@@ -80,8 +80,30 @@
         .control-title {
             font-size: 2.5vh;
             font-weight: bold;
-            margin-bottom: 1.5vh;
+            margin-bottom: 1vh;
             color: #2c3e50;
+        }
+        
+        /* Master Toggle Links */
+        .master-controls {
+            margin-bottom: 2vh;
+            font-size: 1.8vh;
+            display: flex;
+            gap: 1vw;
+        }
+        
+        .master-controls a {
+            text-decoration: none;
+            font-weight: bold;
+            padding: 0.5vh 1vw;
+            border-radius: 4px;
+            background: #f0f0f0;
+            color: #333;
+            border: 1px solid #ccc;
+        }
+        
+        .master-controls a:hover {
+            background: #e0e0e0;
         }
 
         /* Sort Dropdown */
@@ -182,12 +204,19 @@
                     <option value="original">Original File Order</option>
                     <option value="az">Alphabetical (A - Z)</option>
                     <option value="za">Alphabetical (Z - A)</option>
-                    <option value="length">Word Length (Short to Long)</option>
+                    <option value="lengthAsc">Word Length (Short to Long)</option>
+                    <option value="lengthDesc">Word Length (Long to Short)</option>
                 </select>
             </div>
 
             <div class="control-group" id="gradeFilterContainer">
                 <div class="control-title">Select Grades & Units</div>
+                
+                <div class="master-controls">
+                    <a href="#" onclick="toggleAll(true); return false;">Check All</a>
+                    <a href="#" onclick="toggleAll(false); return false;">Clear All</a>
+                </div>
+                
                 </div>
         </aside>
 
@@ -223,15 +252,15 @@
 
         // 2. Build the interactive sidebar dynamically
         function buildSidebar() {
+            // Find where to inject checkboxes, right after the master controls
             const container = document.getElementById('gradeFilterContainer');
-            container.innerHTML = '';
-
+            
             for (const grade in rawVocabData) {
                 if (!gradeConfig[grade]) continue;
 
                 const colorId = gradeConfig[grade].colorClass;
 
-                // Create Grade Checkbox
+                // Create Grade Checkbox (Acts as a folder toggle now)
                 const gradeLabel = document.createElement('label');
                 gradeLabel.className = `checkbox-container color-${colorId}`;
                 gradeLabel.style.fontWeight = "bold";
@@ -240,7 +269,8 @@
                 gradeCheckbox.type = 'checkbox';
                 gradeCheckbox.className = 'grade-checkbox';
                 gradeCheckbox.dataset.grade = grade;
-                gradeCheckbox.addEventListener('change', toggleUnitSection);
+                // Changed from toggleUnitSection to toggleDrawer
+                gradeCheckbox.addEventListener('change', toggleDrawer);
                 
                 gradeLabel.appendChild(gradeCheckbox);
                 gradeLabel.appendChild(document.createTextNode(gradeConfig[grade].name));
@@ -262,6 +292,7 @@
                     unitCheckbox.className = `unit-checkbox unit-checkbox-${grade}`;
                     unitCheckbox.dataset.grade = grade;
                     unitCheckbox.dataset.unit = unit;
+                    // Individual units update the display when checked
                     unitCheckbox.addEventListener('change', updateDisplay);
 
                     unitLabel.appendChild(unitCheckbox);
@@ -275,25 +306,43 @@
             document.getElementById('sortMethod').addEventListener('change', updateDisplay);
         }
 
-        // 3. Show/Hide unit checkboxes when a grade is toggled
-        function toggleUnitSection(e) {
+        // 3. Show/Hide unit sections without auto-checking the boxes
+        function toggleDrawer(e) {
             const grade = e.target.dataset.grade;
             const unitSection = document.getElementById(`units-${grade}`);
-            const unitCheckboxes = document.querySelectorAll(`.unit-checkbox-${grade}`);
             
+            // Just open or close the visual folder, do not touch the unit checkboxes
             if (e.target.checked) {
                 unitSection.style.display = 'block';
-                // Auto-check all units when grade is checked
-                unitCheckboxes.forEach(cb => cb.checked = true);
             } else {
                 unitSection.style.display = 'none';
-                // Uncheck all units when grade is unchecked
+                
+                // Optional logic: If you uncheck the master grade folder, 
+                // do you want it to wipe out any active units inside? Yes, keeps the UI clean.
+                const unitCheckboxes = document.querySelectorAll(`.unit-checkbox-${grade}`);
                 unitCheckboxes.forEach(cb => cb.checked = false);
+                updateDisplay();
             }
+        }
+        
+        // 4. Master Check All / Clear All function
+        function toggleAll(forceCheck) {
+            // Force all grade folders open or closed
+            document.querySelectorAll('.grade-checkbox').forEach(cb => {
+                cb.checked = forceCheck;
+                const grade = cb.dataset.grade;
+                document.getElementById(`units-${grade}`).style.display = forceCheck ? 'block' : 'none';
+            });
+            
+            // Force all unit checkboxes checked or unchecked
+            document.querySelectorAll('.unit-checkbox').forEach(cb => {
+                cb.checked = forceCheck;
+            });
+            
             updateDisplay();
         }
 
-        // 4. Gather, sort, and display the words
+        // 5. Gather, sort, and display the words
         function updateDisplay() {
             const displayArea = document.getElementById('wordDisplayArea');
             const sortMethod = document.getElementById('sortMethod').value;
@@ -303,7 +352,7 @@
             const checkedUnits = document.querySelectorAll('.unit-checkbox:checked');
             
             if (checkedUnits.length === 0) {
-                displayArea.innerHTML = `<div class="empty-state">Please check a grade and unit on the left to view vocabulary.</div>`;
+                displayArea.innerHTML = `<div class="empty-state">Please check specific units on the left to view vocabulary.</div>`;
                 displayArea.style.display = "block";
                 return;
             }
@@ -331,10 +380,12 @@
                 activeWords.sort((a, b) => a.text.toLowerCase().localeCompare(b.text.toLowerCase()));
             } else if (sortMethod === 'za') {
                 activeWords.sort((a, b) => b.text.toLowerCase().localeCompare(a.text.toLowerCase()));
-            } else if (sortMethod === 'length') {
+            } else if (sortMethod === 'lengthAsc') {
                 activeWords.sort((a, b) => a.text.length - b.text.length);
+            } else if (sortMethod === 'lengthDesc') {
+                activeWords.sort((a, b) => b.text.length - a.text.length);
             }
-            // If 'original', it remains in the order it was pushed into the array (which follows the JSON structure)
+            // If 'original', it remains in the order it was pushed into the array
 
             // Render to DOM
             displayArea.innerHTML = '';
@@ -356,7 +407,8 @@
 
                 const tagSpan = document.createElement('span');
                 tagSpan.className = `word-tag bg-${wordObj.colorClass}`;
-                // Clean up the tag text (e.g., "Grade 5 - Unit 1: Feelings")
+                
+                // Clean up the tag text
                 const cleanGrade = wordObj.grade.replace('grade', 'G');
                 tagSpan.textContent = `${cleanGrade} - ${wordObj.unit.split(':')[0]}`;
 

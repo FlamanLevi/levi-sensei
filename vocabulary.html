@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master Vocabulary Reference</title>
+    <style>
+        /* Base settings for TV/Laptop visibility */
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background-color: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 2vh 0;
+            font-size: 3vh;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        /* Back Button to Dashboard */
+        .back-button {
+            position: absolute;
+            left: 2vw;
+            top: 50%;
+            transform: translateY(-50%);
+            color: white;
+            text-decoration: none;
+            font-size: 2vh;
+            background: rgba(255,255,255,0.2);
+            padding: 1vh 1vw;
+            border-radius: 5px;
+        }
+
+        .back-button:hover { background: rgba(255,255,255,0.4); }
+
+        /* Two-column layout */
+        .dashboard-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* Left Sidebar: Controls */
+        .sidebar {
+            width: 25vw;
+            min-width: 300px;
+            background: white;
+            padding: 2vw;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+            overflow-y: auto;
+            border-right: 2px solid #e0e0e0;
+        }
+
+        /* Right Content: Word Grid */
+        .content {
+            flex: 1;
+            padding: 2vw;
+            overflow-y: auto;
+            background: #fdfdfd;
+        }
+
+        /* Control Panels */
+        .control-group {
+            margin-bottom: 3vh;
+            padding-bottom: 2vh;
+            border-bottom: 1px solid #eee;
+        }
+
+        .control-title {
+            font-size: 2.5vh;
+            font-weight: bold;
+            margin-bottom: 1.5vh;
+            color: #2c3e50;
+        }
+
+        /* Sort Dropdown */
+        select {
+            width: 100%;
+            padding: 1vh;
+            font-size: 2vh;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        /* Checkboxes */
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1vh;
+            font-size: 2.2vh;
+            cursor: pointer;
+        }
+
+        .checkbox-container input {
+            width: 2.5vh;
+            height: 2.5vh;
+            margin-right: 1vw;
+            cursor: pointer;
+        }
+
+        /* Dynamic Unit Sections */
+        .unit-section {
+            margin-left: 2vw;
+            margin-top: 1vh;
+            padding: 1vh;
+            border-left: 3px solid #ccc;
+            display: none; /* Hidden by default */
+        }
+
+        /* Textbook Colors */
+        .color-g3 { color: #d81b60; border-left-color: #d81b60; }
+        .color-g4 { color: #2e7d32; border-left-color: #2e7d32; }
+        .color-g5 { color: #e67e22; border-left-color: #e67e22; }
+        .color-g6 { color: #1976d2; border-left-color: #1976d2; }
+        .bg-g3 { background-color: #d81b60; }
+        .bg-g4 { background-color: #2e7d32; }
+        .bg-g5 { background-color: #e67e22; }
+        .bg-g6 { background-color: #1976d2; }
+
+        /* Word Grid System */
+        .word-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5vw;
+        }
+
+        .word-card {
+            background: white;
+            padding: 1.5vw;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            font-size: 3.5vh;
+            font-weight: bold;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            border-left: 6px solid #ccc;
+        }
+
+        /* Small tag on each word indicating its source */
+        .word-tag {
+            font-size: 1.5vh;
+            color: white;
+            padding: 0.3vh 0.8vw;
+            border-radius: 12px;
+            margin-top: 1vh;
+            font-weight: normal;
+        }
+
+        .empty-state {
+            font-size: 3vh;
+            color: #7f8c8d;
+            text-align: center;
+            margin-top: 10vh;
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="index.html" class="back-button">← Dashboard</a>
+        Master Vocabulary Reference
+    </header>
+
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <div class="control-group">
+                <div class="control-title">Sort Options</div>
+                <select id="sortMethod">
+                    <option value="original">Original File Order</option>
+                    <option value="az">Alphabetical (A - Z)</option>
+                    <option value="za">Alphabetical (Z - A)</option>
+                    <option value="length">Word Length (Short to Long)</option>
+                </select>
+            </div>
+
+            <div class="control-group" id="gradeFilterContainer">
+                <div class="control-title">Select Grades & Units</div>
+                </div>
+        </aside>
+
+        <main class="content">
+            <div id="wordDisplayArea" class="word-grid">
+                <div class="empty-state">Loading vocabulary database...</div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let rawVocabData = {};
+        
+        // Configuration mapping grades to their UI colors and display names
+        const gradeConfig = {
+            "grade3": { name: "Grade 3 (Let's Try 1)", colorClass: "g3" },
+            "grade4": { name: "Grade 4 (Let's Try 2)", colorClass: "g4" },
+            "grade5": { name: "Grade 5 (Here We Go 5)", colorClass: "g5" },
+            "grade6": { name: "Grade 6 (Here We Go 6)", colorClass: "g6" }
+        };
+
+        // 1. Fetch the JSON data
+        fetch('vocabulary.json')
+            .then(response => response.json())
+            .then(data => {
+                rawVocabData = data;
+                buildSidebar();
+                updateDisplay();
+            })
+            .catch(error => {
+                document.getElementById('wordDisplayArea').innerHTML = `<div class="empty-state">Error loading vocabulary.json. Make sure you are running this on a local server or GitHub pages.</div>`;
+            });
+
+        // 2. Build the interactive sidebar dynamically
+        function buildSidebar() {
+            const container = document.getElementById('gradeFilterContainer');
+            container.innerHTML = '';
+
+            for (const grade in rawVocabData) {
+                if (!gradeConfig[grade]) continue;
+
+                const colorId = gradeConfig[grade].colorClass;
+
+                // Create Grade Checkbox
+                const gradeLabel = document.createElement('label');
+                gradeLabel.className = `checkbox-container color-${colorId}`;
+                gradeLabel.style.fontWeight = "bold";
+                
+                const gradeCheckbox = document.createElement('input');
+                gradeCheckbox.type = 'checkbox';
+                gradeCheckbox.className = 'grade-checkbox';
+                gradeCheckbox.dataset.grade = grade;
+                gradeCheckbox.addEventListener('change', toggleUnitSection);
+                
+                gradeLabel.appendChild(gradeCheckbox);
+                gradeLabel.appendChild(document.createTextNode(gradeConfig[grade].name));
+                container.appendChild(gradeLabel);
+
+                // Create Unit Section (Hidden initially)
+                const unitSection = document.createElement('div');
+                unitSection.className = `unit-section color-${colorId}`;
+                unitSection.id = `units-${grade}`;
+
+                // Populate Units for this Grade
+                for (const unit in rawVocabData[grade]) {
+                    const unitLabel = document.createElement('label');
+                    unitLabel.className = 'checkbox-container';
+                    unitLabel.style.color = '#333';
+                    
+                    const unitCheckbox = document.createElement('input');
+                    unitCheckbox.type = 'checkbox';
+                    unitCheckbox.className = `unit-checkbox unit-checkbox-${grade}`;
+                    unitCheckbox.dataset.grade = grade;
+                    unitCheckbox.dataset.unit = unit;
+                    unitCheckbox.addEventListener('change', updateDisplay);
+
+                    unitLabel.appendChild(unitCheckbox);
+                    unitLabel.appendChild(document.createTextNode(unit));
+                    unitSection.appendChild(unitLabel);
+                }
+                container.appendChild(unitSection);
+            }
+
+            // Listen to sort changes
+            document.getElementById('sortMethod').addEventListener('change', updateDisplay);
+        }
+
+        // 3. Show/Hide unit checkboxes when a grade is toggled
+        function toggleUnitSection(e) {
+            const grade = e.target.dataset.grade;
+            const unitSection = document.getElementById(`units-${grade}`);
+            const unitCheckboxes = document.querySelectorAll(`.unit-checkbox-${grade}`);
+            
+            if (e.target.checked) {
+                unitSection.style.display = 'block';
+                // Auto-check all units when grade is checked
+                unitCheckboxes.forEach(cb => cb.checked = true);
+            } else {
+                unitSection.style.display = 'none';
+                // Uncheck all units when grade is unchecked
+                unitCheckboxes.forEach(cb => cb.checked = false);
+            }
+            updateDisplay();
+        }
+
+        // 4. Gather, sort, and display the words
+        function updateDisplay() {
+            const displayArea = document.getElementById('wordDisplayArea');
+            const sortMethod = document.getElementById('sortMethod').value;
+            let activeWords = [];
+
+            // Gather all checked units
+            const checkedUnits = document.querySelectorAll('.unit-checkbox:checked');
+            
+            if (checkedUnits.length === 0) {
+                displayArea.innerHTML = `<div class="empty-state">Please check a grade and unit on the left to view vocabulary.</div>`;
+                displayArea.style.display = "block";
+                return;
+            }
+
+            // Extract words from JSON based on checked boxes
+            checkedUnits.forEach(cb => {
+                const grade = cb.dataset.grade;
+                const unit = cb.dataset.unit;
+                const words = rawVocabData[grade][unit];
+                const colorId = gradeConfig[grade].colorClass;
+
+                words.forEach((word, index) => {
+                    activeWords.push({
+                        text: word,
+                        grade: grade,
+                        unit: unit,
+                        colorClass: colorId,
+                        originalIndex: index // Keeps the logical textbook order intact
+                    });
+                });
+            });
+
+            // Apply Sorting Logic
+            if (sortMethod === 'az') {
+                activeWords.sort((a, b) => a.text.toLowerCase().localeCompare(b.text.toLowerCase()));
+            } else if (sortMethod === 'za') {
+                activeWords.sort((a, b) => b.text.toLowerCase().localeCompare(a.text.toLowerCase()));
+            } else if (sortMethod === 'length') {
+                activeWords.sort((a, b) => a.text.length - b.text.length);
+            }
+            // If 'original', it remains in the order it was pushed into the array (which follows the JSON structure)
+
+            // Render to DOM
+            displayArea.innerHTML = '';
+            displayArea.style.display = "grid";
+
+            activeWords.forEach(wordObj => {
+                const card = document.createElement('div');
+                card.className = `word-card`;
+                card.style.borderLeftColor = gradeConfig[wordObj.grade] ? getComputedStyle(document.body).getPropertyValue(`--${wordObj.colorClass}`) : '';
+                
+                // Manually applying border color for structural integrity
+                if(wordObj.colorClass === 'g3') card.style.borderLeftColor = '#d81b60';
+                if(wordObj.colorClass === 'g4') card.style.borderLeftColor = '#2e7d32';
+                if(wordObj.colorClass === 'g5') card.style.borderLeftColor = '#e67e22';
+                if(wordObj.colorClass === 'g6') card.style.borderLeftColor = '#1976d2';
+
+                const textSpan = document.createElement('span');
+                textSpan.textContent = wordObj.text;
+
+                const tagSpan = document.createElement('span');
+                tagSpan.className = `word-tag bg-${wordObj.colorClass}`;
+                // Clean up the tag text (e.g., "Grade 5 - Unit 1: Feelings")
+                const cleanGrade = wordObj.grade.replace('grade', 'G');
+                tagSpan.textContent = `${cleanGrade} - ${wordObj.unit.split(':')[0]}`;
+
+                card.appendChild(textSpan);
+                card.appendChild(tagSpan);
+                displayArea.appendChild(card);
+            });
+        }
+    </script>
+</body>
+</html>

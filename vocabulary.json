@@ -1,0 +1,35 @@
+{
+  "grade3": {
+    "Unit 1: Test 1": ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"],
+    "Unit 2: Test 2": ["red", "blue", "green", "yellow", "pink", "orange", "purple", "black"]
+  },
+  "grade4": {
+    "Unit 1: Test 1": ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"],
+    "Unit 2: Test 2": ["red", "blue", "green", "yellow", "pink", "orange", "purple", "black"]
+  },
+  "grade5": {
+    "Unit 1: Feelings": ["fine", "happy", "good", "great", "sleepy", "tired", "hungry", "thirsty", "sad", "angry", "excited", "nervous"],
+    "Unit 2: Weather": ["sunny", "rainy", "cloudy", "snowy", "hot", "cold", "warm", "cool"]
+  },
+  "grade6": {
+    "Unit 1: Countries": ["Australia", "Azerbaijan", "Brazil", "Canada", "Chile", "China", "Egypt", "Finland", "France", "Germany", "India", "Italy", "Japan", "Kenya", "Korea", "New Zealand", "Norway", "Peru", "Russia", "Saudi Arabia", "South Africa", "Thailand", "the Maldives", "the Philippines", "the U.K.", "the U.S."],
+    "Unit 2: Skills": ["singing", "cooking", "swimming", "running", "dancing", "fishing", "sports", "kendama", "sewing", "jumping rope", "riding a unicycle", "drawing pictures", "making sweets", "playing the piano", "playing the recorder", "playing video games"],
+    "Unit 3: Seasons": ["spring", "summer", "fall", "winter"],
+    "Unit 4: Months": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+    "Unit 5: Seasonal Events": ["hanami", "the Doll Festival", "Children's Day", "the Star Festival", "a summer festival", "a fireworks festival", "tsukimi", "momijigari", "shichi-go-san", "oshogatsu", "setsubun", "a snow festival"],
+    "Unit 6: Actions": ["see", "saw", "eat", "ate", "go", "went", "enjoy", "enjoyed", "visit", "visited", "make", "made", "talk", "talked", "sing", "sang", "cook", "cooked", "watch", "watched", "play", "played", "practice", "practiced", "like", "love", "have", "want", "buy", "clean", "climb", "dance", "draw", "drink", "fly", "help", "jump", "listen", "read", "run", "stand up", "sit down", "speak", "study", "swim", "walk", "write"],
+    "Unit 7: When and How Often": ["morning", "afternoon", "evening", "night", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "always", "usually", "sometimes", "never"],
+    "Unit 8: Daily Life": ["get up", "eat breakfast", "brush my teeth", "take out the garbage", "leave my house", "go to school", "eat lunch", "go home", "clean my room", "do my homework", "play with my friends", "watch TV", "walk the dog", "cook dinner", "set the table", "eat dinner", "clear the table", "wash the dishes", "clean the bath", "take a bath", "go to bed"],
+    "Unit 9: Town": ["house", "school", "bookstore", "station", "library", "hospital", "fire station", "police station", "supermarket", "flower shop", "shrine", "temple", "restaurant", "park", "stadium", "gym", "zoo", "aquarium", "museum", "castle", "junior high school", "department store", "swimming pool", "amusement park"],
+    "Unit 10: Nature": ["sea", "beach", "mountain", "forest", "rain forest", "desert", "savanna", "lake", "pond", "river", "waterfall", "hot spring", "sky", "sun", "stars", "tree", "nuts", "leaves", "grass", "flower", "fruits", "bugs", "seaweed", "water"],
+    "Unit 11: Living Things": ["bear", "cat", "chimpanzee", "cow", "dog", "elephant", "giraffe", "gorilla", "hamster", "hippo", "horse", "kangaroo", "koala", "lion", "monkey", "mouse", "orangutan", "panda", "pig", "polar bear", "rabbit", "red panda", "tiger", "zebra", "bird", "eagle", "owl", "penguin", "caterpillar", "grasshopper", "frog", "dolphin", "dugong", "fish", "jellyfish", "sea turtle", "seal", "shark", "whale"],
+    "Unit 12: Body": ["head", "neck", "shoulder", "hand", "leg", "ear", "eye", "nose", "mouth", "tail", "fur", "wing", "feather", "shell", "horn"],
+    "Unit 13: Club Activity": ["baseball team", "basketball team", "volleyball team", "soccer team", "tennis team", "track team", "art club", "computer club", "drama club", "dance club", "kendo club", "newspaper club", "science club", "brass band", "chorus"],
+    "Unit 14: Subjects": ["Japanese", "English", "math", "science", "social studies", "music", "P.E.", "calligraphy", "arts and crafts", "home economics", "moral education"],
+    "Unit 15: Jobs": ["actor", "voice actor", "artist", "manga artist", "baseball player", "soccer player", "teacher", "nursery teacher", "journalist", "chef", "farmer", "florist", "hair stylist", "designer", "robot creator", "pharmacist", "vet", "dentist", "nurse", "doctor", "astronaut", "firefighter", "zookeeper"],
+    "Unit 16: School Events": ["entrance ceremony", "art festival", "drama festival", "music festival", "sports day", "volunteer day", "camping trip", "field trip", "school trip", "swimming meet", "graduation ceremony"],
+    "Unit 17: Attributes": ["big", "small", "old", "new", "long", "short", "cool", "beautiful", "cute", "popular", "fresh"],
+    "Unit 18: Impressions": ["nice", "good", "great", "wonderful", "fun", "exciting", "interesting"],
+    "Unit 19: Numbers": ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen", "twenty", "twenty-one", "twenty-two", "twenty-three", "twenty-four", "twenty-five", "twenty-six", "twenty-seven", "twenty-eight", "twenty-nine", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety", "one hundred", "one hundred and one", "two hundred"]
+  }
+}

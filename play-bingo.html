@@ -19,14 +19,28 @@
         .status-bar { font-size: 3vh; font-weight: bold; margin-bottom: 1vh; color: #7f8c8d; flex-shrink: 0;}
         .current-word-display { font-size: 4vh; font-weight: 900; color: #e74c3c; margin-bottom: 1vh; min-height: 5vh; text-align: center; flex-shrink: 0;}
         
-        /* The Student Audit Ribbon - Locked Down */
-        #student-history { display: flex; gap: 2vw; overflow-x: auto; width: 95%; max-width: 700px; padding: 1.5vh 2vw; margin-bottom: 2vh; background: rgba(0,0,0,0.05); border-radius: 10px; box-sizing: border-box; scroll-behavior: smooth; flex-shrink: 0; min-height: 6vh; }
-        #student-history::-webkit-scrollbar { height: 6px; }
-        #student-history::-webkit-scrollbar-thumb { background: #bdc3c7; border-radius: 10px; }
-        .history-tag { background: #95a5a6; color: white; padding: 0.5vh 3vw; border-radius: 20px; font-size: 2.2vh; font-weight: bold; white-space: nowrap; flex-shrink: 0; }
+        /* The Vertical "Wrap" Ledger */
+        #student-history-container { 
+            width: 95%; 
+            max-width: 700px; 
+            height: 12vh; /* Fixed vertical height */
+            overflow-y: auto; /* Scroll vertically when full */
+            background: rgba(0,0,0,0.05); 
+            border-radius: 10px; 
+            padding: 1vh; 
+            margin-bottom: 2vh; 
+            display: flex; 
+            flex-wrap: wrap; /* Wrap words to the next line */
+            gap: 1vh; 
+            justify-content: center; 
+            align-content: flex-start;
+            box-sizing: border-box; 
+            flex-shrink: 0;
+        }
+        .history-tag { background: #95a5a6; color: white; padding: 0.5vh 3vw; border-radius: 15px; font-size: 2vh; font-weight: bold; white-space: nowrap; }
 
-        /* The Bingo Board - Restored Aspect Ratio */
-        .bingo-board { display: grid; gap: 1.5vw; width: 95%; max-width: 700px; flex: 1; align-content: center; justify-content: center;}
+        /* The Bingo Board with Vertical Safety Constraint */
+        .bingo-board { display: grid; gap: 1.5vw; width: 95%; max-width: 60vh; /* STRICT height-based width limit */ flex: 1; align-content: center; justify-content: center;}
         .bingo-cell { aspect-ratio: 1 / 1; background: white; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.15); display: flex; align-items: center; justify-content: center; font-size: clamp(1.8vh, 2vw, 3vh); font-weight: bold; text-align: center; padding: 1vw; cursor: pointer; border: 4px solid transparent; transition: all 0.2s; word-wrap: break-word; line-height: 1.2; user-select: none; box-sizing: border-box;}
         .bingo-cell.stamped { background-color: #2ecc71; color: white; transform: scale(0.95); box-shadow: inset 0 4px 8px rgba(0,0,0,0.2); border-color: #27ae60;}
         .bingo-cell.error { border-color: #e74c3c; animation: shake 0.4s; }
@@ -56,7 +70,7 @@
             <div class="status-bar" id="roomStatus">Room: ---- | Player: ----</div>
             <div class="current-word-display" id="tvWord">Listen to the Teacher...</div>
             
-            <div id="student-history"></div>
+            <div id="student-history-container"></div>
 
             <div class="bingo-board" id="board"></div>
             <button class="btn-leave" id="leaveBtn">Leave Room</button>
@@ -168,7 +182,6 @@
             board.style.gridTemplateColumns = `repeat(${gridSize}, 1fr)`;
             const centerIndex = Math.floor((gridSize * gridSize) / 2);
 
-            // Pull their previously tapped squares if they refreshed
             let session = JSON.parse(sessionStorage.getItem('bingoSession'));
             let stampedIndices = session ? (session.stampedIndices || []) : [];
 
@@ -183,7 +196,6 @@
                 } else {
                     cell.textContent = word;
                     cell.dataset.word = word;
-                    // Re-apply stamp if they manually tapped it previously
                     if (stampedIndices.includes(index.toString()) || stampedIndices.includes(index)) {
                         cell.classList.add('stamped');
                     }
@@ -209,8 +221,8 @@
                 if (data.calledWords) {
                     activeCalledWords = data.calledWords;
                     
-                    // --- Update the UI Ledger ---
-                    const historyPanel = document.getElementById('student-history');
+                    // --- Update the UI Ledger (Vertical Scroll) ---
+                    const historyPanel = document.getElementById('student-history-container');
                     historyPanel.innerHTML = '';
                     activeCalledWords.forEach(word => {
                         const tag = document.createElement('div');
@@ -218,9 +230,8 @@
                         tag.textContent = word;
                         historyPanel.appendChild(tag);
                     });
-                    historyPanel.scrollLeft = historyPanel.scrollWidth;
-                    
-                    // NO MORE AUTO-STAMPING HERE!
+                    // Auto-scroll the vertical ledger to the bottom
+                    historyPanel.scrollTop = historyPanel.scrollHeight;
                 }
             });
         }
@@ -229,10 +240,8 @@
             if (hasWon || cell.classList.contains('stamped')) return; 
             const clickedWord = cell.dataset.word;
             if (activeCalledWords.includes(clickedWord)) {
-                // Correct tap!
                 cell.classList.add('stamped');
                 
-                // Save this tap to their local memory
                 let session = JSON.parse(sessionStorage.getItem('bingoSession'));
                 if (session) {
                     session.stampedIndices.push(cell.dataset.index);
@@ -241,7 +250,6 @@
 
                 checkWinCondition();
             } else {
-                // Wrong tap!
                 cell.classList.add('error');
                 setTimeout(() => cell.classList.remove('error'), 400);
             }

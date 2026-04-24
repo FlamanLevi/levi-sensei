@@ -10,10 +10,11 @@
         .container { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 90%; max-width: 800px; text-align: center; }
         
         /* Setup Phase */
-        #setup-phase { background: rgba(255,255,255,0.1); padding: 4vh 4vw; border-radius: 15px; }
-        select, button { font-size: 3vh; padding: 1.5vh 2vw; margin: 1vh; border-radius: 8px; border: none; cursor: pointer; }
-        .btn-start { background-color: #27ae60; color: white; font-weight: bold; }
-        .btn-start:hover { background-color: #2ecc71; }
+        #setup-phase { background: rgba(255,255,255,0.1); padding: 4vh 4vw; border-radius: 15px; display: flex; flex-direction: column; gap: 1.5vh; align-items: center;}
+        select, button { font-size: 3vh; padding: 1.5vh 2vw; border-radius: 8px; border: none; cursor: pointer; width: 100%; max-width: 400px;}
+        .btn-start { background-color: #27ae60; color: white; font-weight: bold; margin-top: 2vh;}
+        .btn-start:disabled { background-color: #7f8c8d; cursor: not-allowed; }
+        .btn-start:hover:not(:disabled) { background-color: #2ecc71; }
         .btn-end { background-color: #e74c3c; color: white; font-weight: bold; font-size: 2vh; margin-top: 3vh;}
         
         /* Game Phase */
@@ -39,7 +40,8 @@
 
     <div class="container">
         <div id="setup-phase">
-            <h2 style="font-size: 4vh;">Configure Lesson</h2>
+            <h2 style="font-size: 4vh; margin: 0 0 2vh 0;">Configure Lesson</h2>
+            
             <select id="gradeSelect">
                 <option value="" disabled selected>Select Grade</option>
                 <option value="grade3">Grade 3</option>
@@ -47,11 +49,20 @@
                 <option value="grade5">Grade 5</option>
                 <option value="grade6">Grade 6</option>
             </select>
-            <br>
+            
             <select id="unitSelect" disabled>
                 <option value="" disabled selected>Select Unit</option>
             </select>
-            <br><br>
+            
+            <select id="gridSelect" disabled style="display: none;">
+                <option value="" disabled selected>Select Grid Size</option>
+            </select>
+
+            <select id="freeSpaceSelect" style="display: none;">
+                <option value="no">No Free Space</option>
+                <option value="yes">Include Center Free Space</option>
+            </select>
+
             <button class="btn-start" id="createRoomBtn" disabled>Create Room</button>
         </div>
 
@@ -71,7 +82,7 @@
 
     <div id="bingo-alert">
         <div style="font-size: 8vh; font-weight: bold; margin-bottom: -2vh;">BINGO!</div>
-        <div id="bingo-winner">Anna</div>
+        <div id="bingo-winner">Player</div>
         <button class="btn-dismiss" onclick="document.getElementById('bingo-alert').style.display='none'">Dismiss</button>
     </div>
 
@@ -83,7 +94,7 @@
         const firebaseConfig = {
             apiKey: "AIzaSyC7lrhVICmKOL3EhVkiaTkpEE1_VUDPS7k",
             authDomain: "levi-sensei.firebaseapp.com",
-            databaseURL: "https://levi-sensei-default-rtdb.asia-southeast1.firebasedatabase.app/",
+            databaseURL: "https://levi-sensei-default-rtdb.asia-southeast1.firebasedatabase.app/", // MAKE SURE THIS IS YOUR ACTUAL URL
             projectId: "levi-sensei",
             storageBucket: "levi-sensei.firebasestorage.app",
             messagingSenderId: "14792482782",
@@ -107,39 +118,94 @@
                 document.getElementById('gradeSelect').addEventListener('change', populateUnits);
             });
 
-        // 2. UI Logic: Populate Units dropdown based on Grade
+        // 2. Cascade Step 1: Populate Units (Filtering out units with < 9 words)
         function populateUnits(e) {
             const grade = e.target.value;
             const unitSelect = document.getElementById('unitSelect');
+            
+            // Reset downstream menus
             unitSelect.innerHTML = '<option value="" disabled selected>Select Unit</option>';
+            document.getElementById('gridSelect').style.display = 'none';
+            document.getElementById('freeSpaceSelect').style.display = 'none';
+            document.getElementById('createRoomBtn').disabled = true;
             
             for (const unit in rawVocabData[grade]) {
-                const option = document.createElement('option');
-                option.value = unit;
-                option.textContent = unit;
-                unitSelect.appendChild(option);
+                const wordCount = rawVocabData[grade][unit].length;
+                if (wordCount >= 9) {
+                    const option = document.createElement('option');
+                    option.value = unit;
+                    // Helpfully display the word count to the teacher
+                    option.textContent = `${unit} (${wordCount} words)`;
+                    unitSelect.appendChild(option);
+                }
             }
             unitSelect.disabled = false;
-            unitSelect.addEventListener('change', () => document.getElementById('createRoomBtn').disabled = false);
         }
 
-        // 3. Create Room Logic
+        // 3. Cascade Step 2: Show available Grid Sizes based on unit size
+        document.getElementById('unitSelect').addEventListener('change', (e) => {
+            const grade = document.getElementById('gradeSelect').value;
+            const unit = e.target.value;
+            const wordCount = rawVocabData[grade][unit].length;
+
+            const gridSelect = document.getElementById('gridSelect');
+            gridSelect.innerHTML = '<option value="" disabled selected>Select Grid Size</option>';
+            
+            // 3x3 is always available if it passed the unit filter
+            gridSelect.appendChild(new Option('3x3 Grid (9 spaces)', '3'));
+            
+            if (wordCount >= 16) {
+                gridSelect.appendChild(new Option('4x4 Grid (16 spaces)', '4'));
+            }
+            if (wordCount >= 25) {
+                gridSelect.appendChild(new Option('5x5 Grid (25 spaces)', '5'));
+            }
+
+            gridSelect.style.display = 'block';
+            gridSelect.disabled = false;
+            document.getElementById('freeSpaceSelect').style.display = 'none';
+            document.getElementById('createRoomBtn').disabled = true;
+        });
+
+        // 4. Cascade Step 3: Show Free Space toggle if applicable
+        document.getElementById('gridSelect').addEventListener('change', (e) => {
+            const gridSize = e.target.value;
+            const freeSpaceSelect = document.getElementById('freeSpaceSelect');
+
+            // 4x4 grids do not have a center square
+            if (gridSize === '3' || gridSize === '5') {
+                freeSpaceSelect.style.display = 'block';
+                freeSpaceSelect.value = "no"; 
+            } else {
+                freeSpaceSelect.style.display = 'none';
+                freeSpaceSelect.value = "no"; 
+            }
+
+            document.getElementById('createRoomBtn').disabled = false;
+        });
+
+        // 5. Create Room Logic
         document.getElementById('createRoomBtn').addEventListener('click', () => {
             const grade = document.getElementById('gradeSelect').value;
             const unit = document.getElementById('unitSelect').value;
+            const gridSize = parseInt(document.getElementById('gridSelect').value);
+            const hasFreeSpace = document.getElementById('freeSpaceSelect').value === "yes";
+
             activeWordsPool = [...rawVocabData[grade][unit]];
             
-            // Generate 4-letter room code (A-Z)
+            // Generate 4-letter room code
             const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
             currentRoomCode = "";
             for(let i=0; i<4; i++) currentRoomCode += chars.charAt(Math.floor(Math.random() * chars.length));
 
-            // Setup Firebase Document
+            // Push settings to Firebase so tablets know how to build the board
             const roomRef = ref(db, `bingoRooms/${currentRoomCode}`);
             set(roomRef, {
                 status: "active",
                 grade: grade,
                 unit: unit,
+                gridSize: gridSize,
+                hasFreeSpace: hasFreeSpace,
                 currentWord: "",
                 calledWords: []
             });
@@ -149,18 +215,16 @@
             document.getElementById('game-phase').style.display = 'block';
             document.getElementById('roomCodeDisplay').textContent = currentRoomCode;
 
-            // Listen for Players joining & Bingo triggers
+            // Listen for Players & Bingo triggers
             onValue(ref(db, `bingoRooms/${currentRoomCode}/players`), (snapshot) => {
                 const players = snapshot.val();
                 let count = 0;
                 if (players) {
                     count = Object.keys(players).length;
-                    // Check if anyone shouted Bingo
                     for(const uid in players) {
                         if(players[uid].hasBingo === true) {
                             document.getElementById('bingo-winner').textContent = players[uid].name;
                             document.getElementById('bingo-alert').style.display = 'flex';
-                            // Reset their bingo status so it doesn't loop forever
                             update(ref(db, `bingoRooms/${currentRoomCode}/players/${uid}`), { hasBingo: false });
                         }
                     }
@@ -169,42 +233,37 @@
             });
         });
 
-        // 4. Draw Word Logic
+        // 6. Draw Word Logic
         document.getElementById('drawBtn').addEventListener('click', () => {
             if (activeWordsPool.length === 0) {
                 document.getElementById('currentWordDisplay').textContent = "NO WORDS LEFT!";
                 return;
             }
 
-            // Pick a random word and remove it from the pool
             const randomIndex = Math.floor(Math.random() * activeWordsPool.length);
             const drawnWord = activeWordsPool.splice(randomIndex, 1)[0];
             calledWords.push(drawnWord);
 
-            // Update UI
             document.getElementById('currentWordDisplay').textContent = drawnWord;
 
-            // Speak the word using Web Speech API
             const utterance = new SpeechSynthesisUtterance(drawnWord);
             utterance.lang = 'en-US'; 
-            utterance.rate = 0.8; // Slightly slower for elementary students
+            utterance.rate = 0.8; 
             window.speechSynthesis.speak(utterance);
 
-            // Broadcast to Firebase
             update(ref(db, `bingoRooms/${currentRoomCode}`), {
                 currentWord: drawnWord,
                 calledWords: calledWords
             });
         });
 
-        // 5. The Kaizen Janitor: Clean up the database when finished
+        // 7. Janitor Protocol
         document.getElementById('endGameBtn').addEventListener('click', () => {
             if(confirm("Are you sure you want to end the game? This will disconnect all students.")) {
                 remove(ref(db, `bingoRooms/${currentRoomCode}`));
-                location.reload(); // Refresh the page to start over
+                location.reload(); 
             }
         });
-
     </script>
 </body>
 </html>

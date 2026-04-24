@@ -6,50 +6,77 @@
     <title>Bingo Host Dashboard</title>
     <style>
         body, html { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #2c3e50; color: white; display: flex; flex-direction: column; align-items: center; }
-        header { background-color: #1a252f; width: 100%; text-align: center; padding: 2vh 0; font-size: 3vh; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        header { background-color: #1a252f; width: 100%; text-align: center; padding: 2vh 0; font-size: 3vh; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.3); position: relative; }
+        
+        /* Language Toggle Positioning */
+        #langSelect { position: absolute; right: 2vw; top: 2vh; font-size: 2vh; padding: 0.5vh; border-radius: 5px; cursor: pointer; }
+
         .container { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 90%; max-width: 800px; text-align: center; }
         
+        /* Instructions Panel */
+        details { background: rgba(255,255,255,0.05); width: 100%; max-width: 600px; border-radius: 10px; margin-top: 2vh; text-align: left; padding: 1vh 2vw; box-sizing: border-box; }
+        summary { font-size: 2.5vh; font-weight: bold; cursor: pointer; color: #3498db; outline: none; }
+        .inst-list { margin-top: 1vh; font-size: 2vh; line-height: 1.5; color: #bdc3c7; }
+
         /* Setup Phase */
-        #setup-phase { background: rgba(255,255,255,0.1); padding: 4vh 4vw; border-radius: 15px; display: flex; flex-direction: column; gap: 1.5vh; align-items: center;}
-        select, button { font-size: 3vh; padding: 1.5vh 2vw; border-radius: 8px; border: none; cursor: pointer; width: 100%; max-width: 400px;}
-        .toggle-label { font-size: 2.5vh; display: flex; align-items: center; gap: 1vw; cursor: pointer; margin-top: 1vh; background: rgba(0,0,0,0.2); padding: 1vh 2vw; border-radius: 8px;}
+        #setup-phase { background: rgba(255,255,255,0.1); padding: 3vh 4vw; border-radius: 15px; display: flex; flex-direction: column; gap: 1.5vh; align-items: center; margin-top: 2vh; width: 100%; max-width: 600px; box-sizing: border-box;}
+        select, button { font-size: 3vh; padding: 1.5vh 2vw; border-radius: 8px; border: none; cursor: pointer; width: 100%; }
+        .toggle-label { font-size: 2.5vh; display: flex; align-items: center; gap: 1vw; cursor: pointer; margin-top: 1vh; background: rgba(0,0,0,0.2); padding: 1vh 2vw; border-radius: 8px; width: 100%; box-sizing: border-box;}
         .toggle-label input { width: 3vh; height: 3vh; cursor: pointer; margin: 0;}
         .btn-start { background-color: #27ae60; color: white; font-weight: bold; margin-top: 2vh;}
         .btn-start:disabled { background-color: #7f8c8d; cursor: not-allowed; }
         .btn-start:hover:not(:disabled) { background-color: #2ecc71; }
-        .btn-end { background-color: #e74c3c; color: white; font-weight: bold; font-size: 2vh; margin-top: 3vh;}
+        .btn-end { background-color: #e74c3c; color: white; font-weight: bold; font-size: 2vh; margin-top: 3vh; max-width: 400px;}
         
         /* Game Phase */
-        #game-phase { display: none; width: 100%; }
+        #game-phase { display: none; width: 100%; margin-top: 2vh;}
         .room-code-display { font-size: 10vh; font-weight: 900; letter-spacing: 1vw; color: #f1c40f; text-shadow: 2px 2px 8px rgba(0,0,0,0.5); margin-bottom: 2vh;}
         .instruction { font-size: 4vh; margin-bottom: 4vh; }
         .current-word { font-size: 8vh; font-weight: bold; background: white; color: #2c3e50; padding: 3vh 5vw; border-radius: 15px; display: inline-block; min-width: 400px; min-height: 10vh; box-shadow: 0 10px 20px rgba(0,0,0,0.3); margin-bottom: 2vh;}
         .player-count { font-size: 3vh; color: #bdc3c7; margin-bottom: 2vh; }
-        .btn-draw { background-color: #3498db; color: white; font-size: 4vh; font-weight: bold; padding: 3vh 6vw; border-radius: 50px; box-shadow: 0 8px 0 #2980b9; transition: all 0.1s; }
+        .btn-draw { background-color: #3498db; color: white; font-size: 4vh; font-weight: bold; padding: 3vh 6vw; border-radius: 50px; box-shadow: 0 8px 0 #2980b9; transition: all 0.1s; max-width: 600px;}
         .btn-draw:active { transform: translateY(8px); box-shadow: none; }
 
         /* The Audit Ledger */
-        #history-panel { margin-top: 4vh; background: rgba(0,0,0,0.2); border-radius: 10px; padding: 2vh; max-height: 15vh; overflow-y: auto; display: flex; flex-wrap: wrap; gap: 1vh; justify-content: center;}
+        #history-panel { margin-top: 4vh; background: rgba(0,0,0,0.2); border-radius: 10px; padding: 2vh; max-height: 15vh; overflow-y: auto; display: flex; flex-wrap: wrap; gap: 1vh; justify-content: center; width: 100%; max-width: 700px; box-sizing: border-box;}
         .history-tag { background: #7f8c8d; padding: 1vh 1.5vw; border-radius: 5px; font-size: 2vh; font-weight: bold; }
 
         /* Bingo Alert */
         #bingo-alert { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(231, 76, 60, 0.95); flex-direction: column; align-items: center; justify-content: center; z-index: 1000; animation: flash 1s infinite alternate;}
-        #bingo-winner { font-size: 15vh; font-weight: 900; color: white; text-transform: uppercase; }
-        .btn-dismiss { background: white; color: #e74c3c; font-size: 3vh; font-weight: bold; margin-top: 5vh; border-radius: 50px; }
+        #bingo-winner { font-size: 15vh; font-weight: 900; color: white; text-transform: uppercase;}
+        .btn-dismiss { background: white; color: #e74c3c; font-size: 3vh; font-weight: bold; margin-top: 5vh; border-radius: 50px; padding: 1.5vh 3vw;}
         @keyframes flash { from { background: rgba(231, 76, 60, 0.95); } to { background: rgba(192, 57, 43, 0.95); } }
 
     </style>
 </head>
 <body>
 
-    <header>Bingo: Teacher Controls</header>
+    <header>
+        <span data-i18n="header">Bingo: Teacher Controls</span>
+        <select id="langSelect">
+            <option value="en">English</option>
+            <option value="ja">日本語</option>
+        </select>
+    </header>
 
     <div class="container">
+        
+        <details id="instruction-panel">
+            <summary data-i18n="instructionsTitle">Instructions / 使い方</summary>
+            <div class="inst-list">
+                <div data-i18n="step1">1. Select the Grade and Unit.</div>
+                <div data-i18n="step2">2. Choose a Grid Size (larger grids are hidden if the unit is too small).</div>
+                <div data-i18n="step3">3. Choose whether to include a center Free Space.</div>
+                <div data-i18n="step4">4. Click 'Create Room'. Students enter the 4-letter code on their tablets.</div>
+                <div data-i18n="step5">5. Click 'Draw Next Word' to play! The system tracks winners automatically.</div>
+            </div>
+        </details>
+
         <div id="setup-phase">
-            <h2 style="font-size: 4vh; margin: 0 0 2vh 0;">Configure Lesson</h2>
+            <h2 style="font-size: 4vh; margin: 0 0 1vh 0;" data-i18n="configHeader">Configure Lesson</h2>
             
             <select id="gradeSelect">
-                <option value="" disabled selected>Select Grade</option>
+                <option value="" disabled selected data-i18n="selGrade">Select Grade</option>
                 <option value="grade3">Grade 3</option>
                 <option value="grade4">Grade 4</option>
                 <option value="grade5">Grade 5</option>
@@ -57,46 +84,47 @@
             </select>
             
             <select id="unitSelect" disabled>
-                <option value="" disabled selected>Select Unit</option>
+                <option value="" disabled selected data-i18n="selUnit">Select Unit</option>
             </select>
             
             <select id="gridSelect" disabled style="display: none;">
-                <option value="" disabled selected>Select Grid Size</option>
+                <option value="" disabled selected data-i18n="selGrid">Select Grid Size</option>
             </select>
 
             <select id="freeSpaceSelect" style="display: none;">
-                <option value="no">No Free Space</option>
-                <option value="yes">Include Center Free Space</option>
+                <option value="no" data-i18n="noFree">No Free Space</option>
+                <option value="yes" data-i18n="yesFree">Include Center Free Space</option>
             </select>
 
             <label class="toggle-label">
-                <input type="checkbox" id="muteToggle"> Mute Auto-Voice (Manual Calling)
+                <input type="checkbox" id="muteToggle"> 
+                <span data-i18n="muteToggle">Mute Auto-Voice (Manual Calling)</span>
             </label>
 
-            <button class="btn-start" id="createRoomBtn" disabled>Create Room</button>
+            <button class="btn-start" id="createRoomBtn" disabled data-i18n="createBtn">Create Room</button>
         </div>
 
         <div id="game-phase">
-            <div class="instruction">Join on your tablet using code:</div>
+            <div class="instruction" data-i18n="joinInst">Join on your tablet using code:</div>
             <div class="room-code-display" id="roomCodeDisplay">ABCD</div>
             
-            <div class="player-count">Students Connected: <span id="playerCount">0</span></div>
+            <div class="player-count"><span data-i18n="studentsConn">Students Connected:</span> <span id="playerCount">0</span></div>
             
-            <div class="current-word" id="currentWordDisplay">Waiting to draw...</div>
+            <div class="current-word" id="currentWordDisplay" data-i18n="waitDraw">Waiting to draw...</div>
             <br>
-            <button class="btn-draw" id="drawBtn">Draw Next Word</button>
+            <button class="btn-draw" id="drawBtn" data-i18n="drawBtn">Draw Next Word</button>
 
             <div id="history-panel"></div>
 
             <br>
-            <button class="btn-end" id="endGameBtn">End Game & Clear Room</button>
+            <button class="btn-end" id="endGameBtn" data-i18n="endBtn">End Game & Clear Room</button>
         </div>
     </div>
 
     <div id="bingo-alert">
-        <div style="font-size: 8vh; font-weight: bold; margin-bottom: -2vh;">BINGO!</div>
+        <div style="font-size: 8vh; font-weight: bold; margin-bottom: -2vh;" data-i18n="alertWinner">BINGO!</div>
         <div id="bingo-winner">Player</div>
-        <button class="btn-dismiss" onclick="document.getElementById('bingo-alert').style.display='none'">Dismiss</button>
+        <button class="btn-dismiss" onclick="document.getElementById('bingo-alert').style.display='none'" data-i18n="dismissBtn">Dismiss</button>
     </div>
 
     <script type="module">
@@ -116,7 +144,101 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // State Variables
+        // --- BILINGUAL DICTIONARY LOGIC ---
+        const i18n = {
+            en: {
+                header: "Bingo: Teacher Controls",
+                instructionsTitle: "Instructions / 使い方",
+                step1: "1. Select the Grade and Unit.",
+                step2: "2. Choose a Grid Size (larger grids are hidden if the unit is too small).",
+                step3: "3. Choose whether to include a center Free Space.",
+                step4: "4. Click 'Create Room'. Students enter the 4-letter code on their tablets.",
+                step5: "5. Click 'Draw Next Word' to play! The system tracks winners automatically.",
+                configHeader: "Configure Lesson",
+                selGrade: "Select Grade",
+                selUnit: "Select Unit",
+                selGrid: "Select Grid Size",
+                noFree: "No Free Space",
+                yesFree: "Include Center Free Space",
+                muteToggle: "Mute Auto-Voice (Manual Calling)",
+                createBtn: "Create Room",
+                joinInst: "Join on your tablet using code:",
+                studentsConn: "Students Connected: ",
+                waitDraw: "Waiting to draw...",
+                drawBtn: "Draw Next Word",
+                endBtn: "End Game & Clear Room",
+                alertWinner: "BINGO!",
+                dismissBtn: "Dismiss",
+                noWords: "NO WORDS LEFT!",
+                grid3: "3x3 Grid (9 spaces)",
+                grid4: "4x4 Grid (16 spaces)",
+                grid5: "5x5 Grid (25 spaces)"
+            },
+            ja: {
+                header: "ビンゴ：教師用ダッシュボード",
+                instructionsTitle: "使い方 (Instructions)",
+                step1: "1. 学年と単元を選択します。",
+                step2: "2. グリッドサイズを選択します（単語数が少ない場合は大きなサイズは選べません）。",
+                step3: "3. 中央に「フリースペース」を入れるかを選択します。",
+                step4: "4. 「ルームを作成」を押し、児童のタブレットに4桁のコードを入力させます。",
+                step5: "5. 「次の単語を引く」を押してゲーム開始！ビンゴ達成者は自動的に画面に表示されます。",
+                configHeader: "レッスンの設定",
+                selGrade: "学年を選択",
+                selUnit: "単元を選択",
+                selGrid: "グリッドサイズを選択",
+                noFree: "フリースペースなし",
+                yesFree: "中央にフリースペースを配置",
+                muteToggle: "自動音声をミュート（手動で読み上げ）",
+                createBtn: "ルームを作成",
+                joinInst: "タブレットでこのコードを入力して参加：",
+                studentsConn: "接続中の児童数： ",
+                waitDraw: "抽選待ち...",
+                drawBtn: "次の単語を引く",
+                endBtn: "ゲームを終了してルームを削除",
+                alertWinner: "ビンゴ！",
+                dismissBtn: "閉じる",
+                noWords: "単語がありません！",
+                grid3: "3x3 グリッド (9マス)",
+                grid4: "4x4 グリッド (16マス)",
+                grid5: "5x5 グリッド (25マス)"
+            }
+        };
+
+        let currentLang = 'en';
+
+        function applyLanguage() {
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (i18n[currentLang][key]) {
+                    el.textContent = i18n[currentLang][key];
+                }
+            });
+
+            // Refresh dynamic dropdown options to match the language
+            const gridSelect = document.getElementById('gridSelect');
+            if (gridSelect.options.length > 1) {
+                Array.from(gridSelect.options).forEach(opt => {
+                    if (opt.value === "3") opt.textContent = i18n[currentLang].grid3;
+                    if (opt.value === "4") opt.textContent = i18n[currentLang].grid4;
+                    if (opt.value === "5") opt.textContent = i18n[currentLang].grid5;
+                });
+            }
+
+            // Update display board text if it's currently at the waiting/empty state
+            const currentDisplay = document.getElementById('currentWordDisplay').textContent;
+            if (currentDisplay === i18n.en.waitDraw || currentDisplay === i18n.ja.waitDraw) {
+                document.getElementById('currentWordDisplay').textContent = i18n[currentLang].waitDraw;
+            } else if (currentDisplay === i18n.en.noWords || currentDisplay === i18n.ja.noWords) {
+                document.getElementById('currentWordDisplay').textContent = i18n[currentLang].noWords;
+            }
+        }
+
+        document.getElementById('langSelect').addEventListener('change', (e) => {
+            currentLang = e.target.value;
+            applyLanguage();
+        });
+
+        // --- CORE GAME LOGIC ---
         let rawVocabData = {};
         let activeWordsPool = [];
         let calledWords = [];
@@ -132,7 +254,7 @@
         function populateUnits(e) {
             const grade = e.target.value;
             const unitSelect = document.getElementById('unitSelect');
-            unitSelect.innerHTML = '<option value="" disabled selected>Select Unit</option>';
+            unitSelect.innerHTML = `<option value="" disabled selected data-i18n="selUnit">${i18n[currentLang].selUnit}</option>`;
             document.getElementById('gridSelect').style.display = 'none';
             document.getElementById('freeSpaceSelect').style.display = 'none';
             document.getElementById('createRoomBtn').disabled = true;
@@ -142,7 +264,7 @@
                 if (wordCount >= 9) {
                     const option = document.createElement('option');
                     option.value = unit;
-                    option.textContent = `${unit} (${wordCount} words)`;
+                    option.textContent = `${unit} (${wordCount})`;
                     unitSelect.appendChild(option);
                 }
             }
@@ -155,10 +277,10 @@
             const wordCount = rawVocabData[grade][unit].length;
             const gridSelect = document.getElementById('gridSelect');
             
-            gridSelect.innerHTML = '<option value="" disabled selected>Select Grid Size</option>';
-            gridSelect.appendChild(new Option('3x3 Grid (9 spaces)', '3'));
-            if (wordCount >= 16) gridSelect.appendChild(new Option('4x4 Grid (16 spaces)', '4'));
-            if (wordCount >= 25) gridSelect.appendChild(new Option('5x5 Grid (25 spaces)', '5'));
+            gridSelect.innerHTML = `<option value="" disabled selected data-i18n="selGrid">${i18n[currentLang].selGrid}</option>`;
+            gridSelect.appendChild(new Option(i18n[currentLang].grid3, '3'));
+            if (wordCount >= 16) gridSelect.appendChild(new Option(i18n[currentLang].grid4, '4'));
+            if (wordCount >= 25) gridSelect.appendChild(new Option(i18n[currentLang].grid5, '5'));
 
             gridSelect.style.display = 'block';
             gridSelect.disabled = false;
@@ -202,6 +324,7 @@
                 calledWords: []
             });
 
+            document.getElementById('instruction-panel').style.display = 'none';
             document.getElementById('setup-phase').style.display = 'none';
             document.getElementById('game-phase').style.display = 'block';
             document.getElementById('roomCodeDisplay').textContent = currentRoomCode;
@@ -225,7 +348,7 @@
 
         document.getElementById('drawBtn').addEventListener('click', () => {
             if (activeWordsPool.length === 0) {
-                document.getElementById('currentWordDisplay').textContent = "NO WORDS LEFT!";
+                document.getElementById('currentWordDisplay').textContent = i18n[currentLang].noWords;
                 return;
             }
 
@@ -235,7 +358,6 @@
 
             document.getElementById('currentWordDisplay').textContent = drawnWord;
 
-            // Audit Ledger Update
             const historyPanel = document.getElementById('history-panel');
             const newTag = document.createElement('div');
             newTag.className = 'history-tag';
@@ -243,12 +365,11 @@
             historyPanel.appendChild(newTag);
             historyPanel.scrollTop = historyPanel.scrollHeight;
 
-            // Manual Override Check
             const isMuted = document.getElementById('muteToggle').checked;
             if (!isMuted) {
                 const utterance = new SpeechSynthesisUtterance(drawnWord);
                 utterance.lang = 'en-US'; 
-                utterance.rate = 0.7; 
+                utterance.rate = 0.8; 
                 window.speechSynthesis.speak(utterance);
             }
 

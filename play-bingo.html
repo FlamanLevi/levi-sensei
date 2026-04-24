@@ -8,7 +8,7 @@
         body, html { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #ecf0f1; color: #2c3e50; display: flex; flex-direction: column; align-items: center; touch-action: manipulation; overflow-x: hidden; }
         header { background-color: #34495e; color: white; width: 100%; text-align: center; padding: 2vh 0; font-size: 4vh; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.1); flex-shrink: 0;}
         
-        /* Added vertical scroll safety net for the whole app */
+        /* dvh (Dynamic Viewport Height) fix for Safari/iPad bars */
         .container { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; width: 100%; padding: 2vh 0 5vh 0; box-sizing: border-box; overflow-y: auto;}
         
         #login-phase { background: white; padding: 4vh 6vw; border-radius: 20px; box-shadow: 0 8px 15px rgba(0,0,0,0.1); text-align: center; width: 80%; max-width: 400px; margin-top: 5vh;}
@@ -26,7 +26,7 @@
         }
         .history-tag { background: #95a5a6; color: white; padding: 0.5vh 3vw; border-radius: 15px; font-size: 2vh; font-weight: bold; white-space: nowrap; }
 
-        /* The Safari Viewport Fix: Max-width strictly capped using dynamic viewport units (dvh) */
+        /* Strict grid sizing to prevent "growing buttons" blowout */
         .bingo-board { display: grid; gap: 1.5vw; width: 95%; max-width: min(90vw, 50dvh, 50vh); flex: 0 0 auto; align-content: center; justify-content: center;}
         
         .bingo-cell { aspect-ratio: 1 / 1; background: white; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.15); display: flex; align-items: center; justify-content: center; font-size: clamp(1.8vh, 2vw, 3vh); font-weight: bold; text-align: center; padding: 1vw; cursor: pointer; border: 4px solid transparent; transition: all 0.2s; word-wrap: break-word; line-height: 1.2; user-select: none; box-sizing: border-box;}
@@ -36,10 +36,9 @@
 
         .btn-leave { background: transparent; color: #95a5a6; border: none; font-size: 2vh; margin-top: 3vh; cursor: pointer; text-decoration: underline; flex-shrink: 0;}
 
-        /* Upgraded Victory Screen */
         #victory-screen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #f1c40f; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; }
         #victory-screen h1 { font-size: 10vh; color: white; text-shadow: 0 5px 15px rgba(0,0,0,0.2); margin: 0;}
-        .btn-keep-playing { background: #27ae60; color: white; border: none; font-size: 3vh; font-weight: bold; padding: 2vh 6vw; border-radius: 50px; margin-top: 5vh; cursor: pointer; box-shadow: 0 6px 0 #2ecc71;}
+        .btn-keep-playing { background: #27ae60; color: white; border: none; font-size: 3vh; font-weight: bold; padding: 2vh 6vw; border-radius: 50px; margin-top: 5vh; cursor: pointer; box-shadow: 0 6px 0 #218c4d;}
         .btn-keep-playing:active { transform: translateY(6px); box-shadow: none; }
 
         @keyframes shake { 0% { transform: translateX(0); } 25% { transform: translateX(-10px); } 50% { transform: translateX(10px); } 75% { transform: translateX(-10px); } 100% { transform: translateX(0); } }
@@ -91,7 +90,6 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // --- CONTINUOUS PLAY VARIABLES ---
         let myUid = "user_" + Date.now() + "_" + Math.floor(Math.random()*1000); 
         let roomCode = "";
         let myName = "";
@@ -99,8 +97,6 @@
         let myGridData = []; 
         let gridSize = 3;
         let hasFreeSpace = false;
-        
-        // This array permanently remembers which lines we have already claimed!
         let completedLines = []; 
 
         const savedSession = sessionStorage.getItem('bingoSession');
@@ -135,13 +131,18 @@
                     hasFreeSpace = roomData.hasFreeSpace || false;
                     setupBoard(roomData.grade, roomData.unit);
                 } else {
-                    alert("Room not found! Did you copy the code off the TV correctly?");
+                    alert("Room not found!");
                 }
-            }).catch(err => { alert("Connection error. Make sure you are online."); });
+            }).catch(err => { alert("Connection error."); });
         });
 
         function setupBoard(grade, unit) {
-            set(ref(db, `bingoRooms/${roomCode}/players/${myUid}`), { name: myName, hasBingo: false });
+            // Initialize with bingoCount for the Podium logic
+            set(ref(db, `bingoRooms/${roomCode}/players/${myUid}`), { 
+                name: myName, 
+                bingoCount: 0, 
+                lastProcessedCount: 0 
+            });
 
             document.getElementById('login-phase').style.display = 'none';
             document.getElementById('game-phase').style.display = 'flex';
@@ -246,24 +247,20 @@
             }
         }
 
-        // --- UPGRADED CONTINUOUS WIN MATH ---
         function checkWinCondition() {
             const cells = document.querySelectorAll('.bingo-cell');
             const allPossibleLines = [];
 
-            // Build rows
             for (let r = 0; r < gridSize; r++) {
                 let row = [];
                 for (let c = 0; c < gridSize; c++) row.push(r * gridSize + c);
                 allPossibleLines.push(row);
             }
-            // Build cols
             for (let c = 0; c < gridSize; c++) {
                 let col = [];
                 for (let r = 0; r < gridSize; r++) col.push(r * gridSize + c);
                 allPossibleLines.push(col);
             }
-            // Build diags
             let diag1 = [], diag2 = [];
             for (let i = 0; i < gridSize; i++) {
                 diag1.push(i * gridSize + i); 
@@ -274,19 +271,15 @@
 
             let newBingoTriggered = false;
 
-            // Check every possible line
             allPossibleLines.forEach((line, index) => {
                 const isLineStamped = line.every(i => cells[i] && cells[i].classList.contains('stamped'));
-                
-                // If it is stamped, AND we haven't already claimed it previously...
                 if (isLineStamped && !completedLines.includes(index)) {
-                    completedLines.push(index); // Claim it
+                    completedLines.push(index); 
                     newBingoTriggered = true;
                 }
             });
 
             if (newBingoTriggered) {
-                // Save the newly claimed lines to memory
                 let session = JSON.parse(sessionStorage.getItem('bingoSession'));
                 if (session) {
                     session.completedLines = completedLines;
@@ -294,8 +287,11 @@
                 }
 
                 document.getElementById('victory-screen').style.display = 'flex';
-                // Fire the signal to the TV!
-                update(ref(db, `bingoRooms/${roomCode}/players/${myUid}`), { hasBingo: true });
+                
+                // Fire Bingo Count to update the Podium properly
+                update(ref(db, `bingoRooms/${roomCode}/players/${myUid}`), { 
+                    bingoCount: completedLines.length 
+                });
             }
         }
 

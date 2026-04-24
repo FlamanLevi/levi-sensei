@@ -7,6 +7,7 @@
     <style>
         body, html { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #2c3e50; color: white; display: flex; flex-direction: column; align-items: center; }
         
+        /* Stacked Header to prevent overlap on small screens */
         header { background-color: #1a252f; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.5vh; padding: 2vh 0; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
         .header-title { font-size: 3vh; font-weight: bold; text-align: center; padding: 0 2vw; }
         #langSelect { font-size: 2vh; padding: 0.5vh 1vw; border-radius: 5px; cursor: pointer; }
@@ -37,7 +38,7 @@
         #history-panel { margin-top: 4vh; background: rgba(0,0,0,0.2); border-radius: 10px; padding: 2vh; max-height: 15vh; overflow-y: auto; display: flex; flex-wrap: wrap; gap: 1vh; justify-content: center; width: 100%; max-width: 700px; box-sizing: border-box;}
         .history-tag { background: #7f8c8d; padding: 1vh 1.5vw; border-radius: 5px; font-size: 2vh; font-weight: bold; }
 
-        /* The Winners Podium */
+        /* Winners Podium Styling */
         #podium-panel { margin-top: 2vh; background: rgba(46, 204, 113, 0.1); border-radius: 10px; padding: 2vh 4vw; border: 2px solid #27ae60; text-align: left; display: none; width: 100%; max-width: 700px; box-sizing: border-box;}
         #podium-panel h3 { margin: 0 0 1vh 0; color: #2ecc71; font-size: 3vh; text-align: center;}
         #podium-list { font-size: 3vh; font-weight: bold; color: #f1c40f; margin: 0; padding-left: 4vw; columns: 2; }
@@ -65,9 +66,9 @@
             <summary data-i18n="instructionsTitle">Instructions / 使い方</summary>
             <div class="inst-list">
                 <div data-i18n="step1">1. Select the Grade and Unit.</div>
-                <div data-i18n="step2">2. Choose a Grid Size (larger grids are hidden if the unit is too small).</div>
+                <div data-i18n="step2">2. Choose a Grid Size.</div>
                 <div data-i18n="step3">3. Choose whether to include a center Free Space.</div>
-                <div data-i18n="step4">4. Click 'Create Room'. Students enter the 4-letter code on their tablets.</div>
+                <div data-i18n="step4">4. Click 'Create Room'. Students enter the 4-letter code.</div>
                 <div data-i18n="step5">5. Click 'Draw Next Word' to play! The system tracks winners automatically.</div>
             </div>
         </details>
@@ -149,7 +150,6 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // --- BILINGUAL DICTIONARY LOGIC ---
         const i18n = {
             en: {
                 header: "Bingo: Teacher Controls",
@@ -202,7 +202,15 @@
             "Town": "街", "Nature": "自然", "Living Things": "生き物",
             "Body": "体", "Club Activity": "クラブ活動", "Subjects": "教科",
             "Jobs": "職業", "School Events": "学校行事", "Attributes": "特徴",
-            "Numbers": "数字"
+            "Numbers": "数字", "Feelings": "気持ち", "Weather": "天気",
+            "Colors and Shapes": "色と形", "Sports": "スポーツ", "Animals": "動物",
+            "Fruits and Vegetables": "果物と野菜", "Ingredients": "材料",
+            "Food": "食べ物", "Drinks and Desserts": "飲み物とデザート",
+            "Taste and Texture": "味と食感", "Months and Days": "月と曜日",
+            "Things Around You": "身の回りのもの", "Days of the Week": "曜日",
+            "What you Can and Can't Do": "できること・できないこと",
+            "People": "人々", "Character and Personality": "性格",
+            "Directions": "方向", "Operations": "活動", "Impressions": "感想"
         };
 
         let currentLang = 'en';
@@ -348,6 +356,7 @@
             document.getElementById('game-phase').style.display = 'block';
             document.getElementById('roomCodeDisplay').textContent = currentRoomCode;
 
+            // Updated Multi-Win Counting Logic
             onValue(ref(db, `bingoRooms/${currentRoomCode}/players`), (snapshot) => {
                 const players = snapshot.val();
                 let count = 0;
@@ -355,16 +364,14 @@
                     count = Object.keys(players).length;
                     for(const uid in players) {
                         const pData = players[uid];
-                        // If the student's bingo count is higher than what we have recorded...
+                        // Trigger alert if their win count has increased
                         if(pData.bingoCount > (pData.lastProcessedCount || 0)) {
                             const newWins = pData.bingoCount - (pData.lastProcessedCount || 0);
                             
                             for(let i=0; i < newWins; i++) {
-                                // 1. Flash the Alert
                                 document.getElementById('bingo-winner').textContent = pData.name;
                                 document.getElementById('bingo-alert').style.display = 'flex';
                                 
-                                // 2. Add to Podium
                                 const podiumList = document.getElementById('podium-list');
                                 const entry = document.createElement('li');
                                 entry.textContent = pData.name;
@@ -372,7 +379,7 @@
                                 document.getElementById('podium-panel').style.display = 'block';
                             }
 
-                            // 3. Update our "local" record of that student's wins
+                            // Sync local count with database
                             update(ref(db, `bingoRooms/${currentRoomCode}/players/${uid}`), { 
                                 lastProcessedCount: pData.bingoCount 
                             });

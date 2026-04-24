@@ -12,6 +12,8 @@
         /* Setup Phase */
         #setup-phase { background: rgba(255,255,255,0.1); padding: 4vh 4vw; border-radius: 15px; display: flex; flex-direction: column; gap: 1.5vh; align-items: center;}
         select, button { font-size: 3vh; padding: 1.5vh 2vw; border-radius: 8px; border: none; cursor: pointer; width: 100%; max-width: 400px;}
+        .toggle-label { font-size: 2.5vh; display: flex; align-items: center; gap: 1vw; cursor: pointer; margin-top: 1vh; background: rgba(0,0,0,0.2); padding: 1vh 2vw; border-radius: 8px;}
+        .toggle-label input { width: 3vh; height: 3vh; cursor: pointer; margin: 0;}
         .btn-start { background-color: #27ae60; color: white; font-weight: bold; margin-top: 2vh;}
         .btn-start:disabled { background-color: #7f8c8d; cursor: not-allowed; }
         .btn-start:hover:not(:disabled) { background-color: #2ecc71; }
@@ -21,10 +23,14 @@
         #game-phase { display: none; width: 100%; }
         .room-code-display { font-size: 10vh; font-weight: 900; letter-spacing: 1vw; color: #f1c40f; text-shadow: 2px 2px 8px rgba(0,0,0,0.5); margin-bottom: 2vh;}
         .instruction { font-size: 4vh; margin-bottom: 4vh; }
-        .current-word { font-size: 8vh; font-weight: bold; background: white; color: #2c3e50; padding: 3vh 5vw; border-radius: 15px; display: inline-block; min-width: 400px; min-height: 10vh; box-shadow: 0 10px 20px rgba(0,0,0,0.3); margin-bottom: 4vh;}
+        .current-word { font-size: 8vh; font-weight: bold; background: white; color: #2c3e50; padding: 3vh 5vw; border-radius: 15px; display: inline-block; min-width: 400px; min-height: 10vh; box-shadow: 0 10px 20px rgba(0,0,0,0.3); margin-bottom: 2vh;}
         .player-count { font-size: 3vh; color: #bdc3c7; margin-bottom: 2vh; }
         .btn-draw { background-color: #3498db; color: white; font-size: 4vh; font-weight: bold; padding: 3vh 6vw; border-radius: 50px; box-shadow: 0 8px 0 #2980b9; transition: all 0.1s; }
         .btn-draw:active { transform: translateY(8px); box-shadow: none; }
+
+        /* The Audit Ledger */
+        #history-panel { margin-top: 4vh; background: rgba(0,0,0,0.2); border-radius: 10px; padding: 2vh; max-height: 15vh; overflow-y: auto; display: flex; flex-wrap: wrap; gap: 1vh; justify-content: center;}
+        .history-tag { background: #7f8c8d; padding: 1vh 1.5vw; border-radius: 5px; font-size: 2vh; font-weight: bold; }
 
         /* Bingo Alert */
         #bingo-alert { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(231, 76, 60, 0.95); flex-direction: column; align-items: center; justify-content: center; z-index: 1000; animation: flash 1s infinite alternate;}
@@ -63,6 +69,10 @@
                 <option value="yes">Include Center Free Space</option>
             </select>
 
+            <label class="toggle-label">
+                <input type="checkbox" id="muteToggle"> Mute Auto-Voice (Manual Calling)
+            </label>
+
             <button class="btn-start" id="createRoomBtn" disabled>Create Room</button>
         </div>
 
@@ -75,6 +85,9 @@
             <div class="current-word" id="currentWordDisplay">Waiting to draw...</div>
             <br>
             <button class="btn-draw" id="drawBtn">Draw Next Word</button>
+
+            <div id="history-panel"></div>
+
             <br>
             <button class="btn-end" id="endGameBtn">End Game & Clear Room</button>
         </div>
@@ -90,11 +103,10 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
         import { getDatabase, ref, set, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-database.js";
 
-        // === INSERT YOUR KEYS HERE ===
         const firebaseConfig = {
             apiKey: "AIzaSyC7lrhVICmKOL3EhVkiaTkpEE1_VUDPS7k",
             authDomain: "levi-sensei.firebaseapp.com",
-            databaseURL: "https://levi-sensei-default-rtdb.asia-southeast1.firebasedatabase.app/", // MAKE SURE THIS IS YOUR ACTUAL URL
+            databaseURL: "https://levi-sensei-default-rtdb.asia-southeast1.firebasedatabase.app/",
             projectId: "levi-sensei",
             storageBucket: "levi-sensei.firebasestorage.app",
             messagingSenderId: "14792482782",
@@ -110,7 +122,6 @@
         let calledWords = [];
         let currentRoomCode = "";
 
-        // 1. Fetch JSON Data
         fetch('vocabulary.json')
             .then(response => response.json())
             .then(data => {
@@ -118,12 +129,9 @@
                 document.getElementById('gradeSelect').addEventListener('change', populateUnits);
             });
 
-        // 2. Cascade Step 1: Populate Units (Filtering out units with < 9 words)
         function populateUnits(e) {
             const grade = e.target.value;
             const unitSelect = document.getElementById('unitSelect');
-            
-            // Reset downstream menus
             unitSelect.innerHTML = '<option value="" disabled selected>Select Unit</option>';
             document.getElementById('gridSelect').style.display = 'none';
             document.getElementById('freeSpaceSelect').style.display = 'none';
@@ -134,7 +142,6 @@
                 if (wordCount >= 9) {
                     const option = document.createElement('option');
                     option.value = unit;
-                    // Helpfully display the word count to the teacher
                     option.textContent = `${unit} (${wordCount} words)`;
                     unitSelect.appendChild(option);
                 }
@@ -142,24 +149,16 @@
             unitSelect.disabled = false;
         }
 
-        // 3. Cascade Step 2: Show available Grid Sizes based on unit size
         document.getElementById('unitSelect').addEventListener('change', (e) => {
             const grade = document.getElementById('gradeSelect').value;
             const unit = e.target.value;
             const wordCount = rawVocabData[grade][unit].length;
-
             const gridSelect = document.getElementById('gridSelect');
+            
             gridSelect.innerHTML = '<option value="" disabled selected>Select Grid Size</option>';
-            
-            // 3x3 is always available if it passed the unit filter
             gridSelect.appendChild(new Option('3x3 Grid (9 spaces)', '3'));
-            
-            if (wordCount >= 16) {
-                gridSelect.appendChild(new Option('4x4 Grid (16 spaces)', '4'));
-            }
-            if (wordCount >= 25) {
-                gridSelect.appendChild(new Option('5x5 Grid (25 spaces)', '5'));
-            }
+            if (wordCount >= 16) gridSelect.appendChild(new Option('4x4 Grid (16 spaces)', '4'));
+            if (wordCount >= 25) gridSelect.appendChild(new Option('5x5 Grid (25 spaces)', '5'));
 
             gridSelect.style.display = 'block';
             gridSelect.disabled = false;
@@ -167,12 +166,9 @@
             document.getElementById('createRoomBtn').disabled = true;
         });
 
-        // 4. Cascade Step 3: Show Free Space toggle if applicable
         document.getElementById('gridSelect').addEventListener('change', (e) => {
             const gridSize = e.target.value;
             const freeSpaceSelect = document.getElementById('freeSpaceSelect');
-
-            // 4x4 grids do not have a center square
             if (gridSize === '3' || gridSize === '5') {
                 freeSpaceSelect.style.display = 'block';
                 freeSpaceSelect.value = "no"; 
@@ -180,11 +176,9 @@
                 freeSpaceSelect.style.display = 'none';
                 freeSpaceSelect.value = "no"; 
             }
-
             document.getElementById('createRoomBtn').disabled = false;
         });
 
-        // 5. Create Room Logic
         document.getElementById('createRoomBtn').addEventListener('click', () => {
             const grade = document.getElementById('gradeSelect').value;
             const unit = document.getElementById('unitSelect').value;
@@ -193,12 +187,10 @@
 
             activeWordsPool = [...rawVocabData[grade][unit]];
             
-            // Generate 4-letter room code
             const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
             currentRoomCode = "";
             for(let i=0; i<4; i++) currentRoomCode += chars.charAt(Math.floor(Math.random() * chars.length));
 
-            // Push settings to Firebase so tablets know how to build the board
             const roomRef = ref(db, `bingoRooms/${currentRoomCode}`);
             set(roomRef, {
                 status: "active",
@@ -210,12 +202,10 @@
                 calledWords: []
             });
 
-            // Update UI
             document.getElementById('setup-phase').style.display = 'none';
             document.getElementById('game-phase').style.display = 'block';
             document.getElementById('roomCodeDisplay').textContent = currentRoomCode;
 
-            // Listen for Players & Bingo triggers
             onValue(ref(db, `bingoRooms/${currentRoomCode}/players`), (snapshot) => {
                 const players = snapshot.val();
                 let count = 0;
@@ -233,7 +223,6 @@
             });
         });
 
-        // 6. Draw Word Logic
         document.getElementById('drawBtn').addEventListener('click', () => {
             if (activeWordsPool.length === 0) {
                 document.getElementById('currentWordDisplay').textContent = "NO WORDS LEFT!";
@@ -246,10 +235,22 @@
 
             document.getElementById('currentWordDisplay').textContent = drawnWord;
 
-            const utterance = new SpeechSynthesisUtterance(drawnWord);
-            utterance.lang = 'en-US'; 
-            utterance.rate = 0.8; 
-            window.speechSynthesis.speak(utterance);
+            // Audit Ledger Update
+            const historyPanel = document.getElementById('history-panel');
+            const newTag = document.createElement('div');
+            newTag.className = 'history-tag';
+            newTag.textContent = drawnWord;
+            historyPanel.appendChild(newTag);
+            historyPanel.scrollTop = historyPanel.scrollHeight;
+
+            // Manual Override Check
+            const isMuted = document.getElementById('muteToggle').checked;
+            if (!isMuted) {
+                const utterance = new SpeechSynthesisUtterance(drawnWord);
+                utterance.lang = 'en-US'; 
+                utterance.rate = 0.7; 
+                window.speechSynthesis.speak(utterance);
+            }
 
             update(ref(db, `bingoRooms/${currentRoomCode}`), {
                 currentWord: drawnWord,
@@ -257,7 +258,6 @@
             });
         });
 
-        // 7. Janitor Protocol
         document.getElementById('endGameBtn').addEventListener('click', () => {
             if(confirm("Are you sure you want to end the game? This will disconnect all students.")) {
                 remove(ref(db, `bingoRooms/${currentRoomCode}`));

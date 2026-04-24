@@ -7,49 +7,40 @@
     <style>
         body, html { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #ecf0f1; color: #2c3e50; display: flex; flex-direction: column; align-items: center; touch-action: manipulation; overflow-x: hidden; }
         header { background-color: #34495e; color: white; width: 100%; text-align: center; padding: 2vh 0; font-size: 4vh; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.1); flex-shrink: 0;}
-        .container { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; padding: 2vh 0; box-sizing: border-box; overflow: hidden;}
         
-        #login-phase { background: white; padding: 4vh 6vw; border-radius: 20px; box-shadow: 0 8px 15px rgba(0,0,0,0.1); text-align: center; width: 80%; max-width: 400px; }
+        /* Added vertical scroll safety net for the whole app */
+        .container { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; width: 100%; padding: 2vh 0 5vh 0; box-sizing: border-box; overflow-y: auto;}
+        
+        #login-phase { background: white; padding: 4vh 6vw; border-radius: 20px; box-shadow: 0 8px 15px rgba(0,0,0,0.1); text-align: center; width: 80%; max-width: 400px; margin-top: 5vh;}
         input { font-size: 4vh; padding: 2vh; margin-bottom: 2vh; width: 90%; border-radius: 10px; border: 2px solid #bdc3c7; text-align: center; font-weight: bold; text-transform: uppercase; box-sizing: border-box;}
         input::placeholder { text-transform: none; font-weight: normal; font-size: 3vh; }
         .btn-join { background-color: #27ae60; color: white; font-size: 4vh; font-weight: bold; padding: 2vh; width: 100%; border: none; border-radius: 10px; box-shadow: 0 6px 0 #2196f3; cursor: pointer; transition: transform 0.1s; }
         .btn-join:active { transform: translateY(6px); box-shadow: none; }
 
-        #game-phase { display: none; width: 100%; max-width: 100vw; display: flex; flex-direction: column; align-items: center; flex: 1; overflow: hidden; box-sizing: border-box;}
+        #game-phase { display: none; width: 100%; max-width: 100vw; display: flex; flex-direction: column; align-items: center; flex: 1; box-sizing: border-box;}
         .status-bar { font-size: 3vh; font-weight: bold; margin-bottom: 1vh; color: #7f8c8d; flex-shrink: 0;}
         .current-word-display { font-size: 4vh; font-weight: 900; color: #e74c3c; margin-bottom: 1vh; min-height: 5vh; text-align: center; flex-shrink: 0;}
         
-        /* The Vertical "Wrap" Ledger */
         #student-history-container { 
-            width: 95%; 
-            max-width: 700px; 
-            height: 12vh; /* Fixed vertical height */
-            overflow-y: auto; /* Scroll vertically when full */
-            background: rgba(0,0,0,0.05); 
-            border-radius: 10px; 
-            padding: 1vh; 
-            margin-bottom: 2vh; 
-            display: flex; 
-            flex-wrap: wrap; /* Wrap words to the next line */
-            gap: 1vh; 
-            justify-content: center; 
-            align-content: flex-start;
-            box-sizing: border-box; 
-            flex-shrink: 0;
+            width: 95%; max-width: 700px; height: 10vh; min-height: 80px; overflow-y: auto; background: rgba(0,0,0,0.05); border-radius: 10px; padding: 1vh; margin-bottom: 2vh; display: flex; flex-wrap: wrap; gap: 1vh; justify-content: center; align-content: flex-start; box-sizing: border-box; flex-shrink: 0;
         }
         .history-tag { background: #95a5a6; color: white; padding: 0.5vh 3vw; border-radius: 15px; font-size: 2vh; font-weight: bold; white-space: nowrap; }
 
-        /* The Bingo Board with Vertical Safety Constraint */
-        .bingo-board { display: grid; gap: 1.5vw; width: 95%; max-width: 60vh; /* STRICT height-based width limit */ flex: 1; align-content: center; justify-content: center;}
+        /* The Safari Viewport Fix: Max-width strictly capped using dynamic viewport units (dvh) */
+        .bingo-board { display: grid; gap: 1.5vw; width: 95%; max-width: min(90vw, 50dvh, 50vh); flex: 0 0 auto; align-content: center; justify-content: center;}
+        
         .bingo-cell { aspect-ratio: 1 / 1; background: white; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.15); display: flex; align-items: center; justify-content: center; font-size: clamp(1.8vh, 2vw, 3vh); font-weight: bold; text-align: center; padding: 1vw; cursor: pointer; border: 4px solid transparent; transition: all 0.2s; word-wrap: break-word; line-height: 1.2; user-select: none; box-sizing: border-box;}
         .bingo-cell.stamped { background-color: #2ecc71; color: white; transform: scale(0.95); box-shadow: inset 0 4px 8px rgba(0,0,0,0.2); border-color: #27ae60;}
         .bingo-cell.error { border-color: #e74c3c; animation: shake 0.4s; }
         .bingo-cell.free-space { background-color: #f1c40f; color: #2c3e50; border-color: #f39c12; cursor: default;}
 
-        .btn-leave { background: transparent; color: #95a5a6; border: none; font-size: 2vh; margin-top: 2vh; cursor: pointer; text-decoration: underline; flex-shrink: 0;}
+        .btn-leave { background: transparent; color: #95a5a6; border: none; font-size: 2vh; margin-top: 3vh; cursor: pointer; text-decoration: underline; flex-shrink: 0;}
 
+        /* Upgraded Victory Screen */
         #victory-screen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #f1c40f; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; }
-        #victory-screen h1 { font-size: 10vh; color: white; text-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        #victory-screen h1 { font-size: 10vh; color: white; text-shadow: 0 5px 15px rgba(0,0,0,0.2); margin: 0;}
+        .btn-keep-playing { background: #27ae60; color: white; border: none; font-size: 3vh; font-weight: bold; padding: 2vh 6vw; border-radius: 50px; margin-top: 5vh; cursor: pointer; box-shadow: 0 6px 0 #2ecc71;}
+        .btn-keep-playing:active { transform: translateY(6px); box-shadow: none; }
 
         @keyframes shake { 0% { transform: translateX(0); } 25% { transform: translateX(-10px); } 50% { transform: translateX(10px); } 75% { transform: translateX(-10px); } 100% { transform: translateX(0); } }
     </style>
@@ -80,6 +71,7 @@
     <div id="victory-screen">
         <h1>BINGO!</h1>
         <div style="font-size: 4vh; color: white;">Look at the TV!</div>
+        <button class="btn-keep-playing" onclick="document.getElementById('victory-screen').style.display='none'">Keep Playing!</button>
     </div>
 
     <script type="module">
@@ -99,17 +91,18 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // State Variables
+        // --- CONTINUOUS PLAY VARIABLES ---
         let myUid = "user_" + Date.now() + "_" + Math.floor(Math.random()*1000); 
         let roomCode = "";
         let myName = "";
         let activeCalledWords = [];
         let myGridData = []; 
-        let hasWon = false;
         let gridSize = 3;
         let hasFreeSpace = false;
+        
+        // This array permanently remembers which lines we have already claimed!
+        let completedLines = []; 
 
-        // --- SESSION RECOVERY PROTOCOL ---
         const savedSession = sessionStorage.getItem('bingoSession');
         if (savedSession) {
             const parsed = JSON.parse(savedSession);
@@ -119,6 +112,7 @@
             myGridData = parsed.myGridData;
             gridSize = parsed.gridSize;
             hasFreeSpace = parsed.hasFreeSpace;
+            completedLines = parsed.completedLines || [];
 
             document.getElementById('login-phase').style.display = 'none';
             document.getElementById('game-phase').style.display = 'flex';
@@ -128,7 +122,6 @@
             startListening();
         }
 
-        // --- NORMAL JOIN LOGIC ---
         document.getElementById('joinBtn').addEventListener('click', () => {
             roomCode = document.getElementById('roomCodeInput').value.toUpperCase().trim();
             myName = document.getElementById('nameInput').value.trim();
@@ -168,7 +161,7 @@
                     for(let i=0; i < totalSquares; i++) myGridData.push(wordsArray[i % wordsArray.length]);
 
                     sessionStorage.setItem('bingoSession', JSON.stringify({
-                        myUid, roomCode, myName, myGridData, gridSize, hasFreeSpace, stampedIndices: []
+                        myUid, roomCode, myName, myGridData, gridSize, hasFreeSpace, stampedIndices: [], completedLines: []
                     }));
 
                     renderGrid();
@@ -221,7 +214,6 @@
                 if (data.calledWords) {
                     activeCalledWords = data.calledWords;
                     
-                    // --- Update the UI Ledger (Vertical Scroll) ---
                     const historyPanel = document.getElementById('student-history-container');
                     historyPanel.innerHTML = '';
                     activeCalledWords.forEach(word => {
@@ -230,15 +222,15 @@
                         tag.textContent = word;
                         historyPanel.appendChild(tag);
                     });
-                    // Auto-scroll the vertical ledger to the bottom
                     historyPanel.scrollTop = historyPanel.scrollHeight;
                 }
             });
         }
 
         function handleTap(cell) {
-            if (hasWon || cell.classList.contains('stamped')) return; 
+            if (cell.classList.contains('stamped')) return; 
             const clickedWord = cell.dataset.word;
+            
             if (activeCalledWords.includes(clickedWord)) {
                 cell.classList.add('stamped');
                 
@@ -247,7 +239,6 @@
                     session.stampedIndices.push(cell.dataset.index);
                     sessionStorage.setItem('bingoSession', JSON.stringify(session));
                 }
-
                 checkWinCondition();
             } else {
                 cell.classList.add('error');
@@ -255,31 +246,55 @@
             }
         }
 
+        // --- UPGRADED CONTINUOUS WIN MATH ---
         function checkWinCondition() {
             const cells = document.querySelectorAll('.bingo-cell');
-            let isWin = false;
-            const checkLine = (indices) => indices.every(i => cells[i] && cells[i].classList.contains('stamped'));
+            const allPossibleLines = [];
 
+            // Build rows
             for (let r = 0; r < gridSize; r++) {
                 let row = [];
                 for (let c = 0; c < gridSize; c++) row.push(r * gridSize + c);
-                if (checkLine(row)) isWin = true;
+                allPossibleLines.push(row);
             }
+            // Build cols
             for (let c = 0; c < gridSize; c++) {
                 let col = [];
                 for (let r = 0; r < gridSize; r++) col.push(r * gridSize + c);
-                if (checkLine(col)) isWin = true;
+                allPossibleLines.push(col);
             }
+            // Build diags
             let diag1 = [], diag2 = [];
             for (let i = 0; i < gridSize; i++) {
                 diag1.push(i * gridSize + i); 
                 diag2.push(i * gridSize + (gridSize - 1 - i)); 
             }
-            if (checkLine(diag1) || checkLine(diag2)) isWin = true;
+            allPossibleLines.push(diag1);
+            allPossibleLines.push(diag2);
 
-            if (isWin && !hasWon) {
-                hasWon = true;
+            let newBingoTriggered = false;
+
+            // Check every possible line
+            allPossibleLines.forEach((line, index) => {
+                const isLineStamped = line.every(i => cells[i] && cells[i].classList.contains('stamped'));
+                
+                // If it is stamped, AND we haven't already claimed it previously...
+                if (isLineStamped && !completedLines.includes(index)) {
+                    completedLines.push(index); // Claim it
+                    newBingoTriggered = true;
+                }
+            });
+
+            if (newBingoTriggered) {
+                // Save the newly claimed lines to memory
+                let session = JSON.parse(sessionStorage.getItem('bingoSession'));
+                if (session) {
+                    session.completedLines = completedLines;
+                    sessionStorage.setItem('bingoSession', JSON.stringify(session));
+                }
+
                 document.getElementById('victory-screen').style.display = 'flex';
+                // Fire the signal to the TV!
                 update(ref(db, `bingoRooms/${roomCode}/players/${myUid}`), { hasBingo: true });
             }
         }

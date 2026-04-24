@@ -168,7 +168,7 @@
             "Directions": "方向", "Operations": "活動", "Impressions": "感想"
         };
 
-        let currentLang = 'en', rawVocabData = {}, activeWordsPool = [], calledWords = [], currentRoomCode = "", gameActive = true;
+        let currentLang = 'en', rawVocabData = {}, activeWordsPool = [], calledWords = [], currentRoomCode = "", gameActive = false;
         let selectedGridSize = 3, selectedMode = 'standard', sprintLimit = 0;
 
         function translateUnitString(unitString, lang) {
@@ -260,9 +260,9 @@
             const unit = document.getElementById('unitSelect').value;
             activeWordsPool = [...rawVocabData[grade][unit]];
             sprintLimit = Math.floor(activeWordsPool.length * 0.5);
+            gameActive = true; // ACTIVATES WIN LISTENER
 
-            // FIXED ROOM CODE GENERATOR: LETTERS ONLY
-            const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ"; // Removed I, O, 0, 1 to avoid confusion
+            const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ"; 
             currentRoomCode = "";
             for(let i=0; i<4; i++) currentRoomCode += chars.charAt(Math.floor(Math.random() * chars.length));
 
@@ -281,6 +281,7 @@
             document.getElementById('roomCodeDisplay').textContent = currentRoomCode;
 
             onValue(ref(db, `bingoRooms/${currentRoomCode}/players`), snap => {
+                if (!gameActive) return; // IGNORE GHOST WINNERS
                 const players = snap.val() || {}, winners = [];
                 for (const id in players) {
                     const pData = players[id];
@@ -341,7 +342,12 @@
             document.getElementById('game-over-overlay').style.display = 'flex';
         }
 
-        document.getElementById('endGameBtn').addEventListener('click', () => { if(confirm("End game?")) remove(ref(db, `bingoRooms/${currentRoomCode}`)).then(() => location.reload()); });
+        document.getElementById('endGameBtn').addEventListener('click', () => { 
+            if(confirm("End game?")) {
+                gameActive = false; 
+                remove(ref(db, `bingoRooms/${currentRoomCode}`)).then(() => location.reload());
+            } 
+        });
         
         document.getElementById('langSelect').addEventListener('change', e => {
             currentLang = e.target.value;

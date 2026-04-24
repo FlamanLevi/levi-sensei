@@ -354,21 +354,28 @@
                 if (players) {
                     count = Object.keys(players).length;
                     for(const uid in players) {
-                        if(players[uid].hasBingo === true) {
+                        const pData = players[uid];
+                        // If the student's bingo count is higher than what we have recorded...
+                        if(pData.bingoCount > (pData.lastProcessedCount || 0)) {
+                            const newWins = pData.bingoCount - (pData.lastProcessedCount || 0);
                             
-                            // 1. Flash the TV Alert
-                            document.getElementById('bingo-winner').textContent = players[uid].name;
-                            document.getElementById('bingo-alert').style.display = 'flex';
-                            
-                            // 2. Add permanently to the Podium List
-                            const podiumList = document.getElementById('podium-list');
-                            const entry = document.createElement('li');
-                            entry.textContent = players[uid].name;
-                            podiumList.appendChild(entry);
-                            document.getElementById('podium-panel').style.display = 'block';
+                            for(let i=0; i < newWins; i++) {
+                                // 1. Flash the Alert
+                                document.getElementById('bingo-winner').textContent = pData.name;
+                                document.getElementById('bingo-alert').style.display = 'flex';
+                                
+                                // 2. Add to Podium
+                                const podiumList = document.getElementById('podium-list');
+                                const entry = document.createElement('li');
+                                entry.textContent = pData.name;
+                                podiumList.appendChild(entry);
+                                document.getElementById('podium-panel').style.display = 'block';
+                            }
 
-                            // 3. Reset the trigger so they can get a Double Bingo later
-                            update(ref(db, `bingoRooms/${currentRoomCode}/players/${uid}`), { hasBingo: false });
+                            // 3. Update our "local" record of that student's wins
+                            update(ref(db, `bingoRooms/${currentRoomCode}/players/${uid}`), { 
+                                lastProcessedCount: pData.bingoCount 
+                            });
                         }
                     }
                 }

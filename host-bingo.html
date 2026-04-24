@@ -143,7 +143,7 @@
                 modeStandard: "標準 (グリッドサイズで終了)", modeSprint: "スプリント (単語の50%で終了)",
                 modePodium: "ポディウム (上位が決まったら終了)", modeBlackout: "ブラックアウト (最後まで)",
                 noFree: "なし", yesFree: "フリースペースあり", muteToggle: "ミュート",
-                createBtn: "ルームを作成", joinInst: "このコードを入力：", waitDraw: "待機中...",
+                createBtn: "ルーム作成", joinInst: "このコードを入力：", waitDraw: "待機中...",
                 drawBtn: "単語を引く", endBtn: "終了", alertWinner: "ビンゴ！", podiumTitle: "達成者リスト",
                 drawCount: "抽選回数: ", drawLimit: " / 制限: ", noWords: "単語がありません！",
                 grid3: "3x3 グリッド", grid4: "4x4 グリッド", grid5: "5x5 グリッド"
@@ -261,10 +261,18 @@
             activeWordsPool = [...rawVocabData[grade][unit]];
             sprintLimit = Math.floor(activeWordsPool.length * 0.5);
 
-            currentRoomCode = Math.random().toString(36).substring(2, 6).toUpperCase();
+            // FIXED ROOM CODE GENERATOR: LETTERS ONLY
+            const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ"; // Removed I, O, 0, 1 to avoid confusion
+            currentRoomCode = "";
+            for(let i=0; i<4; i++) currentRoomCode += chars.charAt(Math.floor(Math.random() * chars.length));
+
             set(ref(db, `bingoRooms/${currentRoomCode}`), {
-                status: "active", gridSize: selectedGridSize,
+                status: "active", 
+                grade: grade,
+                unit: unit,
+                gridSize: selectedGridSize,
                 hasFreeSpace: document.getElementById('freeSpaceSelect').value === "yes",
+                currentWord: "",
                 calledWords: []
             });
 

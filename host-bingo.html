@@ -6,59 +6,40 @@
     <title>Bingo Host Dashboard</title>
     <style>
         body, html { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #2c3e50; color: white; display: flex; flex-direction: column; align-items: center; }
-        
         header { background-color: #1a252f; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.5vh; padding: 2vh 0; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
         .header-title { font-size: 3vh; font-weight: bold; text-align: center; padding: 0 2vw; }
         #langSelect { font-size: 2vh; padding: 0.5vh 1vw; border-radius: 5px; cursor: pointer; }
-
         .container { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; width: 90%; max-width: 800px; text-align: center; padding-bottom: 5vh; overflow-y: auto;}
-        
         details { background: rgba(255,255,255,0.05); width: 100%; max-width: 600px; border-radius: 10px; margin-top: 2vh; text-align: left; padding: 1vh 2vw; box-sizing: border-box; }
         summary { font-size: 2.5vh; font-weight: bold; cursor: pointer; color: #3498db; outline: none; }
         .inst-list { margin-top: 1vh; font-size: 2vh; line-height: 1.5; color: #bdc3c7; }
-
         #setup-phase { background: rgba(255,255,255,0.1); padding: 3vh 4vw; border-radius: 15px; display: flex; flex-direction: column; gap: 1.5vh; align-items: center; margin-top: 2vh; width: 100%; max-width: 600px; box-sizing: border-box;}
         select, button { font-size: 3vh; padding: 1.5vh 2vw; border-radius: 8px; border: none; cursor: pointer; width: 100%; }
         .toggle-label { font-size: 2.5vh; display: flex; align-items: center; gap: 1vw; cursor: pointer; margin-top: 1vh; background: rgba(0,0,0,0.2); padding: 1vh 2vw; border-radius: 8px; width: 100%; box-sizing: border-box;}
         .toggle-label input { width: 3vh; height: 3vh; cursor: pointer; margin: 0;}
         .btn-start { background-color: #27ae60; color: white; font-weight: bold; margin-top: 2vh;}
         .btn-start:disabled { background-color: #7f8c8d; cursor: not-allowed; }
-        .btn-start:hover:not(:disabled) { background-color: #2ecc71; }
         .btn-end { background-color: #e74c3c; color: white; font-weight: bold; font-size: 2vh; margin-top: 3vh; max-width: 400px;}
-        
         #game-phase { display: none; width: 100%; margin-top: 2vh;}
         .room-code-display { font-size: 10vh; font-weight: 900; letter-spacing: 1vw; color: #f1c40f; text-shadow: 2px 2px 8px rgba(0,0,0,0.5); margin-bottom: 2vh;}
         .instruction { font-size: 4vh; margin-bottom: 4vh; }
         .current-word { font-size: 8vh; font-weight: bold; background: white; color: #2c3e50; padding: 3vh 5vw; border-radius: 15px; display: inline-block; min-width: 400px; min-height: 10vh; box-shadow: 0 10px 20px rgba(0,0,0,0.3); margin-bottom: 2vh;}
-        .player-count { font-size: 3vh; color: #bdc3c7; margin-bottom: 2vh; }
         .btn-draw { background-color: #3498db; color: white; font-size: 4vh; font-weight: bold; padding: 3vh 6vw; border-radius: 50px; box-shadow: 0 8px 0 #2980b9; transition: all 0.1s; max-width: 600px;}
         .btn-draw:active { transform: translateY(8px); box-shadow: none; }
-
-        #history-panel { margin-top: 4vh; background: rgba(0,0,0,0.2); border-radius: 10px; padding: 2vh; max-height: 15vh; overflow-y: auto; display: flex; flex-wrap: wrap; gap: 1vh; justify-content: center; width: 100%; max-width: 700px; box-sizing: border-box;}
-        .history-tag { background: #7f8c8d; padding: 1vh 1.5vw; border-radius: 5px; font-size: 2vh; font-weight: bold; }
-
-        /* UPGRADED LEADERBOARD PODIUM */
+        .btn-draw:disabled { background-color: #7f8c8d; box-shadow: none; transform: none; cursor: not-allowed; }
         #podium-panel { margin-top: 3vh; background: rgba(0, 0, 0, 0.3); border-radius: 15px; padding: 2vh 4vw; border: 2px solid #34495e; width: 100%; max-width: 700px; box-sizing: border-box; display: none;}
         #podium-panel h3 { margin: 0 0 2vh 0; color: #2ecc71; font-size: 4vh; text-transform: uppercase; letter-spacing: 2px;}
         #podium-list { list-style: none; padding: 0; margin: 0; font-size: 3.5vh; font-weight: bold; text-align: left;}
-        
         .podium-entry { display: flex; justify-content: space-between; padding: 1vh 2vw; border-bottom: 1px solid rgba(255,255,255,0.1); text-transform: uppercase; }
-        .podium-entry:last-child { border-bottom: none; }
-
-        /* Ranking Colors */
-        .rank-1 { color: #f1c40f; font-size: 4.5vh; text-shadow: 0 0 10px rgba(241, 196, 15, 0.5); } /* Gold */
-        .rank-2 { color: #bdc3c7; font-size: 4vh; } /* Silver */
-        .rank-3 { color: #cd7f32; font-size: 3.8vh; } /* Bronze */
+        .rank-1 { color: #f1c40f; font-size: 4.5vh; text-shadow: 0 0 10px rgba(241, 196, 15, 0.5); }
+        .rank-2 { color: #bdc3c7; font-size: 4vh; }
+        .rank-3 { color: #cd7f32; font-size: 3.8vh; }
         .rank-other { color: #ffffff; }
-
-        #bingo-alert { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(231, 76, 60, 0.95); flex-direction: column; align-items: center; justify-content: center; z-index: 1000; animation: flash 1s infinite alternate;}
-        #bingo-winner { font-size: 15vh; font-weight: 900; color: white; text-transform: uppercase;}
-        .btn-dismiss { background: white; color: #e74c3c; font-size: 3vh; font-weight: bold; margin-top: 5vh; border-radius: 50px; padding: 1.5vh 3vw;}
-        @keyframes flash { from { background: rgba(231, 76, 60, 0.95); } to { background: rgba(192, 57, 43, 0.95); } }
+        #game-over-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); flex-direction: column; align-items: center; justify-content: center; z-index: 2000; }
+        #game-over-overlay h1 { font-size: 10vh; color: #e74c3c; margin: 0; }
     </style>
 </head>
 <body>
-
     <header>
         <div class="header-title" data-i18n="header">Bingo: Teacher Controls</div>
         <select id="langSelect">
@@ -66,74 +47,56 @@
             <option value="ja">日本語</option>
         </select>
     </header>
-
     <div class="container">
-        
         <details id="instruction-panel">
             <summary data-i18n="instructionsTitle">Instructions / 使い方</summary>
             <div class="inst-list">
-                <div data-i18n="step1">1. Select the Grade and Unit.</div>
-                <div data-i18n="step2">2. Choose a Grid Size.</div>
-                <div data-i18n="step3">3. Choose whether to include a center Free Space.</div>
-                <div data-i18n="step4">4. Click 'Create Room'. Students enter the 4-letter code.</div>
-                <div data-i18n="step5">5. Click 'Draw Next Word' to play!</div>
+                <div data-i18n="step1">1. Select Grade and Unit.</div>
+                <div data-i18n="step2">2. Choose Grid Size and Mode.</div>
+                <div data-i18n="step3">3. Choose Free Space option.</div>
+                <div data-i18n="step4">4. Click 'Create Room' and share code.</div>
+                <div data-i18n="step5">5. Draw words until the end condition is met.</div>
             </div>
         </details>
-
         <div id="setup-phase">
             <h2 style="font-size: 4vh; margin: 0 0 1vh 0;" data-i18n="configHeader">Configure Lesson</h2>
-            
             <select id="gradeSelect">
                 <option value="" disabled selected data-i18n="selGrade">Select Grade</option>
-                <option value="grade3" data-i18n="grade3">Grade 3</option>
-                <option value="grade4" data-i18n="grade4">Grade 4</option>
-                <option value="grade5" data-i18n="grade5">Grade 5</option>
-                <option value="grade6" data-i18n="grade6">Grade 6</option>
+                <option value="grade3">Grade 3</option><option value="grade4">Grade 4</option>
+                <option value="grade5">Grade 5</option><option value="grade6">Grade 6</option>
             </select>
-            
-            <select id="unitSelect" disabled>
-                <option value="" disabled selected data-i18n="selUnit">Select Unit</option>
+            <select id="unitSelect" disabled><option value="" disabled selected data-i18n="selUnit">Select Unit</option></select>
+            <select id="gridSelect" disabled style="display: none;"><option value="" disabled selected data-i18n="selGrid">Select Grid Size</option></select>
+            <select id="modeSelect" style="display: none;">
+                <option value="standard" data-i18n="modeStandard">Standard (Race to Grid Size)</option>
+                <option value="sprint" data-i18n="modeSprint">Sprint (50% Unit Draw)</option>
+                <option value="podium" data-i18n="modePodium">Podium Cap (Fill Podium)</option>
+                <option value="blackout" data-i18n="modeBlackout">Blackout (Play to End)</option>
             </select>
-            
-            <select id="gridSelect" disabled style="display: none;">
-                <option value="" disabled selected data-i18n="selGrid">Select Grid Size</option>
-            </select>
-
             <select id="freeSpaceSelect" style="display: none;">
                 <option value="no" data-i18n="noFree">No Free Space</option>
                 <option value="yes" data-i18n="yesFree">Include Center Free Space</option>
             </select>
-
-            <label class="toggle-label">
-                <input type="checkbox" id="muteToggle"> 
-                <span data-i18n="muteToggle">Mute Auto-Voice (Manual Calling)</span>
-            </label>
-
+            <label class="toggle-label"><input type="checkbox" id="muteToggle"><span data-i18n="muteToggle">Mute Auto-Voice</span></label>
             <button class="btn-start" id="createRoomBtn" disabled data-i18n="createBtn">Create Room</button>
         </div>
-
         <div id="game-phase">
             <div class="instruction" data-i18n="joinInst">Join on your tablet using code:</div>
             <div class="room-code-display" id="roomCodeDisplay">ABCD</div>
-            
-            <div class="player-count"><span data-i18n="studentsConn">Students Connected:</span> <span id="playerCount">0</span></div>
-            
+            <div id="draw-stats" style="margin-bottom: 2vh; font-size: 2.5vh; color: #bdc3c7;"></div>
             <div class="current-word" id="currentWordDisplay" data-i18n="waitDraw">Waiting to draw...</div>
             <br>
             <button class="btn-draw" id="drawBtn" data-i18n="drawBtn">Draw Next Word</button>
-
             <div id="history-panel"></div>
-
-            <div id="podium-panel">
-                <h3 data-i18n="podiumTitle">Winners Podium</h3>
-                <div id="podium-list"></div>
-            </div>
-
-            <br>
-            <button class="btn-end" id="endGameBtn" data-i18n="endBtn">End Game & Clear Room</button>
+            <div id="podium-panel"><h3 data-i18n="podiumTitle">Winners Podium</h3><div id="podium-list"></div></div>
+            <br><button class="btn-end" id="endGameBtn" data-i18n="endBtn">End Game & Clear Room</button>
         </div>
     </div>
-
+    <div id="game-over-overlay">
+        <h1>GAME OVER</h1>
+        <div id="final-results" style="color: white; font-size: 4vh; margin-top: 2vh;"></div>
+        <button class="btn-end" onclick="location.reload()" style="margin-top: 5vh;">Close & Reset</button>
+    </div>
     <div id="bingo-alert">
         <div style="font-size: 8vh; font-weight: bold; margin-bottom: -2vh;" data-i18n="alertWinner">BINGO!</div>
         <div id="bingo-winner">Player</div>
@@ -153,318 +116,146 @@
             messagingSenderId: "14792482782",
             appId: "1:14792482782:web:bdc4db039fabce6360474f"
         };
-
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
         const i18n = {
             en: {
-                header: "Bingo: Teacher Controls",
-                instructionsTitle: "Instructions / 使い方",
-                step1: "1. Select the Grade and Unit.",
-                step2: "2. Choose a Grid Size.",
-                step3: "3. Choose whether to include a center Free Space.",
-                step4: "4. Click 'Create Room'. Students enter the 4-letter code.",
-                step5: "5. Click 'Draw Next Word' to play!",
-                configHeader: "Configure Lesson",
-                selGrade: "Select Grade",
-                grade3: "Grade 3", grade4: "Grade 4", grade5: "Grade 5", grade6: "Grade 6",
-                selUnit: "Select Unit", selGrid: "Select Grid Size",
-                noFree: "No Free Space", yesFree: "Include Center Free Space",
-                muteToggle: "Mute Auto-Voice (Manual Calling)",
-                createBtn: "Create Room", joinInst: "Join on your tablet using code:",
-                studentsConn: "Students Connected: ", waitDraw: "Waiting to draw...",
-                drawBtn: "Draw Next Word", endBtn: "End Game & Clear Room",
-                alertWinner: "BINGO!", dismissBtn: "Dismiss", noWords: "NO WORDS LEFT!",
-                grid3: "3x3 Grid (9 spaces)", grid4: "4x4 Grid (16 spaces)", grid5: "5x5 Grid (25 spaces)",
-                podiumTitle: "Winners Podium"
+                header: "Bingo: Teacher Controls", instructionsTitle: "Instructions / 使い方",
+                configHeader: "Configure Lesson", selGrade: "Select Grade", selUnit: "Select Unit", selGrid: "Select Grid Size",
+                modeStandard: "Standard (First to Grid Size)", modeSprint: "Sprint (50% Unit Draw)",
+                modePodium: "Podium Cap (Fill Top Spots)", modeBlackout: "Blackout (Play to End)",
+                noFree: "No Free Space", yesFree: "Include Free Space", muteToggle: "Mute Auto-Voice",
+                createBtn: "Create Room", joinInst: "Join with code:", waitDraw: "Waiting...",
+                drawBtn: "Draw Word", endBtn: "End Game", alertWinner: "BINGO!", podiumTitle: "Podium",
+                drawCount: "Draws: ", drawLimit: " / Limit: "
             },
             ja: {
-                header: "ビンゴ：教師用ダッシュボード",
-                instructionsTitle: "使い方 (Instructions)",
-                step1: "1. 学年と単元を選択します。",
-                step2: "2. グリッドサイズを選択します。",
-                step3: "3. 中央に「フリースペース」を入れるかを選択します。",
-                step4: "4. 「ルームを作成」を押し、児童に4桁のコードを入力させます。",
-                step5: "5. 「次の単語を引く」を押してゲーム開始！",
-                configHeader: "レッスンの設定",
-                selGrade: "学年を選択",
-                grade3: "3年生 (Grade 3)", grade4: "4年生 (Grade 4)", grade5: "5年生 (Grade 5)", grade6: "6年生 (Grade 6)",
-                selUnit: "単元を選択", selGrid: "グリッドサイズを選択",
-                noFree: "フリースペースなし", yesFree: "中央にフリースペースを配置",
-                muteToggle: "自動音声をミュート",
-                createBtn: "ルームを作成", joinInst: "タブレットでコードを入力：",
-                studentsConn: "接続中の児童数： ", waitDraw: "抽選待ち...",
-                drawBtn: "次の単語を引く", endBtn: "ゲームを終了してルームを削除",
-                alertWinner: "ビンゴ！", dismissBtn: "閉じる", noWords: "単語がありません！",
-                grid3: "3x3 グリッド (9マス)", grid4: "4x4 グリッド (16マス)", grid5: "5x5 グリッド (25マス)",
-                podiumTitle: "達成者リスト"
+                header: "ビンゴ：教師用ダッシュボード", instructionsTitle: "使い方",
+                configHeader: "レッスンの設定", selGrade: "学年を選択", selUnit: "単元を選択", selGrid: "サイズを選択",
+                modeStandard: "標準 (グリッドサイズで終了)", modeSprint: "スプリント (単語の50%で終了)",
+                modePodium: "ポディウム (上位が決まったら終了)", modeBlackout: "ブラックアウト (最後まで)",
+                noFree: "なし", yesFree: "フリースペースあり", muteToggle: "ミュート",
+                createBtn: "ルーム作成", joinInst: "このコードを入力：", waitDraw: "待機中...",
+                drawBtn: "単語を引く", endBtn: "終了", alertWinner: "ビンゴ！", podiumTitle: "達成者リスト",
+                drawCount: "抽選回数: ", drawLimit: " / 制限: "
             }
         };
 
-        const topicDictionary = {
-            "Countries": "国", "Skills": "できること", "Months": "月",
-            "Seasonal Events": "季節の行事", "Actions": "動作",
-            "When and How Often": "頻度", "Daily Life": "日常生活",
-            "Town": "街", "Nature": "自然", "Living Things": "生き物",
-            "Body": "体", "Club Activity": "クラブ活動", "Subjects": "教科",
-            "Jobs": "職業", "School Events": "学校行事", "Attributes": "特徴",
-            "Numbers": "数字", "Feelings": "気持ち", "Weather": "天気",
-            "Colors and Shapes": "色と形", "Sports": "スポーツ", "Animals": "動物",
-            "Fruits and Vegetables": "果物と野菜", "Ingredients": "材料",
-            "Food": "食べ物", "Drinks and Desserts": "飲み物とデザート",
-            "Taste and Texture": "味と食感", "Months and Days": "月と曜日",
-            "Things Around You": "身の回りのもの", "Days of the Week": "曜日",
-            "What you Can and Can't Do": "できること・できないこと",
-            "People": "人々", "Character and Personality": "性格",
-            "Directions": "方向", "Operations": "活動", "Impressions": "感想"
-        };
+        let currentLang = 'en', rawVocabData = {}, activeWordsPool = [], calledWords = [], currentRoomCode = "", gameActive = true;
+        let selectedGridSize = 3, selectedMode = 'standard', sprintLimit = 0;
 
-        let currentLang = 'en';
-
-        function translateUnitString(unitString, lang) {
-            if (lang === 'en') return unitString;
-            const match = unitString.match(/Unit\s*(\d+):\s*(.*)/i);
-            if (match) {
-                const num = match[1];
-                const topic = match[2];
-                const translatedTopic = topicDictionary[topic] || topic; 
-                return `単元 ${num}: ${translatedTopic}`;
-            }
-            return unitString.replace('Unit', '単元');
-        }
-
-        function applyLanguage() {
-            document.querySelectorAll('[data-i18n]').forEach(el => {
-                const key = el.getAttribute('data-i18n');
-                if (i18n[currentLang][key]) el.textContent = i18n[currentLang][key];
-            });
-
-            const unitSelect = document.getElementById('unitSelect');
-            if (unitSelect.options.length > 1) {
-                Array.from(unitSelect.options).forEach(opt => {
-                    if (opt.value !== "") opt.textContent = opt.dataset[currentLang];
-                });
-            }
-
-            const gridSelect = document.getElementById('gridSelect');
-            if (gridSelect.options.length > 1) {
-                Array.from(gridSelect.options).forEach(opt => {
-                    if (opt.value === "3") opt.textContent = i18n[currentLang].grid3;
-                    if (opt.value === "4") opt.textContent = i18n[currentLang].grid4;
-                    if (opt.value === "5") opt.textContent = i18n[currentLang].grid5;
-                });
-            }
-
-            const currentDisplay = document.getElementById('currentWordDisplay').textContent;
-            if (currentDisplay === i18n.en.waitDraw || currentDisplay === i18n.ja.waitDraw) {
-                document.getElementById('currentWordDisplay').textContent = i18n[currentLang].waitDraw;
-            } else if (currentDisplay === i18n.en.noWords || currentDisplay === i18n.ja.noWords) {
-                document.getElementById('currentWordDisplay').textContent = i18n[currentLang].noWords;
-            }
-        }
-
-        document.getElementById('langSelect').addEventListener('change', (e) => {
-            currentLang = e.target.value;
-            applyLanguage();
-        });
-
-        let rawVocabData = {};
-        let activeWordsPool = [];
-        let calledWords = [];
-        let currentRoomCode = "";
-
-        fetch('vocabulary.json')
-            .then(response => response.json())
-            .then(data => {
-                rawVocabData = data;
-                document.getElementById('gradeSelect').addEventListener('change', populateUnits);
-            });
-
-        function populateUnits(e) {
-            const grade = e.target.value;
-            const unitSelect = document.getElementById('unitSelect');
-            unitSelect.innerHTML = `<option value="" disabled selected data-i18n="selUnit">${i18n[currentLang].selUnit}</option>`;
-            document.getElementById('gridSelect').style.display = 'none';
-            document.getElementById('freeSpaceSelect').style.display = 'none';
-            document.getElementById('createRoomBtn').disabled = true;
-            
-            for (const unit in rawVocabData[grade]) {
-                const wordCount = rawVocabData[grade][unit].length;
-                if (wordCount >= 9) {
-                    const option = document.createElement('option');
-                    option.value = unit;
-                    const enText = `${unit} (${wordCount})`;
-                    const jaText = `${translateUnitString(unit, 'ja')} (${wordCount})`;
-                    option.dataset.en = enText;
-                    option.dataset.ja = jaText;
-                    option.textContent = currentLang === 'ja' ? jaText : enText;
-                    unitSelect.appendChild(option);
+        fetch('vocabulary.json').then(r => r.json()).then(d => {
+            rawVocabData = d;
+            document.getElementById('gradeSelect').addEventListener('change', e => {
+                const uSel = document.getElementById('unitSelect');
+                uSel.innerHTML = `<option value="" disabled selected>${i18n[currentLang].selUnit}</option>`;
+                for (const u in rawVocabData[e.target.value]) {
+                    if (rawVocabData[e.target.value][u].length >= 9) uSel.add(new Option(u, u));
                 }
-            }
-            unitSelect.disabled = false;
-        }
-
-        document.getElementById('unitSelect').addEventListener('change', (e) => {
-            const grade = document.getElementById('gradeSelect').value;
-            const unit = e.target.value;
-            const wordCount = rawVocabData[grade][unit].length;
-            const gridSelect = document.getElementById('gridSelect');
-            
-            gridSelect.innerHTML = `<option value="" disabled selected data-i18n="selGrid">${i18n[currentLang].selGrid}</option>`;
-            gridSelect.appendChild(new Option(i18n[currentLang].grid3, '3'));
-            if (wordCount >= 16) gridSelect.appendChild(new Option(i18n[currentLang].grid4, '4'));
-            if (wordCount >= 25) gridSelect.appendChild(new Option(i18n[currentLang].grid5, '5'));
-
-            gridSelect.style.display = 'block';
-            gridSelect.disabled = false;
-            document.getElementById('freeSpaceSelect').style.display = 'none';
-            document.getElementById('createRoomBtn').disabled = true;
+                uSel.disabled = false;
+            });
         });
 
-        document.getElementById('gridSelect').addEventListener('change', (e) => {
-            const gridSize = e.target.value;
-            const freeSpaceSelect = document.getElementById('freeSpaceSelect');
-            if (gridSize === '3' || gridSize === '5') {
-                freeSpaceSelect.style.display = 'block';
-                freeSpaceSelect.value = "no"; 
-            } else {
-                freeSpaceSelect.style.display = 'none';
-                freeSpaceSelect.value = "no"; 
-            }
+        document.getElementById('unitSelect').addEventListener('change', () => {
+            const gSel = document.getElementById('gridSelect');
+            gSel.innerHTML = `<option value="" disabled selected>${i18n[currentLang].selGrid}</option>`;
+            gSel.add(new Option("3x3", "3"));
+            const count = rawVocabData[document.getElementById('gradeSelect').value][document.getElementById('unitSelect').value].length;
+            if (count >= 16) gSel.add(new Option("4x4", "4"));
+            if (count >= 25) gSel.add(new Option("5x5", "5"));
+            gSel.style.display = 'block'; gSel.disabled = false;
+        });
+
+        document.getElementById('gridSelect').addEventListener('change', e => {
+            selectedGridSize = parseInt(e.target.value);
+            document.getElementById('modeSelect').style.display = 'block';
+            document.getElementById('freeSpaceSelect').style.display = (selectedGridSize % 2 !== 0) ? 'block' : 'none';
             document.getElementById('createRoomBtn').disabled = false;
         });
 
         document.getElementById('createRoomBtn').addEventListener('click', () => {
+            selectedMode = document.getElementById('modeSelect').value;
             const grade = document.getElementById('gradeSelect').value;
             const unit = document.getElementById('unitSelect').value;
-            const gridSize = parseInt(document.getElementById('gridSelect').value);
-            const hasFreeSpace = document.getElementById('freeSpaceSelect').value === "yes";
-
             activeWordsPool = [...rawVocabData[grade][unit]];
-            
-            const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            currentRoomCode = "";
-            for(let i=0; i<4; i++) currentRoomCode += chars.charAt(Math.floor(Math.random() * chars.length));
+            sprintLimit = Math.floor(activeWordsPool.length * 0.5);
 
-            const roomRef = ref(db, `bingoRooms/${currentRoomCode}`);
-            set(roomRef, {
-                status: "active",
-                grade: grade,
-                unit: unit,
-                gridSize: gridSize,
-                hasFreeSpace: hasFreeSpace,
-                currentWord: "",
+            currentRoomCode = Math.random().toString(36).substring(2, 6).toUpperCase();
+            set(ref(db, `bingoRooms/${currentRoomCode}`), {
+                status: "active", gridSize: selectedGridSize,
+                hasFreeSpace: document.getElementById('freeSpaceSelect').value === "yes",
                 calledWords: []
             });
 
-            document.getElementById('instruction-panel').style.display = 'none';
             document.getElementById('setup-phase').style.display = 'none';
             document.getElementById('game-phase').style.display = 'block';
             document.getElementById('roomCodeDisplay').textContent = currentRoomCode;
 
-            // UPDATED SORTED LEADERBOARD LOGIC
-            onValue(ref(db, `bingoRooms/${currentRoomCode}/players`), (snapshot) => {
-                const players = snapshot.val();
-                let count = 0;
-                let winnersArr = [];
-
-                if (players) {
-                    count = Object.keys(players).length;
-                    for(const uid in players) {
-                        const pData = players[uid];
-                        
-                        // 1. Handle Alert Flash
-                        if(pData.bingoCount > (pData.lastProcessedCount || 0)) {
-                            const newWins = pData.bingoCount - (pData.lastProcessedCount || 0);
-                            
-                            // Visual Alert for the newest win
-                            document.getElementById('bingo-winner').textContent = pData.name;
-                            document.getElementById('bingo-alert').style.display = 'flex';
-
-                            update(ref(db, `bingoRooms/${currentRoomCode}/players/${uid}`), { 
-                                lastProcessedCount: pData.bingoCount 
-                            });
-                        }
-
-                        // 2. Build array for the Leaderboard
-                        if (pData.bingoCount > 0) {
-                            winnersArr.push({ name: pData.name, count: pData.bingoCount });
-                        }
+            onValue(ref(db, `bingoRooms/${currentRoomCode}/players`), snap => {
+                const players = snap.val() || {}, winners = [];
+                for (const id in players) {
+                    if (players[id].bingoCount > 0) winners.push({ name: players[id].name, count: players[id].bingoCount });
+                    if (players[id].bingoCount > (players[id].lastProcessedCount || 0)) {
+                        document.getElementById('bingo-winner').textContent = players[id].name;
+                        document.getElementById('bingo-alert').style.display = 'flex';
+                        update(ref(db, `bingoRooms/${currentRoomCode}/players/${id}`), { lastProcessedCount: players[id].bingoCount });
                     }
                 }
-
-                // Sort winners: highest count first
-                winnersArr.sort((a, b) => b.count - a.count);
-
-                // Render the Podium
-                const podiumList = document.getElementById('podium-list');
-                podiumList.innerHTML = '';
-                
-                if (winnersArr.length > 0) {
-                    document.getElementById('podium-panel').style.display = 'block';
-                    winnersArr.forEach((winner, index) => {
-                        const entry = document.createElement('div');
-                        entry.className = 'podium-entry';
-                        
-                        // Apply Rank Styling
-                        let rankClass = 'rank-other';
-                        if (index === 0) rankClass = 'rank-1';
-                        else if (index === 1) rankClass = 'rank-2';
-                        else if (index === 2) rankClass = 'rank-3';
-                        
-                        entry.classList.add(rankClass);
-                        
-                        entry.innerHTML = `
-                            <span>${index + 1}. ${winner.name}</span>
-                            <span>${winner.count} BINGOS</span>
-                        `;
-                        podiumList.appendChild(entry);
-                    });
-                }
-                
-                document.getElementById('playerCount').textContent = count;
+                winners.sort((a, b) => b.count - a.count);
+                const pList = document.getElementById('podium-list'); pList.innerHTML = '';
+                winners.forEach((w, i) => {
+                    const el = document.createElement('div');
+                    el.className = `podium-entry rank-${i < 3 ? i + 1 : 'other'}`;
+                    el.innerHTML = `<span>${i + 1}. ${w.name}</span><span>${w.count}</span>`;
+                    pList.appendChild(el);
+                });
+                if (winners.length > 0) document.getElementById('podium-panel').style.display = 'block';
+                checkEndConditions(winners);
             });
         });
+
+        function checkEndConditions(winners) {
+            if (!gameActive) return;
+            let over = false;
+            if (selectedMode === 'standard' && winners.some(w => w.count >= selectedGridSize)) over = true;
+            if (selectedMode === 'podium' && winners.length >= selectedGridSize) over = true;
+            if (over) endGame();
+        }
 
         document.getElementById('drawBtn').addEventListener('click', () => {
-            if (activeWordsPool.length === 0) {
-                document.getElementById('currentWordDisplay').textContent = i18n[currentLang].noWords;
-                return;
+            if (!gameActive || activeWordsPool.length === 0) return;
+            const word = activeWordsPool.splice(Math.floor(Math.random() * activeWordsPool.length), 1)[0];
+            calledWords.push(word);
+            document.getElementById('currentWordDisplay').textContent = word;
+            
+            const h = document.getElementById('history-panel'), tag = document.createElement('div');
+            tag.className = 'history-tag'; tag.textContent = word; h.appendChild(tag); h.scrollTop = h.scrollHeight;
+
+            if (!document.getElementById('muteToggle').checked) {
+                const u = new SpeechSynthesisUtterance(word); u.lang = 'en-US'; window.speechSynthesis.speak(u);
             }
+            update(ref(db, `bingoRooms/${currentRoomCode}`), { currentWord: word, calledWords: calledWords });
 
-            const randomIndex = Math.floor(Math.random() * activeWordsPool.length);
-            const drawnWord = activeWordsPool.splice(randomIndex, 1)[0];
-            calledWords.push(drawnWord);
-
-            document.getElementById('currentWordDisplay').textContent = drawnWord;
-
-            const historyPanel = document.getElementById('history-panel');
-            const newTag = document.createElement('div');
-            newTag.className = 'history-tag';
-            newTag.textContent = drawnWord;
-            historyPanel.appendChild(newTag);
-            historyPanel.scrollTop = historyPanel.scrollHeight;
-
-            const isMuted = document.getElementById('muteToggle').checked;
-            if (!isMuted) {
-                const utterance = new SpeechSynthesisUtterance(drawnWord);
-                utterance.lang = 'en-US'; 
-                utterance.rate = 0.8; 
-                window.speechSynthesis.speak(utterance);
+            const stats = document.getElementById('draw-stats');
+            if (selectedMode === 'sprint') {
+                stats.textContent = `${i18n[currentLang].drawCount}${calledWords.length}${i18n[currentLang].drawLimit}${sprintLimit}`;
+                if (calledWords.length >= sprintLimit) endGame();
+            } else {
+                stats.textContent = `${i18n[currentLang].drawCount}${calledWords.length}`;
             }
-
-            update(ref(db, `bingoRooms/${currentRoomCode}`), {
-                currentWord: drawnWord,
-                calledWords: calledWords
-            });
         });
 
-        document.getElementById('endGameBtn').addEventListener('click', () => {
-            if(confirm("Are you sure you want to end the game? This will disconnect all students.")) {
-                remove(ref(db, `bingoRooms/${currentRoomCode}`));
-                location.reload(); 
-            }
+        function endGame() {
+            gameActive = false;
+            document.getElementById('drawBtn').disabled = true;
+            document.getElementById('game-over-overlay').style.display = 'flex';
+        }
+
+        document.getElementById('endGameBtn').addEventListener('click', () => { if(confirm("End game?")) remove(ref(db, `bingoRooms/${currentRoomCode}`)).then(() => location.reload()); });
+        document.getElementById('langSelect').addEventListener('change', e => {
+            currentLang = e.target.value;
+            document.querySelectorAll('[data-i18n]').forEach(el => el.textContent = i18n[currentLang][el.dataset.i18n]);
         });
     </script>
 </body>

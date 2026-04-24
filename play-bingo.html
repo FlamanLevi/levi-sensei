@@ -18,17 +18,20 @@
         .btn-join:active { transform: translateY(6px); box-shadow: none; }
 
         /* Phase 2: Game Board */
-        #game-phase { display: none; width: 100%; display: flex; flex-direction: column; align-items: center; }
-        .status-bar { font-size: 3vh; font-weight: bold; margin-bottom: 2vh; color: #7f8c8d; }
-        .current-word-display { font-size: 5vh; font-weight: 900; color: #e74c3c; margin-bottom: 3vh; min-height: 6vh; }
+        #game-phase { display: none; width: 100%; display: flex; flex-direction: column; align-items: center; flex: 1;}
+        .status-bar { font-size: 3vh; font-weight: bold; margin-bottom: 1vh; color: #7f8c8d; }
+        .current-word-display { font-size: 4vh; font-weight: 900; color: #e74c3c; margin-bottom: 2vh; min-height: 5vh; }
         
-        /* 3x3 Bingo Grid */
-        .bingo-board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2vw; width: 90%; max-width: 600px; }
-        .bingo-cell { aspect-ratio: 1 / 1; background: white; border-radius: 15px; box-shadow: 0 6px 10px rgba(0,0,0,0.15); display: flex; align-items: center; justify-content: center; font-size: 3vh; font-weight: bold; text-align: center; padding: 1vw; cursor: pointer; border: 4px solid transparent; transition: all 0.2s; word-wrap: break-word; line-height: 1.2; }
+        /* Dynamic Bingo Grid */
+        .bingo-board { display: grid; gap: 1.5vw; width: 95%; max-width: 700px; flex: 1; max-height: 70vh;}
+        .bingo-cell { background: white; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.15); display: flex; align-items: center; justify-content: center; font-size: clamp(1.8vh, 2vw, 3vh); font-weight: bold; text-align: center; padding: 1vw; cursor: pointer; border: 4px solid transparent; transition: all 0.2s; word-wrap: break-word; line-height: 1.2; user-select: none; }
         
         /* The "Stamped" State when tapped correctly */
-        .bingo-cell.stamped { background-color: #2ecc71; color: white; transform: scale(0.95); box-shadow: inset 0 4px 8px rgba(0,0,0,0.2); }
+        .bingo-cell.stamped { background-color: #2ecc71; color: white; transform: scale(0.95); box-shadow: inset 0 4px 8px rgba(0,0,0,0.2); border-color: #27ae60;}
         .bingo-cell.error { border-color: #e74c3c; animation: shake 0.4s; }
+        
+        /* Center Free Space */
+        .bingo-cell.free-space { background-color: #f1c40f; color: #2c3e50; border-color: #f39c12; cursor: default;}
 
         /* Victory Screen */
         #victory-screen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #f1c40f; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; }
@@ -67,7 +70,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
         import { getDatabase, ref, set, get, onValue, update } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-database.js";
 
-        // === YOUR KEYS ===
+        // === YOUR EXACT KEYS ===
         const firebaseConfig = {
             apiKey: "AIzaSyC7lrhVICmKOL3EhVkiaTkpEE1_VUDPS7k",
             authDomain: "levi-sensei.firebaseapp.com",
@@ -82,12 +85,16 @@
         const db = getDatabase(app);
 
         // State Variables
-        let myUid = "user_" + Date.now() + "_" + Math.floor(Math.random()*1000); // Unique ID for this tablet
+        let myUid = "user_" + Date.now() + "_" + Math.floor(Math.random()*1000); 
         let roomCode = "";
         let myName = "";
         let activeCalledWords = [];
         let myGridData = []; 
         let hasWon = false;
+        
+        // Game Settings received from host
+        let gridSize = 3;
+        let hasFreeSpace = false;
 
         // 1. Join Logic
         document.getElementById('joinBtn').addEventListener('click', () => {
@@ -99,10 +106,11 @@
                 return;
             }
 
-            // Ask Firebase if the room exists
             get(ref(db, `bingoRooms/${roomCode}`)).then(snapshot => {
                 if (snapshot.exists()) {
                     const roomData = snapshot.val();
+                    gridSize = roomData.gridSize || 3;
+                    hasFreeSpace = roomData.hasFreeSpace || false;
                     setupBoard(roomData.grade, roomData.unit);
                 } else {
                     alert("Room not found! Did you copy the code off the TV correctly?");
@@ -114,33 +122,31 @@
 
         // 2. Build the Board Logic
         function setupBoard(grade, unit) {
-            // Write this student into the Firebase room
             set(ref(db, `bingoRooms/${roomCode}/players/${myUid}`), {
                 name: myName,
                 hasBingo: false
             });
 
-            // Update UI 
             document.getElementById('login-phase').style.display = 'none';
             document.getElementById('game-phase').style.display = 'flex';
             document.getElementById('roomStatus').textContent = `Room: ${roomCode} | Player: ${myName}`;
 
-            // Fetch the vocabulary to build their unique card
             fetch('vocabulary.json')
                 .then(response => response.json())
                 .then(data => {
                     let wordsArray = [...data[grade][unit]];
                     
-                    // Shuffle the words (Fisher-Yates Shuffle)
+                    // Shuffle the words
                     for (let i = wordsArray.length - 1; i > 0; i--) {
                         const j = Math.floor(Math.random() * (i + 1));
                         [wordsArray[i], wordsArray[j]] = [wordsArray[j], wordsArray[i]];
                     }
 
-                    // Grab the first 9 words to make a 3x3 grid
-                    // (If the unit has less than 9 words, it just repeats to fill the 9 spots so the game doesn't break)
+                    // Calculate total squares needed (e.g., 3x3=9, 4x4=16, 5x5=25)
+                    const totalSquares = gridSize * gridSize;
+                    
                     myGridData = [];
-                    for(let i=0; i<9; i++) {
+                    for(let i=0; i < totalSquares; i++) {
                         myGridData.push(wordsArray[i % wordsArray.length]);
                     }
 
@@ -149,20 +155,33 @@
                 });
         }
 
-        // 3. Render the 3x3 HTML Grid
+        // 3. Render the Dynamic HTML Grid
         function renderGrid() {
             const board = document.getElementById('board');
             board.innerHTML = '';
             
+            // Set the CSS Grid Columns dynamically based on the teacher's setting
+            board.style.gridTemplateColumns = `repeat(${gridSize}, 1fr)`;
+            
+            // Calculate center square index for Free Space
+            const centerIndex = Math.floor((gridSize * gridSize) / 2);
+
             myGridData.forEach((word, index) => {
                 const cell = document.createElement('div');
                 cell.className = 'bingo-cell';
-                cell.textContent = word;
-                cell.dataset.index = index;
-                cell.dataset.word = word;
                 
-                // Tap Logic
-                cell.addEventListener('click', () => handleTap(cell));
+                // Inject Free Space if applicable
+                if (hasFreeSpace && index === centerIndex) {
+                    cell.textContent = "FREE SPACE";
+                    cell.classList.add('stamped', 'free-space'); // Auto-stamp it
+                    cell.dataset.word = "FREE SPACE";
+                } else {
+                    cell.textContent = word;
+                    cell.dataset.word = word;
+                    cell.addEventListener('click', () => handleTap(cell));
+                }
+                
+                cell.dataset.index = index;
                 board.appendChild(cell);
             });
         }
@@ -171,66 +190,67 @@
         function startListening() {
             onValue(ref(db, `bingoRooms/${roomCode}`), (snapshot) => {
                 if(!snapshot.exists()) {
-                    // The teacher hit "End Game", kick the student out
                     alert("The teacher closed the room!");
                     location.reload();
                     return;
                 }
-
                 const data = snapshot.val();
-                
-                // Update the current word text
-                if (data.currentWord) {
-                    document.getElementById('tvWord').textContent = `"${data.currentWord}"`;
-                }
-
-                // Update the list of all words the teacher has drawn so far
-                if (data.calledWords) {
-                    activeCalledWords = data.calledWords;
-                }
+                if (data.currentWord) document.getElementById('tvWord').textContent = `"${data.currentWord}"`;
+                if (data.calledWords) activeCalledWords = data.calledWords;
             });
         }
 
-        // 5. Tablet Interaction Logic (Anti-Cheat Included)
+        // 5. Tablet Interaction Logic 
         function handleTap(cell) {
-            if (hasWon) return; // Stop playing if they already won
-            if (cell.classList.contains('stamped')) return; // Already tapped
+            if (hasWon) return; 
+            if (cell.classList.contains('stamped')) return; 
 
             const clickedWord = cell.dataset.word;
 
-            // Did the teacher actually call this word?
             if (activeCalledWords.includes(clickedWord)) {
-                // Correct!
                 cell.classList.add('stamped');
                 checkWinCondition();
             } else {
-                // Incorrect! Show red flash error
                 cell.classList.add('error');
                 setTimeout(() => cell.classList.remove('error'), 400);
             }
         }
 
-        // 6. Check for 3-in-a-row
+        // 6. Universal Win Math (Works for 3x3, 4x4, and 5x5)
         function checkWinCondition() {
             const cells = document.querySelectorAll('.bingo-cell');
-            const lines = [
-                [0, 1, 2], [3, 4, 5], [6, 7, 8], // Horizontal rows
-                [0, 3, 6], [1, 4, 7], [2, 5, 8], // Vertical columns
-                [0, 4, 8], [2, 4, 6]             // Diagonals
-            ];
+            let isWin = false;
 
-            for (let i = 0; i < lines.length; i++) {
-                const [a, b, c] = lines[i];
-                if (cells[a].classList.contains('stamped') && 
-                    cells[b].classList.contains('stamped') && 
-                    cells[c].classList.contains('stamped')) {
-                    
-                    // WINNER! Send signal to teacher TV
-                    hasWon = true;
-                    document.getElementById('victory-screen').style.display = 'flex';
-                    update(ref(db, `bingoRooms/${roomCode}/players/${myUid}`), { hasBingo: true });
-                    return;
-                }
+            // Helper function: checks if an array of indices are all stamped
+            const checkLine = (indices) => indices.every(i => cells[i].classList.contains('stamped'));
+
+            // Check Horizontal Rows
+            for (let r = 0; r < gridSize; r++) {
+                let row = [];
+                for (let c = 0; c < gridSize; c++) row.push(r * gridSize + c);
+                if (checkLine(row)) isWin = true;
+            }
+
+            // Check Vertical Columns
+            for (let c = 0; c < gridSize; c++) {
+                let col = [];
+                for (let r = 0; r < gridSize; r++) col.push(r * gridSize + c);
+                if (checkLine(col)) isWin = true;
+            }
+
+            // Check Diagonals
+            let diag1 = [], diag2 = [];
+            for (let i = 0; i < gridSize; i++) {
+                diag1.push(i * gridSize + i); // Top-left to Bottom-right
+                diag2.push(i * gridSize + (gridSize - 1 - i)); // Top-right to Bottom-left
+            }
+            if (checkLine(diag1) || checkLine(diag2)) isWin = true;
+
+            // Trigger Victory
+            if (isWin) {
+                hasWon = true;
+                document.getElementById('victory-screen').style.display = 'flex';
+                update(ref(db, `bingoRooms/${roomCode}/players/${myUid}`), { hasBingo: true });
             }
         }
     </script>

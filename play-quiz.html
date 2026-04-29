@@ -32,7 +32,6 @@
         .shape { font-size: 2em; margin-right: 15px; opacity: 0.7; }
         .btn-text { font-size: 1.5em; }
 
-        /* FIXED RESULT OVERLAY */
         #result-overlay { 
             display: none; 
             position: fixed; 
@@ -45,12 +44,12 @@
             color: white; 
             text-align: center; 
         }
-        /* We use separate classes for the background colors now */
         .bg-correct { background-color: #26890c !important; }
         .bg-wrong { background-color: #e21b3c !important; }
         
-        .streak-badge { font-size: 1em; background: rgba(0,0,0,0.2); padding: 10px 20px; border-radius: 30px; margin: 15px 0; font-weight: bold; }
-        .near-miss { font-size: 0.6em; margin-top: 20px; font-weight: normal; font-style: italic; opacity: 0.9; }
+        /* Updated Streak Badge Styling */
+        .streak-badge { font-size: 1em; background: rgba(0,0,0,0.3); padding: 10px 25px; border-radius: 30px; margin: 10px 0; font-weight: bold; border: 2px solid rgba(255,255,255,0.4); }
+        .near-miss { font-size: 0.6em; margin-top: 30px; font-weight: normal; font-style: italic; opacity: 0.9; }
     </style>
 </head>
 <body>
@@ -75,9 +74,10 @@
     </div>
 
     <div id="result-overlay">
-        <div id="status-msg" style="font-size: 2em; font-weight: bold;"></div>
+        <div id="status-msg" style="font-size: 2.2em; font-weight: bold;"></div>
+        <!-- Streak message container -->
         <div id="streak-msg" class="streak-badge" style="display:none;"></div>
-        <div id="score-display" style="font-size: 1.2em; margin-top: 10px;">0 pts</div>
+        <div id="score-display" style="font-size: 1.3em; margin-top: 5px;">0 pts</div>
         <div id="miss-msg" class="near-miss"></div>
     </div>
 
@@ -171,9 +171,12 @@
                     msg.innerText = "CORRECT! 🌟";
                     overlay.classList.add('bg-correct');
                     streak++;
-                    if (streak > 1) {
+                    // Show streak if 2 or more
+                    if (streak >= 2) {
                         streakBar.innerText = `🔥 ${streak} IN A ROW!`;
                         streakBar.style.display = "block";
+                    } else {
+                        streakBar.style.display = "none";
                     }
                 } else {
                     msg.innerText = myAns ? "WRONG 😅" : "TIME UP! ⏰";
@@ -182,7 +185,7 @@
                     streakBar.style.display = "none";
                 }
                 
-                // Fetch Near Miss Info using the Top 5 logic
+                // Fetch Rankings and Near Miss info
                 db.ref('trivia/players').once('value').then(pSnap => {
                     const playersData = pSnap.val() || {};
                     const playersArray = Object.keys(playersData).map(id => ({

@@ -21,11 +21,11 @@
         @media (orientation: landscape) { #game-grid { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; } }
         @media (orientation: portrait) { #game-grid { grid-template-columns: 1fr; grid-template-rows: repeat(4, 1fr); } }
 
-        .answer-btn { border: none; border-radius: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; font-weight: bold; cursor: pointer; padding: 10px; transition: transform 0.1s; }
+        .answer-btn { border: none; border-radius: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; font-weight: bold; cursor: pointer; padding: 10px; transition: transform 0.1s, opacity 0.2s; }
         .answer-btn:active { transform: scale(0.95); }
         
-        /* The Lockout State */
-        .locked { filter: grayscale(100%) brightness(0.5); cursor: not-allowed; pointer-events: none; }
+        /* The Lockout State - Faded Original Colors */
+        .locked { opacity: 0.4; cursor: not-allowed; pointer-events: none; transform: none !important; }
         
         .btn-red { background-color: #e21b3c; }
         .btn-blue { background-color: #1368ce; }
@@ -104,7 +104,7 @@
         let myScore = 0;
         let questionStartTime = 0;
         
-        // NEW: Phase Tracking to prevent invisible UI reloads
+        // Phase Tracking to prevent invisible UI reloads
         let currentPhase = "";
         let currentQuestionNum = -1;
 
@@ -130,7 +130,6 @@
                 if (!state) return;
 
                 if (state.status === "LIVE") {
-                    // ONLY draw the screen if it is a brand new question
                     if (currentPhase !== "LIVE" || currentQuestionNum !== state.questionNumber) {
                         currentPhase = "LIVE";
                         currentQuestionNum = state.questionNumber;
@@ -164,7 +163,6 @@
                         }
                     }
                 } else if (state.status === "REVEAL") {
-                    // ONLY run the reveal logic once per question
                     if (currentPhase !== "REVEAL") {
                         currentPhase = "REVEAL";
                         handleReveal(state);
@@ -227,7 +225,7 @@
                     
                     if (streak >= 2) {
                         streakBar.innerText = `🔥 ${streak} IN A ROW!`;
-                        streakBar.style.display = "block";
+                        streakBar.style.display = "inline-block"; 
                     } else {
                         streakBar.style.display = "none";
                     }

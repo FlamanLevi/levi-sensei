@@ -9,15 +9,33 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
     <style>
-        body { font-family: sans-serif; background-color: #f0f4f8; padding: 20px; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f9; padding: 20px; color: #333; }
         .panel { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        .unit-checkbox { margin-right: 15px; display: inline-block; margin-bottom: 5px; }
-        h2 { border-bottom: 2px solid #007bff; padding-bottom: 5px; }
+        h2 { border-bottom: 2px solid #007bff; padding-bottom: 5px; color: #2c3e50; }
+        
+        /* Master Controls (Check All / Clear All) */
+        .master-controls { margin-bottom: 15px; font-size: 14px; display: flex; gap: 10px; }
+        .master-controls a { text-decoration: none; font-weight: bold; padding: 5px 10px; border-radius: 4px; background: #f0f0f0; color: #333; border: 1px solid #ccc; }
+        .master-controls a:hover { background: #e0e0e0; }
+
+        /* Drawer UI CSS from Master Reference */
+        .checkbox-container { display: flex; align-items: center; margin-bottom: 8px; font-size: 16px; cursor: pointer; }
+        .checkbox-container input { width: 18px; height: 18px; margin-right: 10px; cursor: pointer; }
+        .unit-section { margin-left: 20px; margin-top: 5px; padding: 10px; border-left: 3px solid #ccc; display: none; }
+        
+        .color-g3 { color: #d81b60; border-left-color: #d81b60; }
+        .color-g4 { color: #2e7d32; border-left-color: #2e7d32; }
+        .color-g5 { color: #e67e22; border-left-color: #e67e22; }
+        .color-g6 { color: #1976d2; border-left-color: #1976d2; }
+
+        /* General Game UI */
         .control-btn { font-size: 1.2em; padding: 10px 20px; background-color: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; margin-top: 10px; }
         .control-btn:hover { background-color: #218838; }
+        select { font-size: 1em; padding: 5px; border-radius: 4px; border: 1px solid #ccc; }
+        
         #game-screen { display: none; text-align: center; }
         #room-code-display { font-size: 5em; font-weight: bold; color: #007bff; letter-spacing: 10px; margin: 20px 0; }
-        #current-question-display { font-size: 3em; margin: 30px 0; }
+        #current-question-display { font-size: 4em; margin: 30px 0; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -26,8 +44,12 @@
     <div id="setup-screen" class="panel">
         <h1>Game Setup (Host)</h1>
         
+        <h2>1. Select Units</h2>
+        <div class="master-controls">
+            <a href="#" onclick="toggleAll(true); return false;">Check All</a>
+            <a href="#" onclick="toggleAll(false); return false;">Clear All</a>
+        </div>
         <div id="unit-selector">
-            <h2>1. Select Units</h2>
             <!-- JavaScript will populate checkboxes here -->
         </div>
 
@@ -42,9 +64,11 @@
         
         <label>Game Mode: </label>
         <select id="game-mode">
-            <option value="img_to_en">Prompt: Image ➔ Options: English</option>
-            <option value="en_to_img">Prompt: English ➔ Options: Image</option>
-            <option value="img_to_katakana">Prompt: Image ➔ Options: Katakana (Hard)</option>
+            <option value="hiragana_to_en">Prompt: Hiragana ➔ Options: English</option>
+            <option value="en_to_hiragana">Prompt: English ➔ Options: Hiragana</option>
+            <option value="katakana_to_en">Prompt: Katakana ➔ Options: English</option>
+            <option value="kanji_to_en">Prompt: Kanji ➔ Options: English</option>
+            <option value="img_to_en" disabled>Prompt: Image ➔ Options: English (Pending Images)</option>
         </select>
         <br><br>
 
@@ -64,7 +88,7 @@
 
     <!-- 3. THE LOGIC ENGINE -->
     <script>
-        // --- FIREBASE CONFIG (Your specific keys) ---
+        // --- FIREBASE CONFIG ---
         const firebaseConfig = {
             apiKey: "AIzaSyC7lrhVICmKOL3EhVkiaTkpEE1_VUDPS7k",
             authDomain: "levi-sensei.firebaseapp.com",
@@ -75,7 +99,6 @@
             appId: "1:14792482782:web:13ae42685a94b96460474f"
         };
         
-        // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
@@ -86,7 +109,15 @@
         let selectedTimeLimit = 10000;
         let roomCode = "";
 
-        // 1. Load the JSON Data automatically
+        // UI Configuration
+        const gradeConfig = {
+            "grade3": { name: "Grade 3", colorClass: "g3" },
+            "grade4": { name: "Grade 4", colorClass: "g4" },
+            "grade5": { name: "Grade 5", colorClass: "g5" },
+            "grade6": { name: "Grade 6", colorClass: "g6" }
+        };
+
+        // 1. Load the JSON Data
         fetch('vocabulary.json')
             .then(response => response.json())
             .then(data => {
@@ -95,36 +126,88 @@
             })
             .catch(error => {
                 console.error("Error loading JSON:", error);
-                document.getElementById("unit-selector").innerHTML = "<p style='color:red;'>Failed to load vocabulary.json. Are you running a local server?</p>";
+                document.getElementById("unit-selector").innerHTML = "<p style='color:red;'>Failed to load vocabulary.json.</p>";
             });
 
-        // 2. Build the Checkboxes dynamically
+        // 2. Build the Drawer UI
         function buildSetupUI(data) {
             const container = document.getElementById("unit-selector");
+            container.innerHTML = ""; 
+
             for (const grade in data) {
-                let gradeDiv = document.createElement("div");
-                gradeDiv.innerHTML = `<h3>${grade.toUpperCase()}</h3>`;
+                if (!gradeConfig[grade]) continue;
+                const colorId = gradeConfig[grade].colorClass;
+
+                // Grade Label & Checkbox (The Drawer Trigger)
+                const gradeLabel = document.createElement('label');
+                gradeLabel.className = `checkbox-container color-${colorId}`;
+                gradeLabel.style.fontWeight = "bold";
+                
+                const gradeCheckbox = document.createElement('input');
+                gradeCheckbox.type = 'checkbox';
+                gradeCheckbox.className = 'grade-checkbox';
+                gradeCheckbox.dataset.grade = grade;
+                gradeCheckbox.addEventListener('change', toggleDrawer);
+                
+                gradeLabel.appendChild(gradeCheckbox);
+                gradeLabel.appendChild(document.createTextNode(" " + gradeConfig[grade].name));
+                container.appendChild(gradeLabel);
+
+                // Unit Section (The Drawer Content)
+                const unitSection = document.createElement('div');
+                unitSection.className = `unit-section color-${colorId}`;
+                unitSection.id = `units-${grade}`;
+
                 for (const unit in data[grade]) {
-                    gradeDiv.innerHTML += `
-                        <label class="unit-checkbox">
-                            <input type="checkbox" class="unit-cb" value="${grade}|${unit}">
-                            ${unit}
-                        </label>
-                    `;
+                    const unitLabel = document.createElement('label');
+                    unitLabel.className = 'checkbox-container';
+                    unitLabel.style.color = '#333';
+                    
+                    const unitCheckbox = document.createElement('input');
+                    unitCheckbox.type = 'checkbox';
+                    unitCheckbox.className = `unit-cb unit-checkbox-${grade}`; // .unit-cb is required for the game logic
+                    unitCheckbox.value = `${grade}|${unit}`;
+
+                    unitLabel.appendChild(unitCheckbox);
+                    unitLabel.appendChild(document.createTextNode(" " + unit));
+                    unitSection.appendChild(unitLabel);
                 }
-                container.appendChild(gradeDiv);
+                container.appendChild(unitSection);
             }
         }
 
-        // 3. The Distractor Logic (Unit-Specific + Global Fallback)
+        // Drawer Logic
+        function toggleDrawer(e) {
+            const grade = e.target.dataset.grade;
+            const unitSection = document.getElementById(`units-${grade}`);
+            if (e.target.checked) {
+                unitSection.style.display = 'block';
+            } else {
+                unitSection.style.display = 'none';
+                const unitCheckboxes = document.querySelectorAll(`.unit-checkbox-${grade}`);
+                unitCheckboxes.forEach(cb => cb.checked = false);
+            }
+        }
+
+        function toggleAll(forceCheck) {
+            document.querySelectorAll('.grade-checkbox').forEach(cb => {
+                cb.checked = forceCheck;
+                const grade = cb.dataset.grade;
+                document.getElementById(`units-${grade}`).style.display = forceCheck ? 'block' : 'none';
+            });
+            document.querySelectorAll('.unit-cb').forEach(cb => {
+                cb.checked = forceCheck;
+            });
+        }
+
+        // 3. The Distractor Logic 
         function shuffle(array) {
             return array.sort(() => Math.random() - 0.5);
         }
 
         function generateOptions(targetItem, currentUnitArray, allSelectedItemsArray) {
-            let options = [targetItem]; // Start with the correct answer
+            let options = [targetItem]; 
             
-            // Primary: Pull from the same unit
             let unitDistractors = currentUnitArray.filter(item => item.id !== targetItem.id);
             unitDistractors = shuffle(unitDistractors);
 
@@ -132,7 +215,6 @@
                 options.push(unitDistractors.pop());
             }
 
-            // Fallback: If unit had less than 4 items
             if (options.length < 4) {
                 let globalDistractors = allSelectedItemsArray.filter(item => !options.includes(item));
                 globalDistractors = shuffle(globalDistractors);
@@ -140,12 +222,11 @@
                     options.push(globalDistractors.pop());
                 }
             }
-            return shuffle(options); // Shuffle final 4
+            return shuffle(options); 
         }
 
         // 4. Initialize the Game
         function initializeGame() {
-            // Gather all selected data
             const checkboxes = document.querySelectorAll('.unit-cb:checked');
             let allSelectedItems = [];
             let selectedUnitsData = [];
@@ -162,41 +243,30 @@
                 return;
             }
 
-            // Generate Questions
             questionQueue = [];
             selectedUnitsData.forEach(unitArray => {
                 unitArray.forEach(targetItem => {
                     const options = generateOptions(targetItem, unitArray, allSelectedItems);
-                    questionQueue.push({
-                        target: targetItem,
-                        options: options
-                    });
+                    questionQueue.push({ target: targetItem, options: options });
                 });
             });
 
-            // Shuffle the final question order
             questionQueue = shuffle(questionQueue);
-
-            // Get Settings
             selectedTimeLimit = parseInt(document.getElementById("time-limit").value);
             
-            // Transition UI
-            roomCode = Math.floor(1000 + Math.random() * 9000).toString(); // Generate 4-digit code
+            roomCode = Math.floor(1000 + Math.random() * 9000).toString(); 
             document.getElementById("setup-screen").style.display = "none";
             document.getElementById("game-screen").style.display = "block";
             document.getElementById("room-code-display").innerText = roomCode;
 
-            // --- FIREBASE: OPEN THE LOBBY ---
             db.ref('trivia/room').set({
                 roomCode: roomCode,
                 status: "LOBBY"
             });
-            
-            // Reset the gameState so tablets don't see an old question
             db.ref('trivia/gameState').remove(); 
         }
 
-        // 5. Run the Game (The Dispatcher)
+        // 5. Run the Game
         function sendNextQuestion() {
             if (currentQuestionIndex >= questionQueue.length) {
                 document.getElementById("current-question-display").innerText = "Game Over!";
@@ -207,24 +277,24 @@
             const q = questionQueue[currentQuestionIndex];
             const gameMode = document.getElementById("game-mode").value;
             
-            // Update Big Screen Display based on Mode
-            if(gameMode === "img_to_en" || gameMode === "img_to_katakana") {
-                document.getElementById("current-question-display").innerHTML = `<img src="${q.target.img_path}" style="max-width:300px; max-height:300px;"><br>What is this?`;
-            } else {
-                document.getElementById("current-question-display").innerText = q.target.en.toUpperCase();
-            }
+            // Text-Based Routing Logic
+            let displayText = "";
+            if (gameMode === "hiragana_to_en") displayText = q.target.ja_hiragana;
+            else if (gameMode === "en_to_hiragana") displayText = q.target.en.toUpperCase();
+            else if (gameMode === "katakana_to_en") displayText = q.target.en_katakana;
+            else if (gameMode === "kanji_to_en") displayText = q.target.ja_kanji !== "" ? q.target.ja_kanji : q.target.ja_hiragana;
+            else if (gameMode === "img_to_en") displayText = `<img src="${q.target.img_path}" style="max-width:300px; max-height:300px;"><br>What is this?`;
 
-            // Update button text after start
+            document.getElementById("current-question-display").innerHTML = displayText;
             document.getElementById("next-btn").innerText = "Next Question";
 
-            // --- FIREBASE: SEND QUESTION TO TABLETS ---
             db.ref('trivia/gameState').set({
                 status: "LIVE",
                 questionNumber: currentQuestionIndex,
                 timeLimit: selectedTimeLimit,
-                gameMode: gameMode, // Pass the mode so the tablets know what text/images to display on the buttons
+                gameMode: gameMode,
                 options: q.options,
-                targetId: q.target.id, // For scoring verification
+                targetId: q.target.id,
                 startTime: firebase.database.ServerValue.TIMESTAMP
             });
 

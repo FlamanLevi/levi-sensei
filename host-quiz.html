@@ -78,10 +78,10 @@
         <div style="margin-bottom: 25px;">
             <label style="font-weight: bold;">Time per question: </label>
             <select id="time-limit">
-                <option value="5000">5 Seconds (Extra Hard)</option>
-                <option value="10000">10 Seconds (Hard)</option>
-                <option value="15000" selected>15 Seconds (Medium)</option>
-                <option value="20000">20 Seconds (Easy)</option>
+                <option value="5000">5 Seconds (Hard)</option>
+                <option value="10000" selected>10 Seconds (Medium)</option>
+                <option value="15000">15 Seconds (Easy)</option>
+                <option value="20000">20 Seconds (Very Easy)</option>
             </select>
         </div>
 
@@ -89,7 +89,7 @@
             <div class="matrix-column">
                 <h3 style="margin-top:0;">Main Screen (Prompt)</h3>
                 <label class="checkbox-container"><input type="checkbox" class="mode-cb prompt-cb" value="img"> Image</label>
-                <label class="checkbox-container"><input type="checkbox" class="mode-cb prompt-cb" value="en" checked> English Spelling</label>
+                <label class="checkbox-container"><input type="checkbox" class="mode-cb prompt-cb" value="en"> English Spelling</label>
                 <label class="checkbox-container"><input type="checkbox" class="mode-cb prompt-cb" value="ja_hiragana"> Japanese (Hiragana)</label>
                 <label class="checkbox-container"><input type="checkbox" class="mode-cb prompt-cb" value="en_katakana"> English Pronunciation (Katakana)</label>
                 <label class="checkbox-container"><input type="checkbox" class="mode-cb prompt-cb" value="ja_kanji"> Japanese (Kanji)</label>
@@ -98,7 +98,7 @@
                 <h3 style="margin-top:0;">Tablets (Options)</h3>
                 <label class="checkbox-container"><input type="checkbox" class="mode-cb option-cb" value="img"> Image</label>
                 <label class="checkbox-container"><input type="checkbox" class="mode-cb option-cb" value="en"> English Spelling</label>
-                <label class="checkbox-container"><input type="checkbox" class="mode-cb option-cb" value="ja_hiragana" checked> Japanese (Hiragana)</label>
+                <label class="checkbox-container"><input type="checkbox" class="mode-cb option-cb" value="ja_hiragana"> Japanese (Hiragana)</label>
                 <label class="checkbox-container"><input type="checkbox" class="mode-cb option-cb" value="en_katakana"> English Pronunciation (Katakana)</label>
                 <label class="checkbox-container"><input type="checkbox" class="mode-cb option-cb" value="ja_kanji"> Japanese (Kanji)</label>
             </div>
@@ -148,7 +148,7 @@
                 if (!gradeConfig[grade]) continue;
                 const colorId = gradeConfig[grade].colorClass;
 
-                // Restored BOLD labels
+                // Bold labels
                 const gradeLabel = document.createElement('label');
                 gradeLabel.className = `checkbox-container color-${colorId}`;
                 gradeLabel.style.fontWeight = "bold";
@@ -186,7 +186,7 @@
             updatePoolCounter();
         }
 
-        // Restored Matrix Interlock Logic
+        // Matrix Interlock Logic
         document.querySelectorAll('.mode-cb').forEach(cb => {
             cb.onchange = (e) => {
                 const val = e.target.value;
@@ -248,12 +248,28 @@
             if (currentQuestionIndex >= questionQueue.length) {
                 showLeaderboard(true);
                 db.ref('trivia/gameState').set({ status: "GAME_OVER" });
+                
+                // Nuclear Reset Button Logic
+                const btn = document.getElementById("main-action-btn");
+                btn.innerText = "End Game & Eject Players";
+                btn.style.backgroundColor = "#dc3545"; // Warning Red
+                btn.onclick = function() {
+                    btn.innerText = "Closing Room...";
+                    db.ref('trivia/gameState').set({ status: "CLOSED" });
+                    setTimeout(() => {
+                        db.ref('trivia').remove().then(() => {
+                            location.reload(); 
+                        });
+                    }, 2000);
+                };
                 return;
             }
+            
             gamePhase = "QUESTION";
             document.getElementById('lobby-ui').style.display = "none";
             document.getElementById('timer-bar-container').style.display = "block";
             
+            // Clean data purge before new question
             db.ref('trivia/gameState/responses').set(null).then(() => {
                 const q = questionQueue[currentQuestionIndex];
                 const prompts = Array.from(document.querySelectorAll('.prompt-cb:checked')).map(cb => cb.value);

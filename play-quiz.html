@@ -21,10 +21,11 @@
         @media (orientation: landscape) { #game-grid { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; } }
         @media (orientation: portrait) { #game-grid { grid-template-columns: 1fr; grid-template-rows: repeat(4, 1fr); } }
 
-        .answer-btn { border: none; border-radius: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; font-weight: bold; cursor: pointer; transition: background-color 0.2s; padding: 10px; }
+        .answer-btn { border: none; border-radius: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; font-weight: bold; cursor: pointer; padding: 10px; transition: transform 0.1s, filter 0.2s; }
+        .answer-btn:active { transform: scale(0.95); }
         
-        /* The Neutral Selection State */
-        .answer-btn:disabled { background-color: #6c757d !important; opacity: 1 !important; color: #adb5bd !important; cursor: default; }
+        /* Bulletproof Lockout Class */
+        .locked { filter: grayscale(100%) brightness(0.5); cursor: not-allowed; pointer-events: none; }
         
         .btn-red { background-color: #e21b3c; }
         .btn-blue { background-color: #1368ce; }
@@ -131,10 +132,12 @@
                     document.getElementById('result-overlay').style.display = "none";
                     document.getElementById('game-grid').style.display = "grid";
                     
+                    // Cleanup: Ensure buttons are unlocked for the new question
                     for (let i = 0; i < 4; i++) {
                         const btn = document.getElementById(`btn-${i}`);
                         const container = document.getElementById(`txt-${i}`);
                         btn.disabled = false;
+                        btn.classList.remove('locked'); // Remove dimming filter
                         container.innerHTML = "";
                         
                         state.displayRules.forEach(rule => {
@@ -152,6 +155,21 @@
                     }
                 } else if (state.status === "REVEAL") {
                     handleReveal(state);
+                } else if (state.status === "CLOSED") {
+                    // Nuclear Reset signal received from Host
+                    document.getElementById('game-grid').style.display = "none";
+                    const overlay = document.getElementById('result-overlay');
+                    
+                    overlay.style.display = "flex";
+                    overlay.classList.remove('bg-correct', 'bg-wrong');
+                    overlay.style.backgroundColor = "#343a40"; 
+                    
+                    document.getElementById('status-msg').innerText = "Class Dismissed! 🎒";
+                    document.getElementById('score-display').innerText = "Closing room...";
+                    document.getElementById('streak-msg').style.display = "none";
+                    document.getElementById('miss-msg').innerText = "";
+                    
+                    setTimeout(() => { location.reload(); }, 2000);
                 }
             });
 
@@ -162,8 +180,11 @@
         }
 
         function submitAnswer(idx) {
+            // Apply absolute lockout styling
             for (let i = 0; i < 4; i++) {
-                document.getElementById(`btn-${i}`).disabled = true;
+                const btn = document.getElementById(`btn-${i}`);
+                btn.disabled = true;
+                btn.classList.add('locked'); // Triggers the grayscale filter
             }
             
             db.ref(`trivia/gameState/responses/${myId}`).set({
@@ -189,9 +210,10 @@
                     overlay.classList.add('bg-correct');
                     streak++;
                     
+                    // Render Streak
                     if (streak >= 2) {
                         streakBar.innerText = `🔥 ${streak} IN A ROW!`;
-                        streakBar.style.display = "block";
+                        streakBar.style.display = "inline-block"; // Safer rendering than block
                     } else {
                         streakBar.style.display = "none";
                     }

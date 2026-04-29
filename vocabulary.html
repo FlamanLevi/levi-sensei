@@ -28,7 +28,6 @@
             position: relative;
         }
 
-        /* Back Button to Dashboard */
         .back-button {
             position: absolute;
             left: 2vw;
@@ -44,14 +43,12 @@
 
         .back-button:hover { background: rgba(255,255,255,0.4); }
 
-        /* Two-column layout */
         .dashboard-container {
             display: flex;
             flex: 1;
             overflow: hidden;
         }
 
-        /* Left Sidebar: Controls */
         .sidebar {
             width: 25vw;
             min-width: 300px;
@@ -62,7 +59,6 @@
             border-right: 2px solid #e0e0e0;
         }
 
-        /* Right Content: Word Grid */
         .content {
             flex: 1;
             padding: 2vw;
@@ -70,7 +66,6 @@
             background: #fdfdfd;
         }
 
-        /* Control Panels */
         .control-group {
             margin-bottom: 3vh;
             padding-bottom: 2vh;
@@ -84,7 +79,6 @@
             color: #2c3e50;
         }
         
-        /* Master Toggle Links */
         .master-controls {
             margin-bottom: 2vh;
             font-size: 1.8vh;
@@ -102,11 +96,8 @@
             border: 1px solid #ccc;
         }
         
-        .master-controls a:hover {
-            background: #e0e0e0;
-        }
+        .master-controls a:hover { background: #e0e0e0; }
 
-        /* Sort Dropdown */
         select {
             width: 100%;
             padding: 1vh;
@@ -115,7 +106,6 @@
             border: 1px solid #ccc;
         }
 
-        /* Checkboxes */
         .checkbox-container {
             display: flex;
             align-items: center;
@@ -131,13 +121,12 @@
             cursor: pointer;
         }
 
-        /* Dynamic Unit Sections */
         .unit-section {
             margin-left: 2vw;
             margin-top: 1vh;
             padding: 1vh;
             border-left: 3px solid #ccc;
-            display: none; /* Hidden by default */
+            display: none; 
         }
 
         /* Textbook Colors */
@@ -150,34 +139,50 @@
         .bg-g5 { background-color: #e67e22; }
         .bg-g6 { background-color: #1976d2; }
 
-        /* Word Grid System */
+        /* Upgraded Word Grid System */
         .word-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 1.5vw;
         }
 
         .word-card {
             background: white;
-            padding: 1.5vw;
+            padding: 1vw 1.5vw;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            font-size: 3.5vh;
-            font-weight: bold;
             display: flex;
-            flex-direction: column;
-            align-items: flex-start;
+            flex-direction: row;
+            align-items: center;
+            gap: 1.5vw;
             border-left: 6px solid #ccc;
         }
 
-        /* Small tag on each word indicating its source */
+        .word-thumb {
+            width: 70px;
+            height: 70px;
+            object-fit: contain;
+            border-radius: 5px;
+            background: #f9f9f9;
+        }
+
+        .word-details {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .en-text { font-size: 3vh; font-weight: bold; color: #2c3e50; line-height: 1.1; margin-bottom: 0.5vh;}
+        .ja-text { font-size: 1.8vh; color: #555; }
+        .kata-text { font-size: 1.5vh; color: #8e44ad; font-weight: bold; margin-bottom: 0.5vh;}
+
         .word-tag {
-            font-size: 1.5vh;
+            font-size: 1.4vh;
             color: white;
             padding: 0.3vh 0.8vw;
             border-radius: 12px;
-            margin-top: 1vh;
             font-weight: normal;
+            align-self: flex-start;
         }
 
         .empty-state {
@@ -186,7 +191,6 @@
             text-align: center;
             margin-top: 10vh;
         }
-
     </style>
 </head>
 <body>
@@ -211,13 +215,11 @@
 
             <div class="control-group" id="gradeFilterContainer">
                 <div class="control-title">Select Grades & Units</div>
-                
                 <div class="master-controls">
                     <a href="#" onclick="toggleAll(true); return false;">Check All</a>
                     <a href="#" onclick="toggleAll(false); return false;">Clear All</a>
                 </div>
-                
-                </div>
+            </div>
         </aside>
 
         <main class="content">
@@ -230,7 +232,6 @@
     <script>
         let rawVocabData = {};
         
-        // Configuration mapping grades to their UI colors and display names
         const gradeConfig = {
             "grade3": { name: "Grade 3 (Let's Try 1)", colorClass: "g3" },
             "grade4": { name: "Grade 4 (Let's Try 2)", colorClass: "g4" },
@@ -238,7 +239,6 @@
             "grade6": { name: "Grade 6 (Here We Go 6)", colorClass: "g6" }
         };
 
-        // 1. Fetch the JSON data
         fetch('vocabulary.json')
             .then(response => response.json())
             .then(data => {
@@ -250,7 +250,6 @@
                 document.getElementById('wordDisplayArea').innerHTML = `<div class="empty-state">Error loading vocabulary.json. Make sure you are running this on a local server or GitHub pages.</div>`;
             });
 
-        // 2. Build the interactive sidebar dynamically
         function buildSidebar() {
             const container = document.getElementById('gradeFilterContainer');
             
@@ -259,7 +258,6 @@
 
                 const colorId = gradeConfig[grade].colorClass;
 
-                // Create Grade Checkbox
                 const gradeLabel = document.createElement('label');
                 gradeLabel.className = `checkbox-container color-${colorId}`;
                 gradeLabel.style.fontWeight = "bold";
@@ -274,12 +272,10 @@
                 gradeLabel.appendChild(document.createTextNode(gradeConfig[grade].name));
                 container.appendChild(gradeLabel);
 
-                // Create Unit Section (Hidden initially)
                 const unitSection = document.createElement('div');
                 unitSection.className = `unit-section color-${colorId}`;
                 unitSection.id = `units-${grade}`;
 
-                // Populate Units for this Grade
                 for (const unit in rawVocabData[grade]) {
                     const unitLabel = document.createElement('label');
                     unitLabel.className = 'checkbox-container';
@@ -299,11 +295,9 @@
                 container.appendChild(unitSection);
             }
 
-            // Listen to sort changes
             document.getElementById('sortMethod').addEventListener('change', updateDisplay);
         }
 
-        // 3. Show/Hide unit sections without auto-checking the boxes
         function toggleDrawer(e) {
             const grade = e.target.dataset.grade;
             const unitSection = document.getElementById(`units-${grade}`);
@@ -318,7 +312,6 @@
             }
         }
         
-        // 4. Master Check All / Clear All function
         function toggleAll(forceCheck) {
             document.querySelectorAll('.grade-checkbox').forEach(cb => {
                 cb.checked = forceCheck;
@@ -333,13 +326,11 @@
             updateDisplay();
         }
 
-        // 5. Gather, sort, and display the words
         function updateDisplay() {
             const displayArea = document.getElementById('wordDisplayArea');
             const sortMethod = document.getElementById('sortMethod').value;
             let activeWords = [];
 
-            // Gather all checked units
             const checkedUnits = document.querySelectorAll('.unit-checkbox:checked');
             
             if (checkedUnits.length === 0) {
@@ -348,16 +339,20 @@
                 return;
             }
 
-            // Extract words from JSON based on checked boxes
+            // Extract rich objects instead of raw strings
             checkedUnits.forEach(cb => {
                 const grade = cb.dataset.grade;
                 const unit = cb.dataset.unit;
                 const words = rawVocabData[grade][unit];
                 const colorId = gradeConfig[grade].colorClass;
 
-                words.forEach((word, index) => {
+                words.forEach((wordObj, index) => {
                     activeWords.push({
-                        text: word,
+                        en: wordObj.en,
+                        kanji: wordObj.ja_kanji,
+                        hiragana: wordObj.ja_hiragana,
+                        katakana: wordObj.en_katakana,
+                        img: wordObj.img_path,
                         grade: grade,
                         unit: unit,
                         colorClass: colorId,
@@ -366,47 +361,48 @@
                 });
             });
 
-            // Apply Sorting Logic
+            // Sorting applied to the 'en' property
             if (sortMethod === 'az') {
-                activeWords.sort((a, b) => a.text.toLowerCase().localeCompare(b.text.toLowerCase()));
+                activeWords.sort((a, b) => a.en.toLowerCase().localeCompare(b.en.toLowerCase()));
             } else if (sortMethod === 'za') {
-                activeWords.sort((a, b) => b.text.toLowerCase().localeCompare(a.text.toLowerCase()));
+                activeWords.sort((a, b) => b.en.toLowerCase().localeCompare(a.en.toLowerCase()));
             } else if (sortMethod === 'lengthAsc') {
-                activeWords.sort((a, b) => a.text.length - b.text.length);
+                activeWords.sort((a, b) => a.en.length - b.en.length);
             } else if (sortMethod === 'lengthDesc') {
-                activeWords.sort((a, b) => b.text.length - a.text.length);
+                activeWords.sort((a, b) => b.en.length - a.en.length);
             }
 
-            // Render to DOM
             displayArea.innerHTML = '';
             displayArea.style.display = "grid";
 
-            activeWords.forEach(wordObj => {
+            activeWords.forEach(w => {
                 const card = document.createElement('div');
                 card.className = `word-card`;
-                card.style.borderLeftColor = gradeConfig[wordObj.grade] ? getComputedStyle(document.body).getPropertyValue(`--${wordObj.colorClass}`) : '';
                 
-                if(wordObj.colorClass === 'g3') card.style.borderLeftColor = '#d81b60';
-                if(wordObj.colorClass === 'g4') card.style.borderLeftColor = '#2e7d32';
-                if(wordObj.colorClass === 'g5') card.style.borderLeftColor = '#e67e22';
-                if(wordObj.colorClass === 'g6') card.style.borderLeftColor = '#1976d2';
+                if(w.colorClass === 'g3') card.style.borderLeftColor = '#d81b60';
+                if(w.colorClass === 'g4') card.style.borderLeftColor = '#2e7d32';
+                if(w.colorClass === 'g5') card.style.borderLeftColor = '#e67e22';
+                if(w.colorClass === 'g6') card.style.borderLeftColor = '#1976d2';
 
-                const textSpan = document.createElement('span');
-                textSpan.textContent = wordObj.text;
+                const cleanGrade = w.grade.replace('grade', 'G');
+                const cleanUnit = w.unit.replace('Unit ', 'U');
 
-                const tagSpan = document.createElement('span');
-                tagSpan.className = `word-tag bg-${wordObj.colorClass}`;
-                
-                // Format Grade (e.g., "grade6" -> "G6")
-                const cleanGrade = wordObj.grade.replace('grade', 'G');
-                
-                // Format Unit (e.g., "Unit 1: Countries" -> "U1: Countries")
-                const cleanUnit = wordObj.unit.replace('Unit ', 'U');
-                
-                tagSpan.textContent = `${cleanGrade} - ${cleanUnit}`;
+                // Gracefully build the Japanese text display
+                let jaDisplay = "";
+                if (w.kanji && w.hiragana) jaDisplay = `${w.kanji} (${w.hiragana})`;
+                else if (w.kanji) jaDisplay = w.kanji;
+                else if (w.hiragana) jaDisplay = w.hiragana;
 
-                card.appendChild(textSpan);
-                card.appendChild(tagSpan);
+                card.innerHTML = `
+                    <img src="${w.img}" class="word-thumb" onerror="this.style.display='none'">
+                    <div class="word-details">
+                        <div class="en-text">${w.en}</div>
+                        <div class="kata-text">${w.katakana || ''}</div>
+                        <div class="ja-text">${jaDisplay}</div>
+                        <span class="word-tag bg-${w.colorClass}" style="margin-top: 1vh;">${cleanGrade} - ${cleanUnit}</span>
+                    </div>
+                `;
+                
                 displayArea.appendChild(card);
             });
         }

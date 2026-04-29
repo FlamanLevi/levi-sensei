@@ -16,6 +16,7 @@
         .master-controls a { text-decoration: none; font-weight: bold; padding: 5px 10px; border-radius: 4px; background: #f0f0f0; color: #333; border: 1px solid #ccc; }
 
         .checkbox-container { display: flex; align-items: center; margin-bottom: 8px; font-size: 16px; cursor: pointer; }
+        .checkbox-container input { width: 18px; height: 18px; margin-right: 10px; cursor: pointer; }
         .unit-section { margin-left: 20px; margin-top: 5px; padding: 10px; border-left: 3px solid #ccc; display: none; }
         
         .color-g3 { color: #d81b60; border-left-color: #d81b60; }
@@ -25,9 +26,11 @@
 
         .matrix-container { display: flex; gap: 40px; background: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid #dee2e6; flex-wrap: wrap; }
         .matrix-column { flex: 1; min-width: 250px; }
+        .mode-cb:disabled { cursor: not-allowed; opacity: 0.5; }
 
-        .control-btn { font-size: 1.2em; padding: 10px 20px; background-color: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; margin-top: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
-        .control-btn:hover { background-color: #218838; }
+        .control-btn { font-size: 1.2em; padding: 10px 20px; background-color: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; margin-top: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); transition: 0.2s; }
+        .control-btn:hover { background-color: #218838; transform: translateY(-2px); }
+        .live-counter { margin-left: 15px; color: #e67e22; font-weight: bold; font-size: 0.9em; background: #fff3e0; padding: 3px 8px; border-radius: 12px; }
         
         #game-screen { display: none; text-align: center; }
         #room-code-display { font-size: 6em; font-weight: bold; color: #007bff; letter-spacing: 10px; margin: 10px 0; }
@@ -42,7 +45,7 @@
         .rank-3 { background: #f8d7da; border: 2px solid #f5c6cb; } 
 
         #timer-bar-container { display: none; width: 80%; height: 25px; background: #e9ecef; border-radius: 15px; margin: 0 auto 20px; overflow: hidden; }
-        #timer-bar { width: 100%; height: 100%; background: #28a745; transition: width 0.1s linear; }
+        #timer-bar { width: 100%; height: 100%; background: #28a745; transition: width 0.1s linear, background-color 0.3s; }
     </style>
 </head>
 <body>
@@ -50,20 +53,44 @@
     <div id="setup-screen" class="panel">
         <h1>Game Setup (Host)</h1>
         <h2>1. Select Units</h2>
+        <div class="master-controls">
+            <a href="#" onclick="toggleAll(true); return false;">Check All</a>
+            <a href="#" onclick="toggleAll(false); return false;">Clear All</a>
+        </div>
         <div id="unit-selector"></div>
+
         <h2>2. Game Settings</h2>
-        <label>Questions: </label><select id="question-count"><option value="10">10</option><option value="20">20</option><option value="-1">All</option></select>
-        <label> Time: </label><select id="time-limit"><option value="10000">10s</option><option value="15000" selected>15s</option></select>
+        <label>Questions: </label>
+        <select id="question-count">
+            <option value="5">5</option><option value="10" selected>10</option>
+            <option value="15">15</option><option value="20">20</option>
+            <option value="-1">All Selected</option>
+        </select>
+        <span id="pool-size-display" class="live-counter">Words in pool: 0</span>
+        
+        <br><br>
+        <label>Time: </label>
+        <select id="time-limit">
+            <option value="5000">5s</option><option value="10000">10s</option>
+            <option value="15000" selected>15s</option><option value="20000">20s</option>
+        </select>
+
         <div class="matrix-container">
             <div class="matrix-column">
                 <h3>Main Screen (Prompt)</h3>
+                <label class="checkbox-container"><input type="checkbox" class="mode-cb prompt-cb" value="img"> Image</label>
                 <label class="checkbox-container"><input type="checkbox" class="mode-cb prompt-cb" value="en" checked> English</label>
                 <label class="checkbox-container"><input type="checkbox" class="mode-cb prompt-cb" value="ja_hiragana"> Hiragana</label>
+                <label class="checkbox-container"><input type="checkbox" class="mode-cb prompt-cb" value="en_katakana"> Katakana</label>
+                <label class="checkbox-container"><input type="checkbox" class="mode-cb prompt-cb" value="ja_kanji"> Kanji</label>
             </div>
             <div class="matrix-column">
                 <h3>Tablets (Options)</h3>
-                <label class="checkbox-container"><input type="checkbox" class="mode-cb option-cb" value="ja_hiragana" checked> Hiragana</label>
+                <label class="checkbox-container"><input type="checkbox" class="mode-cb option-cb" value="img"> Image</label>
                 <label class="checkbox-container"><input type="checkbox" class="mode-cb option-cb" value="en"> English</label>
+                <label class="checkbox-container"><input type="checkbox" class="mode-cb option-cb" value="ja_hiragana" checked> Hiragana</label>
+                <label class="checkbox-container"><input type="checkbox" class="mode-cb option-cb" value="en_katakana"> Katakana</label>
+                <label class="checkbox-container"><input type="checkbox" class="mode-cb option-cb" value="ja_kanji"> Kanji</label>
             </div>
         </div>
         <button class="control-btn" onclick="initializeGame()">Create Room</button>
@@ -71,7 +98,8 @@
 
     <div id="game-screen" class="panel">
         <div id="lobby-ui">
-            <h2>Room Code: <span id="room-code-display"></span></h2>
+            <h2>Join on Tablets: <span id="room-code-display"></span></h2>
+            <p>Connected: <span id="student-count">0</span></p>
             <div id="player-list"></div>
         </div>
         <div id="timer-bar-container"><div id="timer-bar"></div></div>
@@ -95,43 +123,90 @@
         let vocabularyData = {}, questionQueue = [], currentQuestionIndex = 0;
         let selectedTimeLimit = 15000, roomCode = "", livePlayersData = {}, gamePhase = "LOBBY", countdownInterval;
 
+        const gradeConfig = {
+            "grade3": { name: "Grade 3", colorClass: "g3" },
+            "grade4": { name: "Grade 4", colorClass: "g4" },
+            "grade5": { name: "Grade 5", colorClass: "g5" },
+            "grade6": { name: "Grade 6", colorClass: "g6" }
+        };
+
         fetch('vocabulary.json').then(r => r.json()).then(d => { vocabularyData = d; buildSetupUI(d); });
 
         function buildSetupUI(data) {
             const container = document.getElementById("unit-selector");
             for (const grade in data) {
+                if (!gradeConfig[grade]) continue;
+                const colorId = gradeConfig[grade].colorClass;
                 const gradeLabel = document.createElement('label');
-                gradeLabel.className = `checkbox-container`;
-                gradeLabel.innerHTML = `<input type="checkbox" class="grade-checkbox" data-grade="${grade}"> ${grade}`;
-                gradeLabel.onclick = (e) => {
-                    const section = document.getElementById(`units-${grade}`);
-                    section.style.display = e.target.checked ? 'block' : 'none';
-                };
+                gradeLabel.className = `checkbox-container color-${colorId}`;
+                gradeLabel.innerHTML = `<input type="checkbox" class="grade-checkbox" data-grade="${grade}"> ${gradeConfig[grade].name}`;
+                gradeLabel.querySelector('input').onchange = toggleDrawer;
                 container.appendChild(gradeLabel);
+
                 const unitSection = document.createElement('div');
                 unitSection.id = `units-${grade}`;
-                unitSection.className = 'unit-section';
+                unitSection.className = `unit-section color-${colorId}`;
                 for (const unit in data[grade]) {
-                    unitSection.innerHTML += `<label class="checkbox-container"><input type="checkbox" class="unit-cb" value="${grade}|${unit}"> ${unit}</label>`;
+                    unitSection.innerHTML += `<label class="checkbox-container"><input type="checkbox" class="unit-cb" value="${grade}|${unit}" onchange="updatePoolCounter()"> ${unit}</label>`;
                 }
                 container.appendChild(unitSection);
             }
         }
 
+        function toggleDrawer(e) {
+            const section = document.getElementById(`units-${e.target.dataset.grade}`);
+            section.style.display = e.target.checked ? 'block' : 'none';
+        }
+
+        function updatePoolCounter() {
+            let count = 0;
+            document.querySelectorAll('.unit-cb:checked').forEach(cb => {
+                const [g, u] = cb.value.split('|');
+                count += vocabularyData[g][u].length;
+            });
+            document.getElementById('pool-size-display').innerText = `Words in pool: ${count}`;
+        }
+
+        function toggleAll(force) {
+            document.querySelectorAll('.grade-checkbox').forEach(cb => { cb.checked = force; toggleDrawer({target: cb}); });
+            document.querySelectorAll('.unit-cb').forEach(cb => { cb.checked = force; });
+            updatePoolCounter();
+        }
+
+        // Matrix Interlock
+        document.querySelectorAll('.mode-cb').forEach(cb => {
+            cb.onchange = (e) => {
+                const isPrompt = e.target.classList.contains('prompt-cb');
+                const opposing = document.querySelector(isPrompt ? `.option-cb[value="${e.target.value}"]` : `.prompt-cb[value="${e.target.value}"]`);
+                if (opposing) { opposing.disabled = e.target.checked; opposing.parentElement.style.opacity = e.target.checked ? '0.5' : '1'; }
+            };
+        });
+
+        function shuffle(a) { return a.sort(() => Math.random() - 0.5); }
+
         function initializeGame() {
             const checkboxes = document.querySelectorAll('.unit-cb:checked');
-            let allItems = [];
+            let selectedItems = [], selectedUnits = [];
             checkboxes.forEach(cb => {
                 const [g, u] = cb.value.split('|');
-                allItems = allItems.concat(vocabularyData[g][u]);
+                selectedUnits.push(vocabularyData[g][u]);
+                selectedItems = selectedItems.concat(vocabularyData[g][u]);
             });
-            if (allItems.length < 4) return alert("Select more units!");
+            if (selectedItems.length < 4) return alert("Select at least 4 words!");
 
-            questionQueue = allItems.map(item => ({
-                target: item,
-                options: allItems.sort(() => 0.5 - Math.random()).slice(0, 4)
-            })).sort(() => 0.5 - Math.random());
+            let basePool = [];
+            selectedUnits.forEach(unitArray => {
+                unitArray.forEach(item => {
+                    let opts = shuffle([...selectedItems]).filter(i => i.id !== item.id).slice(0, 3);
+                    opts.push(item);
+                    basePool.push({ target: item, options: shuffle(opts) });
+                });
+            });
 
+            const count = parseInt(document.getElementById("question-count").value);
+            questionQueue = (count === -1) ? shuffle(basePool) : Array.from({length: count}, (_, i) => basePool[i % basePool.length]).sort(() => 0.5 - Math.random());
+
+            selectedTimeLimit = parseInt(document.getElementById("time-limit").value);
             roomCode = Math.floor(1000 + Math.random() * 9000).toString();
             document.getElementById("setup-screen").style.display = "none";
             document.getElementById("game-screen").style.display = "block";
@@ -140,10 +215,8 @@
             db.ref('trivia/room').set({ roomCode, status: "LOBBY" });
             db.ref('trivia/players').on('value', snap => {
                 livePlayersData = snap.val() || {};
-                if (gamePhase === "LOBBY") {
-                    const list = document.getElementById('player-list');
-                    list.innerHTML = Object.values(livePlayersData).map(p => `<div class="player-tag">${p.name}</div>`).join('');
-                }
+                document.getElementById('student-count').innerText = Object.keys(livePlayersData).length;
+                if (gamePhase === "LOBBY") document.getElementById('player-list').innerHTML = Object.values(livePlayersData).map(p => `<div class="player-tag">${p.name}</div>`).join('');
             });
         }
 
@@ -154,66 +227,76 @@
         }
 
         function startNextQuestion() {
+            if (currentQuestionIndex >= questionQueue.length) {
+                showLeaderboard(true);
+                db.ref('trivia/gameState').set({ status: "GAME_OVER" });
+                return;
+            }
             gamePhase = "QUESTION";
             document.getElementById('lobby-ui').style.display = "none";
             document.getElementById('timer-bar-container').style.display = "block";
             
-            // CLEAN DATA SYNC: Clear old responses before pushing the new question
             db.ref('trivia/gameState/responses').set(null).then(() => {
                 const q = questionQueue[currentQuestionIndex];
-                const activeOptions = Array.from(document.querySelectorAll('.option-cb:checked')).map(cb => cb.value);
+                const prompts = Array.from(document.querySelectorAll('.prompt-cb:checked')).map(cb => cb.value);
+                const options = Array.from(document.querySelectorAll('.option-cb:checked')).map(cb => cb.value);
+
+                let html = "";
+                if (prompts.includes('img') && q.target.img_path) html += `<img src="${q.target.img_path}" style="max-height:30vh; border-radius:10px;">`;
+                if (prompts.includes('en')) html += `<div>${q.target.en.toUpperCase()}</div>`;
+                if (prompts.includes('ja_hiragana')) html += `<div style="font-size:0.5em;">${q.target.ja_hiragana}</div>`;
+
+                document.getElementById("current-question-display").innerHTML = html;
+                document.getElementById("main-action-btn").innerText = "Reveal Answer";
                 
-                db.ref('trivia/gameState').update({
-                    status: "LIVE",
-                    questionNumber: currentQuestionIndex,
-                    timeLimit: selectedTimeLimit,
-                    displayRules: activeOptions,
-                    options: q.options,
-                    targetId: q.target.id,
+                db.ref('trivia/gameState').set({
+                    status: "LIVE", questionNumber: currentQuestionIndex, timeLimit: selectedTimeLimit,
+                    displayRules: options, options: q.options, targetId: q.target.id,
                     startTime: firebase.database.ServerValue.TIMESTAMP
                 });
-
-                document.getElementById("current-question-display").innerText = q.target.en.toUpperCase();
                 startVisualTimer(selectedTimeLimit);
             });
         }
 
-        function startVisualTimer(duration) {
+        function startVisualTimer(dur) {
             clearInterval(countdownInterval);
-            let timeLeft = duration;
+            let left = dur;
             countdownInterval = setInterval(() => {
-                timeLeft -= 100;
-                document.getElementById('timer-bar').style.width = (timeLeft / duration) * 100 + "%";
-                if (timeLeft <= 0) revealAnswer();
+                left -= 100;
+                document.getElementById('timer-bar').style.width = (left/dur)*100 + "%";
+                if (left <= 0) revealAnswer();
             }, 100);
         }
 
         function revealAnswer() {
+            if (gamePhase === "REVEAL") return;
             gamePhase = "REVEAL";
             clearInterval(countdownInterval);
             const q = questionQueue[currentQuestionIndex];
             
-            db.ref('trivia/gameState/responses').once('value').then(snap => {
-                const responses = snap.val() || {};
-                const updates = {};
-                for (const pId in responses) {
-                    if (responses[pId].answer === q.target.id) {
-                        let bonus = Math.floor(500 * (1 - (responses[pId].timeTaken / selectedTimeLimit)));
-                        updates[`trivia/players/${pId}/score`] = (livePlayersData[pId]?.score || 0) + 500 + Math.max(0, bonus);
+            db.ref('trivia/gameState/responses').once('value', snap => {
+                const res = snap.val() || {}, updates = {};
+                for (const id in res) {
+                    if (res[id].answer === q.target.id) {
+                        let pts = 500 + Math.max(0, Math.floor(500 * (1 - (res[id].timeTaken/selectedTimeLimit))));
+                        updates[`trivia/players/${id}/score`] = (livePlayersData[id]?.score || 0) + pts;
                     }
                 }
                 db.ref().update(updates);
             });
 
-            document.getElementById("current-question-display").innerHTML += `<div style="color:green;">Correct: ${q.target.ja_hiragana}</div>`;
+            document.getElementById("current-question-display").innerHTML += `<div style="color:green; font-size:0.5em;">Correct: ${q.target.ja_hiragana}</div>`;
+            document.getElementById("main-action-btn").innerText = "Show Leaderboard";
             db.ref('trivia/gameState').update({ status: "REVEAL", correctAnswer: q.target.id });
             currentQuestionIndex++;
         }
 
-        function showLeaderboard() {
+        function showLeaderboard(final = false) {
             gamePhase = "LEADERBOARD";
-            const players = Object.values(livePlayersData).sort((a,b) => b.score - a.score).slice(0, 5);
-            document.getElementById("current-question-display").innerHTML = players.map((p, i) => `<div class="leaderboard-row">#${i+1} ${p.name}: ${p.score}</div>`).join('');
+            document.getElementById('timer-bar-container').style.display = "none";
+            const top = Object.values(livePlayersData).sort((a,b) => b.score - a.score).slice(0, 5);
+            document.getElementById("current-question-display").innerHTML = `<h2>${final?'Final':'Top 5'}</h2>` + top.map((p,i) => `<div class="leaderboard-row rank-${i+1}"><span>#${i+1} ${p.name}</span><span>${p.score}</span></div>`).join('');
+            if (!final) document.getElementById("main-action-btn").innerText = "Next Question";
         }
     </script>
 </body>

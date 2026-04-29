@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Levi-Sensei Trivia: Host</title>
+    <!-- 1. Load the Firebase "Pipes" -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+    <!-- Basic styling to make it look decent on a projector -->
+    <style>
+        body { font-family: sans-serif; text-align: center; background-color: #f0f4f8; margin: 0; padding: 50px; }
+        #question-box { background: white; padding: 40px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 30px; }
+        h1 { font-size: 3em; color: #333; }
+        .control-btn { font-size: 1.5em; padding: 15px 30px; background-color: #007bff; color: white; border: none; border-radius: 8px; cursor: pointer; }
+        .control-btn:hover { background-color: #0056b3; }
+    </style>
+</head>
+<body>
+
+    <!-- 2. The Visual Interface (The Big Screen) -->
+    <div id="question-box">
+        <h1 id="question-display">Waiting to start...</h1>
+    </div>
+    
+    <button class="control-btn" onclick="sendNextQuestion()">Next Question</button>
+
+    <!-- 3. The Logic (The "Python" Brain) -->
+    <script>
+        // --- STEP A: PASTE YOUR FIREBASE CONFIG HERE ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyC7lrhVICmKOL3EhVkiaTkpEE1_VUDPS7k",
+            authDomain: "levi-sensei.firebaseapp.com",
+            databaseURL: "https://levi-sensei-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "levi-sensei",
+            storageBucket: "levi-sensei.firebasestorage.app",
+            messagingSenderId: "14792482782",
+            appId: "1:14792482782:web:13ae42685a94b96460474f"
+        };
+        
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        // --- STEP B: THE QUESTION DATABASE ---
+        // Just like a list of dictionaries in Python!
+        const questions = [
+            { text: "What is this?", answer: "Apple" },
+            { text: "Do you like dogs?", answer: "Yes" },
+            { text: "What time is it?", answer: "12:00" }
+        ];
+        
+        let currentQuestionIndex = 0;
+
+        // --- STEP C: THE DISPATCH FUNCTION ---
+        function sendNextQuestion() {
+            // 1. Safety check to make sure we don't run out of questions
+            if (currentQuestionIndex >= questions.length) {
+                document.getElementById("question-display").innerText = "Game Over!";
+                return;
+            }
+
+            // 2. Get the current question data
+            const q = questions[currentQuestionIndex];
+            
+            // 3. Update the big screen on your laptop
+            document.getElementById("question-display").innerText = q.text;
+
+            // 4. PUSH TO FIREBASE (This broadcasts to the tablets)
+            db.ref('trivia/gameState').set({
+                status: "LIVE",
+                questionNumber: currentQuestionIndex,
+                startTime: firebase.database.ServerValue.TIMESTAMP // Uses Google's clock to prevent cheating
+            });
+
+            // 5. Move to the next question for next time
+            currentQuestionIndex++;
+        }
+    </script>
+</body>
+</html>

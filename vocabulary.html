@@ -121,7 +121,16 @@
             cursor: pointer;
         }
 
-        /* The Display Toggles specific styling */
+        .wip-tag {
+            font-size: 1.5vh;
+            color: #e74c3c;
+            font-weight: bold;
+            margin-left: 0.5vw;
+            background: rgba(231, 76, 60, 0.1);
+            padding: 0.2vh 0.5vw;
+            border-radius: 4px;
+        }
+
         .display-toggles {
             background: #f8f9fa;
             padding: 1.5vh;
@@ -142,7 +151,6 @@
             display: none; 
         }
 
-        /* Textbook Colors */
         .color-g3 { color: #d81b60; border-left-color: #d81b60; }
         .color-g4 { color: #2e7d32; border-left-color: #2e7d32; }
         .color-g5 { color: #e67e22; border-left-color: #e67e22; }
@@ -152,7 +160,6 @@
         .bg-g5 { background-color: #e67e22; }
         .bg-g6 { background-color: #1976d2; }
 
-        /* Upgraded Word Grid System */
         .word-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -169,7 +176,7 @@
             align-items: center;
             gap: 1.5vw;
             border-left: 6px solid #ccc;
-            min-height: 100px; /* Prevents cards from collapsing completely if text is hidden */
+            min-height: 100px;
         }
 
         .word-thumb {
@@ -187,9 +194,11 @@
             justify-content: center;
         }
 
+        /* Adjusted Visual Hierarchy */
         .en-text { font-size: 3vh; font-weight: bold; color: #2c3e50; line-height: 1.1; margin-bottom: 0.5vh;}
-        .ja-text { font-size: 1.8vh; color: #555; }
-        .kata-text { font-size: 1.5vh; color: #8e44ad; font-weight: bold; margin-bottom: 0.5vh;}
+        .kata-text { font-size: 2vh; color: #8e44ad; font-weight: bold; margin-bottom: 0.5vh;}
+        .ja-text { font-size: 1.5vh; color: #7f8c8d; }
+        
 
         .word-tag {
             font-size: 1.4vh;
@@ -207,10 +216,7 @@
             margin-top: 10vh;
         }
 
-        /* Display Toggle Utility Classes */
-        .hidden-element {
-            display: none !important;
-        }
+        .hidden-element { display: none !important; }
     </style>
 </head>
 <body>
@@ -227,7 +233,7 @@
                 <div class="control-title">Display Options</div>
                 <div class="display-toggles">
                     <label class="checkbox-container">
-                        <input type="checkbox" id="toggleImg" checked onchange="applyDisplayFilters()"> Show Images
+                        <input type="checkbox" id="toggleImg" checked onchange="applyDisplayFilters()"> Show Images <span class="wip-tag">WIP</span>
                     </label>
                     <label class="checkbox-container">
                         <input type="checkbox" id="toggleEn" checked onchange="applyDisplayFilters()"> Show English
@@ -248,6 +254,7 @@
                     <option value="az">English (A - Z)</option>
                     <option value="za">English (Z - A)</option>
                     <option value="kataAz">Katakana (A - Z)</option>
+                    <option value="kataZa">Katakana (Z - A)</option>
                     <option value="lengthAsc">Word Length (Short to Long)</option>
                     <option value="lengthDesc">Word Length (Long to Short)</option>
                 </select>
@@ -423,17 +430,22 @@
                 });
             });
 
-            // Advanced Sorting Logic
+            // Sorting Logic with new Katakana (Z-A) added
             if (sortMethod === 'az') {
                 activeWords.sort((a, b) => a.en.toLowerCase().localeCompare(b.en.toLowerCase()));
             } else if (sortMethod === 'za') {
                 activeWords.sort((a, b) => b.en.toLowerCase().localeCompare(a.en.toLowerCase()));
             } else if (sortMethod === 'kataAz') {
-                // Sorts by Katakana, pushing empty katakana strings to the bottom
                 activeWords.sort((a, b) => {
                     if (!a.katakana) return 1;
                     if (!b.katakana) return -1;
                     return a.katakana.localeCompare(b.katakana, 'ja');
+                });
+            } else if (sortMethod === 'kataZa') {
+                activeWords.sort((a, b) => {
+                    if (!a.katakana) return 1;
+                    if (!b.katakana) return -1;
+                    return b.katakana.localeCompare(a.katakana, 'ja');
                 });
             } else if (sortMethod === 'lengthAsc') {
                 activeWords.sort((a, b) => a.en.length - b.en.length);
@@ -461,7 +473,6 @@
                 else if (w.kanji) jaDisplay = w.kanji;
                 else if (w.hiragana) jaDisplay = w.hiragana;
 
-                // Ensure empty strings don't render empty divs that mess up spacing
                 const kataHTML = w.katakana ? `<div class="kata-text">${w.katakana}</div>` : '';
                 const jaHTML = jaDisplay ? `<div class="ja-text">${jaDisplay}</div>` : '';
 
@@ -478,7 +489,6 @@
                 displayArea.appendChild(card);
             });
 
-            // Re-apply display filters immediately after rendering new cards
             applyDisplayFilters();
         }
     </script>

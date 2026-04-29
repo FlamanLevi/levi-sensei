@@ -17,21 +17,12 @@
 
         #waiting-screen { display: none; flex-direction: column; align-items: center; justify-content: center; height: 100%; background: #007bff; color: white; }
 
-        /* RESPONSIVE GRID */
-        #game-grid { 
-            display: none; 
-            gap: 10px; 
-            padding: 10px; 
-            height: 100vh; 
-            box-sizing: border-box; 
-        }
-        /* Landscape: 2x2 Grid */
+        #game-grid { display: none; gap: 10px; padding: 10px; height: 100vh; box-sizing: border-box; }
         @media (orientation: landscape) { #game-grid { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; } }
-        /* Portrait: 4x1 Stack */
         @media (orientation: portrait) { #game-grid { grid-template-columns: 1fr; grid-template-rows: repeat(4, 1fr); } }
 
-        .answer-btn { border: none; border-radius: 15px; display: flex; flex-direction: row; align-items: center; justify-content: center; color: white; font-weight: bold; cursor: pointer; transition: background-color 0.2s; }
-        .answer-btn:disabled { background-color: #888 !important; opacity: 1; } /* The Neutral Selection State */
+        .answer-btn { border: none; border-radius: 15px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; cursor: pointer; transition: background-color 0.2s; }
+        .answer-btn:disabled { background-color: #888 !important; opacity: 1; }
         
         .btn-red { background-color: #e21b3c; }
         .btn-blue { background-color: #1368ce; }
@@ -41,13 +32,25 @@
         .shape { font-size: 2em; margin-right: 15px; opacity: 0.7; }
         .btn-text { font-size: 1.5em; }
 
-        /* RESULT OVERLAY */
-        #result-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 100; flex-direction: column; align-items: center; justify-content: center; color: white; text-align: center; }
-        .correct { background-color: #26890c; }
-        .wrong { background-color: #e21b3c; }
+        /* FIXED RESULT OVERLAY */
+        #result-overlay { 
+            display: none; 
+            position: fixed; 
+            top: 0; left: 0; 
+            width: 100%; height: 100%; 
+            z-index: 100; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            color: white; 
+            text-align: center; 
+        }
+        /* We use separate classes for the background colors now */
+        .bg-correct { background-color: #26890c !important; }
+        .bg-wrong { background-color: #e21b3c !important; }
         
-        .streak-badge { font-size: 0.6em; background: rgba(255,255,255,0.2); padding: 5px 15px; border-radius: 20px; margin-top: 15px; }
-        .near-miss { font-size: 0.4em; margin-top: 20px; font-weight: normal; font-style: italic; opacity: 0.9; }
+        .streak-badge { font-size: 1em; background: rgba(0,0,0,0.2); padding: 10px 20px; border-radius: 30px; margin: 15px 0; font-weight: bold; }
+        .near-miss { font-size: 0.6em; margin-top: 20px; font-weight: normal; font-style: italic; opacity: 0.9; }
     </style>
 </head>
 <body>
@@ -72,9 +75,9 @@
     </div>
 
     <div id="result-overlay">
-        <div id="status-msg" style="font-size: 1.5em;"></div>
+        <div id="status-msg" style="font-size: 2em; font-weight: bold;"></div>
         <div id="streak-msg" class="streak-badge" style="display:none;"></div>
-        <div id="score-display" style="font-size: 0.8em; margin-top: 10px;">0 pts</div>
+        <div id="score-display" style="font-size: 1.2em; margin-top: 10px;">0 pts</div>
         <div id="miss-msg" class="near-miss"></div>
     </div>
 
@@ -131,7 +134,7 @@
                         btn.disabled = false;
                         let label = "";
                         state.displayRules.forEach(r => { if(currentOptions[i][r]) label += currentOptions[i][r] + " "; });
-                        document.getElementById(`txt-${i}`).innerText = label || (currentOptions[i].ja_hiragana || "???"); // Fallback logic
+                        document.getElementById(`txt-${i}`).innerText = label.trim() || (currentOptions[i].ja_hiragana || "???");
                     }
                 } else if (state.status === "REVEAL") {
                     handleReveal(state);
@@ -157,13 +160,16 @@
             const overlay = document.getElementById('result-overlay');
             const msg = document.getElementById('status-msg');
             const streakBar = document.getElementById('streak-msg');
+            
             overlay.style.display = "flex";
+            overlay.classList.remove('bg-correct', 'bg-wrong');
 
             db.ref(`trivia/gameState/responses/${myId}`).once('value').then(snap => {
                 const myAns = snap.val() ? snap.val().answer : null;
+                
                 if (myAns === state.correctAnswer) {
                     msg.innerText = "CORRECT! 🌟";
-                    overlay.className = "correct";
+                    overlay.classList.add('bg-correct');
                     streak++;
                     if (streak > 1) {
                         streakBar.innerText = `🔥 ${streak} IN A ROW!`;
@@ -171,22 +177,28 @@
                     }
                 } else {
                     msg.innerText = myAns ? "WRONG 😅" : "TIME UP! ⏰";
-                    overlay.className = "wrong";
+                    overlay.classList.add('bg-wrong');
                     streak = 0;
                     streakBar.style.display = "none";
                 }
                 
-                // Fetch Near Miss Info
+                // Fetch Near Miss Info using the Top 5 logic
                 db.ref('trivia/players').once('value').then(pSnap => {
-                    const players = Object.values(pSnap.val() || {}).sort((a,b) => b.score - a.score);
-                    const top5 = players.slice(0, 5);
-                    const myRank = players.findIndex(p => p.name === document.getElementById('name-input').value) + 1;
+                    const playersData = pSnap.val() || {};
+                    const playersArray = Object.keys(playersData).map(id => ({
+                        id: id,
+                        score: playersData[id].score || 0
+                    })).sort((a,b) => b.score - a.score);
+
+                    const myRank = playersArray.findIndex(p => p.id === myId) + 1;
                     
-                    if (myRank > 5 && top5.length >= 5) {
-                        const gap = top5[4].score - myScore;
+                    if (myRank > 5 && playersArray.length >= 5) {
+                        const gap = playersArray[4].score - myScore;
                         document.getElementById('miss-msg').innerText = `You are ${gap} pts away from the Top 5!`;
+                    } else if (myRank <= 5 && myRank > 0) {
+                        document.getElementById('miss-msg').innerText = "You are in the Top 5! 🏆";
                     } else {
-                        document.getElementById('miss-msg').innerText = myRank <= 5 ? "You are in the Top 5! 🏆" : "";
+                        document.getElementById('miss-msg').innerText = "";
                     }
                 });
             });

@@ -78,10 +78,10 @@
         <div style="margin-bottom: 25px;">
             <label style="font-weight: bold;">Time per question: </label>
             <select id="time-limit">
-                <option value="5000">5 Seconds (Hard)</option>
-                <option value="10000" selected>10 Seconds (Medium)</option>
-                <option value="15000">15 Seconds (Easy)</option>
-                <option value="20000">20 Seconds (Very Easy)</option>
+                <option value="5000">5 Seconds (Extra Hard)</option>
+                <option value="10000">10 Seconds (Hard)</option>
+                <option value="15000" selected>15 Seconds (Medium)</option>
+                <option value="20000">20 Seconds (Easy)</option>
             </select>
         </div>
 
@@ -89,7 +89,7 @@
             <div class="matrix-column">
                 <h3 style="margin-top:0;">Main Screen (Prompt)</h3>
                 <label class="checkbox-container"><input type="checkbox" class="mode-cb prompt-cb" value="img"> Image</label>
-                <label class="checkbox-container"><input type="checkbox" class="mode-cb prompt-cb" value="en"> English Spelling</label>
+                <label class="checkbox-container"><input type="checkbox" class="mode-cb prompt-cb" value="en" checked> English Spelling</label>
                 <label class="checkbox-container"><input type="checkbox" class="mode-cb prompt-cb" value="ja_hiragana"> Japanese (Hiragana)</label>
                 <label class="checkbox-container"><input type="checkbox" class="mode-cb prompt-cb" value="en_katakana"> English Pronunciation (Katakana)</label>
                 <label class="checkbox-container"><input type="checkbox" class="mode-cb prompt-cb" value="ja_kanji"> Japanese (Kanji)</label>
@@ -98,7 +98,7 @@
                 <h3 style="margin-top:0;">Tablets (Options)</h3>
                 <label class="checkbox-container"><input type="checkbox" class="mode-cb option-cb" value="img"> Image</label>
                 <label class="checkbox-container"><input type="checkbox" class="mode-cb option-cb" value="en"> English Spelling</label>
-                <label class="checkbox-container"><input type="checkbox" class="mode-cb option-cb" value="ja_hiragana"> Japanese (Hiragana)</label>
+                <label class="checkbox-container"><input type="checkbox" class="mode-cb option-cb" value="ja_hiragana" checked> Japanese (Hiragana)</label>
                 <label class="checkbox-container"><input type="checkbox" class="mode-cb option-cb" value="en_katakana"> English Pronunciation (Katakana)</label>
                 <label class="checkbox-container"><input type="checkbox" class="mode-cb option-cb" value="ja_kanji"> Japanese (Kanji)</label>
             </div>
@@ -148,7 +148,6 @@
                 if (!gradeConfig[grade]) continue;
                 const colorId = gradeConfig[grade].colorClass;
 
-                // Bold labels
                 const gradeLabel = document.createElement('label');
                 gradeLabel.className = `checkbox-container color-${colorId}`;
                 gradeLabel.style.fontWeight = "bold";
@@ -186,7 +185,6 @@
             updatePoolCounter();
         }
 
-        // Matrix Interlock Logic
         document.querySelectorAll('.mode-cb').forEach(cb => {
             cb.onchange = (e) => {
                 const val = e.target.value;
@@ -230,11 +228,14 @@
             document.getElementById("game-screen").style.display = "block";
             document.getElementById("room-code-display").innerText = roomCode;
 
-            db.ref('trivia/room').set({ roomCode, status: "LOBBY" });
-            db.ref('trivia/players').on('value', snap => {
-                livePlayersData = snap.val() || {};
-                document.getElementById('student-count').innerText = Object.keys(livePlayersData).length;
-                if (gamePhase === "LOBBY") document.getElementById('player-list').innerHTML = Object.values(livePlayersData).map(p => `<div class="player-tag">${p.name}</div>`).join('');
+            // PRE-GAME WIPE: Ensure the room is sterile before creating it.
+            db.ref('trivia').remove().then(() => {
+                db.ref('trivia/room').set({ roomCode, status: "LOBBY" });
+                db.ref('trivia/players').on('value', snap => {
+                    livePlayersData = snap.val() || {};
+                    document.getElementById('student-count').innerText = Object.keys(livePlayersData).length;
+                    if (gamePhase === "LOBBY") document.getElementById('player-list').innerHTML = Object.values(livePlayersData).map(p => `<div class="player-tag">${p.name}</div>`).join('');
+                });
             });
         }
 
@@ -245,31 +246,10 @@
         }
 
         function startNextQuestion() {
-            if (currentQuestionIndex >= questionQueue.length) {
-                showLeaderboard(true);
-                db.ref('trivia/gameState').set({ status: "GAME_OVER" });
-                
-                // Nuclear Reset Button Logic
-                const btn = document.getElementById("main-action-btn");
-                btn.innerText = "End Game & Eject Players";
-                btn.style.backgroundColor = "#dc3545"; // Warning Red
-                btn.onclick = function() {
-                    btn.innerText = "Closing Room...";
-                    db.ref('trivia/gameState').set({ status: "CLOSED" });
-                    setTimeout(() => {
-                        db.ref('trivia').remove().then(() => {
-                            location.reload(); 
-                        });
-                    }, 2000);
-                };
-                return;
-            }
-            
             gamePhase = "QUESTION";
             document.getElementById('lobby-ui').style.display = "none";
             document.getElementById('timer-bar-container').style.display = "block";
             
-            // Clean data purge before new question
             db.ref('trivia/gameState/responses').set(null).then(() => {
                 const q = questionQueue[currentQuestionIndex];
                 const prompts = Array.from(document.querySelectorAll('.prompt-cb:checked')).map(cb => cb.value);
@@ -322,17 +302,44 @@
             });
 
             document.getElementById("current-question-display").innerHTML += `<div style="color:green; font-size:0.5em; margin-top:20px;">Correct Answer: ${q.target.en} (${q.target.ja_hiragana})</div>`;
-            document.getElementById("main-action-btn").innerText = "Show Leaderboard";
+            
+            // Check if this is the final question to change the button text
+            let isFinal = (currentQuestionIndex + 1 >= questionQueue.length);
+            document.getElementById("main-action-btn").innerText = isFinal ? "Show Final Scores" : "Show Leaderboard";
+            
             db.ref('trivia/gameState').update({ status: "REVEAL", correctAnswer: q.target.id });
             currentQuestionIndex++;
         }
 
-        function showLeaderboard(final = false) {
+        function showLeaderboard() {
             gamePhase = "LEADERBOARD";
             document.getElementById('timer-bar-container').style.display = "none";
             const top = Object.values(livePlayersData).sort((a,b) => b.score - a.score).slice(0, 5);
-            document.getElementById("current-question-display").innerHTML = `<h2>${final?'Final Scores':'Top 5 Leaderboard'}</h2>` + top.map((p,i) => `<div class="leaderboard-row rank-${i+1}"><span>#${i+1} ${p.name}</span><span>${p.score} pts</span></div>`).join('');
-            if (!final) document.getElementById("main-action-btn").innerText = "Next Question";
+            
+            // Determine if the game is over based on the question index
+            let isFinal = (currentQuestionIndex >= questionQueue.length);
+            
+            document.getElementById("current-question-display").innerHTML = `<h2>${isFinal ? 'Final Scores' : 'Top 5 Leaderboard'}</h2>` + top.map((p,i) => `<div class="leaderboard-row rank-${i+1}"><span>#${i+1} ${p.name}</span><span>${p.score} pts</span></div>`).join('');
+            
+            const btn = document.getElementById("main-action-btn");
+            if (isFinal) {
+                // Instantly turn the button into the End Game/Nuclear Reset
+                db.ref('trivia/gameState').update({ status: "GAME_OVER" });
+                btn.innerText = "End Game & Eject Players";
+                btn.style.backgroundColor = "#dc3545"; // Warning Red
+                btn.onclick = function() {
+                    btn.innerText = "Closing Room...";
+                    db.ref('trivia/gameState').set({ status: "CLOSED" });
+                    setTimeout(() => {
+                        db.ref('trivia').remove().then(() => {
+                            location.reload(); 
+                        });
+                    }, 2000);
+                };
+            } else {
+                btn.innerText = "Next Question";
+                btn.onclick = handleGameFlow; // Ensure standard routing for ongoing games
+            }
         }
     </script>
 </body>

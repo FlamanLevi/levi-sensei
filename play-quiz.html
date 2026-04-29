@@ -13,7 +13,7 @@
         
         #join-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 20px; text-align: center; }
         input { font-size: 1.5em; padding: 15px; margin: 10px; border-radius: 10px; border: 2px solid #ccc; width: 80%; max-width: 300px; text-align: center; }
-        .join-btn { font-size: 1.5em; padding: 15px 40px; background: #007bff; color: white; border: none; border-radius: 10px; width: 80%; max-width: 300px; }
+        .join-btn { font-size: 1.5em; padding: 15px 40px; background: #007bff; color: white; border: none; border-radius: 10px; width: 80%; max-width: 300px; cursor: pointer; }
 
         #waiting-screen { display: none; flex-direction: column; align-items: center; justify-content: center; height: 100%; background: #007bff; color: white; }
 
@@ -21,35 +21,26 @@
         @media (orientation: landscape) { #game-grid { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; } }
         @media (orientation: portrait) { #game-grid { grid-template-columns: 1fr; grid-template-rows: repeat(4, 1fr); } }
 
-        .answer-btn { border: none; border-radius: 15px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; cursor: pointer; transition: background-color 0.2s; }
-        /* Improved Neutral Lockout State */
-        .answer-btn:disabled { background-color: #6c757d !important; opacity: 1; color: #adb5bd; }
+        .answer-btn { border: none; border-radius: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; font-weight: bold; cursor: pointer; transition: background-color 0.2s; padding: 10px; }
+        
+        /* The Neutral Selection State - Using !important to win over color classes */
+        .answer-btn:disabled { background-color: #6c757d !important; opacity: 1 !important; color: #adb5bd !important; cursor: default; }
         
         .btn-red { background-color: #e21b3c; }
         .btn-blue { background-color: #1368ce; }
         .btn-yellow { background-color: #d89e00; }
         .btn-green { background-color: #26890c; }
 
-        .shape { font-size: 2em; margin-right: 15px; opacity: 0.7; }
-        .btn-text { font-size: 1.5em; }
+        .shape { font-size: 2em; margin-bottom: 5px; opacity: 0.7; }
+        .btn-text-container { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+        .btn-text-line { font-size: 1.2em; line-height: 1.1; margin: 0; }
 
-        #result-overlay { 
-            display: none; 
-            position: fixed; 
-            top: 0; left: 0; 
-            width: 100%; height: 100%; 
-            z-index: 100; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; 
-            color: white; 
-            text-align: center; 
-        }
+        #result-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 100; flex-direction: column; align-items: center; justify-content: center; color: white; text-align: center; }
         .bg-correct { background-color: #26890c !important; }
         .bg-wrong { background-color: #e21b3c !important; }
         
-        .streak-badge { font-size: 1em; background: rgba(0,0,0,0.3); padding: 10px 25px; border-radius: 30px; margin: 15px 0; font-weight: bold; border: 2px solid rgba(255,255,255,0.4); }
-        .near-miss { font-size: 0.6em; margin-top: 30px; font-weight: normal; font-style: italic; opacity: 0.9; }
+        .streak-badge { font-size: 1.2em; background: rgba(0,0,0,0.3); padding: 12px 30px; border-radius: 40px; margin: 15px 0; font-weight: bold; border: 2px solid rgba(255,255,255,0.4); display: none; }
+        .near-miss { font-size: 0.7em; margin-top: 25px; font-weight: normal; font-style: italic; opacity: 0.9; }
     </style>
 </head>
 <body>
@@ -67,10 +58,22 @@
     </div>
 
     <div id="game-grid">
-        <button class="answer-btn btn-red" onclick="submitAnswer(0)" id="btn-0"><span class="shape">▲</span><span class="btn-text" id="txt-0"></span></button>
-        <button class="answer-btn btn-blue" onclick="submitAnswer(1)" id="btn-1"><span class="shape">◆</span><span class="btn-text" id="txt-1"></span></button>
-        <button class="answer-btn btn-yellow" onclick="submitAnswer(2)" id="btn-2"><span class="shape">●</span><span class="btn-text" id="txt-2"></span></button>
-        <button class="answer-btn btn-green" onclick="submitAnswer(3)" id="btn-3"><span class="shape">■</span><span class="btn-text" id="txt-3"></span></button>
+        <button class="answer-btn btn-red" onclick="submitAnswer(0)" id="btn-0">
+            <span class="shape">▲</span>
+            <div class="btn-text-container" id="txt-0"></div>
+        </button>
+        <button class="answer-btn btn-blue" onclick="submitAnswer(1)" id="btn-1">
+            <span class="shape">◆</span>
+            <div class="btn-text-container" id="txt-1"></div>
+        </button>
+        <button class="answer-btn btn-yellow" onclick="submitAnswer(2)" id="btn-2">
+            <span class="shape">●</span>
+            <div class="btn-text-container" id="txt-2"></div>
+        </button>
+        <button class="answer-btn btn-green" onclick="submitAnswer(3)" id="btn-3">
+            <span class="shape">■</span>
+            <div class="btn-text-container" id="txt-3"></div>
+        </button>
     </div>
 
     <div id="result-overlay">
@@ -130,10 +133,24 @@
                     
                     for (let i = 0; i < 4; i++) {
                         const btn = document.getElementById(`btn-${i}`);
-                        btn.disabled = false; // Buttons enabled at start of question
-                        let label = "";
-                        state.displayRules.forEach(r => { if(currentOptions[i][r]) label += currentOptions[i][r] + " "; });
-                        document.getElementById(`txt-${i}`).innerText = label.trim() || (currentOptions[i].ja_hiragana || "???");
+                        const container = document.getElementById(`txt-${i}`);
+                        btn.disabled = false;
+                        container.innerHTML = ""; // Clear old text
+                        
+                        // Line Break Logic: Create a div for each rule
+                        state.displayRules.forEach(rule => {
+                            if (currentOptions[i][rule]) {
+                                const line = document.createElement('div');
+                                line.className = "btn-text-line";
+                                line.innerText = currentOptions[i][rule];
+                                container.appendChild(line);
+                            }
+                        });
+
+                        // Fallback
+                        if (container.innerHTML === "") {
+                            container.innerHTML = `<div class="btn-text-line">${currentOptions[i].ja_hiragana || "???"}</div>`;
+                        }
                     }
                 } else if (state.status === "REVEAL") {
                     handleReveal(state);
@@ -147,7 +164,7 @@
         }
 
         function submitAnswer(idx) {
-            // Lock all buttons as soon as one is pressed
+            // Lock and Dim all buttons
             for (let i = 0; i < 4; i++) {
                 document.getElementById(`btn-${i}`).disabled = true;
             }
@@ -174,9 +191,9 @@
                     msg.innerText = "CORRECT! 🌟";
                     overlay.classList.add('bg-correct');
                     streak++;
+                    
                     if (streak >= 2) {
                         streakBar.innerText = `🔥 ${streak} IN A ROW!`;
-                        streakBar.style.visibility = "visible";
                         streakBar.style.display = "block";
                     } else {
                         streakBar.style.display = "none";
@@ -188,6 +205,7 @@
                     streakBar.style.display = "none";
                 }
                 
+                // Rank/Near Miss Check
                 db.ref('trivia/players').once('value').then(pSnap => {
                     const playersData = pSnap.val() || {};
                     const playersArray = Object.keys(playersData).map(id => ({
@@ -213,3 +231,4 @@
     </script>
 </body>
 </html>
+```[cite: 1]

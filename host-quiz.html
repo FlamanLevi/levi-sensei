@@ -11,10 +11,10 @@
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f9; padding: 20px; color: #333; }
         .panel { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        h2 { border-bottom: 2px solid #007bff; padding-bottom: 5px; color: #2c3e50; }
+        h2 { border-bottom: 2px solid #007bff; padding-bottom: 5px; color: #2c3e50; margin-top: 25px; }
         h3 { color: #2c3e50; }
         
-        /* Master Controls (Check All / Clear All) */
+        /* Master Controls */
         .master-controls { margin-bottom: 15px; font-size: 14px; display: flex; gap: 10px; }
         .master-controls a { text-decoration: none; font-weight: bold; padding: 5px 10px; border-radius: 4px; background: #f0f0f0; color: #333; border: 1px solid #ccc; }
         .master-controls a:hover { background: #e0e0e0; }
@@ -36,13 +36,31 @@
         .mode-cb:disabled { cursor: not-allowed; opacity: 0.5; }
 
         /* General Game UI */
-        .control-btn { font-size: 1.2em; padding: 10px 20px; background-color: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; margin-top: 15px; }
-        .control-btn:hover { background-color: #218838; }
+        .control-btn { font-size: 1.2em; padding: 10px 20px; background-color: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; margin-top: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); transition: 0.2s; }
+        .control-btn:hover { background-color: #218838; transform: translateY(-2px); }
         select { font-size: 1em; padding: 5px; border-radius: 4px; border: 1px solid #ccc; }
+        .live-counter { margin-left: 15px; color: #e67e22; font-weight: bold; font-size: 0.9em; background: #fff3e0; padding: 3px 8px; border-radius: 12px; }
         
         #game-screen { display: none; text-align: center; }
-        #room-code-display { font-size: 5em; font-weight: bold; color: #007bff; letter-spacing: 10px; margin: 20px 0; }
-        #current-question-display { font-size: 3em; margin: 30px 0; font-weight: bold; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; }
+        #room-code-display { font-size: 6em; font-weight: bold; color: #007bff; letter-spacing: 10px; margin: 10px 0; text-shadow: 2px 2px 4px rgba(0,0,0,0.1); }
+        #current-question-display { font-size: 3em; margin: 20px 0; font-weight: bold; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; }
+        
+        /* Lobby Player List CSS */
+        #player-list { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin: 20px 0; padding: 20px; background: #f8f9fa; border-radius: 10px; min-height: 50px; }
+        .player-tag { background: #e0f7fa; color: #006064; padding: 10px 20px; border-radius: 25px; font-weight: bold; font-size: 1.2em; box-shadow: 0 2px 4px rgba(0,0,0,0.1); animation: popIn 0.3s ease-out; }
+
+        /* Leaderboard CSS */
+        .leaderboard-row { display: flex; justify-content: space-between; align-items: center; background: #fff; padding: 15px 30px; margin: 0 auto 10px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); font-size: 1.5em; animation: popIn 0.4s ease-out backwards; width: 80%; max-width: 600px; }
+        .rank-1 { background: #fff3cd; border: 2px solid #ffeeba; } 
+        .rank-2 { background: #e2e3e5; border: 2px solid #d6d8db; } 
+        .rank-3 { background: #f8d7da; border: 2px solid #f5c6cb; } 
+        .score-val { font-weight: bold; color: #007bff; }
+
+        @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 80% { transform: scale(1.05); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
+
+        /* Timer CSS */
+        #timer-bar-container { display: none; width: 80%; height: 25px; background: #e9ecef; border-radius: 15px; margin: 0 auto 20px; overflow: hidden; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); }
+        #timer-bar { width: 100%; height: 100%; background: #28a745; border-radius: 15px; transition: width 0.1s linear, background-color 0.3s; }
     </style>
 </head>
 <body>
@@ -56,25 +74,36 @@
             <a href="#" onclick="toggleAll(true); return false;">Check All</a>
             <a href="#" onclick="toggleAll(false); return false;">Clear All</a>
         </div>
-        <div id="unit-selector">
-            <!-- JavaScript will populate checkboxes here -->
-        </div>
+        <div id="unit-selector"></div>
 
         <h2>2. Game Settings</h2>
+        
+        <label style="font-weight: bold;">Number of Questions: </label>
+        <select id="question-count">
+            <option value="5">5 Questions (Sprint)</option>
+            <option value="10" selected>10 Questions (Standard)</option>
+            <option value="15">15 Questions</option>
+            <option value="20">20 Questions</option>
+            <option value="30">30 Questions</option>
+            <option value="-1">All Selected Words (Endurance)</option>
+        </select>
+        <span id="pool-size-display" class="live-counter">Words in pool: 0</span>
+        <br><br>
+
         <label style="font-weight: bold;">Time per question: </label>
         <select id="time-limit">
-            <option value="5000">5 Seconds (Fast!)</option>
-            <option value="10000" selected>10 Seconds (Standard)</option>
-            <option value="15000">15 Seconds (Slower)</option>
+            <option value="5000">5 Seconds (Extra Hard)</option>
+            <option value="10000">10 Seconds (Hard)</option>
+            <option value="15000" selected>15 Seconds (Medium)</option>
+            <option value="20000">20 Seconds (Easy)</option>
         </select>
         <br><br>
         
-        <!-- THE MATRIX UI -->
         <div class="matrix-container">
             <div class="matrix-column">
                 <h3>Main Screen (Prompt)</h3>
-                <label class="checkbox-container" style="color: #888;">
-                    <input type="checkbox" class="mode-cb prompt-cb" value="img" disabled> Image (Pending Assets)
+                <label class="checkbox-container">
+                    <input type="checkbox" class="mode-cb prompt-cb" value="img"> Image
                 </label>
                 <label class="checkbox-container"><input type="checkbox" class="mode-cb prompt-cb" value="en" checked> English Spelling</label>
                 <label class="checkbox-container"><input type="checkbox" class="mode-cb prompt-cb" value="ja_hiragana"> Japanese (Hiragana)</label>
@@ -83,6 +112,9 @@
             </div>
             <div class="matrix-column">
                 <h3>Tablets (Options)</h3>
+                <label class="checkbox-container">
+                    <input type="checkbox" class="mode-cb option-cb" value="img"> Image
+                </label>
                 <label class="checkbox-container"><input type="checkbox" class="mode-cb option-cb" value="en"> English Spelling</label>
                 <label class="checkbox-container"><input type="checkbox" class="mode-cb option-cb" value="ja_hiragana" checked> Japanese (Hiragana)</label>
                 <label class="checkbox-container"><input type="checkbox" class="mode-cb option-cb" value="en_katakana"> English Pronunciation (Katakana)</label>
@@ -95,18 +127,21 @@
 
     <!-- 2. THE LOBBY / GAME SCREEN -->
     <div id="game-screen" class="panel">
-        <h2>Join Room on Tablets:</h2>
-        <div id="room-code-display"></div>
-        <p>Students waiting: <span id="student-count">0</span> (Feature coming soon)</p>
+        <div id="lobby-ui">
+            <h2>Join Room on Tablets:</h2>
+            <div id="room-code-display"></div>
+            <p style="font-size: 1.5em; margin: 10px 0;">Students Connected: <span id="student-count" style="font-weight: bold; color: #e67e22; font-size: 1.2em;">0</span></p>
+            <div id="player-list"></div>
+        </div>
         
-        <hr>
-        <div id="current-question-display">Waiting to start...</div>
-        <button class="control-btn" onclick="sendNextQuestion()" id="next-btn">Start Game</button>
+        <div id="timer-bar-container"><div id="timer-bar"></div></div>
+        <div id="current-question-display"></div>
+        
+        <button class="control-btn" onclick="handleGameFlow()" id="main-action-btn">Start Game</button>
     </div>
 
     <!-- 3. THE LOGIC ENGINE -->
     <script>
-        // --- FIREBASE CONFIG ---
         const firebaseConfig = {
             apiKey: "AIzaSyC7lrhVICmKOL3EhVkiaTkpEE1_VUDPS7k",
             authDomain: "levi-sensei.firebaseapp.com",
@@ -120,14 +155,16 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        // System Variables
         let vocabularyData = {};
         let questionQueue = [];
         let currentQuestionIndex = 0;
-        let selectedTimeLimit = 10000;
+        let selectedTimeLimit = 15000;
         let roomCode = "";
+        let livePlayersData = {}; 
+        
+        let gamePhase = "LOBBY"; 
+        let countdownInterval;
 
-        // UI Configuration
         const gradeConfig = {
             "grade3": { name: "Grade 3", colorClass: "g3" },
             "grade4": { name: "Grade 4", colorClass: "g4" },
@@ -135,28 +172,17 @@
             "grade6": { name: "Grade 6", colorClass: "g6" }
         };
 
-        // 1. Load the JSON Data
-        fetch('vocabulary.json')
-            .then(response => response.json())
-            .then(data => {
-                vocabularyData = data;
-                buildSetupUI(data);
-            })
-            .catch(error => {
-                console.error("Error loading JSON:", error);
-                document.getElementById("unit-selector").innerHTML = "<p style='color:red;'>Failed to load vocabulary.json.</p>";
-            });
+        fetch('vocabulary.json').then(r => r.json()).then(d => { 
+            vocabularyData = d; 
+            buildSetupUI(d); 
+        });
 
-        // 2. Build the Drawer UI
         function buildSetupUI(data) {
             const container = document.getElementById("unit-selector");
-            container.innerHTML = ""; 
-
             for (const grade in data) {
                 if (!gradeConfig[grade]) continue;
                 const colorId = gradeConfig[grade].colorClass;
 
-                // Grade Label & Checkbox (The Drawer Trigger)
                 const gradeLabel = document.createElement('label');
                 gradeLabel.className = `checkbox-container color-${colorId}`;
                 gradeLabel.style.fontWeight = "bold";
@@ -171,7 +197,6 @@
                 gradeLabel.appendChild(document.createTextNode(" " + gradeConfig[grade].name));
                 container.appendChild(gradeLabel);
 
-                // Unit Section (The Drawer Content)
                 const unitSection = document.createElement('div');
                 unitSection.className = `unit-section color-${colorId}`;
                 unitSection.id = `units-${grade}`;
@@ -180,11 +205,11 @@
                     const unitLabel = document.createElement('label');
                     unitLabel.className = 'checkbox-container';
                     unitLabel.style.color = '#333';
-                    
                     const unitCheckbox = document.createElement('input');
                     unitCheckbox.type = 'checkbox';
                     unitCheckbox.className = `unit-cb unit-checkbox-${grade}`;
                     unitCheckbox.value = `${grade}|${unit}`;
+                    unitCheckbox.addEventListener('change', updatePoolCounter);
 
                     unitLabel.appendChild(unitCheckbox);
                     unitLabel.appendChild(document.createTextNode(" " + unit));
@@ -194,87 +219,53 @@
             }
         }
 
-        // Drawer Logic
+        function updatePoolCounter() {
+            let count = 0;
+            document.querySelectorAll('.unit-cb:checked').forEach(cb => {
+                const [g, u] = cb.value.split('|');
+                count += vocabularyData[g][u].length;
+            });
+            document.getElementById('pool-size-display').innerText = `Words in pool: ${count}`;
+        }
+
         function toggleDrawer(e) {
             const grade = e.target.dataset.grade;
-            const unitSection = document.getElementById(`units-${grade}`);
-            if (e.target.checked) {
-                unitSection.style.display = 'block';
-            } else {
-                unitSection.style.display = 'none';
-                const unitCheckboxes = document.querySelectorAll(`.unit-checkbox-${grade}`);
-                unitCheckboxes.forEach(cb => cb.checked = false);
-            }
+            document.getElementById(`units-${grade}`).style.display = e.target.checked ? 'block' : 'none';
+            if (!e.target.checked) document.querySelectorAll(`.unit-checkbox-${grade}`).forEach(cb => { cb.checked = false; cb.dispatchEvent(new Event('change')); });
         }
 
         function toggleAll(forceCheck) {
-            document.querySelectorAll('.grade-checkbox').forEach(cb => {
-                cb.checked = forceCheck;
-                const grade = cb.dataset.grade;
-                document.getElementById(`units-${grade}`).style.display = forceCheck ? 'block' : 'none';
-            });
-            document.querySelectorAll('.unit-cb').forEach(cb => {
-                cb.checked = forceCheck;
-            });
+            document.querySelectorAll('.grade-checkbox').forEach(cb => { cb.checked = forceCheck; document.getElementById(`units-${cb.dataset.grade}`).style.display = forceCheck ? 'block' : 'none'; });
+            document.querySelectorAll('.unit-cb').forEach(cb => { cb.checked = forceCheck; cb.dispatchEvent(new Event('change')); });
         }
 
-        // 3. Matrix Interlock Logic (Mutual Exclusivity)
         document.querySelectorAll('.mode-cb').forEach(cb => {
             cb.addEventListener('change', function(e) {
                 const val = e.target.value;
                 const isPrompt = e.target.classList.contains('prompt-cb');
-                
-                // Find the opposing checkbox
-                const targetSelector = isPrompt ? `.option-cb[value="${val}"]` : `.prompt-cb[value="${val}"]`;
-                const opposingCb = document.querySelector(targetSelector);
-                
-                if (opposingCb && val !== 'img') { // Don't lock images since it's only on prompt anyway
-                    if (e.target.checked) {
-                        opposingCb.checked = false;
-                        opposingCb.disabled = true;
-                        opposingCb.parentElement.style.opacity = '0.5';
-                    } else {
-                        opposingCb.disabled = false;
-                        opposingCb.parentElement.style.opacity = '1';
-                    }
+                const opposingCb = document.querySelector(isPrompt ? `.option-cb[value="${val}"]` : `.prompt-cb[value="${val}"]`);
+                if (opposingCb) { 
+                    if (e.target.checked) { opposingCb.checked = false; opposingCb.disabled = true; opposingCb.parentElement.style.opacity = '0.5'; } 
+                    else { opposingCb.disabled = false; opposingCb.parentElement.style.opacity = '1'; }
                 }
             });
         });
-        
-        // Fire it once on load to lock the default selections
-        setTimeout(() => {
-            document.querySelectorAll('.mode-cb:checked').forEach(cb => {
-                cb.dispatchEvent(new Event('change'));
-            });
-        }, 100);
+        setTimeout(() => document.querySelectorAll('.mode-cb:checked').forEach(cb => cb.dispatchEvent(new Event('change'))), 100);
 
-
-        // 4. The Distractor Logic 
-        function shuffle(array) {
-            return array.sort(() => Math.random() - 0.5);
-        }
+        function shuffle(array) { return array.sort(() => Math.random() - 0.5); }
 
         function generateOptions(targetItem, currentUnitArray, allSelectedItemsArray) {
             let options = [targetItem]; 
-            
-            let unitDistractors = currentUnitArray.filter(item => item.id !== targetItem.id);
-            unitDistractors = shuffle(unitDistractors);
-
-            while (options.length < 4 && unitDistractors.length > 0) {
-                options.push(unitDistractors.pop());
-            }
+            let unitDistractors = shuffle(currentUnitArray.filter(item => item.id !== targetItem.id));
+            while (options.length < 4 && unitDistractors.length > 0) options.push(unitDistractors.pop());
 
             if (options.length < 4) {
-                let globalDistractors = allSelectedItemsArray.filter(item => !options.includes(item));
-                globalDistractors = shuffle(globalDistractors);
-                while (options.length < 4 && globalDistractors.length > 0) {
-                    options.push(globalDistractors.pop());
-                }
+                let globalDistractors = shuffle(allSelectedItemsArray.filter(item => !options.includes(item)));
+                while (options.length < 4 && globalDistractors.length > 0) options.push(globalDistractors.pop());
             }
             return shuffle(options); 
         }
 
-        // 5. Initialize the Game
         function initializeGame() {
             const checkboxes = document.querySelectorAll('.unit-cb:checked');
             let allSelectedItems = [];
@@ -282,94 +273,166 @@
 
             checkboxes.forEach(cb => {
                 const [grade, unit] = cb.value.split('|');
-                const unitItems = vocabularyData[grade][unit];
-                selectedUnitsData.push(unitItems);
-                allSelectedItems = allSelectedItems.concat(unitItems);
+                selectedUnitsData.push(vocabularyData[grade][unit]);
+                allSelectedItems = allSelectedItems.concat(vocabularyData[grade][unit]);
             });
 
-            if (allSelectedItems.length < 4) {
-                alert("Please select more units! You need at least 4 words total.");
-                return;
-            }
+            if (allSelectedItems.length < 4) { alert("Please select more units!"); return; }
 
-            // Verify Matrix Selection
-            const activePrompts = document.querySelectorAll('.prompt-cb:checked');
-            const activeOptions = document.querySelectorAll('.option-cb:checked');
-            if (activePrompts.length === 0 || activeOptions.length === 0) {
-                alert("Please select at least one Prompt (Main Screen) and one Option (Tablets).");
-                return;
-            }
+            let basePool = [];
+            selectedUnitsData.forEach(unitArray => unitArray.forEach(targetItem => basePool.push({ target: targetItem, options: generateOptions(targetItem, unitArray, allSelectedItems) })));
 
+            const numRequested = parseInt(document.getElementById("question-count").value);
             questionQueue = [];
-            selectedUnitsData.forEach(unitArray => {
-                unitArray.forEach(targetItem => {
-                    const options = generateOptions(targetItem, unitArray, allSelectedItems);
-                    questionQueue.push({ target: targetItem, options: options });
-                });
-            });
+            if (numRequested === -1) questionQueue = shuffle(basePool);
+            else {
+                while (questionQueue.length < numRequested) questionQueue = questionQueue.concat(shuffle([...basePool]));
+                questionQueue = questionQueue.slice(0, numRequested); 
+            }
 
-            questionQueue = shuffle(questionQueue);
             selectedTimeLimit = parseInt(document.getElementById("time-limit").value);
-            
             roomCode = Math.floor(1000 + Math.random() * 9000).toString(); 
+            
             document.getElementById("setup-screen").style.display = "none";
             document.getElementById("game-screen").style.display = "block";
             document.getElementById("room-code-display").innerText = roomCode;
 
-            db.ref('trivia/room').set({
-                roomCode: roomCode,
-                status: "LOBBY"
-            });
+            db.ref('trivia/room').set({ roomCode: roomCode, status: "LOBBY" });
+            db.ref('trivia/players').remove(); 
             db.ref('trivia/gameState').remove(); 
+
+            db.ref('trivia/players').on('value', (snapshot) => {
+                livePlayersData = snapshot.val() || {};
+                if(gamePhase === "LOBBY") {
+                    const playerNames = Object.values(livePlayersData).map(p => p.name);
+                    document.getElementById('student-count').innerText = playerNames.length;
+                    const playerListDiv = document.getElementById('player-list');
+                    playerListDiv.innerHTML = ''; 
+                    playerNames.forEach(name => {
+                        const nameTag = document.createElement('div');
+                        nameTag.className = 'player-tag';
+                        nameTag.innerText = name;
+                        playerListDiv.appendChild(nameTag);
+                    });
+                }
+            });
         }
 
-        // 6. Run the Game (The Dispatcher)
-        function sendNextQuestion() {
+        function handleGameFlow() {
+            if (gamePhase === "LOBBY" || gamePhase === "LEADERBOARD") startNextQuestion();
+            else if (gamePhase === "QUESTION") revealAnswer();
+            else if (gamePhase === "REVEAL") showLeaderboard();
+        }
+
+        function startNextQuestion() {
             if (currentQuestionIndex >= questionQueue.length) {
-                document.getElementById("current-question-display").innerText = "Game Over!";
+                showLeaderboard(true); 
+                document.getElementById("main-action-btn").style.display = "none";
                 db.ref('trivia/gameState').set({ status: "GAME_OVER" });
                 return;
             }
 
+            gamePhase = "QUESTION";
+            document.getElementById('lobby-ui').style.display = "none"; 
+            document.getElementById('timer-bar-container').style.display = "block";
+            db.ref('trivia/gameState/responses').remove();
+
             const q = questionQueue[currentQuestionIndex];
-            
-            // Read the Matrix rules
             const activePrompts = Array.from(document.querySelectorAll('.prompt-cb:checked')).map(cb => cb.value);
             const activeOptions = Array.from(document.querySelectorAll('.option-cb:checked')).map(cb => cb.value);
 
-            // Generate Big Screen Display dynamically
             let displayHTML = "";
-            if (activePrompts.includes('img') && q.target.img_path) {
-                displayHTML += `<img src="${q.target.img_path}" style="max-height:30vh; border-radius:10px; box-shadow:0 4px 8px rgba(0,0,0,0.2);">`;
-            }
-            if (activePrompts.includes('en') && q.target.en) {
-                displayHTML += `<div style="font-size: 1.5em; color: #333; line-height: 1;">${q.target.en.toUpperCase()}</div>`;
-            }
-            if (activePrompts.includes('en_katakana') && q.target.en_katakana) {
-                displayHTML += `<div style="font-size: 0.8em; color: #8e44ad; line-height: 1;">${q.target.en_katakana}</div>`;
-            }
-            if (activePrompts.includes('ja_kanji') && q.target.ja_kanji) {
-                displayHTML += `<div style="font-size: 0.8em; color: #555; line-height: 1;">${q.target.ja_kanji}</div>`;
-            }
-            if (activePrompts.includes('ja_hiragana') && q.target.ja_hiragana) {
-                displayHTML += `<div style="font-size: 0.8em; color: #555; line-height: 1;">${q.target.ja_hiragana}</div>`;
-            }
+            if (activePrompts.includes('img') && q.target.img_path) displayHTML += `<img src="${q.target.img_path}" onerror="this.style.display='none'" style="max-height:30vh; border-radius:10px; box-shadow:0 4px 8px rgba(0,0,0,0.2);">`;
+            if (activePrompts.includes('en') && q.target.en) displayHTML += `<div style="font-size: 1.5em; color: #333; line-height: 1;">${q.target.en.toUpperCase()}</div>`;
+            if (activePrompts.includes('en_katakana') && q.target.en_katakana) displayHTML += `<div style="font-size: 0.8em; color: #8e44ad; line-height: 1;">${q.target.en_katakana}</div>`;
+            if (activePrompts.includes('ja_kanji') && q.target.ja_kanji) displayHTML += `<div style="font-size: 0.8em; color: #555; line-height: 1;">${q.target.ja_kanji}</div>`;
+            if (activePrompts.includes('ja_hiragana') && q.target.ja_hiragana) displayHTML += `<div style="font-size: 0.8em; color: #555; line-height: 1;">${q.target.ja_hiragana}</div>`;
 
             document.getElementById("current-question-display").innerHTML = displayHTML;
-            document.getElementById("next-btn").innerText = "Next Question";
+            document.getElementById("main-action-btn").innerText = "Reveal Answer";
+            document.getElementById("main-action-btn").style.backgroundColor = "#ffc107"; 
+            document.getElementById("main-action-btn").style.color = "#333";
 
-            // --- FIREBASE: SEND QUESTION AND RULES TO TABLETS ---
             db.ref('trivia/gameState').set({
                 status: "LIVE",
                 questionNumber: currentQuestionIndex,
                 timeLimit: selectedTimeLimit,
-                displayRules: activeOptions, // Tells the tablets what to print on the buttons
+                displayRules: activeOptions, 
                 options: q.options,
                 targetId: q.target.id,
                 startTime: firebase.database.ServerValue.TIMESTAMP
             });
 
+            startVisualTimer(selectedTimeLimit);
+        }
+
+        function startVisualTimer(duration) {
+            clearInterval(countdownInterval);
+            const timerBar = document.getElementById('timer-bar');
+            timerBar.style.width = "100%";
+            timerBar.style.backgroundColor = "#28a745"; 
+            
+            let timeLeft = duration;
+            countdownInterval = setInterval(() => {
+                timeLeft -= 100;
+                const percentage = (timeLeft / duration) * 100;
+                timerBar.style.width = percentage + "%";
+                if (percentage < 30) timerBar.style.backgroundColor = "#dc3545"; 
+                else if (percentage < 60) timerBar.style.backgroundColor = "#ffc107"; 
+                if (timeLeft <= 0) revealAnswer();
+            }, 100);
+        }
+
+        function revealAnswer() {
+            if (gamePhase === "REVEAL") return; 
+            gamePhase = "REVEAL";
+            clearInterval(countdownInterval);
+            document.getElementById('timer-bar').style.width = "0%";
+            const q = questionQueue[currentQuestionIndex];
+            
+            db.ref('trivia/gameState/responses').once('value').then(snapshot => {
+                const responses = snapshot.val() || {};
+                const updates = {};
+                for (const pId in responses) {
+                    if (responses[pId].answer === q.target.id) {
+                        let bonus = Math.floor(500 * (1 - (responses[pId].timeTaken / selectedTimeLimit)));
+                        updates[`trivia/players/${pId}/score`] = (livePlayersData[pId]?.score || 0) + 500 + Math.max(0, bonus);
+                    }
+                }
+                if (Object.keys(updates).length > 0) db.ref().update(updates);
+            });
+
+            let revealHTML = `
+                <div style="margin-top: 20px; padding: 20px 40px; background: #d4edda; border: 3px solid #28a745; border-radius: 15px; color: #155724; animation: popIn 0.3s ease-out;">
+                    <h3 style="margin:0; font-size: 0.6em; text-transform: uppercase;">Correct Answer:</h3>
+                    <div style="font-size: 1.2em; font-weight: bold; margin-top: 10px;">${q.target.en.toUpperCase()}</div>
+                    <div style="font-size: 0.6em; color:#555;">${q.target.ja_hiragana} / ${q.target.en_katakana}</div>
+                </div>`;
+            document.getElementById("current-question-display").innerHTML += revealHTML;
+            document.getElementById("main-action-btn").innerText = "Show Leaderboard";
+            document.getElementById("main-action-btn").style.backgroundColor = "#17a2b8"; 
+            document.getElementById("main-action-btn").style.color = "white";
+
+            db.ref('trivia/gameState').update({ status: "REVEAL", correctAnswer: q.target.id });
             currentQuestionIndex++;
+        }
+
+        function showLeaderboard(isFinal = false) {
+            gamePhase = "LEADERBOARD";
+            document.getElementById('timer-bar-container').style.display = "none";
+            const players = Object.values(livePlayersData).sort((a, b) => (b.score || 0) - (a.score || 0)).slice(0, 5);
+
+            let html = `<h2 style="font-size: 2em; margin-bottom: 20px;">${isFinal ? '🏆 Final Scores 🏆' : 'Top 5 Leaderboard'}</h2>`;
+            players.forEach((p, i) => {
+                let rank = i === 0 ? 'rank-1' : (i === 1 ? 'rank-2' : (i === 2 ? 'rank-3' : ''));
+                html += `<div class="leaderboard-row ${rank}"><span>#${i+1} ${p.name}</span><span class="score-val">${p.score || 0} pts</span></div>`;
+            });
+
+            document.getElementById("current-question-display").innerHTML = html;
+            if (!isFinal) {
+                document.getElementById("main-action-btn").innerText = "Next Question";
+                document.getElementById("main-action-btn").style.backgroundColor = "#28a745"; 
+            }
         }
     </script>
 </body>

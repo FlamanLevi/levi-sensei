@@ -52,6 +52,7 @@
 
     <div id="setup-screen" class="panel">
         <h1>Game Setup (Host)</h1>
+        
         <h2>1. Select Units</h2>
         <div class="master-controls">
             <a href="#" onclick="toggleAll(true); return false;">Check All</a>
@@ -60,37 +61,46 @@
         <div id="unit-selector"></div>
 
         <h2>2. Game Settings</h2>
-        <label>Questions: </label>
-        <select id="question-count">
-            <option value="5">5</option><option value="10" selected>10</option>
-            <option value="15">15</option><option value="20">20</option>
-            <option value="-1">All Selected</option>
-        </select>
-        <span id="pool-size-display" class="live-counter">Words in pool: 0</span>
         
-        <br><br>
-        <label>Time: </label>
-        <select id="time-limit">
-            <option value="5000">5s</option><option value="10000">10s</option>
-            <option value="15000" selected>15s</option><option value="20000">20s</option>
-        </select>
+        <div style="margin-bottom: 15px;">
+            <label style="font-weight: bold;">Number of Questions: </label>
+            <select id="question-count">
+                <option value="5">5 Questions (Sprint)</option>
+                <option value="10" selected>10 Questions (Standard)</option>
+                <option value="15">15 Questions</option>
+                <option value="20">20 Questions</option>
+                <option value="30">30 Questions</option>
+                <option value="-1">All Selected Words (Endurance)</option>
+            </select>
+            <span id="pool-size-display" class="live-counter">Words in pool: 0</span>
+        </div>
+
+        <div style="margin-bottom: 25px;">
+            <label style="font-weight: bold;">Time per question: </label>
+            <select id="time-limit">
+                <option value="5000">5 Seconds (Extra Hard)</option>
+                <option value="10000">10 Seconds (Hard)</option>
+                <option value="15000" selected>15 Seconds (Medium)</option>
+                <option value="20000">20 Seconds (Easy)</option>
+            </select>
+        </div>
 
         <div class="matrix-container">
             <div class="matrix-column">
-                <h3>Main Screen (Prompt)</h3>
+                <h3 style="margin-top:0;">Main Screen (Prompt)</h3>
                 <label class="checkbox-container"><input type="checkbox" class="mode-cb prompt-cb" value="img"> Image</label>
-                <label class="checkbox-container"><input type="checkbox" class="mode-cb prompt-cb" value="en" checked> English</label>
-                <label class="checkbox-container"><input type="checkbox" class="mode-cb prompt-cb" value="ja_hiragana"> Hiragana</label>
-                <label class="checkbox-container"><input type="checkbox" class="mode-cb prompt-cb" value="en_katakana"> Katakana</label>
-                <label class="checkbox-container"><input type="checkbox" class="mode-cb prompt-cb" value="ja_kanji"> Kanji</label>
+                <label class="checkbox-container"><input type="checkbox" class="mode-cb prompt-cb" value="en" checked> English Spelling</label>
+                <label class="checkbox-container"><input type="checkbox" class="mode-cb prompt-cb" value="ja_hiragana"> Japanese (Hiragana)</label>
+                <label class="checkbox-container"><input type="checkbox" class="mode-cb prompt-cb" value="en_katakana"> English Pronunciation (Katakana)</label>
+                <label class="checkbox-container"><input type="checkbox" class="mode-cb prompt-cb" value="ja_kanji"> Japanese (Kanji)</label>
             </div>
             <div class="matrix-column">
-                <h3>Tablets (Options)</h3>
+                <h3 style="margin-top:0;">Tablets (Options)</h3>
                 <label class="checkbox-container"><input type="checkbox" class="mode-cb option-cb" value="img"> Image</label>
-                <label class="checkbox-container"><input type="checkbox" class="mode-cb option-cb" value="en"> English</label>
-                <label class="checkbox-container"><input type="checkbox" class="mode-cb option-cb" value="ja_hiragana" checked> Hiragana</label>
-                <label class="checkbox-container"><input type="checkbox" class="mode-cb option-cb" value="en_katakana"> Katakana</label>
-                <label class="checkbox-container"><input type="checkbox" class="mode-cb option-cb" value="ja_kanji"> Kanji</label>
+                <label class="checkbox-container"><input type="checkbox" class="mode-cb option-cb" value="en"> English Spelling</label>
+                <label class="checkbox-container"><input type="checkbox" class="mode-cb option-cb" value="ja_hiragana" checked> Japanese (Hiragana)</label>
+                <label class="checkbox-container"><input type="checkbox" class="mode-cb option-cb" value="en_katakana"> English Pronunciation (Katakana)</label>
+                <label class="checkbox-container"><input type="checkbox" class="mode-cb option-cb" value="ja_kanji"> Japanese (Kanji)</label>
             </div>
         </div>
         <button class="control-btn" onclick="initializeGame()">Create Room</button>
@@ -99,7 +109,7 @@
     <div id="game-screen" class="panel">
         <div id="lobby-ui">
             <h2>Join on Tablets: <span id="room-code-display"></span></h2>
-            <p>Connected: <span id="student-count">0</span></p>
+            <p>Students Connected: <span id="student-count">0</span></p>
             <div id="player-list"></div>
         </div>
         <div id="timer-bar-container"><div id="timer-bar"></div></div>
@@ -137,8 +147,11 @@
             for (const grade in data) {
                 if (!gradeConfig[grade]) continue;
                 const colorId = gradeConfig[grade].colorClass;
+
+                // Restored BOLD labels
                 const gradeLabel = document.createElement('label');
                 gradeLabel.className = `checkbox-container color-${colorId}`;
+                gradeLabel.style.fontWeight = "bold";
                 gradeLabel.innerHTML = `<input type="checkbox" class="grade-checkbox" data-grade="${grade}"> ${gradeConfig[grade].name}`;
                 gradeLabel.querySelector('input').onchange = toggleDrawer;
                 container.appendChild(gradeLabel);
@@ -147,7 +160,7 @@
                 unitSection.id = `units-${grade}`;
                 unitSection.className = `unit-section color-${colorId}`;
                 for (const unit in data[grade]) {
-                    unitSection.innerHTML += `<label class="checkbox-container"><input type="checkbox" class="unit-cb" value="${grade}|${unit}" onchange="updatePoolCounter()"> ${unit}</label>`;
+                    unitSection.innerHTML += `<label class="checkbox-container" style="color:#333;"><input type="checkbox" class="unit-cb" value="${grade}|${unit}" onchange="updatePoolCounter()"> ${unit}</label>`;
                 }
                 container.appendChild(unitSection);
             }
@@ -173,12 +186,17 @@
             updatePoolCounter();
         }
 
-        // Matrix Interlock
+        // Restored Matrix Interlock Logic
         document.querySelectorAll('.mode-cb').forEach(cb => {
             cb.onchange = (e) => {
+                const val = e.target.value;
                 const isPrompt = e.target.classList.contains('prompt-cb');
-                const opposing = document.querySelector(isPrompt ? `.option-cb[value="${e.target.value}"]` : `.prompt-cb[value="${e.target.value}"]`);
-                if (opposing) { opposing.disabled = e.target.checked; opposing.parentElement.style.opacity = e.target.checked ? '0.5' : '1'; }
+                const opposing = document.querySelector(isPrompt ? `.option-cb[value="${val}"]` : `.prompt-cb[value="${val}"]`);
+                if (opposing) { 
+                    opposing.disabled = e.target.checked; 
+                    opposing.parentElement.style.opacity = e.target.checked ? '0.5' : '1'; 
+                    if(e.target.checked) opposing.checked = false;
+                }
             };
         });
 
@@ -245,6 +263,8 @@
                 if (prompts.includes('img') && q.target.img_path) html += `<img src="${q.target.img_path}" style="max-height:30vh; border-radius:10px;">`;
                 if (prompts.includes('en')) html += `<div>${q.target.en.toUpperCase()}</div>`;
                 if (prompts.includes('ja_hiragana')) html += `<div style="font-size:0.5em;">${q.target.ja_hiragana}</div>`;
+                if (prompts.includes('en_katakana')) html += `<div style="font-size:0.5em; color:#8e44ad;">${q.target.en_katakana}</div>`;
+                if (prompts.includes('ja_kanji')) html += `<div style="font-size:0.5em; color:#555;">${q.target.ja_kanji}</div>`;
 
                 document.getElementById("current-question-display").innerHTML = html;
                 document.getElementById("main-action-btn").innerText = "Reveal Answer";
@@ -285,7 +305,7 @@
                 db.ref().update(updates);
             });
 
-            document.getElementById("current-question-display").innerHTML += `<div style="color:green; font-size:0.5em;">Correct: ${q.target.ja_hiragana}</div>`;
+            document.getElementById("current-question-display").innerHTML += `<div style="color:green; font-size:0.5em; margin-top:20px;">Correct Answer: ${q.target.en} (${q.target.ja_hiragana})</div>`;
             document.getElementById("main-action-btn").innerText = "Show Leaderboard";
             db.ref('trivia/gameState').update({ status: "REVEAL", correctAnswer: q.target.id });
             currentQuestionIndex++;
@@ -295,7 +315,7 @@
             gamePhase = "LEADERBOARD";
             document.getElementById('timer-bar-container').style.display = "none";
             const top = Object.values(livePlayersData).sort((a,b) => b.score - a.score).slice(0, 5);
-            document.getElementById("current-question-display").innerHTML = `<h2>${final?'Final':'Top 5'}</h2>` + top.map((p,i) => `<div class="leaderboard-row rank-${i+1}"><span>#${i+1} ${p.name}</span><span>${p.score}</span></div>`).join('');
+            document.getElementById("current-question-display").innerHTML = `<h2>${final?'Final Scores':'Top 5 Leaderboard'}</h2>` + top.map((p,i) => `<div class="leaderboard-row rank-${i+1}"><span>#${i+1} ${p.name}</span><span>${p.score} pts</span></div>`).join('');
             if (!final) document.getElementById("main-action-btn").innerText = "Next Question";
         }
     </script>

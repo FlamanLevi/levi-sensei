@@ -39,10 +39,17 @@
         #player-list { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin: 20px 0; padding: 20px; background: #f8f9fa; border-radius: 10px; min-height: 50px; }
         .player-tag { background: #e0f7fa; color: #006064; padding: 10px 20px; border-radius: 25px; font-weight: bold; font-size: 1.2em; }
 
+        /* Leaderboard & Awards Styling */
         .leaderboard-row { display: flex; justify-content: space-between; align-items: center; background: #fff; padding: 15px 30px; margin: 0 auto 10px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); font-size: 1.5em; width: 80%; max-width: 600px; }
         .rank-1 { background: #fff3cd; border: 2px solid #ffeeba; } 
         .rank-2 { background: #e2e3e5; border: 2px solid #d6d8db; } 
         .rank-3 { background: #f8d7da; border: 2px solid #f5c6cb; } 
+
+        .award-container { display: flex; gap: 20px; justify-content: center; margin-top: 20px; flex-wrap: wrap; }
+        .award-card { background: #fff; padding: 20px; border-radius: 15px; box-shadow: 0 8px 15px rgba(0,0,0,0.1); flex: 1; min-width: 220px; max-width: 300px; border-top: 6px solid #007bff; }
+        .award-title { font-weight: bold; color: #7f8c8d; font-size: 0.4em; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; }
+        .award-winner { font-size: 0.8em; font-weight: bold; color: #2c3e50; }
+        .award-stat { color: #e67e22; font-weight: bold; margin-top: 10px; font-size: 0.5em;}
 
         #timer-bar-container { display: none; width: 80%; height: 25px; background: #e9ecef; border-radius: 15px; margin: 0 auto 20px; overflow: hidden; }
         #timer-bar { width: 100%; height: 100%; background: #28a745; transition: width 0.1s linear, background-color 0.3s; }
@@ -219,8 +226,15 @@
                 });
             });
 
+            let shuffledPool = shuffle([...basePool]);
             const count = parseInt(document.getElementById("question-count").value);
-            questionQueue = (count === -1) ? shuffle(basePool) : Array.from({length: count}, (_, i) => basePool[i % basePool.length]).sort(() => 0.5 - Math.random());
+            let targetCount = (count === -1) ? shuffledPool.length : count;
+            
+            questionQueue = [];
+            for (let i = 0; i < targetCount; i++) {
+                questionQueue.push(shuffledPool[i % shuffledPool.length]);
+            }
+            questionQueue = shuffle(questionQueue);
 
             selectedTimeLimit = parseInt(document.getElementById("time-limit").value);
             roomCode = Math.floor(1000 + Math.random() * 9000).toString();
@@ -228,7 +242,6 @@
             document.getElementById("game-screen").style.display = "block";
             document.getElementById("room-code-display").innerText = roomCode;
 
-            // PRE-GAME WIPE: Ensure the room is sterile before creating it.
             db.ref('trivia').remove().then(() => {
                 db.ref('trivia/room').set({ roomCode, status: "LOBBY" });
                 db.ref('trivia/players').on('value', snap => {
@@ -293,17 +306,35 @@
             db.ref('trivia/gameState/responses').once('value', snap => {
                 const res = snap.val() || {}, updates = {};
                 for (const id in res) {
+                    // Ensure player data has tracking metrics initialized
+                    let pData = livePlayersData[id] || { score: 0, currentStreak: 0, maxStreak: 0, fastestTime: 999999 };
+                    pData.currentStreak = pData.currentStreak || 0;
+                    pData.maxStreak = pData.maxStreak || 0;
+                    pData.fastestTime = pData.fastestTime || 999999;
+
                     if (res[id].answer === q.target.id) {
                         let pts = 500 + Math.max(0, Math.floor(500 * (1 - (res[id].timeTaken/selectedTimeLimit))));
-                        updates[`trivia/players/${id}/score`] = (livePlayersData[id]?.score || 0) + pts;
+                        pData.score = (pData.score || 0) + pts;
+                        pData.currentStreak += 1;
+                        
+                        if (pData.currentStreak > pData.maxStreak) pData.maxStreak = pData.currentStreak;
+                        if (res[id].timeTaken < pData.fastestTime) pData.fastestTime = res[id].timeTaken;
+                    } else {
+                        pData.currentStreak = 0; // Break the streak
                     }
+                    
+                    updates[`trivia/players/${id}/score`] = pData.score;
+                    updates[`trivia/players/${id}/maxStreak`] = pData.maxStreak;
+                    updates[`trivia/players/${id}/currentStreak`] = pData.currentStreak;
+                    updates[`trivia/players/${id}/fastestTime`] = pData.fastestTime;
+                    
+                    livePlayersData[id] = pData; // Update local cache immediately
                 }
                 db.ref().update(updates);
             });
 
             document.getElementById("current-question-display").innerHTML += `<div style="color:green; font-size:0.5em; margin-top:20px;">Correct Answer: ${q.target.en} (${q.target.ja_hiragana})</div>`;
             
-            // Check if this is the final question to change the button text
             let isFinal = (currentQuestionIndex + 1 >= questionQueue.length);
             document.getElementById("main-action-btn").innerText = isFinal ? "Show Final Scores" : "Show Leaderboard";
             
@@ -314,19 +345,56 @@
         function showLeaderboard() {
             gamePhase = "LEADERBOARD";
             document.getElementById('timer-bar-container').style.display = "none";
-            const top = Object.values(livePlayersData).sort((a,b) => b.score - a.score).slice(0, 5);
             
-            // Determine if the game is over based on the question index
             let isFinal = (currentQuestionIndex >= questionQueue.length);
+            const players = Object.values(livePlayersData);
             
-            document.getElementById("current-question-display").innerHTML = `<h2>${isFinal ? 'Final Scores' : 'Top 5 Leaderboard'}</h2>` + top.map((p,i) => `<div class="leaderboard-row rank-${i+1}"><span>#${i+1} ${p.name}</span><span>${p.score} pts</span></div>`).join('');
+            let html = `<h2>${isFinal ? '🏆 Final Awards Ceremony 🏆' : 'Top 5 Leaderboard'}</h2>`;
+            
+            if (!isFinal) {
+                // Interim Leaderboard: Just show Top 5 by Score
+                const top = [...players].sort((a,b) => (b.score||0) - (a.score||0)).slice(0, 5);
+                html += top.map((p,i) => `<div class="leaderboard-row rank-${i+1}"><span>#${i+1} ${p.name}</span><span>${p.score || 0} pts</span></div>`).join('');
+            } else {
+                // Final Leaderboard: Show Podium + Special Awards
+                const podium = [...players].sort((a,b) => (b.score||0) - (a.score||0)).slice(0, 3);
+                
+                html += `<div style="margin-bottom: 30px;">`;
+                html += podium.map((p,i) => `<div class="leaderboard-row rank-${i+1}"><span>${i===0?'🥇':i===1?'🥈':'🥉'} ${p.name}</span><span>${p.score || 0} pts</span></div>`).join('');
+                html += `</div>`;
+                
+                // Calculate Special Awards
+                const topStreakPlayer = [...players].sort((a,b) => (b.maxStreak||0) - (a.maxStreak||0))[0];
+                const fastestPlayer = [...players].filter(p => p.fastestTime && p.fastestTime < 999999).sort((a,b) => a.fastestTime - b.fastestTime)[0];
+
+                html += `<div class="award-container">`;
+                
+                if (topStreakPlayer && topStreakPlayer.maxStreak > 1) {
+                    html += `<div class="award-card" style="border-top-color: #ff9800;">
+                                <div class="award-title">Unstoppable Streak</div>
+                                <div class="award-winner">🔥 ${topStreakPlayer.name}</div>
+                                <div class="award-stat">${topStreakPlayer.maxStreak} in a row!</div>
+                             </div>`;
+                }
+                
+                if (fastestPlayer) {
+                    html += `<div class="award-card" style="border-top-color: #9c27b0;">
+                                <div class="award-title">Quickest Thinker</div>
+                                <div class="award-winner">⚡ ${fastestPlayer.name}</div>
+                                <div class="award-stat">${(fastestPlayer.fastestTime / 1000).toFixed(2)} seconds</div>
+                             </div>`;
+                }
+                
+                html += `</div>`;
+            }
+            
+            document.getElementById("current-question-display").innerHTML = html;
             
             const btn = document.getElementById("main-action-btn");
             if (isFinal) {
-                // Instantly turn the button into the End Game/Nuclear Reset
                 db.ref('trivia/gameState').update({ status: "GAME_OVER" });
                 btn.innerText = "End Game & Eject Players";
-                btn.style.backgroundColor = "#dc3545"; // Warning Red
+                btn.style.backgroundColor = "#dc3545"; 
                 btn.onclick = function() {
                     btn.innerText = "Closing Room...";
                     db.ref('trivia/gameState').set({ status: "CLOSED" });
@@ -338,7 +406,7 @@
                 };
             } else {
                 btn.innerText = "Next Question";
-                btn.onclick = handleGameFlow; // Ensure standard routing for ongoing games
+                btn.onclick = handleGameFlow; 
             }
         }
     </script>

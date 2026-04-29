@@ -23,7 +23,7 @@
 
         .answer-btn { border: none; border-radius: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; font-weight: bold; cursor: pointer; transition: background-color 0.2s; padding: 10px; }
         
-        /* The Neutral Selection State - Using !important to win over color classes */
+        /* The Neutral Selection State */
         .answer-btn:disabled { background-color: #6c757d !important; opacity: 1 !important; color: #adb5bd !important; cursor: default; }
         
         .btn-red { background-color: #e21b3c; }
@@ -135,9 +135,8 @@
                         const btn = document.getElementById(`btn-${i}`);
                         const container = document.getElementById(`txt-${i}`);
                         btn.disabled = false;
-                        container.innerHTML = ""; // Clear old text
+                        container.innerHTML = "";
                         
-                        // Line Break Logic: Create a div for each rule
                         state.displayRules.forEach(rule => {
                             if (currentOptions[i][rule]) {
                                 const line = document.createElement('div');
@@ -147,7 +146,6 @@
                             }
                         });
 
-                        // Fallback
                         if (container.innerHTML === "") {
                             container.innerHTML = `<div class="btn-text-line">${currentOptions[i].ja_hiragana || "???"}</div>`;
                         }
@@ -164,7 +162,6 @@
         }
 
         function submitAnswer(idx) {
-            // Lock and Dim all buttons
             for (let i = 0; i < 4; i++) {
                 document.getElementById(`btn-${i}`).disabled = true;
             }
@@ -205,7 +202,6 @@
                     streakBar.style.display = "none";
                 }
                 
-                // Rank/Near Miss Check
                 db.ref('trivia/players').once('value').then(pSnap => {
                     const playersData = pSnap.val() || {};
                     const playersArray = Object.keys(playersData).map(id => ({
@@ -231,4 +227,3 @@
     </script>
 </body>
 </html>
-```[cite: 1]

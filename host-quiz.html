@@ -46,9 +46,9 @@
         .rank-3 { background: #f8d7da; border: 2px solid #f5c6cb; } 
 
         .award-container { display: flex; gap: 20px; justify-content: center; margin-top: 20px; flex-wrap: wrap; }
-        .award-card { background: #fff; padding: 20px; border-radius: 15px; box-shadow: 0 8px 15px rgba(0,0,0,0.1); flex: 1; min-width: 220px; max-width: 300px; border-top: 6px solid #007bff; }
+        .award-card { background: #fff; padding: 20px; border-radius: 15px; box-shadow: 0 8px 15px rgba(0,0,0,0.1); flex: 1; min-width: 220px; max-width: 300px; border-top: 6px solid #007bff; display: flex; flex-direction: column; justify-content: center;}
         .award-title { font-weight: bold; color: #7f8c8d; font-size: 0.4em; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; }
-        .award-winner { font-size: 0.8em; font-weight: bold; color: #2c3e50; }
+        .award-winner { font-size: 0.8em; font-weight: bold; color: #2c3e50; line-height: 1.3; margin: 5px 0; }
         .award-stat { color: #e67e22; font-weight: bold; margin-top: 10px; font-size: 0.5em;}
 
         #timer-bar-container { display: none; width: 80%; height: 25px; background: #e9ecef; border-radius: 15px; margin: 0 auto 20px; overflow: hidden; }
@@ -306,7 +306,6 @@
             db.ref('trivia/gameState/responses').once('value', snap => {
                 const res = snap.val() || {}, updates = {};
                 for (const id in res) {
-                    // Ensure player data has tracking metrics initialized
                     let pData = livePlayersData[id] || { score: 0, currentStreak: 0, maxStreak: 0, fastestTime: 999999 };
                     pData.currentStreak = pData.currentStreak || 0;
                     pData.maxStreak = pData.maxStreak || 0;
@@ -320,7 +319,7 @@
                         if (pData.currentStreak > pData.maxStreak) pData.maxStreak = pData.currentStreak;
                         if (res[id].timeTaken < pData.fastestTime) pData.fastestTime = res[id].timeTaken;
                     } else {
-                        pData.currentStreak = 0; // Break the streak
+                        pData.currentStreak = 0;
                     }
                     
                     updates[`trivia/players/${id}/score`] = pData.score;
@@ -328,7 +327,7 @@
                     updates[`trivia/players/${id}/currentStreak`] = pData.currentStreak;
                     updates[`trivia/players/${id}/fastestTime`] = pData.fastestTime;
                     
-                    livePlayersData[id] = pData; // Update local cache immediately
+                    livePlayersData[id] = pData;
                 }
                 db.ref().update(updates);
             });
@@ -342,6 +341,15 @@
             currentQuestionIndex++;
         }
 
+        // Helper function to format ties beautifully
+        function formatNamesList(winners) {
+            if (winners.length === 0) return "";
+            if (winners.length === 1) return winners[0].name;
+            if (winners.length === 2) return `${winners[0].name} & ${winners[1].name}`;
+            if (winners.length === 3) return `${winners[0].name}, ${winners[1].name} & ${winners[2].name}`;
+            return `${winners[0].name}, ${winners[1].name} & ${winners.length - 2} others`;
+        }
+
         function showLeaderboard() {
             gamePhase = "LEADERBOARD";
             document.getElementById('timer-bar-container').style.display = "none";
@@ -352,36 +360,38 @@
             let html = `<h2>${isFinal ? '🏆 Final Awards Ceremony 🏆' : 'Top 5 Leaderboard'}</h2>`;
             
             if (!isFinal) {
-                // Interim Leaderboard: Just show Top 5 by Score
                 const top = [...players].sort((a,b) => (b.score||0) - (a.score||0)).slice(0, 5);
                 html += top.map((p,i) => `<div class="leaderboard-row rank-${i+1}"><span>#${i+1} ${p.name}</span><span>${p.score || 0} pts</span></div>`).join('');
             } else {
-                // Final Leaderboard: Show Podium + Special Awards
                 const podium = [...players].sort((a,b) => (b.score||0) - (a.score||0)).slice(0, 3);
                 
                 html += `<div style="margin-bottom: 30px;">`;
                 html += podium.map((p,i) => `<div class="leaderboard-row rank-${i+1}"><span>${i===0?'🥇':i===1?'🥈':'🥉'} ${p.name}</span><span>${p.score || 0} pts</span></div>`).join('');
                 html += `</div>`;
                 
-                // Calculate Special Awards
-                const topStreakPlayer = [...players].sort((a,b) => (b.maxStreak||0) - (a.maxStreak||0))[0];
-                const fastestPlayer = [...players].filter(p => p.fastestTime && p.fastestTime < 999999).sort((a,b) => a.fastestTime - b.fastestTime)[0];
+                // Tie-breaker calculation logic
+                const maxStreakVal = players.length > 0 ? Math.max(...players.map(p => p.maxStreak || 0)) : 0;
+                const streakWinners = players.filter(p => (p.maxStreak || 0) === maxStreakVal && maxStreakVal > 1);
+
+                const validTimes = players.map(p => p.fastestTime || 999999).filter(t => t < 999999);
+                const bestTimeVal = validTimes.length > 0 ? Math.min(...validTimes) : null;
+                const fastestWinners = bestTimeVal ? players.filter(p => p.fastestTime === bestTimeVal) : [];
 
                 html += `<div class="award-container">`;
                 
-                if (topStreakPlayer && topStreakPlayer.maxStreak > 1) {
+                if (streakWinners.length > 0) {
                     html += `<div class="award-card" style="border-top-color: #ff9800;">
                                 <div class="award-title">Unstoppable Streak</div>
-                                <div class="award-winner">🔥 ${topStreakPlayer.name}</div>
-                                <div class="award-stat">${topStreakPlayer.maxStreak} in a row!</div>
+                                <div class="award-winner">🔥 ${formatNamesList(streakWinners)}</div>
+                                <div class="award-stat">${maxStreakVal} in a row!</div>
                              </div>`;
                 }
                 
-                if (fastestPlayer) {
+                if (fastestWinners.length > 0) {
                     html += `<div class="award-card" style="border-top-color: #9c27b0;">
                                 <div class="award-title">Quickest Thinker</div>
-                                <div class="award-winner">⚡ ${fastestPlayer.name}</div>
-                                <div class="award-stat">${(fastestPlayer.fastestTime / 1000).toFixed(2)} seconds</div>
+                                <div class="award-winner">⚡ ${formatNamesList(fastestWinners)}</div>
+                                <div class="award-stat">${(bestTimeVal / 1000).toFixed(2)} seconds</div>
                              </div>`;
                 }
                 

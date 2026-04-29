@@ -121,6 +121,19 @@
             cursor: pointer;
         }
 
+        /* The Display Toggles specific styling */
+        .display-toggles {
+            background: #f8f9fa;
+            padding: 1.5vh;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .display-toggles .checkbox-container {
+            font-size: 2vh;
+            margin-bottom: 0.5vh;
+        }
+
         .unit-section {
             margin-left: 2vw;
             margin-top: 1vh;
@@ -156,6 +169,7 @@
             align-items: center;
             gap: 1.5vw;
             border-left: 6px solid #ccc;
+            min-height: 100px; /* Prevents cards from collapsing completely if text is hidden */
         }
 
         .word-thumb {
@@ -170,6 +184,7 @@
             display: flex;
             flex-direction: column;
             flex: 1;
+            justify-content: center;
         }
 
         .en-text { font-size: 3vh; font-weight: bold; color: #2c3e50; line-height: 1.1; margin-bottom: 0.5vh;}
@@ -191,6 +206,11 @@
             text-align: center;
             margin-top: 10vh;
         }
+
+        /* Display Toggle Utility Classes */
+        .hidden-element {
+            display: none !important;
+        }
     </style>
 </head>
 <body>
@@ -202,12 +222,32 @@
 
     <div class="dashboard-container">
         <aside class="sidebar">
+            
+            <div class="control-group">
+                <div class="control-title">Display Options</div>
+                <div class="display-toggles">
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="toggleImg" checked onchange="applyDisplayFilters()"> Show Images
+                    </label>
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="toggleEn" checked onchange="applyDisplayFilters()"> Show English
+                    </label>
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="toggleKata" checked onchange="applyDisplayFilters()"> Show Katakana
+                    </label>
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="toggleJa" checked onchange="applyDisplayFilters()"> Show Japanese
+                    </label>
+                </div>
+            </div>
+
             <div class="control-group">
                 <div class="control-title">Sort Options</div>
                 <select id="sortMethod">
                     <option value="original">Original File Order</option>
-                    <option value="az">Alphabetical (A - Z)</option>
-                    <option value="za">Alphabetical (Z - A)</option>
+                    <option value="az">English (A - Z)</option>
+                    <option value="za">English (Z - A)</option>
+                    <option value="kataAz">Katakana (A - Z)</option>
                     <option value="lengthAsc">Word Length (Short to Long)</option>
                     <option value="lengthDesc">Word Length (Long to Short)</option>
                 </select>
@@ -326,6 +366,29 @@
             updateDisplay();
         }
 
+        function applyDisplayFilters() {
+            const showImg = document.getElementById('toggleImg').checked;
+            const showEn = document.getElementById('toggleEn').checked;
+            const showKata = document.getElementById('toggleKata').checked;
+            const showJa = document.getElementById('toggleJa').checked;
+
+            document.querySelectorAll('.word-thumb').forEach(el => {
+                showImg ? el.classList.remove('hidden-element') : el.classList.add('hidden-element');
+            });
+            
+            document.querySelectorAll('.en-text').forEach(el => {
+                showEn ? el.classList.remove('hidden-element') : el.classList.add('hidden-element');
+            });
+
+            document.querySelectorAll('.kata-text').forEach(el => {
+                showKata ? el.classList.remove('hidden-element') : el.classList.add('hidden-element');
+            });
+
+            document.querySelectorAll('.ja-text').forEach(el => {
+                showJa ? el.classList.remove('hidden-element') : el.classList.add('hidden-element');
+            });
+        }
+
         function updateDisplay() {
             const displayArea = document.getElementById('wordDisplayArea');
             const sortMethod = document.getElementById('sortMethod').value;
@@ -339,7 +402,6 @@
                 return;
             }
 
-            // Extract rich objects instead of raw strings
             checkedUnits.forEach(cb => {
                 const grade = cb.dataset.grade;
                 const unit = cb.dataset.unit;
@@ -361,11 +423,18 @@
                 });
             });
 
-            // Sorting applied to the 'en' property
+            // Advanced Sorting Logic
             if (sortMethod === 'az') {
                 activeWords.sort((a, b) => a.en.toLowerCase().localeCompare(b.en.toLowerCase()));
             } else if (sortMethod === 'za') {
                 activeWords.sort((a, b) => b.en.toLowerCase().localeCompare(a.en.toLowerCase()));
+            } else if (sortMethod === 'kataAz') {
+                // Sorts by Katakana, pushing empty katakana strings to the bottom
+                activeWords.sort((a, b) => {
+                    if (!a.katakana) return 1;
+                    if (!b.katakana) return -1;
+                    return a.katakana.localeCompare(b.katakana, 'ja');
+                });
             } else if (sortMethod === 'lengthAsc') {
                 activeWords.sort((a, b) => a.en.length - b.en.length);
             } else if (sortMethod === 'lengthDesc') {
@@ -387,24 +456,30 @@
                 const cleanGrade = w.grade.replace('grade', 'G');
                 const cleanUnit = w.unit.replace('Unit ', 'U');
 
-                // Gracefully build the Japanese text display
                 let jaDisplay = "";
                 if (w.kanji && w.hiragana) jaDisplay = `${w.kanji} (${w.hiragana})`;
                 else if (w.kanji) jaDisplay = w.kanji;
                 else if (w.hiragana) jaDisplay = w.hiragana;
 
+                // Ensure empty strings don't render empty divs that mess up spacing
+                const kataHTML = w.katakana ? `<div class="kata-text">${w.katakana}</div>` : '';
+                const jaHTML = jaDisplay ? `<div class="ja-text">${jaDisplay}</div>` : '';
+
                 card.innerHTML = `
                     <img src="${w.img}" class="word-thumb" onerror="this.style.display='none'">
                     <div class="word-details">
                         <div class="en-text">${w.en}</div>
-                        <div class="kata-text">${w.katakana || ''}</div>
-                        <div class="ja-text">${jaDisplay}</div>
+                        ${kataHTML}
+                        ${jaHTML}
                         <span class="word-tag bg-${w.colorClass}" style="margin-top: 1vh;">${cleanGrade} - ${cleanUnit}</span>
                     </div>
                 `;
                 
                 displayArea.appendChild(card);
             });
+
+            // Re-apply display filters immediately after rendering new cards
+            applyDisplayFilters();
         }
     </script>
 </body>

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Levi-Sensei Trivia: Player</title>
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f4f4f9; margin: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+        
+        /* Join Screen */
+        #join-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 20px; text-align: center; }
+        input { font-size: 1.5em; padding: 15px; margin: 10px; border-radius: 10px; border: 2px solid #ccc; width: 80%; max-width: 300px; text-align: center; }
+        .join-btn { font-size: 1.5em; padding: 15px 40px; background: #007bff; color: white; border: none; border-radius: 10px; cursor: pointer; width: 80%; max-width: 300px; }
+
+        /* Waiting/Lobby Screen */
+        #waiting-screen { display: none; flex-direction: column; align-items: center; justify-content: center; height: 100%; background: #007bff; color: white; }
+
+        /* Game Grid */
+        #game-grid { display: none; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 10px; padding: 10px; height: 100vh; box-sizing: border-box; }
+        .answer-btn { border: none; border-radius: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; font-weight: bold; cursor: pointer; transition: transform 0.1s; position: relative; }
+        .answer-btn:active { transform: scale(0.95); opacity: 0.8; }
+        .answer-btn:disabled { opacity: 0.5; filter: grayscale(50%); transform: none; }
+        
+        .btn-red { background-color: #e21b3c; }
+        .btn-blue { background-color: #1368ce; }
+        .btn-yellow { background-color: #d89e00; }
+        .btn-green { background-color: #26890c; }
+
+        .shape { font-size: 3em; margin-bottom: 5px; opacity: 0.5; }
+        .btn-text { font-size: 1.5em; text-align: center; padding: 0 5px; word-wrap: break-word; }
+
+        /* Result Overlays */
+        #result-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 100; flex-direction: column; align-items: center; justify-content: center; color: white; text-align: center; font-size: 2em; font-weight: bold; }
+        .correct { background-color: #26890c; }
+        .wrong { background-color: #e21b3c; }
+        .rank-info { font-size: 0.5em; margin-top: 10px; opacity: 0.9; }
+
+        /* Animations */
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        .waiting-text { animation: pulse 2s infinite; }
+    </style>
+</head>
+<body>
+
+    <!-- 1. JOIN SCREEN -->
+    <div id="join-screen">
+        <h1 style="color: #2c3e50;">Levi-Sensei Trivia</h1>
+        <input type="number" id="pin-input" placeholder="Room PIN" pattern="\d*">
+        <input type="text" id="name-input" placeholder="Nickname" maxlength="12">
+        <button class="join-btn" onclick="joinRoom()">Join Game</button>
+    </div>
+
+    <!-- 2. WAITING LOBBY -->
+    <div id="waiting-screen">
+        <h2 class="waiting-text">You're in!</h2>
+        <p>Look at the big screen.</p>
+        <div id="my-name" style="font-weight: bold; font-size: 1.5em;"></div>
+    </div>
+
+    <!-- 3. GAME GRID -->
+    <div id="game-grid">
+        <button class="answer-btn btn-red" onclick="submitAnswer(0)" id="btn-0">
+            <span class="shape">▲</span><span class="btn-text" id="txt-0"></span>
+        </button>
+        <button class="answer-btn btn-blue" onclick="submitAnswer(1)" id="btn-1">
+            <span class="shape">◆</span><span class="btn-text" id="txt-1"></span>
+        </button>
+        <button class="answer-btn btn-yellow" onclick="submitAnswer(2)" id="btn-2">
+            <span class="shape">●</span><span class="btn-text" id="txt-2"></span>
+        </button>
+        <button class="answer-btn btn-green" onclick="submitAnswer(3)" id="btn-3">
+            <span class="shape">■</span><span class="btn-text" id="txt-3"></span>
+        </button>
+    </div>
+
+    <!-- 4. RESULT OVERLAY -->
+    <div id="result-overlay">
+        <div id="status-msg"></div>
+        <div class="rank-info" id="score-display">0 pts</div>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyC7lrhVICmKOL3EhVkiaTkpEE1_VUDPS7k",
+            authDomain: "levi-sensei.firebaseapp.com",
+            databaseURL: "https://levi-sensei-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "levi-sensei",
+            storageBucket: "levi-sensei.firebasestorage.app",
+            messagingSenderId: "14792482782",
+            appId: "1:14792482782:web:13ae42685a94b96460474f"
+        };
+        
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        let myId = "";
+        let myName = "";
+        let currentPin = "";
+        let hasAnswered = false;
+        let questionStartTime = 0;
+        let currentOptions = [];
+
+        // 1. JOIN ROOM LOGIC
+        function joinRoom() {
+            const pin = document.getElementById('pin-input').value;
+            const name = document.getElementById('name-input').value.trim();
+
+            if (!pin || !name) { alert("Enter PIN and Name!"); return; }
+
+            // Verify room exists
+            db.ref('trivia/room').once('value').then(snapshot => {
+                const room = snapshot.val();
+                if (room && room.roomCode === pin) {
+                    currentPin = pin;
+                    myName = name;
+                    myId = "user_" + Math.random().toString(36).substr(2, 9);
+                    
+                    // Register player
+                    db.ref(`trivia/players/${myId}`).set({
+                        name: myName,
+                        score: 0,
+                        lastAnswer: ""
+                    });
+
+                    // UI Transition
+                    document.getElementById('join-screen').style.display = "none";
+                    document.getElementById('waiting-screen').style.display = "flex";
+                    document.getElementById('my-name').innerText = myName;
+
+                    startGameStateListener();
+                } else {
+                    alert("Room not found! Check the PIN on the board.");
+                }
+            });
+        }
+
+        // 2. LISTEN TO HOST
+        function startGameStateListener() {
+            db.ref('trivia/gameState').on('value', (snapshot) => {
+                const state = snapshot.val();
+                if (!state) return;
+
+                if (state.status === "LIVE") {
+                    showQuestion(state);
+                } else if (state.status === "REVEAL") {
+                    showResult(state);
+                } else if (state.status === "GAME_OVER") {
+                    location.reload(); // Simple reset
+                }
+            });
+
+            // Listen to personal score for the "Lean Data" approach
+            db.ref(`trivia/players/${myId}/score`).on('value', (snapshot) => {
+                const score = snapshot.val() || 0;
+                document.getElementById('score-display').innerText = score + " pts";
+            });
+        }
+
+        // 3. SHOW QUESTION UI
+        function showQuestion(state) {
+            hasAnswered = false;
+            currentOptions = state.options;
+            questionStartTime = Date.now();
+
+            // Hide overlays
+            document.getElementById('waiting-screen').style.display = "none";
+            document.getElementById('result-overlay').style.display = "none";
+            document.getElementById('game-grid').style.display = "grid";
+
+            // Enable buttons
+            for (let i = 0; i < 4; i++) {
+                const btn = document.getElementById(`btn-${i}`);
+                const txt = document.getElementById(`txt-${i}`);
+                btn.disabled = false;
+                
+                // Build button text based on Matrix displayRules
+                // displayRules is an array like ['en', 'ja_hiragana']
+                let label = "";
+                state.displayRules.forEach(rule => {
+                    if (currentOptions[i][rule]) {
+                        label += currentOptions[i][rule] + " ";
+                    }
+                });
+                txt.innerText = label.trim();
+            }
+        }
+
+        // 4. SUBMIT ANSWER
+        function submitAnswer(index) {
+            if (hasAnswered) return;
+            hasAnswered = true;
+            const timeTaken = Date.now() - questionStartTime;
+
+            // Visual feedback
+            for (let i = 0; i < 4; i++) {
+                document.getElementById(`btn-${i}`).disabled = true;
+            }
+
+            // Push response to Host
+            db.ref(`trivia/gameState/responses/${myId}`).set({
+                answer: currentOptions[index].id,
+                timeTaken: timeTaken
+            });
+
+            // Show temporary waiting state
+            document.getElementById('game-grid').style.opacity = "0.5";
+        }
+
+        // 5. SHOW RESULTS
+        function showResult(state) {
+            document.getElementById('game-grid').style.display = "none";
+            document.getElementById('game-grid').style.opacity = "1";
+            
+            const overlay = document.getElementById('result-overlay');
+            const msg = document.getElementById('status-msg');
+            
+            overlay.style.display = "flex";
+            overlay.className = ""; // Reset colors
+
+            // Get our answer from Firebase
+            db.ref(`trivia/gameState/responses/${myId}`).once('value').then(snap => {
+                const myRes = snap.val();
+                if (myRes && myRes.answer === state.correctAnswer) {
+                    msg.innerText = "CORRECT! 🎉";
+                    overlay.classList.add('correct');
+                } else if (myRes) {
+                    msg.innerText = "WRONG ❌";
+                    overlay.classList.add('wrong');
+                } else {
+                    msg.innerText = "TIME OUT ⏰";
+                    overlay.classList.add('wrong');
+                }
+            });
+        }
+    </script>
+</body>
+</html>

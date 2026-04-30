@@ -45,8 +45,20 @@
         
         #game-screen { display: none; text-align: center; }
         #room-code-display { font-size: 6em; font-weight: bold; color: #007bff; letter-spacing: 10px; margin: 10px 0; }
-        #current-question-display { font-size: 3em; margin: 20px 0; font-weight: bold; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; }
+        #current-question-display { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; margin: 20px 0; }
+        .prompt-area { font-size: 3em; font-weight: bold; }
         
+        /* Host Options Grid Styles */
+        .host-options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 90%; max-width: 800px; margin-top: 10px; }
+        .host-opt { border-radius: 15px; padding: 15px 10px; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 1.5em; font-weight: bold; transition: opacity 0.5s, filter 0.5s, transform 0.3s; box-shadow: 0 4px 6px rgba(0,0,0,0.15); min-height: 100px; }
+        .host-opt.dimmed { opacity: 0.15; filter: grayscale(100%); transform: scale(0.95); }
+        .host-opt.correct-answer { transform: scale(1.05); box-shadow: 0 0 20px rgba(38, 137, 12, 0.8); z-index: 10; border: 4px solid #fff; }
+        .bg-red { background-color: #e21b3c; }
+        .bg-blue { background-color: #1368ce; }
+        .bg-yellow { background-color: #d89e00; }
+        .bg-green { background-color: #26890c; }
+        .shape { font-size: 2em; opacity: 0.6; margin-bottom: 5px; line-height: 1; }
+
         #player-list { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin: 20px 0; padding: 20px; background: #f8f9fa; border-radius: 10px; min-height: 50px; }
         .player-tag { background: #e0f7fa; color: #006064; padding: 10px 20px; border-radius: 25px; font-weight: bold; font-size: 1.2em; }
 
@@ -71,7 +83,6 @@
         <div class="header-row">
             <h1 data-i18n="title">Game Setup (Host)</h1>
             <div class="lang-toggle">
-                <!-- Swapped active class to JA button -->
                 <button id="btn-lang-en" onclick="setLang('en')">EN</button>
                 <button id="btn-lang-ja" class="active" onclick="setLang('ja')">日本語</button>
             </div>
@@ -89,27 +100,38 @@
         <h2 data-i18n="h2">2. Game Settings</h2>
         <p class="instruction-text" data-i18n="inst2">Configure the match rules and determine which language formats appear on the main display versus the student tablets.</p>
         
-        <div style="margin-bottom: 15px;">
-            <label style="font-weight: bold;" data-i18n="lblQ">Number of Questions: </label>
-            <select id="question-count">
-                <option value="5" data-i18n="qSprint">5 Questions (Sprint)</option>
-                <option value="10" selected data-i18n="qStd">10 Questions (Standard)</option>
-                <option value="15" data-i18n="q15">15 Questions</option>
-                <option value="20" data-i18n="q20">20 Questions</option>
-                <option value="30" data-i18n="q30">30 Questions</option>
-                <option value="-1" data-i18n="qEnd">All Selected Words (Endurance)</option>
-            </select>
-            <span id="pool-size-display" class="live-counter" data-i18n-prefix="pool">Words in pool: 0</span>
-        </div>
+        <div style="margin-bottom: 15px; display: flex; gap: 20px; flex-wrap: wrap;">
+            <div>
+                <label style="font-weight: bold;" data-i18n="lblQ">Number of Questions: </label>
+                <select id="question-count">
+                    <option value="5" data-i18n="qSprint">5 Questions (Sprint)</option>
+                    <option value="10" selected data-i18n="qStd">10 Questions (Standard)</option>
+                    <option value="15" data-i18n="q15">15 Questions</option>
+                    <option value="20" data-i18n="q20">20 Questions</option>
+                    <option value="30" data-i18n="q30">30 Questions</option>
+                    <option value="-1" data-i18n="qEnd">All Selected Words (Endurance)</option>
+                </select>
+                <span id="pool-size-display" class="live-counter" data-i18n-prefix="pool">Words in pool: 0</span>
+            </div>
+            
+            <div>
+                <label style="font-weight: bold;" data-i18n="lblT">Time per question: </label>
+                <select id="time-limit">
+                    <option value="5000" data-i18n="t5">5 Seconds (Hard)</option>
+                    <option value="10000" selected data-i18n="t10">10 Seconds (Medium)</option>
+                    <option value="15000" data-i18n="t15">15 Seconds (Easy)</option>
+                    <option value="20000" data-i18n="t20">20 Seconds (Very Easy)</option>
+                </select>
+            </div>
 
-        <div style="margin-bottom: 25px;">
-            <label style="font-weight: bold;" data-i18n="lblT">Time per question: </label>
-            <select id="time-limit">
-                <option value="5000" data-i18n="t5">5 Seconds (Hard)</option>
-                <option value="10000" selected data-i18n="t10">10 Seconds (Medium)</option>
-                <option value="15000" data-i18n="t15">15 Seconds (Easy)</option>
-                <option value="20000" data-i18n="t20">20 Seconds (Very Easy)</option>
-            </select>
+            <div>
+                <label style="font-weight: bold;" data-i18n="lblHint">Hint System: </label>
+                <select id="hint-mode">
+                    <option value="none" data-i18n="hNone">No Hints</option>
+                    <option value="even" data-i18n="hEven">Evenly Spaced (66% / 33%)</option>
+                    <option value="late" selected data-i18n="hLate">Back-loaded (50% / 20%)</option>
+                </select>
+            </div>
         </div>
 
         <div class="matrix-container">
@@ -153,6 +175,8 @@
                 h2: "2. Game Settings",
                 inst2: "Configure the match rules and determine which language formats appear on the main display versus the student tablets.",
                 lblQ: "Number of Questions: ", lblT: "Time per question: ",
+                lblHint: "Hint System: ",
+                hNone: "No Hints", hEven: "Evenly Spaced (66% / 33%)", hLate: "Back-loaded (50% / 20%)",
                 lblMain: "Main Screen (Prompt)", lblTab: "Tablets (Options)",
                 lblImg: "Image", lblEn: "English Spelling", lblHi: "Japanese (Hiragana)", lblKa: "English Pronunciation (Katakana)", lblKj: "Japanese (Kanji)",
                 btnCreate: "Create Room",
@@ -160,7 +184,7 @@
                 t5: "5 Seconds (Hard)", t10: "10 Seconds (Medium)", t15: "15 Seconds (Easy)", t20: "20 Seconds (Very Easy)",
                 lblJoin: "Join on Tablets:", lblConn: "Students Connected:", btnStart: "Start Game",
                 poolPrefix: "Words in pool: ", docTitle: "Levi-Sensei Trivia: Control Hub",
-                btnEndGame: "End Game" // Softened language
+                btnEndGame: "End Game"
             },
             ja: {
                 title: "ゲーム設定 (ホスト)", h1: "1. 単元を選択",
@@ -169,6 +193,8 @@
                 h2: "2. ゲーム設定",
                 inst2: "ルールの設定と、メイン画面・タブレットに表示する言語フォーマットを決めてください。",
                 lblQ: "問題数: ", lblT: "1問あたりの時間: ",
+                lblHint: "ヒント機能: ",
+                hNone: "ヒントなし", hEven: "均等 (残り66% / 33%)", hLate: "後半重視 (残り50% / 20%)",
                 lblMain: "メイン画面 (問題)", lblTab: "タブレット (選択肢)",
                 lblImg: "画像", lblEn: "英語のつづり", lblHi: "日本語 (ひらがな)", lblKa: "英語の発音 (カタカナ)", lblKj: "日本語 (漢字)",
                 btnCreate: "ルーム作成",
@@ -176,11 +202,10 @@
                 t5: "5秒 (難しい)", t10: "10秒 (普通)", t15: "15秒 (簡単)", t20: "20秒 (とても簡単)",
                 lblJoin: "タブレットで参加:", lblConn: "接続中の生徒:", btnStart: "ゲーム開始",
                 poolPrefix: "選択された単語数: ", docTitle: "リヴァイ先生トリビア: 管理ハブ",
-                btnEndGame: "ゲーム終了" // Softened language
+                btnEndGame: "ゲーム終了"
             }
         };
 
-        // Initialize with default Japanese
         let currentLang = 'ja';
 
         function setLang(lang) {
@@ -214,7 +239,7 @@
         const db = firebase.database();
 
         let vocabularyData = {}, questionQueue = [], currentQuestionIndex = 0;
-        let selectedTimeLimit = 10000, roomCode = "", livePlayersData = {}, gamePhase = "LOBBY", countdownInterval;
+        let selectedTimeLimit = 10000, selectedHintMode = "late", roomCode = "", livePlayersData = {}, gamePhase = "LOBBY", countdownInterval;
 
         const gradeColors = {
             "grade3": "g3", "grade4": "g4", "grade5": "g5", "grade6": "g6"
@@ -249,7 +274,6 @@
                 container.appendChild(unitSection);
             }
             
-            // Set language based on default currentLang
             setLang(currentLang);
             validateSetup();
         }
@@ -273,6 +297,7 @@
             document.querySelectorAll('.grade-checkbox').forEach(cb => { cb.checked = force; toggleDrawer({target: cb}); });
             document.querySelectorAll('.unit-cb').forEach(cb => { cb.checked = force; });
             updatePoolCounter();
+            validateSetup();
         }
 
         function validateSetup() {
@@ -334,7 +359,9 @@
             questionQueue = shuffle(questionQueue);
 
             selectedTimeLimit = parseInt(document.getElementById("time-limit").value);
+            selectedHintMode = document.getElementById("hint-mode").value;
             roomCode = Math.floor(1000 + Math.random() * 9000).toString();
+            
             document.getElementById("setup-screen").style.display = "none";
             document.getElementById("game-screen").style.display = "block";
             document.getElementById("room-code-display").innerText = roomCode;
@@ -351,7 +378,6 @@
 
         function handleGameFlow() {
             if (gamePhase === "LOBBY" || gamePhase === "LEADERBOARD") startNextQuestion();
-            else if (gamePhase === "QUESTION") revealAnswer();
             else if (gamePhase === "REVEAL") showLeaderboard();
         }
 
@@ -359,22 +385,51 @@
             gamePhase = "QUESTION";
             document.getElementById('lobby-ui').style.display = "none";
             document.getElementById('timer-bar-container').style.display = "block";
+            document.getElementById('main-action-btn').style.display = "none";
             
             db.ref('trivia/gameState/responses').set(null).then(() => {
                 const q = questionQueue[currentQuestionIndex];
                 const prompts = Array.from(document.querySelectorAll('.prompt-cb:checked')).map(cb => cb.value);
                 const options = Array.from(document.querySelectorAll('.option-cb:checked')).map(cb => cb.value);
 
-                let html = "";
-                if (prompts.includes('img') && q.target.img_path) html += `<img src="${q.target.img_path}" style="max-height:30vh; border-radius:10px;">`;
-                if (prompts.includes('en')) html += `<div>${q.target.en.toUpperCase()}</div>`;
-                if (prompts.includes('ja_hiragana')) html += `<div style="font-size:0.5em;">${q.target.ja_hiragana}</div>`;
-                if (prompts.includes('en_katakana')) html += `<div style="font-size:0.5em; color:#8e44ad;">${q.target.en_katakana}</div>`;
-                if (prompts.includes('ja_kanji')) html += `<div style="font-size:0.5em; color:#555;">${q.target.ja_kanji}</div>`;
+                let promptHtml = `<div class="prompt-area">`;
+                if (prompts.includes('img') && q.target.img_path) promptHtml += `<img src="${q.target.img_path}" style="max-height:25vh; border-radius:10px;">`;
+                if (prompts.includes('en')) promptHtml += `<div>${q.target.en.toUpperCase()}</div>`;
+                if (prompts.includes('ja_hiragana')) promptHtml += `<div style="font-size:0.5em;">${q.target.ja_hiragana}</div>`;
+                if (prompts.includes('en_katakana')) promptHtml += `<div style="font-size:0.5em; color:#8e44ad;">${q.target.en_katakana}</div>`;
+                if (prompts.includes('ja_kanji')) promptHtml += `<div style="font-size:0.5em; color:#555;">${q.target.ja_kanji}</div>`;
+                promptHtml += `</div>`;
 
-                document.getElementById("current-question-display").innerHTML = html;
-                document.getElementById("main-action-btn").innerText = currentLang === 'en' ? "Reveal Answer" : "答えを見る";
+                let optionsHtml = `<div class="host-options-grid">`;
+                const shapes = ['▲', '◆', '●', '■'];
+                const colors = ['bg-red', 'bg-blue', 'bg-yellow', 'bg-green'];
                 
+                let wrongIndices = [];
+                for (let i = 0; i < 4; i++) {
+                    if (q.options[i].id !== q.target.id) wrongIndices.push(i);
+                    
+                    let label = "";
+                    options.forEach(rule => {
+                        if (q.options[i][rule]) label += `<div>${q.options[i][rule]}</div>`;
+                    });
+                    if (label === "") label = `<div>${q.options[i].ja_hiragana || "???"}</div>`;
+
+                    optionsHtml += `<div id="host-opt-${i}" class="host-opt ${colors[i]}" data-correct="${q.options[i].id === q.target.id}">
+                        <div class="shape">${shapes[i]}</div>
+                        ${label}
+                    </div>`;
+                }
+                optionsHtml += `</div>`;
+
+                document.getElementById("current-question-display").innerHTML = promptHtml + optionsHtml;
+                
+                wrongIndices = shuffle(wrongIndices);
+                window.hint1Index = wrongIndices[0];
+                window.hint2Index = wrongIndices[1];
+                window.hint3Index = wrongIndices[2];
+                window.hint1Given = false;
+                window.hint2Given = false;
+
                 db.ref('trivia/gameState').set({
                     status: "LIVE", questionNumber: currentQuestionIndex, timeLimit: selectedTimeLimit,
                     displayRules: options, options: q.options, targetId: q.target.id,
@@ -387,9 +442,35 @@
         function startVisualTimer(dur) {
             clearInterval(countdownInterval);
             let left = dur;
+            
+            // Calculate Hint Thresholds based on selected mode
+            let hint1Threshold = 0;
+            let hint2Threshold = 0;
+            
+            if (selectedHintMode === 'even') {
+                hint1Threshold = dur * 0.66;
+                hint2Threshold = dur * 0.33;
+            } else if (selectedHintMode === 'late') {
+                hint1Threshold = dur * 0.50;
+                hint2Threshold = dur * 0.20;
+            }
+
             countdownInterval = setInterval(() => {
                 left -= 100;
                 document.getElementById('timer-bar').style.width = (left/dur)*100 + "%";
+                
+                // Process Hints if not "none"
+                if (selectedHintMode !== 'none') {
+                    if (!window.hint1Given && left <= hint1Threshold) {
+                        window.hint1Given = true;
+                        document.getElementById(`host-opt-${window.hint1Index}`).classList.add('dimmed');
+                    }
+                    if (!window.hint2Given && left <= hint2Threshold) {
+                        window.hint2Given = true;
+                        document.getElementById(`host-opt-${window.hint2Index}`).classList.add('dimmed');
+                    }
+                }
+
                 if (left <= 0) revealAnswer();
             }, 100);
         }
@@ -398,6 +479,15 @@
             if (gamePhase === "REVEAL") return;
             gamePhase = "REVEAL";
             clearInterval(countdownInterval);
+            
+            document.getElementById(`host-opt-${window.hint3Index}`).classList.add('dimmed');
+            for(let i=0; i<4; i++) {
+                let box = document.getElementById(`host-opt-${i}`);
+                if (box.getAttribute('data-correct') === "true") {
+                    box.classList.add('correct-answer');
+                }
+            }
+            
             const q = questionQueue[currentQuestionIndex];
             
             db.ref('trivia/gameState/responses').once('value', snap => {
@@ -432,11 +522,14 @@
             const correctLabel = currentLang === 'en' ? 'Correct Answer:' : '正解:';
             document.getElementById("current-question-display").innerHTML += `<div style="color:green; font-size:0.5em; margin-top:20px;">${correctLabel} ${q.target.en} (${q.target.ja_hiragana})</div>`;
             
+            const btn = document.getElementById("main-action-btn");
+            btn.style.display = "inline-block";
+            
             let isFinal = (currentQuestionIndex + 1 >= questionQueue.length);
             if (currentLang === 'en') {
-                document.getElementById("main-action-btn").innerText = isFinal ? "Show Final Scores" : "Show Leaderboard";
+                btn.innerText = isFinal ? "Show Final Scores" : "Show Leaderboard";
             } else {
-                document.getElementById("main-action-btn").innerText = isFinal ? "最終結果を見る" : "順位を見る";
+                btn.innerText = isFinal ? "最終結果を見る" : "順位を見る";
             }
             
             db.ref('trivia/gameState').update({ status: "REVEAL", correctAnswer: q.target.id });
@@ -512,7 +605,6 @@
             const btn = document.getElementById("main-action-btn");
             if (isFinal) {
                 db.ref('trivia/gameState').update({ status: "GAME_OVER" });
-                // Use translated key for softened text
                 btn.innerText = i18n[currentLang].btnEndGame;
                 btn.style.backgroundColor = "#dc3545"; 
                 btn.onclick = function() {

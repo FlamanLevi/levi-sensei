@@ -38,7 +38,9 @@
         .mode-cb:disabled { cursor: not-allowed; opacity: 0.5; }
 
         .control-btn { font-size: 1.2em; padding: 10px 20px; background-color: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; margin-top: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); transition: 0.2s; }
-        .control-btn:hover { background-color: #218838; transform: translateY(-2px); }
+        .control-btn:hover:not(:disabled) { background-color: #218838; transform: translateY(-2px); }
+        .control-btn:disabled { background-color: #6c757d; cursor: not-allowed; opacity: 0.6; box-shadow: none; }
+        
         .live-counter { margin-left: 15px; color: #e67e22; font-weight: bold; font-size: 0.9em; background: #fff3e0; padding: 3px 8px; border-radius: 12px; }
         
         #game-screen { display: none; text-align: center; }
@@ -69,8 +71,9 @@
         <div class="header-row">
             <h1 data-i18n="title">Game Setup (Host)</h1>
             <div class="lang-toggle">
-                <button id="btn-lang-en" class="active" onclick="setLang('en')">EN</button>
-                <button id="btn-lang-ja" onclick="setLang('ja')">日本語</button>
+                <!-- Swapped active class to JA button -->
+                <button id="btn-lang-en" onclick="setLang('en')">EN</button>
+                <button id="btn-lang-ja" class="active" onclick="setLang('ja')">日本語</button>
             </div>
         </div>
         
@@ -102,10 +105,10 @@
         <div style="margin-bottom: 25px;">
             <label style="font-weight: bold;" data-i18n="lblT">Time per question: </label>
             <select id="time-limit">
-                <option value="5000" data-i18n="t5">5 Seconds (Extra Hard)</option>
-                <option value="10000" data-i18n="t10">10 Seconds (Hard)</option>
-                <option value="15000" selected data-i18n="t15">15 Seconds (Medium)</option>
-                <option value="20000" data-i18n="t20">20 Seconds (Easy)</option>
+                <option value="5000" data-i18n="t5">5 Seconds (Hard)</option>
+                <option value="10000" selected data-i18n="t10">10 Seconds (Medium)</option>
+                <option value="15000" data-i18n="t15">15 Seconds (Easy)</option>
+                <option value="20000" data-i18n="t20">20 Seconds (Very Easy)</option>
             </select>
         </div>
 
@@ -113,7 +116,7 @@
             <div class="matrix-column">
                 <h3 style="margin-top:0;" data-i18n="lblMain">Main Screen (Prompt)</h3>
                 <label class="checkbox-container"><input type="checkbox" class="mode-cb prompt-cb" value="img"> <span data-i18n="lblImg">Image</span></label>
-                <label class="checkbox-container"><input type="checkbox" class="mode-cb prompt-cb" value="en" checked> <span data-i18n="lblEn">English Spelling</span></label>
+                <label class="checkbox-container"><input type="checkbox" class="mode-cb prompt-cb" value="en"> <span data-i18n="lblEn">English Spelling</span></label>
                 <label class="checkbox-container"><input type="checkbox" class="mode-cb prompt-cb" value="ja_hiragana"> <span data-i18n="lblHi">Japanese (Hiragana)</span></label>
                 <label class="checkbox-container"><input type="checkbox" class="mode-cb prompt-cb" value="en_katakana"> <span data-i18n="lblKa">English Pronunciation (Katakana)</span></label>
                 <label class="checkbox-container"><input type="checkbox" class="mode-cb prompt-cb" value="ja_kanji"> <span data-i18n="lblKj">Japanese (Kanji)</span></label>
@@ -122,12 +125,12 @@
                 <h3 style="margin-top:0;" data-i18n="lblTab">Tablets (Options)</h3>
                 <label class="checkbox-container"><input type="checkbox" class="mode-cb option-cb" value="img"> <span data-i18n="lblImg">Image</span></label>
                 <label class="checkbox-container"><input type="checkbox" class="mode-cb option-cb" value="en"> <span data-i18n="lblEn">English Spelling</span></label>
-                <label class="checkbox-container"><input type="checkbox" class="mode-cb option-cb" value="ja_hiragana" checked> <span data-i18n="lblHi">Japanese (Hiragana)</span></label>
+                <label class="checkbox-container"><input type="checkbox" class="mode-cb option-cb" value="ja_hiragana"> <span data-i18n="lblHi">Japanese (Hiragana)</span></label>
                 <label class="checkbox-container"><input type="checkbox" class="mode-cb option-cb" value="en_katakana"> <span data-i18n="lblKa">English Pronunciation (Katakana)</span></label>
                 <label class="checkbox-container"><input type="checkbox" class="mode-cb option-cb" value="ja_kanji"> <span data-i18n="lblKj">Japanese (Kanji)</span></label>
             </div>
         </div>
-        <button class="control-btn" onclick="initializeGame()" data-i18n="btnCreate">Create Room</button>
+        <button class="control-btn" id="create-room-btn" onclick="initializeGame()" data-i18n="btnCreate" disabled>Create Room</button>
     </div>
 
     <div id="game-screen" class="panel">
@@ -154,9 +157,10 @@
                 lblImg: "Image", lblEn: "English Spelling", lblHi: "Japanese (Hiragana)", lblKa: "English Pronunciation (Katakana)", lblKj: "Japanese (Kanji)",
                 btnCreate: "Create Room",
                 qSprint: "5 Questions (Sprint)", qStd: "10 Questions (Standard)", q15: "15 Questions", q20: "20 Questions", q30: "30 Questions", qEnd: "All Selected Words (Endurance)",
-                t5: "5 Seconds (Extra Hard)", t10: "10 Seconds (Hard)", t15: "15 Seconds (Medium)", t20: "20 Seconds (Easy)",
+                t5: "5 Seconds (Hard)", t10: "10 Seconds (Medium)", t15: "15 Seconds (Easy)", t20: "20 Seconds (Very Easy)",
                 lblJoin: "Join on Tablets:", lblConn: "Students Connected:", btnStart: "Start Game",
-                poolPrefix: "Words in pool: ", docTitle: "Levi-Sensei Trivia: Control Hub"
+                poolPrefix: "Words in pool: ", docTitle: "Levi-Sensei Trivia: Control Hub",
+                btnEndGame: "End Game" // Softened language
             },
             ja: {
                 title: "ゲーム設定 (ホスト)", h1: "1. 単元を選択",
@@ -169,13 +173,15 @@
                 lblImg: "画像", lblEn: "英語のつづり", lblHi: "日本語 (ひらがな)", lblKa: "英語の発音 (カタカナ)", lblKj: "日本語 (漢字)",
                 btnCreate: "ルーム作成",
                 qSprint: "5問 (スプリント)", qStd: "10問 (標準)", q15: "15問", q20: "20問", q30: "30問", qEnd: "選択した全単語 (耐久)",
-                t5: "5秒 (激ムズ)", t10: "10秒 (難しい)", t15: "15秒 (普通)", t20: "20秒 (簡単)",
+                t5: "5秒 (難しい)", t10: "10秒 (普通)", t15: "15秒 (簡単)", t20: "20秒 (とても簡単)",
                 lblJoin: "タブレットで参加:", lblConn: "接続中の生徒:", btnStart: "ゲーム開始",
-                poolPrefix: "選択された単語数: ", docTitle: "リヴァイ先生トリビア: 管理ハブ"
+                poolPrefix: "選択された単語数: ", docTitle: "リヴァイ先生トリビア: 管理ハブ",
+                btnEndGame: "ゲーム終了" // Softened language
             }
         };
 
-        let currentLang = 'en';
+        // Initialize with default Japanese
+        let currentLang = 'ja';
 
         function setLang(lang) {
             currentLang = lang;
@@ -188,7 +194,6 @@
                 if (i18n[lang][key]) el.innerText = i18n[lang][key];
             });
             
-            // Swap JSON-driven dynamic text (Grades and Units)
             document.querySelectorAll('.dynamic-lang').forEach(el => {
                 el.innerText = el.getAttribute(`data-${lang}`);
             });
@@ -209,7 +214,7 @@
         const db = firebase.database();
 
         let vocabularyData = {}, questionQueue = [], currentQuestionIndex = 0;
-        let selectedTimeLimit = 15000, roomCode = "", livePlayersData = {}, gamePhase = "LOBBY", countdownInterval;
+        let selectedTimeLimit = 10000, roomCode = "", livePlayersData = {}, gamePhase = "LOBBY", countdownInterval;
 
         const gradeColors = {
             "grade3": "g3", "grade4": "g4", "grade5": "g5", "grade6": "g6"
@@ -244,7 +249,9 @@
                 container.appendChild(unitSection);
             }
             
+            // Set language based on default currentLang
             setLang(currentLang);
+            validateSetup();
         }
 
         function toggleDrawer(e) {
@@ -268,8 +275,16 @@
             updatePoolCounter();
         }
 
+        function validateSetup() {
+            const promptChecked = document.querySelectorAll('.prompt-cb:checked').length > 0;
+            const optionChecked = document.querySelectorAll('.option-cb:checked').length > 0;
+            const btn = document.getElementById('create-room-btn');
+            
+            btn.disabled = !(promptChecked && optionChecked);
+        }
+
         document.querySelectorAll('.mode-cb').forEach(cb => {
-            cb.onchange = (e) => {
+            cb.addEventListener('change', (e) => {
                 const val = e.target.value;
                 const isPrompt = e.target.classList.contains('prompt-cb');
                 const opposing = document.querySelector(isPrompt ? `.option-cb[value="${val}"]` : `.prompt-cb[value="${val}"]`);
@@ -278,7 +293,8 @@
                     opposing.parentElement.style.opacity = e.target.checked ? '0.5' : '1'; 
                     if(e.target.checked) opposing.checked = false;
                 }
-            };
+                validateSetup();
+            });
         });
 
         function shuffle(a) { return a.sort(() => Math.random() - 0.5); }
@@ -496,7 +512,8 @@
             const btn = document.getElementById("main-action-btn");
             if (isFinal) {
                 db.ref('trivia/gameState').update({ status: "GAME_OVER" });
-                btn.innerText = currentLang === 'en' ? "End Game & Eject Players" : "終了して全員退出";
+                // Use translated key for softened text
+                btn.innerText = i18n[currentLang].btnEndGame;
                 btn.style.backgroundColor = "#dc3545"; 
                 btn.onclick = function() {
                     btn.innerText = currentLang === 'en' ? "Closing Room..." : "ルームを閉じています...";

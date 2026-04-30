@@ -8,9 +8,10 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f9; padding: 20px; color: #333; }
-        .panel { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f9; padding: 20px; color: #333; margin: 0; }
         
+        /* Setup Screen Styling (Kept clean for the teacher on laptop) */
+        #setup-screen.panel { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; }
         .header-row { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #007bff; padding-bottom: 10px; margin-bottom: 20px; }
         .header-row h1 { margin: 0; color: #2c3e50; }
         
@@ -40,44 +41,76 @@
         .control-btn { font-size: 1.2em; padding: 10px 20px; background-color: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; margin-top: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); transition: 0.2s; }
         .control-btn:hover:not(:disabled) { background-color: #218838; transform: translateY(-2px); }
         .control-btn:disabled { background-color: #6c757d; cursor: not-allowed; opacity: 0.6; box-shadow: none; }
-        
         .live-counter { margin-left: 15px; color: #e67e22; font-weight: bold; font-size: 0.9em; background: #fff3e0; padding: 3px 8px; border-radius: 12px; }
         
-        #game-screen { display: none; text-align: center; }
-        #room-code-display { font-size: 6em; font-weight: bold; color: #007bff; letter-spacing: 10px; margin: 10px 0; }
-        #current-question-display { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; margin: 20px 0; }
-        .prompt-area { font-size: 3em; font-weight: bold; }
+        /* ----------------------------------------------------- */
+        /* GAME SCREEN STYLING - BACK-ROW PROOFED FOR PROJECTOR */
+        /* ----------------------------------------------------- */
+        #game-screen { display: none; text-align: center; height: 100vh; display: flex; flex-direction: column; box-sizing: border-box; transition: background-color 0.5s; }
         
-        /* Host Options Grid Styles */
-        .host-options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 90%; max-width: 800px; margin-top: 10px; }
-        .host-opt { border-radius: 15px; padding: 15px 10px; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 1.5em; font-weight: bold; transition: opacity 0.5s, filter 0.5s, transform 0.3s; box-shadow: 0 4px 6px rgba(0,0,0,0.15); min-height: 100px; }
-        .host-opt.dimmed { opacity: 0.15; filter: grayscale(100%); transform: scale(0.95); }
-        .host-opt.correct-answer { transform: scale(1.05); box-shadow: 0 0 20px rgba(38, 137, 12, 0.8); z-index: 10; border: 4px solid #fff; }
+        /* Lobby */
+        #lobby-ui { display: none; flex-direction: column; align-items: center; justify-content: center; height: 100%; }
+        #room-code-display { font-size: 10vw; font-weight: bold; color: #007bff; letter-spacing: 15px; margin: 10px 0; line-height: 1; }
+        #lobby-ui h2 { font-size: 4vw; margin-bottom: 0; }
+        #lobby-ui p { font-size: 2vw; color: #555; }
+        
+        #player-list { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; margin: 30px 0; padding: 20px; background: #f8f9fa; border-radius: 15px; width: 90%; max-height: 40vh; overflow-y: auto; }
+        .player-tag { background: #e0f7fa; color: #006064; padding: 15px 30px; border-radius: 30px; font-weight: bold; font-size: 2em; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+
+        /* Jumbotron Timer */
+        #timer-bar-container { display: none; width: 90%; height: 40px; background: #e9ecef; border-radius: 20px; margin: 20px auto; overflow: hidden; border: 3px solid #ced4da; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); flex-shrink: 0; }
+        #timer-bar { width: 100%; height: 100%; background: #28a745; transition: width 0.1s linear, background-color 0.3s; }
+
+        /* Massive Prompt Area */
+        #current-question-display { display: none; flex-direction: column; align-items: center; justify-content: center; flex-grow: 1; width: 100%; padding: 0 20px; box-sizing: border-box; }
+        .prompt-area { font-size: 5vw; font-weight: bold; line-height: 1.2; margin-bottom: 30px; display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%; }
+        .prompt-area img { max-height: 40vh; max-width: 90%; border-radius: 15px; box-shadow: 0 8px 16px rgba(0,0,0,0.2); object-fit: contain; }
+        .prompt-subtext { font-size: 0.5em; color: #555; font-weight: normal; }
+        .prompt-subtext-purple { font-size: 0.5em; color: #8e44ad; font-weight: normal; }
+
+        /* Chunky High-Contrast Option Grid */
+        .host-options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 95%; max-width: 1200px; margin-bottom: 20px; }
+        .host-opt { border-radius: 20px; padding: 20px; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 3.5vw; font-weight: bold; transition: opacity 0.5s, filter 0.5s, transform 0.3s, background-color 0.3s; box-shadow: 0 8px 15px rgba(0,0,0,0.2); min-height: 15vh; border: 4px solid rgba(0,0,0,0.1); line-height: 1.1; text-align: center; }
+        .host-opt .shape { font-size: 1.5em; opacity: 0.8; margin-bottom: 10px; line-height: 0.8; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .host-opt div { text-shadow: 1px 1px 3px rgba(0,0,0,0.3); word-break: break-word; }
+        
         .bg-red { background-color: #e21b3c; }
         .bg-blue { background-color: #1368ce; }
         .bg-yellow { background-color: #d89e00; }
         .bg-green { background-color: #26890c; }
-        .shape { font-size: 2em; opacity: 0.6; margin-bottom: 5px; line-height: 1; }
+        
+        /* Hint State */
+        .host-opt.dimmed { opacity: 0.1; filter: grayscale(100%); transform: scale(0.95); }
+        
+        /* Dark Mode Reveal State */
+        .reveal-mode { background-color: #2c3e50 !important; color: white !important; }
+        .reveal-mode .prompt-area { color: white; }
+        .reveal-mode .prompt-subtext, .reveal-mode .prompt-subtext-purple { color: #ccc; }
+        .reveal-mode .host-opt.dimmed { display: none; } /* Hide wrong answers completely */
+        .reveal-mode .correct-answer { transform: scale(1.1); box-shadow: 0 0 40px rgba(255, 255, 255, 0.4); border: 6px solid #fff; grid-column: span 2; /* Stretch across full width */ margin: 0 auto; width: 80%; }
+        
+        /* Correct Answer Label */
+        .correct-label-reveal { font-size: 3vw; font-weight: bold; color: #2ecc71; margin-top: 20px; background: rgba(0,0,0,0.5); padding: 15px 40px; border-radius: 30px; border: 2px solid #2ecc71; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
-        #player-list { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin: 20px 0; padding: 20px; background: #f8f9fa; border-radius: 10px; min-height: 50px; }
-        .player-tag { background: #e0f7fa; color: #006064; padding: 10px 20px; border-radius: 25px; font-weight: bold; font-size: 1.2em; }
+        /* Next Button (Jumbo size for host) */
+        #main-action-btn-container { width: 100%; text-align: center; margin-bottom: 20px; position: fixed; bottom: 20px; left: 0; z-index: 100; }
+        #main-action-btn { font-size: 2.5em; padding: 20px 60px; border-radius: 50px; box-shadow: 0 10px 20px rgba(0,0,0,0.3); display: none; }
 
-        .leaderboard-row { display: flex; justify-content: space-between; align-items: center; background: #fff; padding: 15px 30px; margin: 0 auto 10px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); font-size: 1.5em; width: 80%; max-width: 600px; }
-        .rank-1 { background: #fff3cd; border: 2px solid #ffeeba; } 
-        .rank-2 { background: #e2e3e5; border: 2px solid #d6d8db; } 
-        .rank-3 { background: #f8d7da; border: 2px solid #f5c6cb; } 
+        /* Leaderboard Overhaul */
+        .leaderboard-row { display: flex; justify-content: space-between; align-items: center; background: #fff; padding: 20px 40px; margin: 0 auto 15px; border-radius: 15px; box-shadow: 0 6px 12px rgba(0,0,0,0.15); font-size: 3vw; width: 85%; max-width: 900px; color: #333; font-weight: bold; }
+        .rank-1 { background: #fff3cd; border: 4px solid #ffeeba; transform: scale(1.05); } 
+        .rank-2 { background: #e2e3e5; border: 4px solid #d6d8db; } 
+        .rank-3 { background: #f8d7da; border: 4px solid #f5c6cb; } 
 
-        .award-container { display: flex; gap: 20px; justify-content: center; margin-top: 20px; flex-wrap: wrap; }
-        .award-card { background: #fff; padding: 20px; border-radius: 15px; box-shadow: 0 8px 15px rgba(0,0,0,0.1); flex: 1; min-width: 220px; max-width: 300px; border-top: 6px solid #007bff; display: flex; flex-direction: column; justify-content: center;}
-        .award-title { font-weight: bold; color: #7f8c8d; font-size: 0.4em; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; }
-        .award-winner { font-size: 0.8em; font-weight: bold; color: #2c3e50; line-height: 1.3; margin: 5px 0; }
-        .award-stat { color: #e67e22; font-weight: bold; margin-top: 10px; font-size: 0.5em;}
-
-        #timer-bar-container { display: none; width: 80%; height: 25px; background: #e9ecef; border-radius: 15px; margin: 0 auto 20px; overflow: hidden; }
-        #timer-bar { width: 100%; height: 100%; background: #28a745; transition: width 0.1s linear, background-color 0.3s; }
+        .award-container { display: flex; gap: 30px; justify-content: center; margin-top: 40px; flex-wrap: wrap; width: 90%; }
+        .award-card { background: #fff; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); flex: 1; min-width: 300px; border-top: 10px solid #007bff; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .award-title { font-weight: bold; color: #7f8c8d; font-size: 1.5vw; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 15px; }
+        .award-winner { font-size: 3vw; font-weight: bold; color: #2c3e50; line-height: 1.2; margin: 10px 0; text-align: center; }
+        .award-stat { color: #e67e22; font-weight: bold; margin-top: 15px; font-size: 2vw; }
     </style>
 </head>
-<body>
+<body id="main-body">
 
     <div id="setup-screen" class="panel">
         <div class="header-row">
@@ -155,15 +188,22 @@
         <button class="control-btn" id="create-room-btn" onclick="initializeGame()" data-i18n="btnCreate" disabled>Create Room</button>
     </div>
 
-    <div id="game-screen" class="panel">
-        <div id="lobby-ui">
-            <h2><span data-i18n="lblJoin">Join on Tablets:</span> <span id="room-code-display"></span></h2>
-            <p><span data-i18n="lblConn">Students Connected:</span> <span id="student-count">0</span></p>
+    <!-- MAIN GAME SCREEN FOR PROJECTOR -->
+    <div id="game-screen">
+        <div id="lobby-ui" style="display: none;">
+            <h2><span data-i18n="lblJoin">Join on Tablets:</span></h2>
+            <div id="room-code-display"></div>
+            <p><span data-i18n="lblConn">Students Connected:</span> <span id="student-count" style="font-weight: bold; color: #28a745;">0</span></p>
             <div id="player-list"></div>
         </div>
+        
         <div id="timer-bar-container"><div id="timer-bar"></div></div>
+        
         <div id="current-question-display"></div>
-        <button class="control-btn" onclick="handleGameFlow()" id="main-action-btn" data-i18n="btnStart">Start Game</button>
+        
+        <div id="main-action-btn-container">
+            <button class="control-btn" onclick="handleGameFlow()" id="main-action-btn" data-i18n="btnStart">Start Game</button>
+        </div>
     </div>
 
     <script>
@@ -362,9 +402,13 @@
             selectedHintMode = document.getElementById("hint-mode").value;
             roomCode = Math.floor(1000 + Math.random() * 9000).toString();
             
+            // Switch UI to Game Mode
             document.getElementById("setup-screen").style.display = "none";
-            document.getElementById("game-screen").style.display = "block";
+            document.getElementById("game-screen").style.display = "flex";
+            document.getElementById("lobby-ui").style.display = "flex";
+            document.getElementById("main-action-btn").style.display = "inline-block";
             document.getElementById("room-code-display").innerText = roomCode;
+            document.body.style.backgroundColor = "#fff"; // Clean white background for projector
 
             db.ref('trivia').remove().then(() => {
                 db.ref('trivia/room').set({ roomCode, status: "LOBBY" });
@@ -383,7 +427,12 @@
 
         function startNextQuestion() {
             gamePhase = "QUESTION";
+            
+            // Reset Dark Mode
+            document.body.classList.remove('reveal-mode');
+            
             document.getElementById('lobby-ui').style.display = "none";
+            document.getElementById('current-question-display').style.display = "flex";
             document.getElementById('timer-bar-container').style.display = "block";
             document.getElementById('main-action-btn').style.display = "none";
             
@@ -392,14 +441,16 @@
                 const prompts = Array.from(document.querySelectorAll('.prompt-cb:checked')).map(cb => cb.value);
                 const options = Array.from(document.querySelectorAll('.option-cb:checked')).map(cb => cb.value);
 
+                // Build Jumbotron Prompt
                 let promptHtml = `<div class="prompt-area">`;
-                if (prompts.includes('img') && q.target.img_path) promptHtml += `<img src="${q.target.img_path}" style="max-height:25vh; border-radius:10px;">`;
+                if (prompts.includes('img') && q.target.img_path) promptHtml += `<img src="${q.target.img_path}">`;
                 if (prompts.includes('en')) promptHtml += `<div>${q.target.en.toUpperCase()}</div>`;
-                if (prompts.includes('ja_hiragana')) promptHtml += `<div style="font-size:0.5em;">${q.target.ja_hiragana}</div>`;
-                if (prompts.includes('en_katakana')) promptHtml += `<div style="font-size:0.5em; color:#8e44ad;">${q.target.en_katakana}</div>`;
-                if (prompts.includes('ja_kanji')) promptHtml += `<div style="font-size:0.5em; color:#555;">${q.target.ja_kanji}</div>`;
+                if (prompts.includes('ja_hiragana')) promptHtml += `<div class="prompt-subtext">${q.target.ja_hiragana}</div>`;
+                if (prompts.includes('en_katakana')) promptHtml += `<div class="prompt-subtext-purple">${q.target.en_katakana}</div>`;
+                if (prompts.includes('ja_kanji')) promptHtml += `<div class="prompt-subtext">${q.target.ja_kanji}</div>`;
                 promptHtml += `</div>`;
 
+                // Build Jumbotron Options
                 let optionsHtml = `<div class="host-options-grid">`;
                 const shapes = ['▲', '◆', '●', '■'];
                 const colors = ['bg-red', 'bg-blue', 'bg-yellow', 'bg-green'];
@@ -443,7 +494,6 @@
             clearInterval(countdownInterval);
             let left = dur;
             
-            // Calculate Hint Thresholds based on selected mode
             let hint1Threshold = 0;
             let hint2Threshold = 0;
             
@@ -457,9 +507,14 @@
 
             countdownInterval = setInterval(() => {
                 left -= 100;
-                document.getElementById('timer-bar').style.width = (left/dur)*100 + "%";
+                // Color shift timer based on urgency
+                const timerBar = document.getElementById('timer-bar');
+                timerBar.style.width = (left/dur)*100 + "%";
                 
-                // Process Hints if not "none"
+                if (left <= dur * 0.3) { timerBar.style.backgroundColor = "#e21b3c"; } // Red
+                else if (left <= dur * 0.6) { timerBar.style.backgroundColor = "#ffc107"; } // Yellow
+                else { timerBar.style.backgroundColor = "#28a745"; } // Green
+                
                 if (selectedHintMode !== 'none') {
                     if (!window.hint1Given && left <= hint1Threshold) {
                         window.hint1Given = true;
@@ -480,6 +535,9 @@
             gamePhase = "REVEAL";
             clearInterval(countdownInterval);
             
+            // Activate Dark Mode Reveal
+            document.body.classList.add('reveal-mode');
+            
             document.getElementById(`host-opt-${window.hint3Index}`).classList.add('dimmed');
             for(let i=0; i<4; i++) {
                 let box = document.getElementById(`host-opt-${i}`);
@@ -498,7 +556,7 @@
                     pData.maxStreak = pData.maxStreak || 0;
                     pData.fastestTime = pData.fastestTime || 999999;
 
-                    if (res[id].answer === q.target.id) {
+                    if (res[id] && res[id].answer === q.target.id) {
                         let pts = 500 + Math.max(0, Math.floor(500 * (1 - (res[id].timeTaken/selectedTimeLimit))));
                         pData.score = (pData.score || 0) + pts;
                         pData.currentStreak += 1;
@@ -519,8 +577,9 @@
                 db.ref().update(updates);
             });
 
+            // Add big pulsing correct answer label
             const correctLabel = currentLang === 'en' ? 'Correct Answer:' : '正解:';
-            document.getElementById("current-question-display").innerHTML += `<div style="color:green; font-size:0.5em; margin-top:20px;">${correctLabel} ${q.target.en} (${q.target.ja_hiragana})</div>`;
+            document.getElementById("current-question-display").innerHTML += `<div class="correct-label-reveal">${correctLabel} ${q.target.en} (${q.target.ja_hiragana})</div>`;
             
             const btn = document.getElementById("main-action-btn");
             btn.style.display = "inline-block";
@@ -547,6 +606,9 @@
 
         function showLeaderboard() {
             gamePhase = "LEADERBOARD";
+            
+            // Remove dark mode for leaderboard readability
+            document.body.classList.remove('reveal-mode');
             document.getElementById('timer-bar-container').style.display = "none";
             
             let isFinal = (currentQuestionIndex >= questionQueue.length);
@@ -556,7 +618,7 @@
                 ? (currentLang === 'en' ? '🏆 Final Awards Ceremony 🏆' : '🏆 最終結果発表 🏆')
                 : (currentLang === 'en' ? 'Top 5 Leaderboard' : 'トップ 5');
                 
-            let html = `<h2>${titleText}</h2>`;
+            let html = `<h2 style="font-size: 4vw; margin-bottom: 30px;">${titleText}</h2>`;
             
             if (!isFinal) {
                 const top = [...players].sort((a,b) => (b.score||0) - (a.score||0)).slice(0, 5);
@@ -564,7 +626,7 @@
             } else {
                 const podium = [...players].sort((a,b) => (b.score||0) - (a.score||0)).slice(0, 3);
                 
-                html += `<div style="margin-bottom: 30px;">`;
+                html += `<div style="margin-bottom: 40px; width: 100%;">`;
                 html += podium.map((p,i) => `<div class="leaderboard-row rank-${i+1}"><span>${i===0?'🥇':i===1?'🥈':'🥉'} ${p.name}</span><span>${p.score || 0} pts</span></div>`).join('');
                 html += `</div>`;
                 

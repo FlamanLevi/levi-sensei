@@ -12,7 +12,7 @@
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f9; margin: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; color: #333; }
         
         /* Language Toggle Styling */
-        .lang-toggle-container { width: 100%; display: flex; justify-content: flex-end; padding: 15px 20px; box-sizing: border-box; position: absolute; top: 0; left: 0; }
+        .lang-toggle-container { width: 100%; display: flex; justify-content: flex-end; padding: 15px 20px; box-sizing: border-box; position: absolute; top: 0; left: 0; z-index: 10; }
         .lang-toggle { display: flex; border: 2px solid #007bff; border-radius: 20px; overflow: hidden; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .lang-toggle button { background: transparent; border: none; padding: 8px 15px; font-weight: bold; cursor: pointer; color: #007bff; transition: 0.2s; font-size: 1em; }
         .lang-toggle button.active { background: #007bff; color: white; }
@@ -39,11 +39,9 @@
         @media (orientation: landscape) { #game-grid { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; } }
         @media (orientation: portrait) { #game-grid { grid-template-columns: 1fr; grid-template-rows: repeat(4, 1fr); } }
 
-        /* touch-action: manipulation removes the 300ms tap delay on mobile devices! */
         .answer-btn { border: none; border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; font-weight: bold; cursor: pointer; padding: 15px; transition: transform 0.1s, opacity 0.2s; touch-action: manipulation; box-shadow: 0 6px 0 rgba(0,0,0,0.2); }
         .answer-btn:active { transform: translateY(6px); box-shadow: none; }
         
-        /* The Lockout State */
         .locked { opacity: 0.4; cursor: not-allowed; pointer-events: none; transform: translateY(6px) !important; box-shadow: none !important; }
         
         .btn-red { background-color: #e21b3c; }
@@ -62,6 +60,25 @@
         
         .streak-badge { font-size: 1.4em; background: rgba(0,0,0,0.3); padding: 12px 30px; border-radius: 40px; margin: 15px 0; font-weight: bold; border: 2px solid rgba(255,255,255,0.4); display: none; }
         .near-miss { font-size: 1em; margin-top: 25px; font-weight: bold; background: rgba(255,255,255,0.2); padding: 10px 20px; border-radius: 15px; opacity: 0.9; }
+
+        /* Game Over / Personal Stats Screen */
+        #game-over-screen { display: none; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 20px; text-align: center; box-sizing: border-box; background-color: #f4f4f9; z-index: 50; position: absolute; top: 0; left: 0; width: 100%; }
+        #game-over-screen h1 { color: #007bff; font-size: 2.5em; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px; }
+        
+        .stats-card { background: white; padding: 30px 20px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 90%; max-width: 400px; display: flex; flex-direction: column; gap: 20px; }
+        .stat-item { background: #f8f9fa; padding: 15px; border-radius: 15px; display: flex; flex-direction: column; align-items: center; border: 2px solid #e9ecef; }
+        .stat-label { font-size: 0.9em; font-weight: bold; color: #6c757d; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
+        .stat-value { font-size: 2.2em; font-weight: bold; color: #2c3e50; }
+        
+        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .stat-sub-item { background: #f8f9fa; padding: 15px 10px; border-radius: 15px; display: flex; flex-direction: column; align-items: center; border: 2px solid #e9ecef; }
+        .stat-sub-item .stat-value { font-size: 1.5em; }
+
+        .rank-color { color: #007bff; }
+        .streak-color { color: #e67e22; }
+        .time-color { color: #9c27b0; }
+
+        .look-up-msg { margin-top: 25px; font-size: 1.2em; font-weight: bold; color: #e21b3c; background: #f8d7da; padding: 15px 25px; border-radius: 15px; border: 2px solid #f5c6cb; animation: pulse 2s infinite; }
     </style>
 </head>
 <body>
@@ -114,8 +131,33 @@
         <div id="miss-msg" class="near-miss" style="display: none;"></div>
     </div>
 
+    <!-- Personal Stats Screen (Appears at the end of the game) -->
+    <div id="game-over-screen">
+        <h1 data-i18n="gameOverTitle">Good Job!</h1>
+        <div class="stats-card">
+            <div class="stat-item">
+                <div class="stat-label" data-i18n="statRank">Final Rank</div>
+                <div class="stat-value rank-color" id="go-rank"></div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label" data-i18n="statScore">Total Score</div>
+                <div class="stat-value" id="go-score"></div>
+            </div>
+            <div class="stat-grid">
+                <div class="stat-sub-item">
+                    <div class="stat-label" data-i18n="statStreak">Best Streak</div>
+                    <div class="stat-value streak-color">🔥 <span id="go-streak"></span></div>
+                </div>
+                <div class="stat-sub-item">
+                    <div class="stat-label" data-i18n="statTime">Fastest Time</div>
+                    <div class="stat-value time-color">⚡ <span id="go-time"></span></div>
+                </div>
+            </div>
+        </div>
+        <div class="look-up-msg" data-i18n="waitHostEnd">Look at the main screen for the awards!</div>
+    </div>
+
     <script>
-        // --- TRANSLATION DICTIONARY ---
         const i18n = {
             en: {
                 title: "Levi-Sensei Trivia",
@@ -135,7 +177,13 @@
                 missAway: "You are {gap} pts away from the Top 5!",
                 missTop: "You are in the Top 5! 🏆",
                 endTitle: "Class Dismissed! 🎒",
-                endScore: "Closing room..."
+                endScore: "Closing room...",
+                gameOverTitle: "Good Job!",
+                statRank: "Final Rank",
+                statScore: "Total Score",
+                statStreak: "Best Streak",
+                statTime: "Fastest Time",
+                waitHostEnd: "Look at the main screen for the awards!"
             },
             ja: {
                 title: "リヴァイ先生トリビア",
@@ -155,11 +203,17 @@
                 missAway: "トップ5まであと {gap} ポイント！",
                 missTop: "トップ5に入っているよ！ 🏆",
                 endTitle: "授業おわり！ 🎒",
-                endScore: "ルームを閉じています..."
+                endScore: "ルームを閉じています...",
+                gameOverTitle: "おつかれさま！",
+                statRank: "最終順位",
+                statScore: "合計スコア",
+                statStreak: "最高連続正解",
+                statTime: "最速タイム",
+                waitHostEnd: "前の大画面で結果発表を見てね！"
             }
         };
 
-        let currentLang = 'ja'; // Default to Japanese for students
+        let currentLang = 'ja'; 
 
         function setLang(lang) {
             currentLang = lang;
@@ -167,20 +221,22 @@
             document.getElementById('btn-lang-ja').className = lang === 'ja' ? 'active' : '';
             document.title = i18n[lang].docTitle;
 
-            // Update inner text
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.getAttribute('data-i18n');
                 if (i18n[lang][key]) el.innerText = i18n[lang][key];
             });
             
-            // Update placeholders
             document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
                 const key = el.getAttribute('data-i18n-placeholder');
                 if (i18n[lang][key]) el.placeholder = i18n[lang][key];
             });
+            
+            // Re-render personal stats if they are currently visible
+            if (currentPhase === "GAME_OVER") {
+                renderPersonalStats();
+            }
         }
 
-        // --- FIREBASE LOGIC ---
         const firebaseConfig = {
             apiKey: "AIzaSyC7lrhVICmKOL3EhVkiaTkpEE1_VUDPS7k",
             authDomain: "levi-sensei.firebaseapp.com",
@@ -202,6 +258,7 @@
         
         let currentPhase = "";
         let currentQuestionNum = -1;
+        let finalPlayerData = null;
 
         function joinRoom() {
             const pin = document.getElementById('pin-input').value;
@@ -217,7 +274,7 @@
                     myId = "u_" + Math.random().toString(36).substr(2, 5);
                     db.ref(`trivia/players/${myId}`).set({ name: name, score: 0 });
                     
-                    document.getElementById('lang-container').style.display = "none"; // Hide toggle once in
+                    document.getElementById('lang-container').style.display = "none"; 
                     document.getElementById('join-screen').style.display = "none";
                     document.getElementById('waiting-screen').style.display = "flex";
                     startGameStateListener();
@@ -242,6 +299,7 @@
                         
                         document.getElementById('waiting-screen').style.display = "none";
                         document.getElementById('result-overlay').style.display = "none";
+                        document.getElementById('game-over-screen').style.display = "none";
                         document.getElementById('game-grid').style.display = "grid";
                         
                         for (let i = 0; i < 4; i++) {
@@ -270,10 +328,17 @@
                         currentPhase = "REVEAL";
                         handleReveal(state);
                     }
+                } else if (state.status === "GAME_OVER") {
+                    if (currentPhase !== "GAME_OVER") {
+                        currentPhase = "GAME_OVER";
+                        document.getElementById('lang-container').style.display = "flex"; // Bring toggle back
+                        showPersonalStats();
+                    }
                 } else if (state.status === "CLOSED") {
                     if (currentPhase !== "CLOSED") {
                         currentPhase = "CLOSED";
                         document.getElementById('game-grid').style.display = "none";
+                        document.getElementById('game-over-screen').style.display = "none";
                         const overlay = document.getElementById('result-overlay');
                         
                         overlay.style.display = "flex";
@@ -292,7 +357,9 @@
 
             db.ref(`trivia/players/${myId}/score`).on('value', snap => {
                 myScore = snap.val() || 0;
-                document.getElementById('score-display').innerText = myScore + " pts";
+                if (currentPhase !== "GAME_OVER") {
+                    document.getElementById('score-display').innerText = myScore + " pts";
+                }
             });
         }
 
@@ -363,9 +430,44 @@
             });
         }
         
+        function showPersonalStats() {
+            document.getElementById('result-overlay').style.display = "none";
+            document.getElementById('game-grid').style.display = "none";
+            document.getElementById('waiting-screen').style.display = "none";
+            
+            db.ref('trivia/players').once('value').then(snap => {
+                finalPlayerData = snap.val() || {};
+                renderPersonalStats();
+                document.getElementById('game-over-screen').style.display = "flex";
+            });
+        }
+        
+        function renderPersonalStats() {
+            if (!finalPlayerData) return;
+            
+            const me = finalPlayerData[myId] || {score: 0, maxStreak: 0, fastestTime: 999999};
+
+            const playersArray = Object.keys(finalPlayerData).map(id => ({
+                id: id,
+                score: finalPlayerData[id].score || 0
+            })).sort((a,b) => b.score - a.score);
+
+            let myRank = playersArray.findIndex(p => p.id === myId) + 1;
+            if(myRank === 0) myRank = "-";
+
+            let timeStr = "--";
+            if (me.fastestTime && me.fastestTime < 999999) {
+                timeStr = (me.fastestTime / 1000).toFixed(2) + (currentLang === 'ja' ? " 秒" : "s");
+            }
+
+            document.getElementById('go-rank').innerText = currentLang === 'ja' ? `${myRank}位` : `#${myRank}`;
+            document.getElementById('go-score').innerText = me.score + " pts";
+            document.getElementById('go-streak').innerText = me.maxStreak + (currentLang === 'ja' ? ' 問' : '');
+            document.getElementById('go-time').innerText = timeStr;
+        }
+        
         function startGameStateListener() { gameStateListener(); }
         
-        // Initialize default language
         setLang('ja');
     </script>
 </body>

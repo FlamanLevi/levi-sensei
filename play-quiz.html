@@ -9,53 +9,83 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background-color: #f4f4f9; margin: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f9; margin: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; color: #333; }
         
-        #join-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 20px; text-align: center; }
-        input { font-size: 1.5em; padding: 15px; margin: 10px; border-radius: 10px; border: 2px solid #ccc; width: 80%; max-width: 300px; text-align: center; }
-        .join-btn { font-size: 1.5em; padding: 15px 40px; background: #007bff; color: white; border: none; border-radius: 10px; width: 80%; max-width: 300px; cursor: pointer; }
+        /* Language Toggle Styling */
+        .lang-toggle-container { width: 100%; display: flex; justify-content: flex-end; padding: 15px 20px; box-sizing: border-box; position: absolute; top: 0; left: 0; }
+        .lang-toggle { display: flex; border: 2px solid #007bff; border-radius: 20px; overflow: hidden; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .lang-toggle button { background: transparent; border: none; padding: 8px 15px; font-weight: bold; cursor: pointer; color: #007bff; transition: 0.2s; font-size: 1em; }
+        .lang-toggle button.active { background: #007bff; color: white; }
 
-        #waiting-screen { display: none; flex-direction: column; align-items: center; justify-content: center; height: 100%; background: #007bff; color: white; }
+        /* Join Screen */
+        #join-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 20px; text-align: center; box-sizing: border-box; }
+        #join-screen h1 { color: #2c3e50; margin-bottom: 10px; font-size: 2.2em; }
+        .instruction-text { font-size: 1.1em; color: #555; margin-bottom: 25px; max-width: 400px; line-height: 1.4; }
+        
+        input { font-size: 1.5em; padding: 15px; margin: 10px; border-radius: 15px; border: 2px solid #ccc; width: 85%; max-width: 350px; text-align: center; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); transition: border-color 0.3s; }
+        input:focus { border-color: #007bff; outline: none; }
+        .join-btn { font-size: 1.5em; padding: 15px 40px; background: #007bff; color: white; border: none; border-radius: 15px; width: 85%; max-width: 350px; cursor: pointer; font-weight: bold; margin-top: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); transition: transform 0.1s, background-color 0.2s; }
+        .join-btn:active { transform: scale(0.95); background: #0056b3; }
 
-        #game-grid { display: none; gap: 10px; padding: 10px; height: 100vh; box-sizing: border-box; }
+        /* Waiting/Lobby Screen */
+        #waiting-screen { display: none; flex-direction: column; align-items: center; justify-content: center; height: 100%; background: #007bff; color: white; text-align: center; padding: 20px; box-sizing: border-box; }
+        #waiting-screen h2 { font-size: 2.5em; margin-bottom: 15px; }
+        #waiting-screen p { font-size: 1.3em; max-width: 400px; line-height: 1.5; background: rgba(0,0,0,0.1); padding: 20px; border-radius: 15px; }
+        .spinner { margin-top: 20px; width: 50px; height: 50px; border: 5px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: white; animation: spin 1s ease-in-out infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Game Grid */
+        #game-grid { display: none; gap: 12px; padding: 12px; height: 100vh; box-sizing: border-box; }
         @media (orientation: landscape) { #game-grid { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; } }
         @media (orientation: portrait) { #game-grid { grid-template-columns: 1fr; grid-template-rows: repeat(4, 1fr); } }
 
-        .answer-btn { border: none; border-radius: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; font-weight: bold; cursor: pointer; padding: 10px; transition: transform 0.1s, opacity 0.2s; }
-        .answer-btn:active { transform: scale(0.95); }
+        /* touch-action: manipulation removes the 300ms tap delay on mobile devices! */
+        .answer-btn { border: none; border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; font-weight: bold; cursor: pointer; padding: 15px; transition: transform 0.1s, opacity 0.2s; touch-action: manipulation; box-shadow: 0 6px 0 rgba(0,0,0,0.2); }
+        .answer-btn:active { transform: translateY(6px); box-shadow: none; }
         
-        /* The Lockout State - Faded Original Colors */
-        .locked { opacity: 0.4; cursor: not-allowed; pointer-events: none; transform: none !important; }
+        /* The Lockout State */
+        .locked { opacity: 0.4; cursor: not-allowed; pointer-events: none; transform: translateY(6px) !important; box-shadow: none !important; }
         
         .btn-red { background-color: #e21b3c; }
         .btn-blue { background-color: #1368ce; }
         .btn-yellow { background-color: #d89e00; }
         .btn-green { background-color: #26890c; }
 
-        .shape { font-size: 2em; margin-bottom: 5px; opacity: 0.7; }
-        .btn-text-container { display: flex; flex-direction: column; align-items: center; gap: 2px; }
-        .btn-text-line { font-size: 1.2em; line-height: 1.1; margin: 0; }
+        .shape { font-size: 2.5em; margin-bottom: 5px; opacity: 0.8; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .btn-text-container { display: flex; flex-direction: column; align-items: center; gap: 4px; text-shadow: 1px 1px 3px rgba(0,0,0,0.3); }
+        .btn-text-line { font-size: 1.4em; line-height: 1.1; margin: 0; word-break: break-word; text-align: center; }
 
+        /* Result Overlays */
         #result-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 100; flex-direction: column; align-items: center; justify-content: center; color: white; text-align: center; }
         .bg-correct { background-color: #26890c !important; }
         .bg-wrong { background-color: #e21b3c !important; }
         
-        .streak-badge { font-size: 1.2em; background: rgba(0,0,0,0.3); padding: 12px 30px; border-radius: 40px; margin: 15px 0; font-weight: bold; border: 2px solid rgba(255,255,255,0.4); display: none; }
-        .near-miss { font-size: 0.7em; margin-top: 25px; font-weight: normal; font-style: italic; opacity: 0.9; }
+        .streak-badge { font-size: 1.4em; background: rgba(0,0,0,0.3); padding: 12px 30px; border-radius: 40px; margin: 15px 0; font-weight: bold; border: 2px solid rgba(255,255,255,0.4); display: none; }
+        .near-miss { font-size: 1em; margin-top: 25px; font-weight: bold; background: rgba(255,255,255,0.2); padding: 10px 20px; border-radius: 15px; opacity: 0.9; }
     </style>
 </head>
 <body>
 
+    <div class="lang-toggle-container" id="lang-container">
+        <div class="lang-toggle">
+            <button id="btn-lang-en" onclick="setLang('en')">EN</button>
+            <button id="btn-lang-ja" class="active" onclick="setLang('ja')">日本語</button>
+        </div>
+    </div>
+
     <div id="join-screen">
-        <h1 style="color: #2c3e50;">Levi-Sensei Trivia</h1>
-        <input type="number" id="pin-input" placeholder="Room PIN">
-        <input type="text" id="name-input" placeholder="Nickname" maxlength="12">
-        <button class="join-btn" onclick="joinRoom()">Join Game</button>
+        <h1 data-i18n="title">Levi-Sensei Trivia</h1>
+        <p class="instruction-text" data-i18n="joinInst">Look at the main screen for the Room PIN. Enter it below along with your Nickname!</p>
+        
+        <input type="number" id="pin-input" data-i18n-placeholder="pinHolder" placeholder="Room PIN">
+        <input type="text" id="name-input" data-i18n-placeholder="nameHolder" placeholder="Nickname" maxlength="12">
+        <button class="join-btn" onclick="joinRoom()" data-i18n="btnJoin">Join Game</button>
     </div>
 
     <div id="waiting-screen">
-        <h2 style="font-size: 2em;">You're in!</h2>
-        <p>Get ready...</p>
+        <h2 data-i18n="waitTitle">You're in!</h2>
+        <p data-i18n="waitInst">Look at the big screen. Read the question, then tap the right color/shape on your tablet. Be quick to get more points!</p>
+        <div class="spinner"></div>
     </div>
 
     <div id="game-grid">
@@ -78,13 +108,79 @@
     </div>
 
     <div id="result-overlay">
-        <div id="status-msg" style="font-size: 2.2em; font-weight: bold;"></div>
+        <div id="status-msg" style="font-size: 3em; font-weight: bold;"></div>
         <div id="streak-msg" class="streak-badge"></div>
-        <div id="score-display" style="font-size: 1.3em; margin-top: 5px;">0 pts</div>
-        <div id="miss-msg" class="near-miss"></div>
+        <div id="score-display" style="font-size: 1.8em; margin-top: 10px;">0 pts</div>
+        <div id="miss-msg" class="near-miss" style="display: none;"></div>
     </div>
 
     <script>
+        // --- TRANSLATION DICTIONARY ---
+        const i18n = {
+            en: {
+                title: "Levi-Sensei Trivia",
+                joinInst: "Look at the main screen for the Room PIN. Enter it below along with your Nickname!",
+                pinHolder: "Room PIN",
+                nameHolder: "Nickname",
+                btnJoin: "Join Game",
+                waitTitle: "You're in!",
+                waitInst: "Look at the big screen. Read the question, then tap the right color/shape on your tablet. Be quick to get more points!",
+                alertPin: "Enter PIN and Name!",
+                alertWrong: "Room not found! Check the PIN on the board.",
+                docTitle: "Levi-Sensei Trivia: Player",
+                resCorrect: "CORRECT! 🌟",
+                resWrong: "WRONG 😅",
+                resTime: "TIME UP! ⏰",
+                streak: "🔥 {x} IN A ROW!",
+                missAway: "You are {gap} pts away from the Top 5!",
+                missTop: "You are in the Top 5! 🏆",
+                endTitle: "Class Dismissed! 🎒",
+                endScore: "Closing room..."
+            },
+            ja: {
+                title: "リヴァイ先生トリビア",
+                joinInst: "前の大画面を見て、ルームPIN（番号）とニックネームを入力してね！",
+                pinHolder: "ルームPIN (番号)",
+                nameHolder: "ニックネーム",
+                btnJoin: "参加する",
+                waitTitle: "参加完了！",
+                waitInst: "前の大画面を見てね。問題が出たら、正しい色や形のボタンをすばやくタップしよう！早いほど高得点だよ！",
+                alertPin: "PINとニックネームを入力してね！",
+                alertWrong: "ルームが見つかりません。大画面のPINを確認してね。",
+                docTitle: "リヴァイ先生トリビア: プレイヤー",
+                resCorrect: "正解！ 🌟",
+                resWrong: "ざんねん 😅",
+                resTime: "時間切れ！ ⏰",
+                streak: "🔥 {x}問連続正解！",
+                missAway: "トップ5まであと {gap} ポイント！",
+                missTop: "トップ5に入っているよ！ 🏆",
+                endTitle: "授業おわり！ 🎒",
+                endScore: "ルームを閉じています..."
+            }
+        };
+
+        let currentLang = 'ja'; // Default to Japanese for students
+
+        function setLang(lang) {
+            currentLang = lang;
+            document.getElementById('btn-lang-en').className = lang === 'en' ? 'active' : '';
+            document.getElementById('btn-lang-ja').className = lang === 'ja' ? 'active' : '';
+            document.title = i18n[lang].docTitle;
+
+            // Update inner text
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (i18n[lang][key]) el.innerText = i18n[lang][key];
+            });
+            
+            // Update placeholders
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-i18n-placeholder');
+                if (i18n[lang][key]) el.placeholder = i18n[lang][key];
+            });
+        }
+
+        // --- FIREBASE LOGIC ---
         const firebaseConfig = {
             apiKey: "AIzaSyC7lrhVICmKOL3EhVkiaTkpEE1_VUDPS7k",
             authDomain: "levi-sensei.firebaseapp.com",
@@ -104,23 +200,30 @@
         let myScore = 0;
         let questionStartTime = 0;
         
-        // Phase Tracking to prevent invisible UI reloads
         let currentPhase = "";
         let currentQuestionNum = -1;
 
         function joinRoom() {
             const pin = document.getElementById('pin-input').value;
             const name = document.getElementById('name-input').value.trim();
-            if (!pin || !name) return;
+            
+            if (!pin || !name) {
+                alert(i18n[currentLang].alertPin);
+                return; 
+            }
 
             db.ref('trivia/room').once('value').then(snap => {
                 if (snap.val() && snap.val().roomCode === pin) {
                     myId = "u_" + Math.random().toString(36).substr(2, 5);
                     db.ref(`trivia/players/${myId}`).set({ name: name, score: 0 });
+                    
+                    document.getElementById('lang-container').style.display = "none"; // Hide toggle once in
                     document.getElementById('join-screen').style.display = "none";
                     document.getElementById('waiting-screen').style.display = "flex";
                     startGameStateListener();
-                } else { alert("Wrong PIN"); }
+                } else { 
+                    alert(i18n[currentLang].alertWrong); 
+                }
             });
         }
 
@@ -177,10 +280,10 @@
                         overlay.classList.remove('bg-correct', 'bg-wrong');
                         overlay.style.backgroundColor = "#343a40"; 
                         
-                        document.getElementById('status-msg').innerText = "Class Dismissed! 🎒";
-                        document.getElementById('score-display').innerText = "Closing room...";
+                        document.getElementById('status-msg').innerText = i18n[currentLang].endTitle;
+                        document.getElementById('score-display').innerText = i18n[currentLang].endScore;
                         document.getElementById('streak-msg').style.display = "none";
-                        document.getElementById('miss-msg').innerText = "";
+                        document.getElementById('miss-msg').style.display = "none";
                         
                         setTimeout(() => { location.reload(); }, 2000);
                     }
@@ -211,6 +314,7 @@
             const overlay = document.getElementById('result-overlay');
             const msg = document.getElementById('status-msg');
             const streakBar = document.getElementById('streak-msg');
+            const missBar = document.getElementById('miss-msg');
             
             overlay.style.display = "flex";
             overlay.classList.remove('bg-correct', 'bg-wrong');
@@ -219,18 +323,18 @@
                 const myAns = snap.val() ? snap.val().answer : null;
                 
                 if (myAns === state.correctAnswer) {
-                    msg.innerText = "CORRECT! 🌟";
+                    msg.innerText = i18n[currentLang].resCorrect;
                     overlay.classList.add('bg-correct');
                     streak++;
                     
                     if (streak >= 2) {
-                        streakBar.innerText = `🔥 ${streak} IN A ROW!`;
+                        streakBar.innerText = i18n[currentLang].streak.replace('{x}', streak);
                         streakBar.style.display = "inline-block"; 
                     } else {
                         streakBar.style.display = "none";
                     }
                 } else {
-                    msg.innerText = myAns ? "WRONG 😅" : "TIME UP! ⏰";
+                    msg.innerText = myAns ? i18n[currentLang].resWrong : i18n[currentLang].resTime;
                     overlay.classList.add('bg-wrong');
                     streak = 0;
                     streakBar.style.display = "none";
@@ -247,17 +351,22 @@
                     
                     if (myRank > 5 && playersArray.length >= 5) {
                         const gap = playersArray[4].score - myScore;
-                        document.getElementById('miss-msg').innerText = `You are ${gap} pts away from the Top 5!`;
+                        missBar.innerText = i18n[currentLang].missAway.replace('{gap}', gap);
+                        missBar.style.display = "inline-block";
                     } else if (myRank <= 5 && myRank > 0) {
-                        document.getElementById('miss-msg').innerText = "You are in the Top 5! 🏆";
+                        missBar.innerText = i18n[currentLang].missTop;
+                        missBar.style.display = "inline-block";
                     } else {
-                        document.getElementById('miss-msg').innerText = "";
+                        missBar.style.display = "none";
                     }
                 });
             });
         }
         
         function startGameStateListener() { gameStateListener(); }
+        
+        // Initialize default language
+        setLang('ja');
     </script>
 </body>
 </html>

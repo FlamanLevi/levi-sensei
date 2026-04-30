@@ -10,7 +10,16 @@
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f9; padding: 20px; color: #333; }
         .panel { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        h2 { border-bottom: 2px solid #007bff; padding-bottom: 5px; color: #2c3e50; margin-top: 25px; }
+        
+        .header-row { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #007bff; padding-bottom: 10px; margin-bottom: 20px; }
+        .header-row h1 { margin: 0; color: #2c3e50; }
+        
+        .lang-toggle { display: flex; border: 2px solid #007bff; border-radius: 20px; overflow: hidden; background: white; }
+        .lang-toggle button { background: transparent; border: none; padding: 8px 15px; font-weight: bold; cursor: pointer; color: #007bff; transition: 0.2s; font-size: 1em; }
+        .lang-toggle button.active { background: #007bff; color: white; }
+        
+        h2 { color: #2c3e50; margin-top: 25px; margin-bottom: 5px; }
+        .instruction-text { font-size: 0.9em; color: #6c757d; font-style: italic; margin-top: 0; margin-bottom: 15px; }
         
         .master-controls { margin-bottom: 15px; font-size: 14px; display: flex; gap: 10px; }
         .master-controls a { text-decoration: none; font-weight: bold; padding: 5px 10px; border-radius: 4px; background: #f0f0f0; color: #333; border: 1px solid #ccc; }
@@ -39,7 +48,6 @@
         #player-list { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin: 20px 0; padding: 20px; background: #f8f9fa; border-radius: 10px; min-height: 50px; }
         .player-tag { background: #e0f7fa; color: #006064; padding: 10px 20px; border-radius: 25px; font-weight: bold; font-size: 1.2em; }
 
-        /* Leaderboard & Awards Styling */
         .leaderboard-row { display: flex; justify-content: space-between; align-items: center; background: #fff; padding: 15px 30px; margin: 0 auto 10px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); font-size: 1.5em; width: 80%; max-width: 600px; }
         .rank-1 { background: #fff3cd; border: 2px solid #ffeeba; } 
         .rank-2 { background: #e2e3e5; border: 2px solid #d6d8db; } 
@@ -58,73 +66,136 @@
 <body>
 
     <div id="setup-screen" class="panel">
-        <h1>Game Setup (Host)</h1>
+        <div class="header-row">
+            <h1 data-i18n="title">Game Setup (Host)</h1>
+            <div class="lang-toggle">
+                <button id="btn-lang-en" class="active" onclick="setLang('en')">EN</button>
+                <button id="btn-lang-ja" onclick="setLang('ja')">日本語</button>
+            </div>
+        </div>
         
-        <h2>1. Select Units</h2>
+        <h2 data-i18n="h1">1. Select Units</h2>
+        <p class="instruction-text" data-i18n="inst1">Choose the vocabulary units you want to test. Ensure you select at least 4 words total to generate a game.</p>
+        
         <div class="master-controls">
-            <a href="#" onclick="toggleAll(true); return false;">Check All</a>
-            <a href="#" onclick="toggleAll(false); return false;">Clear All</a>
+            <a href="#" onclick="toggleAll(true); return false;" data-i18n="btnCheck">Check All</a>
+            <a href="#" onclick="toggleAll(false); return false;" data-i18n="btnClear">Clear All</a>
         </div>
         <div id="unit-selector"></div>
 
-        <h2>2. Game Settings</h2>
+        <h2 data-i18n="h2">2. Game Settings</h2>
+        <p class="instruction-text" data-i18n="inst2">Configure the match rules and determine which language formats appear on the main display versus the student tablets.</p>
         
         <div style="margin-bottom: 15px;">
-            <label style="font-weight: bold;">Number of Questions: </label>
+            <label style="font-weight: bold;" data-i18n="lblQ">Number of Questions: </label>
             <select id="question-count">
-                <option value="5">5 Questions (Sprint)</option>
-                <option value="10" selected>10 Questions (Standard)</option>
-                <option value="15">15 Questions</option>
-                <option value="20">20 Questions</option>
-                <option value="30">30 Questions</option>
-                <option value="-1">All Selected Words (Endurance)</option>
+                <option value="5" data-i18n="qSprint">5 Questions (Sprint)</option>
+                <option value="10" selected data-i18n="qStd">10 Questions (Standard)</option>
+                <option value="15" data-i18n="q15">15 Questions</option>
+                <option value="20" data-i18n="q20">20 Questions</option>
+                <option value="30" data-i18n="q30">30 Questions</option>
+                <option value="-1" data-i18n="qEnd">All Selected Words (Endurance)</option>
             </select>
-            <span id="pool-size-display" class="live-counter">Words in pool: 0</span>
+            <span id="pool-size-display" class="live-counter" data-i18n-prefix="pool">Words in pool: 0</span>
         </div>
 
         <div style="margin-bottom: 25px;">
-            <label style="font-weight: bold;">Time per question: </label>
+            <label style="font-weight: bold;" data-i18n="lblT">Time per question: </label>
             <select id="time-limit">
-                <option value="5000">5 Seconds (Extra Hard)</option>
-                <option value="10000">10 Seconds (Hard)</option>
-                <option value="15000" selected>15 Seconds (Medium)</option>
-                <option value="20000">20 Seconds (Easy)</option>
+                <option value="5000" data-i18n="t5">5 Seconds (Extra Hard)</option>
+                <option value="10000" data-i18n="t10">10 Seconds (Hard)</option>
+                <option value="15000" selected data-i18n="t15">15 Seconds (Medium)</option>
+                <option value="20000" data-i18n="t20">20 Seconds (Easy)</option>
             </select>
         </div>
 
         <div class="matrix-container">
             <div class="matrix-column">
-                <h3 style="margin-top:0;">Main Screen (Prompt)</h3>
-                <label class="checkbox-container"><input type="checkbox" class="mode-cb prompt-cb" value="img"> Image</label>
-                <label class="checkbox-container"><input type="checkbox" class="mode-cb prompt-cb" value="en" checked> English Spelling</label>
-                <label class="checkbox-container"><input type="checkbox" class="mode-cb prompt-cb" value="ja_hiragana"> Japanese (Hiragana)</label>
-                <label class="checkbox-container"><input type="checkbox" class="mode-cb prompt-cb" value="en_katakana"> English Pronunciation (Katakana)</label>
-                <label class="checkbox-container"><input type="checkbox" class="mode-cb prompt-cb" value="ja_kanji"> Japanese (Kanji)</label>
+                <h3 style="margin-top:0;" data-i18n="lblMain">Main Screen (Prompt)</h3>
+                <label class="checkbox-container"><input type="checkbox" class="mode-cb prompt-cb" value="img"> <span data-i18n="lblImg">Image</span></label>
+                <label class="checkbox-container"><input type="checkbox" class="mode-cb prompt-cb" value="en" checked> <span data-i18n="lblEn">English Spelling</span></label>
+                <label class="checkbox-container"><input type="checkbox" class="mode-cb prompt-cb" value="ja_hiragana"> <span data-i18n="lblHi">Japanese (Hiragana)</span></label>
+                <label class="checkbox-container"><input type="checkbox" class="mode-cb prompt-cb" value="en_katakana"> <span data-i18n="lblKa">English Pronunciation (Katakana)</span></label>
+                <label class="checkbox-container"><input type="checkbox" class="mode-cb prompt-cb" value="ja_kanji"> <span data-i18n="lblKj">Japanese (Kanji)</span></label>
             </div>
             <div class="matrix-column">
-                <h3 style="margin-top:0;">Tablets (Options)</h3>
-                <label class="checkbox-container"><input type="checkbox" class="mode-cb option-cb" value="img"> Image</label>
-                <label class="checkbox-container"><input type="checkbox" class="mode-cb option-cb" value="en"> English Spelling</label>
-                <label class="checkbox-container"><input type="checkbox" class="mode-cb option-cb" value="ja_hiragana" checked> Japanese (Hiragana)</label>
-                <label class="checkbox-container"><input type="checkbox" class="mode-cb option-cb" value="en_katakana"> English Pronunciation (Katakana)</label>
-                <label class="checkbox-container"><input type="checkbox" class="mode-cb option-cb" value="ja_kanji"> Japanese (Kanji)</label>
+                <h3 style="margin-top:0;" data-i18n="lblTab">Tablets (Options)</h3>
+                <label class="checkbox-container"><input type="checkbox" class="mode-cb option-cb" value="img"> <span data-i18n="lblImg">Image</span></label>
+                <label class="checkbox-container"><input type="checkbox" class="mode-cb option-cb" value="en"> <span data-i18n="lblEn">English Spelling</span></label>
+                <label class="checkbox-container"><input type="checkbox" class="mode-cb option-cb" value="ja_hiragana" checked> <span data-i18n="lblHi">Japanese (Hiragana)</span></label>
+                <label class="checkbox-container"><input type="checkbox" class="mode-cb option-cb" value="en_katakana"> <span data-i18n="lblKa">English Pronunciation (Katakana)</span></label>
+                <label class="checkbox-container"><input type="checkbox" class="mode-cb option-cb" value="ja_kanji"> <span data-i18n="lblKj">Japanese (Kanji)</span></label>
             </div>
         </div>
-        <button class="control-btn" onclick="initializeGame()">Create Room</button>
+        <button class="control-btn" onclick="initializeGame()" data-i18n="btnCreate">Create Room</button>
     </div>
 
     <div id="game-screen" class="panel">
         <div id="lobby-ui">
-            <h2>Join on Tablets: <span id="room-code-display"></span></h2>
-            <p>Students Connected: <span id="student-count">0</span></p>
+            <h2><span data-i18n="lblJoin">Join on Tablets:</span> <span id="room-code-display"></span></h2>
+            <p><span data-i18n="lblConn">Students Connected:</span> <span id="student-count">0</span></p>
             <div id="player-list"></div>
         </div>
         <div id="timer-bar-container"><div id="timer-bar"></div></div>
         <div id="current-question-display"></div>
-        <button class="control-btn" onclick="handleGameFlow()" id="main-action-btn">Start Game</button>
+        <button class="control-btn" onclick="handleGameFlow()" id="main-action-btn" data-i18n="btnStart">Start Game</button>
     </div>
 
     <script>
+        const i18n = {
+            en: {
+                title: "Game Setup (Host)", h1: "1. Select Units",
+                inst1: "Choose the vocabulary units you want to test. Ensure you select at least 4 words total to generate a game.",
+                btnCheck: "Check All", btnClear: "Clear All",
+                h2: "2. Game Settings",
+                inst2: "Configure the match rules and determine which language formats appear on the main display versus the student tablets.",
+                lblQ: "Number of Questions: ", lblT: "Time per question: ",
+                lblMain: "Main Screen (Prompt)", lblTab: "Tablets (Options)",
+                lblImg: "Image", lblEn: "English Spelling", lblHi: "Japanese (Hiragana)", lblKa: "English Pronunciation (Katakana)", lblKj: "Japanese (Kanji)",
+                btnCreate: "Create Room",
+                qSprint: "5 Questions (Sprint)", qStd: "10 Questions (Standard)", q15: "15 Questions", q20: "20 Questions", q30: "30 Questions", qEnd: "All Selected Words (Endurance)",
+                t5: "5 Seconds (Extra Hard)", t10: "10 Seconds (Hard)", t15: "15 Seconds (Medium)", t20: "20 Seconds (Easy)",
+                lblJoin: "Join on Tablets:", lblConn: "Students Connected:", btnStart: "Start Game",
+                poolPrefix: "Words in pool: ", docTitle: "Levi-Sensei Trivia: Control Hub"
+            },
+            ja: {
+                title: "ゲーム設定 (ホスト)", h1: "1. 単元を選択",
+                inst1: "テストしたい単語の単元を選んでください。ゲームを作成するには、合計4語以上を選択する必要があります。",
+                btnCheck: "すべて選択", btnClear: "すべてクリア",
+                h2: "2. ゲーム設定",
+                inst2: "ルールの設定と、メイン画面・タブレットに表示する言語フォーマットを決めてください。",
+                lblQ: "問題数: ", lblT: "1問あたりの時間: ",
+                lblMain: "メイン画面 (問題)", lblTab: "タブレット (選択肢)",
+                lblImg: "画像", lblEn: "英語のつづり", lblHi: "日本語 (ひらがな)", lblKa: "英語の発音 (カタカナ)", lblKj: "日本語 (漢字)",
+                btnCreate: "ルーム作成",
+                qSprint: "5問 (スプリント)", qStd: "10問 (標準)", q15: "15問", q20: "20問", q30: "30問", qEnd: "選択した全単語 (耐久)",
+                t5: "5秒 (激ムズ)", t10: "10秒 (難しい)", t15: "15秒 (普通)", t20: "20秒 (簡単)",
+                lblJoin: "タブレットで参加:", lblConn: "接続中の生徒:", btnStart: "ゲーム開始",
+                poolPrefix: "選択された単語数: ", docTitle: "リヴァイ先生トリビア: 管理ハブ"
+            }
+        };
+
+        let currentLang = 'en';
+
+        function setLang(lang) {
+            currentLang = lang;
+            document.getElementById('btn-lang-en').className = lang === 'en' ? 'active' : '';
+            document.getElementById('btn-lang-ja').className = lang === 'ja' ? 'active' : '';
+            document.title = i18n[lang].docTitle;
+
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (i18n[lang][key]) el.innerText = i18n[lang][key];
+            });
+            
+            // Swap JSON-driven dynamic text (Grades and Units)
+            document.querySelectorAll('.dynamic-lang').forEach(el => {
+                el.innerText = el.getAttribute(`data-${lang}`);
+            });
+            
+            updatePoolCounter();
+        }
+
         const firebaseConfig = {
             apiKey: "AIzaSyC7lrhVICmKOL3EhVkiaTkpEE1_VUDPS7k",
             authDomain: "levi-sensei.firebaseapp.com",
@@ -140,36 +211,40 @@
         let vocabularyData = {}, questionQueue = [], currentQuestionIndex = 0;
         let selectedTimeLimit = 15000, roomCode = "", livePlayersData = {}, gamePhase = "LOBBY", countdownInterval;
 
-        const gradeConfig = {
-            "grade3": { name: "Grade 3", colorClass: "g3" },
-            "grade4": { name: "Grade 4", colorClass: "g4" },
-            "grade5": { name: "Grade 5", colorClass: "g5" },
-            "grade6": { name: "Grade 6", colorClass: "g6" }
+        const gradeColors = {
+            "grade3": "g3", "grade4": "g4", "grade5": "g5", "grade6": "g6"
         };
 
         fetch('vocabulary.json').then(r => r.json()).then(d => { vocabularyData = d; buildSetupUI(d); });
 
         function buildSetupUI(data) {
             const container = document.getElementById("unit-selector");
-            for (const grade in data) {
-                if (!gradeConfig[grade]) continue;
-                const colorId = gradeConfig[grade].colorClass;
+            for (const gradeKey in data) {
+                const gradeObj = data[gradeKey];
+                const colorClass = gradeColors[gradeKey] || "g3";
 
                 const gradeLabel = document.createElement('label');
-                gradeLabel.className = `checkbox-container color-${colorId}`;
+                gradeLabel.className = `checkbox-container color-${colorClass}`;
                 gradeLabel.style.fontWeight = "bold";
-                gradeLabel.innerHTML = `<input type="checkbox" class="grade-checkbox" data-grade="${grade}"> ${gradeConfig[grade].name}`;
+                gradeLabel.innerHTML = `<input type="checkbox" class="grade-checkbox" data-grade="${gradeKey}"> <span class="dynamic-lang" data-en="${gradeObj.name_en}" data-ja="${gradeObj.name_ja}">${gradeObj.name_en}</span>`;
                 gradeLabel.querySelector('input').onchange = toggleDrawer;
                 container.appendChild(gradeLabel);
 
                 const unitSection = document.createElement('div');
-                unitSection.id = `units-${grade}`;
-                unitSection.className = `unit-section color-${colorId}`;
-                for (const unit in data[grade]) {
-                    unitSection.innerHTML += `<label class="checkbox-container" style="color:#333;"><input type="checkbox" class="unit-cb" value="${grade}|${unit}" onchange="updatePoolCounter()"> ${unit}</label>`;
+                unitSection.id = `units-${gradeKey}`;
+                unitSection.className = `unit-section color-${colorClass}`;
+                
+                for (const unitKey in gradeObj.units) {
+                    const unitObj = gradeObj.units[unitKey];
+                    unitSection.innerHTML += `<label class="checkbox-container" style="color:#333;">
+                        <input type="checkbox" class="unit-cb" value="${gradeKey}|${unitKey}" onchange="updatePoolCounter()"> 
+                        <span class="dynamic-lang" data-en="${unitObj.name_en}" data-ja="${unitObj.name_ja}">${unitObj.name_en}</span>
+                    </label>`;
                 }
                 container.appendChild(unitSection);
             }
+            
+            setLang(currentLang);
         }
 
         function toggleDrawer(e) {
@@ -181,9 +256,10 @@
             let count = 0;
             document.querySelectorAll('.unit-cb:checked').forEach(cb => {
                 const [g, u] = cb.value.split('|');
-                count += vocabularyData[g][u].length;
+                count += vocabularyData[g].units[u].words.length;
             });
-            document.getElementById('pool-size-display').innerText = `Words in pool: ${count}`;
+            const prefix = i18n[currentLang].poolPrefix;
+            document.getElementById('pool-size-display').innerText = `${prefix}${count}`;
         }
 
         function toggleAll(force) {
@@ -209,17 +285,22 @@
 
         function initializeGame() {
             const checkboxes = document.querySelectorAll('.unit-cb:checked');
-            let selectedItems = [], selectedUnits = [];
+            let selectedItems = [];
+            
             checkboxes.forEach(cb => {
                 const [g, u] = cb.value.split('|');
-                selectedUnits.push(vocabularyData[g][u]);
-                selectedItems = selectedItems.concat(vocabularyData[g][u]);
+                const unitWords = vocabularyData[g].units[u].words;
+                selectedItems = selectedItems.concat(unitWords);
             });
-            if (selectedItems.length < 4) return alert("Select at least 4 words!");
+            
+            const warningMsg = currentLang === 'en' ? "Select at least 4 words!" : "4つ以上の単語を選択してください！";
+            if (selectedItems.length < 4) return alert(warningMsg);
 
             let basePool = [];
-            selectedUnits.forEach(unitArray => {
-                unitArray.forEach(item => {
+            checkboxes.forEach(cb => {
+                const [g, u] = cb.value.split('|');
+                const unitWords = vocabularyData[g].units[u].words;
+                unitWords.forEach(item => {
                     let opts = shuffle([...selectedItems]).filter(i => i.id !== item.id).slice(0, 3);
                     opts.push(item);
                     basePool.push({ target: item, options: shuffle(opts) });
@@ -276,7 +357,7 @@
                 if (prompts.includes('ja_kanji')) html += `<div style="font-size:0.5em; color:#555;">${q.target.ja_kanji}</div>`;
 
                 document.getElementById("current-question-display").innerHTML = html;
-                document.getElementById("main-action-btn").innerText = "Reveal Answer";
+                document.getElementById("main-action-btn").innerText = currentLang === 'en' ? "Reveal Answer" : "答えを見る";
                 
                 db.ref('trivia/gameState').set({
                     status: "LIVE", questionNumber: currentQuestionIndex, timeLimit: selectedTimeLimit,
@@ -332,22 +413,27 @@
                 db.ref().update(updates);
             });
 
-            document.getElementById("current-question-display").innerHTML += `<div style="color:green; font-size:0.5em; margin-top:20px;">Correct Answer: ${q.target.en} (${q.target.ja_hiragana})</div>`;
+            const correctLabel = currentLang === 'en' ? 'Correct Answer:' : '正解:';
+            document.getElementById("current-question-display").innerHTML += `<div style="color:green; font-size:0.5em; margin-top:20px;">${correctLabel} ${q.target.en} (${q.target.ja_hiragana})</div>`;
             
             let isFinal = (currentQuestionIndex + 1 >= questionQueue.length);
-            document.getElementById("main-action-btn").innerText = isFinal ? "Show Final Scores" : "Show Leaderboard";
+            if (currentLang === 'en') {
+                document.getElementById("main-action-btn").innerText = isFinal ? "Show Final Scores" : "Show Leaderboard";
+            } else {
+                document.getElementById("main-action-btn").innerText = isFinal ? "最終結果を見る" : "順位を見る";
+            }
             
             db.ref('trivia/gameState').update({ status: "REVEAL", correctAnswer: q.target.id });
             currentQuestionIndex++;
         }
 
-        // Helper function to format ties beautifully
         function formatNamesList(winners) {
             if (winners.length === 0) return "";
             if (winners.length === 1) return winners[0].name;
             if (winners.length === 2) return `${winners[0].name} & ${winners[1].name}`;
             if (winners.length === 3) return `${winners[0].name}, ${winners[1].name} & ${winners[2].name}`;
-            return `${winners[0].name}, ${winners[1].name} & ${winners.length - 2} others`;
+            const othersLabel = currentLang === 'en' ? 'others' : '名';
+            return `${winners[0].name}, ${winners[1].name} & ${winners.length - 2} ${othersLabel}`;
         }
 
         function showLeaderboard() {
@@ -357,7 +443,11 @@
             let isFinal = (currentQuestionIndex >= questionQueue.length);
             const players = Object.values(livePlayersData);
             
-            let html = `<h2>${isFinal ? '🏆 Final Awards Ceremony 🏆' : 'Top 5 Leaderboard'}</h2>`;
+            const titleText = isFinal 
+                ? (currentLang === 'en' ? '🏆 Final Awards Ceremony 🏆' : '🏆 最終結果発表 🏆')
+                : (currentLang === 'en' ? 'Top 5 Leaderboard' : 'トップ 5');
+                
+            let html = `<h2>${titleText}</h2>`;
             
             if (!isFinal) {
                 const top = [...players].sort((a,b) => (b.score||0) - (a.score||0)).slice(0, 5);
@@ -369,7 +459,6 @@
                 html += podium.map((p,i) => `<div class="leaderboard-row rank-${i+1}"><span>${i===0?'🥇':i===1?'🥈':'🥉'} ${p.name}</span><span>${p.score || 0} pts</span></div>`).join('');
                 html += `</div>`;
                 
-                // Tie-breaker calculation logic
                 const maxStreakVal = players.length > 0 ? Math.max(...players.map(p => p.maxStreak || 0)) : 0;
                 const streakWinners = players.filter(p => (p.maxStreak || 0) === maxStreakVal && maxStreakVal > 1);
 
@@ -380,18 +469,22 @@
                 html += `<div class="award-container">`;
                 
                 if (streakWinners.length > 0) {
+                    const stTitle = currentLang === 'en' ? "Unstoppable Streak" : "連続正解王";
+                    const stStat = currentLang === 'en' ? "in a row!" : "問連続正解！";
                     html += `<div class="award-card" style="border-top-color: #ff9800;">
-                                <div class="award-title">Unstoppable Streak</div>
+                                <div class="award-title">${stTitle}</div>
                                 <div class="award-winner">🔥 ${formatNamesList(streakWinners)}</div>
-                                <div class="award-stat">${maxStreakVal} in a row!</div>
+                                <div class="award-stat">${maxStreakVal} ${stStat}</div>
                              </div>`;
                 }
                 
                 if (fastestWinners.length > 0) {
+                    const ftTitle = currentLang === 'en' ? "Quickest Thinker" : "スピード王";
+                    const ftStat = currentLang === 'en' ? "seconds" : "秒";
                     html += `<div class="award-card" style="border-top-color: #9c27b0;">
-                                <div class="award-title">Quickest Thinker</div>
+                                <div class="award-title">${ftTitle}</div>
                                 <div class="award-winner">⚡ ${formatNamesList(fastestWinners)}</div>
-                                <div class="award-stat">${(bestTimeVal / 1000).toFixed(2)} seconds</div>
+                                <div class="award-stat">${(bestTimeVal / 1000).toFixed(2)} ${ftStat}</div>
                              </div>`;
                 }
                 
@@ -403,10 +496,10 @@
             const btn = document.getElementById("main-action-btn");
             if (isFinal) {
                 db.ref('trivia/gameState').update({ status: "GAME_OVER" });
-                btn.innerText = "End Game & Eject Players";
+                btn.innerText = currentLang === 'en' ? "End Game & Eject Players" : "終了して全員退出";
                 btn.style.backgroundColor = "#dc3545"; 
                 btn.onclick = function() {
-                    btn.innerText = "Closing Room...";
+                    btn.innerText = currentLang === 'en' ? "Closing Room..." : "ルームを閉じています...";
                     db.ref('trivia/gameState').set({ status: "CLOSED" });
                     setTimeout(() => {
                         db.ref('trivia').remove().then(() => {
@@ -415,7 +508,7 @@
                     }, 2000);
                 };
             } else {
-                btn.innerText = "Next Question";
+                btn.innerText = currentLang === 'en' ? "Next Question" : "次の問題";
                 btn.onclick = handleGameFlow; 
             }
         }

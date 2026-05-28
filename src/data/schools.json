@@ -1,0 +1,35 @@
+{
+  "schools": [
+    { "id": "futako", "name_en": "Futako Tamagawa ES", "name_ja": "二子玉川小学校" },
+    { "id": "toyogaoka", "name_en": "Toyogaoka ES", "name_ja": "豊ヶ丘小学校" },
+    { "id": "test", "name_en": "Test / Home", "name_ja": "テスト・ホーム" }
+  ],
+  "classes": {
+    "futako": [
+      { "id": "futako_3_1", "grade": "grade3", "name": "3-1" },
+      { "id": "futako_3_2", "grade": "grade3", "name": "3-2" },
+      { "id": "futako_3_3", "grade": "grade3", "name": "3-3" },
+      { "id": "futako_4_1", "grade": "grade4", "name": "4-1" },
+      { "id": "futako_4_2", "grade": "grade4", "name": "4-2" },
+      { "id": "futako_4_3", "grade": "grade4", "name": "4-3" },
+      { "id": "futako_5_1", "grade": "grade5", "name": "5-1" },
+      { "id": "futako_5_2", "grade": "grade5", "name": "5-2" },
+      { "id": "futako_5_3", "grade": "grade5", "name": "5-3" },
+      { "id": "futako_5_4", "grade": "grade5", "name": "5-4" },
+      { "id": "futako_6_1", "grade": "grade6", "name": "6-1" },
+      { "id": "futako_6_2", "grade": "grade6", "name": "6-2" },
+      { "id": "futako_6_3", "grade": "grade6", "name": "6-3" },
+      { "id": "futako_6_4", "grade": "grade6", "name": "6-4" }
+    ],
+    "toyogaoka": [
+      { "id": "toyogaoka_3_1", "grade": "grade3", "name": "3-1" },
+      { "id": "toyogaoka_4_1", "grade": "grade4", "name": "4-1" },
+      { "id": "toyogaoka_5_1", "grade": "grade5", "name": "5-1" },
+      { "id": "toyogaoka_6_1", "grade": "grade6", "name": "6-1" },
+      { "id": "toyogaoka_6_2", "grade": "grade6", "name": "6-2" }
+    ],
+    "test": [
+      { "id": "test_guest", "grade": "all", "name": "Guest" }
+    ]
+  }
+}

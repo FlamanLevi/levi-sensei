@@ -1,0 +1,133 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   Base Theme Variables (from Original CSS)
+   ========================================================================== */
+@theme {
+  --font-family-sans: 'UD Digi Kyokasho NP-R', 'UD Digi Kyokasho N-R', 'UD Digi Kyokasho', 'UDデジタル教科書体', 'BIZ UDPGothic', 'Hiragino Maru Gothic ProN', 'Rounded Mplus 1c', 'Noto Sans JP', sans-serif;
+}
+
+:root {
+  --bg-color: #f8f9fa;
+  --surface-color: #ffffff;
+  --text-color: #333333;
+  --text-muted: #666666;
+  --border-color: #e0e0e0;
+  --header-bg: #ffffff;
+  --header-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  --primary-color: #007bff;
+  --primary-light: #4dabf7;
+}
+
+[data-theme="dark"] {
+  --bg-color: #121212;
+  --surface-color: #1e1e1e;
+  --text-color: #ffffff;
+  --text-muted: #cccccc;
+  --border-color: #444444;
+  --header-bg: #1e1e1e;
+  --header-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+/* Color Schemes */
+[data-color="black"]  { --primary-color: #343a40; --primary-light: #495057; }
+[data-color="blue"]   { --primary-color: #007bff; --primary-light: #4dabf7; }
+[data-color="brown"]  { --primary-color: #795548; --primary-light: #a1887f; }
+[data-color="gray"]   { --primary-color: #6c757d; --primary-light: #adb5bd; }
+[data-color="green"]  { --primary-color: #28a745; --primary-light: #69db7c; }
+[data-color="orange"] { --primary-color: #fd7e14; --primary-light: #ffa94d; }
+[data-color="pink"]   { --primary-color: #e83e8c; --primary-light: #faa2c1; }
+[data-color="purple"] { --primary-color: #6f42c1; --primary-light: #9775fa; }
+[data-color="red"]    { --primary-color: #dc3545; --primary-light: #ffa8a8; }
+[data-color="yellow"] { --primary-color: #ffc107; --primary-light: #ffe066; }
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Background Patterns */
+[data-pattern="dots"] body {
+  background-image: radial-gradient(color-mix(in srgb, var(--primary-color) 20%, transparent) 2px, transparent 2px);
+  background-size: 30px 30px;
+}
+
+[data-pattern="grid"] body {
+  background-image: linear-gradient(color-mix(in srgb, var(--primary-color) 15%, transparent) 1px, transparent 1px),
+                    linear-gradient(90deg, color-mix(in srgb, var(--primary-color) 15%, transparent) 1px, transparent 1px);
+  background-size: 30px 30px;
+}
+
+[data-pattern="waves"] body {
+  background-image: radial-gradient(circle at 100% 50%, transparent 10%, color-mix(in srgb, var(--primary-color) 15%, transparent) 11%, color-mix(in srgb, var(--primary-color) 15%, transparent) 15%, transparent 16%, transparent),
+                    radial-gradient(circle at 0% 50%, transparent 10%, color-mix(in srgb, var(--primary-color) 15%, transparent) 11%, color-mix(in srgb, var(--primary-color) 15%, transparent) 15%, transparent 16%, transparent);
+  background-size: 40px 40px;
+  background-position: 0 0, 20px 20px;
+}
+
+[data-pattern="stripes"] body {
+  background-image: repeating-linear-gradient(
+    45deg,
+    color-mix(in srgb, var(--primary-color) 8%, transparent),
+    color-mix(in srgb, var(--primary-color) 8%, transparent) 10px,
+    transparent 10px,
+    transparent 20px
+  );
+}
+
+[data-pattern="cross"] body {
+  background: 
+    linear-gradient(45deg, transparent 48%, color-mix(in srgb, var(--primary-color) 15%, transparent) 49%, color-mix(in srgb, var(--primary-color) 15%, transparent) 51%, transparent 52%),
+    linear-gradient(-45deg, transparent 48%, color-mix(in srgb, var(--primary-color) 15%, transparent) 49%, color-mix(in srgb, var(--primary-color) 15%, transparent) 51%, transparent 52%);
+  background-size: 30px 30px;
+  background-color: var(--bg-color);
+}
+
+ruby {
+  ruby-align: center;
+}
+rt {
+  font-size: 0.65em;
+  color: var(--text-muted);
+  font-weight: normal;
+}
+
+/* ==========================================================================
+   Print Styles
+   ========================================================================== */
+@media print {
+  /* Hide UI elements that shouldn't be printed */
+  .no-print {
+    display: none !important;
+  }
+  
+  /* Reset background styles for printing */
+  body, .print-area {
+    background: white !important;
+    color: black !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Make sure background images (like the item borders/circles) print */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Hide header and footer */
+  header, footer {
+    display: none !important;
+  }
+
+  /* Force print area to take full page */
+  .print-area {
+    width: 100% !important;
+    max-width: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    page-break-after: always;
+  }
+}

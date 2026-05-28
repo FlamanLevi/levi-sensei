@@ -539,7 +539,7 @@ function QuizHostLive({ t, lang }) {
         startNextQuestion(currentQIndex + 1);
       }
     }
-  }, [phase, currentQIndex, questionQueue.length, startNextQuestion, troubleWords, selectedUnits, roomCode, settings]);
+  }, [phase, currentQIndex, questionQueue.length, startNextQuestion, troubleWords, selectedUnits, roomCode, settings, players, db]);
 
 
   // Clean up timer on unmount

@@ -81,7 +81,7 @@ export const StudentReveal = ({ gameState, myAnswer, me, myRank, pointsToNext, p
                 <span className="text-xl font-black">{pointsToNext} pts</span>
              </div>
           )}
-          {pointsAheadOfPrev !== null && pointsToNext === null && (
+          {pointsAheadOfPrev !== null && (
              <div className="bg-black/20 border border-white/20 rounded-xl p-3 flex justify-between items-center text-sm font-bold shadow-sm">
                 <span className="opacity-90">🛡️ {t("Lead on rank below", "下の順位との差")}</span>
                 <span className="text-xl font-black">+{pointsAheadOfPrev} pts</span>

@@ -459,6 +459,7 @@ function QuizHostLive({ t, lang }) {
     if (phase === 'LEADERBOARD') {
       if (currentQIndex + 1 >= questionQueue.length) {
         setPhase('GAME_OVER');
+        update(ref(db, 'trivia/gameState'), { status: 'GAME_OVER' });
         
         // Log comprehensive game session to Analytics
         try {
@@ -652,7 +653,7 @@ function QuizHostLive({ t, lang }) {
         
         {phase === 'LOBBY' && <HostLobby roomCode={roomCode} players={players} startGame={startGame} kickPlayer={kickPlayer} t={t} />}
         {phase === 'QUESTION' && <HostQuestion roomCode={roomCode} questionQueue={questionQueue} currentQIndex={currentQIndex} timeLeft={timeLeft} settings={settings} t={t} />}
-        {phase === 'REVEAL' && <HostReveal questionQueue={questionQueue} currentQIndex={currentQIndex} answerStats={answerStats} settings={settings} t={t} nextPhase={() => setPhase('LEADERBOARD')} />}
+        {phase === 'REVEAL' && <HostReveal questionQueue={questionQueue} currentQIndex={currentQIndex} answerStats={answerStats} settings={settings} t={t} nextPhase={() => { setPhase('LEADERBOARD'); update(ref(db, 'trivia/gameState'), { status: 'LEADERBOARD' }); }} />}
         {phase === 'LEADERBOARD' && <HostLeaderboard players={players} nextPhase={nextPhase} currentQIndex={currentQIndex} questionQueue={questionQueue} t={t} />}
         {phase === 'GAME_OVER' && <HostGameOver players={players} teamScores={teamScores} isTeamMode={isTeamMode} TEAM_CONFIG={TEAM_CONFIG} troubleWords={troubleWords} getTopTiers={getTopTiers} selectedAward={selectedAward} setSelectedAward={setSelectedAward} handlePlayAgainSame={handlePlayAgainSame} handlePlayAgainChange={handlePlayAgainChange} handleEndGame={handleEndGame} t={t} />}
       </div>

@@ -46,6 +46,13 @@ function QuizHostLive({ t, lang }) {
   const [answerStats, setAnswerStats] = useState({}); // To hold distribution
   const [troubleWords, setTroubleWords] = useState([]); // Track hard questions
   const [selectedAward, setSelectedAward] = useState(null); // 'streak', 'correct', 'fastest'
+  const [timeOffset, setTimeOffset] = useState(0);
+
+  useEffect(() => {
+    const offsetRef = ref(db, '.info/serverTimeOffset');
+    const unsub = onValue(offsetRef, (snap) => setTimeOffset(snap.val() || 0));
+    return () => unsub();
+  }, []);
 
   // Helper for End Game Awards
   const getTopTiers = (statKey, isAscending = false, requireAccuracy = false) => {
@@ -78,6 +85,12 @@ function QuizHostLive({ t, lang }) {
     const isTeamMode = settings.gameMode !== 'individual';
     const snap = await get(ref(db, 'trivia/responses'));
     const responsesData = snap.val() || {};
+    
+    const pSnap = await get(ref(db, 'trivia/players'));
+    const players = pSnap.val() || {};
+    
+    const tSnap = await get(ref(db, 'trivia/teamScores'));
+    const teamScores = tSnap.val() || {};
     
     const updates = {};
     const teamRoundContributions = {};
@@ -307,7 +320,7 @@ function QuizHostLive({ t, lang }) {
     updates['trivia/gameState/options'] = q.options;
     updates['trivia/gameState/targetId'] = q.target.id;
     updates['trivia/gameState/totalQuestions'] = questionQueue.length;
-    updates['trivia/gameState/startTime'] = Date.now();
+    updates['trivia/gameState/startTime'] = Date.now() + timeOffset;
 
     await update(ref(db), updates);
 
@@ -331,7 +344,7 @@ function QuizHostLive({ t, lang }) {
         return newTime;
       });
     }, 100);
-  }, [questionQueue, settings, revealAnswer]);
+  }, [questionQueue, settings, revealAnswer, timeOffset]);
 
   // 2. Game Flow Functions
   const startGame = async () => {

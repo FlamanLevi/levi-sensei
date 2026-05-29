@@ -28,6 +28,7 @@ function QuizStudentLive({ t, lang }) {
   
   const { room, gameState, players, responses } = useGameState(playerId);
   const [isConnected, setIsConnected] = useState(true);
+  const [timeOffset, setTimeOffset] = useState(0);
 
   // Derive answer state directly from Firebase to survive accidental page refreshes
   const myResponse = responses?.[playerId];
@@ -65,21 +66,22 @@ function QuizStudentLive({ t, lang }) {
     }
   }, [playerId, room?.status]);
 
-  // Track connection status
+  // Track connection status and time offset
   useEffect(() => {
     const connectedRef = ref(db, '.info/connected');
-    const unsub = onValue(connectedRef, (snap) => {
-      setIsConnected(snap.val() === true);
-    });
-    return () => unsub();
+    const offsetRef = ref(db, '.info/serverTimeOffset');
+    const unsub1 = onValue(connectedRef, (snap) => setIsConnected(snap.val() === true));
+    const unsub2 = onValue(offsetRef, (snap) => setTimeOffset(snap.val() || 0));
+    return () => { unsub1(); unsub2(); };
   }, []);
 
 
   const submitAnswer = async (optionId) => {
     if (hasAnswered) return;
     
+    const estimatedServerTime = Date.now() + timeOffset;
     const timeBonus = me?.activeBuffs?.time_freeze ? 5000 : 0;
-    const timeTaken = Math.max(0, Date.now() - gameState.startTime - timeBonus);
+    const timeTaken = Math.max(0, estimatedServerTime - gameState.startTime - timeBonus);
     
     await runTransaction(ref(db, `trivia/responses/${playerId}`), (currentData) => {
       if (currentData) {

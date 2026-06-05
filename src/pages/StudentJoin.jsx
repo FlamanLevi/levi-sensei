@@ -6,7 +6,7 @@ import { useAuth } from '../hooks/useAuth';
 import schoolsData from '../data/schools.json';
 
 function StudentJoin({ t, lang }) {
-  const { user, profile } = useAuth();
+  const { user, profile, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const initialPin = searchParams.get('pin') || '';
@@ -14,9 +14,9 @@ function StudentJoin({ t, lang }) {
   const [step, setStep] = useState(1); // 1: PIN, 2: Profile Setup
   const [pin, setPin] = useState(initialPin);
   
-  // Setup fields
-  const [setupName, setSetupName] = useState('');
-  const [setupClass, setSetupClass] = useState('');
+  // Setup fields — pre-filled from localStorage as a device-level fallback
+  const [setupName, setSetupName] = useState(() => localStorage.getItem('student_name') || '');
+  const [setupClass, setSetupClass] = useState(() => localStorage.getItem('student_class') || '');
 
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -24,11 +24,10 @@ function StudentJoin({ t, lang }) {
   const [gameType, setGameType] = useState(null); // 'trivia' or 'ohajiki'
   const [isConnected, setIsConnected] = useState(true);
 
-  // Pre-fill name if it exists on their profile
+  // Pre-fill name from Firebase profile (overrides localStorage if Firebase has data)
   useEffect(() => {
-    if (profile?.name) {
-      setSetupName(profile.name);
-    }
+    if (profile?.name) setSetupName(profile.name);
+    if (profile?.className) setSetupClass(profile.className);
   }, [profile]);
 
   useEffect(() => {
@@ -90,7 +89,7 @@ function StudentJoin({ t, lang }) {
          }
       }
 
-      // Also ensure their profile is updated/saved to this school
+      // Save profile to Firebase (for cross-device persistence)
       if (user) {
          await update(ref(db, `users/${user.uid}/profile`), {
             name: nameToUse.trim(),
@@ -100,6 +99,11 @@ function StudentJoin({ t, lang }) {
             createdAt: profile?.createdAt || Date.now()
          });
       }
+      // ALWAYS save to localStorage as a device-level backup
+      // This persists even if anonymous auth resets (e.g. browser data cleared on shared iPads)
+      localStorage.setItem('student_name', nameToUse.trim());
+      localStorage.setItem('student_class', classNameToUse);
+      localStorage.setItem('student_school', room.schoolId || 'unknown');
 
       if (type === 'trivia') {
         sessionStorage.setItem('current_quiz_player_id', playerId);
@@ -147,13 +151,22 @@ function StudentJoin({ t, lang }) {
 
       if (targetRoom) {
         
-        // Lazy Initialization Check
+        // Lazy Initialization Check — prefer Firebase profile, fall back to localStorage
         const roomSchoolId = targetRoom.schoolId || 'unknown';
-        const hasValidProfile = profile?.name && profile?.className && profile?.schoolId === roomSchoolId;
+        const localName = localStorage.getItem('student_name');
+        const localClass = localStorage.getItem('student_class');
+        const localSchool = localStorage.getItem('student_school');
+        
+        const firebaseProfileValid = profile?.name && profile?.className && profile?.schoolId === roomSchoolId;
+        // localStorage profile is valid if it has a name/class, and either the school matches or the room has no school set
+        const localProfileValid = localName && localClass && (localSchool === roomSchoolId || roomSchoolId === 'unknown');
+        const hasValidProfile = firebaseProfileValid || localProfileValid;
+        const nameToUse = profile?.name || localName;
+        const classToUse = profile?.className || localClass;
 
         if (hasValidProfile) {
-          // Join instantly
-          await joinGame(targetRoom, profile.name, profile.className, targetType);
+          // Join instantly using best available profile data
+          await joinGame(targetRoom, nameToUse, classToUse, targetType);
         } else {
           // Needs profile setup for this school
           setRoomData(targetRoom);
@@ -161,7 +174,10 @@ function StudentJoin({ t, lang }) {
           setStep(2);
           
           if (!setupClass && roomSchoolId !== 'unknown' && schoolsData.classes[roomSchoolId]) {
-             setSetupClass(schoolsData.classes[roomSchoolId][0].id);
+             // Only override class if localStorage doesn't already have one
+             if (!localStorage.getItem('student_class')) {
+               setSetupClass(schoolsData.classes[roomSchoolId][0].id);
+             }
           }
           
           setIsLoading(false);

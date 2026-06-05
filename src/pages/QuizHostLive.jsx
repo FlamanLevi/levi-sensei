@@ -43,6 +43,7 @@ function QuizHostLive({ t, lang }) {
   const { room, gameState, players, teamScores, responses } = useGameState();
 
   const timerRef = useRef(null);
+  const hasRevealedRef = useRef(false); // Guard against double-firing revealAnswer
   const [answerStats, setAnswerStats] = useState({}); // To hold distribution
   const [troubleWords, setTroubleWords] = useState([]); // Track hard questions
   const [selectedAward, setSelectedAward] = useState(null); // 'streak', 'correct', 'fastest'
@@ -282,6 +283,10 @@ function QuizHostLive({ t, lang }) {
   }, [players, teamScores, settings]);
 
   const revealAnswer = useCallback(async (q) => {
+    // Guard: prevent double-firing if timer and auto-reveal both trigger simultaneously
+    if (hasRevealedRef.current) return;
+    hasRevealedRef.current = true;
+
     setPhase('REVEAL');
     clearInterval(timerRef.current);
 
@@ -323,6 +328,9 @@ function QuizHostLive({ t, lang }) {
     updates['trivia/gameState/startTime'] = serverTimestamp();
 
     await update(ref(db), updates);
+
+    // Reset reveal guard so the next question can trigger revealAnswer again
+    hasRevealedRef.current = false;
 
     setPhase('QUESTION');
     setAnswerStats({});

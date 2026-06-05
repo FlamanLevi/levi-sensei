@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import flatVocab from '../data/normalized_vocabulary.json';
 import { isWordInUnit } from '../utils/vocabulary';
 import { db } from '../lib/firebase';
-import { ref, update, set, remove, onDisconnect, get, push, runTransaction, onValue } from 'firebase/database';
+import { ref, update, set, remove, onDisconnect, get, push, runTransaction, onValue, serverTimestamp } from 'firebase/database';
 import { useGameState } from '../hooks/useGameState';
 import { useBGM } from '../hooks/useBGM';
 import { HostLobby } from '../components/quiz/host/HostLobby';
@@ -46,13 +46,6 @@ function QuizHostLive({ t, lang }) {
   const [answerStats, setAnswerStats] = useState({}); // To hold distribution
   const [troubleWords, setTroubleWords] = useState([]); // Track hard questions
   const [selectedAward, setSelectedAward] = useState(null); // 'streak', 'correct', 'fastest'
-  const [timeOffset, setTimeOffset] = useState(0);
-
-  useEffect(() => {
-    const offsetRef = ref(db, '.info/serverTimeOffset');
-    const unsub = onValue(offsetRef, (snap) => setTimeOffset(snap.val() || 0));
-    return () => unsub();
-  }, []);
 
   // Helper for End Game Awards
   const getTopTiers = (statKey, isAscending = false, requireAccuracy = false) => {
@@ -115,7 +108,7 @@ function QuizHostLive({ t, lang }) {
       let fastestTime = pData.fastestTime || 999999;
       let correctCount = pData.correctCount || 0;
       let comebackPoints = pData.comebackPoints || 0;
-      let totalTimeTaken = pData.totalTimeTaken || 0;
+      let correctTimeTaken = pData.correctTimeTaken || 0;
       let questionsAnswered = pData.questionsAnswered || 0;
       let pointsEarned = 0;
       let idleCount = pData.idleCount || 0;
@@ -127,7 +120,6 @@ function QuizHostLive({ t, lang }) {
              stats[responsesData[id].answer] += 1;
          }
          questionsAnswered += 1;
-         totalTimeTaken += responsesData[id].timeTaken;
       }
 
       if (hasAnswered) {
@@ -142,7 +134,12 @@ function QuizHostLive({ t, lang }) {
       }
 
       if (hasAnswered && responsesData[id].answer === q.target.id) {
-        pointsEarned = 500 + Math.max(0, Math.floor(500 * (1 - (responsesData[id].timeTaken / settings.timeLimit))));
+        // Cap timeTaken: floor at 300ms (absorbs network jitter), ceiling at timeLimit
+        // This is the HOST-side safety net that corrects any clock skew from student devices
+        const rawTime = responsesData[id].timeTaken || settings.timeLimit;
+        const cappedTime = Math.min(Math.max(rawTime, 300), settings.timeLimit);
+
+        pointsEarned = 500 + Math.max(0, Math.floor(500 * (1 - (cappedTime / settings.timeLimit))));
         
         // Catch-up mechanic & 2x Item Buff
         let currentMultiplier = pData.comebackMultiplier || 1;
@@ -157,8 +154,10 @@ function QuizHostLive({ t, lang }) {
         score += pointsEarned;
         currentStreak += 1;
         correctCount += 1;
+        // Only accumulate time for correct answers — wrong/missed answers skew the average
+        correctTimeTaken += cappedTime;
         if (currentStreak > maxStreak) maxStreak = currentStreak;
-        if (responsesData[id].timeTaken < fastestTime) fastestTime = responsesData[id].timeTaken;
+        if (cappedTime < fastestTime) fastestTime = cappedTime;
 
         if (isTeamMode && pData.teamId) {
           if (!teamRoundContributions[pData.teamId]) teamRoundContributions[pData.teamId] = 0;
@@ -204,8 +203,9 @@ function QuizHostLive({ t, lang }) {
       updates[`trivia/players/${id}/fastestTime`] = fastestTime;
       updates[`trivia/players/${id}/correctCount`] = correctCount;
       updates[`trivia/players/${id}/comebackPoints`] = comebackPoints;
-      updates[`trivia/players/${id}/totalTimeTaken`] = totalTimeTaken;
-      updates[`trivia/players/${id}/avgTime`] = questionsAnswered > 0 ? Math.floor(totalTimeTaken / questionsAnswered) : 0;
+      updates[`trivia/players/${id}/correctTimeTaken`] = correctTimeTaken;
+      // avgTime = average time for CORRECT answers only, in milliseconds
+      updates[`trivia/players/${id}/avgTime`] = correctCount > 0 ? Math.floor(correctTimeTaken / correctCount) : 999999;
       updates[`trivia/players/${id}/idleCount`] = idleCount;
       updates[`trivia/players/${id}/lastRoundScore`] = pointsEarned;
     });
@@ -320,7 +320,7 @@ function QuizHostLive({ t, lang }) {
     updates['trivia/gameState/options'] = q.options;
     updates['trivia/gameState/targetId'] = q.target.id;
     updates['trivia/gameState/totalQuestions'] = questionQueue.length;
-    updates['trivia/gameState/startTime'] = Date.now() + timeOffset;
+    updates['trivia/gameState/startTime'] = serverTimestamp();
 
     await update(ref(db), updates);
 
@@ -344,7 +344,7 @@ function QuizHostLive({ t, lang }) {
         return newTime;
       });
     }, 100);
-  }, [questionQueue, settings, revealAnswer, timeOffset]);
+  }, [questionQueue, settings, revealAnswer]);
 
   // 2. Game Flow Functions
   const startGame = async () => {

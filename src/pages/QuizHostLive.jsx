@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import flatVocab from '../data/normalized_vocabulary.json';
 import { isWordInUnit } from '../utils/vocabulary';
 import { db } from '../lib/firebase';
-import { ref, update, set, remove, onDisconnect, get, push, runTransaction } from 'firebase/database';
+import { ref, update, set, remove, onDisconnect, get, push, runTransaction, onValue } from 'firebase/database';
 import { useGameState } from '../hooks/useGameState';
 import { useBGM } from '../hooks/useBGM';
 import { HostLobby } from '../components/quiz/host/HostLobby';

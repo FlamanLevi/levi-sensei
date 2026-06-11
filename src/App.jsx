@@ -23,6 +23,8 @@ import ClassWars from './pages/ClassWars';
 import AdminWorksheetsHub from './pages/AdminWorksheetsHub';
 import WorksheetLineMatching from './pages/WorksheetLineMatching';
 import { TeacherSchoolDropdown } from './components/TeacherSchoolDropdown';
+import { db } from './lib/firebase';
+import { ref, onValue } from 'firebase/database';
 
 function App() {
   const [lang, setLang] = useState(() => localStorage.getItem('esl-lang') || 'ja');

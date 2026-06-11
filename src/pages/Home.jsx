@@ -113,12 +113,6 @@ function Home({ t }) {
         </Link>
       </nav>
 
-      {/* Teacher Portal Link */}
-      <div className="mt-12 mb-8 text-center">
-        <Link to="/admin" className="inline-flex items-center justify-center gap-2 px-4 py-2 text-[var(--text-muted)] hover:text-[var(--primary-color)] font-bold text-sm transition-colors opacity-70 hover:opacity-100 bg-[var(--surface-color)] border-2 border-[var(--border-color)] rounded-full hover:border-[var(--primary-color)]">
-          <span>👩‍🏫</span> {t("Teacher Portal / Host Game", "先生用ポータル / ゲームをホスト")}
-        </Link>
-      </div>
     </div>
   );
 }

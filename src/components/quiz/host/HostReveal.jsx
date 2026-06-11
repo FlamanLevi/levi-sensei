@@ -55,7 +55,7 @@ export const HostReveal = ({ questionQueue, currentQIndex, answerStats, settings
          initial={{ y: 20, opacity: 0 }}
          animate={{ y: 0, opacity: 1 }}
          transition={{ delay: 0.2 }}
-         className="text-7xl font-black text-[var(--primary-color)] drop-shadow-md mb-2"
+         className="text-[clamp(4rem,10vw,12rem)] font-black text-[var(--primary-color)] drop-shadow-md mb-2 leading-none"
        >
          {questionQueue[currentQIndex].target.en}
        </motion.h1>
@@ -63,7 +63,7 @@ export const HostReveal = ({ questionQueue, currentQIndex, answerStats, settings
          initial={{ y: 20, opacity: 0 }}
          animate={{ y: 0, opacity: 1 }}
          transition={{ delay: 0.3 }}
-         className="text-3xl font-bold text-[var(--text-color)] drop-shadow-md mb-8"
+         className="text-[clamp(3rem,8vw,10rem)] font-bold text-[var(--text-color)] drop-shadow-md mb-8 leading-none"
        >
          {questionQueue[currentQIndex].target.ja_kanji || questionQueue[currentQIndex].target.ja_hiragana}
        </motion.h2>

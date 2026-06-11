@@ -91,17 +91,17 @@ export const HostQuestion = ({ roomCode, questionQueue, currentQIndex, timeLeft,
                   <img src={`/${questionQueue[currentQIndex].target.img_path}`} alt="Prompt" className="max-h-[30vh] object-contain rounded-xl shadow-lg mb-4" />
                 )}
                 {hasEn && (
-                  <h1 className={`font-black text-[var(--primary-color)] drop-shadow-md mb-2 shrink-0 w-full text-center text-balance leading-tight px-4 ${hasKata ? 'text-[clamp(2rem,6vmin,6rem)]' : 'text-[clamp(3rem,8vmin,8rem)]'}`}>
+                  <h1 className={`font-black text-[var(--primary-color)] drop-shadow-md mb-2 shrink-0 w-full text-center text-balance leading-tight px-4 ${hasKata ? 'text-[clamp(3rem,8vw,8rem)]' : 'text-[clamp(4rem,12vw,12rem)]'}`}>
                     {questionQueue[currentQIndex].target.en}
                   </h1>
                 )}
                 {hasKata && (
-                  <h2 className={`font-bold text-[#ffb3ff] drop-shadow-md mb-2 shrink-0 w-full text-center text-balance leading-tight px-4 ${hasEn ? 'text-[clamp(1.5rem,3vmin,3rem)]' : 'text-[clamp(3rem,8vmin,8rem)]'}`}>
+                  <h2 className={`font-bold text-[#ffb3ff] drop-shadow-md mb-2 shrink-0 w-full text-center text-balance leading-tight px-4 ${hasEn ? 'text-[clamp(2rem,4vw,5rem)]' : 'text-[clamp(4rem,12vw,12rem)]'}`}>
                     {questionQueue[currentQIndex].target.en_katakana}
                   </h2>
                 )}
                 {hasJa && (
-                  <h3 className="text-[clamp(2rem,5vmin,5rem)] font-bold text-[var(--text-color)] shrink-0 w-full text-center text-balance leading-tight px-4">
+                  <h3 className="text-[clamp(3rem,10vw,10rem)] font-bold text-[var(--text-color)] shrink-0 w-full text-center text-balance leading-tight px-4">
                     <RubyText kanji={questionQueue[currentQIndex].target.ja_kanji} hiragana={questionQueue[currentQIndex].target.ja_hiragana} />
                   </h3>
                 )}

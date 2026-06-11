@@ -519,42 +519,8 @@ function QuizHostLive({ t, lang }) {
           console.error("Failed to log analytics:", e);
         }
 
-        // Award Coins to authenticated profiles
-        const sortedPlayerIds = Object.keys(players).sort((a, b) => (players[b].score || 0) - (players[a].score || 0));
-        
-        Object.keys(players).forEach(uid => {
-           // Firebase UIDs are alphanumeric. Fallbacks start with 'player_'
-           if (!uid.startsWith('player_')) {
-               const pData = players[uid];
-               const earnedPoints = pData.score || 0;
-               const finalRank = sortedPlayerIds.indexOf(uid) + 1;
-               
-               if (earnedPoints > 0) {
-                   const profileRef = ref(db, `users/${uid}/profile/coins`);
-                   runTransaction(profileRef, (currentCoins) => {
-                       return (currentCoins || 0) + earnedPoints;
-                   }).catch(e => console.error("Coin award failed for", uid, e));
+        // The awarding of Coins, XP, and Match History is now handled securely by the onGameComplete Cloud Function.
 
-                   const xpRef = ref(db, `users/${uid}/profile/xp`);
-                   runTransaction(xpRef, (currentXp) => {
-                       return (currentXp || 0) + earnedPoints;
-                   }).catch(e => console.error("XP award failed for", uid, e));
-                   
-                   // Save Match History
-                   push(ref(db, `users/${uid}/matchHistory`), {
-                       timestamp: Date.now(),
-                       score: earnedPoints,
-                       rank: finalRank,
-                       totalPlayers: sortedPlayerIds.length,
-                       accuracy: pData.questionsAnswered > 0 ? Math.round((pData.correctCount / pData.questionsAnswered) * 100) : 0,
-                       fastestTime: pData.fastestTime || 999999,
-                       avgTime: pData.avgTime || 0,
-                       coinsEarned: earnedPoints,
-                       gameMode: settings?.gameMode || 'individual'
-                   }).catch(e => console.error("Match History failed for", uid, e));
-               }
-           }
-        });
 
       } else {
         startNextQuestion(currentQIndex + 1);

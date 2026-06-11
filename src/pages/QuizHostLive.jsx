@@ -205,6 +205,7 @@ function QuizHostLive({ t, lang }) {
       updates[`trivia/players/${id}/correctCount`] = correctCount;
       updates[`trivia/players/${id}/comebackPoints`] = comebackPoints;
       updates[`trivia/players/${id}/correctTimeTaken`] = correctTimeTaken;
+      updates[`trivia/players/${id}/questionsAnswered`] = questionsAnswered;
       // avgTime = average time for CORRECT answers only, in milliseconds
       updates[`trivia/players/${id}/avgTime`] = correctCount > 0 ? Math.floor(correctTimeTaken / correctCount) : 999999;
       updates[`trivia/players/${id}/idleCount`] = idleCount;

@@ -91,17 +91,17 @@ export const HostQuestion = ({ roomCode, questionQueue, currentQIndex, timeLeft,
                   <img src={`/${questionQueue[currentQIndex].target.img_path}`} alt="Prompt" className="max-h-[30vh] object-contain rounded-xl shadow-lg mb-4" />
                 )}
                 {hasEn && (
-                  <h1 className={`font-black text-[var(--primary-color)] drop-shadow-md mb-2 shrink-0 w-full text-center text-balance leading-tight px-4 ${hasKata ? 'text-[clamp(3rem,8vw,8rem)]' : 'text-[clamp(4rem,12vw,12rem)]'}`}>
+                  <h1 style={{ fontSize: hasKata ? '8vw' : '12vw', lineHeight: 1.1 }} className="font-black text-[var(--primary-color)] drop-shadow-md mb-2 shrink-0 w-full text-center text-balance px-4">
                     {questionQueue[currentQIndex].target.en}
                   </h1>
                 )}
                 {hasKata && (
-                  <h2 className={`font-bold text-[#ffb3ff] drop-shadow-md mb-2 shrink-0 w-full text-center text-balance leading-tight px-4 ${hasEn ? 'text-[clamp(2rem,4vw,5rem)]' : 'text-[clamp(4rem,12vw,12rem)]'}`}>
+                  <h2 style={{ fontSize: hasEn ? '4vw' : '12vw', lineHeight: 1.1 }} className="font-bold text-[#ffb3ff] drop-shadow-md mb-2 shrink-0 w-full text-center text-balance px-4">
                     {questionQueue[currentQIndex].target.en_katakana}
                   </h2>
                 )}
                 {hasJa && (
-                  <h3 className="text-[clamp(3rem,10vw,10rem)] font-bold text-[var(--text-color)] shrink-0 w-full text-center text-balance leading-tight px-4">
+                  <h3 style={{ fontSize: '10vw', lineHeight: 1.1 }} className="font-bold text-[var(--text-color)] shrink-0 w-full text-center text-balance px-4">
                     <RubyText kanji={questionQueue[currentQIndex].target.ja_kanji} hiragana={questionQueue[currentQIndex].target.ja_hiragana} />
                   </h3>
                 )}

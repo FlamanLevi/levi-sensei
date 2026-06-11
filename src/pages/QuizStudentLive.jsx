@@ -76,12 +76,20 @@ function QuizStudentLive({ t, lang }) {
   }, []);
 
 
+  const [localQuestionStartTime, setLocalQuestionStartTime] = useState(Date.now());
+
+  useEffect(() => {
+    if (gameState?.status === 'LIVE') {
+      setLocalQuestionStartTime(Date.now());
+    }
+  }, [gameState?.status, gameState?.questionNumber]);
+
   const submitAnswer = async (optionId) => {
     if (hasAnswered) return;
     
-    const estimatedServerTime = Date.now() + timeOffset;
+    // Calculate time taken strictly from when the question appeared on their screen, ignoring network latency.
     const timeBonus = me?.activeBuffs?.time_freeze ? 5000 : 0;
-    const timeTaken = Math.max(0, estimatedServerTime - gameState.startTime - timeBonus);
+    const timeTaken = Math.max(0, Date.now() - localQuestionStartTime - timeBonus);
     
     await runTransaction(ref(db, `trivia/responses/${playerId}`), (currentData) => {
       if (currentData) {

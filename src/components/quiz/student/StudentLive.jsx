@@ -136,8 +136,8 @@ export const StudentLive = ({ gameState, hasAnswered, submitAnswer, me, handleUs
               <motion.button
                 variants={itemVariants}
                 key={opt.id}
-                onClick={() => submitAnswer(opt.id)}
-                className={`flex flex-col items-center justify-center p-4 rounded-3xl border-4 border-b-[12px] active:border-b-[4px] active:translate-y-[8px] transition-all overflow-hidden relative shadow-lg ${isCrystalCorrect ? 'bg-yellow-400 border-yellow-600 text-black shadow-[0_0_30px_rgba(250,204,21,1)] z-10 scale-105' : COLORS[idx % COLORS.length]} ${!isCrystalCorrect && !COLORS[idx % COLORS.length].includes('text-black') ? 'text-white' : ''}`}
+                onPointerDown={() => submitAnswer(opt.id)}
+                className={`flex flex-col items-center justify-center p-4 rounded-3xl border-4 border-b-[12px] active:border-b-[4px] active:translate-y-[8px] transition-all overflow-hidden relative shadow-lg touch-none select-none ${isCrystalCorrect ? 'bg-yellow-400 border-yellow-600 text-black shadow-[0_0_30px_rgba(250,204,21,1)] z-10 scale-105' : COLORS[idx % COLORS.length]} ${!isCrystalCorrect && !COLORS[idx % COLORS.length].includes('text-black') ? 'text-white' : ''}`}
               >
                 {/* Shrink Ray Effect */}
                 <div className={`flex flex-col w-full h-full items-center justify-center transition-transform duration-300 ${hasShrink ? 'scale-[0.4]' : 'scale-100'}`}>

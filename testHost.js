@@ -19,27 +19,17 @@ const auth = getAuth(app);
 async function simulateHost() {
     await signInAnonymously(auth);
     
-    // Send Question 1
-    console.log("Sending Question 1...");
-    await update(ref(db, 'trivia/gameState'), {
-        status: 'LIVE',
-        questionNumber: 0,
-        options: [{id: 'Q1_A'}, {id: 'Q1_B'}],
-        targetId: 'Q1_B'
-    });
-    
-    await new Promise(r => setTimeout(r, 4000));
-    
-    // Send Question 2
-    console.log("Sending Question 2...");
-    await update(ref(db, 'trivia/gameState'), {
-        status: 'LIVE',
-        questionNumber: 1,
-        options: [{id: 'Q2_A'}, {id: 'Q2_B'}],
-        targetId: 'Q2_A'
-    });
-
-    await new Promise(r => setTimeout(r, 4000));
+    for (let i = 0; i < 5; i++) {
+        console.log(`Sending Question ${i + 1}...`);
+        await update(ref(db, 'trivia/gameState'), {
+            status: 'LIVE',
+            questionNumber: i,
+            options: [{id: `Q${i + 1}_A`}, {id: `Q${i + 1}_B`}],
+            targetId: `Q${i + 1}_B`
+        });
+        
+        await new Promise(r => setTimeout(r, 4000));
+    }
 
     // Send GAME_OVER
     console.log("Sending GAME_OVER...");

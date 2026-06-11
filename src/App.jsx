@@ -46,6 +46,34 @@ function App() {
     localStorage.setItem('esl-student-name', studentName);
   }, [studentName]);
 
+  // Auto-reload stale tabs that are kept open for days (e.g. on student iPads)
+  useEffect(() => {
+    const checkStaleTab = () => {
+      const today = new Date().toDateString();
+      const lastLoad = sessionStorage.getItem('esl_last_load_date');
+      
+      if (lastLoad && lastLoad !== today) {
+        sessionStorage.setItem('esl_last_load_date', today);
+        window.location.reload(true);
+      } else if (!lastLoad) {
+        sessionStorage.setItem('esl_last_load_date', today);
+      }
+    };
+
+    // Check immediately on mount
+    checkStaleTab();
+
+    // Check every time the browser tab becomes visible again (e.g. Safari wakes up)
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        checkStaleTab();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, []);
+
   const toggleStar = (word) => {
     setStarredWords(prev => {
       const exists = prev.find(w => w.id === word.id && w.en === word.en);

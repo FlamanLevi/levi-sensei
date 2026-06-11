@@ -53,7 +53,7 @@ function QuizHostLive({ t, lang }) {
     const allValues = Object.values(players)
       .filter(p => requireAccuracy ? p.correctCount === p.questionsAnswered && p.questionsAnswered > 0 : true)
       .map(p => p[statKey] || 0)
-      .filter(val => isAscending ? val < 999999 && val > 0 : val > 0);
+      .filter(val => statKey === 'avgTime' || statKey === 'fastestTime' ? val > 0 && val < 999999 : val > 0);
     
     const uniqueValues = [...new Set(allValues)].sort((a, b) => isAscending ? a - b : b - a);
     const top3Values = uniqueValues.slice(0, 3);

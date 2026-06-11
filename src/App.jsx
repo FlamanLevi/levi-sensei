@@ -74,6 +74,25 @@ function App() {
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
   }, []);
 
+  // Force-refresh all clients globally when a new version is pushed
+  useEffect(() => {
+    const versionRef = ref(db, 'app/settings/version');
+    const unsub = onValue(versionRef, (snap) => {
+      const currentVersion = snap.val();
+      const localVersion = localStorage.getItem('app_version');
+      
+      if (currentVersion && localVersion && currentVersion !== localVersion) {
+        // Version changed! Update local storage and force a hard reload
+        localStorage.setItem('app_version', currentVersion);
+        window.location.reload(true);
+      } else if (currentVersion && !localVersion) {
+        // First time loading this logic, just set it
+        localStorage.setItem('app_version', currentVersion);
+      }
+    });
+    return () => unsub();
+  }, []);
+
   const toggleStar = (word) => {
     setStarredWords(prev => {
       const exists = prev.find(w => w.id === word.id && w.en === word.en);

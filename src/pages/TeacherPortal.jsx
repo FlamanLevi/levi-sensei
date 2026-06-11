@@ -41,8 +41,18 @@ function TeacherPortal({ t, lang }) {
             <h2 className="text-4xl font-black text-[var(--text-color)]">
               {t("Teacher Portal", "先生用ポータル")}
             </h2>
-            <p className="text-[var(--text-muted)] text-xl mt-2 font-bold">
+            <p className="text-[var(--text-muted)] text-xl mt-2 font-bold flex flex-wrap gap-4 items-center">
               {t("Manage classroom resources and digital tools.", "教室用リソースとデジタルツールを管理します。")}
+              <button
+                onClick={async () => {
+                  if (window.confirm(t("Force all connected iPads to refresh their browsers instantly?", "すべての接続中のiPadのブラウザを強制的に更新しますか？"))) {
+                    await update(ref(db), { 'app/settings/version': Date.now() });
+                  }
+                }}
+                className="bg-red-500 hover:bg-red-600 text-white text-sm font-bold py-2 px-4 rounded-lg shadow-sm transition-all active:scale-95"
+              >
+                🔄 {t("Force Refresh All iPads", "全iPadを強制更新")}
+              </button>
             </p>
           </div>
         </div>

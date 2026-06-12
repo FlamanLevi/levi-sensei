@@ -463,6 +463,26 @@ function QuizHostLive({ t, lang }) {
       finalQueue = finalQueue.slice(0, settings.questionCount);
     }
     
+    // D. Prevent consecutive same-index correct answers to defeat "button mashing"
+    let lastCorrectIndex = -1;
+    finalQueue.forEach(q => {
+      let currentIndex = q.options.findIndex(opt => opt.id === q.target.id);
+      if (currentIndex === lastCorrectIndex) {
+        // Swap the correct answer with a randomly chosen distractor
+        let newIndex = Math.floor(Math.random() * q.options.length);
+        while (newIndex === lastCorrectIndex) {
+          newIndex = Math.floor(Math.random() * q.options.length);
+        }
+        const temp = q.options[currentIndex];
+        q.options[currentIndex] = q.options[newIndex];
+        q.options[newIndex] = temp;
+        
+        lastCorrectIndex = newIndex;
+      } else {
+        lastCorrectIndex = currentIndex;
+      }
+    });
+
     setQuestionQueue(finalQueue);
 
     // D. Setup disconnection cleanup

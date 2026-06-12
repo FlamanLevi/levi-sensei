@@ -166,21 +166,12 @@ function QuizStudentLive({ t, lang }) {
     );
   }
 
-  // Determine rank based on current scores across all players
-  const sortedPlayerIds = Object.keys(players).sort((a, b) => (players[b].score || 0) - (players[a].score || 0));
-  const myRank = sortedPlayerIds.indexOf(playerId) + 1;
-  const totalPlayers = sortedPlayerIds.length;
-
-  let pointsToNext = null;
-  let pointsAheadOfPrev = null;
-  if (myRank > 1) {
-     const playerAheadId = sortedPlayerIds[myRank - 2];
-     pointsToNext = (players[playerAheadId]?.score || 0) - (me.score || 0);
-  }
-  if (myRank < sortedPlayerIds.length) {
-     const playerBehindId = sortedPlayerIds[myRank];
-     pointsAheadOfPrev = (me.score || 0) - (players[playerBehindId]?.score || 0);
-  }
+  // The host now calculates ranks and points to next/prev during calculateScoresAndLeaderboard
+  // because the student device only downloads their own player object for bandwidth efficiency.
+  const myRank = me?.rank || 1;
+  const totalPlayers = gameState?.totalPlayers || 1;
+  const pointsToNext = me?.pointsToNext;
+  const pointsAheadOfPrev = me?.pointsAheadOfPrev;
 
   const renderPhase = () => {
     if (room.status === 'LOBBY' || !gameState) {

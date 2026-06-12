@@ -277,6 +277,21 @@ function QuizHostLive({ t, lang }) {
       });
     }
 
+    // Calculate Ranks for Student iPads (since students only download their own player object)
+    const playerScores = Object.keys(players)
+      .filter(id => updates[`trivia/players/${id}`] !== null) // Exclude kicked idle ghosts
+      .map(id => ({
+        id,
+        score: updates[`trivia/players/${id}/score`] || 0
+      })).sort((a, b) => b.score - a.score);
+
+    playerScores.forEach((ps, index) => {
+      updates[`trivia/players/${ps.id}/rank`] = index + 1;
+      updates[`trivia/players/${ps.id}/pointsToNext`] = index > 0 ? playerScores[index - 1].score - ps.score : null;
+      updates[`trivia/players/${ps.id}/pointsAheadOfPrev`] = index < playerScores.length - 1 ? ps.score - playerScores[index + 1].score : null;
+    });
+    updates['trivia/gameState/totalPlayers'] = playerScores.length;
+
     await update(ref(db), updates);
     setAnswerStats(stats);
     

@@ -30,9 +30,10 @@ function QuizStudentLive({ t, lang }) {
   const [isConnected, setIsConnected] = useState(true);
   const [timeOffset, setTimeOffset] = useState(0);
 
-  // Derive answer state directly from Firebase to survive accidental page refreshes
+  // Derive answer state strictly tied to the current question number
+  // This prevents race conditions where the UI updates to the next question before the previous response is wiped.
   const myResponse = responses?.[playerId];
-  const hasAnswered = !!myResponse;
+  const hasAnswered = myResponse?.questionNumber === gameState?.questionNumber;
   const myAnswer = myResponse?.answer;
 
   const [isGameOver, setIsGameOver] = useState(false);
@@ -90,14 +91,17 @@ function QuizStudentLive({ t, lang }) {
     // Calculate time taken strictly from when the question appeared on their screen, ignoring network latency.
     const timeBonus = me?.activeBuffs?.time_freeze ? 5000 : 0;
     const timeTaken = Math.max(0, Date.now() - localQuestionStartTime - timeBonus);
+    const qNum = gameState?.questionNumber;
     
     await runTransaction(ref(db, `trivia/responses/${playerId}`), (currentData) => {
-      if (currentData) {
-        return; // Abort transaction if answer already exists
+      // Abort if an answer already exists FOR THIS SPECIFIC QUESTION
+      if (currentData && currentData.questionNumber === qNum) {
+        return; 
       }
       return {
         answer: optionId,
-        timeTaken: timeTaken
+        timeTaken: timeTaken,
+        questionNumber: qNum
       };
     });
   };

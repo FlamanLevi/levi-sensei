@@ -115,7 +115,7 @@ function QuizHostLive({ t, lang }) {
       let idleCount = pData.idleCount || 0;
       let hasAnswered = false;
 
-      if (responsesData[id] && responsesData[id].answer) {
+      if (responsesData[id] && responsesData[id].answer && responsesData[id].questionNumber === currentQIndex) {
          hasAnswered = true;
          if (stats[responsesData[id].answer] !== undefined) {
              stats[responsesData[id].answer] += 1;

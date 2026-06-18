@@ -549,7 +549,7 @@ function QuizHostSetup({ t, lang }) {
           </div>
           <button 
             onClick={handleCreateRoom}
-            disabled={isCreating || poolSize < 5 || prompts.size === 0 || options.size === 0}
+            disabled={isCreating || poolSize < 5 || englishFormats.size === 0}
             className="w-full md:w-auto px-12 py-4 text-2xl font-black rounded-2xl text-white bg-[var(--primary-color)] shadow-[0_8px_30px_rgba(var(--primary-rgb),0.4)] hover:scale-105 active:scale-95 transition-all disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed"
           >
             {isCreating ? t("Creating...", "作成中...") : t("Create Room", "ルームを作成")}

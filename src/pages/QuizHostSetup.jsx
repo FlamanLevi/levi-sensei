@@ -58,7 +58,7 @@ function QuizHostSetup({ t, lang }) {
   const [gameMode, setGameMode] = useState('individual');
 
   // State: Matrix Display Config
-  const [questionFlow, setQuestionFlow] = useState('ja_to_en'); // 'ja_to_en', 'en_to_ja', 'mixed'
+  const [questionFlow, setQuestionFlow] = useState('mixed'); // 'ja_to_en', 'en_to_ja', 'mixed'
   const [englishFormats, setEnglishFormats] = useState(new Set(['en', 'en_katakana']));
   
   const [bgm, setBgm] = useState('random_wangan');

@@ -54,7 +54,7 @@ function TeacherPortal({ t, lang }) {
               <button
                 onClick={async () => {
                   if (window.confirm(t("Force all connected iPads to refresh their browsers instantly?", "すべての接続中のiPadのブラウザを強制的に更新しますか？"))) {
-                    await update(ref(db), { 'app/settings/version': Date.now() });
+                    await update(ref(db), { 'trivia/version': Date.now() });
                   }
                 }}
                 className="bg-red-500 hover:bg-red-600 text-white text-sm font-bold py-2 px-4 rounded-lg shadow-sm transition-all active:scale-95"

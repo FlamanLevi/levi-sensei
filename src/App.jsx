@@ -90,9 +90,7 @@ function App() {
 
   // Force-refresh all clients globally when a new version is pushed
   useEffect(() => {
-    if (!user) return; // Wait for authentication before attaching listener to avoid permission denied
-    
-    const versionRef = ref(db, 'app/settings/version');
+    const versionRef = ref(db, 'trivia/version');
     const unsub = onValue(versionRef, (snap) => {
       const currentVersion = snap.val();
       const localVersion = localStorage.getItem('app_version');

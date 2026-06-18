@@ -210,7 +210,7 @@ function OhajikiHostLive({ t, lang }) {
               <button
                 onClick={async () => {
                   if (window.confirm(t("Force all connected iPads to refresh their browsers instantly?", "すべての接続中のiPadのブラウザを強制的に更新しますか？"))) {
-                    await update(ref(db), { 'app/settings/version': Date.now() });
+                    await update(ref(db), { 'trivia/version': Date.now() });
                   }
                 }}
                 className="px-4 py-2 bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400 hover:bg-red-500 hover:text-white dark:hover:bg-red-600 font-bold rounded-xl shadow-sm transition-all border border-red-200 dark:border-red-800 flex items-center gap-2"

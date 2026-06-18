@@ -55,25 +55,25 @@ export const StudentGameOver = ({ me, myRank, totalPlayers, players, t, navigate
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-2xl border-2 border-gray-200 dark:border-gray-700 flex flex-col items-center justify-center shadow-sm">
+              <div className="bg-[var(--bg-color)] p-4 rounded-2xl border-2 border-[var(--border-color)] flex flex-col items-center justify-center shadow-sm">
                  <span className="text-2xl mb-1">🎯</span>
                  <span className="text-3xl font-black text-[var(--text-color)]">{accuracy}%</span>
                  <span className="text-xs font-bold text-[var(--text-muted)] text-center">{t("Accuracy", "正解率")}</span>
               </div>
               
-              <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-2xl border-2 border-gray-200 dark:border-gray-700 flex flex-col items-center justify-center shadow-sm">
+              <div className="bg-[var(--bg-color)] p-4 rounded-2xl border-2 border-[var(--border-color)] flex flex-col items-center justify-center shadow-sm">
                  <span className="text-2xl mb-1">🔥</span>
                  <span className="text-3xl font-black text-[var(--text-color)]">{me.maxStreak || 0}</span>
                  <span className="text-xs font-bold text-[var(--text-muted)] text-center">{t("Max Streak", "最高連続")}</span>
               </div>
 
-              <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-2xl border-2 border-gray-200 dark:border-gray-700 flex flex-col items-center justify-center shadow-sm">
+              <div className="bg-[var(--bg-color)] p-4 rounded-2xl border-2 border-[var(--border-color)] flex flex-col items-center justify-center shadow-sm">
                  <span className="text-2xl mb-1">⚡</span>
                  <span className="text-2xl font-black text-[var(--text-color)]">{me.fastestTime < 999999 ? (me.fastestTime / 1000).toFixed(1) + 's' : '-'}</span>
                  <span className="text-xs font-bold text-[var(--text-muted)] text-center">{t("Fastest", "最速")}</span>
               </div>
               
-              <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-2xl border-2 border-gray-200 dark:border-gray-700 flex flex-col items-center justify-center shadow-sm">
+              <div className="bg-[var(--bg-color)] p-4 rounded-2xl border-2 border-[var(--border-color)] flex flex-col items-center justify-center shadow-sm">
                  <span className="text-2xl mb-1">⏱️</span>
                  <span className="text-2xl font-black text-[var(--text-color)]">{me.avgTime ? (me.avgTime / 1000).toFixed(1) + 's' : '-'}</span>
                  <span className="text-xs font-bold text-[var(--text-muted)] text-center">{t("Average", "平均")}</span>
@@ -82,10 +82,10 @@ export const StudentGameOver = ({ me, myRank, totalPlayers, players, t, navigate
 
             {/* Awards Section */}
             {myAwards.length > 0 && (
-              <div className="mt-2 bg-purple-50 dark:bg-purple-900/20 rounded-2xl border-2 border-purple-200 dark:border-purple-800 p-4 flex flex-col gap-3 shadow-sm text-left">
-                 <h3 className="text-sm font-bold text-purple-600 dark:text-purple-400 uppercase tracking-widest text-center mb-1">{t("Special Awards Won!", "特別賞を獲得！")}</h3>
+              <div className="mt-2 bg-[var(--bg-color)] rounded-2xl border-2 border-[var(--border-color)] p-4 flex flex-col gap-3 shadow-sm text-left">
+                 <h3 className="text-sm font-bold text-[var(--primary-color)] uppercase tracking-widest text-center mb-1">{t("Special Awards Won!", "特別賞を獲得！")}</h3>
                  {myAwards.map((award, i) => (
-                    <div key={i} className="flex gap-4 items-center bg-white dark:bg-black/20 p-3 rounded-xl shadow-sm border border-purple-100 dark:border-purple-800/50">
+                    <div key={i} className="flex gap-4 items-center bg-[var(--surface-color)] p-3 rounded-xl shadow-sm border-2 border-[var(--border-color)]">
                        <span className="text-3xl">{award.emoji}</span>
                        <div className="flex flex-col">
                           <span className="font-bold text-[var(--text-color)]">{award.title}</span>

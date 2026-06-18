@@ -280,10 +280,6 @@ function QuizHostLive({ t, lang }) {
   }, [phase, currentQIndex, questionQueue.length, startNextQuestion, troubleWords, selectedUnits, roomCode, settings, players, db]);
 
 
-  // Clean up timer on unmount
-  useEffect(() => {
-    return () => clearInterval(timerRef.current);
-  }, []);
 
   const handlePlayAgainSame = async () => {
     if (!window.confirm(t("Are you sure you want to play again with the same settings?", "同じ設定でもう一度プレイしますか？"))) return;

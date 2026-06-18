@@ -42,16 +42,7 @@ export const HostReveal = ({ questionQueue, currentQIndex, answerStats, settings
          {t("Correct Answer!", "正解！")}
        </motion.h2>
        
-       {settings.prompts.includes('img') && questionQueue[currentQIndex].target.img_path && (
-         <motion.img 
-           initial={{ scale: 0.8, opacity: 0 }}
-           animate={{ scale: 1.05, opacity: 1 }}
-           transition={{ type: "spring", bounce: 0.5, delay: 0.1 }}
-           src={`/${questionQueue[currentQIndex].target.img_path}`} 
-           alt="Prompt" 
-           className="max-h-[30vh] object-contain rounded-xl shadow-lg border-4 border-green-500 mb-8" 
-         />
-       )}
+
        {(() => {
          const isJaPrompt = questionQueue[currentQIndex].promptFormats?.includes('ja');
          const PrimaryText = isJaPrompt ? 

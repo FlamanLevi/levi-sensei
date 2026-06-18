@@ -5,6 +5,7 @@ import { isWordInUnit } from '../utils/vocabulary';
 import { db } from '../lib/firebase';
 import { ref, update, set, remove, onDisconnect, get, push, runTransaction, onValue, serverTimestamp } from 'firebase/database';
 import { useGameState } from '../hooks/useGameState';
+import { useQuizHost } from '../hooks/useQuizHost';
 import { useBGM } from '../hooks/useBGM';
 import { HostLobby } from '../components/quiz/host/HostLobby';
 import { HostQuestion } from '../components/quiz/host/HostQuestion';
@@ -31,22 +32,32 @@ function QuizHostLive({ t, lang }) {
   const { roomCode, selectedUnits, settings } = location.state || {};
   
   const [questionQueue, setQuestionQueue] = useState([]);
-  const [currentQIndex, setCurrentQIndex] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(0);
-  const [phase, setPhase] = useState('LOBBY'); // LOBBY, QUESTION, REVEAL, LEADERBOARD, GAME_OVER
-
-  const trackToLoad = (!settings?.bgm || settings.bgm === 'none') ? null : settings.bgm;
-  const isPlaying = phase !== 'LOBBY';
-
-  const { isMuted, toggleMute } = useBGM(trackToLoad, isPlaying);
+  const [selectedAward, setSelectedAward] = useState(null); // 'streak', 'correct', 'fastest'
   
   const { room, gameState, players, teamScores, responses } = useGameState();
 
-  const timerRef = useRef(null);
-  const hasRevealedRef = useRef(false); // Guard against double-firing revealAnswer
-  const [answerStats, setAnswerStats] = useState({}); // To hold distribution
-  const [troubleWords, setTroubleWords] = useState([]); // Track hard questions
-  const [selectedAward, setSelectedAward] = useState(null); // 'streak', 'correct', 'fastest'
+  const {
+    currentQIndex,
+    setCurrentQIndex,
+    timeLeft,
+    phase,
+    setPhase,
+    answerStats,
+    setAnswerStats,
+    troubleWords,
+    setTroubleWords,
+    revealAnswer,
+    startNextQuestion,
+    startGame
+  } = useQuizHost(questionQueue, settings, players, teamScores);
+
+  const totalQuestions = questionQueue.length > 0 ? questionQueue.length : 10;
+  const timeLimitSecs = settings?.timeLimit ? settings.timeLimit / 1000 : 15;
+  const estimatedGameTime = totalQuestions * (timeLimitSecs + 15); // Add 15s for Reveal & Leaderboard screens
+
+  const trackToLoad = (!settings?.bgm || settings.bgm === 'none') ? null : settings.bgm;
+  const isPlaying = phase !== 'LOBBY';
+  const { isMuted, toggleMute } = useBGM(trackToLoad, isPlaying, estimatedGameTime);
 
   // Helper for End Game Awards
   const getTopTiers = (statKey, isAscending = false, requireAccuracy = false) => {
@@ -73,311 +84,6 @@ function QuizHostLive({ t, lang }) {
     team_1: { name: t("Blue Team", "青チーム"), bg: 'bg-blue-50', border: 'border-blue-400', text: 'text-blue-600', emoji: '🔵' },
     team_2: { name: t("Yellow Team", "黄チーム"), bg: 'bg-yellow-50', border: 'border-yellow-400', text: 'text-yellow-600', emoji: '🟡' },
     team_3: { name: t("Green Team", "緑チーム"), bg: 'bg-green-50', border: 'border-green-400', text: 'text-green-600', emoji: '🟢' }
-  };
-
-  const calculateScoresAndLeaderboard = useCallback(async (q) => {
-    const isTeamMode = settings.gameMode !== 'individual';
-    const snap = await get(ref(db, 'trivia/responses'));
-    const responsesData = snap.val() || {};
-    
-    const pSnap = await get(ref(db, 'trivia/players'));
-    const players = pSnap.val() || {};
-    
-    const tSnap = await get(ref(db, 'trivia/teamScores'));
-    const teamScores = tSnap.val() || {};
-    
-    const updates = {};
-    const teamRoundContributions = {};
-    const teamPlayerCounts = {};
-    
-    const stats = {}; // For distribution chart
-    q.options.forEach(opt => stats[opt.id] = 0);
-
-    // Calculate current top score BEFORE this round's updates to use for Item catch-up mechanics
-    let currentTopScore = 1;
-    if (isTeamMode) {
-       currentTopScore = Math.max(1, ...Object.values(teamScores).map(t => t.score || 0));
-    } else {
-       currentTopScore = Math.max(1, ...Object.values(players).map(p => p.score || 0));
-    }
-
-    Object.keys(players).forEach(id => {
-      let pData = players[id];
-      let score = pData.score || 0;
-      let currentStreak = pData.currentStreak || 0;
-      let maxStreak = pData.maxStreak || 0;
-      let fastestTime = pData.fastestTime || 999999;
-      let correctCount = pData.correctCount || 0;
-      let comebackPoints = pData.comebackPoints || 0;
-      let correctTimeTaken = pData.correctTimeTaken || 0;
-      let questionsAnswered = pData.questionsAnswered || 0;
-      let pointsEarned = 0;
-      let idleCount = pData.idleCount || 0;
-      let hasAnswered = false;
-
-      if (responsesData[id] && responsesData[id].answer && responsesData[id].questionNumber === currentQIndex) {
-         hasAnswered = true;
-         if (stats[responsesData[id].answer] !== undefined) {
-             stats[responsesData[id].answer] += 1;
-         }
-         questionsAnswered += 1;
-      }
-
-      if (hasAnswered) {
-         idleCount = 0;
-      } else {
-         idleCount += 1;
-      }
-
-      if (idleCount >= 2) {
-         updates[`trivia/players/${id}`] = null;
-         return; // Auto-kick ghost player
-      }
-
-      if (hasAnswered && responsesData[id].answer === q.target.id) {
-        // Cap timeTaken: floor at 300ms (absorbs network jitter), ceiling at timeLimit
-        // This is the HOST-side safety net that corrects any clock skew from student devices
-        const rawTime = responsesData[id].timeTaken || settings.timeLimit;
-        const cappedTime = Math.min(Math.max(rawTime, 300), settings.timeLimit);
-
-        pointsEarned = 500 + Math.max(0, Math.floor(500 * (1 - (cappedTime / settings.timeLimit))));
-        
-        // Catch-up mechanic & 2x Item Buff
-        let currentMultiplier = pData.comebackMultiplier || 1;
-        if (pData.hasMultiplier) currentMultiplier = Math.max(currentMultiplier, 2); // Legacy fallback
-        if (pData.has2xItem) currentMultiplier = Math.max(currentMultiplier, 2);
-
-        if (currentMultiplier > 1) {
-            pointsEarned = Math.floor(pointsEarned * currentMultiplier);
-            comebackPoints += pointsEarned;
-        }
-
-        score += pointsEarned;
-        currentStreak += 1;
-        correctCount += 1;
-        // Only accumulate time for correct answers — wrong/missed answers skew the average
-        correctTimeTaken += cappedTime;
-        if (currentStreak > maxStreak) maxStreak = currentStreak;
-        if (cappedTime < fastestTime) fastestTime = cappedTime;
-
-        if (isTeamMode && pData.teamId) {
-          if (!teamRoundContributions[pData.teamId]) teamRoundContributions[pData.teamId] = 0;
-          teamRoundContributions[pData.teamId] += pointsEarned;
-        }
-
-        if (!pData.item && settings.itemsMode && settings.itemsMode !== 'none') {
-           const pScore = isTeamMode && pData.teamId ? (teamScores[pData.teamId]?.score || 0) : score;
-           const isFallingBehind = currentTopScore > 1000 && pScore <= (currentTopScore * 0.5);
-           
-           const newItem = rollForItem({
-               isCorrect: true,
-               currentStreak,
-               isFallingBehind,
-               itemsMode: settings.itemsMode
-           });
-           
-           if (newItem) {
-               updates[`trivia/players/${id}/item`] = newItem;
-           }
-        }
-      } else {
-        currentStreak = 0;
-      }
-
-      if (isTeamMode && pData.teamId) {
-        teamPlayerCounts[pData.teamId] = (teamPlayerCounts[pData.teamId] || 0) + 1;
-        if (!updates[`trivia/teamScores/${pData.teamId}/totalAnswered`]) {
-            updates[`trivia/teamScores/${pData.teamId}/totalAnswered`] = teamScores[pData.teamId]?.totalAnswered || 0;
-            updates[`trivia/teamScores/${pData.teamId}/totalCorrect`] = teamScores[pData.teamId]?.totalCorrect || 0;
-        }
-        if (responsesData[id] && responsesData[id].answer) {
-            updates[`trivia/teamScores/${pData.teamId}/totalAnswered`] += 1;
-            if (responsesData[id].answer === q.target.id) {
-                updates[`trivia/teamScores/${pData.teamId}/totalCorrect`] += 1;
-            }
-        }
-      }
-
-      updates[`trivia/players/${id}/score`] = score;
-      updates[`trivia/players/${id}/maxStreak`] = maxStreak;
-      updates[`trivia/players/${id}/currentStreak`] = currentStreak;
-      updates[`trivia/players/${id}/fastestTime`] = fastestTime;
-      updates[`trivia/players/${id}/correctCount`] = correctCount;
-      updates[`trivia/players/${id}/comebackPoints`] = comebackPoints;
-      updates[`trivia/players/${id}/correctTimeTaken`] = correctTimeTaken;
-      updates[`trivia/players/${id}/questionsAnswered`] = questionsAnswered;
-      // avgTime = average time for CORRECT answers only, in milliseconds
-      updates[`trivia/players/${id}/avgTime`] = correctCount > 0 ? Math.floor(correctTimeTaken / correctCount) : 999999;
-      updates[`trivia/players/${id}/idleCount`] = idleCount;
-      updates[`trivia/players/${id}/lastRoundScore`] = pointsEarned;
-    });
-
-    // Track Trouble Words (if less than 50% got it right)
-    const totalAnswers = Object.values(stats).reduce((a, b) => a + b, 0);
-    const correctAnswers = stats[q.target.id] || 0;
-    if (totalAnswers > 0) {
-      const percentWrong = ((totalAnswers - correctAnswers) / totalAnswers) * 100;
-      setTroubleWords(prev => [...prev, {
-        word: q.target,
-        percentWrong: Math.round(percentWrong)
-      }].sort((a, b) => b.percentWrong - a.percentWrong));
-    }
-
-    const updatedTeamScores = {};
-    if (isTeamMode) {
-      Object.keys(teamPlayerCounts).forEach(teamId => {
-        const totalPoints = teamRoundContributions[teamId] || 0;
-        const memberCount = teamPlayerCounts[teamId];
-        if (memberCount > 0) {
-          const averageScore = Math.round(totalPoints / memberCount);
-          if (averageScore > 0) {
-            const currentTeamScore = teamScores[teamId]?.score || 0;
-            updatedTeamScores[teamId] = currentTeamScore + averageScore;
-            updates[`trivia/teamScores/${teamId}/score`] = updatedTeamScores[teamId];
-          }
-        }
-      });
-      
-      // Determine who gets the comeback multiplier next round
-      const allScores = [...Object.values(updatedTeamScores), ...Object.values(teamScores).map(t => t.score || 0)];
-      const topTeamScore = Math.max(1, ...allScores);
-      
-      Object.keys(players).forEach(id => {
-         const tId = players[id].teamId;
-         const tScore = updatedTeamScores[tId] || teamScores[tId]?.score || 0;
-         
-         let multiplier = 1;
-         if (topTeamScore > 1500) {
-             if (tScore <= topTeamScore * 0.25) multiplier = 3;
-             else if (tScore <= topTeamScore * 0.50) multiplier = 2;
-             else if (tScore <= topTeamScore * 0.75) multiplier = 1.5;
-         }
-         updates[`trivia/players/${id}/comebackMultiplier`] = multiplier;
-         updates[`trivia/players/${id}/hasMultiplier`] = null; // Clean up legacy
-      });
-
-    } else {
-      // Individual mode multiplier
-      let newTopScore = 1;
-      Object.keys(players).forEach(id => {
-        const s = updates[`trivia/players/${id}/score`] || players[id].score || 0;
-        if (s > newTopScore) newTopScore = s;
-      });
-
-      Object.keys(players).forEach(id => {
-         const s = updates[`trivia/players/${id}/score`] || players[id].score || 0;
-         let multiplier = 1;
-         if (newTopScore > 1500) {
-             if (s <= newTopScore * 0.25) multiplier = 3;
-             else if (s <= newTopScore * 0.50) multiplier = 2;
-             else if (s <= newTopScore * 0.75) multiplier = 1.5;
-         }
-         updates[`trivia/players/${id}/comebackMultiplier`] = multiplier;
-         updates[`trivia/players/${id}/hasMultiplier`] = null; // Clean up legacy
-      });
-    }
-
-    // Calculate Ranks for Student iPads (since students only download their own player object)
-    const playerScores = Object.keys(players)
-      .filter(id => updates[`trivia/players/${id}`] !== null) // Exclude kicked idle ghosts
-      .map(id => ({
-        id,
-        score: updates[`trivia/players/${id}/score`] || 0
-      })).sort((a, b) => b.score - a.score);
-
-    playerScores.forEach((ps, index) => {
-      updates[`trivia/players/${ps.id}/rank`] = index + 1;
-      updates[`trivia/players/${ps.id}/pointsToNext`] = index > 0 ? playerScores[index - 1].score - ps.score : null;
-      updates[`trivia/players/${ps.id}/pointsAheadOfPrev`] = index < playerScores.length - 1 ? ps.score - playerScores[index + 1].score : null;
-    });
-    updates['trivia/gameState/totalPlayers'] = playerScores.length;
-
-    await update(ref(db), updates);
-    setAnswerStats(stats);
-    
-    // The transition to LEADERBOARD is now handled by HostReveal.jsx's own timer/button
-  }, [players, teamScores, settings]);
-
-  const revealAnswer = useCallback(async (q) => {
-    // Guard: prevent double-firing if timer and auto-reveal both trigger simultaneously
-    if (hasRevealedRef.current) return;
-    hasRevealedRef.current = true;
-
-    setPhase('REVEAL');
-    clearInterval(timerRef.current);
-
-    // Tell tablets to reveal
-    await update(ref(db, 'trivia/gameState'), {
-      status: "REVEAL",
-      correctAnswer: q.target.id
-    });
-
-    // Wait a brief moment to ensure all late responses were written, then calculate score.
-    // (In a production app, we'd use Firebase Cloud Functions for this to prevent tampering, 
-    // but doing it client-side on the Host is identical to the legacy app's behavior).
-    setTimeout(() => {
-       calculateScoresAndLeaderboard(q);
-    }, 1000);
-  }, [calculateScoresAndLeaderboard]);
-
-  const startNextQuestion = useCallback(async (index) => {
-    setCurrentQIndex(index);
-    const q = questionQueue[index];
-    
-    // Wipe responses and single-use buffs from previous question, 
-    // AND push new question state to Firebase in a SINGLE ATOMIC UPDATE.
-    const updates = {};
-    updates['trivia/responses'] = null;
-    Object.keys(players).forEach(id => {
-       updates[`trivia/players/${id}/activeBuffs`] = null;
-       updates[`trivia/players/${id}/hasShield`] = null;
-       updates[`trivia/players/${id}/has2xItem`] = null;
-    });
-    
-    updates['trivia/gameState/status'] = "LIVE";
-    updates['trivia/gameState/questionNumber'] = index;
-    updates['trivia/gameState/timeLimit'] = settings.timeLimit;
-    updates['trivia/gameState/displayRules'] = settings.options;
-    updates['trivia/gameState/options'] = q.options;
-    updates['trivia/gameState/targetId'] = q.target.id;
-    updates['trivia/gameState/totalQuestions'] = questionQueue.length;
-    updates['trivia/gameState/startTime'] = serverTimestamp();
-
-    await update(ref(db), updates);
-
-    // Reset reveal guard so the next question can trigger revealAnswer again
-    hasRevealedRef.current = false;
-
-    setPhase('QUESTION');
-    setAnswerStats({});
-    
-    // Start local timer
-    clearInterval(timerRef.current);
-    let msLeft = settings.timeLimit;
-    setTimeLeft(msLeft);
-    
-    timerRef.current = setInterval(() => {
-      setTimeLeft((prev) => {
-        const newTime = prev - 100;
-        
-        if (newTime <= 0) {
-          clearInterval(timerRef.current);
-          revealAnswer(q);
-          return 0;
-        }
-        return newTime;
-      });
-    }, 100);
-  }, [questionQueue, settings, revealAnswer]);
-
-  // 2. Game Flow Functions
-  const startGame = async () => {
-    // Lock the room so no new players can join mid-game
-    await update(ref(db, 'trivia/room'), {
-      status: "LIVE"
-    });
-    setPhase('QUESTION');
-    startNextQuestion(0);
   };
 
   // 1. Build the Question Queue on mount using Smart Distractors
@@ -505,7 +211,7 @@ function QuizHostLive({ t, lang }) {
       if (totalPlayers > 0 && responseCount >= totalPlayers) {
         // We add a tiny 500ms delay so the last student sees their "Answer Sent" 
         // screen for a moment before the big screen reveals the answer.
-        const timeout = setTimeout(() => revealAnswer(questionQueue[currentQIndex]), 500);
+        const timeout = setTimeout(() => revealAnswer(questionQueue[currentQIndex], currentQIndex), 500);
         return () => clearTimeout(timeout);
       }
     }
@@ -650,13 +356,27 @@ function QuizHostLive({ t, lang }) {
         
         <div className="flex items-center gap-4">
           {phase === 'LOBBY' && (
-            <button 
-              onClick={startGame}
-              disabled={Object.keys(players).length === 0}
-              className="px-6 py-2 bg-green-500 text-white font-black rounded-xl shadow-md hover:bg-green-400 disabled:opacity-50 disabled:bg-gray-400 disabled:hover:bg-gray-400 transition-colors animate-in slide-in-from-right"
-            >
-              ▶ {t("Start Game", "ゲームスタート")}
-            </button>
+            <>
+              <button
+                onClick={async () => {
+                  if (window.confirm(t("Force all connected iPads to refresh their browsers instantly?", "すべての接続中のiPadのブラウザを強制的に更新しますか？"))) {
+                    await update(ref(db), { 'app/settings/version': Date.now() });
+                  }
+                }}
+                className="px-4 py-2 bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400 hover:bg-red-500 hover:text-white dark:hover:bg-red-600 font-bold rounded-xl shadow-sm transition-all border border-red-200 dark:border-red-800 flex items-center gap-2"
+                title={t("Force Refresh All iPads", "全iPadを強制更新")}
+              >
+                🔄 <span className="hidden sm:inline">{t("Refresh iPads", "iPadを更新")}</span>
+              </button>
+              
+              <button 
+                onClick={startGame}
+                disabled={Object.keys(players).length === 0}
+                className="px-6 py-2 bg-green-500 text-white font-black rounded-xl shadow-md hover:bg-green-400 disabled:opacity-50 disabled:bg-gray-400 disabled:hover:bg-gray-400 transition-colors animate-in slide-in-from-right"
+              >
+                ▶ {t("Start Game", "ゲームスタート")}
+              </button>
+            </>
           )}
 
           {trackToLoad && phase !== 'LOBBY' && (

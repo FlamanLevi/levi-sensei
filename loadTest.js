@@ -23,14 +23,12 @@ async function runLoadTest() {
     await signInAnonymously(auth);
     console.log("Signed in anonymously.");
     
-    const players = [
-        { id: 'player_load_1', nickname: 'Bot 1' },
-        { id: 'player_load_2', nickname: 'Bot 2' },
-        { id: 'player_load_3', nickname: 'Bot 3' },
-        { id: 'player_load_4', nickname: 'Bot 4' },
-    ];
+    const players = Array.from({ length: 40 }, (_, i) => ({
+        id: `player_load_${i + 1}`,
+        nickname: `TestBot ${i + 1}`
+    }));
 
-    console.log("Joining 4 players to the lobby...");
+    console.log("Joining 40 players to the lobby...");
     const updates = {};
     players.forEach(p => {
         updates[`trivia/players/${p.id}`] = {
@@ -60,14 +58,17 @@ async function runLoadTest() {
             currentQuestionNumber = state.questionNumber;
             console.log(`\nQuestion ${currentQuestionNumber + 1} is LIVE! Answering...`);
             
-            const options = state.options || [];
-            const answerOption = state.targetId || (options.length > 0 ? options[0].id : "A"); 
-            
             const responseUpdates = {};
             players.forEach(p => {
+                // 70% chance to guess the correct targetId, 30% chance to guess a random distractor
+                let chosenAnswer = state.targetId;
+                if (Math.random() > 0.70 && options.length > 0) {
+                   chosenAnswer = options[Math.floor(Math.random() * options.length)].id;
+                }
+                
                 responseUpdates[`trivia/responses/${p.id}`] = {
-                    answer: answerOption,
-                    timeTaken: 2000 + Math.floor(Math.random() * 1000)
+                    answer: chosenAnswer || "A",
+                    timeTaken: 800 + Math.floor(Math.random() * 7000)
                 };
             });
             

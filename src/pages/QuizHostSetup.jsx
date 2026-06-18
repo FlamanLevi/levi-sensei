@@ -61,7 +61,7 @@ function QuizHostSetup({ t, lang }) {
   const [prompts, setPrompts] = useState(new Set(['ja'])); // Main screen default
   const [options, setOptions] = useState(new Set(['en', 'en_katakana'])); // Tablet default
   
-  const [bgm, setBgm] = useState('random');
+  const [bgm, setBgm] = useState('random_wangan');
   const [itemsMode, setItemsMode] = useState('none');
   const [isCreating, setIsCreating] = useState(false);
   const [showHelpModal, setShowHelpModal] = useState(false);
@@ -176,10 +176,17 @@ function QuizHostSetup({ t, lang }) {
         schoolId
       });
 
+      const marioTracks = ['mariokart.mp3', 'newsupermariobros2.mp3', 'newsupermariobroswii.mp3', 'supermarioworld.mp3', 'warioland.mp3'];
+      const wanganTracks = ['wanganmidnight1.mp3', 'wanganmidnight2.mp3', 'wanganmidnight3.mp3', 'wanganmidnight4.mp3', 'wanganmidnight5.mp3'];
+      
       let finalBgm = bgm;
-      if (bgm === 'random') {
-        const tracks = ['bgm-1.mp3', 'bgm-2.mp3', 'bgm-3.mp3'];
-        finalBgm = tracks[Math.floor(Math.random() * tracks.length)];
+      if (bgm === 'random_all') {
+        const allTracks = [...marioTracks, ...wanganTracks];
+        finalBgm = allTracks[Math.floor(Math.random() * allTracks.length)];
+      } else if (bgm === 'random_mario') {
+        finalBgm = marioTracks[Math.floor(Math.random() * marioTracks.length)];
+      } else if (bgm === 'random_wangan') {
+        finalBgm = wanganTracks[Math.floor(Math.random() * wanganTracks.length)];
       }
 
       navigate(`/admin/games/quiz/live`, { 
@@ -403,10 +410,9 @@ function QuizHostSetup({ t, lang }) {
               value={bgm} 
               onChange={setBgm}
               options={[
-                { value: 'random', label: t("Random", "ランダム"), subLabel: t("Surprise me!", "おまかせ") },
-                { value: 'bgm-1.mp3', label: "MK64", subLabel: t("Mario Kart", "マリオカート") },
-                { value: 'bgm-2.mp3', label: "P5R", subLabel: t("Persona 5", "ペルソナ5") },
-                { value: 'bgm-3.mp3', label: "Wangan", subLabel: t("Midnight", "湾岸ミッドナイト") },
+                { value: 'random_all', label: t("Random", "ランダム"), subLabel: t("All Series", "全シリーズ") },
+                { value: 'random_mario', label: "Mario", subLabel: t("Super Mario Bros", "スーパーマリオ") },
+                { value: 'random_wangan', label: "Wangan", subLabel: t("Maximum Tune", "湾岸ミッドナイト") },
                 { value: 'none', label: t("None", "なし"), subLabel: t("Silent", "無音") }
               ]}
             />

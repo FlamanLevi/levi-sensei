@@ -206,13 +206,27 @@ function OhajikiHostLive({ t, lang }) {
         
         <div className="flex items-center gap-4">
           {phase === 'LOBBY' && (
-            <button 
-              onClick={startGame}
-              disabled={!players || Object.keys(players).length === 0}
-              className="px-6 py-2 bg-[var(--primary-color)] text-white font-black rounded-xl shadow-md hover:brightness-110 disabled:opacity-50 transition-all"
-            >
-              ▶ {t("Start Game", "ゲームスタート")}
-            </button>
+            <>
+              <button
+                onClick={async () => {
+                  if (window.confirm(t("Force all connected iPads to refresh their browsers instantly?", "すべての接続中のiPadのブラウザを強制的に更新しますか？"))) {
+                    await update(ref(db), { 'app/settings/version': Date.now() });
+                  }
+                }}
+                className="px-4 py-2 bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400 hover:bg-red-500 hover:text-white dark:hover:bg-red-600 font-bold rounded-xl shadow-sm transition-all border border-red-200 dark:border-red-800 flex items-center gap-2"
+                title={t("Force Refresh All iPads", "全iPadを強制更新")}
+              >
+                🔄 <span className="hidden sm:inline">{t("Refresh iPads", "iPadを更新")}</span>
+              </button>
+              
+              <button 
+                onClick={startGame}
+                disabled={!players || Object.keys(players).length === 0}
+                className="px-6 py-2 bg-[var(--primary-color)] text-white font-black rounded-xl shadow-md hover:brightness-110 disabled:opacity-50 transition-all"
+              >
+                ▶ {t("Start Game", "ゲームスタート")}
+              </button>
+            </>
           )}
         </div>
       </div>

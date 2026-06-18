@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from 'react';
-import { Routes, Route, Link, useLocation } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Routes, Route, Link, useLocation, Outlet } from 'react-router-dom';
 import Home from './pages/Home';
 import ToolsHub from './pages/ToolsHub';
 import VocabularyHub from './pages/VocabularyHub';
@@ -22,9 +22,20 @@ import StudentProfile from './pages/StudentProfile';
 import ClassWars from './pages/ClassWars';
 import AdminWorksheetsHub from './pages/AdminWorksheetsHub';
 import WorksheetLineMatching from './pages/WorksheetLineMatching';
+import SuperSetup from './pages/SuperSetup';
 import { TeacherSchoolDropdown } from './components/TeacherSchoolDropdown';
+import { TeacherAuthGateway } from './components/auth/TeacherAuthGateway';
 import { db } from './lib/firebase';
 import { ref, onValue } from 'firebase/database';
+import { useAuth } from './hooks/useAuth';
+
+function AdminRouteWrapper({ t, lang }) {
+  return (
+    <TeacherAuthGateway t={t} lang={lang}>
+      <Outlet />
+    </TeacherAuthGateway>
+  );
+}
 
 function App() {
   const [lang, setLang] = useState(() => localStorage.getItem('esl-lang') || 'ja');
@@ -32,7 +43,6 @@ function App() {
   const [color, setColor] = useState(() => localStorage.getItem('esl-color') || 'blue');
   const [pattern, setPattern] = useState(() => localStorage.getItem('esl-pattern') || 'none');
   const [studentName, setStudentName] = useState(() => localStorage.getItem('esl-student-name') || '');
-  const [showAdminLogin, setShowAdminLogin] = useState(false);
 
   // Load Starred Words
   const [starredWords, setStarredWords] = useState(() => {
@@ -76,8 +86,12 @@ function App() {
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
   }, []);
 
+  const { user } = useAuth();
+
   // Force-refresh all clients globally when a new version is pushed
   useEffect(() => {
+    if (!user) return; // Wait for authentication before attaching listener to avoid permission denied
+    
     const versionRef = ref(db, 'app/settings/version');
     const unsub = onValue(versionRef, (snap) => {
       const currentVersion = snap.val();
@@ -93,7 +107,7 @@ function App() {
       }
     });
     return () => unsub();
-  }, []);
+  }, [user]);
 
   const toggleStar = (word) => {
     setStarredWords(prev => {
@@ -128,25 +142,6 @@ function App() {
 
   const t = (en, ja) => (lang === 'en' ? en : ja);
 
-  // Hidden Teacher Portal Logic
-  const tapTimes = useRef([]);
-  
-  const handleTitleClick = (e) => {
-    if (e.detail > 1) {
-      e.preventDefault();
-    }
-
-    const now = Date.now();
-    tapTimes.current.push(now);
-    
-    tapTimes.current = tapTimes.current.filter(t => now - t <= 2500);
-    
-    if (tapTimes.current.length >= 5) {
-      tapTimes.current = [];
-      setShowAdminLogin(true);
-    }
-  };
-
   const location = useLocation();
   const isLiveGame = location.pathname === '/play/trivia' || 
                      location.pathname === '/play/ohajiki' || 
@@ -157,56 +152,12 @@ function App() {
   return (
     <div className="min-h-screen flex flex-col font-sans transition-colors duration-300">
       
-      {/* Admin Login Modal */}
-      {showAdminLogin && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
-          <div className="bg-[var(--surface-color)] p-8 rounded-2xl shadow-xl w-full max-w-sm border-4 border-[var(--border-color)] animate-in zoom-in-95 duration-200">
-            <h3 className="text-2xl font-black text-[var(--text-color)] mb-4 text-center">
-              {t("Teacher Portal Access", "先生ポータル")}
-            </h3>
-            <form onSubmit={(e) => {
-              e.preventDefault();
-              const pwd = e.target.password.value;
-              if (pwd.toLowerCase() === 'admin') {
-                setShowAdminLogin(false);
-                window.location.hash = "#/admin";
-              } else {
-                alert("Incorrect Password.");
-              }
-            }}>
-              <input 
-                autoFocus
-                type="password" 
-                name="password"
-                className="w-full text-center text-3xl font-black py-4 px-4 rounded-xl border-4 border-[var(--border-color)] bg-transparent text-[var(--text-color)] focus:border-[var(--primary-color)] focus:outline-none transition-colors mb-6 tracking-widest"
-                placeholder="•••••"
-              />
-              <div className="flex gap-4">
-                <button 
-                  type="button"
-                  onClick={() => setShowAdminLogin(false)}
-                  className="flex-1 py-3 bg-gray-500 text-white text-xl font-bold rounded-xl hover:brightness-110 active:scale-95 transition-all"
-                >
-                  {t("Cancel", "キャンセル")}
-                </button>
-                <button 
-                  type="submit"
-                  className="flex-1 py-3 bg-[var(--primary-color)] text-white text-xl font-bold rounded-xl hover:brightness-110 active:scale-95 transition-all"
-                >
-                  {t("Enter", "決定")}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
       {/* Header */}
       {!isLiveGame && (
       <header className={`flex flex-wrap justify-between items-center px-6 py-4 transition-all duration-300 gap-4 ${isAdmin ? 'sticky top-0 z-50 bg-[var(--surface-color)]/90 backdrop-blur-md shadow-md border-b-2 border-[var(--border-color)]' : 'bg-[var(--header-bg)] shadow-[var(--header-shadow)]'}`}>
         <div className="flex-1 min-w-max">
           <Link 
-            to="/"
-            onClick={handleTitleClick}
+            to="/admin"
             className="text-2xl text-[var(--primary-color)] font-bold m-0 transition-colors duration-300 cursor-pointer select-none no-underline block"
           >
             {lang === 'en' ? "Levi Sensei's Page" : <>リヴァイ<ruby>先生<rt>せんせい</rt></ruby>のページ</>}
@@ -298,22 +249,27 @@ function App() {
       <main className={`flex-1 ${isLiveGame ? 'p-0 max-w-full' : 'p-6 max-w-[1200px]'} w-full mx-auto`}>
         <Routes>
           <Route path="/" element={<Home t={t} studentName={studentName} setStudentName={setStudentName} />} />
-          <Route path="/admin" element={<TeacherPortal t={t} lang={lang} />} />
-          <Route path="/admin/games" element={<GameCategoryHub t={t} lang={lang} />} />
-          <Route path="/admin/games/tablet" element={<TabletGamesHub t={t} lang={lang} />} />
-          <Route path="/admin/games/tablet/ohajiki" element={<OhajikiHostSetup t={t} lang={lang} />} />
-          <Route path="/admin/games/tablet/ohajiki/live" element={<OhajikiHostLive t={t} lang={lang} />} />
           
-          <Route path="/admin/games/classroom" element={<ClassroomGamesHub t={t} lang={lang} />} />
-          <Route path="/admin/games/classroom/ohajiki" element={<OhajikiGame t={t} lang={lang} />} />
-          <Route path="/admin/games/quiz" element={<QuizHostSetup t={t} lang={lang} />} />
-          <Route path="/admin/games/quiz/live" element={<QuizHostLive t={t} lang={lang} />} />
-          
-          <Route path="/admin/tools" element={<AdminToolsHub t={t} lang={lang} />} />
-          <Route path="/admin/tools/quiz-analytics" element={<AdminAnalytics t={t} lang={lang} />} />
-          <Route path="/admin/tools/class-wars" element={<ClassWars t={t} lang={lang} />} />
-          <Route path="/admin/tools/worksheets" element={<AdminWorksheetsHub t={t} lang={lang} />} />
-          <Route path="/admin/tools/worksheets/matching" element={<WorksheetLineMatching t={t} lang={lang} />} />
+          <Route path="/admin/super-setup" element={<SuperSetup t={t} />} />
+
+          <Route path="/admin" element={<AdminRouteWrapper t={t} lang={lang} />}>
+            <Route index element={<TeacherPortal t={t} lang={lang} />} />
+            <Route path="games" element={<GameCategoryHub t={t} lang={lang} />} />
+            <Route path="games/tablet" element={<TabletGamesHub t={t} lang={lang} />} />
+            <Route path="games/tablet/ohajiki" element={<OhajikiHostSetup t={t} lang={lang} />} />
+            <Route path="games/tablet/ohajiki/live" element={<OhajikiHostLive t={t} lang={lang} />} />
+            
+            <Route path="games/classroom" element={<ClassroomGamesHub t={t} lang={lang} />} />
+            <Route path="games/classroom/ohajiki" element={<OhajikiGame t={t} lang={lang} />} />
+            <Route path="games/quiz" element={<QuizHostSetup t={t} lang={lang} />} />
+            <Route path="games/quiz/live" element={<QuizHostLive t={t} lang={lang} />} />
+            
+            <Route path="tools" element={<AdminToolsHub t={t} lang={lang} />} />
+            <Route path="tools/quiz-analytics" element={<AdminAnalytics t={t} lang={lang} />} />
+            <Route path="tools/class-wars" element={<ClassWars t={t} lang={lang} />} />
+            <Route path="tools/worksheets" element={<AdminWorksheetsHub t={t} lang={lang} />} />
+            <Route path="tools/worksheets/matching" element={<WorksheetLineMatching t={t} lang={lang} />} />
+          </Route>
           
           <Route path="/profile" element={<StudentProfile t={t} lang={lang} />} />
           

@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
+import { RubyText } from '../../../components/RubyText';
 
 export const HostReveal = ({ questionQueue, currentQIndex, answerStats, settings, t, nextPhase }) => {
   const [countdown, setCountdown] = useState(5); // 5 second auto-advance
@@ -51,24 +52,38 @@ export const HostReveal = ({ questionQueue, currentQIndex, answerStats, settings
            className="max-h-[30vh] object-contain rounded-xl shadow-lg border-4 border-green-500 mb-8" 
          />
        )}
-       <motion.h1 
-         initial={{ y: 20, opacity: 0 }}
-         animate={{ y: 0, opacity: 1 }}
-         transition={{ delay: 0.2 }}
-         style={{ fontSize: '12vw', lineHeight: 1.1 }}
-         className="font-black text-[var(--primary-color)] drop-shadow-md mb-2"
-       >
-         {questionQueue[currentQIndex].target.en}
-       </motion.h1>
-       <motion.h2 
-         initial={{ y: 20, opacity: 0 }}
-         animate={{ y: 0, opacity: 1 }}
-         transition={{ delay: 0.3 }}
-         style={{ fontSize: '10vw', lineHeight: 1.1 }}
-         className="font-bold text-[var(--text-color)] drop-shadow-md mb-8"
-       >
-         {questionQueue[currentQIndex].target.ja_kanji || questionQueue[currentQIndex].target.ja_hiragana}
-       </motion.h2>
+       {(() => {
+         const isJaPrompt = questionQueue[currentQIndex].promptFormats?.includes('ja');
+         const PrimaryText = isJaPrompt ? 
+           <RubyText kanji={questionQueue[currentQIndex].target.ja_kanji} hiragana={questionQueue[currentQIndex].target.ja_hiragana} /> : 
+           questionQueue[currentQIndex].target.en;
+         const SecondaryText = isJaPrompt ? 
+           questionQueue[currentQIndex].target.en : 
+           <RubyText kanji={questionQueue[currentQIndex].target.ja_kanji} hiragana={questionQueue[currentQIndex].target.ja_hiragana} />;
+
+         return (
+           <>
+             <motion.h1 
+               initial={{ y: 20, opacity: 0 }}
+               animate={{ y: 0, opacity: 1 }}
+               transition={{ delay: 0.2 }}
+               style={{ fontSize: '12vw', lineHeight: 1.1 }}
+               className="font-black text-[var(--primary-color)] drop-shadow-md mb-2"
+             >
+               {PrimaryText}
+             </motion.h1>
+             <motion.h2 
+               initial={{ y: 20, opacity: 0 }}
+               animate={{ y: 0, opacity: 1 }}
+               transition={{ delay: 0.3 }}
+               style={{ fontSize: '10vw', lineHeight: 1.1 }}
+               className="font-bold text-[var(--text-color)] drop-shadow-md mb-8"
+             >
+               {SecondaryText}
+             </motion.h2>
+           </>
+         );
+       })()}
        
        {/* Distribution Chart */}
        <motion.div 

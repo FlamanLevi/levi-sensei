@@ -160,7 +160,16 @@ function QuizHostLive({ t, lang }) {
       const selectedDistractors = shuffle(tagMatches).slice(0, settings.optionCount - 1);
       const options = shuffle([targetWord, ...selectedDistractors]);
 
-      return { target: targetWord, options };
+      let flow = settings.questionFlow || 'ja_to_en';
+      if (flow === 'mixed') {
+        flow = Math.random() > 0.5 ? 'ja_to_en' : 'en_to_ja';
+      }
+
+      const engFormats = settings.englishFormats || ['en', 'en_katakana'];
+      const promptFormats = flow === 'ja_to_en' ? ['ja'] : engFormats;
+      const optionFormats = flow === 'ja_to_en' ? engFormats : ['ja'];
+
+      return { target: targetWord, options, promptFormats, optionFormats };
     });
 
     // C. Trim to selected question count

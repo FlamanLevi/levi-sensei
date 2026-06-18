@@ -58,8 +58,8 @@ function QuizHostSetup({ t, lang }) {
   const [gameMode, setGameMode] = useState('individual');
 
   // State: Matrix Display Config
-  const [prompts, setPrompts] = useState(new Set(['ja'])); // Main screen default
-  const [options, setOptions] = useState(new Set(['en', 'en_katakana'])); // Tablet default
+  const [questionFlow, setQuestionFlow] = useState('ja_to_en'); // 'ja_to_en', 'en_to_ja', 'mixed'
+  const [englishFormats, setEnglishFormats] = useState(new Set(['en', 'en_katakana']));
   
   const [bgm, setBgm] = useState('random_wangan');
   const [itemsMode, setItemsMode] = useState('none');
@@ -102,47 +102,14 @@ function QuizHostSetup({ t, lang }) {
     setSelectedUnits(newSelection);
   };
 
-  const getCategory = (val) => {
-    if (val === 'img') return 'img';
-    if (val === 'ja') return 'ja';
-    return 'en';
-  };
-
-  const getActiveCategory = (selectedSet) => {
-    if (selectedSet.has('img')) return 'img';
-    if (selectedSet.has('ja')) return 'ja';
-    if (selectedSet.has('en') || selectedSet.has('en_katakana')) return 'en';
-    return null;
-  };
-
-  const isPromptDisabled = (val) => {
-    if (val === 'img') return true;
-    const cat = getCategory(val);
-    const activePromptCat = getActiveCategory(prompts);
-    const activeOptionsCat = getActiveCategory(options);
-    
-    if (activePromptCat && activePromptCat !== cat) return true;
-    if (activeOptionsCat === cat) return true;
-    return false;
-  };
-
-  const isOptionDisabled = (val) => {
-    if (val === 'img') return true;
-    const cat = getCategory(val);
-    const activePromptCat = getActiveCategory(prompts);
-    const activeOptionsCat = getActiveCategory(options);
-    
-    if (activeOptionsCat && activeOptionsCat !== cat) return true;
-    if (activePromptCat === cat) return true;
-    return false;
-  };
-
-  const toggleMatrix = (setObj, updateFn, value, disabled) => {
-    if (disabled) return;
-    const newSet = new Set(setObj);
-    if (newSet.has(value)) newSet.delete(value);
-    else newSet.add(value);
-    updateFn(newSet);
+  const toggleFormat = (value) => {
+    const newSet = new Set(englishFormats);
+    if (newSet.has(value)) {
+      if (newSet.size > 1) newSet.delete(value);
+    } else {
+      newSet.add(value);
+    }
+    setEnglishFormats(newSet);
   };
 
   const handleCreateRoom = async () => {
@@ -150,12 +117,8 @@ function QuizHostSetup({ t, lang }) {
       alert(t("Select at least 5 words total to generate a game.", "ゲームを作成するには、合計5つ以上の単語を選択してください。"));
       return;
     }
-    if (prompts.size === 0) {
-      alert(t("Select at least one display option for the Main Screen.", "メイン画面の表示オプションを少なくとも1つ選択してください。"));
-      return;
-    }
-    if (options.size === 0) {
-      alert(t("Select at least one option for the Tablets.", "タブレットの表示オプションを少なくとも1つ選択してください。"));
+    if (englishFormats.size === 0) {
+      alert(t("Select at least one English format.", "英語の表示形式を少なくとも1つ選択してください。"));
       return;
     }
 
@@ -204,7 +167,18 @@ function QuizHostSetup({ t, lang }) {
           roomCode, 
           selectedUnits: isReviewMode ? [] : Array.from(selectedUnits),
           preselectedIds,
-          settings: { questionCount, timeLimit, optionCount, hintMode, gameMode, itemsMode, bgm: finalBgm, prompts: Array.from(prompts), options: Array.from(options), isReviewMode }
+          settings: { 
+            questionCount, 
+            timeLimit, 
+            optionCount, 
+            hintMode, 
+            gameMode, 
+            itemsMode, 
+            bgm: finalBgm, 
+            questionFlow, 
+            englishFormats: Array.from(englishFormats), 
+            isReviewMode 
+          }
         }
       });
 
@@ -235,12 +209,6 @@ function QuizHostSetup({ t, lang }) {
     hidden: { opacity: 0, y: 20 },
     show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
   };
-
-  const matrixConfig = [
-    { val: 'ja', icon: '漢', labelEn: 'Japanese', labelJa: '日本語' },
-    { val: 'en', icon: 'ABC', labelEn: 'Spelling', labelJa: 'スペル' },
-    { val: 'en_katakana', icon: 'ア', labelEn: 'Katakana', labelJa: 'カタカナ' }
-  ];
 
   return (
     <div className="min-h-[100dvh] pb-32">
@@ -447,54 +415,40 @@ function QuizHostSetup({ t, lang }) {
             />
           </div>
 
-          {/* Matrix Configuration */}
+          {/* Matrix Configuration (Now Question Flow) */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 pt-8 border-t-2 border-[var(--border-color)]">
             
-            {/* Main Screen */}
-            <div className="flex flex-col gap-4">
-              <h4 className="font-black text-xl text-[var(--text-color)]">📺 {t("Main Screen (Prompt)", "メイン画面 (問題)")}</h4>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                {matrixConfig.map(opt => {
-                  const disabled = isPromptDisabled(opt.val);
-                  const isSelected = prompts.has(opt.val);
-                  return (
-                    <motion.button 
-                      key={`prompt-${opt.val}`}
-                      whileHover={disabled ? {} : { scale: 1.05 }}
-                      whileTap={disabled ? {} : { scale: 0.95 }}
-                      onClick={() => toggleMatrix(prompts, setPrompts, opt.val, disabled)}
-                      disabled={disabled}
-                      className={`flex flex-col items-center justify-center p-4 rounded-2xl border-2 font-bold transition-all h-28 ${disabled ? 'opacity-30 cursor-not-allowed bg-[var(--surface-color)] border-[var(--border-color)]' : isSelected ? 'bg-[var(--primary-color)] text-white border-[var(--primary-color)] shadow-md' : 'bg-[var(--surface-color)] text-[var(--text-color)] border-[var(--border-color)] hover:border-[var(--primary-color)]/50'}`}
-                    >
-                      <span className="text-3xl mb-2">{opt.icon}</span>
-                      <span className="text-sm">{t(opt.labelEn, opt.labelJa)}</span>
-                    </motion.button>
-                  );
-                })}
-              </div>
-            </div>
+            {/* Question Flow */}
+            <SegmentedControl 
+              layoutIdKey="qFlow"
+              label={t("Question Flow", "出題形式")} 
+              value={questionFlow} 
+              onChange={setQuestionFlow}
+              options={[
+                { value: 'ja_to_en', label: "🇯🇵 ➔ 🔤", subLabel: t("JP to EN", "日本語➔英語") },
+                { value: 'en_to_ja', label: "🔤 ➔ 🇯🇵", subLabel: t("EN to JP", "英語➔日本語") },
+                { value: 'mixed', label: "🔀 Mixed", subLabel: t("Random", "ランダム") }
+              ]}
+            />
 
-            {/* Tablets */}
-            <div className="flex flex-col gap-4">
-              <h4 className="font-black text-xl text-[var(--text-color)]">📱 {t("Tablets (Options)", "タブレット (選択肢)")}</h4>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                {matrixConfig.map(opt => {
-                  const disabled = isOptionDisabled(opt.val);
-                  const isSelected = options.has(opt.val);
-                  return (
-                    <motion.button 
-                      key={`opt-${opt.val}`}
-                      whileHover={disabled ? {} : { scale: 1.05 }}
-                      whileTap={disabled ? {} : { scale: 0.95 }}
-                      onClick={() => toggleMatrix(options, setOptions, opt.val, disabled)}
-                      disabled={disabled}
-                      className={`flex flex-col items-center justify-center p-4 rounded-2xl border-2 font-bold transition-all h-28 ${disabled ? 'opacity-30 cursor-not-allowed bg-[var(--surface-color)] border-[var(--border-color)]' : isSelected ? 'bg-[var(--primary-color)] text-white border-[var(--primary-color)] shadow-md' : 'bg-[var(--surface-color)] text-[var(--text-color)] border-[var(--border-color)] hover:border-[var(--primary-color)]/50'}`}
-                    >
-                      <span className="text-3xl mb-2">{opt.icon}</span>
-                      <span className="text-sm">{t(opt.labelEn, opt.labelJa)}</span>
-                    </motion.button>
-                  );
-                })}
+            {/* English Formats */}
+            <div className="flex flex-col gap-2">
+              <label className="font-bold text-sm text-[var(--text-color)] pl-1">{t("English Formatting", "英語の形式")}</label>
+              <div className="flex p-1.5 gap-1.5 rounded-2xl border-2 border-[var(--border-color)] bg-[var(--surface-color)] shadow-inner">
+                <motion.button 
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => toggleFormat('en')}
+                  className={`flex flex-col flex-1 items-center justify-center py-2 px-3 rounded-xl transition-all font-black text-lg ${englishFormats.has('en') ? 'bg-[var(--primary-color)] text-white shadow-md' : 'text-[var(--text-muted)] hover:bg-[var(--border-color)]'}`}
+                >
+                  ABC <span className={`text-xs font-bold mt-0.5 tracking-tight ${englishFormats.has('en') ? 'text-white/90' : 'text-[var(--text-muted)]/70'}`}>{t("Spelling", "スペル")}</span>
+                </motion.button>
+                <motion.button 
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => toggleFormat('en_katakana')}
+                  className={`flex flex-col flex-1 items-center justify-center py-2 px-3 rounded-xl transition-all font-black text-lg ${englishFormats.has('en_katakana') ? 'bg-[var(--primary-color)] text-white shadow-md' : 'text-[var(--text-muted)] hover:bg-[var(--border-color)]'}`}
+                >
+                  ア <span className={`text-xs font-bold mt-0.5 tracking-tight ${englishFormats.has('en_katakana') ? 'text-white/90' : 'text-[var(--text-muted)]/70'}`}>{t("Katakana", "カタカナ")}</span>
+                </motion.button>
               </div>
             </div>
 

@@ -60,7 +60,8 @@ export const useQuizHost = (questionQueue, settings, players, teamScores) => {
     updates['trivia/gameState/status'] = "LIVE";
     updates['trivia/gameState/questionNumber'] = index;
     updates['trivia/gameState/timeLimit'] = settings.timeLimit;
-    updates['trivia/gameState/displayRules'] = settings.options;
+    updates['trivia/gameState/displayRules'] = q.optionFormats;
+    updates['trivia/gameState/promptFormats'] = q.promptFormats;
     updates['trivia/gameState/options'] = q.options;
     updates['trivia/gameState/targetId'] = q.target.id;
     updates['trivia/gameState/totalQuestions'] = questionQueue.length;

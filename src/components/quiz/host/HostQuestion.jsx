@@ -80,10 +80,11 @@ export const HostQuestion = ({ roomCode, questionQueue, currentQIndex, timeLeft,
           className="flex flex-col items-center justify-center flex-grow min-h-0 w-full max-w-4xl py-2"
         >
           {(() => {
-            const hasImg = settings.prompts.includes('img') && questionQueue[currentQIndex].target.img_path;
-            const hasEn = settings.prompts.includes('en');
-            const hasKata = settings.prompts.includes('en_katakana');
-            const hasJa = settings.prompts.includes('ja');
+            const formats = questionQueue[currentQIndex].promptFormats || [];
+            const hasImg = formats.includes('img') && questionQueue[currentQIndex].target.img_path;
+            const hasEn = formats.includes('en');
+            const hasKata = formats.includes('en_katakana');
+            const hasJa = formats.includes('ja');
 
             return (
               <>
@@ -119,10 +120,11 @@ export const HostQuestion = ({ roomCode, questionQueue, currentQIndex, timeLeft,
         >
           {questionQueue[currentQIndex].options.map((opt, idx) => {
             const isDimmed = dimmedOptionIds.includes(opt.id);
-            const hasImg = settings.options.includes('img') && opt.img_path;
-            const hasEn = settings.options.includes('en');
-            const hasKata = settings.options.includes('en_katakana');
-            const hasJa = settings.options.includes('ja');
+            const formats = questionQueue[currentQIndex].optionFormats || [];
+            const hasImg = formats.includes('img') && opt.img_path;
+            const hasEn = formats.includes('en');
+            const hasKata = formats.includes('en_katakana');
+            const hasJa = formats.includes('ja');
 
             return (
               <motion.div

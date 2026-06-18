@@ -65,6 +65,16 @@ function QuizHostSetup({ t, lang }) {
   const [itemsMode, setItemsMode] = useState('none');
   const [isCreating, setIsCreating] = useState(false);
   const [showHelpModal, setShowHelpModal] = useState(false);
+  
+  // State: Grade Accordion
+  const [expandedGrades, setExpandedGrades] = useState(new Set());
+
+  const toggleGrade = (gradeId) => {
+    const newSet = new Set(expandedGrades);
+    if (newSet.has(gradeId)) newSet.delete(gradeId);
+    else newSet.add(gradeId);
+    setExpandedGrades(newSet);
+  };
 
   useEffect(() => {
     if (isReviewMode) {
@@ -271,32 +281,51 @@ function QuizHostSetup({ t, lang }) {
               </div>
             </div>
             
-            <div className="space-y-8">
-              {flatVocab.grades.map(grade => (
+            <div className="space-y-4">
+              {flatVocab.grades
+                .filter(grade => grade.id !== 'grade3' && grade.id !== 'grade4')
+                .map(grade => {
+                const isExpanded = expandedGrades.has(grade.id);
+                return (
                 <div key={grade.id} className="pl-4 border-l-4 border-[var(--primary-color)]">
-                  <h4 className="font-black text-xl text-[var(--text-color)] mb-4">{t(grade.name_en, grade.name_ja)}</h4>
-                  <div className="flex flex-wrap gap-3">
-                    {(groupedUnits[grade.id] || []).map(unit => {
-                      const isSelected = selectedUnits.has(unit.id);
-                      const wordCount = flatVocab.words.filter(w => isWordInUnit(w, unit.id)).length;
-                      return (
-                        <motion.button 
-                          key={unit.id} 
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          onClick={() => toggleUnit(unit.id)}
-                          className={`flex items-center gap-3 px-4 py-3 rounded-2xl border-2 font-bold transition-all ${isSelected ? 'bg-[var(--primary-color)] text-white border-[var(--primary-color)] shadow-md' : 'bg-[var(--surface-color)] text-[var(--text-color)] border-[var(--border-color)] hover:border-[var(--primary-color)]/50'}`}
-                        >
-                          <span className="text-base">{t(unit.name_en, unit.name_ja)}</span>
-                          <span className={`text-xs px-2.5 py-1 rounded-full ${isSelected ? 'bg-white/20' : 'bg-black/5 dark:bg-white/10'}`}>
-                            {wordCount} {t("words", "単語")}
-                          </span>
-                        </motion.button>
-                      );
-                    })}
-                  </div>
+                  <h4 
+                    onClick={() => toggleGrade(grade.id)}
+                    className="font-black text-xl text-[var(--text-color)] mb-2 cursor-pointer flex justify-between items-center select-none py-2 hover:bg-[var(--primary-color)]/10 rounded-lg px-2 transition-colors"
+                  >
+                    {t(grade.name_en, grade.name_ja)}
+                    <span className="text-sm text-[var(--primary-color)]">{isExpanded ? '▼' : '▶'}</span>
+                  </h4>
+                  <AnimatePresence>
+                    {isExpanded && (
+                      <motion.div 
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        className="flex flex-wrap gap-3 overflow-hidden px-2 pb-4 pt-2"
+                      >
+                        {(groupedUnits[grade.id] || []).map(unit => {
+                          const isSelected = selectedUnits.has(unit.id);
+                          const wordCount = flatVocab.words.filter(w => isWordInUnit(w, unit.id)).length;
+                          return (
+                            <motion.button 
+                              key={unit.id} 
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                              onClick={() => toggleUnit(unit.id)}
+                              className={`flex items-center gap-3 px-4 py-3 rounded-2xl border-2 font-bold transition-all ${isSelected ? 'bg-[var(--primary-color)] text-white border-[var(--primary-color)] shadow-md' : 'bg-[var(--surface-color)] text-[var(--text-color)] border-[var(--border-color)] hover:border-[var(--primary-color)]/50'}`}
+                            >
+                              <span className="text-base">{t(unit.name_en, unit.name_ja)}</span>
+                              <span className={`text-xs px-2.5 py-1 rounded-full ${isSelected ? 'bg-white/20' : 'bg-black/5 dark:bg-white/10'}`}>
+                                {wordCount} {t("words", "単語")}
+                              </span>
+                            </motion.button>
+                          );
+                        })}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
-              ))}
+              )})}
             </div>
           </motion.div>
         ) : (

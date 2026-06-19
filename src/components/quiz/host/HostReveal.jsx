@@ -58,8 +58,8 @@ export const HostReveal = ({ questionQueue, currentQIndex, answerStats, settings
                initial={{ y: 20, opacity: 0 }}
                animate={{ y: 0, opacity: 1 }}
                transition={{ delay: 0.2 }}
-               style={{ fontSize: '12vw', lineHeight: 1.1 }}
-               className="font-black text-[var(--primary-color)] drop-shadow-md mb-2"
+               style={{ lineHeight: 1.1 }}
+               className="font-black text-[var(--primary-color)] drop-shadow-md mb-2 text-[clamp(2.5rem,10vmin,8rem)]"
              >
                {PrimaryText}
              </motion.h1>
@@ -67,8 +67,8 @@ export const HostReveal = ({ questionQueue, currentQIndex, answerStats, settings
                initial={{ y: 20, opacity: 0 }}
                animate={{ y: 0, opacity: 1 }}
                transition={{ delay: 0.3 }}
-               style={{ fontSize: '10vw', lineHeight: 1.1 }}
-               className="font-bold text-[var(--text-color)] drop-shadow-md mb-8"
+               style={{ lineHeight: 1.1 }}
+               className="font-bold text-[var(--text-color)] drop-shadow-md mb-8 text-[clamp(2rem,8vmin,6rem)]"
              >
                {SecondaryText}
              </motion.h2>

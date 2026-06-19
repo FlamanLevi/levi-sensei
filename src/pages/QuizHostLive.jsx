@@ -358,7 +358,7 @@ function QuizHostLive({ t, lang }) {
   if (!roomCode) return null;
 
   return (
-    <div className="flex flex-col h-[100dvh] animate-in fade-in duration-300">
+    <div className="flex flex-col h-[100dvh] p-2 md:p-4 animate-in fade-in duration-300">
       
       {/* Utility Header */}
       <div className="flex justify-between items-center bg-[var(--surface-color)] p-4 rounded-lg shadow-sm border-2 border-[var(--border-color)] mb-4 shrink-0 z-50 relative">

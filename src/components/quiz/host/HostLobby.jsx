@@ -11,7 +11,7 @@ export const HostLobby = ({ roomCode, players, startGame, kickPlayer, t }) => (
     <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-[var(--secondary-color,var(--primary-color))]/10 rounded-full blur-3xl -z-10 pointer-events-none"></div>
 
     {/* Left Column: QR Code & PIN */}
-    <div className="flex flex-col items-center justify-center shrink-0 w-1/2 lg:w-5/12 min-w-[350px]">
+    <div className="flex flex-col items-center justify-center shrink w-1/2 lg:w-5/12 min-w-[350px] min-h-0">
       <motion.h2 
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -24,14 +24,16 @@ export const HostLobby = ({ roomCode, players, startGame, kickPlayer, t }) => (
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ type: "spring", bounce: 0.5 }}
-        className="bg-[var(--surface-color)] border-4 border-[var(--primary-color)]/20 shadow-[0_20px_50px_rgba(0,0,0,0.1)] rounded-3xl md:rounded-[3rem] p-4 md:p-8 lg:p-10 flex flex-col items-center justify-center gap-4 md:gap-8 shrink-0 w-full max-w-md lg:max-w-2xl"
+        className="bg-[var(--surface-color)] border-4 border-[var(--primary-color)]/20 shadow-[0_20px_50px_rgba(0,0,0,0.1)] rounded-3xl md:rounded-[3rem] p-4 md:p-8 lg:p-10 flex flex-col items-center justify-center gap-4 shrink min-h-0 w-full max-w-md lg:max-w-2xl"
       >
-        <div className="text-5xl md:text-7xl lg:text-[8rem] xl:text-[10rem] font-black text-[var(--primary-color)] tracking-widest leading-none drop-shadow-sm text-center">
+        <div className="text-[clamp(4rem,15vmin,10rem)] font-black text-[var(--primary-color)] tracking-widest leading-none drop-shadow-sm text-center">
           {roomCode}
         </div>
-        <div className="flex flex-col items-center bg-white p-3 md:p-5 lg:p-6 rounded-2xl shadow-inner border-4 border-gray-100 shrink-0 w-full max-w-[280px] lg:max-w-[350px]">
-          <QRCode value={`${window.location.origin}${window.location.pathname}#/play?pin=${roomCode}`} size={256} level="L" style={{ width: '100%', height: 'auto' }} />
-          <span className="text-gray-400 font-bold mt-2 lg:mt-3 text-xs md:text-sm lg:text-lg text-center">{t("Scan to Join", "スキャンして参加")}</span>
+        <div className="flex flex-col items-center bg-white p-3 md:p-5 rounded-2xl shadow-inner border-4 border-gray-100 shrink w-full max-w-[280px] lg:max-w-[350px] min-h-0 overflow-hidden">
+          <div className="w-full shrink min-h-0 flex items-center justify-center">
+            <QRCode value={`${window.location.origin}${window.location.pathname}#/play?pin=${roomCode}`} size={256} level="L" style={{ height: '100%', maxWidth: '100%', objectFit: 'contain' }} />
+          </div>
+          <span className="text-gray-400 font-bold mt-2 text-xs md:text-sm lg:text-lg text-center shrink-0">{t("Scan to Join", "スキャンして参加")}</span>
         </div>
       </motion.div>
     </div>

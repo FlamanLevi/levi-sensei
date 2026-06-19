@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Avatar } from '../../Avatar';
 
 export const HostLeaderboard = ({ players, nextPhase, currentQIndex, questionQueue, t }) => {
-  const [countdown, setCountdown] = useState(5); // 5 second auto-advance
+  const [countdown, setCountdown] = useState(4); // 4 second auto-advance
   const [isAdvancing, setIsAdvancing] = useState(false);
 
   const handleNextPhase = () => {

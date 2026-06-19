@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { RubyText } from '../../../components/RubyText';
 
 export const HostReveal = ({ questionQueue, currentQIndex, answerStats, settings, t, nextPhase }) => {
-  const [countdown, setCountdown] = useState(5); // 5 second auto-advance
+  const [countdown, setCountdown] = useState(6); // 6 second auto-advance
   const [isAdvancing, setIsAdvancing] = useState(false);
 
   const handleNextPhase = () => {

@@ -190,20 +190,22 @@ export const calculateScoresAndLeaderboard = async ({
       const allScores = [...Object.values(updatedTeamScores), ...Object.values(currentTeamScores).map(t => t.score || 0)];
       const topTeamScore = Math.max(1, ...allScores);
       
-      Object.keys(currentPlayers).forEach(id => {
-         if (updates[`trivia/players/${id}`] === null) return;
-         const tId = currentPlayers[id].teamId;
-         const tScore = updatedTeamScores[tId] || currentTeamScores[tId]?.score || 0;
-         
-         let multiplier = 1;
-         if (topTeamScore > 1500) {
-             if (tScore <= topTeamScore * 0.25) multiplier = 3;
-             else if (tScore <= topTeamScore * 0.50) multiplier = 2;
-             else if (tScore <= topTeamScore * 0.75) multiplier = 1.5;
-         }
-         updates[`trivia/players/${id}/comebackMultiplier`] = multiplier;
-         updates[`trivia/players/${id}/hasMultiplier`] = null; // Clean up legacy
-      });
+      if (settings.catchupMode !== 'off') {
+        Object.keys(currentPlayers).forEach(id => {
+           if (updates[`trivia/players/${id}`] === null) return;
+           const tId = currentPlayers[id].teamId;
+           const tScore = updatedTeamScores[tId] || currentTeamScores[tId]?.score || 0;
+           
+           let multiplier = 1;
+           if (topTeamScore > 1500) {
+               if (tScore <= topTeamScore * 0.25) multiplier = 3;
+               else if (tScore <= topTeamScore * 0.50) multiplier = 2;
+               else if (tScore <= topTeamScore * 0.75) multiplier = 1.5;
+           }
+           updates[`trivia/players/${id}/comebackMultiplier`] = multiplier;
+           updates[`trivia/players/${id}/hasMultiplier`] = null; // Clean up legacy
+        });
+      }
 
     } else {
       let newTopScore = 1;
@@ -212,18 +214,20 @@ export const calculateScoresAndLeaderboard = async ({
         if (s > newTopScore) newTopScore = s;
       });
 
-      Object.keys(currentPlayers).forEach(id => {
-         if (updates[`trivia/players/${id}`] === null) return;
-         const s = updates[`trivia/players/${id}/score`] || currentPlayers[id].score || 0;
-         let multiplier = 1;
-         if (newTopScore > 1500) {
-             if (s <= newTopScore * 0.25) multiplier = 3;
-             else if (s <= newTopScore * 0.50) multiplier = 2;
-             else if (s <= newTopScore * 0.75) multiplier = 1.5;
-         }
-         updates[`trivia/players/${id}/comebackMultiplier`] = multiplier;
-         updates[`trivia/players/${id}/hasMultiplier`] = null; // Clean up legacy
-      });
+      if (settings.catchupMode !== 'off') {
+        Object.keys(currentPlayers).forEach(id => {
+           if (updates[`trivia/players/${id}`] === null) return;
+           const s = updates[`trivia/players/${id}/score`] || currentPlayers[id].score || 0;
+           let multiplier = 1;
+           if (newTopScore > 1500) {
+               if (s <= newTopScore * 0.25) multiplier = 3;
+               else if (s <= newTopScore * 0.50) multiplier = 2;
+               else if (s <= newTopScore * 0.75) multiplier = 1.5;
+           }
+           updates[`trivia/players/${id}/comebackMultiplier`] = multiplier;
+           updates[`trivia/players/${id}/hasMultiplier`] = null; // Clean up legacy
+        });
+      }
     }
 
     // Calculate Ranks for Student iPads

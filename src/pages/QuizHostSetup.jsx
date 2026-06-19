@@ -56,6 +56,7 @@ function QuizHostSetup({ t, lang }) {
   const [optionCount, setOptionCount] = useState(4);
   const [hintMode, setHintMode] = useState('late');
   const [gameMode, setGameMode] = useState('individual');
+  const [catchupMode, setCatchupMode] = useState('on');
 
   // State: Matrix Display Config
   const [questionFlow, setQuestionFlow] = useState('mixed'); // 'ja_to_en', 'en_to_ja', 'mixed'
@@ -173,6 +174,7 @@ function QuizHostSetup({ t, lang }) {
             optionCount, 
             hintMode, 
             gameMode, 
+            catchupMode,
             itemsMode, 
             bgm: finalBgm, 
             questionFlow, 
@@ -387,6 +389,16 @@ function QuizHostSetup({ t, lang }) {
                 { value: 'individual', label: t("Solo", "ソロ"), subLabel: t("Versus", "個人戦") },
                 { value: 'team2', label: t("2 Teams", "2チーム"), subLabel: t("Red vs Blue", "赤 vs 青") },
                 { value: 'team4', label: t("4 Teams", "4チーム"), subLabel: t("All colors", "4色対抗") }
+              ]}
+            />
+            <SegmentedControl 
+              layoutIdKey="catchupMode"
+              label={t("Catch-up Bonus", "逆転ボーナス")} 
+              value={catchupMode} 
+              onChange={setCatchupMode}
+              options={[
+                { value: 'on', label: t("On", "オン"), subLabel: t("Passive Boost", "自動で倍率付与") },
+                { value: 'off', label: t("Off", "オフ"), subLabel: t("Raw Points Only", "素点のみ") }
               ]}
             />
             <SegmentedControl 

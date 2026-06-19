@@ -302,6 +302,8 @@ function QuizHostLive({ t, lang }) {
       updates[`trivia/players/${pId}/totalTime`] = 0;
       updates[`trivia/players/${pId}/avgTime`] = 0;
       updates[`trivia/players/${pId}/idleCount`] = 0;
+      updates[`trivia/players/${pId}/comebackMultiplier`] = 1;
+      updates[`trivia/players/${pId}/hasMultiplier`] = null;
     });
     await update(ref(db), updates);
     setCurrentQIndex(0);
@@ -326,6 +328,8 @@ function QuizHostLive({ t, lang }) {
       updates[`trivia/players/${pId}/totalTime`] = 0;
       updates[`trivia/players/${pId}/avgTime`] = 0;
       updates[`trivia/players/${pId}/idleCount`] = 0;
+      updates[`trivia/players/${pId}/comebackMultiplier`] = 1;
+      updates[`trivia/players/${pId}/hasMultiplier`] = null;
     });
     await update(ref(db), updates);
     navigate('/admin/games/quiz/setup', { state: { retainRoom: true, roomCode } });

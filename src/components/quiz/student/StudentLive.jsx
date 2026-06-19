@@ -25,10 +25,16 @@ export const StudentLive = ({ gameState, hasAnswered, submitAnswer, me, handleUs
   };
 
   const [now, setNow] = useState(Date.now());
+  const [mountTime] = useState(Date.now());
+  
   useEffect(() => {
     const int = setInterval(() => setNow(Date.now()), 100);
     return () => clearInterval(int);
   }, []);
+
+  const timeLimitMs = (gameState?.settings?.timeLimit || 15) * 1000;
+  const readDelayMs = Math.min(timeLimitMs * 0.2, 2500);
+  const isReadDelayActive = (now - mountTime) < readDelayMs;
 
   const activeEffects = gameState.activeEffects || {};
   const myDebuffs = Object.values(activeEffects).filter(e => 
@@ -137,7 +143,8 @@ export const StudentLive = ({ gameState, hasAnswered, submitAnswer, me, handleUs
                 variants={itemVariants}
                 key={opt.id}
                 onPointerDown={() => submitAnswer(opt.id)}
-                className={`flex flex-col items-center justify-center p-4 rounded-3xl border-4 border-b-[12px] active:border-b-[4px] active:translate-y-[8px] transition-all overflow-hidden relative shadow-lg touch-none select-none ${isCrystalCorrect ? 'bg-yellow-400 border-yellow-600 text-black shadow-[0_0_30px_rgba(250,204,21,1)] z-10 scale-105' : COLORS[idx % COLORS.length]} ${!isCrystalCorrect && !COLORS[idx % COLORS.length].includes('text-black') ? 'text-white' : ''}`}
+                disabled={isReadDelayActive}
+                className={`flex flex-col items-center justify-center p-4 rounded-3xl border-4 border-b-[12px] active:border-b-[4px] active:translate-y-[8px] transition-all overflow-hidden relative shadow-lg touch-none select-none ${isCrystalCorrect ? 'bg-yellow-400 border-yellow-600 text-black shadow-[0_0_30px_rgba(250,204,21,1)] z-10 scale-105' : COLORS[idx % COLORS.length]} ${!isCrystalCorrect && !COLORS[idx % COLORS.length].includes('text-black') ? 'text-white' : ''} ${isReadDelayActive ? 'opacity-50 grayscale-[0.5] !cursor-not-allowed active:!border-b-[12px] active:!translate-y-0' : ''}`}
               >
                 {/* Shrink Ray Effect */}
                 <div className={`flex flex-col w-full h-full items-center justify-center transition-transform duration-300 ${hasShrink ? 'scale-[0.4]' : 'scale-100'}`}>

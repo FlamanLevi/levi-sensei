@@ -94,8 +94,17 @@ function QuizStudentLive({ t, lang }) {
     
     // Calculate time taken strictly from when the question appeared on their screen, ignoring network latency.
     const timeBonus = me?.activeBuffs?.time_freeze ? 5000 : 0;
-    const timeTaken = Math.max(0, Date.now() - localQuestionStartTime - timeBonus);
+    const actualTimeTaken = Math.max(0, Date.now() - localQuestionStartTime);
+    const timeTaken = Math.max(0, actualTimeTaken - timeBonus);
     const qNum = gameState?.questionNumber;
+    
+    // Read Delay Guard (20% of time limit, max 2.5s)
+    const timeLimitMs = (gameState?.settings?.timeLimit || 15) * 1000;
+    const readDelayMs = Math.min(timeLimitMs * 0.2, 2500);
+    if (actualTimeTaken < readDelayMs) {
+      setIsSubmitting(false);
+      return;
+    }
     
     try {
       await set(ref(db, `trivia/responses/${playerId}`), {

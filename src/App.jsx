@@ -95,7 +95,7 @@ function App() {
       const currentVersion = snap.val();
       const localVersion = localStorage.getItem('app_version');
       
-      if (currentVersion && localVersion && currentVersion !== localVersion) {
+      if (currentVersion && localVersion && String(currentVersion) !== localVersion) {
         // Version changed! Update local storage and force a hard reload
         localStorage.setItem('app_version', currentVersion);
         window.location.reload(true);

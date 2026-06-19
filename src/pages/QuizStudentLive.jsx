@@ -30,6 +30,8 @@ function QuizStudentLive({ t, lang }) {
   const [isConnected, setIsConnected] = useState(true);
   const [timeOffset, setTimeOffset] = useState(0);
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   // Derive answer state strictly tied to the current question number
   // This prevents race conditions where the UI updates to the next question before the previous response is wiped.
   const myResponse = responses?.[playerId];
@@ -82,28 +84,35 @@ function QuizStudentLive({ t, lang }) {
   useEffect(() => {
     if (gameState?.status === 'LIVE') {
       setLocalQuestionStartTime(Date.now());
+      setIsSubmitting(false); // Reset lock on new question
     }
   }, [gameState?.status, gameState?.questionNumber]);
 
   const submitAnswer = async (optionId) => {
-    if (hasAnswered) return;
+    if (hasAnswered || isSubmitting) return;
+    setIsSubmitting(true);
     
     // Calculate time taken strictly from when the question appeared on their screen, ignoring network latency.
     const timeBonus = me?.activeBuffs?.time_freeze ? 5000 : 0;
     const timeTaken = Math.max(0, Date.now() - localQuestionStartTime - timeBonus);
     const qNum = gameState?.questionNumber;
     
-    await runTransaction(ref(db, `trivia/responses/${playerId}`), (currentData) => {
-      // Abort if an answer already exists FOR THIS SPECIFIC QUESTION
-      if (currentData && currentData.questionNumber === qNum) {
-        return; 
-      }
-      return {
-        answer: optionId,
-        timeTaken: timeTaken,
-        questionNumber: qNum
-      };
-    });
+    try {
+      await runTransaction(ref(db, `trivia/responses/${playerId}`), (currentData) => {
+        // Abort if an answer already exists FOR THIS SPECIFIC QUESTION
+        if (currentData && currentData.questionNumber === qNum) {
+          return; 
+        }
+        return {
+          answer: optionId,
+          timeTaken: timeTaken,
+          questionNumber: qNum
+        };
+      });
+    } catch (e) {
+      console.error(e);
+      setIsSubmitting(false); // Unlock if transaction throws network error
+    }
   };
 
   const handleUseItem = async () => {

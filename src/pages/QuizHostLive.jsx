@@ -214,7 +214,10 @@ function QuizHostLive({ t, lang }) {
 
       const totalPlayers = Object.keys(players).length;
       const responsesData = responses || {};
-      const responseCount = Object.keys(responsesData).length;
+      
+      // ONLY count responses that belong to the current question to prevent stale data race conditions
+      const validResponses = Object.values(responsesData).filter(r => r.questionNumber === currentQIndex);
+      const responseCount = validResponses.length;
 
       // If we have players and everyone has submitted an answer
       if (totalPlayers > 0 && responseCount >= totalPlayers) {

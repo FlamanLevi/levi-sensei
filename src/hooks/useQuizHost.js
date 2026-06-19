@@ -41,7 +41,7 @@ export const useQuizHost = (questionQueue, settings, players, teamScores) => {
            setAnswerStats,
            setTroubleWords
        });
-    }, 1000);
+    }, 2500);
   }, [currentQIndex, players, teamScores, settings]);
 
   const startNextQuestion = useCallback(async (index) => {

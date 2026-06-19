@@ -191,6 +191,7 @@ export const calculateScoresAndLeaderboard = async ({
       const topTeamScore = Math.max(1, ...allScores);
       
       Object.keys(currentPlayers).forEach(id => {
+         if (updates[`trivia/players/${id}`] === null) return;
          const tId = currentPlayers[id].teamId;
          const tScore = updatedTeamScores[tId] || currentTeamScores[tId]?.score || 0;
          
@@ -212,6 +213,7 @@ export const calculateScoresAndLeaderboard = async ({
       });
 
       Object.keys(currentPlayers).forEach(id => {
+         if (updates[`trivia/players/${id}`] === null) return;
          const s = updates[`trivia/players/${id}/score`] || currentPlayers[id].score || 0;
          let multiplier = 1;
          if (newTopScore > 1500) {

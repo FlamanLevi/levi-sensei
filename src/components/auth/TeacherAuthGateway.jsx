@@ -3,7 +3,7 @@ import { auth, db } from '../../lib/firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { ref, get, update } from 'firebase/database';
 import { useAuth } from '../../hooks/useAuth';
-import { useLocation, Navigate } from 'react-router-dom';
+import { useLocation, Navigate, Link } from 'react-router-dom';
 
 export function TeacherAuthGateway({ children, t, lang }) {
   const { user, loading } = useAuth();
@@ -118,6 +118,11 @@ export function TeacherAuthGateway({ children, t, lang }) {
                 {isAuthenticating ? t("Checking...", "確認中...") : t("Unlock", "ロック解除")}
               </button>
             </form>
+            <div className="mt-6 text-center">
+              <Link to="/" className="text-[var(--text-muted)] font-bold hover:underline">
+                {t("Return to Home", "ホームに戻る")}
+              </Link>
+            </div>
           </>
         )}
 

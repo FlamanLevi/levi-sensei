@@ -31,46 +31,7 @@ function Home({ t }) {
         )}
       </div>
 
-      {/* PWA Install Prompt (iOS Safari) */}
-      {(() => {
-        // Only run on client
-        if (typeof window === 'undefined' || typeof navigator === 'undefined') return null;
-        
-        const isIos = () => {
-          const userAgent = window.navigator.userAgent.toLowerCase();
-          return /iphone|ipad|ipod/.test(userAgent);
-        };
-        
-        // Is it already installed / running in standalone mode?
-        const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-        
-        if (isIos() && !isStandalone) {
-          return (
-            <div className="bg-blue-50 dark:bg-blue-900/30 border-2 border-blue-400 p-4 rounded-2xl shadow-sm mb-6 flex flex-col sm:flex-row items-center gap-4 animate-in slide-in-from-top-4 duration-500">
-              <div className="text-4xl">📱</div>
-              <div className="flex-1">
-                <h3 className="font-black text-blue-800 dark:text-blue-300 text-lg mb-1">
-                  {t("Install this App!", "アプリをインストール！")}
-                </h3>
-                <p className="text-blue-700 dark:text-blue-200 font-bold text-sm leading-relaxed">
-                  {t(
-                    "For the best experience, tap the Share icon at the top of Safari, then tap 'Add to Home Screen'.", 
-                    "もっと快適に遊ぶために、Safariの上にある「共有」アイコンをタップして、「ホーム画面に追加」を選んでね！"
-                  )}
-                </p>
-              </div>
-              <div className="bg-white dark:bg-gray-800 p-2 rounded-xl shadow-inner border border-blue-200 dark:border-blue-700 shrink-0 flex items-center justify-center">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-500">
-                  <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
-                  <polyline points="16 6 12 2 8 6"></polyline>
-                  <line x1="12" y1="2" x2="12" y2="15"></line>
-                </svg>
-              </div>
-            </div>
-          );
-        }
-        return null;
-      })()}
+
 
       {/* Massive Join Game Banner */}
       <Link to="/play" className="w-full flex flex-col justify-center items-center text-center gap-4 bg-[var(--primary-color)] py-12 px-8 rounded-2xl shadow-[var(--header-shadow)] no-underline text-white border-4 border-transparent transition-all duration-300 hover:brightness-110 hover:shadow-xl hover:scale-[1.02] active:scale-95 mb-10">

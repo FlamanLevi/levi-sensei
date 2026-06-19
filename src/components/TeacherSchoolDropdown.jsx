@@ -19,6 +19,11 @@ export function TeacherSchoolDropdown({ t, lang }) {
     return () => unsub();
   }, [user]);
 
+  // Only show this dropdown to the master admin
+  if (!user || user.email !== 'admin@levisensei.local') {
+    return null;
+  }
+
   const handleSchoolChange = async (e) => {
     const newSchoolId = e.target.value;
     setActiveSchoolId(newSchoolId);

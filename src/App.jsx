@@ -155,7 +155,7 @@ function App() {
       <header className={`flex flex-wrap justify-between items-center px-6 py-4 transition-all duration-300 gap-4 ${isAdmin ? 'sticky top-0 z-50 bg-[var(--surface-color)]/90 backdrop-blur-md shadow-md border-b-2 border-[var(--border-color)]' : 'bg-[var(--header-bg)] shadow-[var(--header-shadow)]'}`}>
         <div className="flex-1 min-w-max">
           <Link 
-            to="/admin"
+            to="/"
             className="text-2xl text-[var(--primary-color)] font-bold m-0 transition-colors duration-300 cursor-pointer select-none no-underline block"
           >
             {lang === 'en' ? "Levi Sensei's Page" : <>リヴァイ<ruby>先生<rt>せんせい</rt></ruby>のページ</>}

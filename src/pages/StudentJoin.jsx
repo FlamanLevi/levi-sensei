@@ -4,7 +4,7 @@ import { db } from '../lib/firebase';
 import { ref, get, set, runTransaction, onValue, update } from 'firebase/database';
 import { useAuth } from '../hooks/useAuth';
 import schoolsData from '../data/schools.json';
-import { PWAInstallPrompt } from '../components/PWAInstallPrompt';
+import { PWAWall } from '../components/PWAWall';
 
 function StudentJoin({ t, lang }) {
   const { user, profile, loading: authLoading } = useAuth();
@@ -215,9 +215,8 @@ function StudentJoin({ t, lang }) {
         </div>
       )}
       
-      <PWAInstallPrompt t={t} />
-
-      <div className="w-full max-w-md bg-[var(--surface-color)] p-8 rounded-2xl shadow-xl border-4 border-[var(--border-color)]">
+      <PWAWall t={t}>
+        <div className="w-full max-w-md bg-[var(--surface-color)] p-8 rounded-2xl shadow-xl border-4 border-[var(--border-color)]">
         <h1 className="text-4xl font-black text-center text-[var(--primary-color)] mb-8">
           {step === 1 ? t("Join Game", "ゲームに参加") : t("Profile Setup", "プロフィール設定")}
         </h1>
@@ -315,6 +314,7 @@ function StudentJoin({ t, lang }) {
           </form>
         )}
       </div>
+      </PWAWall>
     </div>
   );
 }

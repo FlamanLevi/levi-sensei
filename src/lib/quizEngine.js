@@ -29,6 +29,16 @@ export const calculateScoresAndLeaderboard = async ({
     const tSnap = await get(ref(db, 'trivia/teamScores'));
     const currentTeamScores = tSnap.val() || {};
     
+    // DEBUG LOGGING: Push snapshot to Firebase so we can diagnose the exact state
+    await push(ref(db, 'trivia/debug_logs'), {
+        timestamp: serverTimestamp(),
+        currentQIndex,
+        responsesData,
+        currentPlayersCount: Object.keys(currentPlayers).length,
+        optionsCount: q.options.length,
+        isTeamMode
+    });
+
     const updates = {};
     const teamRoundContributions = {};
     const teamPlayerCounts = {};
@@ -172,15 +182,9 @@ export const calculateScoresAndLeaderboard = async ({
     if (isTeamMode) {
       Object.keys(teamPlayerCounts).forEach(teamId => {
         const totalPoints = teamRoundContributions[teamId] || 0;
-        const memberCount = teamPlayerCounts[teamId];
-        if (memberCount > 0) {
-          const averageScore = Math.round(totalPoints / memberCount);
-          if (averageScore > 0) {
-            const currentScore = currentTeamScores[teamId]?.score || 0;
-            updatedTeamScores[teamId] = currentScore + averageScore;
-            updates[`trivia/teamScores/${teamId}/score`] = updatedTeamScores[teamId];
-          }
-        }
+        const currentScore = currentTeamScores[teamId]?.score || 0;
+        updatedTeamScores[teamId] = currentScore + totalPoints;
+        updates[`trivia/teamScores/${teamId}/score`] = updatedTeamScores[teamId];
       });
       
       const allScores = [...Object.values(updatedTeamScores), ...Object.values(currentTeamScores).map(t => t.score || 0)];

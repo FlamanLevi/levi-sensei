@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { db } from '../lib/firebase';
-import { ref, onDisconnect, runTransaction, onValue } from 'firebase/database';
+import { ref, onDisconnect, set, onValue } from 'firebase/database';
 import { useGameState } from '../hooks/useGameState';
 import { OfflineBanner } from '../components/quiz/student/OfflineBanner';
 import { StudentLobby } from '../components/quiz/student/StudentLobby';
@@ -98,16 +98,10 @@ function QuizStudentLive({ t, lang }) {
     const qNum = gameState?.questionNumber;
     
     try {
-      await runTransaction(ref(db, `trivia/responses/${playerId}`), (currentData) => {
-        // Abort if an answer already exists FOR THIS SPECIFIC QUESTION
-        if (currentData && currentData.questionNumber === qNum) {
-          return; 
-        }
-        return {
-          answer: optionId,
-          timeTaken: timeTaken,
-          questionNumber: qNum
-        };
+      await set(ref(db, `trivia/responses/${playerId}`), {
+        answer: optionId,
+        timeTaken: timeTaken,
+        questionNumber: qNum
       });
     } catch (e) {
       console.error(e);

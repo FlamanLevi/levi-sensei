@@ -3,7 +3,9 @@ import { motion } from 'framer-motion';
 export const StudentReveal = ({ gameState, myAnswer, me, myRank, pointsToNext, pointsAheadOfPrev, feedbackMessage, t }) => {
   const isCorrect = myAnswer === gameState.correctAnswer;
   const multiplier = me.comebackMultiplier || 1;
-  const correctWordObj = gameState.options?.find(o => o.id === gameState.correctAnswer);
+  const correctWordObj = gameState?.options?.find(o => o.id === gameState?.correctAnswer);
+  const correctAnswerEn = gameState?.correctAnswerEn || correctWordObj?.en || "Correct Answer";
+  const correctAnswerJa = gameState?.correctAnswerJa || correctWordObj?.ja_kanji || correctWordObj?.ja_hiragana || "正解";
   
   return (
     <motion.div 
@@ -41,7 +43,7 @@ export const StudentReveal = ({ gameState, myAnswer, me, myRank, pointsToNext, p
         {isCorrect ? t("Correct!", "正解！") : t("Incorrect!", "不正解！")}
       </motion.h1>
 
-      {!isCorrect && correctWordObj && (
+      {!isCorrect && correctAnswerEn && (
          <motion.div 
            initial={{ opacity: 0, y: 10 }}
            animate={{ opacity: 1, y: 0 }}
@@ -49,7 +51,7 @@ export const StudentReveal = ({ gameState, myAnswer, me, myRank, pointsToNext, p
            className="bg-white/20 px-6 py-2 rounded-2xl mb-6 border-2 border-white/40 shadow-sm"
          >
             <span className="text-sm uppercase font-bold opacity-80 block tracking-widest">{t("Correct Answer", "正解")}</span>
-            <span className="text-3xl font-black">{correctWordObj.en} <span className="text-xl opacity-80">({correctWordObj.ja_kanji || correctWordObj.ja_hiragana})</span></span>
+            <span className="text-3xl font-black">{correctAnswerEn} <span className="text-xl opacity-80">({correctAnswerJa})</span></span>
          </motion.div>
       )}
 

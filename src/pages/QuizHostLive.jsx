@@ -290,10 +290,12 @@ function QuizHostLive({ t, lang }) {
     setPhase('REVEAL');
     clearInterval(timerRef.current);
 
-    // Tell tablets to reveal
+    // Tell tablets to reveal — store display text directly so students don't need to do a lookup
     await update(ref(db, 'trivia/gameState'), {
       status: "REVEAL",
-      correctAnswer: q.target.id
+      correctAnswer: q.target.id,
+      correctAnswerEn: q.target.en || '',
+      correctAnswerJa: q.target.ja_kanji || q.target.ja_hiragana || '',
     });
 
     // Wait a brief moment to ensure all late responses were written, then calculate score.

@@ -33,12 +33,28 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: 'npm'
       - name: Install dependencies
         run: npm ci
       - name: Build
         run: npm run build
+      - name: Check build output
+        run: |
+          echo "=== DIST EXISTS ==="
+          if [ -d "./dist" ]; then
+            echo "dist directory found"
+          else
+            echo "ERROR: ./dist not found"
+            ls -la
+            exit 1
+          fi
+          echo "=== DIST LISTING ==="
+          ls -la ./dist
+          echo "=== DIST SIZE ==="
+          du -sh ./dist || true
+          echo "=== index.html HEAD ==="
+          head -n 40 ./dist/index.html || true
       - name: Setup Pages
         uses: actions/configure-pages@v4
       - name: Upload artifact

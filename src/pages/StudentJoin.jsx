@@ -4,7 +4,6 @@ import { db } from '../lib/firebase';
 import { ref, get, set, runTransaction, onValue, update } from 'firebase/database';
 import { useAuth } from '../hooks/useAuth';
 import schoolsData from '../data/schools.json';
-import { PWAWall } from '../components/PWAWall';
 
 function StudentJoin({ t, lang }) {
   const { user, profile, loading: authLoading } = useAuth();
@@ -22,7 +21,7 @@ function StudentJoin({ t, lang }) {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [roomData, setRoomData] = useState(null);
-  const [gameType, setGameType] = useState(null); // 'trivia' or 'ohajiki'
+  const [gameType, setGameType] = useState(null); // 'trivia' or 'ohajiki' or 'bingo'
   const [isConnected, setIsConnected] = useState(true);
 
   // Pre-fill name from Firebase profile (overrides localStorage if Firebase has data)
@@ -87,6 +86,15 @@ function StudentJoin({ t, lang }) {
              avatar: profile?.equippedAvatar || null,
              color: profile?.equippedColor || null
            });
+         } else if (type === 'bingo') {
+           await set(ref(db, `bingo/players/${playerId}`), {
+             nickname: nameToUse.trim(),
+             board: [],
+             hasBingo: false,
+             lastActive: Date.now(),
+             avatar: profile?.equippedAvatar || null,
+             color: profile?.equippedColor || null
+           });
          }
       }
 
@@ -112,6 +120,9 @@ function StudentJoin({ t, lang }) {
       } else if (type === 'ohajiki') {
         sessionStorage.setItem('current_ohajiki_player_id', playerId);
         navigate('/play/ohajiki', { state: { playerId } });
+      } else if (type === 'bingo') {
+        sessionStorage.setItem('current_bingo_player_id', playerId);
+        navigate('/play/bingo', { state: { playerId } });
       }
     } catch (err) {
       setError(t("Failed to join game", "ゲームへの参加に失敗しました"));
@@ -130,14 +141,16 @@ function StudentJoin({ t, lang }) {
     setError('');
 
     try {
-      // Check both games
-      const [triviaRoomSnap, ohajikiRoomSnap] = await Promise.all([
+      // Check all games
+      const [triviaRoomSnap, ohajikiRoomSnap, bingoRoomSnap] = await Promise.all([
         get(ref(db, 'trivia/room')),
-        get(ref(db, 'ohajiki/room'))
+        get(ref(db, 'ohajiki/room')),
+        get(ref(db, 'bingo/room'))
       ]);
 
       const triviaRoom = triviaRoomSnap.val();
       const ohajikiRoom = ohajikiRoomSnap.val();
+      const bingoRoom = bingoRoomSnap.val();
 
       let targetRoom = null;
       let targetType = null;
@@ -148,6 +161,9 @@ function StudentJoin({ t, lang }) {
       } else if (ohajikiRoom && ohajikiRoom.roomCode === pin && ohajikiRoom.status === 'LOBBY') {
         targetRoom = ohajikiRoom;
         targetType = 'ohajiki';
+      } else if (bingoRoom && bingoRoom.roomCode === pin && bingoRoom.status === 'LOBBY') {
+        targetRoom = bingoRoom;
+        targetType = 'bingo';
       }
 
       if (targetRoom) {
@@ -215,8 +231,7 @@ function StudentJoin({ t, lang }) {
         </div>
       )}
       
-      <PWAWall t={t}>
-        <div className="w-full max-w-md bg-[var(--surface-color)] p-8 rounded-2xl shadow-xl border-4 border-[var(--border-color)]">
+      <div className="w-full max-w-md bg-[var(--surface-color)] p-8 rounded-2xl shadow-xl border-4 border-[var(--border-color)]">
         <h1 className="text-4xl font-black text-center text-[var(--primary-color)] mb-8">
           {step === 1 ? t("Join Game", "ゲームに参加") : t("Profile Setup", "プロフィール設定")}
         </h1>
@@ -314,7 +329,6 @@ function StudentJoin({ t, lang }) {
           </form>
         )}
       </div>
-      </PWAWall>
     </div>
   );
 }

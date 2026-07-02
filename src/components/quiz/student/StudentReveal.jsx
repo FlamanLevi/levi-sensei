@@ -49,7 +49,7 @@ export const StudentReveal = ({ gameState, myAnswer, me, myRank, pointsToNext, p
            className="bg-white/20 px-6 py-2 rounded-2xl mb-6 border-2 border-white/40 shadow-sm"
          >
             <span className="text-sm uppercase font-bold opacity-80 block tracking-widest">{t("Correct Answer", "正解")}</span>
-            <span className="text-3xl font-black">{correctWordObj.english} <span className="text-xl opacity-80">({correctWordObj.japanese})</span></span>
+            <span className="text-3xl font-black">{correctWordObj.en} <span className="text-xl opacity-80">({correctWordObj.ja_kanji || correctWordObj.ja_hiragana})</span></span>
          </motion.div>
       )}
 

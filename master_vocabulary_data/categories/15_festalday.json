@@ -1,0 +1,2257 @@
+[
+  {
+    "id": "word_0020",
+    "english": "balloon",
+    "canonical_key": "balloon",
+    "disambiguation": "",
+    "display_label": "balloon",
+    "normalized_english": "balloon",
+    "part_of_speech": "noun",
+    "category": "15_festalday",
+    "category_name": "Holidays, Events & Games",
+    "ja_kanji": "風船",
+    "ja_hiragana": "ふうせん",
+    "en_katakana": "バルーン",
+    "ruby": [
+      {
+        "base": "風船",
+        "ruby": "ふうせん"
+      }
+    ],
+    "ruby_html": "<ruby>風船<rt>ふうせん</rt></ruby>",
+    "ruby_text": "[風船|ふうせん]",
+    "sound_file": "",
+    "card_image": "cards/full/hwg5_u12_29_balloon_full.png",
+    "card_image_kana": "cards/full/hwg5_u12_29_balloon_full.png",
+    "card_image_en": "cards/full/hwg5_u12_29_balloon_full.png",
+    "card_image_bilingual": "cards/full/hwg5_u12_29_balloon_full.png",
+    "card_variants": [],
+    "token": "borderlink_balloon",
+    "grades": [
+      "ES_G3",
+      "ES_G5"
+    ],
+    "themes": [
+      "This is for you. カードをおくろう"
+    ],
+    "target_sentences": [
+      "Q: What do you do on balloon? / A: We have fun and celebrate balloon."
+    ],
+    "tags": [
+      "item",
+      "toy"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u12_29_balloon_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u12_29_balloon_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u12_29_balloon_text.png",
+    "lemma": "balloon",
+    "is_plural": false,
+    "letter_count": 7,
+    "syllable_count": 2,
+    "first_letter": "B",
+    "is_compound": false,
+    "phonics_initial": "b",
+    "difficulty_tier": 2,
+    "primary_image": "cards/full/hwg5_u12_29_balloon_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is a holiday, festival, or celebration.",
+      "feature_hint": "A special event known as '風船' (ふうせん) in Japanese.",
+      "letter_hint": "It starts with the letter B."
+    },
+    "target_dialogues": [
+      {
+        "question": "What do you do on balloon?",
+        "answer": "We have fun and celebrate balloon.",
+        "context": "Talking about holidays and festivals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "cards/full/hwg5_u12_29_balloon_full.png",
+        "sound_file": "",
+        "source": "lets_try_dictionary"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u12_29_balloon_illust.png",
+        "card_full": "cards/full/hwg5_u12_29_balloon_full.png",
+        "card_text": "cards/text/hwg5_u12_29_balloon_text.png",
+        "unit": "Unit 12: Unit 12: Things Around You",
+        "source": "here_we_go_5",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0110",
+    "english": "fireworks festival",
+    "canonical_key": "fireworks festival",
+    "disambiguation": "",
+    "display_label": "fireworks festival",
+    "normalized_english": "fireworks festival",
+    "part_of_speech": "noun",
+    "category": "15_festalday",
+    "category_name": "Holidays, Events & Games",
+    "ja_kanji": "花火大会",
+    "ja_hiragana": "はなびたいかい",
+    "en_katakana": "ファイヤーワークスフェスティバル",
+    "ruby": [
+      {
+        "base": "花火大会",
+        "ruby": "はなびたいかい"
+      }
+    ],
+    "ruby_html": "<ruby>花火大会<rt>はなびたいかい</rt></ruby>",
+    "ruby_text": "[花火大会|はなびたいかい]",
+    "sound_file": "",
+    "card_image": "",
+    "card_image_kana": "",
+    "card_image_en": "",
+    "card_image_bilingual": "",
+    "card_variants": [],
+    "token": "hwg_fireworks festival",
+    "grades": [
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What do you do on fireworks festival? / A: We have fun and celebrate fireworks festival."
+    ],
+    "tags": [
+      "festival",
+      "summer"
+    ],
+    "lemma": "fireworks festival",
+    "is_plural": false,
+    "letter_count": 17,
+    "syllable_count": 6,
+    "first_letter": "F",
+    "is_compound": true,
+    "phonics_initial": "f",
+    "difficulty_tier": 3,
+    "primary_image": "",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is a holiday, festival, or celebration.",
+      "feature_hint": "A special event known as '花火大会' (はなびたいかい) in Japanese.",
+      "letter_hint": "It starts with the letter F."
+    },
+    "target_dialogues": [
+      {
+        "question": "What do you do on fireworks festival?",
+        "answer": "We have fun and celebrate fireworks festival.",
+        "context": "Talking about holidays and festivals"
+      }
+    ],
+    "media_by_grade": {}
+  },
+  {
+    "id": "word_0126",
+    "english": "ghost",
+    "canonical_key": "ghost",
+    "disambiguation": "",
+    "display_label": "ghost",
+    "normalized_english": "ghost",
+    "part_of_speech": "noun",
+    "category": "15_festalday",
+    "category_name": "Holidays, Events & Games",
+    "ja_kanji": "おばけ",
+    "ja_hiragana": "おばけ",
+    "en_katakana": "ゴースト",
+    "ruby": [
+      {
+        "base": "おばけ",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "おばけ",
+    "ruby_text": "おばけ",
+    "sound_file": "",
+    "card_image": "",
+    "card_image_kana": "",
+    "card_image_en": "",
+    "card_image_bilingual": "",
+    "card_variants": [],
+    "token": "borderlink_ghost",
+    "grades": [
+      "ES_G2"
+    ],
+    "themes": [
+      "Halloween"
+    ],
+    "target_sentences": [
+      "Q: What do you do on ghost? / A: We have fun and celebrate ghost."
+    ],
+    "tags": [
+      "halloween"
+    ],
+    "lemma": "ghost",
+    "is_plural": false,
+    "letter_count": 5,
+    "syllable_count": 1,
+    "first_letter": "G",
+    "is_compound": false,
+    "phonics_initial": "g",
+    "difficulty_tier": 1,
+    "primary_image": "",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is a holiday, festival, or celebration.",
+      "feature_hint": "A special event known as 'おばけ' (おばけ) in Japanese.",
+      "letter_hint": "It starts with the letter G."
+    },
+    "target_dialogues": [
+      {
+        "question": "What do you do on ghost?",
+        "answer": "We have fun and celebrate ghost.",
+        "context": "Talking about holidays and festivals"
+      }
+    ],
+    "media_by_grade": {}
+  },
+  {
+    "id": "word_0202",
+    "english": "mummy",
+    "canonical_key": "mummy",
+    "disambiguation": "",
+    "display_label": "mummy",
+    "normalized_english": "mummy",
+    "part_of_speech": "noun",
+    "category": "15_festalday",
+    "category_name": "Holidays, Events & Games",
+    "ja_kanji": "ミイラ",
+    "ja_hiragana": "みいら",
+    "en_katakana": "マミー",
+    "ruby": [
+      {
+        "base": "ミイラ",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "ミイラ",
+    "ruby_text": "ミイラ",
+    "sound_file": "",
+    "card_image": "",
+    "card_image_kana": "",
+    "card_image_en": "",
+    "card_image_bilingual": "",
+    "card_variants": [],
+    "token": "borderlink_mummy",
+    "grades": [
+      "ES_G2"
+    ],
+    "themes": [
+      "Halloween"
+    ],
+    "target_sentences": [
+      "Q: What do you do on mummy? / A: We have fun and celebrate mummy."
+    ],
+    "tags": [
+      "halloween"
+    ],
+    "lemma": "mummy",
+    "is_plural": false,
+    "letter_count": 5,
+    "syllable_count": 2,
+    "first_letter": "M",
+    "is_compound": false,
+    "phonics_initial": "m",
+    "difficulty_tier": 1,
+    "primary_image": "",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is a holiday, festival, or celebration.",
+      "feature_hint": "A special event known as 'ミイラ' (みいら) in Japanese.",
+      "letter_hint": "It starts with the letter M."
+    },
+    "target_dialogues": [
+      {
+        "question": "What do you do on mummy?",
+        "answer": "We have fun and celebrate mummy.",
+        "context": "Talking about holidays and festivals"
+      }
+    ],
+    "media_by_grade": {}
+  },
+  {
+    "id": "word_0253",
+    "english": "present",
+    "canonical_key": "present",
+    "disambiguation": "",
+    "display_label": "present",
+    "normalized_english": "present",
+    "part_of_speech": "noun",
+    "category": "15_festalday",
+    "category_name": "Holidays, Events & Games",
+    "ja_kanji": "プレゼント",
+    "ja_hiragana": "ぷれぜんと",
+    "en_katakana": "プレゼント",
+    "ruby": [
+      {
+        "base": "プレゼント",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "プレゼント",
+    "ruby_text": "プレゼント",
+    "sound_file": "",
+    "card_image": "",
+    "card_image_kana": "",
+    "card_image_en": "",
+    "card_image_bilingual": "",
+    "card_variants": [],
+    "token": "borderlink_present",
+    "grades": [
+      "ES_G3"
+    ],
+    "themes": [
+      "Writing a School Trip"
+    ],
+    "target_sentences": [
+      "Q: What do you do on present? / A: We have fun and celebrate present."
+    ],
+    "tags": [
+      "christmas",
+      "gift"
+    ],
+    "lemma": "present",
+    "is_plural": false,
+    "letter_count": 7,
+    "syllable_count": 2,
+    "first_letter": "P",
+    "is_compound": false,
+    "phonics_initial": "pr",
+    "difficulty_tier": 2,
+    "primary_image": "",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is a holiday, festival, or celebration.",
+      "feature_hint": "A special event known as 'プレゼント' (ぷれぜんと) in Japanese.",
+      "letter_hint": "It starts with the letter P."
+    },
+    "target_dialogues": [
+      {
+        "question": "What do you do on present?",
+        "answer": "We have fun and celebrate present.",
+        "context": "Talking about holidays and festivals"
+      }
+    ],
+    "media_by_grade": {}
+  },
+  {
+    "id": "word_0276",
+    "english": "Santa Claus",
+    "canonical_key": "santa claus",
+    "disambiguation": "",
+    "display_label": "Santa Claus",
+    "normalized_english": "santa",
+    "part_of_speech": "noun",
+    "category": "15_festalday",
+    "category_name": "Holidays, Events & Games",
+    "ja_kanji": "サンタクロース",
+    "ja_hiragana": "さんたくろーす",
+    "en_katakana": "サンタクロース",
+    "ruby": [
+      {
+        "base": "サンタクロース",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "サンタクロース",
+    "ruby_text": "サンタクロース",
+    "sound_file": "",
+    "card_image": "",
+    "card_image_kana": "",
+    "card_image_en": "",
+    "card_image_bilingual": "",
+    "card_variants": [],
+    "token": "borderlink_santa",
+    "grades": [
+      "ES_G1",
+      "ES_G2"
+    ],
+    "themes": [
+      "Christmas"
+    ],
+    "target_sentences": [
+      "Q: What do you do on Santa Claus? / A: We have fun and celebrate Santa Claus."
+    ],
+    "tags": [
+      "christmas"
+    ],
+    "lemma": "Santa Claus",
+    "is_plural": false,
+    "letter_count": 10,
+    "syllable_count": 3,
+    "first_letter": "S",
+    "is_compound": true,
+    "phonics_initial": "s",
+    "difficulty_tier": 3,
+    "primary_image": "",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is a holiday, festival, or celebration.",
+      "feature_hint": "A special event known as 'サンタクロース' (さんたくろーす) in Japanese.",
+      "letter_hint": "It starts with the letter S."
+    },
+    "target_dialogues": [
+      {
+        "question": "What do you do on Santa Claus?",
+        "answer": "We have fun and celebrate Santa Claus.",
+        "context": "Talking about holidays and festivals"
+      }
+    ],
+    "media_by_grade": {}
+  },
+  {
+    "id": "word_0312",
+    "english": "snowman",
+    "canonical_key": "snowman",
+    "disambiguation": "",
+    "display_label": "snowman",
+    "normalized_english": "snowman",
+    "part_of_speech": "noun",
+    "category": "15_festalday",
+    "category_name": "Holidays, Events & Games",
+    "ja_kanji": "雪だるま",
+    "ja_hiragana": "ゆきだるま",
+    "en_katakana": "スノーマン",
+    "ruby": [
+      {
+        "base": "雪",
+        "ruby": "ゆき"
+      },
+      {
+        "base": "だるま",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "<ruby>雪<rt>ゆき</rt></ruby>だるま",
+    "ruby_text": "[雪|ゆき]だるま",
+    "sound_file": "",
+    "card_image": "",
+    "card_image_kana": "",
+    "card_image_en": "",
+    "card_image_bilingual": "",
+    "card_variants": [],
+    "token": "borderlink_snowman",
+    "grades": [
+      "ES_G2"
+    ],
+    "themes": [
+      "Christmas"
+    ],
+    "target_sentences": [
+      "Q: What do you do on snowman? / A: We have fun and celebrate snowman."
+    ],
+    "tags": [
+      "winter"
+    ],
+    "lemma": "snowman",
+    "is_plural": false,
+    "letter_count": 7,
+    "syllable_count": 2,
+    "first_letter": "S",
+    "is_compound": false,
+    "phonics_initial": "sn",
+    "difficulty_tier": 2,
+    "primary_image": "",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is a holiday, festival, or celebration.",
+      "feature_hint": "A special event known as '雪だるま' (ゆきだるま) in Japanese.",
+      "letter_hint": "It starts with the letter S."
+    },
+    "target_dialogues": [
+      {
+        "question": "What do you do on snowman?",
+        "answer": "We have fun and celebrate snowman.",
+        "context": "Talking about holidays and festivals"
+      }
+    ],
+    "media_by_grade": {}
+  },
+  {
+    "id": "word_0326",
+    "english": "stocking",
+    "canonical_key": "stocking",
+    "disambiguation": "",
+    "display_label": "stocking",
+    "normalized_english": "stocking",
+    "part_of_speech": "noun",
+    "category": "15_festalday",
+    "category_name": "Holidays, Events & Games",
+    "ja_kanji": "靴下",
+    "ja_hiragana": "くつした",
+    "en_katakana": "ストッキング",
+    "ruby": [
+      {
+        "base": "靴下",
+        "ruby": "くつした"
+      }
+    ],
+    "ruby_html": "<ruby>靴下<rt>くつした</rt></ruby>",
+    "ruby_text": "[靴下|くつした]",
+    "sound_file": "",
+    "card_image": "",
+    "card_image_kana": "",
+    "card_image_en": "",
+    "card_image_bilingual": "",
+    "card_variants": [],
+    "token": "borderlink_stocking",
+    "grades": [
+      "ES_G1"
+    ],
+    "themes": [
+      "Christmas"
+    ],
+    "target_sentences": [
+      "Q: What do you do on stocking? / A: We have fun and celebrate stocking."
+    ],
+    "tags": [
+      "christmas"
+    ],
+    "lemma": "stocking",
+    "is_plural": false,
+    "letter_count": 8,
+    "syllable_count": 2,
+    "first_letter": "S",
+    "is_compound": false,
+    "phonics_initial": "st",
+    "difficulty_tier": 2,
+    "primary_image": "",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is a holiday, festival, or celebration.",
+      "feature_hint": "A special event known as '靴下' (くつした) in Japanese.",
+      "letter_hint": "It starts with the letter S."
+    },
+    "target_dialogues": [
+      {
+        "question": "What do you do on stocking?",
+        "answer": "We have fun and celebrate stocking.",
+        "context": "Talking about holidays and festivals"
+      }
+    ],
+    "media_by_grade": {}
+  },
+  {
+    "id": "word_0329",
+    "english": "summer festival",
+    "canonical_key": "summer festival",
+    "disambiguation": "",
+    "display_label": "summer festival",
+    "normalized_english": "summer festival",
+    "part_of_speech": "noun",
+    "category": "15_festalday",
+    "category_name": "Holidays, Events & Games",
+    "ja_kanji": "夏祭り",
+    "ja_hiragana": "なつまつり",
+    "en_katakana": "サマーフェスティバル",
+    "ruby": [
+      {
+        "base": "夏祭",
+        "ruby": "なつまつ"
+      },
+      {
+        "base": "り",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "<ruby>夏祭<rt>なつまつ</rt></ruby>り",
+    "ruby_text": "[夏祭|なつまつ]り",
+    "sound_file": "",
+    "card_image": "",
+    "card_image_kana": "",
+    "card_image_en": "",
+    "card_image_bilingual": "",
+    "card_variants": [],
+    "token": "hwg_summer festival",
+    "grades": [
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What do you do on summer festival? / A: We have fun and celebrate summer festival."
+    ],
+    "tags": [
+      "festival",
+      "summer"
+    ],
+    "lemma": "summer festival",
+    "is_plural": false,
+    "letter_count": 14,
+    "syllable_count": 5,
+    "first_letter": "S",
+    "is_compound": true,
+    "phonics_initial": "s",
+    "difficulty_tier": 3,
+    "primary_image": "",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is a holiday, festival, or celebration.",
+      "feature_hint": "A special event known as '夏祭り' (なつまつり) in Japanese.",
+      "letter_hint": "It starts with the letter S."
+    },
+    "target_dialogues": [
+      {
+        "question": "What do you do on summer festival?",
+        "answer": "We have fun and celebrate summer festival.",
+        "context": "Talking about holidays and festivals"
+      }
+    ],
+    "media_by_grade": {}
+  },
+  {
+    "id": "word_0358",
+    "english": "toys",
+    "canonical_key": "toys",
+    "disambiguation": "",
+    "display_label": "toys",
+    "normalized_english": "toys",
+    "part_of_speech": "noun",
+    "category": "15_festalday",
+    "category_name": "Holidays, Events & Games",
+    "ja_kanji": "おもちゃ",
+    "ja_hiragana": "おもちゃ",
+    "en_katakana": "トイズ",
+    "ruby": [
+      {
+        "base": "おもちゃ",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "おもちゃ",
+    "ruby_text": "おもちゃ",
+    "sound_file": "",
+    "card_image": "",
+    "card_image_kana": "",
+    "card_image_en": "",
+    "card_image_bilingual": "",
+    "card_variants": [],
+    "token": "borderlink_toys",
+    "grades": [
+      "ES_G1"
+    ],
+    "themes": [
+      "Christmas"
+    ],
+    "target_sentences": [
+      "Q: What do you do on toys? / A: We have fun and celebrate toys."
+    ],
+    "tags": [
+      "item",
+      "toy"
+    ],
+    "lemma": "toy",
+    "is_plural": true,
+    "letter_count": 4,
+    "syllable_count": 1,
+    "first_letter": "T",
+    "is_compound": false,
+    "phonics_initial": "t",
+    "difficulty_tier": 1,
+    "primary_image": "",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is a holiday, festival, or celebration.",
+      "feature_hint": "A special event known as 'おもちゃ' (おもちゃ) in Japanese.",
+      "letter_hint": "It starts with the letter T."
+    },
+    "target_dialogues": [
+      {
+        "question": "What do you do on toys?",
+        "answer": "We have fun and celebrate toys.",
+        "context": "Talking about holidays and festivals"
+      }
+    ],
+    "media_by_grade": {}
+  },
+  {
+    "id": "word_0398",
+    "english": "witch",
+    "canonical_key": "witch",
+    "disambiguation": "",
+    "display_label": "witch",
+    "normalized_english": "witch",
+    "part_of_speech": "noun",
+    "category": "15_festalday",
+    "category_name": "Holidays, Events & Games",
+    "ja_kanji": "魔女",
+    "ja_hiragana": "まじょ",
+    "en_katakana": "ウィッチ",
+    "ruby": [
+      {
+        "base": "魔女",
+        "ruby": "まじょ"
+      }
+    ],
+    "ruby_html": "<ruby>魔女<rt>まじょ</rt></ruby>",
+    "ruby_text": "[魔女|まじょ]",
+    "sound_file": "",
+    "card_image": "",
+    "card_image_kana": "",
+    "card_image_en": "",
+    "card_image_bilingual": "",
+    "card_variants": [],
+    "token": "borderlink_witch",
+    "grades": [
+      "ES_G2"
+    ],
+    "themes": [
+      "Halloween"
+    ],
+    "target_sentences": [
+      "Q: What do you do on witch? / A: We have fun and celebrate witch."
+    ],
+    "tags": [
+      "halloween"
+    ],
+    "lemma": "witch",
+    "is_plural": false,
+    "letter_count": 5,
+    "syllable_count": 1,
+    "first_letter": "W",
+    "is_compound": false,
+    "phonics_initial": "w",
+    "difficulty_tier": 1,
+    "primary_image": "",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is a holiday, festival, or celebration.",
+      "feature_hint": "A special event known as '魔女' (まじょ) in Japanese.",
+      "letter_hint": "It starts with the letter W."
+    },
+    "target_dialogues": [
+      {
+        "question": "What do you do on witch?",
+        "answer": "We have fun and celebrate witch.",
+        "context": "Talking about holidays and festivals"
+      }
+    ],
+    "media_by_grade": {}
+  },
+  {
+    "id": "word_0837",
+    "english": "ball",
+    "canonical_key": "ball",
+    "disambiguation": "",
+    "display_label": "ball",
+    "normalized_english": "ball",
+    "part_of_speech": "noun",
+    "category": "15_festalday",
+    "category_name": "Holidays, Events & Games",
+    "ja_kanji": "ボール",
+    "ja_hiragana": "ぼーる",
+    "en_katakana": "ボール",
+    "ruby": [
+      {
+        "base": "ボール",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "ボール",
+    "ruby_text": "ボール",
+    "sound_file": "dic_wb_15festalday_ball_1542.mp3",
+    "card_image": "dic_wb_15festalday_ball_1542_1_c.png",
+    "card_image_kana": "dic_wb_15festalday_ball_1542_1_c.png",
+    "card_image_en": "dic_wb_15festalday_ball_1542_1_e.png",
+    "card_image_bilingual": "dic_wb_15festalday_ball_1542_1_ce.png",
+    "card_variants": [
+      "dic_wb_15festalday_ball_1542_1.png"
+    ],
+    "token": "dic_wb_15festalday_ball_1542&dic_wb_15festalday_ball_1542&dic_wb_15festalday_ball_1542",
+    "grades": [
+      "ES_G5"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What do you do on ball? / A: We have fun and celebrate ball."
+    ],
+    "tags": [
+      "object"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u12_14_ball_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u12_14_ball_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u12_14_ball_text.png",
+    "lemma": "ball",
+    "is_plural": false,
+    "letter_count": 4,
+    "syllable_count": 1,
+    "first_letter": "B",
+    "is_compound": false,
+    "phonics_initial": "b",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_15festalday_ball_1542_1_c.png",
+    "primary_audio": "dic_wb_15festalday_ball_1542.mp3",
+    "three_hints": {
+      "category_hint": "It is a holiday, festival, or celebration.",
+      "feature_hint": "A special event known as 'ボール' (ぼーる) in Japanese.",
+      "letter_hint": "It starts with the letter B."
+    },
+    "target_dialogues": [
+      {
+        "question": "What do you do on ball?",
+        "answer": "We have fun and celebrate ball.",
+        "context": "Talking about holidays and festivals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u12_14_ball_illust.png",
+        "card_full": "cards/full/hwg5_u12_14_ball_full.png",
+        "card_text": "cards/text/hwg5_u12_14_ball_text.png",
+        "unit": "Unit 12: Unit 12: Things Around You",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_15festalday_ball_1542.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0838",
+    "english": "camping",
+    "canonical_key": "camping",
+    "disambiguation": "",
+    "display_label": "camping",
+    "normalized_english": "camping",
+    "part_of_speech": "noun",
+    "category": "15_festalday",
+    "category_name": "Holidays, Events & Games",
+    "ja_kanji": "キャンプ",
+    "ja_hiragana": "きゃんぷ",
+    "en_katakana": "キャンピング",
+    "ruby": [
+      {
+        "base": "キャンプ",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "キャンプ",
+    "ruby_text": "キャンプ",
+    "sound_file": "dic_wb_15festalday_camping_1532.mp3",
+    "card_image": "dic_6_card_camping_0779_1_c.png",
+    "card_image_kana": "dic_6_card_camping_0779_1_c.png",
+    "card_image_en": "dic_6_card_camping_0779_1_e.png",
+    "card_image_bilingual": "dic_6_card_camping_0779_1_ce.png",
+    "card_variants": [
+      "dic_6_card_camping_0779_1.png"
+    ],
+    "token": "dic_wb_15festalday_camping_1532&dic_wb_15festalday_camping_1532&dic_6_card_camping_0779",
+    "grades": [
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What do you do on camping? / A: We have fun and celebrate camping."
+    ],
+    "tags": [
+      "activity"
+    ],
+    "lemma": "camping",
+    "is_plural": false,
+    "letter_count": 7,
+    "syllable_count": 2,
+    "first_letter": "C",
+    "is_compound": false,
+    "phonics_initial": "c",
+    "difficulty_tier": 3,
+    "primary_image": "dic_6_card_camping_0779_1_c.png",
+    "primary_audio": "dic_wb_15festalday_camping_1532.mp3",
+    "three_hints": {
+      "category_hint": "It is a holiday, festival, or celebration.",
+      "feature_hint": "A special event known as 'キャンプ' (きゃんぷ) in Japanese.",
+      "letter_hint": "It starts with the letter C."
+    },
+    "target_dialogues": [
+      {
+        "question": "What do you do on camping?",
+        "answer": "We have fun and celebrate camping.",
+        "context": "Talking about holidays and festivals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G6": {
+        "card_image": "dic_6_card_camping_0779_1_c.png",
+        "sound_file": "dic_wb_15festalday_camping_1532.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_6_card_camping_0779_1_ce.png",
+        "card_bw": "dic_6_card_camping_0779_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0839",
+    "english": "card",
+    "canonical_key": "card",
+    "disambiguation": "",
+    "display_label": "card",
+    "normalized_english": "card",
+    "part_of_speech": "noun",
+    "category": "15_festalday",
+    "category_name": "Holidays, Events & Games",
+    "ja_kanji": "カード",
+    "ja_hiragana": "かーど",
+    "en_katakana": "カード",
+    "ruby": [
+      {
+        "base": "カード",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "カード",
+    "ruby_text": "カード",
+    "sound_file": "dic_wb_15festalday_card_1544.mp3",
+    "card_image": "dic_wb_15festalday_card_1544_1_c.png",
+    "card_image_kana": "dic_wb_15festalday_card_1544_1_c.png",
+    "card_image_en": "dic_wb_15festalday_card_1544_1_e.png",
+    "card_image_bilingual": "dic_wb_15festalday_card_1544_1_ce.png",
+    "card_variants": [
+      "dic_wb_15festalday_card_1544_1.png"
+    ],
+    "token": "dic_wb_15festalday_card_1544&dic_wb_15festalday_card_1544&dic_wb_15festalday_card_1544",
+    "grades": [
+      "ES_G5"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What do you do on card? / A: We have fun and celebrate card."
+    ],
+    "tags": [
+      "object"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u12_10_card_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u12_10_card_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u12_10_card_text.png",
+    "lemma": "card",
+    "is_plural": false,
+    "letter_count": 4,
+    "syllable_count": 1,
+    "first_letter": "C",
+    "is_compound": false,
+    "phonics_initial": "c",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_15festalday_card_1544_1_c.png",
+    "primary_audio": "dic_wb_15festalday_card_1544.mp3",
+    "three_hints": {
+      "category_hint": "It is a holiday, festival, or celebration.",
+      "feature_hint": "A special event known as 'カード' (かーど) in Japanese.",
+      "letter_hint": "It starts with the letter C."
+    },
+    "target_dialogues": [
+      {
+        "question": "What do you do on card?",
+        "answer": "We have fun and celebrate card.",
+        "context": "Talking about holidays and festivals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u12_10_card_illust.png",
+        "card_full": "cards/full/hwg5_u12_10_card_full.png",
+        "card_text": "cards/text/hwg5_u12_10_card_text.png",
+        "unit": "Unit 12: Unit 12: Things Around You",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_15festalday_card_1544.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0840",
+    "english": "Children's Day",
+    "canonical_key": "children's day",
+    "disambiguation": "",
+    "display_label": "Children's Day",
+    "normalized_english": "children's day",
+    "part_of_speech": "noun",
+    "category": "15_festalday",
+    "category_name": "Holidays, Events & Games",
+    "ja_kanji": "こどもの日",
+    "ja_hiragana": "こどものひ",
+    "en_katakana": "チルドレンズデー",
+    "ruby": [
+      {
+        "base": "こどもの",
+        "ruby": ""
+      },
+      {
+        "base": "日",
+        "ruby": "ひ"
+      }
+    ],
+    "ruby_html": "こどもの<ruby>日<rt>ひ</rt></ruby>",
+    "ruby_text": "こどもの[日|ひ]",
+    "sound_file": "dic_wb_15festalday_childrensday_1527.mp3",
+    "card_image": "dic_wb_15festalday_childrensday_1527_1_c.png",
+    "card_image_kana": "dic_wb_15festalday_childrensday_1527_1_c.png",
+    "card_image_en": "dic_wb_15festalday_childrensday_1527_1_e.png",
+    "card_image_bilingual": "dic_wb_15festalday_childrensday_1527_1_ce.png",
+    "card_variants": [
+      "dic_wb_15festalday_childrensday_1527_1.png"
+    ],
+    "token": "dic_wb_15festalday_childrensday_1527&dic_wb_15festalday_childrensday_1527&dic_wb_15festalday_childrensday_1527",
+    "grades": [
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What do you do on Children's Day? / A: We have fun and celebrate Children's Day."
+    ],
+    "tags": [
+      "holiday"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u05_02_Children_s_Day_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u05_02_Children_s_Day_illust.png",
+    "hwg_card_text": "cards/text/hwg6_u05_02_Children_s_Day_text.png",
+    "lemma": "Children's Day",
+    "is_plural": false,
+    "letter_count": 12,
+    "syllable_count": 3,
+    "first_letter": "C",
+    "is_compound": true,
+    "phonics_initial": "ch",
+    "difficulty_tier": 3,
+    "primary_image": "dic_wb_15festalday_childrensday_1527_1_c.png",
+    "primary_audio": "dic_wb_15festalday_childrensday_1527.mp3",
+    "three_hints": {
+      "category_hint": "It is a holiday, festival, or celebration.",
+      "feature_hint": "A special event known as 'こどもの日' (こどものひ) in Japanese.",
+      "letter_hint": "It starts with the letter C."
+    },
+    "target_dialogues": [
+      {
+        "question": "What do you do on Children's Day?",
+        "answer": "We have fun and celebrate Children's Day.",
+        "context": "Talking about holidays and festivals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u05_02_Children_s_Day_illust.png",
+        "card_full": "cards/full/hwg6_u05_02_Children_s_Day_full.png",
+        "card_text": "cards/text/hwg6_u05_02_Children_s_Day_text.png",
+        "unit": "Unit 5: Unit 5: Seasonal Events",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_15festalday_childrensday_1527.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0841",
+    "english": "Dolls' Festival",
+    "canonical_key": "dolls' festival",
+    "disambiguation": "",
+    "display_label": "Dolls' Festival",
+    "normalized_english": "dolls' festival",
+    "part_of_speech": "noun",
+    "category": "15_festalday",
+    "category_name": "Holidays, Events & Games",
+    "ja_kanji": "ひな祭り",
+    "ja_hiragana": "ひなまつり",
+    "en_katakana": "ドールズフェスティバル",
+    "ruby": [
+      {
+        "base": "ひな",
+        "ruby": ""
+      },
+      {
+        "base": "祭",
+        "ruby": "まつ"
+      },
+      {
+        "base": "り",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "ひな<ruby>祭<rt>まつ</rt></ruby>り",
+    "ruby_text": "ひな[祭|まつ]り",
+    "sound_file": "dic_wb_15festalday_dollsfestival_1528.mp3",
+    "card_image": "dic_5_card_dollsfestival_0175_1_c.png",
+    "card_image_kana": "dic_5_card_dollsfestival_0175_1_c.png",
+    "card_image_en": "dic_5_card_dollsfestival_0175_1_e.png",
+    "card_image_bilingual": "dic_5_card_dollsfestival_0175_1_ce.png",
+    "card_variants": [
+      "dic_5_card_dollsfestival_0175_1.png"
+    ],
+    "token": "dic_wb_15festalday_dollsfestival_1528&dic_wb_15festalday_dollsfestival_1528&dic_5_card_dollsfestival_0175",
+    "grades": [
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What do you do on Dolls' Festival? / A: We have fun and celebrate Dolls' Festival."
+    ],
+    "tags": [
+      "holiday"
+    ],
+    "lemma": "Dolls' Festival",
+    "is_plural": false,
+    "letter_count": 13,
+    "syllable_count": 4,
+    "first_letter": "D",
+    "is_compound": true,
+    "phonics_initial": "d",
+    "difficulty_tier": 3,
+    "primary_image": "dic_5_card_dollsfestival_0175_1_c.png",
+    "primary_audio": "dic_wb_15festalday_dollsfestival_1528.mp3",
+    "three_hints": {
+      "category_hint": "It is a holiday, festival, or celebration.",
+      "feature_hint": "A special event known as 'ひな祭り' (ひなまつり) in Japanese.",
+      "letter_hint": "It starts with the letter D."
+    },
+    "target_dialogues": [
+      {
+        "question": "What do you do on Dolls' Festival?",
+        "answer": "We have fun and celebrate Dolls' Festival.",
+        "context": "Talking about holidays and festivals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "dic_5_card_dollsfestival_0175_1_c.png",
+        "sound_file": "dic_wb_15festalday_dollsfestival_1528.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_5_card_dollsfestival_0175_1_ce.png",
+        "card_bw": "dic_5_card_dollsfestival_0175_1.png"
+      },
+      "ES_G6": {
+        "card_image": "dic_5_card_dollsfestival_0175_1_c.png",
+        "sound_file": "dic_wb_15festalday_dollsfestival_1528.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_5_card_dollsfestival_0175_1_ce.png",
+        "card_bw": "dic_5_card_dollsfestival_0175_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0842",
+    "english": "festival",
+    "canonical_key": "festival",
+    "disambiguation": "",
+    "display_label": "festival",
+    "normalized_english": "festival",
+    "part_of_speech": "noun",
+    "category": "15_festalday",
+    "category_name": "Holidays, Events & Games",
+    "ja_kanji": "祭り",
+    "ja_hiragana": "まつり",
+    "en_katakana": "フェスティバル",
+    "ruby": [
+      {
+        "base": "祭",
+        "ruby": "まつ"
+      },
+      {
+        "base": "り",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "<ruby>祭<rt>まつ</rt></ruby>り",
+    "ruby_text": "[祭|まつ]り",
+    "sound_file": "dic_wb_15festalday_festival_1540.mp3",
+    "card_image": "dic_6_sal_festival_0512_1_c.png",
+    "card_image_kana": "dic_6_sal_festival_0512_1_c.png",
+    "card_image_en": "dic_6_sal_festival_0512_1_e.png",
+    "card_image_bilingual": "dic_6_sal_festival_0512_1_ce.png",
+    "card_variants": [
+      "dic_6_sal_festival_0512_1.png"
+    ],
+    "token": "dic_wb_15festalday_festival_1540&dic_wb_15festalday_festival_1540&dic_6_sal_festival_0512",
+    "grades": [
+      "ES_G3"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What do you do on festival? / A: We have fun and celebrate festival."
+    ],
+    "tags": [
+      "event"
+    ],
+    "lemma": "festival",
+    "is_plural": false,
+    "letter_count": 8,
+    "syllable_count": 3,
+    "first_letter": "F",
+    "is_compound": false,
+    "phonics_initial": "f",
+    "difficulty_tier": 2,
+    "primary_image": "dic_6_sal_festival_0512_1_c.png",
+    "primary_audio": "dic_wb_15festalday_festival_1540.mp3",
+    "three_hints": {
+      "category_hint": "It is a holiday, festival, or celebration.",
+      "feature_hint": "A special event known as '祭り' (まつり) in Japanese.",
+      "letter_hint": "It starts with the letter F."
+    },
+    "target_dialogues": [
+      {
+        "question": "What do you do on festival?",
+        "answer": "We have fun and celebrate festival.",
+        "context": "Talking about holidays and festivals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_6_sal_festival_0512_1_c.png",
+        "sound_file": "dic_wb_15festalday_festival_1540.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_6_sal_festival_0512_1_ce.png",
+        "card_bw": "dic_6_sal_festival_0512_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0843",
+    "english": "firework",
+    "canonical_key": "firework",
+    "disambiguation": "",
+    "display_label": "firework",
+    "normalized_english": "firework",
+    "part_of_speech": "noun",
+    "category": "15_festalday",
+    "category_name": "Holidays, Events & Games",
+    "ja_kanji": "花火",
+    "ja_hiragana": "はなび",
+    "en_katakana": "ファイアワーク",
+    "ruby": [
+      {
+        "base": "花火",
+        "ruby": "はなび"
+      }
+    ],
+    "ruby_html": "<ruby>花火<rt>はなび</rt></ruby>",
+    "ruby_text": "[花火|はなび]",
+    "sound_file": "dic_wb_15festalday_firework_1533.mp3",
+    "card_image": "dic_wb_15festalday_firework_1533_1_c.png",
+    "card_image_kana": "dic_wb_15festalday_firework_1533_1_c.png",
+    "card_image_en": "dic_wb_15festalday_firework_1533_1_e.png",
+    "card_image_bilingual": "dic_wb_15festalday_firework_1533_1_ce.png",
+    "card_variants": [
+      "dic_wb_15festalday_firework_1533_1.png"
+    ],
+    "token": "dic_wb_15festalday_firework_1533&dic_wb_15festalday_firework_1533&dic_wb_15festalday_firework_1533",
+    "grades": [
+      "ES_G3"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What do you do on firework? / A: We have fun and celebrate firework."
+    ],
+    "tags": [
+      "event",
+      "summer"
+    ],
+    "lemma": "firework",
+    "is_plural": false,
+    "letter_count": 8,
+    "syllable_count": 3,
+    "first_letter": "F",
+    "is_compound": false,
+    "phonics_initial": "f",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_15festalday_firework_1533_1_c.png",
+    "primary_audio": "dic_wb_15festalday_firework_1533.mp3",
+    "three_hints": {
+      "category_hint": "It is a holiday, festival, or celebration.",
+      "feature_hint": "A special event known as '花火' (はなび) in Japanese.",
+      "letter_hint": "It starts with the letter F."
+    },
+    "target_dialogues": [
+      {
+        "question": "What do you do on firework?",
+        "answer": "We have fun and celebrate firework.",
+        "context": "Talking about holidays and festivals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_wb_15festalday_firework_1533_1_c.png",
+        "sound_file": "dic_wb_15festalday_firework_1533.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_wb_15festalday_firework_1533_1_ce.png",
+        "card_bw": "dic_wb_15festalday_firework_1533_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0844",
+    "english": "fishing",
+    "canonical_key": "fishing",
+    "disambiguation": "",
+    "display_label": "fishing",
+    "normalized_english": "fishing",
+    "part_of_speech": "verb",
+    "category": "15_festalday",
+    "category_name": "Holidays, Events & Games",
+    "ja_kanji": "釣り",
+    "ja_hiragana": "つり",
+    "en_katakana": "フィッシング",
+    "ruby": [
+      {
+        "base": "釣",
+        "ruby": "つ"
+      },
+      {
+        "base": "り",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "<ruby>釣<rt>つ</rt></ruby>り",
+    "ruby_text": "[釣|つ]り",
+    "sound_file": "dic_wb_15festalday_fishing_1534.mp3",
+    "card_image": "dic_6_card_fishing_0780_1_c.png",
+    "card_image_kana": "dic_6_card_fishing_0780_1_c.png",
+    "card_image_en": "dic_6_card_fishing_0780_1_e.png",
+    "card_image_bilingual": "dic_6_card_fishing_0780_1_ce.png",
+    "card_variants": [
+      "dic_6_card_fishing_0780_1.png"
+    ],
+    "token": "dic_wb_15festalday_fishing_1534&dic_wb_15festalday_fishing_1534&dic_6_card_fishing_0780",
+    "grades": [
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What do you do on fishing? / A: We have fun and celebrate fishing."
+    ],
+    "tags": [
+      "action",
+      "gerund",
+      "skill"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u02_05_fishing_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u02_05_fishing_illust.png",
+    "hwg_card_text": "cards/text/hwg6_u02_05_fishing_text.png",
+    "lemma": "fishing",
+    "is_plural": false,
+    "letter_count": 7,
+    "syllable_count": 2,
+    "first_letter": "F",
+    "is_compound": false,
+    "phonics_initial": "f",
+    "difficulty_tier": 3,
+    "primary_image": "dic_6_card_fishing_0780_1_c.png",
+    "primary_audio": "dic_wb_15festalday_fishing_1534.mp3",
+    "three_hints": {
+      "category_hint": "It is a holiday, festival, or celebration.",
+      "feature_hint": "A special event known as '釣り' (つり) in Japanese.",
+      "letter_hint": "It starts with the letter F."
+    },
+    "target_dialogues": [
+      {
+        "question": "What do you do on fishing?",
+        "answer": "We have fun and celebrate fishing.",
+        "context": "Talking about holidays and festivals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u02_05_fishing_illust.png",
+        "card_full": "cards/full/hwg6_u02_05_fishing_full.png",
+        "card_text": "cards/text/hwg6_u02_05_fishing_text.png",
+        "unit": "Unit 2: Unit 2: Skills",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_15festalday_fishing_1534.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0845",
+    "english": "hiking",
+    "canonical_key": "hiking",
+    "disambiguation": "",
+    "display_label": "hiking",
+    "normalized_english": "hiking",
+    "part_of_speech": "noun",
+    "category": "15_festalday",
+    "category_name": "Holidays, Events & Games",
+    "ja_kanji": "ハイキング",
+    "ja_hiragana": "はいきんぐ",
+    "en_katakana": "ハイキング",
+    "ruby": [
+      {
+        "base": "ハイキング",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "ハイキング",
+    "ruby_text": "ハイキング",
+    "sound_file": "dic_wb_15festalday_hiking_1535.mp3",
+    "card_image": "dic_6_card_hiking_0778_1_c.png",
+    "card_image_kana": "dic_6_card_hiking_0778_1_c.png",
+    "card_image_en": "dic_6_card_hiking_0778_1_e.png",
+    "card_image_bilingual": "dic_6_card_hiking_0778_1_ce.png",
+    "card_variants": [
+      "dic_6_card_hiking_0778_1.png"
+    ],
+    "token": "dic_wb_15festalday_hiking_1535&dic_wb_15festalday_hiking_1535&dic_6_card_hiking_0778",
+    "grades": [
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What do you do on hiking? / A: We have fun and celebrate hiking."
+    ],
+    "tags": [
+      "activity"
+    ],
+    "lemma": "hiking",
+    "is_plural": false,
+    "letter_count": 6,
+    "syllable_count": 2,
+    "first_letter": "H",
+    "is_compound": false,
+    "phonics_initial": "h",
+    "difficulty_tier": 3,
+    "primary_image": "dic_6_card_hiking_0778_1_c.png",
+    "primary_audio": "dic_wb_15festalday_hiking_1535.mp3",
+    "three_hints": {
+      "category_hint": "It is a holiday, festival, or celebration.",
+      "feature_hint": "A special event known as 'ハイキング' (はいきんぐ) in Japanese.",
+      "letter_hint": "It starts with the letter H."
+    },
+    "target_dialogues": [
+      {
+        "question": "What do you do on hiking?",
+        "answer": "We have fun and celebrate hiking.",
+        "context": "Talking about holidays and festivals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G6": {
+        "card_image": "dic_6_card_hiking_0778_1_c.png",
+        "sound_file": "dic_wb_15festalday_hiking_1535.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_6_card_hiking_0778_1_ce.png",
+        "card_bw": "dic_6_card_hiking_0778_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0846",
+    "english": "jogging",
+    "canonical_key": "jogging",
+    "disambiguation": "",
+    "display_label": "jogging",
+    "normalized_english": "jogging",
+    "part_of_speech": "noun",
+    "category": "15_festalday",
+    "category_name": "Holidays, Events & Games",
+    "ja_kanji": "ジョギング",
+    "ja_hiragana": "じょぎんぐ",
+    "en_katakana": "ジョギング",
+    "ruby": [
+      {
+        "base": "ジョギング",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "ジョギング",
+    "ruby_text": "ジョギング",
+    "sound_file": "dic_wb_15festalday_jogging_1536.mp3",
+    "card_image": "dic_6_card_jogging_0753_1_c.png",
+    "card_image_kana": "dic_6_card_jogging_0753_1_c.png",
+    "card_image_en": "dic_6_card_jogging_0753_1_e.png",
+    "card_image_bilingual": "dic_6_card_jogging_0753_1_ce.png",
+    "card_variants": [
+      "dic_6_card_jogging_0753_1.png"
+    ],
+    "token": "dic_wb_15festalday_jogging_1536&dic_wb_15festalday_jogging_1536&dic_6_card_jogging_0753",
+    "grades": [
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What do you do on jogging? / A: We have fun and celebrate jogging."
+    ],
+    "tags": [
+      "activity",
+      "sports"
+    ],
+    "lemma": "jogging",
+    "is_plural": false,
+    "letter_count": 7,
+    "syllable_count": 2,
+    "first_letter": "J",
+    "is_compound": false,
+    "phonics_initial": "j",
+    "difficulty_tier": 3,
+    "primary_image": "dic_6_card_jogging_0753_1_c.png",
+    "primary_audio": "dic_wb_15festalday_jogging_1536.mp3",
+    "three_hints": {
+      "category_hint": "It is a holiday, festival, or celebration.",
+      "feature_hint": "A special event known as 'ジョギング' (じょぎんぐ) in Japanese.",
+      "letter_hint": "It starts with the letter J."
+    },
+    "target_dialogues": [
+      {
+        "question": "What do you do on jogging?",
+        "answer": "We have fun and celebrate jogging.",
+        "context": "Talking about holidays and festivals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G6": {
+        "card_image": "dic_6_card_jogging_0753_1_c.png",
+        "sound_file": "dic_wb_15festalday_jogging_1536.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_6_card_jogging_0753_1_ce.png",
+        "card_bw": "dic_6_card_jogging_0753_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0848",
+    "english": "New Year's Day",
+    "canonical_key": "new year's day",
+    "disambiguation": "",
+    "display_label": "New Year's Day",
+    "normalized_english": "new year's day",
+    "part_of_speech": "noun",
+    "category": "15_festalday",
+    "category_name": "Holidays, Events & Games",
+    "ja_kanji": "お正月",
+    "ja_hiragana": "おしょうがつ",
+    "en_katakana": "ニューイヤーズデー",
+    "ruby": [
+      {
+        "base": "お",
+        "ruby": ""
+      },
+      {
+        "base": "正月",
+        "ruby": "しょうがつ"
+      }
+    ],
+    "ruby_html": "お<ruby>正月<rt>しょうがつ</rt></ruby>",
+    "ruby_text": "お[正月|しょうがつ]",
+    "sound_file": "dic_wb_15festalday_newyearsday_1529.mp3",
+    "card_image": "dic_5_card_newyearsday_0174_1_c.png",
+    "card_image_kana": "dic_5_card_newyearsday_0174_1_c.png",
+    "card_image_en": "dic_5_card_newyearsday_0174_1_e.png",
+    "card_image_bilingual": "dic_5_card_newyearsday_0174_1_ce.png",
+    "card_variants": [
+      "dic_5_card_newyearsday_0174_1.png"
+    ],
+    "token": "dic_wb_15festalday_newyearsday_1529&dic_wb_15festalday_newyearsday_1529&dic_5_card_newyearsday_0174",
+    "grades": [
+      "ES_G5"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What do you do on New Year's Day? / A: We have fun and celebrate New Year's Day."
+    ],
+    "tags": [
+      "holiday"
+    ],
+    "lemma": "New Year's Day",
+    "is_plural": false,
+    "letter_count": 11,
+    "syllable_count": 4,
+    "first_letter": "N",
+    "is_compound": true,
+    "phonics_initial": "n",
+    "difficulty_tier": 3,
+    "primary_image": "dic_5_card_newyearsday_0174_1_c.png",
+    "primary_audio": "dic_wb_15festalday_newyearsday_1529.mp3",
+    "three_hints": {
+      "category_hint": "It is a holiday, festival, or celebration.",
+      "feature_hint": "A special event known as 'お正月' (おしょうがつ) in Japanese.",
+      "letter_hint": "It starts with the letter N."
+    },
+    "target_dialogues": [
+      {
+        "question": "What do you do on New Year's Day?",
+        "answer": "We have fun and celebrate New Year's Day.",
+        "context": "Talking about holidays and festivals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "dic_5_card_newyearsday_0174_1_c.png",
+        "sound_file": "dic_wb_15festalday_newyearsday_1529.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_5_card_newyearsday_0174_1_ce.png",
+        "card_bw": "dic_5_card_newyearsday_0174_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0849",
+    "english": "New Year's Eve",
+    "canonical_key": "new year's eve",
+    "disambiguation": "",
+    "display_label": "New Year's Eve",
+    "normalized_english": "new year's eve",
+    "part_of_speech": "noun",
+    "category": "15_festalday",
+    "category_name": "Holidays, Events & Games",
+    "ja_kanji": "大みそか",
+    "ja_hiragana": "おおみそか",
+    "en_katakana": "ニューイヤーズイブ",
+    "ruby": [
+      {
+        "base": "大",
+        "ruby": "おお"
+      },
+      {
+        "base": "みそか",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "<ruby>大<rt>おお</rt></ruby>みそか",
+    "ruby_text": "[大|おお]みそか",
+    "sound_file": "dic_wb_15festalday_newyearseve_1676.mp3",
+    "card_image": "dic_5_card_newyearseve_0177_1_c.png",
+    "card_image_kana": "dic_5_card_newyearseve_0177_1_c.png",
+    "card_image_en": "dic_5_card_newyearseve_0177_1_e.png",
+    "card_image_bilingual": "dic_5_card_newyearseve_0177_1_ce.png",
+    "card_variants": [
+      "dic_5_card_newyearseve_0177_1.png"
+    ],
+    "token": "dic_wb_15festalday_newyearseve_1676&dic_wb_15festalday_newyearseve_1676&dic_5_card_newyearseve_0177",
+    "grades": [
+      "ES_G5"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What do you do on New Year's Eve? / A: We have fun and celebrate New Year's Eve."
+    ],
+    "tags": [
+      "holiday"
+    ],
+    "lemma": "New Year's Eve",
+    "is_plural": false,
+    "letter_count": 11,
+    "syllable_count": 4,
+    "first_letter": "N",
+    "is_compound": true,
+    "phonics_initial": "n",
+    "difficulty_tier": 3,
+    "primary_image": "dic_5_card_newyearseve_0177_1_c.png",
+    "primary_audio": "dic_wb_15festalday_newyearseve_1676.mp3",
+    "three_hints": {
+      "category_hint": "It is a holiday, festival, or celebration.",
+      "feature_hint": "A special event known as '大みそか' (おおみそか) in Japanese.",
+      "letter_hint": "It starts with the letter N."
+    },
+    "target_dialogues": [
+      {
+        "question": "What do you do on New Year's Eve?",
+        "answer": "We have fun and celebrate New Year's Eve.",
+        "context": "Talking about holidays and festivals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "dic_5_card_newyearseve_0177_1_c.png",
+        "sound_file": "dic_wb_15festalday_newyearseve_1676.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_5_card_newyearseve_0177_1_ce.png",
+        "card_bw": "dic_5_card_newyearseve_0177_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0850",
+    "english": "playing",
+    "canonical_key": "playing",
+    "disambiguation": "",
+    "display_label": "playing",
+    "normalized_english": "playing",
+    "part_of_speech": "noun",
+    "category": "15_festalday",
+    "category_name": "Holidays, Events & Games",
+    "ja_kanji": "遊ぶこと",
+    "ja_hiragana": "あそぶこと",
+    "en_katakana": "プレイング",
+    "ruby": [
+      {
+        "base": "遊",
+        "ruby": "あそ"
+      },
+      {
+        "base": "ぶこと",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "<ruby>遊<rt>あそ</rt></ruby>ぶこと",
+    "ruby_text": "[遊|あそ]ぶこと",
+    "sound_file": "dic_wb_15festalday_playing_1537.mp3",
+    "card_image": "dic_6_card_playing_0754_1_c.png",
+    "card_image_kana": "dic_6_card_playing_0754_1_c.png",
+    "card_image_en": "dic_6_card_playing_0754_1_e.png",
+    "card_image_bilingual": "dic_6_card_playing_0754_1_ce.png",
+    "card_variants": [
+      "dic_6_card_playing_0754_1.png"
+    ],
+    "token": "dic_wb_15festalday_playing_1537&dic_wb_15festalday_playing_1537&dic_6_card_playing_0754",
+    "grades": [
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What do you do on playing? / A: We have fun and celebrate playing."
+    ],
+    "tags": [
+      "activity"
+    ],
+    "lemma": "playing",
+    "is_plural": false,
+    "letter_count": 7,
+    "syllable_count": 2,
+    "first_letter": "P",
+    "is_compound": false,
+    "phonics_initial": "pl",
+    "difficulty_tier": 3,
+    "primary_image": "dic_6_card_playing_0754_1_c.png",
+    "primary_audio": "dic_wb_15festalday_playing_1537.mp3",
+    "three_hints": {
+      "category_hint": "It is a holiday, festival, or celebration.",
+      "feature_hint": "A special event known as '遊ぶこと' (あそぶこと) in Japanese.",
+      "letter_hint": "It starts with the letter P."
+    },
+    "target_dialogues": [
+      {
+        "question": "What do you do on playing?",
+        "answer": "We have fun and celebrate playing.",
+        "context": "Talking about holidays and festivals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G6": {
+        "card_image": "dic_6_card_playing_0754_1_c.png",
+        "sound_file": "dic_wb_15festalday_playing_1537.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_6_card_playing_0754_1_ce.png",
+        "card_bw": "dic_6_card_playing_0754_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0851",
+    "english": "reading",
+    "canonical_key": "reading",
+    "disambiguation": "",
+    "display_label": "reading",
+    "normalized_english": "reading",
+    "part_of_speech": "noun",
+    "category": "15_festalday",
+    "category_name": "Holidays, Events & Games",
+    "ja_kanji": "読書",
+    "ja_hiragana": "どくしょ",
+    "en_katakana": "リーディング",
+    "ruby": [
+      {
+        "base": "読書",
+        "ruby": "どくしょ"
+      }
+    ],
+    "ruby_html": "<ruby>読書<rt>どくしょ</rt></ruby>",
+    "ruby_text": "[読書|どくしょ]",
+    "sound_file": "dic_wb_15festalday_reading_1538.mp3",
+    "card_image": "dic_6_card_reading_0755_1_c.png",
+    "card_image_kana": "dic_6_card_reading_0755_1_c.png",
+    "card_image_en": "dic_6_card_reading_0755_1_e.png",
+    "card_image_bilingual": "dic_6_card_reading_0755_1_ce.png",
+    "card_variants": [
+      "dic_6_card_reading_0755_1.png"
+    ],
+    "token": "dic_wb_15festalday_reading_1538&dic_wb_15festalday_reading_1538&dic_6_card_reading_0755",
+    "grades": [
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What do you do on reading? / A: We have fun and celebrate reading."
+    ],
+    "tags": [
+      "activity"
+    ],
+    "lemma": "reading",
+    "is_plural": false,
+    "letter_count": 7,
+    "syllable_count": 2,
+    "first_letter": "R",
+    "is_compound": false,
+    "phonics_initial": "r",
+    "difficulty_tier": 3,
+    "primary_image": "dic_6_card_reading_0755_1_c.png",
+    "primary_audio": "dic_wb_15festalday_reading_1538.mp3",
+    "three_hints": {
+      "category_hint": "It is a holiday, festival, or celebration.",
+      "feature_hint": "A special event known as '読書' (どくしょ) in Japanese.",
+      "letter_hint": "It starts with the letter R."
+    },
+    "target_dialogues": [
+      {
+        "question": "What do you do on reading?",
+        "answer": "We have fun and celebrate reading.",
+        "context": "Talking about holidays and festivals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G6": {
+        "card_image": "dic_6_card_reading_0755_1_c.png",
+        "sound_file": "dic_wb_15festalday_reading_1538.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_6_card_reading_0755_1_ce.png",
+        "card_bw": "dic_6_card_reading_0755_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0852",
+    "english": "shopping",
+    "canonical_key": "shopping",
+    "disambiguation": "",
+    "display_label": "shopping",
+    "normalized_english": "shopping",
+    "part_of_speech": "noun",
+    "category": "15_festalday",
+    "category_name": "Holidays, Events & Games",
+    "ja_kanji": "買い物",
+    "ja_hiragana": "かいもの",
+    "en_katakana": "ショッピング",
+    "ruby": [
+      {
+        "base": "買",
+        "ruby": "か"
+      },
+      {
+        "base": "い",
+        "ruby": ""
+      },
+      {
+        "base": "物",
+        "ruby": "もの"
+      }
+    ],
+    "ruby_html": "<ruby>買<rt>か</rt></ruby>い<ruby>物<rt>もの</rt></ruby>",
+    "ruby_text": "[買|か]い[物|もの]",
+    "sound_file": "dic_wb_15festalday_shopping_1539.mp3",
+    "card_image": "dic_6_card_shopping_0756_1_c.png",
+    "card_image_kana": "dic_6_card_shopping_0756_1_c.png",
+    "card_image_en": "dic_6_card_shopping_0756_1_e.png",
+    "card_image_bilingual": "dic_6_card_shopping_0756_1_ce.png",
+    "card_variants": [
+      "dic_6_card_shopping_0756_1.png"
+    ],
+    "token": "dic_wb_15festalday_shopping_1539&dic_wb_15festalday_shopping_1539&dic_6_card_shopping_0756",
+    "grades": [
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What do you do on shopping? / A: We have fun and celebrate shopping."
+    ],
+    "tags": [
+      "activity"
+    ],
+    "lemma": "shopping",
+    "is_plural": false,
+    "letter_count": 8,
+    "syllable_count": 2,
+    "first_letter": "S",
+    "is_compound": false,
+    "phonics_initial": "sh",
+    "difficulty_tier": 3,
+    "primary_image": "dic_6_card_shopping_0756_1_c.png",
+    "primary_audio": "dic_wb_15festalday_shopping_1539.mp3",
+    "three_hints": {
+      "category_hint": "It is a holiday, festival, or celebration.",
+      "feature_hint": "A special event known as '買い物' (かいもの) in Japanese.",
+      "letter_hint": "It starts with the letter S."
+    },
+    "target_dialogues": [
+      {
+        "question": "What do you do on shopping?",
+        "answer": "We have fun and celebrate shopping.",
+        "context": "Talking about holidays and festivals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G6": {
+        "card_image": "dic_6_card_shopping_0756_1_c.png",
+        "sound_file": "dic_wb_15festalday_shopping_1539.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_6_card_shopping_0756_1_ce.png",
+        "card_bw": "dic_6_card_shopping_0756_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0853",
+    "english": "Snow Festival",
+    "canonical_key": "snow festival",
+    "disambiguation": "",
+    "display_label": "Snow Festival",
+    "normalized_english": "snow festival",
+    "part_of_speech": "noun",
+    "category": "15_festalday",
+    "category_name": "Holidays, Events & Games",
+    "ja_kanji": "雪祭り",
+    "ja_hiragana": "ゆきまつり",
+    "en_katakana": "スノーフェスティバル",
+    "ruby": [
+      {
+        "base": "雪祭",
+        "ruby": "ゆきまつ"
+      },
+      {
+        "base": "り",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "<ruby>雪祭<rt>ゆきまつ</rt></ruby>り",
+    "ruby_text": "[雪祭|ゆきまつ]り",
+    "sound_file": "dic_wb_15festalday_snowfestival_1530.mp3",
+    "card_image": "dic_wb_15festalday_snowfestival_1530_1_c.png",
+    "card_image_kana": "dic_wb_15festalday_snowfestival_1530_1_c.png",
+    "card_image_en": "dic_wb_15festalday_snowfestival_1530_1_e.png",
+    "card_image_bilingual": "dic_wb_15festalday_snowfestival_1530_1_ce.png",
+    "card_variants": [
+      "dic_wb_15festalday_snowfestival_1530_1.png"
+    ],
+    "token": "dic_wb_15festalday_snowfestival_1530&dic_wb_15festalday_snowfestival_1530&dic_wb_15festalday_snowfestival_1530",
+    "grades": [
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What do you do on Snow Festival? / A: We have fun and celebrate Snow Festival."
+    ],
+    "tags": [
+      "holiday",
+      "winter"
+    ],
+    "lemma": "Snow Festival",
+    "is_plural": false,
+    "letter_count": 12,
+    "syllable_count": 4,
+    "first_letter": "S",
+    "is_compound": true,
+    "phonics_initial": "sn",
+    "difficulty_tier": 3,
+    "primary_image": "dic_wb_15festalday_snowfestival_1530_1_c.png",
+    "primary_audio": "dic_wb_15festalday_snowfestival_1530.mp3",
+    "three_hints": {
+      "category_hint": "It is a holiday, festival, or celebration.",
+      "feature_hint": "A special event known as '雪祭り' (ゆきまつり) in Japanese.",
+      "letter_hint": "It starts with the letter S."
+    },
+    "target_dialogues": [
+      {
+        "question": "What do you do on Snow Festival?",
+        "answer": "We have fun and celebrate Snow Festival.",
+        "context": "Talking about holidays and festivals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G6": {
+        "card_image": "dic_wb_15festalday_snowfestival_1530_1_c.png",
+        "sound_file": "dic_wb_15festalday_snowfestival_1530.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_wb_15festalday_snowfestival_1530_1_ce.png",
+        "card_bw": "dic_wb_15festalday_snowfestival_1530_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0854",
+    "english": "Star Festival",
+    "canonical_key": "star festival",
+    "disambiguation": "",
+    "display_label": "Star Festival",
+    "normalized_english": "star festival",
+    "part_of_speech": "noun",
+    "category": "15_festalday",
+    "category_name": "Holidays, Events & Games",
+    "ja_kanji": "七夕",
+    "ja_hiragana": "たなばた",
+    "en_katakana": "スターフェスティバル",
+    "ruby": [
+      {
+        "base": "七夕",
+        "ruby": "たなばた"
+      }
+    ],
+    "ruby_html": "<ruby>七夕<rt>たなばた</rt></ruby>",
+    "ruby_text": "[七夕|たなばた]",
+    "sound_file": "dic_wb_15festalday_starfestival_1531.mp3",
+    "card_image": "dic_wb_15festalday_starfestival_1531_1_c.png",
+    "card_image_kana": "dic_wb_15festalday_starfestival_1531_1_c.png",
+    "card_image_en": "dic_wb_15festalday_starfestival_1531_1_e.png",
+    "card_image_bilingual": "dic_wb_15festalday_starfestival_1531_1_ce.png",
+    "card_variants": [
+      "dic_wb_15festalday_starfestival_1531_1.png"
+    ],
+    "token": "dic_wb_15festalday_starfestival_1531&dic_wb_15festalday_starfestival_1531&dic_wb_15festalday_starfestival_1531",
+    "grades": [
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What do you do on Star Festival? / A: We have fun and celebrate Star Festival."
+    ],
+    "tags": [
+      "holiday"
+    ],
+    "lemma": "Star Festival",
+    "is_plural": false,
+    "letter_count": 12,
+    "syllable_count": 4,
+    "first_letter": "S",
+    "is_compound": true,
+    "phonics_initial": "st",
+    "difficulty_tier": 3,
+    "primary_image": "dic_wb_15festalday_starfestival_1531_1_c.png",
+    "primary_audio": "dic_wb_15festalday_starfestival_1531.mp3",
+    "three_hints": {
+      "category_hint": "It is a holiday, festival, or celebration.",
+      "feature_hint": "A special event known as '七夕' (たなばた) in Japanese.",
+      "letter_hint": "It starts with the letter S."
+    },
+    "target_dialogues": [
+      {
+        "question": "What do you do on Star Festival?",
+        "answer": "We have fun and celebrate Star Festival.",
+        "context": "Talking about holidays and festivals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G6": {
+        "card_image": "dic_wb_15festalday_starfestival_1531_1_c.png",
+        "sound_file": "dic_wb_15festalday_starfestival_1531.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_wb_15festalday_starfestival_1531_1_ce.png",
+        "card_bw": "dic_wb_15festalday_starfestival_1531_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0855",
+    "english": "tag",
+    "canonical_key": "tag",
+    "disambiguation": "",
+    "display_label": "tag",
+    "normalized_english": "tag",
+    "part_of_speech": "noun",
+    "category": "15_festalday",
+    "category_name": "Holidays, Events & Games",
+    "ja_kanji": "鬼ごっこ",
+    "ja_hiragana": "おにごっこ",
+    "en_katakana": "タグ",
+    "ruby": [
+      {
+        "base": "鬼",
+        "ruby": "おに"
+      },
+      {
+        "base": "ごっこ",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "<ruby>鬼<rt>おに</rt></ruby>ごっこ",
+    "ruby_text": "[鬼|おに]ごっこ",
+    "sound_file": "dic_wb_15festalday_tag_1548.mp3",
+    "card_image": "dic_wb_15festalday_tag_1548_1_c.png",
+    "card_image_kana": "dic_wb_15festalday_tag_1548_1_c.png",
+    "card_image_en": "dic_wb_15festalday_tag_1548_1_e.png",
+    "card_image_bilingual": "dic_wb_15festalday_tag_1548_1_ce.png",
+    "card_variants": [
+      "dic_wb_15festalday_tag_1548_1.png"
+    ],
+    "token": "dic_wb_15festalday_tag_1548&dic_wb_15festalday_tag_1548&dic_wb_15festalday_tag_1548",
+    "grades": [
+      "ES_G3"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What do you do on tag? / A: We have fun and celebrate tag."
+    ],
+    "tags": [
+      "game",
+      "play"
+    ],
+    "lemma": "tag",
+    "is_plural": false,
+    "letter_count": 3,
+    "syllable_count": 1,
+    "first_letter": "T",
+    "is_compound": false,
+    "phonics_initial": "t",
+    "difficulty_tier": 1,
+    "primary_image": "dic_wb_15festalday_tag_1548_1_c.png",
+    "primary_audio": "dic_wb_15festalday_tag_1548.mp3",
+    "three_hints": {
+      "category_hint": "It is a holiday, festival, or celebration.",
+      "feature_hint": "A special event known as '鬼ごっこ' (おにごっこ) in Japanese.",
+      "letter_hint": "It starts with the letter T."
+    },
+    "target_dialogues": [
+      {
+        "question": "What do you do on tag?",
+        "answer": "We have fun and celebrate tag.",
+        "context": "Talking about holidays and festivals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_wb_15festalday_tag_1548_1_c.png",
+        "sound_file": "dic_wb_15festalday_tag_1548.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_wb_15festalday_tag_1548_1_ce.png",
+        "card_bw": "dic_wb_15festalday_tag_1548_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0856",
+    "english": "unicycle",
+    "canonical_key": "unicycle",
+    "disambiguation": "",
+    "display_label": "unicycle",
+    "normalized_english": "unicycle",
+    "part_of_speech": "noun",
+    "category": "15_festalday",
+    "category_name": "Holidays, Events & Games",
+    "ja_kanji": "一輪車",
+    "ja_hiragana": "いちりんしゃ",
+    "en_katakana": "ユニサイクル",
+    "ruby": [
+      {
+        "base": "一輪車",
+        "ruby": "いちりんしゃ"
+      }
+    ],
+    "ruby_html": "<ruby>一輪車<rt>いちりんしゃ</rt></ruby>",
+    "ruby_text": "[一輪車|いちりんしゃ]",
+    "sound_file": "dic_wb_15festalday_unicycle_1549.mp3",
+    "card_image": "dic_wb_15festalday_unicycle_1549_1_c.png",
+    "card_image_kana": "dic_wb_15festalday_unicycle_1549_1_c.png",
+    "card_image_en": "dic_wb_15festalday_unicycle_1549_1_e.png",
+    "card_image_bilingual": "dic_wb_15festalday_unicycle_1549_1_ce.png",
+    "card_variants": [
+      "dic_wb_15festalday_unicycle_1549_1.png"
+    ],
+    "token": "dic_wb_15festalday_unicycle_1549&dic_wb_15festalday_unicycle_1549&dic_wb_15festalday_unicycle_1549",
+    "grades": [
+      "ES_G3"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What do you do on unicycle? / A: We have fun and celebrate unicycle."
+    ],
+    "tags": [
+      "play",
+      "sports"
+    ],
+    "lemma": "unicycle",
+    "is_plural": false,
+    "letter_count": 8,
+    "syllable_count": 3,
+    "first_letter": "U",
+    "is_compound": false,
+    "phonics_initial": "u",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_15festalday_unicycle_1549_1_c.png",
+    "primary_audio": "dic_wb_15festalday_unicycle_1549.mp3",
+    "three_hints": {
+      "category_hint": "It is a holiday, festival, or celebration.",
+      "feature_hint": "A special event known as '一輪車' (いちりんしゃ) in Japanese.",
+      "letter_hint": "It starts with the letter U."
+    },
+    "target_dialogues": [
+      {
+        "question": "What do you do on unicycle?",
+        "answer": "We have fun and celebrate unicycle.",
+        "context": "Talking about holidays and festivals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_wb_15festalday_unicycle_1549_1_c.png",
+        "sound_file": "dic_wb_15festalday_unicycle_1549.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_wb_15festalday_unicycle_1549_1_ce.png",
+        "card_bw": "dic_wb_15festalday_unicycle_1549_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0857",
+    "english": "vacation",
+    "canonical_key": "vacation",
+    "disambiguation": "",
+    "display_label": "vacation",
+    "normalized_english": "vacation",
+    "part_of_speech": "noun",
+    "category": "15_festalday",
+    "category_name": "Holidays, Events & Games",
+    "ja_kanji": "休み",
+    "ja_hiragana": "やすみ",
+    "en_katakana": "バケーション",
+    "ruby": [
+      {
+        "base": "休",
+        "ruby": "やす"
+      },
+      {
+        "base": "み",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "<ruby>休<rt>やす</rt></ruby>み",
+    "ruby_text": "[休|やす]み",
+    "sound_file": "dic_wb_15festalday_vacation_1541.mp3",
+    "card_image": "dic_wb_15festalday_vacation_1541_1_c.png",
+    "card_image_kana": "dic_wb_15festalday_vacation_1541_1_c.png",
+    "card_image_en": "dic_wb_15festalday_vacation_1541_1_e.png",
+    "card_image_bilingual": "dic_wb_15festalday_vacation_1541_1_ce.png",
+    "card_variants": [
+      "dic_wb_15festalday_vacation_1541_1.png"
+    ],
+    "token": "dic_wb_15festalday_vacation_1541&dic_wb_15festalday_vacation_1541&dic_wb_15festalday_vacation_1541",
+    "grades": [
+      "ES_G3"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What do you do on vacation? / A: We have fun and celebrate vacation."
+    ],
+    "tags": [
+      "holiday"
+    ],
+    "lemma": "vacation",
+    "is_plural": false,
+    "letter_count": 8,
+    "syllable_count": 3,
+    "first_letter": "V",
+    "is_compound": false,
+    "phonics_initial": "v",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_15festalday_vacation_1541_1_c.png",
+    "primary_audio": "dic_wb_15festalday_vacation_1541.mp3",
+    "three_hints": {
+      "category_hint": "It is a holiday, festival, or celebration.",
+      "feature_hint": "A special event known as '休み' (やすみ) in Japanese.",
+      "letter_hint": "It starts with the letter V."
+    },
+    "target_dialogues": [
+      {
+        "question": "What do you do on vacation?",
+        "answer": "We have fun and celebrate vacation.",
+        "context": "Talking about holidays and festivals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_wb_15festalday_vacation_1541_1_c.png",
+        "sound_file": "dic_wb_15festalday_vacation_1541.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_wb_15festalday_vacation_1541_1_ce.png",
+        "card_bw": "dic_wb_15festalday_vacation_1541_1.png"
+      }
+    }
+  }
+]

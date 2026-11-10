@@ -1,0 +1,1645 @@
+// Authoritative Sound Packs Registry for Levi-Sensei English Platform
+// Generated automatically with cleaned canonical titles and zero duplicate tracks
+
+export interface SoundTrack {
+  id: string;
+  role: 'lobby' | 'quiz' | 'rush' | 'boss' | 'podium';
+  title: string;
+  bpm: number;
+  duration: string;
+  score: number;
+  filename: string;
+  url: string;
+}
+
+export interface SoundPack {
+  id: string;
+  name: string;
+  nameJa: string;
+  franchise: string;
+  icon: string;
+  badgeColor: string;
+  accentBorder: string;
+  bgLight: string;
+  bgDark: string;
+  description: string;
+  descriptionJa: string;
+  tracks: SoundTrack[];
+}
+
+export const SOUND_PACKS: Record<string, SoundPack> = {
+  "all_stars": {
+    "id": "all_stars",
+    "name": "Levi-Sensei All-Stars",
+    "nameJa": "オールスター",
+    "icon": "🎲",
+    "franchise": "Curated Champions",
+    "badgeColor": "bg-indigo-500 text-white",
+    "accentBorder": "border-indigo-500",
+    "bgLight": "bg-indigo-50/80 hover:bg-indigo-100/80",
+    "bgDark": "dark:bg-indigo-950/40 dark:hover:bg-indigo-900/40",
+    "description": "Cross-franchise champion mix handpicked for maximum classroom hype",
+    "descriptionJa": "全フランチャイズから厳選されたベスト曲ミックス",
+    "tracks": [
+      {
+        "id": "initial_d_lobby_01",
+        "role": "lobby",
+        "title": "Jirenma (Instrumental)",
+        "bpm": 136.0,
+        "duration": "4:26",
+        "score": 92.0,
+        "filename": "lobby_01_jirenma_instrumental.mp3",
+        "url": "/media/bgm/initial_d/lobby_01_jirenma_instrumental.mp3"
+      },
+      {
+        "id": "initial_d_lobby_02",
+        "role": "lobby",
+        "title": "Kiseki no Hana (Instrumental)",
+        "bpm": 143.6,
+        "duration": "4:00",
+        "score": 90.0,
+        "filename": "lobby_02_kiseki_no_hana_instrumental.mp3",
+        "url": "/media/bgm/initial_d/lobby_02_kiseki_no_hana_instrumental.mp3"
+      },
+      {
+        "id": "initial_d_quiz_01_shouri",
+        "role": "quiz",
+        "title": "Shouri",
+        "bpm": 136.0,
+        "duration": "1:00",
+        "score": 94.0,
+        "filename": "quiz_01_shouri.mp3",
+        "url": "/media/bgm/initial_d/quiz_01_shouri.mp3"
+      },
+      {
+        "id": "initial_d_quiz_02_never_mind",
+        "role": "quiz",
+        "title": "Never Mind",
+        "bpm": 136.0,
+        "duration": "3:25",
+        "score": 94.0,
+        "filename": "quiz_02_never_mind.mp3",
+        "url": "/media/bgm/initial_d/quiz_02_never_mind.mp3"
+      },
+      {
+        "id": "initial_d_quiz_03_counterattack",
+        "role": "quiz",
+        "title": "Counterattack!",
+        "bpm": 136.0,
+        "duration": "2:30",
+        "score": 94.0,
+        "filename": "quiz_03_counterattack.mp3",
+        "url": "/media/bgm/initial_d/quiz_03_counterattack.mp3"
+      },
+      {
+        "id": "initial_d_quiz_04",
+        "role": "quiz",
+        "title": "Back on the Rocks",
+        "bpm": 155.0,
+        "duration": "4:49",
+        "score": 92.0,
+        "filename": "quiz_04_back_on_the_rocks.mp3",
+        "url": "/media/bgm/initial_d/quiz_04_back_on_the_rocks.mp3"
+      },
+      {
+        "id": "initial_d_rush_01_saturday_night_fever",
+        "role": "rush",
+        "title": "Saturday Night Fever",
+        "bpm": 155.0,
+        "duration": "4:47",
+        "score": 95.0,
+        "filename": "rush_01_saturday_night_fever.mp3",
+        "url": "/media/bgm/initial_d/rush_01_saturday_night_fever.mp3"
+      },
+      {
+        "id": "initial_d_rush_02_i_like_you_like_you_are",
+        "role": "rush",
+        "title": "I Like You Like You Are",
+        "bpm": 155.0,
+        "duration": "4:29",
+        "score": 94.0,
+        "filename": "rush_02_i_like_you_like_you_are.mp3",
+        "url": "/media/bgm/initial_d/rush_02_i_like_you_like_you_are.mp3"
+      },
+      {
+        "id": "initial_d_rush_03_around_the_world",
+        "role": "rush",
+        "title": "Around the World",
+        "bpm": 154.0,
+        "duration": "4:49",
+        "score": 93.0,
+        "filename": "rush_03_around_the_world.mp3",
+        "url": "/media/bgm/initial_d/rush_03_around_the_world.mp3"
+      },
+      {
+        "id": "initial_d_rush_04_big_in_japan",
+        "role": "rush",
+        "title": "Big in Japan",
+        "bpm": 154.0,
+        "duration": "4:44",
+        "score": 93.0,
+        "filename": "rush_04_big_in_japan.mp3",
+        "url": "/media/bgm/initial_d/rush_04_big_in_japan.mp3"
+      },
+      {
+        "id": "initial_d_rush_05_i_love_you_like_you_are",
+        "role": "rush",
+        "title": "I Love You Like You Are",
+        "bpm": 154.0,
+        "duration": "4:11",
+        "score": 93.0,
+        "filename": "rush_05_i_love_you_like_you_are.mp3",
+        "url": "/media/bgm/initial_d/rush_05_i_love_you_like_you_are.mp3"
+      },
+      {
+        "id": "initial_d_boss_01_dont_stand_so_close",
+        "role": "boss",
+        "title": "Don't Stand So Close",
+        "bpm": 158.0,
+        "duration": "4:32",
+        "score": 95.0,
+        "filename": "boss_01_dont_stand_so_close.mp3",
+        "url": "/media/bgm/initial_d/boss_01_dont_stand_so_close.mp3"
+      },
+      {
+        "id": "initial_d_boss_02_boom_boom_japan",
+        "role": "boss",
+        "title": "Boom Boom Japan",
+        "bpm": 158.0,
+        "duration": "2:34",
+        "score": 95.0,
+        "filename": "boss_02_boom_boom_japan.mp3",
+        "url": "/media/bgm/initial_d/boss_02_boom_boom_japan.mp3"
+      },
+      {
+        "id": "initial_d_boss_03_dancing",
+        "role": "boss",
+        "title": "Dancing",
+        "bpm": 156.0,
+        "duration": "2:35",
+        "score": 94.0,
+        "filename": "boss_03_dancing.mp3",
+        "url": "/media/bgm/initial_d/boss_03_dancing.mp3"
+      },
+      {
+        "id": "initial_d_boss_04_be_my_babe",
+        "role": "boss",
+        "title": "Be My Babe",
+        "bpm": 156.0,
+        "duration": "5:12",
+        "score": 94.0,
+        "filename": "boss_04_be_my_babe.mp3",
+        "url": "/media/bgm/initial_d/boss_04_be_my_babe.mp3"
+      },
+      {
+        "id": "initial_d_boss_05_maybe_tonite",
+        "role": "boss",
+        "title": "Maybe Tonite",
+        "bpm": 155.0,
+        "duration": "2:32",
+        "score": 93.0,
+        "filename": "boss_05_maybe_tonite.mp3",
+        "url": "/media/bgm/initial_d/boss_05_maybe_tonite.mp3"
+      },
+      {
+        "id": "initial_d_podium_01_the_race_is_over",
+        "role": "podium",
+        "title": "The Race is Over",
+        "bpm": 85.0,
+        "duration": "2:14",
+        "score": 91.0,
+        "filename": "podium_01_the_race_is_over.mp3",
+        "url": "/media/bgm/initial_d/podium_01_the_race_is_over.mp3"
+      },
+      {
+        "id": "initial_d_podium_02_takumi_shouri",
+        "role": "podium",
+        "title": "Takumi Shouri",
+        "bpm": 112.3,
+        "duration": "4:06",
+        "score": 68.0,
+        "filename": "podium_02_takumi_shouri.mp3",
+        "url": "/media/bgm/initial_d/podium_02_takumi_shouri.mp3"
+      },
+      {
+        "id": "persona_5_lobby_01_sarudahiko",
+        "role": "lobby",
+        "title": "Sarudahiko",
+        "bpm": 98.0,
+        "duration": "1:55",
+        "score": 90.0,
+        "filename": "lobby_01_sarudahiko.mp3",
+        "url": "/media/bgm/persona_5/lobby_01_sarudahiko.mp3"
+      },
+      {
+        "id": "persona_5_lobby_02_royal_palace_waltz",
+        "role": "lobby",
+        "title": "Royal Palace Waltz",
+        "bpm": 95.0,
+        "duration": "2:13",
+        "score": 89.0,
+        "filename": "lobby_02_royal_palace_waltz.mp3",
+        "url": "/media/bgm/persona_5/lobby_02_royal_palace_waltz.mp3"
+      },
+      {
+        "id": "persona_5_quiz_01_rivers_in_the_desert",
+        "role": "quiz",
+        "title": "Rivers in the Desert",
+        "bpm": 131.0,
+        "duration": "5:15",
+        "score": 94.0,
+        "filename": "quiz_01_rivers_in_the_desert.mp3",
+        "url": "/media/bgm/persona_5/quiz_01_rivers_in_the_desert.mp3"
+      },
+      {
+        "id": "persona_5_quiz_02_kinpaku",
+        "role": "quiz",
+        "title": "Kinpaku",
+        "bpm": 130.0,
+        "duration": "1:33",
+        "score": 93.0,
+        "filename": "quiz_02_kinpaku.mp3",
+        "url": "/media/bgm/persona_5/quiz_02_kinpaku.mp3"
+      },
+      {
+        "id": "persona_5_quiz_03_layer_cake",
+        "role": "quiz",
+        "title": "Layer Cake",
+        "bpm": 130.0,
+        "duration": "2:39",
+        "score": 93.0,
+        "filename": "quiz_03_layer_cake.mp3",
+        "url": "/media/bgm/persona_5/quiz_03_layer_cake.mp3"
+      },
+      {
+        "id": "persona_5_quiz_04_life_will_change",
+        "role": "quiz",
+        "title": "Life Will Change",
+        "bpm": 129.0,
+        "duration": "2:30",
+        "score": 92.0,
+        "filename": "quiz_04_life_will_change.mp3",
+        "url": "/media/bgm/persona_5/quiz_04_life_will_change.mp3"
+      },
+      {
+        "id": "persona_5_quiz_05_wake_up_get_up",
+        "role": "quiz",
+        "title": "Wake Up, Get Up, Get Out There",
+        "bpm": 129.0,
+        "duration": "2:52",
+        "score": 92.0,
+        "filename": "quiz_05_wake_up_get_up.mp3",
+        "url": "/media/bgm/persona_5/quiz_05_wake_up_get_up.mp3"
+      },
+      {
+        "id": "persona_5_rush_01_beneath_the_mask",
+        "role": "rush",
+        "title": "Beneath the Mask",
+        "bpm": 152.0,
+        "duration": "4:37",
+        "score": 93.0,
+        "filename": "rush_01_beneath_the_mask.mp3",
+        "url": "/media/bgm/persona_5/rush_01_beneath_the_mask.mp3"
+      },
+      {
+        "id": "persona_5_rush_02_beneath_the_mask_rain",
+        "role": "rush",
+        "title": "Beneath the Mask (Rain)",
+        "bpm": 144.0,
+        "duration": "4:38",
+        "score": 93.0,
+        "filename": "rush_02_beneath_the_mask_rain.mp3",
+        "url": "/media/bgm/persona_5/rush_02_beneath_the_mask_rain.mp3"
+      },
+      {
+        "id": "persona_5_rush_03_phantom_dash",
+        "role": "rush",
+        "title": "Phantom Dash",
+        "bpm": 136.0,
+        "duration": "4:55",
+        "score": 93.0,
+        "filename": "rush_03_phantom_dash.mp3",
+        "url": "/media/bgm/persona_5/rush_03_phantom_dash.mp3"
+      },
+      {
+        "id": "persona_5_rush_04_high_pressure",
+        "role": "rush",
+        "title": "High Pressure",
+        "bpm": 135.0,
+        "duration": "2:04",
+        "score": 93.0,
+        "filename": "rush_04_high_pressure.mp3",
+        "url": "/media/bgm/persona_5/rush_04_high_pressure.mp3"
+      },
+      {
+        "id": "persona_5_boss_01_blooming_rival",
+        "role": "boss",
+        "title": "Blooming Rival",
+        "bpm": 135.0,
+        "duration": "4:00",
+        "score": 93.0,
+        "filename": "boss_01_blooming_rival.mp3",
+        "url": "/media/bgm/persona_5/boss_01_blooming_rival.mp3"
+      },
+      {
+        "id": "persona_5_boss_02_new_beginning",
+        "role": "boss",
+        "title": "New Beginning",
+        "bpm": 134.0,
+        "duration": "2:27",
+        "score": 92.0,
+        "filename": "boss_02_new_beginning.mp3",
+        "url": "/media/bgm/persona_5/boss_02_new_beginning.mp3"
+      },
+      {
+        "id": "persona_5_boss_03_will_power",
+        "role": "boss",
+        "title": "Will Power",
+        "bpm": 143.6,
+        "duration": "2:45",
+        "score": 70.0,
+        "filename": "boss_03_will_power.mp3",
+        "url": "/media/bgm/persona_5/boss_03_will_power.mp3"
+      },
+      {
+        "id": "persona_5_boss_04_sunset_bridge",
+        "role": "boss",
+        "title": "Sunset Bridge",
+        "bpm": 133.0,
+        "duration": "1:41",
+        "score": 91.0,
+        "filename": "boss_04_sunset_bridge.mp3",
+        "url": "/media/bgm/persona_5/boss_04_sunset_bridge.mp3"
+      },
+      {
+        "id": "persona_5_podium_01_victory",
+        "role": "podium",
+        "title": "Victory",
+        "bpm": 120.0,
+        "duration": "1:33",
+        "score": 90.0,
+        "filename": "podium_01_victory.mp3",
+        "url": "/media/bgm/persona_5/podium_01_victory.mp3"
+      },
+      {
+        "id": "wangan_lobby_01_the_story_starts_here",
+        "role": "lobby",
+        "title": "The Story Starts Here",
+        "bpm": 102.0,
+        "duration": "3:07",
+        "score": 90.0,
+        "filename": "lobby_01_the_story_starts_here.mp3",
+        "url": "/media/bgm/wangan/lobby_01_the_story_starts_here.mp3"
+      },
+      {
+        "id": "wangan_lobby_02_love_and_gold",
+        "role": "lobby",
+        "title": "Love and Gold",
+        "bpm": 110.0,
+        "duration": "5:58",
+        "score": 89.0,
+        "filename": "lobby_02_love_and_gold.mp3",
+        "url": "/media/bgm/wangan/lobby_02_love_and_gold.mp3"
+      },
+      {
+        "id": "wangan_quiz_01_move_on",
+        "role": "quiz",
+        "title": "Move On",
+        "bpm": 134.0,
+        "duration": "5:26",
+        "score": 93.0,
+        "filename": "quiz_01_move_on.mp3",
+        "url": "/media/bgm/wangan/quiz_01_move_on.mp3"
+      },
+      {
+        "id": "wangan_quiz_02_maximum_synergy",
+        "role": "quiz",
+        "title": "Maximum Synergy",
+        "bpm": 134.0,
+        "duration": "6:07",
+        "score": 93.0,
+        "filename": "quiz_02_maximum_synergy.mp3",
+        "url": "/media/bgm/wangan/quiz_02_maximum_synergy.mp3"
+      },
+      {
+        "id": "wangan_quiz_03_i_will_follow_you",
+        "role": "quiz",
+        "title": "I Will Follow You",
+        "bpm": 135.0,
+        "duration": "6:48",
+        "score": 93.0,
+        "filename": "quiz_03_i_will_follow_you.mp3",
+        "url": "/media/bgm/wangan/quiz_03_i_will_follow_you.mp3"
+      },
+      {
+        "id": "wangan_quiz_04_high_speed_monster",
+        "role": "quiz",
+        "title": "High Speed Monster",
+        "bpm": 135.0,
+        "duration": "6:52",
+        "score": 93.0,
+        "filename": "quiz_04_high_speed_monster.mp3",
+        "url": "/media/bgm/wangan/quiz_04_high_speed_monster.mp3"
+      },
+      {
+        "id": "wangan_quiz_05_midnight_wave",
+        "role": "quiz",
+        "title": "Midnight Wave",
+        "bpm": 136.0,
+        "duration": "6:50",
+        "score": 94.0,
+        "filename": "quiz_05_midnight_wave.mp3",
+        "url": "/media/bgm/wangan/quiz_05_midnight_wave.mp3"
+      },
+      {
+        "id": "wangan_rush_01_beatific_smile",
+        "role": "rush",
+        "title": "Beatific Smile",
+        "bpm": 140.0,
+        "duration": "5:33",
+        "score": 94.0,
+        "filename": "rush_01_beatific_smile.mp3",
+        "url": "/media/bgm/wangan/rush_01_beatific_smile.mp3"
+      },
+      {
+        "id": "wangan_rush_02_glare",
+        "role": "rush",
+        "title": "Glare",
+        "bpm": 144.0,
+        "duration": "5:44",
+        "score": 94.0,
+        "filename": "rush_02_glare.mp3",
+        "url": "/media/bgm/wangan/rush_02_glare.mp3"
+      },
+      {
+        "id": "wangan_rush_03_driving_energy",
+        "role": "rush",
+        "title": "Driving Energy",
+        "bpm": 144.0,
+        "duration": "4:44",
+        "score": 94.0,
+        "filename": "rush_03_driving_energy.mp3",
+        "url": "/media/bgm/wangan/rush_03_driving_energy.mp3"
+      },
+      {
+        "id": "wangan_rush_04_drive_me_crazy",
+        "role": "rush",
+        "title": "Drive Me Crazy",
+        "bpm": 136.0,
+        "duration": "6:02",
+        "score": 74.0,
+        "filename": "rush_04_drive_me_crazy.mp3",
+        "url": "/media/bgm/wangan/rush_04_drive_me_crazy.mp3"
+      },
+      {
+        "id": "wangan_rush_05_feel_the_moment",
+        "role": "rush",
+        "title": "Feel the Moment",
+        "bpm": 144.0,
+        "duration": "6:22",
+        "score": 94.0,
+        "filename": "rush_05_feel_the_moment.mp3",
+        "url": "/media/bgm/wangan/rush_05_feel_the_moment.mp3"
+      },
+      {
+        "id": "wangan_boss_01_love_my_own_life",
+        "role": "boss",
+        "title": "Love My Own Life",
+        "bpm": 135.0,
+        "duration": "6:20",
+        "score": 93.0,
+        "filename": "boss_01_love_my_own_life.mp3",
+        "url": "/media/bgm/wangan/boss_01_love_my_own_life.mp3"
+      },
+      {
+        "id": "wangan_boss_02_dont_stop",
+        "role": "boss",
+        "title": "Don't Stop",
+        "bpm": 137.0,
+        "duration": "5:04",
+        "score": 94.0,
+        "filename": "boss_02_dont_stop.mp3",
+        "url": "/media/bgm/wangan/boss_02_dont_stop.mp3"
+      },
+      {
+        "id": "wangan_boss_03_happy_moment",
+        "role": "boss",
+        "title": "Happy Moment",
+        "bpm": 138.0,
+        "duration": "4:20",
+        "score": 94.0,
+        "filename": "boss_03_happy_moment.mp3",
+        "url": "/media/bgm/wangan/boss_03_happy_moment.mp3"
+      },
+      {
+        "id": "wangan_podium_01_result_maxi1",
+        "role": "podium",
+        "title": "Result (Maxi 1)",
+        "bpm": 92.0,
+        "duration": "2:04",
+        "score": 90.0,
+        "filename": "podium_01_result_maxi1.mp3",
+        "url": "/media/bgm/wangan/podium_01_result_maxi1.mp3"
+      },
+      {
+        "id": "wangan_podium_02_result_maxi2",
+        "role": "podium",
+        "title": "Result (Maxi 2)",
+        "bpm": 139.6,
+        "duration": "2:13",
+        "score": 84.0,
+        "filename": "podium_02_result_maxi2.mp3",
+        "url": "/media/bgm/wangan/podium_02_result_maxi2.mp3"
+      },
+      {
+        "id": "dragon_lobby_01_playful_stroll",
+        "role": "lobby",
+        "title": "Playful Stroll",
+        "bpm": 90.0,
+        "duration": "2:08",
+        "score": 89.0,
+        "filename": "lobby_01_playful_stroll.mp3",
+        "url": "/media/bgm/dragon/lobby_01_playful_stroll.mp3"
+      },
+      {
+        "id": "dragon_lobby_02_golden_lounge",
+        "role": "lobby",
+        "title": "Golden Lounge",
+        "bpm": 100.0,
+        "duration": "2:30",
+        "score": 90.0,
+        "filename": "lobby_02_golden_lounge.mp3",
+        "url": "/media/bgm/dragon/lobby_02_golden_lounge.mp3"
+      },
+      {
+        "id": "dragon_quiz_01_fish_on",
+        "role": "quiz",
+        "title": "Fish On!",
+        "bpm": 128.0,
+        "duration": "2:10",
+        "score": 92.0,
+        "filename": "quiz_01_fish_on.mp3",
+        "url": "/media/bgm/dragon/quiz_01_fish_on.mp3"
+      },
+      {
+        "id": "dragon_quiz_02_burn_gracefully",
+        "role": "quiz",
+        "title": "優美に燃ゆ",
+        "bpm": 132.0,
+        "duration": "2:40",
+        "score": 93.0,
+        "filename": "quiz_02_burn_gracefully.mp3",
+        "url": "/media/bgm/dragon/quiz_02_burn_gracefully.mp3"
+      },
+      {
+        "id": "dragon_quiz_03_for_will",
+        "role": "quiz",
+        "title": "For Will",
+        "bpm": 134.0,
+        "duration": "3:02",
+        "score": 93.0,
+        "filename": "quiz_03_for_will.mp3",
+        "url": "/media/bgm/dragon/quiz_03_for_will.mp3"
+      },
+      {
+        "id": "dragon_quiz_04_kamurocho_rhythm",
+        "role": "quiz",
+        "title": "Kamurocho Rhythm",
+        "bpm": 130.0,
+        "duration": "2:20",
+        "score": 92.0,
+        "filename": "quiz_04_kamurocho_rhythm.mp3",
+        "url": "/media/bgm/dragon/quiz_04_kamurocho_rhythm.mp3"
+      },
+      {
+        "id": "dragon_quiz_05_street_jazz_beat",
+        "role": "quiz",
+        "title": "Street Jazz Beat",
+        "bpm": 131.0,
+        "duration": "2:15",
+        "score": 92.0,
+        "filename": "quiz_05_street_jazz_beat.mp3",
+        "url": "/media/bgm/dragon/quiz_05_street_jazz_beat.mp3"
+      },
+      {
+        "id": "dragon_rush_01_kingdom_of_glory",
+        "role": "rush",
+        "title": "Kingdom of Glory",
+        "bpm": 148.0,
+        "duration": "3:10",
+        "score": 94.0,
+        "filename": "rush_01_kingdom_of_glory.mp3",
+        "url": "/media/bgm/dragon/rush_01_kingdom_of_glory.mp3"
+      },
+      {
+        "id": "dragon_rush_02_sprint_dash",
+        "role": "rush",
+        "title": "Sprint Dash",
+        "bpm": 145.0,
+        "duration": "2:45",
+        "score": 94.0,
+        "filename": "rush_02_sprint_dash.mp3",
+        "url": "/media/bgm/dragon/rush_02_sprint_dash.mp3"
+      },
+      {
+        "id": "dragon_rush_03_rock_stride",
+        "role": "rush",
+        "title": "Rock Stride",
+        "bpm": 142.0,
+        "duration": "2:50",
+        "score": 94.0,
+        "filename": "rush_03_rock_stride.mp3",
+        "url": "/media/bgm/dragon/rush_03_rock_stride.mp3"
+      },
+      {
+        "id": "dragon_rush_04_boxcelios",
+        "role": "rush",
+        "title": "Boxcelios",
+        "bpm": 140.0,
+        "duration": "2:30",
+        "score": 93.0,
+        "filename": "rush_04_boxcelios.mp3",
+        "url": "/media/bgm/dragon/rush_04_boxcelios.mp3"
+      },
+      {
+        "id": "dragon_rush_05_olivier",
+        "role": "rush",
+        "title": "Olivier",
+        "bpm": 138.0,
+        "duration": "2:40",
+        "score": 93.0,
+        "filename": "rush_05_olivier.mp3",
+        "url": "/media/bgm/dragon/rush_05_olivier.mp3"
+      },
+      {
+        "id": "dragon_boss_01_blaze",
+        "role": "boss",
+        "title": "Blaze",
+        "bpm": 146.0,
+        "duration": "3:30",
+        "score": 94.0,
+        "filename": "boss_01_blaze.mp3",
+        "url": "/media/bgm/dragon/boss_01_blaze.mp3"
+      },
+      {
+        "id": "dragon_boss_02_grand_clash",
+        "role": "boss",
+        "title": "Grand Clash",
+        "bpm": 150.0,
+        "duration": "3:15",
+        "score": 95.0,
+        "filename": "boss_02_grand_clash.mp3",
+        "url": "/media/bgm/dragon/boss_02_grand_clash.mp3"
+      },
+      {
+        "id": "dragon_boss_03_as_you_like",
+        "role": "boss",
+        "title": "As You Like",
+        "bpm": 144.0,
+        "duration": "2:55",
+        "score": 94.0,
+        "filename": "boss_03_as_you_like.mp3",
+        "url": "/media/bgm/dragon/boss_03_as_you_like.mp3"
+      },
+      {
+        "id": "dragon_boss_04_entrance_to_the_clash",
+        "role": "boss",
+        "title": "Entrance to the Clash",
+        "bpm": 142.0,
+        "duration": "3:05",
+        "score": 93.0,
+        "filename": "boss_04_entrance_to_the_clash.mp3",
+        "url": "/media/bgm/dragon/boss_04_entrance_to_the_clash.mp3"
+      },
+      {
+        "id": "dragon_boss_05_karakuribito",
+        "role": "boss",
+        "title": "カラクリビト",
+        "bpm": 140.0,
+        "duration": "2:50",
+        "score": 93.0,
+        "filename": "boss_05_karakuribito.mp3",
+        "url": "/media/bgm/dragon/boss_05_karakuribito.mp3"
+      },
+      {
+        "id": "dragon_podium_01_for_the_victory",
+        "role": "podium",
+        "title": "For the Victory",
+        "bpm": 95.0,
+        "duration": "2:20",
+        "score": 90.0,
+        "filename": "podium_01_for_the_victory.mp3",
+        "url": "/media/bgm/dragon/podium_01_for_the_victory.mp3"
+      },
+      {
+        "id": "dragon_podium_02_victory_road",
+        "role": "podium",
+        "title": "Victory Road",
+        "bpm": 100.0,
+        "duration": "2:40",
+        "score": 91.0,
+        "filename": "podium_02_victory_road.mp3",
+        "url": "/media/bgm/dragon/podium_02_victory_road.mp3"
+      },
+      {
+        "id": "mario_01",
+        "role": "rush",
+        "title": "Mario Kart 🏁",
+        "bpm": 134.0,
+        "duration": "2:30",
+        "score": 90.0,
+        "filename": "mariokart.mp3",
+        "url": "/media/bgm/mario/mariokart.mp3"
+      },
+      {
+        "id": "mario_02",
+        "role": "quiz",
+        "title": "New Super Mario Bros 2 🍄",
+        "bpm": 130.0,
+        "duration": "2:15",
+        "score": 88.0,
+        "filename": "newsupermariobros2.mp3",
+        "url": "/media/bgm/mario/newsupermariobros2.mp3"
+      },
+      {
+        "id": "mario_03",
+        "role": "quiz",
+        "title": "New Super Mario Bros Wii ⭐",
+        "bpm": 128.0,
+        "duration": "2:40",
+        "score": 88.0,
+        "filename": "newsupermariobroswii.mp3",
+        "url": "/media/bgm/mario/newsupermariobroswii.mp3"
+      },
+      {
+        "id": "mario_04",
+        "role": "quiz",
+        "title": "Super Mario World 🦖",
+        "bpm": 124.0,
+        "duration": "2:20",
+        "score": 86.0,
+        "filename": "supermarioworld.mp3",
+        "url": "/media/bgm/mario/supermarioworld.mp3"
+      },
+      {
+        "id": "mario_05",
+        "role": "lobby",
+        "title": "Wario Land 💰",
+        "bpm": 118.0,
+        "duration": "2:10",
+        "score": 85.0,
+        "filename": "warioland.mp3",
+        "url": "/media/bgm/mario/warioland.mp3"
+      }
+    ]
+  },
+  "initial_d": {
+    "id": "initial_d",
+    "name": "Mt. Akina Eurobeat",
+    "nameJa": "峠のユーロビート",
+    "icon": "🏎️",
+    "franchise": "Eurobeat",
+    "badgeColor": "bg-amber-500 text-white",
+    "accentBorder": "border-amber-500",
+    "bgLight": "bg-amber-50/80 hover:bg-amber-100/80",
+    "bgDark": "dark:bg-amber-950/40 dark:hover:bg-amber-900/40",
+    "description": "High-RPM Super Eurobeat racing anthems for adrenaline and sprint races",
+    "descriptionJa": "最高速のユーロビート！超高速レースや集中クイズに最適",
+    "tracks": [
+      {
+        "id": "initial_d_lobby_01",
+        "role": "lobby",
+        "title": "Jirenma (Instrumental)",
+        "bpm": 136.0,
+        "duration": "4:26",
+        "score": 92.0,
+        "filename": "lobby_01_jirenma_instrumental.mp3",
+        "url": "/media/bgm/initial_d/lobby_01_jirenma_instrumental.mp3"
+      },
+      {
+        "id": "initial_d_lobby_02",
+        "role": "lobby",
+        "title": "Kiseki no Hana (Instrumental)",
+        "bpm": 143.6,
+        "duration": "4:00",
+        "score": 90.0,
+        "filename": "lobby_02_kiseki_no_hana_instrumental.mp3",
+        "url": "/media/bgm/initial_d/lobby_02_kiseki_no_hana_instrumental.mp3"
+      },
+      {
+        "id": "initial_d_quiz_01_shouri",
+        "role": "quiz",
+        "title": "Shouri",
+        "bpm": 136.0,
+        "duration": "1:00",
+        "score": 94.0,
+        "filename": "quiz_01_shouri.mp3",
+        "url": "/media/bgm/initial_d/quiz_01_shouri.mp3"
+      },
+      {
+        "id": "initial_d_quiz_02_never_mind",
+        "role": "quiz",
+        "title": "Never Mind",
+        "bpm": 136.0,
+        "duration": "3:25",
+        "score": 94.0,
+        "filename": "quiz_02_never_mind.mp3",
+        "url": "/media/bgm/initial_d/quiz_02_never_mind.mp3"
+      },
+      {
+        "id": "initial_d_quiz_03_counterattack",
+        "role": "quiz",
+        "title": "Counterattack!",
+        "bpm": 136.0,
+        "duration": "2:30",
+        "score": 94.0,
+        "filename": "quiz_03_counterattack.mp3",
+        "url": "/media/bgm/initial_d/quiz_03_counterattack.mp3"
+      },
+      {
+        "id": "initial_d_quiz_04",
+        "role": "quiz",
+        "title": "Back on the Rocks",
+        "bpm": 155.0,
+        "duration": "4:49",
+        "score": 92.0,
+        "filename": "quiz_04_back_on_the_rocks.mp3",
+        "url": "/media/bgm/initial_d/quiz_04_back_on_the_rocks.mp3"
+      },
+      {
+        "id": "initial_d_rush_01_saturday_night_fever",
+        "role": "rush",
+        "title": "Saturday Night Fever",
+        "bpm": 155.0,
+        "duration": "4:47",
+        "score": 95.0,
+        "filename": "rush_01_saturday_night_fever.mp3",
+        "url": "/media/bgm/initial_d/rush_01_saturday_night_fever.mp3"
+      },
+      {
+        "id": "initial_d_rush_02_i_like_you_like_you_are",
+        "role": "rush",
+        "title": "I Like You Like You Are",
+        "bpm": 155.0,
+        "duration": "4:29",
+        "score": 94.0,
+        "filename": "rush_02_i_like_you_like_you_are.mp3",
+        "url": "/media/bgm/initial_d/rush_02_i_like_you_like_you_are.mp3"
+      },
+      {
+        "id": "initial_d_rush_03_around_the_world",
+        "role": "rush",
+        "title": "Around the World",
+        "bpm": 154.0,
+        "duration": "4:49",
+        "score": 93.0,
+        "filename": "rush_03_around_the_world.mp3",
+        "url": "/media/bgm/initial_d/rush_03_around_the_world.mp3"
+      },
+      {
+        "id": "initial_d_rush_04_big_in_japan",
+        "role": "rush",
+        "title": "Big in Japan",
+        "bpm": 154.0,
+        "duration": "4:44",
+        "score": 93.0,
+        "filename": "rush_04_big_in_japan.mp3",
+        "url": "/media/bgm/initial_d/rush_04_big_in_japan.mp3"
+      },
+      {
+        "id": "initial_d_rush_05_i_love_you_like_you_are",
+        "role": "rush",
+        "title": "I Love You Like You Are",
+        "bpm": 154.0,
+        "duration": "4:11",
+        "score": 93.0,
+        "filename": "rush_05_i_love_you_like_you_are.mp3",
+        "url": "/media/bgm/initial_d/rush_05_i_love_you_like_you_are.mp3"
+      },
+      {
+        "id": "initial_d_boss_01_dont_stand_so_close",
+        "role": "boss",
+        "title": "Don't Stand So Close",
+        "bpm": 158.0,
+        "duration": "4:32",
+        "score": 95.0,
+        "filename": "boss_01_dont_stand_so_close.mp3",
+        "url": "/media/bgm/initial_d/boss_01_dont_stand_so_close.mp3"
+      },
+      {
+        "id": "initial_d_boss_02_boom_boom_japan",
+        "role": "boss",
+        "title": "Boom Boom Japan",
+        "bpm": 158.0,
+        "duration": "2:34",
+        "score": 95.0,
+        "filename": "boss_02_boom_boom_japan.mp3",
+        "url": "/media/bgm/initial_d/boss_02_boom_boom_japan.mp3"
+      },
+      {
+        "id": "initial_d_boss_03_dancing",
+        "role": "boss",
+        "title": "Dancing",
+        "bpm": 156.0,
+        "duration": "2:35",
+        "score": 94.0,
+        "filename": "boss_03_dancing.mp3",
+        "url": "/media/bgm/initial_d/boss_03_dancing.mp3"
+      },
+      {
+        "id": "initial_d_boss_04_be_my_babe",
+        "role": "boss",
+        "title": "Be My Babe",
+        "bpm": 156.0,
+        "duration": "5:12",
+        "score": 94.0,
+        "filename": "boss_04_be_my_babe.mp3",
+        "url": "/media/bgm/initial_d/boss_04_be_my_babe.mp3"
+      },
+      {
+        "id": "initial_d_boss_05_maybe_tonite",
+        "role": "boss",
+        "title": "Maybe Tonite",
+        "bpm": 155.0,
+        "duration": "2:32",
+        "score": 93.0,
+        "filename": "boss_05_maybe_tonite.mp3",
+        "url": "/media/bgm/initial_d/boss_05_maybe_tonite.mp3"
+      },
+      {
+        "id": "initial_d_podium_01_the_race_is_over",
+        "role": "podium",
+        "title": "The Race is Over",
+        "bpm": 85.0,
+        "duration": "2:14",
+        "score": 91.0,
+        "filename": "podium_01_the_race_is_over.mp3",
+        "url": "/media/bgm/initial_d/podium_01_the_race_is_over.mp3"
+      },
+      {
+        "id": "initial_d_podium_02_takumi_shouri",
+        "role": "podium",
+        "title": "Takumi Shouri",
+        "bpm": 112.3,
+        "duration": "4:06",
+        "score": 68.0,
+        "filename": "podium_02_takumi_shouri.mp3",
+        "url": "/media/bgm/initial_d/podium_02_takumi_shouri.mp3"
+      }
+    ]
+  },
+  "persona_5": {
+    "id": "persona_5",
+    "name": "Phantom Thieves",
+    "nameJa": "怪盗団のジャズ",
+    "icon": "🎷",
+    "franchise": "Acid Jazz & Funk",
+    "badgeColor": "bg-rose-500 text-white",
+    "accentBorder": "border-rose-500",
+    "bgLight": "bg-rose-50/80 hover:bg-rose-100/80",
+    "bgDark": "dark:bg-rose-950/40 dark:hover:bg-rose-900/40",
+    "description": "Stylish tactical funk, brass grooves and acid jazz",
+    "descriptionJa": "スタイリッシュなアシッドジャズ＆ファンクサウンド",
+    "tracks": [
+      {
+        "id": "persona_5_lobby_01_sarudahiko",
+        "role": "lobby",
+        "title": "Sarudahiko",
+        "bpm": 98.0,
+        "duration": "1:55",
+        "score": 90.0,
+        "filename": "lobby_01_sarudahiko.mp3",
+        "url": "/media/bgm/persona_5/lobby_01_sarudahiko.mp3"
+      },
+      {
+        "id": "persona_5_lobby_02_royal_palace_waltz",
+        "role": "lobby",
+        "title": "Royal Palace Waltz",
+        "bpm": 95.0,
+        "duration": "2:13",
+        "score": 89.0,
+        "filename": "lobby_02_royal_palace_waltz.mp3",
+        "url": "/media/bgm/persona_5/lobby_02_royal_palace_waltz.mp3"
+      },
+      {
+        "id": "persona_5_quiz_01_rivers_in_the_desert",
+        "role": "quiz",
+        "title": "Rivers in the Desert",
+        "bpm": 131.0,
+        "duration": "5:15",
+        "score": 94.0,
+        "filename": "quiz_01_rivers_in_the_desert.mp3",
+        "url": "/media/bgm/persona_5/quiz_01_rivers_in_the_desert.mp3"
+      },
+      {
+        "id": "persona_5_quiz_02_kinpaku",
+        "role": "quiz",
+        "title": "Kinpaku",
+        "bpm": 130.0,
+        "duration": "1:33",
+        "score": 93.0,
+        "filename": "quiz_02_kinpaku.mp3",
+        "url": "/media/bgm/persona_5/quiz_02_kinpaku.mp3"
+      },
+      {
+        "id": "persona_5_quiz_03_layer_cake",
+        "role": "quiz",
+        "title": "Layer Cake",
+        "bpm": 130.0,
+        "duration": "2:39",
+        "score": 93.0,
+        "filename": "quiz_03_layer_cake.mp3",
+        "url": "/media/bgm/persona_5/quiz_03_layer_cake.mp3"
+      },
+      {
+        "id": "persona_5_quiz_04_life_will_change",
+        "role": "quiz",
+        "title": "Life Will Change",
+        "bpm": 129.0,
+        "duration": "2:30",
+        "score": 92.0,
+        "filename": "quiz_04_life_will_change.mp3",
+        "url": "/media/bgm/persona_5/quiz_04_life_will_change.mp3"
+      },
+      {
+        "id": "persona_5_quiz_05_wake_up_get_up",
+        "role": "quiz",
+        "title": "Wake Up, Get Up, Get Out There",
+        "bpm": 129.0,
+        "duration": "2:52",
+        "score": 92.0,
+        "filename": "quiz_05_wake_up_get_up.mp3",
+        "url": "/media/bgm/persona_5/quiz_05_wake_up_get_up.mp3"
+      },
+      {
+        "id": "persona_5_rush_01_beneath_the_mask",
+        "role": "rush",
+        "title": "Beneath the Mask",
+        "bpm": 152.0,
+        "duration": "4:37",
+        "score": 93.0,
+        "filename": "rush_01_beneath_the_mask.mp3",
+        "url": "/media/bgm/persona_5/rush_01_beneath_the_mask.mp3"
+      },
+      {
+        "id": "persona_5_rush_02_beneath_the_mask_rain",
+        "role": "rush",
+        "title": "Beneath the Mask (Rain)",
+        "bpm": 144.0,
+        "duration": "4:38",
+        "score": 93.0,
+        "filename": "rush_02_beneath_the_mask_rain.mp3",
+        "url": "/media/bgm/persona_5/rush_02_beneath_the_mask_rain.mp3"
+      },
+      {
+        "id": "persona_5_rush_03_phantom_dash",
+        "role": "rush",
+        "title": "Phantom Dash",
+        "bpm": 136.0,
+        "duration": "4:55",
+        "score": 93.0,
+        "filename": "rush_03_phantom_dash.mp3",
+        "url": "/media/bgm/persona_5/rush_03_phantom_dash.mp3"
+      },
+      {
+        "id": "persona_5_rush_04_high_pressure",
+        "role": "rush",
+        "title": "High Pressure",
+        "bpm": 135.0,
+        "duration": "2:04",
+        "score": 93.0,
+        "filename": "rush_04_high_pressure.mp3",
+        "url": "/media/bgm/persona_5/rush_04_high_pressure.mp3"
+      },
+      {
+        "id": "persona_5_boss_01_blooming_rival",
+        "role": "boss",
+        "title": "Blooming Rival",
+        "bpm": 135.0,
+        "duration": "4:00",
+        "score": 93.0,
+        "filename": "boss_01_blooming_rival.mp3",
+        "url": "/media/bgm/persona_5/boss_01_blooming_rival.mp3"
+      },
+      {
+        "id": "persona_5_boss_02_new_beginning",
+        "role": "boss",
+        "title": "New Beginning",
+        "bpm": 134.0,
+        "duration": "2:27",
+        "score": 92.0,
+        "filename": "boss_02_new_beginning.mp3",
+        "url": "/media/bgm/persona_5/boss_02_new_beginning.mp3"
+      },
+      {
+        "id": "persona_5_boss_03_will_power",
+        "role": "boss",
+        "title": "Will Power",
+        "bpm": 143.6,
+        "duration": "2:45",
+        "score": 70.0,
+        "filename": "boss_03_will_power.mp3",
+        "url": "/media/bgm/persona_5/boss_03_will_power.mp3"
+      },
+      {
+        "id": "persona_5_boss_04_sunset_bridge",
+        "role": "boss",
+        "title": "Sunset Bridge",
+        "bpm": 133.0,
+        "duration": "1:41",
+        "score": 91.0,
+        "filename": "boss_04_sunset_bridge.mp3",
+        "url": "/media/bgm/persona_5/boss_04_sunset_bridge.mp3"
+      },
+      {
+        "id": "persona_5_podium_01_victory",
+        "role": "podium",
+        "title": "Victory",
+        "bpm": 120.0,
+        "duration": "1:33",
+        "score": 90.0,
+        "filename": "podium_01_victory.mp3",
+        "url": "/media/bgm/persona_5/podium_01_victory.mp3"
+      }
+    ]
+  },
+  "wangan": {
+    "id": "wangan",
+    "name": "Midnight Expressway",
+    "nameJa": "湾岸ミッドナイト",
+    "icon": "🌙",
+    "franchise": "Trance & Dance",
+    "badgeColor": "bg-cyan-500 text-white",
+    "accentBorder": "border-cyan-500",
+    "bgLight": "bg-cyan-50/80 hover:bg-cyan-100/80",
+    "bgDark": "dark:bg-cyan-950/40 dark:hover:bg-cyan-900/40",
+    "description": "Hypnotic high-speed highway trance and electronic energy",
+    "descriptionJa": "疾走感あふれるハイウェイトランス＆エレクトロニック",
+    "tracks": [
+      {
+        "id": "wangan_lobby_01_the_story_starts_here",
+        "role": "lobby",
+        "title": "The Story Starts Here",
+        "bpm": 102.0,
+        "duration": "3:07",
+        "score": 90.0,
+        "filename": "lobby_01_the_story_starts_here.mp3",
+        "url": "/media/bgm/wangan/lobby_01_the_story_starts_here.mp3"
+      },
+      {
+        "id": "wangan_lobby_02_love_and_gold",
+        "role": "lobby",
+        "title": "Love and Gold",
+        "bpm": 110.0,
+        "duration": "5:58",
+        "score": 89.0,
+        "filename": "lobby_02_love_and_gold.mp3",
+        "url": "/media/bgm/wangan/lobby_02_love_and_gold.mp3"
+      },
+      {
+        "id": "wangan_quiz_01_move_on",
+        "role": "quiz",
+        "title": "Move On",
+        "bpm": 134.0,
+        "duration": "5:26",
+        "score": 93.0,
+        "filename": "quiz_01_move_on.mp3",
+        "url": "/media/bgm/wangan/quiz_01_move_on.mp3"
+      },
+      {
+        "id": "wangan_quiz_02_maximum_synergy",
+        "role": "quiz",
+        "title": "Maximum Synergy",
+        "bpm": 134.0,
+        "duration": "6:07",
+        "score": 93.0,
+        "filename": "quiz_02_maximum_synergy.mp3",
+        "url": "/media/bgm/wangan/quiz_02_maximum_synergy.mp3"
+      },
+      {
+        "id": "wangan_quiz_03_i_will_follow_you",
+        "role": "quiz",
+        "title": "I Will Follow You",
+        "bpm": 135.0,
+        "duration": "6:48",
+        "score": 93.0,
+        "filename": "quiz_03_i_will_follow_you.mp3",
+        "url": "/media/bgm/wangan/quiz_03_i_will_follow_you.mp3"
+      },
+      {
+        "id": "wangan_quiz_04_high_speed_monster",
+        "role": "quiz",
+        "title": "High Speed Monster",
+        "bpm": 135.0,
+        "duration": "6:52",
+        "score": 93.0,
+        "filename": "quiz_04_high_speed_monster.mp3",
+        "url": "/media/bgm/wangan/quiz_04_high_speed_monster.mp3"
+      },
+      {
+        "id": "wangan_quiz_05_midnight_wave",
+        "role": "quiz",
+        "title": "Midnight Wave",
+        "bpm": 136.0,
+        "duration": "6:50",
+        "score": 94.0,
+        "filename": "quiz_05_midnight_wave.mp3",
+        "url": "/media/bgm/wangan/quiz_05_midnight_wave.mp3"
+      },
+      {
+        "id": "wangan_rush_01_beatific_smile",
+        "role": "rush",
+        "title": "Beatific Smile",
+        "bpm": 140.0,
+        "duration": "5:33",
+        "score": 94.0,
+        "filename": "rush_01_beatific_smile.mp3",
+        "url": "/media/bgm/wangan/rush_01_beatific_smile.mp3"
+      },
+      {
+        "id": "wangan_rush_02_glare",
+        "role": "rush",
+        "title": "Glare",
+        "bpm": 144.0,
+        "duration": "5:44",
+        "score": 94.0,
+        "filename": "rush_02_glare.mp3",
+        "url": "/media/bgm/wangan/rush_02_glare.mp3"
+      },
+      {
+        "id": "wangan_rush_03_driving_energy",
+        "role": "rush",
+        "title": "Driving Energy",
+        "bpm": 144.0,
+        "duration": "4:44",
+        "score": 94.0,
+        "filename": "rush_03_driving_energy.mp3",
+        "url": "/media/bgm/wangan/rush_03_driving_energy.mp3"
+      },
+      {
+        "id": "wangan_rush_04_drive_me_crazy",
+        "role": "rush",
+        "title": "Drive Me Crazy",
+        "bpm": 136.0,
+        "duration": "6:02",
+        "score": 74.0,
+        "filename": "rush_04_drive_me_crazy.mp3",
+        "url": "/media/bgm/wangan/rush_04_drive_me_crazy.mp3"
+      },
+      {
+        "id": "wangan_rush_05_feel_the_moment",
+        "role": "rush",
+        "title": "Feel the Moment",
+        "bpm": 144.0,
+        "duration": "6:22",
+        "score": 94.0,
+        "filename": "rush_05_feel_the_moment.mp3",
+        "url": "/media/bgm/wangan/rush_05_feel_the_moment.mp3"
+      },
+      {
+        "id": "wangan_boss_01_love_my_own_life",
+        "role": "boss",
+        "title": "Love My Own Life",
+        "bpm": 135.0,
+        "duration": "6:20",
+        "score": 93.0,
+        "filename": "boss_01_love_my_own_life.mp3",
+        "url": "/media/bgm/wangan/boss_01_love_my_own_life.mp3"
+      },
+      {
+        "id": "wangan_boss_02_dont_stop",
+        "role": "boss",
+        "title": "Don't Stop",
+        "bpm": 137.0,
+        "duration": "5:04",
+        "score": 94.0,
+        "filename": "boss_02_dont_stop.mp3",
+        "url": "/media/bgm/wangan/boss_02_dont_stop.mp3"
+      },
+      {
+        "id": "wangan_boss_03_happy_moment",
+        "role": "boss",
+        "title": "Happy Moment",
+        "bpm": 138.0,
+        "duration": "4:20",
+        "score": 94.0,
+        "filename": "boss_03_happy_moment.mp3",
+        "url": "/media/bgm/wangan/boss_03_happy_moment.mp3"
+      },
+      {
+        "id": "wangan_podium_01_result_maxi1",
+        "role": "podium",
+        "title": "Result (Maxi 1)",
+        "bpm": 92.0,
+        "duration": "2:04",
+        "score": 90.0,
+        "filename": "podium_01_result_maxi1.mp3",
+        "url": "/media/bgm/wangan/podium_01_result_maxi1.mp3"
+      },
+      {
+        "id": "wangan_podium_02_result_maxi2",
+        "role": "podium",
+        "title": "Result (Maxi 2)",
+        "bpm": 139.6,
+        "duration": "2:13",
+        "score": 84.0,
+        "filename": "podium_02_result_maxi2.mp3",
+        "url": "/media/bgm/wangan/podium_02_result_maxi2.mp3"
+      }
+    ]
+  },
+  "dragon": {
+    "id": "dragon",
+    "name": "Dragon Legends",
+    "nameJa": "龍の伝説",
+    "icon": "🐉",
+    "franchise": "Heroic Rock & Brass",
+    "badgeColor": "bg-red-600 text-white",
+    "accentBorder": "border-red-600",
+    "bgLight": "bg-red-50/80 hover:bg-red-100/80",
+    "bgDark": "dark:bg-red-950/40 dark:hover:bg-red-900/40",
+    "description": "Heroic guitar riffs, brass fanfares, and fierce boss anthems",
+    "descriptionJa": "熱血ギターリフと勇壮なブラス！大熱戦のバトルサウンド",
+    "tracks": [
+      {
+        "id": "dragon_lobby_01_playful_stroll",
+        "role": "lobby",
+        "title": "Playful Stroll",
+        "bpm": 90.0,
+        "duration": "2:08",
+        "score": 89.0,
+        "filename": "lobby_01_playful_stroll.mp3",
+        "url": "/media/bgm/dragon/lobby_01_playful_stroll.mp3"
+      },
+      {
+        "id": "dragon_lobby_02_golden_lounge",
+        "role": "lobby",
+        "title": "Golden Lounge",
+        "bpm": 100.0,
+        "duration": "2:30",
+        "score": 90.0,
+        "filename": "lobby_02_golden_lounge.mp3",
+        "url": "/media/bgm/dragon/lobby_02_golden_lounge.mp3"
+      },
+      {
+        "id": "dragon_quiz_01_fish_on",
+        "role": "quiz",
+        "title": "Fish On!",
+        "bpm": 128.0,
+        "duration": "2:10",
+        "score": 92.0,
+        "filename": "quiz_01_fish_on.mp3",
+        "url": "/media/bgm/dragon/quiz_01_fish_on.mp3"
+      },
+      {
+        "id": "dragon_quiz_02_burn_gracefully",
+        "role": "quiz",
+        "title": "優美に燃ゆ",
+        "bpm": 132.0,
+        "duration": "2:40",
+        "score": 93.0,
+        "filename": "quiz_02_burn_gracefully.mp3",
+        "url": "/media/bgm/dragon/quiz_02_burn_gracefully.mp3"
+      },
+      {
+        "id": "dragon_quiz_03_for_will",
+        "role": "quiz",
+        "title": "For Will",
+        "bpm": 134.0,
+        "duration": "3:02",
+        "score": 93.0,
+        "filename": "quiz_03_for_will.mp3",
+        "url": "/media/bgm/dragon/quiz_03_for_will.mp3"
+      },
+      {
+        "id": "dragon_quiz_04_kamurocho_rhythm",
+        "role": "quiz",
+        "title": "Kamurocho Rhythm",
+        "bpm": 130.0,
+        "duration": "2:20",
+        "score": 92.0,
+        "filename": "quiz_04_kamurocho_rhythm.mp3",
+        "url": "/media/bgm/dragon/quiz_04_kamurocho_rhythm.mp3"
+      },
+      {
+        "id": "dragon_quiz_05_street_jazz_beat",
+        "role": "quiz",
+        "title": "Street Jazz Beat",
+        "bpm": 131.0,
+        "duration": "2:15",
+        "score": 92.0,
+        "filename": "quiz_05_street_jazz_beat.mp3",
+        "url": "/media/bgm/dragon/quiz_05_street_jazz_beat.mp3"
+      },
+      {
+        "id": "dragon_rush_01_kingdom_of_glory",
+        "role": "rush",
+        "title": "Kingdom of Glory",
+        "bpm": 148.0,
+        "duration": "3:10",
+        "score": 94.0,
+        "filename": "rush_01_kingdom_of_glory.mp3",
+        "url": "/media/bgm/dragon/rush_01_kingdom_of_glory.mp3"
+      },
+      {
+        "id": "dragon_rush_02_sprint_dash",
+        "role": "rush",
+        "title": "Sprint Dash",
+        "bpm": 145.0,
+        "duration": "2:45",
+        "score": 94.0,
+        "filename": "rush_02_sprint_dash.mp3",
+        "url": "/media/bgm/dragon/rush_02_sprint_dash.mp3"
+      },
+      {
+        "id": "dragon_rush_03_rock_stride",
+        "role": "rush",
+        "title": "Rock Stride",
+        "bpm": 142.0,
+        "duration": "2:50",
+        "score": 94.0,
+        "filename": "rush_03_rock_stride.mp3",
+        "url": "/media/bgm/dragon/rush_03_rock_stride.mp3"
+      },
+      {
+        "id": "dragon_rush_04_boxcelios",
+        "role": "rush",
+        "title": "Boxcelios",
+        "bpm": 140.0,
+        "duration": "2:30",
+        "score": 93.0,
+        "filename": "rush_04_boxcelios.mp3",
+        "url": "/media/bgm/dragon/rush_04_boxcelios.mp3"
+      },
+      {
+        "id": "dragon_rush_05_olivier",
+        "role": "rush",
+        "title": "Olivier",
+        "bpm": 138.0,
+        "duration": "2:40",
+        "score": 93.0,
+        "filename": "rush_05_olivier.mp3",
+        "url": "/media/bgm/dragon/rush_05_olivier.mp3"
+      },
+      {
+        "id": "dragon_boss_01_blaze",
+        "role": "boss",
+        "title": "Blaze",
+        "bpm": 146.0,
+        "duration": "3:30",
+        "score": 94.0,
+        "filename": "boss_01_blaze.mp3",
+        "url": "/media/bgm/dragon/boss_01_blaze.mp3"
+      },
+      {
+        "id": "dragon_boss_02_grand_clash",
+        "role": "boss",
+        "title": "Grand Clash",
+        "bpm": 150.0,
+        "duration": "3:15",
+        "score": 95.0,
+        "filename": "boss_02_grand_clash.mp3",
+        "url": "/media/bgm/dragon/boss_02_grand_clash.mp3"
+      },
+      {
+        "id": "dragon_boss_03_as_you_like",
+        "role": "boss",
+        "title": "As You Like",
+        "bpm": 144.0,
+        "duration": "2:55",
+        "score": 94.0,
+        "filename": "boss_03_as_you_like.mp3",
+        "url": "/media/bgm/dragon/boss_03_as_you_like.mp3"
+      },
+      {
+        "id": "dragon_boss_04_entrance_to_the_clash",
+        "role": "boss",
+        "title": "Entrance to the Clash",
+        "bpm": 142.0,
+        "duration": "3:05",
+        "score": 93.0,
+        "filename": "boss_04_entrance_to_the_clash.mp3",
+        "url": "/media/bgm/dragon/boss_04_entrance_to_the_clash.mp3"
+      },
+      {
+        "id": "dragon_boss_05_karakuribito",
+        "role": "boss",
+        "title": "カラクリビト",
+        "bpm": 140.0,
+        "duration": "2:50",
+        "score": 93.0,
+        "filename": "boss_05_karakuribito.mp3",
+        "url": "/media/bgm/dragon/boss_05_karakuribito.mp3"
+      },
+      {
+        "id": "dragon_podium_01_for_the_victory",
+        "role": "podium",
+        "title": "For the Victory",
+        "bpm": 95.0,
+        "duration": "2:20",
+        "score": 90.0,
+        "filename": "podium_01_for_the_victory.mp3",
+        "url": "/media/bgm/dragon/podium_01_for_the_victory.mp3"
+      },
+      {
+        "id": "dragon_podium_02_victory_road",
+        "role": "podium",
+        "title": "Victory Road",
+        "bpm": 100.0,
+        "duration": "2:40",
+        "score": 91.0,
+        "filename": "podium_02_victory_road.mp3",
+        "url": "/media/bgm/dragon/podium_02_victory_road.mp3"
+      }
+    ]
+  },
+  "mario": {
+    "id": "mario",
+    "name": "Mushroom Kingdom",
+    "nameJa": "キノコ王国",
+    "icon": "🍄",
+    "franchise": "Nintendo Classics",
+    "badgeColor": "bg-emerald-500 text-white",
+    "accentBorder": "border-emerald-500",
+    "bgLight": "bg-emerald-50/80 hover:bg-emerald-100/80",
+    "bgDark": "dark:bg-emerald-950/40 dark:hover:bg-emerald-900/40",
+    "description": "Whimsical and cheerful classic video game tunes",
+    "descriptionJa": "親しみやすい任天堂クラシックス！低学年にも大人気",
+    "tracks": [
+      {
+        "id": "mario_01",
+        "role": "rush",
+        "title": "Mario Kart 🏁",
+        "bpm": 134.0,
+        "duration": "2:30",
+        "score": 90.0,
+        "filename": "mariokart.mp3",
+        "url": "/media/bgm/mario/mariokart.mp3"
+      },
+      {
+        "id": "mario_02",
+        "role": "quiz",
+        "title": "New Super Mario Bros 2 🍄",
+        "bpm": 130.0,
+        "duration": "2:15",
+        "score": 88.0,
+        "filename": "newsupermariobros2.mp3",
+        "url": "/media/bgm/mario/newsupermariobros2.mp3"
+      },
+      {
+        "id": "mario_03",
+        "role": "quiz",
+        "title": "New Super Mario Bros Wii ⭐",
+        "bpm": 128.0,
+        "duration": "2:40",
+        "score": 88.0,
+        "filename": "newsupermariobroswii.mp3",
+        "url": "/media/bgm/mario/newsupermariobroswii.mp3"
+      },
+      {
+        "id": "mario_04",
+        "role": "quiz",
+        "title": "Super Mario World 🦖",
+        "bpm": 124.0,
+        "duration": "2:20",
+        "score": 86.0,
+        "filename": "supermarioworld.mp3",
+        "url": "/media/bgm/mario/supermarioworld.mp3"
+      },
+      {
+        "id": "mario_05",
+        "role": "lobby",
+        "title": "Wario Land 💰",
+        "bpm": 118.0,
+        "duration": "2:10",
+        "score": 85.0,
+        "filename": "warioland.mp3",
+        "url": "/media/bgm/mario/warioland.mp3"
+      }
+    ]
+  },
+  "none": {
+    "id": "none",
+    "name": "Silent (SFX Only)",
+    "nameJa": "無音 (効果音のみ)",
+    "icon": "🔇",
+    "franchise": "Classroom Audio",
+    "badgeColor": "bg-slate-500 text-white",
+    "accentBorder": "border-slate-500",
+    "bgLight": "bg-slate-100 hover:bg-slate-200",
+    "bgDark": "dark:bg-slate-800 dark:hover:bg-slate-700",
+    "description": "Background music muted; quiz sound effects and speech only",
+    "descriptionJa": "BGMなし・効果音と音声のみ",
+    "tracks": []
+  }
+};
+
+export const SOUND_PACK_LIST: SoundPack[] = Object.values(SOUND_PACKS);
+
+export function getSoundPack(id?: string): SoundPack {
+  if (!id || id === 'none') return SOUND_PACKS.none;
+  if (id === 'random_all' || id === 'all') return SOUND_PACKS.all_stars;
+  if (id === 'random_mario') return SOUND_PACKS.mario;
+  if (id === 'random_wangan') return SOUND_PACKS.wangan;
+  return SOUND_PACKS[id] || SOUND_PACKS.all_stars;
+}

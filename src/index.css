@@ -1,0 +1,459 @@
+@import "tailwindcss";
+@config "../tailwind.config.js";
+
+@layer base {
+  html {
+    overscroll-behavior-y: none;
+    overscroll-behavior-x: none;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    overscroll-behavior-y: none;
+    overscroll-behavior-x: none;
+    min-height: 100vh;
+    min-height: 100dvh;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+  }
+
+  #root {
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* CRIT-HW-04: Global Touch Protection against iOS Safari Double-Tap Zoom */
+  *, *::before, *::after {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  button, 
+  [role="button"],
+  .touch-card,
+  input,
+  select {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Full lockout on high-speed game surfaces */
+  .game-touch-surface {
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .student-ui {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+    touch-action: manipulation;
+  }
+
+  /* Designate smooth scrollable trays without pull-to-refresh */
+  .scrollable-card-tray {
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* CRIT-TYPO-04: MEXT Typographically Compliant Ruby Baseline with High Back-Row Contrast */
+  ruby {
+    ruby-position: over;
+    ruby-align: center;
+    line-height: 1;
+  }
+
+  rt {
+    font-size: 0.58em;
+    line-height: 1;
+    font-weight: 600;
+    color: inherit;
+    opacity: 0.95;
+    user-select: none;
+    text-align: center;
+    letter-spacing: -0.01em;
+  }
+
+  .dark rt {
+    color: inherit;
+    opacity: 0.92;
+  }
+
+  /* Prevent low-contrast slate-400 on furigana from washing out on classroom projectors */
+  rt.text-slate-400 {
+    color: #475569; /* Crisp slate-600 in light mode */
+  }
+  .dark rt.text-slate-400 {
+    color: #cbd5e1; /* Crisp luminescent slate-300 in dark mode */
+  }
+}
+
+/* Custom Elementary School Styled Scrollbars */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+  border: 2px solid #f1f5f9;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: #0f172a;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: #334155;
+  border: 2px solid #0f172a;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+/* Playful bubbly button press */
+.btn-bubbly {
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.btn-bubbly:active {
+  transform: scale(0.95) translateY(2px);
+}
+
+/* Hide scrollbar for tabs */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* 3D Card Flip Utilities */
+.perspective-1000 {
+  perspective: 1000px;
+}
+.transform-style-3d {
+  transform-style: preserve-3d;
+}
+.backface-hidden {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
+
+@keyframes cardShake {
+  0%, 100% { transform: translateX(0) rotate(0deg); }
+  20% { transform: translateX(-6px) rotate(-3deg); }
+  40% { transform: translateX(6px) rotate(3deg); }
+  60% { transform: translateX(-4px) rotate(-2deg); }
+  80% { transform: translateX(4px) rotate(2deg); }
+}
+.animate-card-shake {
+  animation: cardShake 0.45s ease-in-out;
+}
+
+/* Theme Switching Instant Synchronization */
+.no-theme-transition,
+.no-theme-transition *,
+.no-theme-transition *::before,
+.no-theme-transition *::after {
+  -webkit-transition: none !important;
+  -moz-transition: none !important;
+  -o-transition: none !important;
+  -ms-transition: none !important;
+  transition: none !important;
+}
+
+@layer components {
+  /* 3D Toy-Box Push Button Base */
+  .btn-toy-base,
+  .btn-toy-emerald,
+  .btn-toy-rose,
+  .btn-toy-indigo,
+  .btn-toy-blue,
+  .btn-toy-amber {
+    position: relative;
+    border-radius: 1.25rem;
+    font-weight: 900;
+    transition: transform 0.08s cubic-bezier(0.34, 1.56, 0.64, 1),
+                box-shadow 0.08s cubic-bezier(0.34, 1.56, 0.64, 1),
+                border-bottom-width 0.08s ease-out;
+    transform: translateY(0);
+    user-select: none;
+    touch-action: manipulation;
+  }
+
+  /* Emerald Action Button */
+  .btn-toy-emerald {
+    @apply bg-emerald-500 text-white border-2 border-emerald-600;
+    box-shadow: 0 6px 0 0 #047857, 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+  }
+  .btn-toy-emerald:hover {
+    @apply bg-emerald-400;
+  }
+  .btn-toy-emerald:active {
+    transform: translateY(6px);
+    box-shadow: 0 0 0 0 #047857, 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+  }
+
+  /* Rose / Strawberry Button */
+  .btn-toy-rose {
+    @apply bg-rose-500 text-white border-2 border-rose-600;
+    box-shadow: 0 6px 0 0 #be123c, 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+  }
+  .btn-toy-rose:hover {
+    @apply bg-rose-400;
+  }
+  .btn-toy-rose:active {
+    transform: translateY(6px);
+    box-shadow: 0 0 0 0 #be123c, 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+  }
+
+  /* Royal Indigo Button */
+  .btn-toy-indigo {
+    @apply bg-indigo-600 text-white border-2 border-indigo-700;
+    box-shadow: 0 6px 0 0 #4338ca, 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+  }
+  .btn-toy-indigo:hover {
+    @apply bg-indigo-500;
+  }
+  .btn-toy-indigo:active {
+    transform: translateY(6px);
+    box-shadow: 0 0 0 0 #4338ca, 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+  }
+
+  /* Electric Cobalt Blue Button */
+  .btn-toy-blue {
+    @apply bg-blue-600 text-white border-2 border-blue-700;
+    box-shadow: 0 6px 0 0 #1d4ed8, 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+  }
+  .btn-toy-blue:hover {
+    @apply bg-blue-500;
+  }
+  .btn-toy-blue:active {
+    transform: translateY(6px);
+    box-shadow: 0 0 0 0 #1d4ed8, 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+  }
+
+  /* Wario Gold / Star Button */
+  .btn-toy-amber {
+    @apply bg-amber-400 text-slate-950 border-2 border-amber-500;
+    box-shadow: 0 6px 0 0 #b45309, 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+  }
+  .btn-toy-amber:hover {
+    @apply bg-amber-300;
+  }
+  .btn-toy-amber:active {
+    transform: translateY(6px);
+    box-shadow: 0 0 0 0 #b45309, 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+  }
+
+  /* Hard-Edged Comic-Book Card Tokens */
+  .card-comic {
+    border: 3.5px solid #0f172a;
+    box-shadow: 5px 5px 0px 0px #0f172a;
+  }
+  .card-comic-amber {
+    border: 3.5px solid #78350f;
+    box-shadow: 5px 5px 0px 0px #b45309;
+  }
+}
+
+@layer utilities {
+  /* Futakotamagawa TV Display Profile: Broadcast Midnight */
+  .theme-futako-tv {
+    --tv-bg: #070c18;
+    --tv-surface: #0f172a;
+    --tv-border: #1e293b;
+    --neon-blue: #38bdf8;
+    --neon-gold: #fbbf24;
+    --neon-emerald: #34d399;
+    --neon-rose: #fb7185;
+  }
+
+  .bg-futako-studio {
+    background-color: var(--tv-bg, #070c18);
+    background-image: 
+      radial-gradient(at 50% 0%, #1e1b4b 0px, transparent 60%),
+      radial-gradient(at 100% 100%, #0c4a6e 0px, transparent 40%);
+  }
+
+  /* Toyogaoka Paper Whiteboard Canvas Profile */
+  .theme-toyo-sheet {
+    --sheet-bg: #faf8f5;
+    --sheet-card: #ffffff;
+    --sheet-ink: #0f172a;
+    --toyo-red: #ef4444;
+    --toyo-blue: #2563eb;
+    --toyo-yellow: #facc15;
+    --toyo-green: #10b981;
+  }
+
+  .card-toyo-sheet {
+    background-color: var(--sheet-card, #ffffff);
+    border: 4px solid var(--sheet-ink, #0f172a);
+    box-shadow: 6px 6px 0px 0px var(--sheet-ink, #0f172a);
+    border-radius: 1.5rem;
+  }
+
+  .card-toyo-red {
+    background-color: #ef4444;
+    border: 4px solid #0f172a;
+    box-shadow: 5px 5px 0px 0px #0f172a;
+    color: #ffffff;
+    border-radius: 1.5rem;
+  }
+
+  .card-toyo-blue {
+    background-color: #2563eb;
+    border: 4px solid #0f172a;
+    box-shadow: 5px 5px 0px 0px #0f172a;
+    color: #ffffff;
+    border-radius: 1.5rem;
+  }
+
+  .card-toyo-yellow {
+    background-color: #facc15;
+    border: 4px solid #0f172a;
+    box-shadow: 5px 5px 0px 0px #0f172a;
+    color: #0f172a;
+    border-radius: 1.5rem;
+  }
+
+  .card-toyo-green {
+    background-color: #10b981;
+    border: 4px solid #0f172a;
+    box-shadow: 5px 5px 0px 0px #0f172a;
+    color: #ffffff;
+    border-radius: 1.5rem;
+  }
+
+  /* Toyogaoka Japanese Chalkboard Mode */
+  .theme-toyo-kokuban {
+    background-color: #163628;
+    background-image: 
+      radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.04) 0%, transparent 80%),
+      linear-gradient(to bottom, #132f23 0%, #193d2e 100%);
+    color: #f8fafc;
+  }
+
+  .chalk-text-white {
+    color: #ffffff;
+    text-shadow: 0 0 1px rgba(255, 255, 255, 0.9), 0 0 4px rgba(255, 255, 255, 0.4);
+    font-family: 'UD Digi Kyokasho NP-R', 'BIZ UDPGothic', sans-serif;
+    font-weight: 900;
+  }
+
+  .chalk-text-yellow {
+    color: #fef08a;
+    text-shadow: 0 0 1px rgba(254, 240, 138, 0.9), 0 0 4px rgba(250, 204, 21, 0.4);
+    font-family: 'UD Digi Kyokasho NP-R', 'BIZ UDPGothic', sans-serif;
+    font-weight: 900;
+  }
+}
+
+/* =========================================================================
+   PERMANENT GLOBAL CUD PATTERNS (Guaranteed Unpurgeable by Tailwind)
+   ========================================================================= */
+
+/* RED ▲ (Triangle) -> 45° Bold Diagonal Hatching */
+.pattern-triangle {
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.30) 0px,
+    rgba(255, 255, 255, 0.30) 3.5px,
+    transparent 3.5px,
+    transparent 14px
+  ) !important;
+}
+
+/* BLUE ◆ (Diamond) -> 45° Intersecting Diamond Argyle Mesh */
+.pattern-diamond {
+  background-image: 
+    repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.30) 0px, rgba(255, 255, 255, 0.30) 3px, transparent 3px, transparent 16px),
+    repeating-linear-gradient(-45deg, rgba(255, 255, 255, 0.30) 0px, rgba(255, 255, 255, 0.30) 3px, transparent 3px, transparent 16px) !important;
+}
+
+/* YELLOW ● (Circle) -> High-Contrast Stamped Dark Polka Dots */
+.pattern-circle {
+  background-image: radial-gradient(
+    circle,
+    rgba(15, 23, 42, 0.32) 4px,
+    transparent 4px
+  ) !important;
+  background-size: 18px 18px !important;
+}
+
+/* GREEN ■ (Square) -> 90° Cartesian Square Graph Grid */
+.pattern-square {
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.32) 3px, transparent 3px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.32) 3px, transparent 3px) !important;
+  background-size: 16px 16px !important;
+}
+
+
+/* =========================================================================
+   A4 PRINT ENGINE STYLES (Worksheets & Educational Materials)
+   ========================================================================= */
+@media print {
+  @page {
+    margin: 6mm 8mm;
+  }
+
+  html, body, #root {
+    background: #ffffff !important;
+    color: #000000 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  header, nav, footer, .print\:hidden {
+    display: none !important;
+  }
+
+  .print\:block {
+    display: block !important;
+  }
+
+  .worksheet-a4-page {
+    page-break-after: always !important;
+    break-after: page !important;
+    break-inside: avoid !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+    background: #ffffff !important;
+  }
+
+  .worksheet-a4-page.landscape {
+    width: 297mm !important;
+    max-width: 297mm !important;
+    height: 196mm !important;
+    max-height: 196mm !important;
+  }
+
+  .worksheet-a4-page.portrait {
+    width: 210mm !important;
+    max-width: 210mm !important;
+    height: 275mm !important;
+    max-height: 275mm !important;
+  }
+}

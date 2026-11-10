@@ -1,0 +1,224 @@
+# ==============================================================================
+# LEVI-SENSEI KATAKANA LOANWORDS & FALSE FRIENDS (MEXT Grades 1-6)
+# Format: english_lemma: katakana_pronunciation
+# ==============================================================================
+
+# --- 1. The Core Video 16 (Food & Sweets) ---
+banana: バナナ
+chocolate: チョコレート
+jelly: ゼリー
+gummy candy: グミ
+gummy: グミ
+pudding: プリン
+ice cream: アイスクリーム
+popcorn: ポップコーン
+marshmallow: マシュマロ
+cake: ケーキ
+strawberry: ストロベリー
+yogurt: ヨーグルト
+potato chips: ポテトチップス
+pineapple: パイナップル
+cream puff: シュークリーム
+hot chocolate: ココア
+orange juice: オレンジジュース
+
+# --- 2. More Fruits, Vegetables & Sweets ---
+apple juice: アップルジュース
+melon: メロン
+lemon: レモン
+orange: オレンジ
+kiwi: キウイ
+peach: ピーチ
+grape: グレープ
+cherry: チェリー
+mango: マンゴー
+papaya: パパイヤ
+tomato: トマト
+carrot: キャロット
+potato: ポテト
+cabbage: キャベツ
+onion: オニオン
+corn: コーン
+green pepper: ピーマン
+broccoli: ブロッコリー
+asparagus: アスパラガス
+lettuce: レタス
+cucumber: キューカンバー
+donut: ドーナツ
+doughnut: ドーナツ
+cookie: クッキー
+jam: ジャム
+pie: パイ
+apple pie: アップルパイ
+tart: タルト
+pancake: パンケーキ
+
+# --- 3. Fast Food, Meals & Drinks ---
+pizza: ピザ
+hamburger: ハンバーガー
+sandwich: サンドイッチ
+spaghetti: スパゲッティ
+salad: サラダ
+steak: ステーキ
+soup: スープ
+coffee: コーヒー
+milk: ミルク
+tea: ティー
+cola: コーラ
+butter: バター
+cheese: チーズ
+sausage: ソーセージ
+ham: ハム
+toast: トースト
+curry: カレー
+curry and rice: カレーライス
+cereal: シリアル
+bacon: ベーコン
+omelet: オムレツ
+omelette: オムレツ
+beef: ビーフ
+pork: ポーク
+chicken: チキン
+hot dog: ホットドッグ
+french fries: フライドポテト
+
+# --- 4. Musical Instruments ---
+piano: ピアノ
+guitar: ギター
+recorder: リコーダー
+drum: ドラム
+drums: ドラム
+trumpet: トランペット
+violin: バイオリン
+flute: フルート
+harmonica: ハーモニカ
+tambourine: タンバリン
+castanets: カスタネット
+keyboard: キーボード
+xylophone: シロフォン
+triangle: トライアングル
+handbell: ハンドベル
+bell: ベル
+
+# --- 5. Sports, Games & Activities ---
+soccer: サッカー
+baseball: ベースボール
+basketball: バスケットボール
+volleyball: バレーボール
+tennis: テニス
+badminton: バドミントン
+table tennis: ピンポン
+dodgeball: ドッジボール
+skiing: スキー
+skating: スケート
+snowboarding: スノーボード
+golf: ゴルフ
+swimming: スイミング
+running: ランニング
+marathon: マラソン
+dance: ダンス
+game: ゲーム
+video game: テレビゲーム
+puzzle: パズル
+card: カード
+card game: カードゲーム
+fishing: フィッシング
+camping: キャンプ
+
+# --- 6. Loanword Animals (No native Japanese species name) ---
+koala: コアラ
+panda: パンダ
+kangaroo: カンガルー
+gorilla: ゴリラ
+penguin: ペンギン
+hamster: ハムスター
+cheetah: チーター
+chimpanzee: チンパンジー
+zebra: ゼブラ
+flamingo: フラミンゴ
+chameleon: カメレオン
+dinosaur: ダイナソー
+
+# --- 7. Vehicles & Transportation ---
+bus: バス
+taxi: タクシー
+truck: トラック
+helicopter: ヘリコプター
+rocket: ロケット
+ambulance: アンビュランス
+yacht: ヨット
+canoe: カヌー
+motorbike: バイク
+motorcycle: バイク
+ferry: フェリー
+jet: ジェット機
+
+# --- 8. Facilities, Buildings & Places ---
+supermarket: スーパーマーケット
+convenience store: コンビニ
+department store: デパート
+hotel: ホテル
+restaurant: レストラン
+pool: プール
+park: パーク
+stadium: スタジアム
+museum: ミュージアム
+hospital: ホスピタル
+bakery: ベーカリー
+
+# --- 9. Clothing, Fashion & Accessories ---
+t-shirt: Tシャツ
+shirt: シャツ
+sweater: セーター
+jacket: ジャケット
+coat: コート
+cap: キャップ
+socks: ソックス
+boots: ブーツ
+pajamas: パジャマ
+belt: ベルト
+apron: エプロン
+ribbon: リボン
+badge: バッジ
+uniform: ユニフォーム
+sneakers: スニーカー
+sandals: サンダル
+scarf: スカーフ
+muffler: マフラー
+
+# --- 10. School, Stationery & Technology ---
+notebook: ノート
+marker: マーカー
+glue: グルー
+tape: テープ
+desk: デスク
+locker: ロッカー
+calendar: カレンダー
+computer: コンピューター
+tablet: タブレット
+mouse: マウス
+screen: スクリーン
+cup: カップ
+glass: コップ
+pen: ペン
+ballpoint pen: ボールペン
+scissors: シザーズ
+eraser: イレーザー
+
+# --- 11. Classic False Friends (和製英語) ---
+mechanical pencil: シャープペン
+outlet: コンセント
+energy: エネルギー
+plastic bag: ビニール袋
+stapler: ホッチキス
+
+# --- 12. Colors & Shapes ---
+pink: ピンク
+orange: オレンジ
+purple: パープル
+gold: ゴールド
+silver: シルバー
+rainbow: レインボー
+star: スター
+heart: ハート
+diamond: ダイヤ

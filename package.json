@@ -1,0 +1,53 @@
+{
+  "name": "levi-sensei-platform",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build && node scripts/copy_assets.cjs",
+    "preview": "vite preview",
+    "deploy": "npm run build && firebase deploy",
+    "deploy:hosting": "npm run build && firebase deploy --only hosting",
+    "deploy:rules": "firebase deploy --only database",
+    "purge-rooms": "node scripts/purge_rooms.cjs",
+    "kill-rooms": "node scripts/purge_rooms.cjs",
+    "purge-roster": "node scripts/purge_roster.cjs",
+    "compress:bgm": "node scripts/compress_bgm.cjs",
+    "deploy:v2": "npm run build && firebase deploy -P v2 --only hosting",
+    "deploy:both": "npm run build && firebase deploy -P default --only hosting && firebase deploy -P v2 --only hosting",
+    "deploy:pages": "npm run build && npx wrangler@3 pages deploy dist --project-name=levi-sensei --branch=main --commit-dirty=true",
+    "deploy:cf": "npm run build && npx wrangler deploy"
+  },
+  "dependencies": {
+    "@types/qrcode": "^1.5.6",
+    "@types/three": "^0.186.0",
+    "canvas-confetti": "^1.9.4",
+    "firebase": "^13.0.0",
+    "lucide-react": "^1.53.0",
+    "qrcode": "^1.5.4",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "three": "^0.186.1",
+    "zustand": "^5.0.15"
+  },
+  "devDependencies": {
+    "@ffmpeg-installer/ffmpeg": "^1.1.0",
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/canvas-confetti": "^1.9.0",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.2",
+    "autoprefixer": "^10.6.1",
+    "postcss": "^8.5.29",
+    "rollup-plugin-visualizer": "^7.1.1",
+    "sharp": "^0.35.5",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.4"
+  },
+  "allowScripts": {
+    "@firebase/util@1.15.3": true,
+    "protobufjs@7.6.6": true
+  }
+}

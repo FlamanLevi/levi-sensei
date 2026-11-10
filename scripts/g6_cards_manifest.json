@@ -1,0 +1,1532 @@
+{
+  "u01": [
+    {
+      "slot": "00",
+      "en": "Australia"
+    },
+    {
+      "slot": "01",
+      "en": "Azerbaijan"
+    },
+    {
+      "slot": "02",
+      "en": "Brazil"
+    },
+    {
+      "slot": "03",
+      "en": "Canada"
+    },
+    {
+      "slot": "04",
+      "en": "Chile"
+    },
+    {
+      "slot": "05",
+      "en": "China"
+    },
+    {
+      "slot": "06",
+      "en": "Egypt"
+    },
+    {
+      "slot": "07",
+      "en": "Finland"
+    },
+    {
+      "slot": "08",
+      "en": "France"
+    },
+    {
+      "slot": "09",
+      "en": "Germany"
+    },
+    {
+      "slot": "10",
+      "en": "India"
+    },
+    {
+      "slot": "11",
+      "en": "Italy"
+    },
+    {
+      "slot": "12",
+      "en": "Japan"
+    },
+    {
+      "slot": "13",
+      "en": "Kenya"
+    },
+    {
+      "slot": "14",
+      "en": "Korea"
+    },
+    {
+      "slot": "15",
+      "en": "New_Zealand"
+    },
+    {
+      "slot": "16",
+      "en": "Norway"
+    },
+    {
+      "slot": "17",
+      "en": "Peru"
+    },
+    {
+      "slot": "18",
+      "en": "Russia"
+    },
+    {
+      "slot": "19",
+      "en": "Saudi_Arabia"
+    },
+    {
+      "slot": "20",
+      "en": "South_Africa"
+    },
+    {
+      "slot": "21",
+      "en": "Thailand"
+    },
+    {
+      "slot": "22",
+      "en": "the_Maldives"
+    },
+    {
+      "slot": "23",
+      "en": "the_Philippines"
+    },
+    {
+      "slot": "24",
+      "en": "the_U_K_"
+    },
+    {
+      "slot": "25",
+      "en": "the_U_S_"
+    }
+  ],
+  "u02": [
+    {
+      "slot": "00",
+      "en": "singing"
+    },
+    {
+      "slot": "01",
+      "en": "cooking"
+    },
+    {
+      "slot": "02",
+      "en": "swimming"
+    },
+    {
+      "slot": "03",
+      "en": "running"
+    },
+    {
+      "slot": "04",
+      "en": "dancing"
+    },
+    {
+      "slot": "05",
+      "en": "fishing"
+    },
+    {
+      "slot": "06",
+      "en": "sports"
+    },
+    {
+      "slot": "07",
+      "en": "kendama"
+    },
+    {
+      "slot": "08",
+      "en": "sewing"
+    },
+    {
+      "slot": "09",
+      "en": "jumping_rope"
+    },
+    {
+      "slot": "10",
+      "en": "riding_a_unicycle"
+    },
+    {
+      "slot": "11",
+      "en": "drawing_pictures"
+    },
+    {
+      "slot": "12",
+      "en": "making_sweets"
+    },
+    {
+      "slot": "13",
+      "en": "playing_the_piano"
+    },
+    {
+      "slot": "14",
+      "en": "playing_the_recorder"
+    },
+    {
+      "slot": "15",
+      "en": "playing_video_games"
+    }
+  ],
+  "u03": [
+    {
+      "slot": "00",
+      "en": "spring"
+    },
+    {
+      "slot": "01",
+      "en": "summer"
+    },
+    {
+      "slot": "02",
+      "en": "fall"
+    },
+    {
+      "slot": "03",
+      "en": "winter"
+    }
+  ],
+  "u04": [
+    {
+      "slot": "00",
+      "en": "January"
+    },
+    {
+      "slot": "01",
+      "en": "February"
+    },
+    {
+      "slot": "02",
+      "en": "March"
+    },
+    {
+      "slot": "03",
+      "en": "April"
+    },
+    {
+      "slot": "04",
+      "en": "May"
+    },
+    {
+      "slot": "05",
+      "en": "June"
+    },
+    {
+      "slot": "06",
+      "en": "July"
+    },
+    {
+      "slot": "07",
+      "en": "August"
+    },
+    {
+      "slot": "08",
+      "en": "September"
+    },
+    {
+      "slot": "09",
+      "en": "October"
+    },
+    {
+      "slot": "10",
+      "en": "November"
+    },
+    {
+      "slot": "11",
+      "en": "December"
+    }
+  ],
+  "u05": [
+    {
+      "slot": "00",
+      "en": "hanami"
+    },
+    {
+      "slot": "01",
+      "en": "the_Doll_Festival"
+    },
+    {
+      "slot": "02",
+      "en": "Children_s_Day"
+    },
+    {
+      "slot": "03",
+      "en": "the_Star_Festival"
+    },
+    {
+      "slot": "04",
+      "en": "a_summer_festival"
+    },
+    {
+      "slot": "05",
+      "en": "a_fireworks_festival"
+    },
+    {
+      "slot": "06",
+      "en": "tsukimi"
+    },
+    {
+      "slot": "07",
+      "en": "momijigari"
+    },
+    {
+      "slot": "08",
+      "en": "shichi-go-san"
+    },
+    {
+      "slot": "09",
+      "en": "oshogatsu"
+    },
+    {
+      "slot": "10",
+      "en": "setsubun"
+    },
+    {
+      "slot": "11",
+      "en": "a_snow_festival"
+    }
+  ],
+  "u06": [
+    {
+      "slot": "00",
+      "en": "see"
+    },
+    {
+      "slot": "01",
+      "en": "saw"
+    },
+    {
+      "slot": "02",
+      "en": "eat"
+    },
+    {
+      "slot": "03",
+      "en": "ate"
+    },
+    {
+      "slot": "04",
+      "en": "go"
+    },
+    {
+      "slot": "05",
+      "en": "went"
+    },
+    {
+      "slot": "06",
+      "en": "enjoy"
+    },
+    {
+      "slot": "07",
+      "en": "enjoyed"
+    },
+    {
+      "slot": "08",
+      "en": "visit"
+    },
+    {
+      "slot": "09",
+      "en": "visited"
+    },
+    {
+      "slot": "10",
+      "en": "make"
+    },
+    {
+      "slot": "11",
+      "en": "made"
+    },
+    {
+      "slot": "12",
+      "en": "talk"
+    },
+    {
+      "slot": "13",
+      "en": "talked"
+    },
+    {
+      "slot": "14",
+      "en": "sing"
+    },
+    {
+      "slot": "15",
+      "en": "sang"
+    },
+    {
+      "slot": "16",
+      "en": "cook"
+    },
+    {
+      "slot": "17",
+      "en": "cooked"
+    },
+    {
+      "slot": "18",
+      "en": "watch"
+    },
+    {
+      "slot": "19",
+      "en": "watched"
+    },
+    {
+      "slot": "20",
+      "en": "play"
+    },
+    {
+      "slot": "21",
+      "en": "played"
+    },
+    {
+      "slot": "22",
+      "en": "practice"
+    },
+    {
+      "slot": "23",
+      "en": "practiced"
+    },
+    {
+      "slot": "24",
+      "en": "like"
+    },
+    {
+      "slot": "25",
+      "en": "love"
+    },
+    {
+      "slot": "26",
+      "en": "have"
+    },
+    {
+      "slot": "27",
+      "en": "want"
+    },
+    {
+      "slot": "28",
+      "en": "buy"
+    },
+    {
+      "slot": "29",
+      "en": "clean"
+    },
+    {
+      "slot": "30",
+      "en": "climb"
+    },
+    {
+      "slot": "31",
+      "en": "dance"
+    },
+    {
+      "slot": "32",
+      "en": "draw"
+    },
+    {
+      "slot": "33",
+      "en": "drink"
+    },
+    {
+      "slot": "34",
+      "en": "fly"
+    },
+    {
+      "slot": "35",
+      "en": "help"
+    },
+    {
+      "slot": "36",
+      "en": "jump"
+    },
+    {
+      "slot": "37",
+      "en": "listen"
+    },
+    {
+      "slot": "38",
+      "en": "read"
+    },
+    {
+      "slot": "39",
+      "en": "run"
+    },
+    {
+      "slot": "40",
+      "en": "stand_up"
+    },
+    {
+      "slot": "41",
+      "en": "sit_down"
+    },
+    {
+      "slot": "42",
+      "en": "speak"
+    },
+    {
+      "slot": "43",
+      "en": "study"
+    },
+    {
+      "slot": "44",
+      "en": "swim"
+    },
+    {
+      "slot": "45",
+      "en": "walk"
+    },
+    {
+      "slot": "46",
+      "en": "write"
+    }
+  ],
+  "u07": [
+    {
+      "slot": "00",
+      "en": "morning"
+    },
+    {
+      "slot": "01",
+      "en": "afternoon"
+    },
+    {
+      "slot": "02",
+      "en": "evening"
+    },
+    {
+      "slot": "03",
+      "en": "night"
+    },
+    {
+      "slot": "04",
+      "en": "Sunday"
+    },
+    {
+      "slot": "05",
+      "en": "Monday"
+    },
+    {
+      "slot": "06",
+      "en": "Tuesday"
+    },
+    {
+      "slot": "07",
+      "en": "Wednesday"
+    },
+    {
+      "slot": "08",
+      "en": "Thursday"
+    },
+    {
+      "slot": "09",
+      "en": "Friday"
+    },
+    {
+      "slot": "10",
+      "en": "Saturday"
+    },
+    {
+      "slot": "11",
+      "en": "always"
+    },
+    {
+      "slot": "12",
+      "en": "usually"
+    },
+    {
+      "slot": "13",
+      "en": "sometimes"
+    },
+    {
+      "slot": "14",
+      "en": "never"
+    }
+  ],
+  "u08": [
+    {
+      "slot": "00",
+      "en": "get_up"
+    },
+    {
+      "slot": "01",
+      "en": "eat_breakfast"
+    },
+    {
+      "slot": "02",
+      "en": "brush_my_teeth"
+    },
+    {
+      "slot": "03",
+      "en": "take_out_the_garbage"
+    },
+    {
+      "slot": "04",
+      "en": "leave_my_house"
+    },
+    {
+      "slot": "05",
+      "en": "go_to_school"
+    },
+    {
+      "slot": "06",
+      "en": "eat_lunch"
+    },
+    {
+      "slot": "07",
+      "en": "go_home"
+    },
+    {
+      "slot": "08",
+      "en": "clean_my_room"
+    },
+    {
+      "slot": "09",
+      "en": "do_my_homework"
+    },
+    {
+      "slot": "10",
+      "en": "play_with_my_friends"
+    },
+    {
+      "slot": "11",
+      "en": "watch_TV"
+    },
+    {
+      "slot": "12",
+      "en": "walk_the_dog"
+    },
+    {
+      "slot": "13",
+      "en": "cook_dinner"
+    },
+    {
+      "slot": "14",
+      "en": "set_the_table"
+    },
+    {
+      "slot": "15",
+      "en": "eat_dinner"
+    },
+    {
+      "slot": "16",
+      "en": "clear_the_table"
+    },
+    {
+      "slot": "17",
+      "en": "wash_the_dishes"
+    },
+    {
+      "slot": "18",
+      "en": "clean_the_bath"
+    },
+    {
+      "slot": "19",
+      "en": "take_a_bath"
+    },
+    {
+      "slot": "20",
+      "en": "go_to_bed"
+    }
+  ],
+  "u09": [
+    {
+      "slot": "00",
+      "en": "house"
+    },
+    {
+      "slot": "01",
+      "en": "school"
+    },
+    {
+      "slot": "02",
+      "en": "bookstore"
+    },
+    {
+      "slot": "03",
+      "en": "station"
+    },
+    {
+      "slot": "04",
+      "en": "library"
+    },
+    {
+      "slot": "05",
+      "en": "hospital"
+    },
+    {
+      "slot": "06",
+      "en": "fire_station"
+    },
+    {
+      "slot": "07",
+      "en": "police_station"
+    },
+    {
+      "slot": "08",
+      "en": "supermarket"
+    },
+    {
+      "slot": "09",
+      "en": "flower_shop"
+    },
+    {
+      "slot": "10",
+      "en": "shrine"
+    },
+    {
+      "slot": "11",
+      "en": "temple"
+    },
+    {
+      "slot": "12",
+      "en": "restaurant"
+    },
+    {
+      "slot": "13",
+      "en": "park"
+    },
+    {
+      "slot": "14",
+      "en": "stadium"
+    },
+    {
+      "slot": "15",
+      "en": "gym"
+    },
+    {
+      "slot": "16",
+      "en": "zoo"
+    },
+    {
+      "slot": "17",
+      "en": "aquarium"
+    },
+    {
+      "slot": "18",
+      "en": "museum"
+    },
+    {
+      "slot": "19",
+      "en": "castle"
+    },
+    {
+      "slot": "20",
+      "en": "junior_high_school"
+    },
+    {
+      "slot": "21",
+      "en": "department_store"
+    },
+    {
+      "slot": "22",
+      "en": "swimming_pool"
+    },
+    {
+      "slot": "23",
+      "en": "amusement_park"
+    }
+  ],
+  "u10": [
+    {
+      "slot": "00",
+      "en": "sea"
+    },
+    {
+      "slot": "01",
+      "en": "beach"
+    },
+    {
+      "slot": "02",
+      "en": "mountain"
+    },
+    {
+      "slot": "03",
+      "en": "forest"
+    },
+    {
+      "slot": "04",
+      "en": "rain_forest"
+    },
+    {
+      "slot": "05",
+      "en": "desert"
+    },
+    {
+      "slot": "06",
+      "en": "savanna"
+    },
+    {
+      "slot": "07",
+      "en": "lake"
+    },
+    {
+      "slot": "08",
+      "en": "pond"
+    },
+    {
+      "slot": "09",
+      "en": "river"
+    },
+    {
+      "slot": "10",
+      "en": "waterfall"
+    },
+    {
+      "slot": "11",
+      "en": "hot_spring"
+    },
+    {
+      "slot": "12",
+      "en": "sky"
+    },
+    {
+      "slot": "13",
+      "en": "sun"
+    },
+    {
+      "slot": "14",
+      "en": "stars"
+    },
+    {
+      "slot": "15",
+      "en": "tree"
+    },
+    {
+      "slot": "16",
+      "en": "nuts"
+    },
+    {
+      "slot": "17",
+      "en": "leaves"
+    },
+    {
+      "slot": "18",
+      "en": "grass"
+    },
+    {
+      "slot": "19",
+      "en": "flower"
+    },
+    {
+      "slot": "20",
+      "en": "fruits"
+    },
+    {
+      "slot": "21",
+      "en": "bugs"
+    },
+    {
+      "slot": "22",
+      "en": "seaweed"
+    },
+    {
+      "slot": "23",
+      "en": "water"
+    }
+  ],
+  "u11": [
+    {
+      "slot": "00",
+      "en": "bear"
+    },
+    {
+      "slot": "01",
+      "en": "cat"
+    },
+    {
+      "slot": "02",
+      "en": "chimpanzee"
+    },
+    {
+      "slot": "03",
+      "en": "cow"
+    },
+    {
+      "slot": "04",
+      "en": "dog"
+    },
+    {
+      "slot": "05",
+      "en": "elephant"
+    },
+    {
+      "slot": "06",
+      "en": "giraffe"
+    },
+    {
+      "slot": "07",
+      "en": "gorilla"
+    },
+    {
+      "slot": "08",
+      "en": "hamster"
+    },
+    {
+      "slot": "09",
+      "en": "hippo"
+    },
+    {
+      "slot": "10",
+      "en": "horse"
+    },
+    {
+      "slot": "11",
+      "en": "kangaroo"
+    },
+    {
+      "slot": "12",
+      "en": "koala"
+    },
+    {
+      "slot": "13",
+      "en": "lion"
+    },
+    {
+      "slot": "14",
+      "en": "monkey"
+    },
+    {
+      "slot": "15",
+      "en": "mouse"
+    },
+    {
+      "slot": "16",
+      "en": "orangutan"
+    },
+    {
+      "slot": "17",
+      "en": "panda"
+    },
+    {
+      "slot": "18",
+      "en": "pig"
+    },
+    {
+      "slot": "19",
+      "en": "polar_bear"
+    },
+    {
+      "slot": "20",
+      "en": "rabbit"
+    },
+    {
+      "slot": "21",
+      "en": "red_panda"
+    },
+    {
+      "slot": "22",
+      "en": "tiger"
+    },
+    {
+      "slot": "23",
+      "en": "zebra"
+    },
+    {
+      "slot": "24",
+      "en": "bird"
+    },
+    {
+      "slot": "25",
+      "en": "eagle"
+    },
+    {
+      "slot": "26",
+      "en": "owl"
+    },
+    {
+      "slot": "27",
+      "en": "penguin"
+    },
+    {
+      "slot": "28",
+      "en": "caterpillar"
+    },
+    {
+      "slot": "29",
+      "en": "grasshopper"
+    },
+    {
+      "slot": "30",
+      "en": "frog"
+    },
+    {
+      "slot": "31",
+      "en": "dolphin"
+    },
+    {
+      "slot": "32",
+      "en": "dugong"
+    },
+    {
+      "slot": "33",
+      "en": "fish"
+    },
+    {
+      "slot": "34",
+      "en": "jellyfish"
+    },
+    {
+      "slot": "35",
+      "en": "sea_turtle"
+    },
+    {
+      "slot": "36",
+      "en": "seal"
+    },
+    {
+      "slot": "37",
+      "en": "shark"
+    },
+    {
+      "slot": "38",
+      "en": "whale"
+    }
+  ],
+  "u12": [
+    {
+      "slot": "00",
+      "en": "head"
+    },
+    {
+      "slot": "01",
+      "en": "neck"
+    },
+    {
+      "slot": "02",
+      "en": "shoulder"
+    },
+    {
+      "slot": "03",
+      "en": "hand"
+    },
+    {
+      "slot": "04",
+      "en": "leg"
+    },
+    {
+      "slot": "05",
+      "en": "ear"
+    },
+    {
+      "slot": "06",
+      "en": "eye"
+    },
+    {
+      "slot": "07",
+      "en": "nose"
+    },
+    {
+      "slot": "08",
+      "en": "mouth"
+    },
+    {
+      "slot": "09",
+      "en": "tail"
+    },
+    {
+      "slot": "10",
+      "en": "fur"
+    },
+    {
+      "slot": "11",
+      "en": "wing"
+    },
+    {
+      "slot": "12",
+      "en": "feather"
+    },
+    {
+      "slot": "13",
+      "en": "shell"
+    },
+    {
+      "slot": "14",
+      "en": "horn"
+    }
+  ],
+  "u13": [
+    {
+      "slot": "00",
+      "en": "baseball_team"
+    },
+    {
+      "slot": "01",
+      "en": "basketball_team"
+    },
+    {
+      "slot": "02",
+      "en": "volleyball_team"
+    },
+    {
+      "slot": "03",
+      "en": "soccer_team"
+    },
+    {
+      "slot": "04",
+      "en": "tennis_team"
+    },
+    {
+      "slot": "05",
+      "en": "track_team"
+    },
+    {
+      "slot": "06",
+      "en": "art_club"
+    },
+    {
+      "slot": "07",
+      "en": "computer_club"
+    },
+    {
+      "slot": "08",
+      "en": "drama_club"
+    },
+    {
+      "slot": "09",
+      "en": "dance_club"
+    },
+    {
+      "slot": "10",
+      "en": "kendo_club"
+    },
+    {
+      "slot": "11",
+      "en": "newspaper_club"
+    },
+    {
+      "slot": "12",
+      "en": "science_club"
+    },
+    {
+      "slot": "13",
+      "en": "brass_band"
+    },
+    {
+      "slot": "14",
+      "en": "chorus"
+    }
+  ],
+  "u14": [
+    {
+      "slot": "00",
+      "en": "Japanese"
+    },
+    {
+      "slot": "01",
+      "en": "English"
+    },
+    {
+      "slot": "02",
+      "en": "math"
+    },
+    {
+      "slot": "03",
+      "en": "science"
+    },
+    {
+      "slot": "04",
+      "en": "social_studies"
+    },
+    {
+      "slot": "05",
+      "en": "music"
+    },
+    {
+      "slot": "06",
+      "en": "P_E_"
+    },
+    {
+      "slot": "07",
+      "en": "calligraphy"
+    },
+    {
+      "slot": "08",
+      "en": "arts_and_crafts"
+    },
+    {
+      "slot": "09",
+      "en": "home_economics"
+    },
+    {
+      "slot": "10",
+      "en": "moral_education"
+    }
+  ],
+  "u15": [
+    {
+      "slot": "00",
+      "en": "actor"
+    },
+    {
+      "slot": "01",
+      "en": "voice_actor"
+    },
+    {
+      "slot": "02",
+      "en": "artist"
+    },
+    {
+      "slot": "03",
+      "en": "manga_artist"
+    },
+    {
+      "slot": "04",
+      "en": "baseball_player"
+    },
+    {
+      "slot": "05",
+      "en": "soccer_player"
+    },
+    {
+      "slot": "06",
+      "en": "teacher"
+    },
+    {
+      "slot": "07",
+      "en": "nursery_teacher"
+    },
+    {
+      "slot": "08",
+      "en": "journalist"
+    },
+    {
+      "slot": "09",
+      "en": "chef"
+    },
+    {
+      "slot": "10",
+      "en": "farmer"
+    },
+    {
+      "slot": "11",
+      "en": "florist"
+    },
+    {
+      "slot": "12",
+      "en": "hair_stylist"
+    },
+    {
+      "slot": "13",
+      "en": "designer"
+    },
+    {
+      "slot": "14",
+      "en": "robot_creator"
+    },
+    {
+      "slot": "15",
+      "en": "pharmacist"
+    },
+    {
+      "slot": "16",
+      "en": "vet"
+    },
+    {
+      "slot": "17",
+      "en": "dentist"
+    },
+    {
+      "slot": "18",
+      "en": "nurse"
+    },
+    {
+      "slot": "19",
+      "en": "doctor"
+    },
+    {
+      "slot": "20",
+      "en": "astronaut"
+    },
+    {
+      "slot": "21",
+      "en": "firefighter"
+    },
+    {
+      "slot": "22",
+      "en": "zookeeper"
+    }
+  ],
+  "u16": [
+    {
+      "slot": "00",
+      "en": "entrance_ceremony"
+    },
+    {
+      "slot": "01",
+      "en": "art_festival"
+    },
+    {
+      "slot": "02",
+      "en": "drama_festival"
+    },
+    {
+      "slot": "03",
+      "en": "music_festival"
+    },
+    {
+      "slot": "04",
+      "en": "sports_day"
+    },
+    {
+      "slot": "05",
+      "en": "volunteer_day"
+    },
+    {
+      "slot": "06",
+      "en": "camping_trip"
+    },
+    {
+      "slot": "07",
+      "en": "field_trip"
+    },
+    {
+      "slot": "08",
+      "en": "school_trip"
+    },
+    {
+      "slot": "09",
+      "en": "swimming_meet"
+    },
+    {
+      "slot": "10",
+      "en": "graduation_ceremony"
+    }
+  ],
+  "u17": [
+    {
+      "slot": "00",
+      "en": "big"
+    },
+    {
+      "slot": "01",
+      "en": "small"
+    },
+    {
+      "slot": "02",
+      "en": "old"
+    },
+    {
+      "slot": "03",
+      "en": "new"
+    },
+    {
+      "slot": "04",
+      "en": "long"
+    },
+    {
+      "slot": "05",
+      "en": "short"
+    },
+    {
+      "slot": "06",
+      "en": "cool"
+    },
+    {
+      "slot": "07",
+      "en": "beautiful"
+    },
+    {
+      "slot": "08",
+      "en": "cute"
+    },
+    {
+      "slot": "09",
+      "en": "popular"
+    },
+    {
+      "slot": "10",
+      "en": "fresh"
+    }
+  ],
+  "u18": [
+    {
+      "slot": "00",
+      "en": "nice"
+    },
+    {
+      "slot": "01",
+      "en": "good"
+    },
+    {
+      "slot": "02",
+      "en": "great"
+    },
+    {
+      "slot": "03",
+      "en": "wonderful"
+    },
+    {
+      "slot": "04",
+      "en": "fun"
+    },
+    {
+      "slot": "05",
+      "en": "exciting"
+    },
+    {
+      "slot": "06",
+      "en": "interesting"
+    }
+  ],
+  "u19": [
+    {
+      "slot": "00",
+      "en": "zero"
+    },
+    {
+      "slot": "01",
+      "en": "one"
+    },
+    {
+      "slot": "02",
+      "en": "two"
+    },
+    {
+      "slot": "03",
+      "en": "three"
+    },
+    {
+      "slot": "04",
+      "en": "four"
+    },
+    {
+      "slot": "05",
+      "en": "five"
+    },
+    {
+      "slot": "06",
+      "en": "six"
+    },
+    {
+      "slot": "07",
+      "en": "seven"
+    },
+    {
+      "slot": "08",
+      "en": "eight"
+    },
+    {
+      "slot": "09",
+      "en": "nine"
+    },
+    {
+      "slot": "10",
+      "en": "ten"
+    },
+    {
+      "slot": "11",
+      "en": "eleven"
+    },
+    {
+      "slot": "12",
+      "en": "twelve"
+    },
+    {
+      "slot": "13",
+      "en": "thirteen"
+    },
+    {
+      "slot": "14",
+      "en": "fourteen"
+    },
+    {
+      "slot": "15",
+      "en": "fifteen"
+    },
+    {
+      "slot": "16",
+      "en": "sixteen"
+    },
+    {
+      "slot": "17",
+      "en": "seventeen"
+    },
+    {
+      "slot": "18",
+      "en": "eighteen"
+    },
+    {
+      "slot": "19",
+      "en": "nineteen"
+    },
+    {
+      "slot": "20",
+      "en": "twenty"
+    },
+    {
+      "slot": "21",
+      "en": "twenty-one"
+    },
+    {
+      "slot": "22",
+      "en": "twenty-two"
+    },
+    {
+      "slot": "23",
+      "en": "twenty-three"
+    },
+    {
+      "slot": "24",
+      "en": "twenty-four"
+    },
+    {
+      "slot": "25",
+      "en": "twenty-five"
+    },
+    {
+      "slot": "26",
+      "en": "twenty-six"
+    },
+    {
+      "slot": "27",
+      "en": "twenty-seven"
+    },
+    {
+      "slot": "28",
+      "en": "twenty-eight"
+    },
+    {
+      "slot": "29",
+      "en": "twenty-nine"
+    },
+    {
+      "slot": "30",
+      "en": "thirty"
+    },
+    {
+      "slot": "31",
+      "en": "forty"
+    },
+    {
+      "slot": "32",
+      "en": "fifty"
+    },
+    {
+      "slot": "33",
+      "en": "sixty"
+    },
+    {
+      "slot": "34",
+      "en": "seventy"
+    },
+    {
+      "slot": "35",
+      "en": "eighty"
+    },
+    {
+      "slot": "36",
+      "en": "ninety"
+    },
+    {
+      "slot": "37",
+      "en": "one_hundred"
+    },
+    {
+      "slot": "38",
+      "en": "one_hundred_and_one"
+    },
+    {
+      "slot": "39",
+      "en": "two_hundred"
+    }
+  ]
+}

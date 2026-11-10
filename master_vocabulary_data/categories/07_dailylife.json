@@ -1,0 +1,3398 @@
+[
+  {
+    "id": "word_0028",
+    "english": "block",
+    "canonical_key": "block",
+    "disambiguation": "",
+    "display_label": "block",
+    "normalized_english": "block",
+    "part_of_speech": "noun",
+    "category": "07_dailylife",
+    "category_name": "Daily Life, Routines & Objects",
+    "ja_kanji": "区画",
+    "ja_hiragana": "くかく",
+    "en_katakana": "ブロック",
+    "ruby": [
+      {
+        "base": "区画",
+        "ruby": "くかく"
+      }
+    ],
+    "ruby_html": "<ruby>区画<rt>くかく</rt></ruby>",
+    "ruby_text": "[区画|くかく]",
+    "sound_file": "dic_wb_06facility_block_1290.mp3",
+    "card_image": "cards/full/hwg5_u21_09_block_full.png",
+    "card_image_kana": "cards/full/hwg5_u21_09_block_full.png",
+    "card_image_en": "cards/full/hwg5_u21_09_block_full.png",
+    "card_image_bilingual": "cards/full/hwg5_u21_09_block_full.png",
+    "card_variants": [],
+    "token": "hwg_block",
+    "grades": [
+      "ES_G5"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Do you have a block? / A: Yes, I do."
+    ],
+    "tags": [
+      "direction",
+      "preposition"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u21_09_block_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u21_09_block_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u21_09_block_text.png",
+    "lemma": "block",
+    "is_plural": false,
+    "letter_count": 5,
+    "syllable_count": 1,
+    "first_letter": "B",
+    "is_compound": false,
+    "phonics_initial": "bl",
+    "difficulty_tier": 2,
+    "primary_image": "cards/full/hwg5_u21_09_block_full.png",
+    "primary_audio": "dic_wb_06facility_block_1290.mp3",
+    "three_hints": {
+      "category_hint": "It is an item used in daily life.",
+      "feature_hint": "An everyday item or clothing known as '区画' (くかく) in Japanese.",
+      "letter_hint": "It starts with the letter B."
+    },
+    "target_dialogues": [
+      {
+        "question": "Do you have a block?",
+        "answer": "Yes, I do.",
+        "context": "Talking about daily personal items"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u21_09_block_illust.png",
+        "card_full": "cards/full/hwg5_u21_09_block_full.png",
+        "card_text": "cards/text/hwg5_u21_09_block_text.png",
+        "unit": "Unit 21: Unit 21: Directions",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_06facility_block_1290.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0029",
+    "english": "boat",
+    "canonical_key": "boat",
+    "disambiguation": "",
+    "display_label": "boat",
+    "normalized_english": "boat",
+    "part_of_speech": "noun",
+    "category": "07_dailylife",
+    "category_name": "Daily Life, Routines & Objects",
+    "ja_kanji": "船",
+    "ja_hiragana": "ふね",
+    "en_katakana": "ボート",
+    "ruby": [
+      {
+        "base": "船",
+        "ruby": "ふね"
+      }
+    ],
+    "ruby_html": "<ruby>船<rt>ふね</rt></ruby>",
+    "ruby_text": "[船|ふね]",
+    "sound_file": "",
+    "card_image": "",
+    "card_image_kana": "",
+    "card_image_en": "",
+    "card_image_bilingual": "",
+    "card_variants": [],
+    "token": "borderlink_boat",
+    "grades": [
+      "ES_G1"
+    ],
+    "themes": [
+      "Opposites",
+      "Transportation"
+    ],
+    "target_sentences": [
+      "Q: Do you have a boat? / A: Yes, I do."
+    ],
+    "tags": [
+      "vehicle"
+    ],
+    "lemma": "boat",
+    "is_plural": false,
+    "letter_count": 4,
+    "syllable_count": 1,
+    "first_letter": "B",
+    "is_compound": false,
+    "phonics_initial": "b",
+    "difficulty_tier": 1,
+    "primary_image": "",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is an item used in daily life.",
+      "feature_hint": "An everyday item or clothing known as '船' (ふね) in Japanese.",
+      "letter_hint": "It starts with the letter B."
+    },
+    "target_dialogues": [
+      {
+        "question": "Do you have a boat?",
+        "answer": "Yes, I do.",
+        "context": "Talking about daily personal items"
+      }
+    ],
+    "media_by_grade": {}
+  },
+  {
+    "id": "word_0043",
+    "english": "car",
+    "canonical_key": "car",
+    "disambiguation": "",
+    "display_label": "car",
+    "normalized_english": "car",
+    "part_of_speech": "noun",
+    "category": "07_dailylife",
+    "category_name": "Daily Life, Routines & Objects",
+    "ja_kanji": "車",
+    "ja_hiragana": "くるま",
+    "en_katakana": "カー",
+    "ruby": [
+      {
+        "base": "車",
+        "ruby": "くるま"
+      }
+    ],
+    "ruby_html": "<ruby>車<rt>くるま</rt></ruby>",
+    "ruby_text": "[車|くるま]",
+    "sound_file": "",
+    "card_image": "",
+    "card_image_kana": "",
+    "card_image_en": "",
+    "card_image_bilingual": "",
+    "card_variants": [],
+    "token": "borderlink_car",
+    "grades": [
+      "ES_G1",
+      "ES_G3"
+    ],
+    "themes": [
+      "Opposites",
+      "This is for you. カードをおくろう",
+      "Transportation"
+    ],
+    "target_sentences": [
+      "Q: Do you have a car? / A: Yes, I do."
+    ],
+    "tags": [
+      "vehicle"
+    ],
+    "lemma": "car",
+    "is_plural": false,
+    "letter_count": 3,
+    "syllable_count": 1,
+    "first_letter": "C",
+    "is_compound": false,
+    "phonics_initial": "c",
+    "difficulty_tier": 1,
+    "primary_image": "",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is an item used in daily life.",
+      "feature_hint": "An everyday item or clothing known as '車' (くるま) in Japanese.",
+      "letter_hint": "It starts with the letter C."
+    },
+    "target_dialogues": [
+      {
+        "question": "Do you have a car?",
+        "answer": "Yes, I do.",
+        "context": "Talking about daily personal items"
+      }
+    ],
+    "media_by_grade": {}
+  },
+  {
+    "id": "word_0061",
+    "english": "corner",
+    "canonical_key": "corner",
+    "disambiguation": "",
+    "display_label": "corner",
+    "normalized_english": "corner",
+    "part_of_speech": "noun",
+    "category": "07_dailylife",
+    "category_name": "Daily Life, Routines & Objects",
+    "ja_kanji": "角",
+    "ja_hiragana": "かど",
+    "en_katakana": "コーナー",
+    "ruby": [
+      {
+        "base": "角",
+        "ruby": "かど"
+      }
+    ],
+    "ruby_html": "<ruby>角<rt>かど</rt></ruby>",
+    "ruby_text": "[角|かど]",
+    "sound_file": "dic_wb_06facility_corner_1294.mp3",
+    "card_image": "cards/full/hwg5_u21_08_corner_full.png",
+    "card_image_kana": "cards/full/hwg5_u21_08_corner_full.png",
+    "card_image_en": "cards/full/hwg5_u21_08_corner_full.png",
+    "card_image_bilingual": "cards/full/hwg5_u21_08_corner_full.png",
+    "card_variants": [],
+    "token": "hwg_corner",
+    "grades": [
+      "ES_G5"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Do you have a corner? / A: Yes, I do."
+    ],
+    "tags": [
+      "direction",
+      "preposition"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u21_08_corner_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u21_08_corner_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u21_08_corner_text.png",
+    "lemma": "corner",
+    "is_plural": false,
+    "letter_count": 6,
+    "syllable_count": 2,
+    "first_letter": "C",
+    "is_compound": false,
+    "phonics_initial": "c",
+    "difficulty_tier": 2,
+    "primary_image": "cards/full/hwg5_u21_08_corner_full.png",
+    "primary_audio": "dic_wb_06facility_corner_1294.mp3",
+    "three_hints": {
+      "category_hint": "It is an item used in daily life.",
+      "feature_hint": "An everyday item or clothing known as '角' (かど) in Japanese.",
+      "letter_hint": "It starts with the letter C."
+    },
+    "target_dialogues": [
+      {
+        "question": "Do you have a corner?",
+        "answer": "Yes, I do.",
+        "context": "Talking about daily personal items"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u21_08_corner_illust.png",
+        "card_full": "cards/full/hwg5_u21_08_corner_full.png",
+        "card_text": "cards/text/hwg5_u21_08_corner_text.png",
+        "unit": "Unit 21: Unit 21: Directions",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_06facility_corner_1294.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0130",
+    "english": "glasses",
+    "canonical_key": "glasses",
+    "disambiguation": "",
+    "display_label": "glasses",
+    "normalized_english": "glasses",
+    "part_of_speech": "noun",
+    "category": "07_dailylife",
+    "category_name": "Daily Life, Routines & Objects",
+    "ja_kanji": "眼鏡",
+    "ja_hiragana": "めがね",
+    "en_katakana": "グラッシズ",
+    "ruby": [
+      {
+        "base": "眼鏡",
+        "ruby": "めがね"
+      }
+    ],
+    "ruby_html": "<ruby>眼鏡<rt>めがね</rt></ruby>",
+    "ruby_text": "[眼鏡|めがね]",
+    "sound_file": "",
+    "card_image": "cards/full/hwg5_u12_23_glasses_full.png",
+    "card_image_kana": "cards/full/hwg5_u12_23_glasses_full.png",
+    "card_image_en": "cards/full/hwg5_u12_23_glasses_full.png",
+    "card_image_bilingual": "cards/full/hwg5_u12_23_glasses_full.png",
+    "card_variants": [],
+    "token": "hwg_glasses",
+    "grades": [
+      "ES_G5"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Do you have a glasses? / A: Yes, I do."
+    ],
+    "tags": [
+      "object"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u12_23_glasses_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u12_23_glasses_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u12_23_glasses_text.png",
+    "lemma": "glasses",
+    "is_plural": false,
+    "letter_count": 7,
+    "syllable_count": 1,
+    "first_letter": "G",
+    "is_compound": false,
+    "phonics_initial": "gl",
+    "difficulty_tier": 2,
+    "primary_image": "cards/full/hwg5_u12_23_glasses_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is an item used in daily life.",
+      "feature_hint": "An everyday item or clothing known as '眼鏡' (めがね) in Japanese.",
+      "letter_hint": "It starts with the letter G."
+    },
+    "target_dialogues": [
+      {
+        "question": "Do you have a glasses?",
+        "answer": "Yes, I do.",
+        "context": "Talking about daily personal items"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u12_23_glasses_illust.png",
+        "card_full": "cards/full/hwg5_u12_23_glasses_full.png",
+        "card_text": "cards/text/hwg5_u12_23_glasses_text.png",
+        "unit": "Unit 12: Unit 12: Things Around You",
+        "source": "here_we_go_5",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0166",
+    "english": "jacket",
+    "canonical_key": "jacket",
+    "disambiguation": "",
+    "display_label": "jacket",
+    "normalized_english": "jacket",
+    "part_of_speech": "noun",
+    "category": "07_dailylife",
+    "category_name": "Daily Life, Routines & Objects",
+    "ja_kanji": "上着",
+    "ja_hiragana": "うわぎ",
+    "en_katakana": "ジャケット",
+    "ruby": [
+      {
+        "base": "上着",
+        "ruby": "うわぎ"
+      }
+    ],
+    "ruby_html": "<ruby>上着<rt>うわぎ</rt></ruby>",
+    "ruby_text": "[上着|うわぎ]",
+    "sound_file": "dic_4_card_jacket_2510.mp3",
+    "card_image": "dic_4_card_jacket_2510_1_c.png",
+    "card_image_kana": "dic_4_card_jacket_2510_1_c.png",
+    "card_image_en": "dic_4_card_jacket_2510_1_e.png",
+    "card_image_bilingual": "dic_4_card_jacket_2510_1_ce.png",
+    "card_variants": [
+      "dic_4_card_jacket_2510_1.png"
+    ],
+    "token": "dic_4_card_jacket_2510&dic_4_card_jacket_2510&dic_4_card_jacket_2510",
+    "grades": [
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Do you have a jacket? / A: Yes, I do."
+    ],
+    "tags": [
+      "clothes"
+    ],
+    "lemma": "jacket",
+    "is_plural": false,
+    "letter_count": 6,
+    "syllable_count": 2,
+    "first_letter": "J",
+    "is_compound": false,
+    "phonics_initial": "j",
+    "difficulty_tier": 2,
+    "primary_image": "dic_4_card_jacket_2510_1_c.png",
+    "primary_audio": "dic_4_card_jacket_2510.mp3",
+    "three_hints": {
+      "category_hint": "It is an item used in daily life.",
+      "feature_hint": "An everyday item or clothing known as '上着' (うわぎ) in Japanese.",
+      "letter_hint": "It starts with the letter J."
+    },
+    "target_dialogues": [
+      {
+        "question": "Do you have a jacket?",
+        "answer": "Yes, I do.",
+        "context": "Talking about daily personal items"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G4": {
+        "card_image": "dic_4_card_jacket_2510_1_c.png",
+        "sound_file": "dic_4_card_jacket_2510.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_4_card_jacket_2510_1_ce.png",
+        "card_bw": "dic_4_card_jacket_2510_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0212",
+    "english": "news",
+    "canonical_key": "news",
+    "disambiguation": "",
+    "display_label": "news",
+    "normalized_english": "news",
+    "part_of_speech": "noun",
+    "category": "07_dailylife",
+    "category_name": "Daily Life, Routines & Objects",
+    "ja_kanji": "ニュース",
+    "ja_hiragana": "にゅーす",
+    "en_katakana": "ニュース",
+    "ruby": [
+      {
+        "base": "ニュース",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "ニュース",
+    "ruby_text": "ニュース",
+    "sound_file": "dic_4_card_news_2609.mp3",
+    "card_image": "dic_4_card_news_2609_1_c.png",
+    "card_image_kana": "dic_4_card_news_2609_1_c.png",
+    "card_image_en": "dic_4_card_news_2609_1_e.png",
+    "card_image_bilingual": "dic_4_card_news_2609_1_ce.png",
+    "card_variants": [
+      "dic_4_card_news_2609_1.png"
+    ],
+    "token": "dic_4_card_news_2609&dic_4_card_news_2609&dic_4_card_news_2609",
+    "grades": [
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Do you have news? / A: Yes, I do."
+    ],
+    "tags": [
+      "media"
+    ],
+    "lemma": "new",
+    "is_plural": true,
+    "letter_count": 4,
+    "syllable_count": 1,
+    "first_letter": "N",
+    "is_compound": false,
+    "phonics_initial": "n",
+    "difficulty_tier": 2,
+    "primary_image": "dic_4_card_news_2609_1_c.png",
+    "primary_audio": "dic_4_card_news_2609.mp3",
+    "three_hints": {
+      "category_hint": "It is an item used in daily life.",
+      "feature_hint": "An everyday item or clothing known as 'ニュース' (にゅーす) in Japanese.",
+      "letter_hint": "It starts with the letter N."
+    },
+    "target_dialogues": [
+      {
+        "question": "Do you have news?",
+        "answer": "Yes, I do.",
+        "context": "Talking about daily personal items"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G4": {
+        "card_image": "dic_4_card_news_2609_1_c.png",
+        "sound_file": "dic_4_card_news_2609.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_4_card_news_2609_1_ce.png",
+        "card_bw": "dic_4_card_news_2609_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0295",
+    "english": "shell",
+    "canonical_key": "shell",
+    "disambiguation": "",
+    "display_label": "shell",
+    "normalized_english": "shell",
+    "part_of_speech": "noun",
+    "category": "07_dailylife",
+    "category_name": "Daily Life, Routines & Objects",
+    "ja_kanji": "貝殻",
+    "ja_hiragana": "かいがら",
+    "en_katakana": "シェル",
+    "ruby": [
+      {
+        "base": "貝殻",
+        "ruby": "かいがら"
+      }
+    ],
+    "ruby_html": "<ruby>貝殻<rt>かいがら</rt></ruby>",
+    "ruby_text": "[貝殻|かいがら]",
+    "sound_file": "",
+    "card_image": "cards/full/hwg6_u12_13_shell_full.png",
+    "card_image_kana": "cards/full/hwg6_u12_13_shell_full.png",
+    "card_image_en": "cards/full/hwg6_u12_13_shell_full.png",
+    "card_image_bilingual": "cards/full/hwg6_u12_13_shell_full.png",
+    "card_variants": [],
+    "token": "hwg_shell",
+    "grades": [
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Do you have a shell? / A: Yes, I do."
+    ],
+    "tags": [
+      "general"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u12_13_shell_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u12_13_shell_illust.png",
+    "hwg_card_text": "cards/text/hwg6_u12_13_shell_text.png",
+    "lemma": "shell",
+    "is_plural": false,
+    "letter_count": 5,
+    "syllable_count": 1,
+    "first_letter": "S",
+    "is_compound": false,
+    "phonics_initial": "sh",
+    "difficulty_tier": 3,
+    "primary_image": "cards/full/hwg6_u12_13_shell_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is an item used in daily life.",
+      "feature_hint": "An everyday item or clothing known as '貝殻' (かいがら) in Japanese.",
+      "letter_hint": "It starts with the letter S."
+    },
+    "target_dialogues": [
+      {
+        "question": "Do you have a shell?",
+        "answer": "Yes, I do.",
+        "context": "Talking about daily personal items"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u12_13_shell_illust.png",
+        "card_full": "cards/full/hwg6_u12_13_shell_full.png",
+        "card_text": "cards/text/hwg6_u12_13_shell_text.png",
+        "unit": "Unit 12: Unit 12: Body",
+        "source": "here_we_go_6",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0298",
+    "english": "shoes",
+    "canonical_key": "shoes",
+    "disambiguation": "",
+    "display_label": "shoes",
+    "normalized_english": "shoes",
+    "part_of_speech": "noun",
+    "category": "07_dailylife",
+    "category_name": "Daily Life, Routines & Objects",
+    "ja_kanji": "靴",
+    "ja_hiragana": "くつ",
+    "en_katakana": "シューズ",
+    "ruby": [
+      {
+        "base": "靴",
+        "ruby": "くつ"
+      }
+    ],
+    "ruby_html": "<ruby>靴<rt>くつ</rt></ruby>",
+    "ruby_text": "[靴|くつ]",
+    "sound_file": "",
+    "card_image": "cards/full/hwg5_u12_21_shoes_full.png",
+    "card_image_kana": "cards/full/hwg5_u12_21_shoes_full.png",
+    "card_image_en": "cards/full/hwg5_u12_21_shoes_full.png",
+    "card_image_bilingual": "cards/full/hwg5_u12_21_shoes_full.png",
+    "card_variants": [],
+    "token": "hwg_shoes",
+    "grades": [
+      "ES_G5"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Do you have a shoes? / A: Yes, I do."
+    ],
+    "tags": [
+      "clothes"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u12_21_shoes_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u12_21_shoes_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u12_21_shoes_text.png",
+    "lemma": "shoes",
+    "is_plural": false,
+    "letter_count": 5,
+    "syllable_count": 1,
+    "first_letter": "S",
+    "is_compound": false,
+    "phonics_initial": "sh",
+    "difficulty_tier": 2,
+    "primary_image": "cards/full/hwg5_u12_21_shoes_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is an item used in daily life.",
+      "feature_hint": "An everyday item or clothing known as '靴' (くつ) in Japanese.",
+      "letter_hint": "It starts with the letter S."
+    },
+    "target_dialogues": [
+      {
+        "question": "Do you have a shoes?",
+        "answer": "Yes, I do.",
+        "context": "Talking about daily personal items"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u12_21_shoes_illust.png",
+        "card_full": "cards/full/hwg5_u12_21_shoes_full.png",
+        "card_text": "cards/text/hwg5_u12_21_shoes_text.png",
+        "unit": "Unit 12: Unit 12: Things Around You",
+        "source": "here_we_go_5",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0310",
+    "english": "smartphone",
+    "canonical_key": "smartphone",
+    "disambiguation": "",
+    "display_label": "smartphone",
+    "normalized_english": "smartphone",
+    "part_of_speech": "noun",
+    "category": "07_dailylife",
+    "category_name": "Daily Life, Routines & Objects",
+    "ja_kanji": "スマートフォン",
+    "ja_hiragana": "すまーとふぉん",
+    "en_katakana": "スマートフォン",
+    "ruby": [
+      {
+        "base": "スマートフォン",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "スマートフォン",
+    "ruby_text": "スマートフォン",
+    "sound_file": "",
+    "card_image": "cards/full/hwg5_u12_27_smartphone_full.png",
+    "card_image_kana": "cards/full/hwg5_u12_27_smartphone_full.png",
+    "card_image_en": "cards/full/hwg5_u12_27_smartphone_full.png",
+    "card_image_bilingual": "cards/full/hwg5_u12_27_smartphone_full.png",
+    "card_variants": [],
+    "token": "hwg_smartphone",
+    "grades": [
+      "ES_G5"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Do you have a smartphone? / A: Yes, I do."
+    ],
+    "tags": [
+      "object"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u12_27_smartphone_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u12_27_smartphone_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u12_27_smartphone_text.png",
+    "lemma": "smartphone",
+    "is_plural": false,
+    "letter_count": 10,
+    "syllable_count": 2,
+    "first_letter": "S",
+    "is_compound": false,
+    "phonics_initial": "sm",
+    "difficulty_tier": 3,
+    "primary_image": "cards/full/hwg5_u12_27_smartphone_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is an item used in daily life.",
+      "feature_hint": "An everyday item or clothing known as 'スマートフォン' (すまーとふぉん) in Japanese.",
+      "letter_hint": "It starts with the letter S."
+    },
+    "target_dialogues": [
+      {
+        "question": "Do you have a smartphone?",
+        "answer": "Yes, I do.",
+        "context": "Talking about daily personal items"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u12_27_smartphone_illust.png",
+        "card_full": "cards/full/hwg5_u12_27_smartphone_full.png",
+        "card_text": "cards/text/hwg5_u12_27_smartphone_text.png",
+        "unit": "Unit 12: Unit 12: Things Around You",
+        "source": "here_we_go_5",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0320",
+    "english": "sports day",
+    "canonical_key": "sports day",
+    "disambiguation": "",
+    "display_label": "sports day",
+    "normalized_english": "sports day",
+    "part_of_speech": "noun",
+    "category": "07_dailylife",
+    "category_name": "Daily Life, Routines & Objects",
+    "ja_kanji": "運動会",
+    "ja_hiragana": "うんどうかい",
+    "en_katakana": "スポーツ・デイ",
+    "ruby": [
+      {
+        "base": "運動会",
+        "ruby": "うんどうかい"
+      }
+    ],
+    "ruby_html": "<ruby>運動会<rt>うんどうかい</rt></ruby>",
+    "ruby_text": "[運動会|うんどうかい]",
+    "sound_file": "",
+    "card_image": "cards/full/hwg6_u16_04_sports_day_full.png",
+    "card_image_kana": "cards/full/hwg6_u16_04_sports_day_full.png",
+    "card_image_en": "cards/full/hwg6_u16_04_sports_day_full.png",
+    "card_image_bilingual": "cards/full/hwg6_u16_04_sports_day_full.png",
+    "card_variants": [],
+    "token": "hwg_sports day",
+    "grades": [
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Do you have a sports day? / A: Yes, I do."
+    ],
+    "tags": [
+      "general"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u16_04_sports_day_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u16_04_sports_day_illust.png",
+    "hwg_card_text": "cards/text/hwg6_u16_04_sports_day_text.png",
+    "lemma": "sports day",
+    "is_plural": false,
+    "letter_count": 9,
+    "syllable_count": 2,
+    "first_letter": "S",
+    "is_compound": true,
+    "phonics_initial": "sp",
+    "difficulty_tier": 3,
+    "primary_image": "cards/full/hwg6_u16_04_sports_day_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is an item used in daily life.",
+      "feature_hint": "An everyday item or clothing known as '運動会' (うんどうかい) in Japanese.",
+      "letter_hint": "It starts with the letter S."
+    },
+    "target_dialogues": [
+      {
+        "question": "Do you have a sports day?",
+        "answer": "Yes, I do.",
+        "context": "Talking about daily personal items"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u16_04_sports_day_illust.png",
+        "card_full": "cards/full/hwg6_u16_04_sports_day_full.png",
+        "card_text": "cards/text/hwg6_u16_04_sports_day_text.png",
+        "unit": "Unit 16: Unit 16: School Events",
+        "source": "here_we_go_6",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0339",
+    "english": "tablet",
+    "canonical_key": "tablet",
+    "disambiguation": "",
+    "display_label": "tablet",
+    "normalized_english": "tablet",
+    "part_of_speech": "noun",
+    "category": "07_dailylife",
+    "category_name": "Daily Life, Routines & Objects",
+    "ja_kanji": "タブレット",
+    "ja_hiragana": "たぶれっと",
+    "en_katakana": "タブレット",
+    "ruby": [
+      {
+        "base": "タブレット",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "タブレット",
+    "ruby_text": "タブレット",
+    "sound_file": "",
+    "card_image": "cards/full/hwg5_u12_05_tablet_full.png",
+    "card_image_kana": "cards/full/hwg5_u12_05_tablet_full.png",
+    "card_image_en": "cards/full/hwg5_u12_05_tablet_full.png",
+    "card_image_bilingual": "cards/full/hwg5_u12_05_tablet_full.png",
+    "card_variants": [],
+    "token": "hwg_tablet",
+    "grades": [
+      "ES_G5"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Do you have a tablet? / A: Yes, I do."
+    ],
+    "tags": [
+      "object"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u12_05_tablet_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u12_05_tablet_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u12_05_tablet_text.png",
+    "lemma": "tablet",
+    "is_plural": false,
+    "letter_count": 6,
+    "syllable_count": 2,
+    "first_letter": "T",
+    "is_compound": false,
+    "phonics_initial": "t",
+    "difficulty_tier": 2,
+    "primary_image": "cards/full/hwg5_u12_05_tablet_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is an item used in daily life.",
+      "feature_hint": "An everyday item or clothing known as 'タブレット' (たぶれっと) in Japanese.",
+      "letter_hint": "It starts with the letter T."
+    },
+    "target_dialogues": [
+      {
+        "question": "Do you have a tablet?",
+        "answer": "Yes, I do.",
+        "context": "Talking about daily personal items"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u12_05_tablet_illust.png",
+        "card_full": "cards/full/hwg5_u12_05_tablet_full.png",
+        "card_text": "cards/text/hwg5_u12_05_tablet_text.png",
+        "unit": "Unit 12: Unit 12: Things Around You",
+        "source": "here_we_go_5",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0360",
+    "english": "train",
+    "canonical_key": "train",
+    "disambiguation": "",
+    "display_label": "train",
+    "normalized_english": "train",
+    "part_of_speech": "noun",
+    "category": "07_dailylife",
+    "category_name": "Daily Life, Routines & Objects",
+    "ja_kanji": "電車",
+    "ja_hiragana": "でんしゃ",
+    "en_katakana": "トレイン",
+    "ruby": [
+      {
+        "base": "電車",
+        "ruby": "でんしゃ"
+      }
+    ],
+    "ruby_html": "<ruby>電車<rt>でんしゃ</rt></ruby>",
+    "ruby_text": "[電車|でんしゃ]",
+    "sound_file": "",
+    "card_image": "",
+    "card_image_kana": "",
+    "card_image_en": "",
+    "card_image_bilingual": "",
+    "card_variants": [],
+    "token": "borderlink_train",
+    "grades": [
+      "ES_G1"
+    ],
+    "themes": [
+      "Opposites",
+      "Transportation"
+    ],
+    "target_sentences": [
+      "Q: Do you have a train? / A: Yes, I do."
+    ],
+    "tags": [
+      "vehicle"
+    ],
+    "lemma": "train",
+    "is_plural": false,
+    "letter_count": 5,
+    "syllable_count": 1,
+    "first_letter": "T",
+    "is_compound": false,
+    "phonics_initial": "tr",
+    "difficulty_tier": 1,
+    "primary_image": "",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is an item used in daily life.",
+      "feature_hint": "An everyday item or clothing known as '電車' (でんしゃ) in Japanese.",
+      "letter_hint": "It starts with the letter T."
+    },
+    "target_dialogues": [
+      {
+        "question": "Do you have a train?",
+        "answer": "Yes, I do.",
+        "context": "Talking about daily personal items"
+      }
+    ],
+    "media_by_grade": {}
+  },
+  {
+    "id": "word_0622",
+    "english": "bus",
+    "canonical_key": "bus",
+    "disambiguation": "",
+    "display_label": "bus",
+    "normalized_english": "bus",
+    "part_of_speech": "noun",
+    "category": "07_dailylife",
+    "category_name": "Daily Life, Routines & Objects",
+    "ja_kanji": "バス",
+    "ja_hiragana": "ばす",
+    "en_katakana": "バス",
+    "ruby": [
+      {
+        "base": "バス",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "バス",
+    "ruby_text": "バス",
+    "sound_file": "dic_wb_06facility_bus_1317.mp3",
+    "card_image": "dic_wb_06facility_bus_1317_1_c.png",
+    "card_image_kana": "dic_wb_06facility_bus_1317_1_c.png",
+    "card_image_en": "dic_wb_06facility_bus_1317_1_e.png",
+    "card_image_bilingual": "dic_wb_06facility_bus_1317_1_ce.png",
+    "card_variants": [
+      "dic_wb_06facility_bus_1317_1.png"
+    ],
+    "token": "dic_wb_06facility_bus_1317&dic_wb_06facility_bus_1317&dic_wb_06facility_bus_1317",
+    "grades": [
+      "ES_G3"
+    ],
+    "themes": [
+      "This is for you. カードをおくろう"
+    ],
+    "target_sentences": [
+      "Q: Do you have a bus? / A: Yes, I do."
+    ],
+    "tags": [
+      "vehicle"
+    ],
+    "lemma": "bus",
+    "is_plural": false,
+    "letter_count": 3,
+    "syllable_count": 1,
+    "first_letter": "B",
+    "is_compound": false,
+    "phonics_initial": "b",
+    "difficulty_tier": 1,
+    "primary_image": "dic_wb_06facility_bus_1317_1_c.png",
+    "primary_audio": "dic_wb_06facility_bus_1317.mp3",
+    "three_hints": {
+      "category_hint": "It is an item used in daily life.",
+      "feature_hint": "An everyday item or clothing known as 'バス' (ばす) in Japanese.",
+      "letter_hint": "It starts with the letter B."
+    },
+    "target_dialogues": [
+      {
+        "question": "Do you have a bus?",
+        "answer": "Yes, I do.",
+        "context": "Talking about daily personal items"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_wb_06facility_bus_1317_1_c.png",
+        "sound_file": "dic_wb_06facility_bus_1317.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_wb_06facility_bus_1317_1_ce.png",
+        "card_bw": "dic_wb_06facility_bus_1317_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0665",
+    "english": "bag",
+    "canonical_key": "bag",
+    "disambiguation": "",
+    "display_label": "bag",
+    "normalized_english": "bag",
+    "part_of_speech": "noun",
+    "category": "07_dailylife",
+    "category_name": "Daily Life, Routines & Objects",
+    "ja_kanji": "かばん",
+    "ja_hiragana": "かばん",
+    "en_katakana": "バッグ",
+    "ruby": [
+      {
+        "base": "かばん",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "かばん",
+    "ruby_text": "かばん",
+    "sound_file": "dic_wb_07dailylife_bag_1365.mp3",
+    "card_image": "dic_5_card_bag_0266_1_c.png",
+    "card_image_kana": "dic_5_card_bag_0266_1_c.png",
+    "card_image_en": "dic_5_card_bag_0266_1_e.png",
+    "card_image_bilingual": "dic_5_card_bag_0266_1_ce.png",
+    "card_variants": [
+      "dic_5_card_bag_0266_1.png"
+    ],
+    "token": "dic_wb_07dailylife_bag_1365&dic_wb_07dailylife_bag_1365&dic_5_card_bag_0266",
+    "grades": [
+      "ES_G5"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Do you have a bag? / A: Yes, I do."
+    ],
+    "tags": [
+      "item"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u12_24_bag_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u12_24_bag_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u12_24_bag_text.png",
+    "lemma": "bag",
+    "is_plural": false,
+    "letter_count": 3,
+    "syllable_count": 1,
+    "first_letter": "B",
+    "is_compound": false,
+    "phonics_initial": "b",
+    "difficulty_tier": 2,
+    "primary_image": "dic_5_card_bag_0266_1_c.png",
+    "primary_audio": "dic_wb_07dailylife_bag_1365.mp3",
+    "three_hints": {
+      "category_hint": "It is an item used in daily life.",
+      "feature_hint": "An everyday item or clothing known as 'かばん' (かばん) in Japanese.",
+      "letter_hint": "It starts with the letter B."
+    },
+    "target_dialogues": [
+      {
+        "question": "Do you have a bag?",
+        "answer": "Yes, I do.",
+        "context": "Talking about daily personal items"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u12_24_bag_illust.png",
+        "card_full": "cards/full/hwg5_u12_24_bag_full.png",
+        "card_text": "cards/text/hwg5_u12_24_bag_text.png",
+        "unit": "Unit 12: Unit 12: Things Around You",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_07dailylife_bag_1365.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0667",
+    "english": "bath",
+    "canonical_key": "bath",
+    "disambiguation": "",
+    "display_label": "bath",
+    "normalized_english": "bath",
+    "part_of_speech": "noun",
+    "category": "07_dailylife",
+    "category_name": "Daily Life, Routines & Objects",
+    "ja_kanji": "お風呂",
+    "ja_hiragana": "おふろ",
+    "en_katakana": "バス",
+    "ruby": [
+      {
+        "base": "お",
+        "ruby": ""
+      },
+      {
+        "base": "風呂",
+        "ruby": "ふろ"
+      }
+    ],
+    "ruby_html": "お<ruby>風呂<rt>ふろ</rt></ruby>",
+    "ruby_text": "お[風呂|ふろ]",
+    "sound_file": "dic_wb_07dailylife_bath_1344.mp3",
+    "card_image": "dic_wb_07dailylife_bath_1344_1_c.png",
+    "card_image_kana": "dic_wb_07dailylife_bath_1344_1_c.png",
+    "card_image_en": "dic_wb_07dailylife_bath_1344_1_e.png",
+    "card_image_bilingual": "dic_wb_07dailylife_bath_1344_1_ce.png",
+    "card_variants": [
+      "dic_wb_07dailylife_bath_1344_1.png"
+    ],
+    "token": "dic_wb_07dailylife_bath_1344&dic_wb_07dailylife_bath_1344&dic_wb_07dailylife_bath_1344",
+    "grades": [
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Do you have a bath? / A: Yes, I do."
+    ],
+    "tags": [
+      "home"
+    ],
+    "lemma": "bath",
+    "is_plural": false,
+    "letter_count": 4,
+    "syllable_count": 1,
+    "first_letter": "B",
+    "is_compound": false,
+    "phonics_initial": "b",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_07dailylife_bath_1344_1_c.png",
+    "primary_audio": "dic_wb_07dailylife_bath_1344.mp3",
+    "three_hints": {
+      "category_hint": "It is an item used in daily life.",
+      "feature_hint": "An everyday item or clothing known as 'お風呂' (おふろ) in Japanese.",
+      "letter_hint": "It starts with the letter B."
+    },
+    "target_dialogues": [
+      {
+        "question": "Do you have a bath?",
+        "answer": "Yes, I do.",
+        "context": "Talking about daily personal items"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G4": {
+        "card_image": "dic_wb_07dailylife_bath_1344_1_c.png",
+        "sound_file": "dic_wb_07dailylife_bath_1344.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_wb_07dailylife_bath_1344_1_ce.png",
+        "card_bw": "dic_wb_07dailylife_bath_1344_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0668",
+    "english": "bed",
+    "canonical_key": "bed",
+    "disambiguation": "",
+    "display_label": "bed",
+    "normalized_english": "bed",
+    "part_of_speech": "noun",
+    "category": "07_dailylife",
+    "category_name": "Daily Life, Routines & Objects",
+    "ja_kanji": "ベッド",
+    "ja_hiragana": "べっど",
+    "en_katakana": "ベッド",
+    "ruby": [
+      {
+        "base": "ベッド",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "ベッド",
+    "ruby_text": "ベッド",
+    "sound_file": "dic_wb_07dailylife_bed_1345.mp3",
+    "card_image": "dic_wb_07dailylife_bed_1345_1_c.png",
+    "card_image_kana": "dic_wb_07dailylife_bed_1345_1_c.png",
+    "card_image_en": "dic_wb_07dailylife_bed_1345_1_e.png",
+    "card_image_bilingual": "dic_wb_07dailylife_bed_1345_1_ce.png",
+    "card_variants": [
+      "dic_wb_07dailylife_bed_1345_1.png"
+    ],
+    "token": "dic_wb_07dailylife_bed_1345&dic_wb_07dailylife_bed_1345&dic_wb_07dailylife_bed_1345",
+    "grades": [
+      "ES_G5"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Do you have a bed? / A: Yes, I do."
+    ],
+    "tags": [
+      "furniture"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u12_16_bed_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u12_16_bed_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u12_16_bed_text.png",
+    "lemma": "bed",
+    "is_plural": false,
+    "letter_count": 3,
+    "syllable_count": 1,
+    "first_letter": "B",
+    "is_compound": false,
+    "phonics_initial": "b",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_07dailylife_bed_1345_1_c.png",
+    "primary_audio": "dic_wb_07dailylife_bed_1345.mp3",
+    "three_hints": {
+      "category_hint": "It is an item used in daily life.",
+      "feature_hint": "An everyday item or clothing known as 'ベッド' (べっど) in Japanese.",
+      "letter_hint": "It starts with the letter B."
+    },
+    "target_dialogues": [
+      {
+        "question": "Do you have a bed?",
+        "answer": "Yes, I do.",
+        "context": "Talking about daily personal items"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u12_16_bed_illust.png",
+        "card_full": "cards/full/hwg5_u12_16_bed_full.png",
+        "card_text": "cards/text/hwg5_u12_16_bed_text.png",
+        "unit": "Unit 12: Unit 12: Things Around You",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_07dailylife_bed_1345.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0669",
+    "english": "bicycle",
+    "canonical_key": "bicycle",
+    "disambiguation": "",
+    "display_label": "bicycle",
+    "normalized_english": "bicycle",
+    "part_of_speech": "noun",
+    "category": "07_dailylife",
+    "category_name": "Daily Life, Routines & Objects",
+    "ja_kanji": "自転車",
+    "ja_hiragana": "じてんしゃ",
+    "en_katakana": "バイシクル",
+    "ruby": [
+      {
+        "base": "自転車",
+        "ruby": "じてんしゃ"
+      }
+    ],
+    "ruby_html": "<ruby>自転車<rt>じてんしゃ</rt></ruby>",
+    "ruby_text": "[自転車|じてんしゃ]",
+    "sound_file": "dic_wb_07dailylife_bicycle_1346.mp3",
+    "card_image": "dic_wb_07dailylife_bicycle_1346_1_c.png",
+    "card_image_kana": "dic_wb_07dailylife_bicycle_1346_1_c.png",
+    "card_image_en": "dic_wb_07dailylife_bicycle_1346_1_e.png",
+    "card_image_bilingual": "dic_wb_07dailylife_bicycle_1346_1_ce.png",
+    "card_variants": [
+      "dic_wb_07dailylife_bicycle_1346_1.png"
+    ],
+    "token": "dic_wb_07dailylife_bicycle_1346&dic_wb_07dailylife_bicycle_1346&dic_wb_07dailylife_bicycle_1346",
+    "grades": [
+      "ES_G1"
+    ],
+    "themes": [
+      "Opposites",
+      "Transportation"
+    ],
+    "target_sentences": [
+      "Q: Do you have a bicycle? / A: Yes, I do."
+    ],
+    "tags": [
+      "vehicle"
+    ],
+    "lemma": "bicycle",
+    "is_plural": false,
+    "letter_count": 7,
+    "syllable_count": 2,
+    "first_letter": "B",
+    "is_compound": false,
+    "phonics_initial": "b",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_07dailylife_bicycle_1346_1_c.png",
+    "primary_audio": "dic_wb_07dailylife_bicycle_1346.mp3",
+    "three_hints": {
+      "category_hint": "It is an item used in daily life.",
+      "feature_hint": "An everyday item or clothing known as '自転車' (じてんしゃ) in Japanese.",
+      "letter_hint": "It starts with the letter B."
+    },
+    "target_dialogues": [
+      {
+        "question": "Do you have a bicycle?",
+        "answer": "Yes, I do.",
+        "context": "Talking about daily personal items"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G1": {
+        "card_image": "dic_wb_07dailylife_bicycle_1346_1_c.png",
+        "sound_file": "dic_wb_07dailylife_bicycle_1346.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_wb_07dailylife_bicycle_1346_1_ce.png",
+        "card_bw": "dic_wb_07dailylife_bicycle_1346_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0671",
+    "english": "boots",
+    "canonical_key": "boots",
+    "disambiguation": "",
+    "display_label": "boots",
+    "normalized_english": "boots",
+    "part_of_speech": "noun",
+    "category": "07_dailylife",
+    "category_name": "Daily Life, Routines & Objects",
+    "ja_kanji": "ブーツ",
+    "ja_hiragana": "ぶーつ",
+    "en_katakana": "ブーツ",
+    "ruby": [
+      {
+        "base": "ブーツ",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "ブーツ",
+    "ruby_text": "ブーツ",
+    "sound_file": "dic_wb_07dailylife_boots_1366.mp3",
+    "card_image": "dic_wb_07dailylife_boots_1366_1_c.png",
+    "card_image_kana": "dic_wb_07dailylife_boots_1366_1_c.png",
+    "card_image_en": "dic_wb_07dailylife_boots_1366_1_e.png",
+    "card_image_bilingual": "dic_wb_07dailylife_boots_1366_1_ce.png",
+    "card_variants": [
+      "dic_wb_07dailylife_boots_1366_1.png"
+    ],
+    "token": "dic_wb_07dailylife_boots_1366&dic_wb_07dailylife_boots_1366&dic_wb_07dailylife_boots_1366",
+    "grades": [
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Do you have a boots? / A: Yes, I do."
+    ],
+    "tags": [
+      "clothes"
+    ],
+    "lemma": "boots",
+    "is_plural": false,
+    "letter_count": 5,
+    "syllable_count": 1,
+    "first_letter": "B",
+    "is_compound": false,
+    "phonics_initial": "b",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_07dailylife_boots_1366_1_c.png",
+    "primary_audio": "dic_wb_07dailylife_boots_1366.mp3",
+    "three_hints": {
+      "category_hint": "It is an item used in daily life.",
+      "feature_hint": "An everyday item or clothing known as 'ブーツ' (ぶーつ) in Japanese.",
+      "letter_hint": "It starts with the letter B."
+    },
+    "target_dialogues": [
+      {
+        "question": "Do you have a boots?",
+        "answer": "Yes, I do.",
+        "context": "Talking about daily personal items"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G4": {
+        "card_image": "dic_wb_07dailylife_boots_1366_1_c.png",
+        "sound_file": "dic_wb_07dailylife_boots_1366.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_wb_07dailylife_boots_1366_1_ce.png",
+        "card_bw": "dic_wb_07dailylife_boots_1366_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0672",
+    "english": "box",
+    "canonical_key": "box",
+    "disambiguation": "",
+    "display_label": "box",
+    "normalized_english": "box",
+    "part_of_speech": "noun",
+    "category": "07_dailylife",
+    "category_name": "Daily Life, Routines & Objects",
+    "ja_kanji": "箱",
+    "ja_hiragana": "はこ",
+    "en_katakana": "ボックス",
+    "ruby": [
+      {
+        "base": "箱",
+        "ruby": "はこ"
+      }
+    ],
+    "ruby_html": "<ruby>箱<rt>はこ</rt></ruby>",
+    "ruby_text": "[箱|はこ]",
+    "sound_file": "dic_wb_07dailylife_box_1348.mp3",
+    "card_image": "dic_5_card_box_0269_1_c.png",
+    "card_image_kana": "dic_5_card_box_0269_1_c.png",
+    "card_image_en": "dic_5_card_box_0269_1_e.png",
+    "card_image_bilingual": "dic_5_card_box_0269_1_ce.png",
+    "card_variants": [
+      "dic_5_card_box_0269_1.png"
+    ],
+    "token": "dic_wb_07dailylife_box_1348&dic_wb_07dailylife_box_1348&dic_5_card_box_0269",
+    "grades": [
+      "ES_G3",
+      "ES_G5"
+    ],
+    "themes": [
+      "How many? 数えてあそぼう"
+    ],
+    "target_sentences": [
+      "Q: Do you have a box? / A: Yes, I do."
+    ],
+    "tags": [
+      "item"
+    ],
+    "lemma": "box",
+    "is_plural": false,
+    "letter_count": 3,
+    "syllable_count": 1,
+    "first_letter": "B",
+    "is_compound": false,
+    "phonics_initial": "b",
+    "difficulty_tier": 1,
+    "primary_image": "dic_5_card_box_0269_1_c.png",
+    "primary_audio": "dic_wb_07dailylife_box_1348.mp3",
+    "three_hints": {
+      "category_hint": "It is an item used in daily life.",
+      "feature_hint": "An everyday item or clothing known as '箱' (はこ) in Japanese.",
+      "letter_hint": "It starts with the letter B."
+    },
+    "target_dialogues": [
+      {
+        "question": "Do you have a box?",
+        "answer": "Yes, I do.",
+        "context": "Talking about daily personal items"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_5_card_box_0269_1_c.png",
+        "sound_file": "dic_wb_07dailylife_box_1348.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_5_card_box_0269_1_ce.png",
+        "card_bw": "dic_5_card_box_0269_1.png"
+      },
+      "ES_G5": {
+        "card_image": "dic_5_card_box_0269_1_c.png",
+        "sound_file": "dic_wb_07dailylife_box_1348.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_5_card_box_0269_1_ce.png",
+        "card_bw": "dic_5_card_box_0269_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0674",
+    "english": "calendar",
+    "canonical_key": "calendar",
+    "disambiguation": "",
+    "display_label": "calendar",
+    "normalized_english": "calendar",
+    "part_of_speech": "noun",
+    "category": "07_dailylife",
+    "category_name": "Daily Life, Routines & Objects",
+    "ja_kanji": "カレンダー",
+    "ja_hiragana": "かれんだー",
+    "en_katakana": "カレンダー",
+    "ruby": [
+      {
+        "base": "カレンダー",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "カレンダー",
+    "ruby_text": "カレンダー",
+    "sound_file": "dic_wb_07dailylife_calendar_1349.mp3",
+    "card_image": "dic_wb_07dailylife_calendar_1349_1_c.png",
+    "card_image_kana": "dic_wb_07dailylife_calendar_1349_1_c.png",
+    "card_image_en": "dic_wb_07dailylife_calendar_1349_1_e.png",
+    "card_image_bilingual": "dic_wb_07dailylife_calendar_1349_1_ce.png",
+    "card_variants": [
+      "dic_wb_07dailylife_calendar_1349_1.png"
+    ],
+    "token": "dic_wb_07dailylife_calendar_1349&dic_wb_07dailylife_calendar_1349&dic_wb_07dailylife_calendar_1349",
+    "grades": [
+      "ES_G4",
+      "ES_G5"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Do you have a calendar? / A: Yes, I do."
+    ],
+    "tags": [
+      "object"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u12_28_calendar_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u12_28_calendar_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u12_28_calendar_text.png",
+    "lemma": "calendar",
+    "is_plural": false,
+    "letter_count": 8,
+    "syllable_count": 3,
+    "first_letter": "C",
+    "is_compound": false,
+    "phonics_initial": "c",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_07dailylife_calendar_1349_1_c.png",
+    "primary_audio": "dic_wb_07dailylife_calendar_1349.mp3",
+    "three_hints": {
+      "category_hint": "It is an item used in daily life.",
+      "feature_hint": "An everyday item or clothing known as 'カレンダー' (かれんだー) in Japanese.",
+      "letter_hint": "It starts with the letter C."
+    },
+    "target_dialogues": [
+      {
+        "question": "Do you have a calendar?",
+        "answer": "Yes, I do.",
+        "context": "Talking about daily personal items"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G4": {
+        "card_image": "dic_wb_07dailylife_calendar_1349_1_c.png",
+        "sound_file": "dic_wb_07dailylife_calendar_1349.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_wb_07dailylife_calendar_1349_1_ce.png",
+        "card_bw": "dic_wb_07dailylife_calendar_1349_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u12_28_calendar_illust.png",
+        "card_full": "cards/full/hwg5_u12_28_calendar_full.png",
+        "card_text": "cards/text/hwg5_u12_28_calendar_text.png",
+        "unit": "Unit 12: Unit 12: Things Around You",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_07dailylife_calendar_1349.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0675",
+    "english": "cap",
+    "canonical_key": "cap",
+    "disambiguation": "",
+    "display_label": "cap",
+    "normalized_english": "cap",
+    "part_of_speech": "noun",
+    "category": "07_dailylife",
+    "category_name": "Daily Life, Routines & Objects",
+    "ja_kanji": "帽子",
+    "ja_hiragana": "ぼうし",
+    "en_katakana": "キャップ",
+    "ruby": [
+      {
+        "base": "帽子",
+        "ruby": "ぼうし"
+      }
+    ],
+    "ruby_html": "<ruby>帽子<rt>ぼうし</rt></ruby>",
+    "ruby_text": "[帽子|ぼうし]",
+    "sound_file": "dic_wb_07dailylife_cap_1367.mp3",
+    "card_image": "dic_5_card_cap_0270_1_c.png",
+    "card_image_kana": "dic_5_card_cap_0270_1_c.png",
+    "card_image_en": "dic_5_card_cap_0270_1_e.png",
+    "card_image_bilingual": "dic_5_card_cap_0270_1_ce.png",
+    "card_variants": [
+      "dic_5_card_cap_0270_1.png",
+      "dic_4_card_cap_2512_1.png"
+    ],
+    "token": "dic_wb_07dailylife_cap_1367&dic_wb_07dailylife_cap_1367&dic_5_card_cap_0270",
+    "grades": [
+      "ES_G4",
+      "ES_G5"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Do you have a cap? / A: Yes, I do."
+    ],
+    "tags": [
+      "clothes"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u12_19_cap_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u12_19_cap_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u12_19_cap_text.png",
+    "lemma": "cap",
+    "is_plural": false,
+    "letter_count": 3,
+    "syllable_count": 1,
+    "first_letter": "C",
+    "is_compound": false,
+    "phonics_initial": "c",
+    "difficulty_tier": 2,
+    "primary_image": "dic_5_card_cap_0270_1_c.png",
+    "primary_audio": "dic_wb_07dailylife_cap_1367.mp3",
+    "three_hints": {
+      "category_hint": "It is an item used in daily life.",
+      "feature_hint": "An everyday item or clothing known as '帽子' (ぼうし) in Japanese.",
+      "letter_hint": "It starts with the letter C."
+    },
+    "target_dialogues": [
+      {
+        "question": "Do you have a cap?",
+        "answer": "Yes, I do.",
+        "context": "Talking about daily personal items"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G4": {
+        "card_image": "dic_4_card_cap_2512_1_c.png",
+        "sound_file": "dic_wb_07dailylife_cap_1367.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_4_card_cap_2512_1_ce.png",
+        "card_bw": "dic_4_card_cap_2512_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u12_19_cap_illust.png",
+        "card_full": "cards/full/hwg5_u12_19_cap_full.png",
+        "card_text": "cards/text/hwg5_u12_19_cap_text.png",
+        "unit": "Unit 12: Unit 12: Things Around You",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_07dailylife_cap_1367.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0677",
+    "english": "clock",
+    "canonical_key": "clock",
+    "disambiguation": "",
+    "display_label": "clock",
+    "normalized_english": "clock",
+    "part_of_speech": "noun",
+    "category": "07_dailylife",
+    "category_name": "Daily Life, Routines & Objects",
+    "ja_kanji": "時計",
+    "ja_hiragana": "とけい",
+    "en_katakana": "クロック",
+    "ruby": [
+      {
+        "base": "時計",
+        "ruby": "とけい"
+      }
+    ],
+    "ruby_html": "<ruby>時計<rt>とけい</rt></ruby>",
+    "ruby_text": "[時計|とけい]",
+    "sound_file": "dic_wb_07dailylife_clock_1352.mp3",
+    "card_image": "dic_wb_07dailylife_clock_1352_1_c.png",
+    "card_image_kana": "dic_wb_07dailylife_clock_1352_1_c.png",
+    "card_image_en": "dic_wb_07dailylife_clock_1352_1_e.png",
+    "card_image_bilingual": "dic_wb_07dailylife_clock_1352_1_ce.png",
+    "card_variants": [
+      "dic_wb_07dailylife_clock_1352_1.png"
+    ],
+    "token": "dic_wb_07dailylife_clock_1352&dic_wb_07dailylife_clock_1352&dic_wb_07dailylife_clock_1352",
+    "grades": [
+      "ES_G5"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Do you have a clock? / A: Yes, I do."
+    ],
+    "tags": [
+      "item"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u12_12_clock_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u12_12_clock_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u12_12_clock_text.png",
+    "lemma": "clock",
+    "is_plural": false,
+    "letter_count": 5,
+    "syllable_count": 1,
+    "first_letter": "C",
+    "is_compound": false,
+    "phonics_initial": "cl",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_07dailylife_clock_1352_1_c.png",
+    "primary_audio": "dic_wb_07dailylife_clock_1352.mp3",
+    "three_hints": {
+      "category_hint": "It is an item used in daily life.",
+      "feature_hint": "An everyday item or clothing known as '時計' (とけい) in Japanese.",
+      "letter_hint": "It starts with the letter C."
+    },
+    "target_dialogues": [
+      {
+        "question": "Do you have a clock?",
+        "answer": "Yes, I do.",
+        "context": "Talking about daily personal items"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u12_12_clock_illust.png",
+        "card_full": "cards/full/hwg5_u12_12_clock_full.png",
+        "card_text": "cards/text/hwg5_u12_12_clock_text.png",
+        "unit": "Unit 12: Unit 12: Things Around You",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_07dailylife_clock_1352.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0678",
+    "english": "computer",
+    "canonical_key": "computer",
+    "disambiguation": "",
+    "display_label": "computer",
+    "normalized_english": "computer",
+    "part_of_speech": "noun",
+    "category": "07_dailylife",
+    "category_name": "Daily Life, Routines & Objects",
+    "ja_kanji": "コンピューター",
+    "ja_hiragana": "こんぴゅーたー",
+    "en_katakana": "コンピューター",
+    "ruby": [
+      {
+        "base": "コンピューター",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "コンピューター",
+    "ruby_text": "コンピューター",
+    "sound_file": "dic_wb_07dailylife_computer_1353.mp3",
+    "card_image": "dic_wb_07dailylife_computer_1353_1_c.png",
+    "card_image_kana": "dic_wb_07dailylife_computer_1353_1_c.png",
+    "card_image_en": "dic_wb_07dailylife_computer_1353_1_e.png",
+    "card_image_bilingual": "dic_wb_07dailylife_computer_1353_1_ce.png",
+    "card_variants": [
+      "dic_wb_07dailylife_computer_1353_1.png"
+    ],
+    "token": "dic_wb_07dailylife_computer_1353&dic_wb_07dailylife_computer_1353&dic_wb_07dailylife_computer_1353",
+    "grades": [
+      "ES_G5"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Do you have a computer? / A: Yes, I do."
+    ],
+    "tags": [
+      "object"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u12_04_computer_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u12_04_computer_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u12_04_computer_text.png",
+    "lemma": "computer",
+    "is_plural": false,
+    "letter_count": 8,
+    "syllable_count": 3,
+    "first_letter": "C",
+    "is_compound": false,
+    "phonics_initial": "c",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_07dailylife_computer_1353_1_c.png",
+    "primary_audio": "dic_wb_07dailylife_computer_1353.mp3",
+    "three_hints": {
+      "category_hint": "It is an item used in daily life.",
+      "feature_hint": "An everyday item or clothing known as 'コンピューター' (こんぴゅーたー) in Japanese.",
+      "letter_hint": "It starts with the letter C."
+    },
+    "target_dialogues": [
+      {
+        "question": "Do you have a computer?",
+        "answer": "Yes, I do.",
+        "context": "Talking about daily personal items"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u12_04_computer_illust.png",
+        "card_full": "cards/full/hwg5_u12_04_computer_full.png",
+        "card_text": "cards/text/hwg5_u12_04_computer_text.png",
+        "unit": "Unit 12: Unit 12: Things Around You",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_07dailylife_computer_1353.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0679",
+    "english": "cup",
+    "canonical_key": "cup",
+    "disambiguation": "",
+    "display_label": "cup",
+    "normalized_english": "cup",
+    "part_of_speech": "noun",
+    "category": "07_dailylife",
+    "category_name": "Daily Life, Routines & Objects",
+    "ja_kanji": "カップ",
+    "ja_hiragana": "かっぷ",
+    "en_katakana": "カップ",
+    "ruby": [
+      {
+        "base": "カップ",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "カップ",
+    "ruby_text": "カップ",
+    "sound_file": "dic_wb_07dailylife_cup_1354.mp3",
+    "card_image": "dic_5_card_cup_0271_1_c.png",
+    "card_image_kana": "dic_5_card_cup_0271_1_c.png",
+    "card_image_en": "dic_5_card_cup_0271_1_e.png",
+    "card_image_bilingual": "dic_5_card_cup_0271_1_ce.png",
+    "card_variants": [
+      "dic_5_card_cup_0271_1.png"
+    ],
+    "token": "dic_wb_07dailylife_cup_1354&dic_wb_07dailylife_cup_1354&dic_5_card_cup_0271",
+    "grades": [
+      "ES_G5"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Do you have a cup? / A: Yes, I do."
+    ],
+    "tags": [
+      "kitchen"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u12_11_cup_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u12_11_cup_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u12_11_cup_text.png",
+    "lemma": "cup",
+    "is_plural": false,
+    "letter_count": 3,
+    "syllable_count": 1,
+    "first_letter": "C",
+    "is_compound": false,
+    "phonics_initial": "c",
+    "difficulty_tier": 2,
+    "primary_image": "dic_5_card_cup_0271_1_c.png",
+    "primary_audio": "dic_wb_07dailylife_cup_1354.mp3",
+    "three_hints": {
+      "category_hint": "It is an item used in daily life.",
+      "feature_hint": "An everyday item or clothing known as 'カップ' (かっぷ) in Japanese.",
+      "letter_hint": "It starts with the letter C."
+    },
+    "target_dialogues": [
+      {
+        "question": "Do you have a cup?",
+        "answer": "Yes, I do.",
+        "context": "Talking about daily personal items"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u12_11_cup_illust.png",
+        "card_full": "cards/full/hwg5_u12_11_cup_full.png",
+        "card_text": "cards/text/hwg5_u12_11_cup_text.png",
+        "unit": "Unit 12: Unit 12: Things Around You",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_07dailylife_cup_1354.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0682",
+    "english": "dish",
+    "canonical_key": "dish",
+    "disambiguation": "",
+    "display_label": "dish",
+    "normalized_english": "dish",
+    "part_of_speech": "noun",
+    "category": "07_dailylife",
+    "category_name": "Daily Life, Routines & Objects",
+    "ja_kanji": "皿",
+    "ja_hiragana": "さら",
+    "en_katakana": "ディッシュ",
+    "ruby": [
+      {
+        "base": "皿",
+        "ruby": "さら"
+      }
+    ],
+    "ruby_html": "<ruby>皿<rt>さら</rt></ruby>",
+    "ruby_text": "[皿|さら]",
+    "sound_file": "dic_wb_07dailylife_dish_1356.mp3",
+    "card_image": "dic_wb_07dailylife_dish_1356_1_c.png",
+    "card_image_kana": "dic_wb_07dailylife_dish_1356_1_c.png",
+    "card_image_en": "dic_wb_07dailylife_dish_1356_1_e.png",
+    "card_image_bilingual": "dic_wb_07dailylife_dish_1356_1_ce.png",
+    "card_variants": [
+      "dic_wb_07dailylife_dish_1356_1.png"
+    ],
+    "token": "dic_wb_07dailylife_dish_1356&dic_wb_07dailylife_dish_1356&dic_wb_07dailylife_dish_1356",
+    "grades": [
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Do you have a dish? / A: Yes, I do."
+    ],
+    "tags": [
+      "kitchen"
+    ],
+    "lemma": "dish",
+    "is_plural": false,
+    "letter_count": 4,
+    "syllable_count": 1,
+    "first_letter": "D",
+    "is_compound": false,
+    "phonics_initial": "d",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_07dailylife_dish_1356_1_c.png",
+    "primary_audio": "dic_wb_07dailylife_dish_1356.mp3",
+    "three_hints": {
+      "category_hint": "It is an item used in daily life.",
+      "feature_hint": "An everyday item or clothing known as '皿' (さら) in Japanese.",
+      "letter_hint": "It starts with the letter D."
+    },
+    "target_dialogues": [
+      {
+        "question": "Do you have a dish?",
+        "answer": "Yes, I do.",
+        "context": "Talking about daily personal items"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G4": {
+        "card_image": "dic_wb_07dailylife_dish_1356_1_c.png",
+        "sound_file": "dic_wb_07dailylife_dish_1356.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_wb_07dailylife_dish_1356_1_ce.png",
+        "card_bw": "dic_wb_07dailylife_dish_1356_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0683",
+    "english": "drum",
+    "canonical_key": "drum",
+    "disambiguation": "",
+    "display_label": "drum",
+    "normalized_english": "drum",
+    "part_of_speech": "noun",
+    "category": "07_dailylife",
+    "category_name": "Daily Life, Routines & Objects",
+    "ja_kanji": "ドラム",
+    "ja_hiragana": "どらむ",
+    "en_katakana": "ドラム",
+    "ruby": [
+      {
+        "base": "ドラム",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "ドラム",
+    "ruby_text": "ドラム",
+    "sound_file": "dic_wb_07dailylife_drum_1381.mp3",
+    "card_image": "dic_6_card_drum_0929_1_c.png",
+    "card_image_kana": "dic_6_card_drum_0929_1_c.png",
+    "card_image_en": "dic_6_card_drum_0929_1_e.png",
+    "card_image_bilingual": "dic_6_card_drum_0929_1_ce.png",
+    "card_variants": [
+      "dic_6_card_drum_0929_1.png"
+    ],
+    "token": "dic_wb_07dailylife_drum_1381&dic_wb_07dailylife_drum_1381&dic_6_card_drum_0929",
+    "grades": [
+      "ES_G3",
+      "ES_G6"
+    ],
+    "themes": [
+      "ALPHABET アルファベットとなかよし"
+    ],
+    "target_sentences": [
+      "Q: Do you have a drum? / A: Yes, I do."
+    ],
+    "tags": [
+      "instrument",
+      "music"
+    ],
+    "lemma": "drum",
+    "is_plural": false,
+    "letter_count": 4,
+    "syllable_count": 1,
+    "first_letter": "D",
+    "is_compound": false,
+    "phonics_initial": "dr",
+    "difficulty_tier": 1,
+    "primary_image": "dic_6_card_drum_0929_1_c.png",
+    "primary_audio": "dic_wb_07dailylife_drum_1381.mp3",
+    "three_hints": {
+      "category_hint": "It is an item used in daily life.",
+      "feature_hint": "An everyday item or clothing known as 'ドラム' (どらむ) in Japanese.",
+      "letter_hint": "It starts with the letter D."
+    },
+    "target_dialogues": [
+      {
+        "question": "Do you have a drum?",
+        "answer": "Yes, I do.",
+        "context": "Talking about daily personal items"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_6_card_drum_0929_1_c.png",
+        "sound_file": "dic_wb_07dailylife_drum_1381.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_6_card_drum_0929_1_ce.png",
+        "card_bw": "dic_6_card_drum_0929_1.png"
+      },
+      "ES_G6": {
+        "card_image": "dic_6_card_drum_0929_1_c.png",
+        "sound_file": "dic_wb_07dailylife_drum_1381.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_6_card_drum_0929_1_ce.png",
+        "card_bw": "dic_6_card_drum_0929_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0684",
+    "english": "garbage",
+    "canonical_key": "garbage",
+    "disambiguation": "",
+    "display_label": "garbage",
+    "normalized_english": "garbage",
+    "part_of_speech": "noun",
+    "category": "07_dailylife",
+    "category_name": "Daily Life, Routines & Objects",
+    "ja_kanji": "ごみ",
+    "ja_hiragana": "ごみ",
+    "en_katakana": "ガーベッジ",
+    "ruby": [
+      {
+        "base": "ごみ",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "ごみ",
+    "ruby_text": "ごみ",
+    "sound_file": "dic_wb_07dailylife_garbage_1357.mp3",
+    "card_image": "dic_wb_07dailylife_garbage_1357_1_c.png",
+    "card_image_kana": "dic_wb_07dailylife_garbage_1357_1_c.png",
+    "card_image_en": "dic_wb_07dailylife_garbage_1357_1_e.png",
+    "card_image_bilingual": "dic_wb_07dailylife_garbage_1357_1_ce.png",
+    "card_variants": [
+      "dic_wb_07dailylife_garbage_1357_1.png"
+    ],
+    "token": "dic_wb_07dailylife_garbage_1357&dic_wb_07dailylife_garbage_1357&dic_wb_07dailylife_garbage_1357",
+    "grades": [
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Do you have a garbage? / A: Yes, I do."
+    ],
+    "tags": [
+      "item"
+    ],
+    "lemma": "garbage",
+    "is_plural": false,
+    "letter_count": 7,
+    "syllable_count": 2,
+    "first_letter": "G",
+    "is_compound": false,
+    "phonics_initial": "g",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_07dailylife_garbage_1357_1_c.png",
+    "primary_audio": "dic_wb_07dailylife_garbage_1357.mp3",
+    "three_hints": {
+      "category_hint": "It is an item used in daily life.",
+      "feature_hint": "An everyday item or clothing known as 'ごみ' (ごみ) in Japanese.",
+      "letter_hint": "It starts with the letter G."
+    },
+    "target_dialogues": [
+      {
+        "question": "Do you have a garbage?",
+        "answer": "Yes, I do.",
+        "context": "Talking about daily personal items"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G4": {
+        "card_image": "dic_wb_07dailylife_garbage_1357_1_c.png",
+        "sound_file": "dic_wb_07dailylife_garbage_1357.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_wb_07dailylife_garbage_1357_1_ce.png",
+        "card_bw": "dic_wb_07dailylife_garbage_1357_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0686",
+    "english": "guitar",
+    "canonical_key": "guitar",
+    "disambiguation": "",
+    "display_label": "guitar",
+    "normalized_english": "guitar",
+    "part_of_speech": "noun",
+    "category": "07_dailylife",
+    "category_name": "Daily Life, Routines & Objects",
+    "ja_kanji": "ギター",
+    "ja_hiragana": "ぎたー",
+    "en_katakana": "ギター",
+    "ruby": [
+      {
+        "base": "ギター",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "ギター",
+    "ruby_text": "ギター",
+    "sound_file": "dic_wb_07dailylife_guitar_1384.mp3",
+    "card_image": "dic_wb_07dailylife_guitar_1384_1_c.png",
+    "card_image_kana": "dic_wb_07dailylife_guitar_1384_1_c.png",
+    "card_image_en": "dic_wb_07dailylife_guitar_1384_1_e.png",
+    "card_image_bilingual": "dic_wb_07dailylife_guitar_1384_1_ce.png",
+    "card_variants": [
+      "dic_wb_07dailylife_guitar_1384_1.png"
+    ],
+    "token": "dic_wb_07dailylife_guitar_1384&dic_wb_07dailylife_guitar_1384&dic_wb_07dailylife_guitar_1384",
+    "grades": [
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Do you have a guitar? / A: Yes, I do."
+    ],
+    "tags": [
+      "instrument",
+      "music"
+    ],
+    "lemma": "guitar",
+    "is_plural": false,
+    "letter_count": 6,
+    "syllable_count": 2,
+    "first_letter": "G",
+    "is_compound": false,
+    "phonics_initial": "g",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_07dailylife_guitar_1384_1_c.png",
+    "primary_audio": "dic_wb_07dailylife_guitar_1384.mp3",
+    "three_hints": {
+      "category_hint": "It is an item used in daily life.",
+      "feature_hint": "An everyday item or clothing known as 'ギター' (ぎたー) in Japanese.",
+      "letter_hint": "It starts with the letter G."
+    },
+    "target_dialogues": [
+      {
+        "question": "Do you have a guitar?",
+        "answer": "Yes, I do.",
+        "context": "Talking about daily personal items"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G4": {
+        "card_image": "dic_wb_07dailylife_guitar_1384_1_c.png",
+        "sound_file": "dic_wb_07dailylife_guitar_1384.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_wb_07dailylife_guitar_1384_1_ce.png",
+        "card_bw": "dic_wb_07dailylife_guitar_1384_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0687",
+    "english": "hat",
+    "canonical_key": "hat",
+    "disambiguation": "",
+    "display_label": "hat",
+    "normalized_english": "hat",
+    "part_of_speech": "noun",
+    "category": "07_dailylife",
+    "category_name": "Daily Life, Routines & Objects",
+    "ja_kanji": "帽子",
+    "ja_hiragana": "ぼうし",
+    "en_katakana": "ハット",
+    "ruby": [
+      {
+        "base": "帽子",
+        "ruby": "ぼうし"
+      }
+    ],
+    "ruby_html": "<ruby>帽子<rt>ぼうし</rt></ruby>",
+    "ruby_text": "[帽子|ぼうし]",
+    "sound_file": "dic_wb_07dailylife_hat_1369.mp3",
+    "card_image": "dic_6_card_hat_0701_1_c.png",
+    "card_image_kana": "dic_6_card_hat_0701_1_c.png",
+    "card_image_en": "dic_6_card_hat_0701_1_e.png",
+    "card_image_bilingual": "dic_6_card_hat_0701_1_ce.png",
+    "card_variants": [
+      "dic_6_card_hat_0701_1.png"
+    ],
+    "token": "dic_wb_07dailylife_hat_1369&dic_wb_07dailylife_hat_1369&dic_6_card_hat_0701",
+    "grades": [
+      "ES_G3",
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [
+      "ALPHABET アルファベットとなかよし"
+    ],
+    "target_sentences": [
+      "Q: Do you have a hat? / A: Yes, I do."
+    ],
+    "tags": [
+      "clothes"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u12_20_hat_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u12_20_hat_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u12_20_hat_text.png",
+    "lemma": "hat",
+    "is_plural": false,
+    "letter_count": 3,
+    "syllable_count": 1,
+    "first_letter": "H",
+    "is_compound": false,
+    "phonics_initial": "h",
+    "difficulty_tier": 1,
+    "primary_image": "dic_6_card_hat_0701_1_c.png",
+    "primary_audio": "dic_wb_07dailylife_hat_1369.mp3",
+    "three_hints": {
+      "category_hint": "It is an item used in daily life.",
+      "feature_hint": "An everyday item or clothing known as '帽子' (ぼうし) in Japanese.",
+      "letter_hint": "It starts with the letter H."
+    },
+    "target_dialogues": [
+      {
+        "question": "Do you have a hat?",
+        "answer": "Yes, I do.",
+        "context": "Talking about daily personal items"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_6_card_hat_0701_1_c.png",
+        "sound_file": "dic_wb_07dailylife_hat_1369.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_6_card_hat_0701_1_ce.png",
+        "card_bw": "dic_6_card_hat_0701_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u12_20_hat_illust.png",
+        "card_full": "cards/full/hwg5_u12_20_hat_full.png",
+        "card_text": "cards/text/hwg5_u12_20_hat_text.png",
+        "unit": "Unit 12: Unit 12: Things Around You",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_07dailylife_hat_1369.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg5_u12_20_hat_illust.png",
+        "card_full": "cards/full/hwg5_u12_20_hat_full.png",
+        "card_text": "cards/text/hwg5_u12_20_hat_text.png",
+        "sound_file": "dic_wb_07dailylife_hat_1369.mp3",
+        "source": "here_we_go_6"
+      }
+    }
+  },
+  {
+    "id": "word_0691",
+    "english": "newspaper",
+    "canonical_key": "newspaper",
+    "disambiguation": "",
+    "display_label": "newspaper",
+    "normalized_english": "newspaper",
+    "part_of_speech": "noun",
+    "category": "07_dailylife",
+    "category_name": "Daily Life, Routines & Objects",
+    "ja_kanji": "新聞",
+    "ja_hiragana": "しんぶん",
+    "en_katakana": "ニュースペーパー",
+    "ruby": [
+      {
+        "base": "新聞",
+        "ruby": "しんぶん"
+      }
+    ],
+    "ruby_html": "<ruby>新聞<rt>しんぶん</rt></ruby>",
+    "ruby_text": "[新聞|しんぶん]",
+    "sound_file": "dic_wb_07dailylife_newspaper_1361.mp3",
+    "card_image": "dic_wb_07dailylife_newspaper_1361_1_c.png",
+    "card_image_kana": "dic_wb_07dailylife_newspaper_1361_1_c.png",
+    "card_image_en": "dic_wb_07dailylife_newspaper_1361_1_e.png",
+    "card_image_bilingual": "dic_wb_07dailylife_newspaper_1361_1_ce.png",
+    "card_variants": [
+      "dic_wb_07dailylife_newspaper_1361_1.png"
+    ],
+    "token": "dic_wb_07dailylife_newspaper_1361&dic_wb_07dailylife_newspaper_1361&dic_wb_07dailylife_newspaper_1361",
+    "grades": [
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Do you have a newspaper? / A: Yes, I do."
+    ],
+    "tags": [
+      "media"
+    ],
+    "lemma": "newspaper",
+    "is_plural": false,
+    "letter_count": 9,
+    "syllable_count": 3,
+    "first_letter": "N",
+    "is_compound": false,
+    "phonics_initial": "n",
+    "difficulty_tier": 3,
+    "primary_image": "dic_wb_07dailylife_newspaper_1361_1_c.png",
+    "primary_audio": "dic_wb_07dailylife_newspaper_1361.mp3",
+    "three_hints": {
+      "category_hint": "It is an item used in daily life.",
+      "feature_hint": "An everyday item or clothing known as '新聞' (しんぶん) in Japanese.",
+      "letter_hint": "It starts with the letter N."
+    },
+    "target_dialogues": [
+      {
+        "question": "Do you have a newspaper?",
+        "answer": "Yes, I do.",
+        "context": "Talking about daily personal items"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G4": {
+        "card_image": "dic_wb_07dailylife_newspaper_1361_1_c.png",
+        "sound_file": "dic_wb_07dailylife_newspaper_1361.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_wb_07dailylife_newspaper_1361_1_ce.png",
+        "card_bw": "dic_wb_07dailylife_newspaper_1361_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0692",
+    "english": "pants",
+    "canonical_key": "pants",
+    "disambiguation": "",
+    "display_label": "pants",
+    "normalized_english": "pants",
+    "part_of_speech": "noun",
+    "category": "07_dailylife",
+    "category_name": "Daily Life, Routines & Objects",
+    "ja_kanji": "ズボン",
+    "ja_hiragana": "ずぼん",
+    "en_katakana": "パンツ",
+    "ruby": [
+      {
+        "base": "ズボン",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "ズボン",
+    "ruby_text": "ズボン",
+    "sound_file": "dic_wb_07dailylife_pants_1370.mp3",
+    "card_image": "dic_wb_07dailylife_pants_1370_1_c.png",
+    "card_image_kana": "dic_wb_07dailylife_pants_1370_1_c.png",
+    "card_image_en": "dic_wb_07dailylife_pants_1370_1_e.png",
+    "card_image_bilingual": "dic_wb_07dailylife_pants_1370_1_ce.png",
+    "card_variants": [
+      "dic_wb_07dailylife_pants_1370_1.png"
+    ],
+    "token": "dic_wb_07dailylife_pants_1370&dic_wb_07dailylife_pants_1370&dic_wb_07dailylife_pants_1370",
+    "grades": [
+      "ES_G4",
+      "ES_G5"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Do you have a pants? / A: Yes, I do."
+    ],
+    "tags": [
+      "clothes"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u12_22_pants_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u12_22_pants_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u12_22_pants_text.png",
+    "lemma": "pants",
+    "is_plural": false,
+    "letter_count": 5,
+    "syllable_count": 1,
+    "first_letter": "P",
+    "is_compound": false,
+    "phonics_initial": "p",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_07dailylife_pants_1370_1_c.png",
+    "primary_audio": "dic_wb_07dailylife_pants_1370.mp3",
+    "three_hints": {
+      "category_hint": "It is an item used in daily life.",
+      "feature_hint": "An everyday item or clothing known as 'ズボン' (ずぼん) in Japanese.",
+      "letter_hint": "It starts with the letter P."
+    },
+    "target_dialogues": [
+      {
+        "question": "Do you have a pants?",
+        "answer": "Yes, I do.",
+        "context": "Talking about daily personal items"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G4": {
+        "card_image": "dic_wb_07dailylife_pants_1370_1_c.png",
+        "sound_file": "dic_wb_07dailylife_pants_1370.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_wb_07dailylife_pants_1370_1_ce.png",
+        "card_bw": "dic_wb_07dailylife_pants_1370_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u12_22_pants_illust.png",
+        "card_full": "cards/full/hwg5_u12_22_pants_full.png",
+        "card_text": "cards/text/hwg5_u12_22_pants_text.png",
+        "unit": "Unit 12: Unit 12: Things Around You",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_07dailylife_pants_1370.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0693",
+    "english": "piano",
+    "canonical_key": "piano",
+    "disambiguation": "",
+    "display_label": "piano",
+    "normalized_english": "piano",
+    "part_of_speech": "noun",
+    "category": "07_dailylife",
+    "category_name": "Daily Life, Routines & Objects",
+    "ja_kanji": "ピアノ",
+    "ja_hiragana": "ぴあの",
+    "en_katakana": "ピアノ",
+    "ruby": [
+      {
+        "base": "ピアノ",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "ピアノ",
+    "ruby_text": "ピアノ",
+    "sound_file": "dic_wb_07dailylife_piano_1382.mp3",
+    "card_image": "dic_6_card_piano_0928_1_c.png",
+    "card_image_kana": "dic_6_card_piano_0928_1_c.png",
+    "card_image_en": "dic_6_card_piano_0928_1_e.png",
+    "card_image_bilingual": "dic_6_card_piano_0928_1_ce.png",
+    "card_variants": [
+      "dic_6_card_piano_0928_1.png"
+    ],
+    "token": "dic_wb_07dailylife_piano_1382&dic_wb_07dailylife_piano_1382&dic_6_card_piano_0928",
+    "grades": [
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Do you have a piano? / A: Yes, I do."
+    ],
+    "tags": [
+      "instrument",
+      "music"
+    ],
+    "lemma": "piano",
+    "is_plural": false,
+    "letter_count": 5,
+    "syllable_count": 2,
+    "first_letter": "P",
+    "is_compound": false,
+    "phonics_initial": "p",
+    "difficulty_tier": 3,
+    "primary_image": "dic_6_card_piano_0928_1_c.png",
+    "primary_audio": "dic_wb_07dailylife_piano_1382.mp3",
+    "three_hints": {
+      "category_hint": "It is an item used in daily life.",
+      "feature_hint": "An everyday item or clothing known as 'ピアノ' (ぴあの) in Japanese.",
+      "letter_hint": "It starts with the letter P."
+    },
+    "target_dialogues": [
+      {
+        "question": "Do you have a piano?",
+        "answer": "Yes, I do.",
+        "context": "Talking about daily personal items"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G6": {
+        "card_image": "dic_6_card_piano_0928_1_c.png",
+        "sound_file": "dic_wb_07dailylife_piano_1382.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_6_card_piano_0928_1_ce.png",
+        "card_bw": "dic_6_card_piano_0928_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0695",
+    "english": "recorder",
+    "canonical_key": "recorder",
+    "disambiguation": "",
+    "display_label": "recorder",
+    "normalized_english": "recorder",
+    "part_of_speech": "noun",
+    "category": "07_dailylife",
+    "category_name": "Daily Life, Routines & Objects",
+    "ja_kanji": "リコーダー",
+    "ja_hiragana": "りこーだー",
+    "en_katakana": "リコーダー",
+    "ruby": [
+      {
+        "base": "リコーダー",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "リコーダー",
+    "ruby_text": "リコーダー",
+    "sound_file": "dic_wb_07dailylife_recorder_1383.mp3",
+    "card_image": "dic_6_card_recorder_0739_1_c.png",
+    "card_image_kana": "dic_6_card_recorder_0739_1_c.png",
+    "card_image_en": "dic_6_card_recorder_0739_1_e.png",
+    "card_image_bilingual": "dic_6_card_recorder_0739_1_ce.png",
+    "card_variants": [
+      "dic_6_card_recorder_0739_1.png"
+    ],
+    "token": "dic_wb_07dailylife_recorder_1383&dic_wb_07dailylife_recorder_1383&dic_6_card_recorder_0739",
+    "grades": [
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Do you have a recorder? / A: Yes, I do."
+    ],
+    "tags": [
+      "instrument",
+      "music"
+    ],
+    "lemma": "recorder",
+    "is_plural": false,
+    "letter_count": 8,
+    "syllable_count": 3,
+    "first_letter": "R",
+    "is_compound": false,
+    "phonics_initial": "r",
+    "difficulty_tier": 3,
+    "primary_image": "dic_6_card_recorder_0739_1_c.png",
+    "primary_audio": "dic_wb_07dailylife_recorder_1383.mp3",
+    "three_hints": {
+      "category_hint": "It is an item used in daily life.",
+      "feature_hint": "An everyday item or clothing known as 'リコーダー' (りこーだー) in Japanese.",
+      "letter_hint": "It starts with the letter R."
+    },
+    "target_dialogues": [
+      {
+        "question": "Do you have a recorder?",
+        "answer": "Yes, I do.",
+        "context": "Talking about daily personal items"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G6": {
+        "card_image": "dic_6_card_recorder_0739_1_c.png",
+        "sound_file": "dic_wb_07dailylife_recorder_1383.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_6_card_recorder_0739_1_ce.png",
+        "card_bw": "dic_6_card_recorder_0739_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0696",
+    "english": "shirt",
+    "canonical_key": "shirt",
+    "disambiguation": "",
+    "display_label": "shirt",
+    "normalized_english": "shirt",
+    "part_of_speech": "noun",
+    "category": "07_dailylife",
+    "category_name": "Daily Life, Routines & Objects",
+    "ja_kanji": "シャツ",
+    "ja_hiragana": "しゃつ",
+    "en_katakana": "シャツ",
+    "ruby": [
+      {
+        "base": "シャツ",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "シャツ",
+    "ruby_text": "シャツ",
+    "sound_file": "dic_wb_07dailylife_shirt_1373.mp3",
+    "card_image": "dic_wb_07dailylife_shirt_1373_1_c.png",
+    "card_image_kana": "dic_wb_07dailylife_shirt_1373_1_c.png",
+    "card_image_en": "dic_wb_07dailylife_shirt_1373_1_e.png",
+    "card_image_bilingual": "dic_wb_07dailylife_shirt_1373_1_ce.png",
+    "card_variants": [
+      "dic_wb_07dailylife_shirt_1373_1.png"
+    ],
+    "token": "dic_wb_07dailylife_shirt_1373&dic_wb_07dailylife_shirt_1373&dic_wb_07dailylife_shirt_1373",
+    "grades": [
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Do you have a shirt? / A: Yes, I do."
+    ],
+    "tags": [
+      "clothes"
+    ],
+    "lemma": "shirt",
+    "is_plural": false,
+    "letter_count": 5,
+    "syllable_count": 1,
+    "first_letter": "S",
+    "is_compound": false,
+    "phonics_initial": "sh",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_07dailylife_shirt_1373_1_c.png",
+    "primary_audio": "dic_wb_07dailylife_shirt_1373.mp3",
+    "three_hints": {
+      "category_hint": "It is an item used in daily life.",
+      "feature_hint": "An everyday item or clothing known as 'シャツ' (しゃつ) in Japanese.",
+      "letter_hint": "It starts with the letter S."
+    },
+    "target_dialogues": [
+      {
+        "question": "Do you have a shirt?",
+        "answer": "Yes, I do.",
+        "context": "Talking about daily personal items"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G4": {
+        "card_image": "dic_wb_07dailylife_shirt_1373_1_c.png",
+        "sound_file": "dic_wb_07dailylife_shirt_1373.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_wb_07dailylife_shirt_1373_1_ce.png",
+        "card_bw": "dic_wb_07dailylife_shirt_1373_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0697",
+    "english": "shorts",
+    "canonical_key": "shorts",
+    "disambiguation": "",
+    "display_label": "shorts",
+    "normalized_english": "shorts",
+    "part_of_speech": "noun",
+    "category": "07_dailylife",
+    "category_name": "Daily Life, Routines & Objects",
+    "ja_kanji": "半ズボン",
+    "ja_hiragana": "はんずぼん",
+    "en_katakana": "ショーツ",
+    "ruby": [
+      {
+        "base": "半",
+        "ruby": "はん"
+      },
+      {
+        "base": "ズボン",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "<ruby>半<rt>はん</rt></ruby>ズボン",
+    "ruby_text": "[半|はん]ズボン",
+    "sound_file": "dic_wb_07dailylife_shorts_1374.mp3",
+    "card_image": "dic_wb_07dailylife_shorts_1374_1_c.png",
+    "card_image_kana": "dic_wb_07dailylife_shorts_1374_1_c.png",
+    "card_image_en": "dic_wb_07dailylife_shorts_1374_1_e.png",
+    "card_image_bilingual": "dic_wb_07dailylife_shorts_1374_1_ce.png",
+    "card_variants": [
+      "dic_wb_07dailylife_shorts_1374_1.png"
+    ],
+    "token": "dic_wb_07dailylife_shorts_1374&dic_wb_07dailylife_shorts_1374&dic_wb_07dailylife_shorts_1374",
+    "grades": [
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Do you have shorts? / A: Yes, I do."
+    ],
+    "tags": [
+      "clothes"
+    ],
+    "lemma": "short",
+    "is_plural": true,
+    "letter_count": 6,
+    "syllable_count": 1,
+    "first_letter": "S",
+    "is_compound": false,
+    "phonics_initial": "sh",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_07dailylife_shorts_1374_1_c.png",
+    "primary_audio": "dic_wb_07dailylife_shorts_1374.mp3",
+    "three_hints": {
+      "category_hint": "It is an item used in daily life.",
+      "feature_hint": "An everyday item or clothing known as '半ズボン' (はんずぼん) in Japanese.",
+      "letter_hint": "It starts with the letter S."
+    },
+    "target_dialogues": [
+      {
+        "question": "Do you have shorts?",
+        "answer": "Yes, I do.",
+        "context": "Talking about daily personal items"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G4": {
+        "card_image": "dic_wb_07dailylife_shorts_1374_1_c.png",
+        "sound_file": "dic_wb_07dailylife_shorts_1374.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_wb_07dailylife_shorts_1374_1_ce.png",
+        "card_bw": "dic_wb_07dailylife_shorts_1374_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0698",
+    "english": "sweater",
+    "canonical_key": "sweater",
+    "disambiguation": "",
+    "display_label": "sweater",
+    "normalized_english": "sweater",
+    "part_of_speech": "noun",
+    "category": "07_dailylife",
+    "category_name": "Daily Life, Routines & Objects",
+    "ja_kanji": "セーター",
+    "ja_hiragana": "せーたー",
+    "en_katakana": "スウェター",
+    "ruby": [
+      {
+        "base": "セーター",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "セーター",
+    "ruby_text": "セーター",
+    "sound_file": "dic_wb_07dailylife_sweater_1376.mp3",
+    "card_image": "dic_wb_07dailylife_sweater_1376_1_c.png",
+    "card_image_kana": "dic_wb_07dailylife_sweater_1376_1_c.png",
+    "card_image_en": "dic_wb_07dailylife_sweater_1376_1_e.png",
+    "card_image_bilingual": "dic_wb_07dailylife_sweater_1376_1_ce.png",
+    "card_variants": [
+      "dic_wb_07dailylife_sweater_1376_1.png"
+    ],
+    "token": "dic_wb_07dailylife_sweater_1376&dic_wb_07dailylife_sweater_1376&dic_wb_07dailylife_sweater_1376",
+    "grades": [
+      "ES_G5"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What time do you sweater? / A: I sweater at seven o'clock."
+    ],
+    "tags": [
+      "object"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u12_26_sweater_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u12_26_sweater_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u12_26_sweater_text.png",
+    "lemma": "sweater",
+    "is_plural": false,
+    "letter_count": 7,
+    "syllable_count": 2,
+    "first_letter": "S",
+    "is_compound": false,
+    "phonics_initial": "sw",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_07dailylife_sweater_1376_1_c.png",
+    "primary_audio": "dic_wb_07dailylife_sweater_1376.mp3",
+    "three_hints": {
+      "category_hint": "It is a daily routine or action.",
+      "feature_hint": "Something you do as part of daily life known as 'セーター' (せーたー).",
+      "letter_hint": "It starts with the letter S."
+    },
+    "target_dialogues": [
+      {
+        "question": "What time do you sweater?",
+        "answer": "I sweater at seven o'clock.",
+        "context": "Asking about daily schedules and routines"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u12_26_sweater_illust.png",
+        "card_full": "cards/full/hwg5_u12_26_sweater_full.png",
+        "card_text": "cards/text/hwg5_u12_26_sweater_text.png",
+        "unit": "Unit 12: Unit 12: Things Around You",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_07dailylife_sweater_1376.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0699",
+    "english": "T-shirt",
+    "canonical_key": "t-shirt",
+    "disambiguation": "",
+    "display_label": "T-shirt",
+    "normalized_english": "t-shirt",
+    "part_of_speech": "noun",
+    "category": "07_dailylife",
+    "category_name": "Daily Life, Routines & Objects",
+    "ja_kanji": "Tシャツ",
+    "ja_hiragana": "てぃーしゃつ",
+    "en_katakana": "ティーシャツ",
+    "ruby": [
+      {
+        "base": "Tシャツ",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "Tシャツ",
+    "ruby_text": "Tシャツ",
+    "sound_file": "dic_wb_07dailylife_t-shirt_1377.mp3",
+    "card_image": "dic_5_card_t-shirt_0273_1_c.png",
+    "card_image_kana": "dic_5_card_t-shirt_0273_1_c.png",
+    "card_image_en": "dic_5_card_t-shirt_0273_1_e.png",
+    "card_image_bilingual": "dic_5_card_t-shirt_0273_1_ce.png",
+    "card_variants": [
+      "dic_5_card_t-shirt_0273_1.png"
+    ],
+    "token": "dic_wb_07dailylife_t-shirt_1377&dic_wb_07dailylife_t-shirt_1377&dic_5_card_t-shirt_0273",
+    "grades": [
+      "ES_G5"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Do you have a t-shirt? / A: Yes, I do."
+    ],
+    "tags": [
+      "clothes"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u12_25_T-shirt_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u12_25_T-shirt_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u12_25_T-shirt_text.png",
+    "lemma": "T-shirt",
+    "is_plural": false,
+    "letter_count": 6,
+    "syllable_count": 1,
+    "first_letter": "T",
+    "is_compound": true,
+    "phonics_initial": "t",
+    "difficulty_tier": 3,
+    "primary_image": "dic_5_card_t-shirt_0273_1_c.png",
+    "primary_audio": "dic_wb_07dailylife_t-shirt_1377.mp3",
+    "three_hints": {
+      "category_hint": "It is an item used in daily life.",
+      "feature_hint": "An everyday item or clothing known as 'Tシャツ' (てぃーしゃつ) in Japanese.",
+      "letter_hint": "It starts with the letter T."
+    },
+    "target_dialogues": [
+      {
+        "question": "Do you have a t-shirt?",
+        "answer": "Yes, I do.",
+        "context": "Talking about daily personal items"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u12_25_T-shirt_illust.png",
+        "card_full": "cards/full/hwg5_u12_25_T-shirt_full.png",
+        "card_text": "cards/text/hwg5_u12_25_T-shirt_text.png",
+        "unit": "Unit 12: Unit 12: Things Around You",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_07dailylife_t-shirt_1377.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0700",
+    "english": "table",
+    "canonical_key": "table",
+    "disambiguation": "",
+    "display_label": "table",
+    "normalized_english": "table",
+    "part_of_speech": "noun",
+    "category": "07_dailylife",
+    "category_name": "Daily Life, Routines & Objects",
+    "ja_kanji": "机",
+    "ja_hiragana": "つくえ",
+    "en_katakana": "テーブル",
+    "ruby": [
+      {
+        "base": "机",
+        "ruby": "つくえ"
+      }
+    ],
+    "ruby_html": "<ruby>机<rt>つくえ</rt></ruby>",
+    "ruby_text": "[机|つくえ]",
+    "sound_file": "dic_wb_07dailylife_table_1362.mp3",
+    "card_image": "dic_wb_07dailylife_table_1362_1_c.png",
+    "card_image_kana": "dic_wb_07dailylife_table_1362_1_c.png",
+    "card_image_en": "dic_wb_07dailylife_table_1362_1_e.png",
+    "card_image_bilingual": "dic_wb_07dailylife_table_1362_1_ce.png",
+    "card_variants": [
+      "dic_wb_07dailylife_table_1362_1.png"
+    ],
+    "token": "dic_wb_07dailylife_table_1362&dic_wb_07dailylife_table_1362&dic_wb_07dailylife_table_1362",
+    "grades": [
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Do you have a table? / A: Yes, I do."
+    ],
+    "tags": [
+      "furniture"
+    ],
+    "lemma": "table",
+    "is_plural": false,
+    "letter_count": 5,
+    "syllable_count": 1,
+    "first_letter": "T",
+    "is_compound": false,
+    "phonics_initial": "t",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_07dailylife_table_1362_1_c.png",
+    "primary_audio": "dic_wb_07dailylife_table_1362.mp3",
+    "three_hints": {
+      "category_hint": "It is an item used in daily life.",
+      "feature_hint": "An everyday item or clothing known as '机' (つくえ) in Japanese.",
+      "letter_hint": "It starts with the letter T."
+    },
+    "target_dialogues": [
+      {
+        "question": "Do you have a table?",
+        "answer": "Yes, I do.",
+        "context": "Talking about daily personal items"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G4": {
+        "card_image": "dic_wb_07dailylife_table_1362_1_c.png",
+        "sound_file": "dic_wb_07dailylife_table_1362.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_wb_07dailylife_table_1362_1_ce.png",
+        "card_bw": "dic_wb_07dailylife_table_1362_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0701",
+    "english": "telephone",
+    "canonical_key": "telephone",
+    "disambiguation": "",
+    "display_label": "telephone",
+    "normalized_english": "telephone",
+    "part_of_speech": "noun",
+    "category": "07_dailylife",
+    "category_name": "Daily Life, Routines & Objects",
+    "ja_kanji": "電話",
+    "ja_hiragana": "でんわ",
+    "en_katakana": "テレフォン",
+    "ruby": [
+      {
+        "base": "電話",
+        "ruby": "でんわ"
+      }
+    ],
+    "ruby_html": "<ruby>電話<rt>でんわ</rt></ruby>",
+    "ruby_text": "[電話|でんわ]",
+    "sound_file": "dic_wb_07dailylife_telephone_1363.mp3",
+    "card_image": "dic_wb_07dailylife_telephone_1363_1_c.png",
+    "card_image_kana": "dic_wb_07dailylife_telephone_1363_1_c.png",
+    "card_image_en": "dic_wb_07dailylife_telephone_1363_1_e.png",
+    "card_image_bilingual": "dic_wb_07dailylife_telephone_1363_1_ce.png",
+    "card_variants": [
+      "dic_wb_07dailylife_telephone_1363_1.png",
+      "dic_4_card_telephone_2607_1.png"
+    ],
+    "token": "dic_wb_07dailylife_telephone_1363&dic_wb_07dailylife_telephone_1363&dic_wb_07dailylife_telephone_1363",
+    "grades": [
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Do you have a telephone? / A: Yes, I do."
+    ],
+    "tags": [
+      "item"
+    ],
+    "lemma": "telephone",
+    "is_plural": false,
+    "letter_count": 9,
+    "syllable_count": 3,
+    "first_letter": "T",
+    "is_compound": false,
+    "phonics_initial": "t",
+    "difficulty_tier": 3,
+    "primary_image": "dic_wb_07dailylife_telephone_1363_1_c.png",
+    "primary_audio": "dic_wb_07dailylife_telephone_1363.mp3",
+    "three_hints": {
+      "category_hint": "It is an item used in daily life.",
+      "feature_hint": "An everyday item or clothing known as '電話' (でんわ) in Japanese.",
+      "letter_hint": "It starts with the letter T."
+    },
+    "target_dialogues": [
+      {
+        "question": "Do you have a telephone?",
+        "answer": "Yes, I do.",
+        "context": "Talking about daily personal items"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G4": {
+        "card_image": "dic_4_card_telephone_2607_1_c.png",
+        "sound_file": "dic_wb_07dailylife_telephone_1363.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_4_card_telephone_2607_1_ce.png",
+        "card_bw": "dic_4_card_telephone_2607_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0702",
+    "english": "TV",
+    "canonical_key": "tv",
+    "disambiguation": "",
+    "display_label": "TV",
+    "normalized_english": "tv",
+    "part_of_speech": "noun",
+    "category": "07_dailylife",
+    "category_name": "Daily Life, Routines & Objects",
+    "ja_kanji": "テレビ",
+    "ja_hiragana": "てれび",
+    "en_katakana": "ティービー",
+    "ruby": [
+      {
+        "base": "テレビ",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "テレビ",
+    "ruby_text": "テレビ",
+    "sound_file": "dic_wb_07dailylife_tv_1364.mp3",
+    "card_image": "dic_wb_07dailylife_tv_1364_1_c.png",
+    "card_image_kana": "dic_wb_07dailylife_tv_1364_1_c.png",
+    "card_image_en": "dic_wb_07dailylife_tv_1364_1_e.png",
+    "card_image_bilingual": "dic_wb_07dailylife_tv_1364_1_ce.png",
+    "card_variants": [
+      "dic_wb_07dailylife_tv_1364_1.png"
+    ],
+    "token": "dic_wb_07dailylife_tv_1364&dic_wb_07dailylife_tv_1364&dic_wb_07dailylife_tv_1364",
+    "grades": [
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Do you have a tv? / A: Yes, I do."
+    ],
+    "tags": [
+      "home",
+      "item"
+    ],
+    "lemma": "TV",
+    "is_plural": false,
+    "letter_count": 2,
+    "syllable_count": 1,
+    "first_letter": "T",
+    "is_compound": false,
+    "phonics_initial": "t",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_07dailylife_tv_1364_1_c.png",
+    "primary_audio": "dic_wb_07dailylife_tv_1364.mp3",
+    "three_hints": {
+      "category_hint": "It is an item used in daily life.",
+      "feature_hint": "An everyday item or clothing known as 'テレビ' (てれび) in Japanese.",
+      "letter_hint": "It starts with the letter T."
+    },
+    "target_dialogues": [
+      {
+        "question": "Do you have a tv?",
+        "answer": "Yes, I do.",
+        "context": "Talking about daily personal items"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G4": {
+        "card_image": "dic_wb_07dailylife_tv_1364_1_c.png",
+        "sound_file": "dic_wb_07dailylife_tv_1364.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_wb_07dailylife_tv_1364_1_ce.png",
+        "card_bw": "dic_wb_07dailylife_tv_1364_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0703",
+    "english": "umbrella",
+    "canonical_key": "umbrella",
+    "disambiguation": "",
+    "display_label": "umbrella",
+    "normalized_english": "umbrella",
+    "part_of_speech": "noun",
+    "category": "07_dailylife",
+    "category_name": "Daily Life, Routines & Objects",
+    "ja_kanji": "傘",
+    "ja_hiragana": "かさ",
+    "en_katakana": "アンブレラ",
+    "ruby": [
+      {
+        "base": "傘",
+        "ruby": "かさ"
+      }
+    ],
+    "ruby_html": "<ruby>傘<rt>かさ</rt></ruby>",
+    "ruby_text": "[傘|かさ]",
+    "sound_file": "dic_wb_07dailylife_umbrella_1378.mp3",
+    "card_image": "dic_wb_07dailylife_umbrella_1378_1_c.png",
+    "card_image_kana": "dic_wb_07dailylife_umbrella_1378_1_c.png",
+    "card_image_en": "dic_wb_07dailylife_umbrella_1378_1_e.png",
+    "card_image_bilingual": "dic_wb_07dailylife_umbrella_1378_1_ce.png",
+    "card_variants": [
+      "dic_wb_07dailylife_umbrella_1378_1.png"
+    ],
+    "token": "dic_wb_07dailylife_umbrella_1378&dic_wb_07dailylife_umbrella_1378&dic_wb_07dailylife_umbrella_1378",
+    "grades": [
+      "ES_G3"
+    ],
+    "themes": [
+      "How many? 数えてあそぼう"
+    ],
+    "target_sentences": [
+      "Q: Do you have an umbrella? / A: Yes, I do."
+    ],
+    "tags": [
+      "item"
+    ],
+    "lemma": "umbrella",
+    "is_plural": false,
+    "letter_count": 8,
+    "syllable_count": 3,
+    "first_letter": "U",
+    "is_compound": false,
+    "phonics_initial": "u",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_07dailylife_umbrella_1378_1_c.png",
+    "primary_audio": "dic_wb_07dailylife_umbrella_1378.mp3",
+    "three_hints": {
+      "category_hint": "It is an item used in daily life.",
+      "feature_hint": "An everyday item or clothing known as '傘' (かさ) in Japanese.",
+      "letter_hint": "It starts with the letter U."
+    },
+    "target_dialogues": [
+      {
+        "question": "Do you have an umbrella?",
+        "answer": "Yes, I do.",
+        "context": "Talking about daily personal items"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_wb_07dailylife_umbrella_1378_1_c.png",
+        "sound_file": "dic_wb_07dailylife_umbrella_1378.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_wb_07dailylife_umbrella_1378_1_ce.png",
+        "card_bw": "dic_wb_07dailylife_umbrella_1378_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0704",
+    "english": "violin",
+    "canonical_key": "violin",
+    "disambiguation": "",
+    "display_label": "violin",
+    "normalized_english": "violin",
+    "part_of_speech": "noun",
+    "category": "07_dailylife",
+    "category_name": "Daily Life, Routines & Objects",
+    "ja_kanji": "バイオリン",
+    "ja_hiragana": "ばいおりん",
+    "en_katakana": "バイオリン",
+    "ruby": [
+      {
+        "base": "バイオリン",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "バイオリン",
+    "ruby_text": "バイオリン",
+    "sound_file": "dic_wb_07dailylife_violin_1385.mp3",
+    "card_image": "dic_6_card_violin_0927_1_c.png",
+    "card_image_kana": "dic_6_card_violin_0927_1_c.png",
+    "card_image_en": "dic_6_card_violin_0927_1_e.png",
+    "card_image_bilingual": "dic_6_card_violin_0927_1_ce.png",
+    "card_variants": [
+      "dic_6_card_violin_0927_1.png"
+    ],
+    "token": "dic_wb_07dailylife_violin_1385&dic_wb_07dailylife_violin_1385&dic_6_card_violin_0927",
+    "grades": [
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Do you have a violin? / A: Yes, I do."
+    ],
+    "tags": [
+      "instrument",
+      "music"
+    ],
+    "lemma": "violin",
+    "is_plural": false,
+    "letter_count": 6,
+    "syllable_count": 2,
+    "first_letter": "V",
+    "is_compound": false,
+    "phonics_initial": "v",
+    "difficulty_tier": 3,
+    "primary_image": "dic_6_card_violin_0927_1_c.png",
+    "primary_audio": "dic_wb_07dailylife_violin_1385.mp3",
+    "three_hints": {
+      "category_hint": "It is an item used in daily life.",
+      "feature_hint": "An everyday item or clothing known as 'バイオリン' (ばいおりん) in Japanese.",
+      "letter_hint": "It starts with the letter V."
+    },
+    "target_dialogues": [
+      {
+        "question": "Do you have a violin?",
+        "answer": "Yes, I do.",
+        "context": "Talking about daily personal items"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G6": {
+        "card_image": "dic_6_card_violin_0927_1_c.png",
+        "sound_file": "dic_wb_07dailylife_violin_1385.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_6_card_violin_0927_1_ce.png",
+        "card_bw": "dic_6_card_violin_0927_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0705",
+    "english": "watch",
+    "canonical_key": "watch_object",
+    "disambiguation": "object",
+    "display_label": "watch (timepiece)",
+    "normalized_english": "watch",
+    "part_of_speech": "noun",
+    "category": "07_dailylife",
+    "category_name": "Daily Life, Routines & Objects",
+    "ja_kanji": "腕時計",
+    "ja_hiragana": "うでどけい",
+    "en_katakana": "ウォッチ",
+    "ruby": [
+      {
+        "base": "腕時計",
+        "ruby": "うでどけい"
+      }
+    ],
+    "ruby_html": "<ruby>腕時計<rt>うでどけい</rt></ruby>",
+    "ruby_text": "[腕時計|うでどけい]",
+    "sound_file": "dic_wb_01action_watch_1051.mp3",
+    "card_image": "dic_wb_07dailylife_watch_1379_1_c.png",
+    "card_image_kana": "dic_wb_07dailylife_watch_1379_1_c.png",
+    "card_image_en": "dic_wb_07dailylife_watch_1379_1_e.png",
+    "card_image_bilingual": "dic_wb_07dailylife_watch_1379_1_ce.png",
+    "card_variants": [
+      "dic_wb_07dailylife_watch_1379_1.png"
+    ],
+    "token": "dic_wb_07dailylife_watch_1379&dic_wb_01action_watch_1051&dic_wb_07dailylife_watch_1379",
+    "grades": [
+      "ES_G3",
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [
+      "How many? 数えてあそぼう"
+    ],
+    "target_sentences": [
+      "Q: Do you have a watch? / A: Yes, I do."
+    ],
+    "tags": [
+      "clothes",
+      "item"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u12_13_watch_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u12_13_watch_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u12_13_watch_text.png",
+    "lemma": "watch",
+    "is_plural": false,
+    "letter_count": 5,
+    "syllable_count": 1,
+    "first_letter": "W",
+    "is_compound": false,
+    "phonics_initial": "w",
+    "difficulty_tier": 1,
+    "primary_image": "dic_wb_07dailylife_watch_1379_1_c.png",
+    "primary_audio": "dic_wb_01action_watch_1051.mp3",
+    "three_hints": {
+      "category_hint": "It is an item used in daily life.",
+      "feature_hint": "An everyday item or clothing known as '腕時計' (うでどけい) in Japanese.",
+      "letter_hint": "It starts with the letter W."
+    },
+    "target_dialogues": [
+      {
+        "question": "Do you have a watch?",
+        "answer": "Yes, I do.",
+        "context": "Talking about daily personal items"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_wb_07dailylife_watch_1379_1_c.png",
+        "sound_file": "dic_wb_01action_watch_1051.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_wb_07dailylife_watch_1379_1_ce.png",
+        "card_bw": "dic_wb_07dailylife_watch_1379_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u12_13_watch_illust.png",
+        "card_full": "cards/full/hwg5_u12_13_watch_full.png",
+        "card_text": "cards/text/hwg5_u12_13_watch_text.png",
+        "unit": "Unit 12: Unit 12: Things Around You",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_01action_watch_1051.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u06_18_watch_illust.png",
+        "card_full": "cards/full/hwg6_u06_18_watch_full.png",
+        "card_text": "cards/text/hwg6_u06_18_watch_text.png",
+        "unit": "Unit 6: Unit 6: Actions",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_01action_watch_1051.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0706",
+    "english": "wheelchair",
+    "canonical_key": "wheelchair",
+    "disambiguation": "",
+    "display_label": "wheelchair",
+    "normalized_english": "wheelchair",
+    "part_of_speech": "noun",
+    "category": "07_dailylife",
+    "category_name": "Daily Life, Routines & Objects",
+    "ja_kanji": "車いす",
+    "ja_hiragana": "くるまいす",
+    "en_katakana": "ホイールチェア",
+    "ruby": [
+      {
+        "base": "車",
+        "ruby": "くるま"
+      },
+      {
+        "base": "いす",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "<ruby>車<rt>くるま</rt></ruby>いす",
+    "ruby_text": "[車|くるま]いす",
+    "sound_file": "dic_wb_07dailylife_wheelchair_1380.mp3",
+    "card_image": "dic_wb_07dailylife_wheelchair_1380_1_c.png",
+    "card_image_kana": "dic_wb_07dailylife_wheelchair_1380_1_c.png",
+    "card_image_en": "dic_wb_07dailylife_wheelchair_1380_1_e.png",
+    "card_image_bilingual": "dic_wb_07dailylife_wheelchair_1380_1_ce.png",
+    "card_variants": [
+      "dic_wb_07dailylife_wheelchair_1380_1.png"
+    ],
+    "token": "dic_wb_07dailylife_wheelchair_1380&dic_wb_07dailylife_wheelchair_1380&dic_wb_07dailylife_wheelchair_1380",
+    "grades": [
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Do you have a wheelchair? / A: Yes, I do."
+    ],
+    "tags": [
+      "item"
+    ],
+    "lemma": "wheelchair",
+    "is_plural": false,
+    "letter_count": 10,
+    "syllable_count": 2,
+    "first_letter": "W",
+    "is_compound": false,
+    "phonics_initial": "wh",
+    "difficulty_tier": 3,
+    "primary_image": "dic_wb_07dailylife_wheelchair_1380_1_c.png",
+    "primary_audio": "dic_wb_07dailylife_wheelchair_1380.mp3",
+    "three_hints": {
+      "category_hint": "It is an item used in daily life.",
+      "feature_hint": "An everyday item or clothing known as '車いす' (くるまいす) in Japanese.",
+      "letter_hint": "It starts with the letter W."
+    },
+    "target_dialogues": [
+      {
+        "question": "Do you have a wheelchair?",
+        "answer": "Yes, I do.",
+        "context": "Talking about daily personal items"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G4": {
+        "card_image": "dic_wb_07dailylife_wheelchair_1380_1_c.png",
+        "sound_file": "dic_wb_07dailylife_wheelchair_1380.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_wb_07dailylife_wheelchair_1380_1_ce.png",
+        "card_bw": "dic_wb_07dailylife_wheelchair_1380_1.png"
+      }
+    }
+  }
+]

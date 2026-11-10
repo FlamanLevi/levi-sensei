@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QRコードでクイズに参加！ iPad出席番号・初期設定ガイド | リヴァイ先生の英語教室</title>
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --card-bg: #151d2e;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #10b981;
+      --primary-hover: #059669;
+      --accent: #f59e0b;
+      --blue: #3b82f6;
+      --purple: #8b5cf6;
+      --pink: #ec4899;
+      --border: #243048;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body {
+      font-family: 'UD Digi Kyokasho NP-R', 'UD Digi Kyokasho NK-R', 'UD Digi Kyokasho N-R', 'BIZ UDPGothic', 'Zen Maru Gothic', 'Hiragino Maru Gothic ProN', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* Top Navigation Header */
+    header {
+      background: rgba(11, 15, 25, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 2px solid var(--border);
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #10b981, #3b82f6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
+    }
+
+    .brand-title {
+      font-size: 19px;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      color: #ffffff;
+    }
+
+    .brand-sub {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    /* Mode Toggle Switch (Raw vs Annotated) */
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .toggle-group {
+      display: flex;
+      background: var(--card-bg);
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      padding: 4px;
+      gap: 4px;
+    }
+
+    .toggle-btn {
+      padding: 8px 16px;
+      border-radius: 12px;
+      border: none;
+      font-size: 13px;
+      font-weight: 800;
+      font-family: inherit;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+      color: var(--text-muted);
+      background: transparent;
+    }
+
+    .toggle-btn.active {
+      background: #2563eb;
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.4);
+    }
+
+    .toggle-btn.active.annotated {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(245, 158, 11, 0.4);
+    }
+
+    .key-badge {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.2);
+      font-weight: 900;
+      font-family: monospace;
+    }
+
+    /* Step Selector Pills Bar */
+    .step-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 16px;
+      background: rgba(21, 29, 46, 0.8);
+      border-bottom: 1px solid var(--border);
+      overflow-x: auto;
+    }
+
+    .step-pill {
+      padding: 7px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--card-bg);
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 800;
+      font-family: inherit;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      transition: all 0.15s ease;
+    }
+
+    .step-pill:hover {
+      border-color: #64748b;
+      color: #ffffff;
+    }
+
+    .step-pill.active {
+      background: #10b981;
+      border-color: #34d399;
+      color: #ffffff;
+      box-shadow: 0 2px 10px rgba(16, 185, 129, 0.35);
+    }
+
+    .step-pill-num {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    /* Main Presentation Stage */
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      max-width: 1300px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .stage-wrapper {
+      position: relative;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Image Display Area (4:3 aspect ratio matching 1080x810) */
+    .image-viewport {
+      position: relative;
+      width: 100%;
+      max-width: 1060px;
+      aspect-ratio: 4 / 3;
+      background: #000000;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6), 0 0 0 3px var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .slide-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      transition: opacity 0.15s ease;
+    }
+
+    /* Nav arrow overlay on sides */
+    .nav-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      background: rgba(15, 23, 42, 0.85);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+      font-size: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      z-index: 20;
+      backdrop-filter: blur(8px);
+    }
+
+    .nav-arrow:hover {
+      background: #3b82f6;
+      border-color: #60a5fa;
+      transform: translateY(-50%) scale(1.1);
+    }
+
+    .nav-arrow.prev { left: -26px; }
+    .nav-arrow.next { right: -26px; }
+
+    /* Teacher Script & Details Card */
+    .details-card {
+      margin-top: 18px;
+      width: 100%;
+      max-width: 1060px;
+      background: var(--card-bg);
+      border: 2px solid var(--border);
+      border-radius: 20px;
+      padding: 18px 24px;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 20px;
+      align-items: center;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+    }
+
+    .step-badge-large {
+      padding: 8px 16px;
+      border-radius: 14px;
+      font-size: 15px;
+      font-weight: 900;
+      color: #ffffff;
+      white-space: nowrap;
+      text-align: center;
+    }
+
+    .step-badge-blue { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+    .step-badge-green { background: linear-gradient(135deg, #10b981, #047857); }
+    .step-badge-amber { background: linear-gradient(135deg, #f59e0b, #b45309); }
+    .step-badge-purple { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
+    .step-badge-pink { background: linear-gradient(135deg, #ec4899, #be185d); }
+
+    .details-content h3 {
+      font-size: 18px;
+      font-weight: 900;
+      color: #ffffff;
+      margin-bottom: 4px;
+    }
+
+    .details-content p {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+
+    .teacher-say {
+      background: rgba(245, 158, 11, 0.12);
+      border-left: 4px solid var(--accent);
+      padding: 10px 16px;
+      border-radius: 0 12px 12px 0;
+      max-width: 380px;
+    }
+
+    .teacher-say-label {
+      font-size: 10px;
+      font-weight: 900;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 2px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .teacher-say-text {
+      font-size: 13px;
+      font-weight: 700;
+      color: #fef3c7;
+      line-height: 1.4;
+    }
+
+    /* Bottom Keyboard Hints */
+    .keyboard-hint {
+      margin-top: 12px;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .keyboard-hint kbd {
+      background: #1e293b;
+      border: 1px solid #475569;
+      border-bottom-width: 2px;
+      padding: 2px 7px;
+      border-radius: 6px;
+      font-family: monospace;
+      font-weight: bold;
+      color: #e2e8f0;
+      font-size: 11px;
+    }
+
+    @media (max-width: 768px) {
+      .details-card {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+      .nav-arrow.prev { left: 8px; }
+      .nav-arrow.next { right: 8px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Header -->
+  <header>
+    <div class="brand">
+      <div class="brand-icon">📷</div>
+      <div>
+        <div class="brand-title">QRコード読み取り＆クイズ参加ガイド</div>
+        <div class="brand-sub">低学年（1〜4年生）向け クイック参加・初期連携フロー</div>
+      </div>
+    </div>
+
+    <!-- Toggle Mode -->
+    <div class="controls">
+      <div class="toggle-group">
+        <button id="btnAnnotated" class="toggle-btn active annotated" onclick="setMode('annotated')">
+          <span>🏷️ 指示つき</span>
+          <span class="key-badge">T</span>
+        </button>
+        <button id="btnRaw" class="toggle-btn" onclick="setMode('raw')">
+          <span>📱 そのまま (iPad)</span>
+          <span class="key-badge">T</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Step Selection Pills -->
+  <nav class="step-bar">
+    <button class="step-pill active" onclick="goToStep(0)">
+      <span class="step-pill-num">1</span>
+      <span>TVのQRコード</span>
+    </button>
+    <button class="step-pill" onclick="goToStep(1)">
+      <span class="step-pill-num">2</span>
+      <span>iPadカメラでスキャン</span>
+    </button>
+    <button class="step-pill" onclick="goToStep(2)">
+      <span class="step-pill-num">3</span>
+      <span>番号タブをタップ</span>
+    </button>
+    <button class="step-pill" onclick="goToStep(3)">
+      <span class="step-pill-num">4</span>
+      <span>じぶんの番号を選ぶ</span>
+    </button>
+    <button class="step-pill" onclick="goToStep(4)">
+      <span class="step-pill-num">5</span>
+      <span>クイズをプレイ！</span>
+    </button>
+    <button class="step-pill" onclick="goToStep(5)">
+      <span class="step-pill-num">6</span>
+      <span>出席番号をセーブ！</span>
+    </button>
+    <button class="step-pill" onclick="goToStep(6)">
+      <span class="step-pill-num">7</span>
+      <span>アイコン・ニックネーム設定</span>
+    </button>
+  </nav>
+
+  <!-- Main Presentation Stage -->
+  <main>
+    <div class="stage-wrapper">
+      <button class="nav-arrow prev" onclick="prevSlide()" title="前へ (←)">‹</button>
+
+      <div class="image-viewport">
+        <img id="slideImg" class="slide-img" src="./guide_images/step1_annotated.png" alt="Slide Image">
+      </div>
+
+      <button class="nav-arrow next" onclick="nextSlide()" title="次へ (→ / Space)">›</button>
+    </div>
+
+    <!-- Slide Details & Verbal Script -->
+    <div class="details-card">
+      <div id="stepBadge" class="step-badge-large step-badge-blue">
+        ステップ 1
+      </div>
+
+      <div class="details-content">
+        <h3 id="stepTitle">【テレビ画面】 前のテレビのQRコードを見よう！</h3>
+        <p id="stepDesc">先生がクイズを開くと、前のテレビに大きなQRコードと4桁の番号が表示されます。</p>
+      </div>
+
+      <div class="teacher-say">
+        <div class="teacher-say-label">🗣️ 先生の声かけ</div>
+        <div id="stepSay" class="teacher-say-text">「前のテレビに大きなQRコードが出たよ！iPadのカメラを向けよう！」</div>
+      </div>
+    </div>
+
+    <!-- Bottom Keyboard Navigation Tips -->
+    <div class="keyboard-hint">
+      <span><kbd>←</kbd> <kbd>→</kbd> または <kbd>Space</kbd> で前後のステップへ</span>
+      <span><kbd>T</kbd> キーで「指示つき」⇄「そのまま」切替</span>
+      <span><kbd>1</kbd>〜<kbd>7</kbd> でステップ直通</span>
+      <span><kbd>F11</kbd> で全画面表示（プロジェクター推奨）</span>
+    </div>
+  </main>
+
+  <script>
+    const SLIDES = [
+      {
+        step: 1,
+        title: "【テレビ画面】 前のテレビのQRコードを見よう！",
+        desc: "先生がクイズの部屋を開くと、テレビに大きなQRコードと4桁の番号（合言葉）が表示されます。",
+        say: "「前のテレビに大きなQRコードが出たよ！iPadのカメラをテレビに向けてみよう！」",
+        badgeClass: "step-badge-blue",
+        raw: "./guide_images/step1_raw.png",
+        annotated: "./guide_images/step1_annotated.png",
+        label: "1. TVのQRコード"
+      },
+      {
+        step: 2,
+        title: "iPadのカメラをテレビのQRコードに向けよう！",
+        desc: "カメラを向けると、画面の上に黄色い「Safariで開く」という案内がポップアップします。",
+        say: "「画面の上に出た黄色い『Safariで開く』を1回ポンとタップしてね！」",
+        badgeClass: "step-badge-green",
+        raw: "./guide_images/step2_raw.png",
+        annotated: "./guide_images/step2_annotated.png",
+        label: "2. カメラでスキャン"
+      },
+      {
+        step: 3,
+        title: "へやの番号は自動入力！「しゅっせき番号」をタップ！",
+        desc: "QRコードから開くと部屋番号（2048）は自動で入っています。真ん中の「しゅっせき番号」を押します。",
+        say: "「部屋番号はもう入っているよ！真ん中の『しゅっせき番号』タブを押してね！」",
+        badgeClass: "step-badge-purple",
+        raw: "./guide_images/step3_raw.png",
+        annotated: "./guide_images/step3_annotated.png",
+        label: "3. 番号タブをタップ"
+      },
+      {
+        step: 4,
+        title: "じぶんの番号（例: 14番）を押して「参加する」！",
+        desc: "iPadケースの裏シールと同じ出席番号を1回タップして、下の紫のボタンを押します。",
+        say: "「じぶんの出席番号（例: 14番）を1回押して、下のむらさきの『参加する』ボタンを押そう！」",
+        badgeClass: "step-badge-pink",
+        raw: "./guide_images/step4_raw.png",
+        annotated: "./guide_images/step4_annotated.png",
+        label: "4. じぶんの番号を選ぶ"
+      },
+      {
+        step: 5,
+        title: "もんだいが出たら、正しいカードをすばやくタップ！",
+        desc: "テレビやiPadに出る英語（例: apple）を見て、4つのカラーカード（▲◆●■）から正解を選ぼう！",
+        say: "「問題が出たら、正解だと思うカードをすばやくタップ！早く答えるほど高得点だよ！」",
+        badgeClass: "step-badge-amber",
+        raw: "./guide_images/step5_raw.png",
+        annotated: "./guide_images/step5_annotated.png",
+        label: "5. クイズをプレイ！"
+      },
+      {
+        step: 6,
+        title: "ゲーム終了！ iPadケースの出席番号を押してセーブ！",
+        desc: "スコアが出たら、下の「スコアをこのiPadに保存しよう！」でじぶんの番号を押して連携完了！",
+        say: "「ゲームが終わったら、iPadケースの番号と同じ数字を押してスコアをiPadに保存しよう！」",
+        badgeClass: "step-badge-green",
+        raw: "./guide_images/step6_raw.png",
+        annotated: "./guide_images/step6_annotated.png",
+        label: "6. 出席番号をセーブ！"
+      },
+      {
+        step: 7,
+        title: "じぶんだけのニックネーム・アイコン・秘密マークを決定！",
+        desc: "クイズの後はマイページでプロフィールを自由に変更！次回のクイズもこの設定で遊べるよ！",
+        say: "「ひらがなでお名前を入れて、すきなアイコンと秘密のマークを1つ決めてね！」",
+        badgeClass: "step-badge-blue",
+        raw: "./guide_images/step7_raw.png",
+        annotated: "./guide_images/step7_annotated.png",
+        label: "7. アイコン・名前設定"
+      }
+    ];
+
+    let currentIndex = 0;
+    let currentMode = "annotated"; // 'annotated' or 'raw'
+
+    function updateView() {
+      const slide = SLIDES[currentIndex];
+      const img = document.getElementById("slideImg");
+
+      // Update image source based on active mode
+      img.src = currentMode === "annotated" ? slide.annotated : slide.raw;
+
+      // Update Text details
+      document.getElementById("stepBadge").textContent = `ステップ ${slide.step}`;
+      document.getElementById("stepBadge").className = `step-badge-large ${slide.badgeClass}`;
+      document.getElementById("stepTitle").textContent = slide.title;
+      document.getElementById("stepDesc").textContent = slide.desc;
+      document.getElementById("stepSay").textContent = slide.say;
+
+      // Update Step Pills
+      const pills = document.querySelectorAll(".step-pill");
+      pills.forEach((p, idx) => {
+        if (idx === currentIndex) {
+          p.classList.add("active");
+          p.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        } else {
+          p.classList.remove("active");
+        }
+      });
+    }
+
+    function setMode(mode) {
+      currentMode = mode;
+      const btnAnn = document.getElementById("btnAnnotated");
+      const btnRaw = document.getElementById("btnRaw");
+
+      if (mode === "annotated") {
+        btnAnn.classList.add("active", "annotated");
+        btnRaw.classList.remove("active");
+      } else {
+        btnRaw.classList.add("active");
+        btnAnn.classList.remove("active", "annotated");
+      }
+      updateView();
+    }
+
+    function toggleMode() {
+      setMode(currentMode === "annotated" ? "raw" : "annotated");
+    }
+
+    function goToStep(index) {
+      if (index >= 0 && index < SLIDES.length) {
+        currentIndex = index;
+        updateView();
+      }
+    }
+
+    function nextSlide() {
+      if (currentIndex < SLIDES.length - 1) {
+        currentIndex++;
+      } else {
+        currentIndex = 0; // loop back
+      }
+      updateView();
+    }
+
+    function prevSlide() {
+      if (currentIndex > 0) {
+        currentIndex--;
+      } else {
+        currentIndex = SLIDES.length - 1; // loop to end
+      }
+      updateView();
+    }
+
+    // Keyboard Shortcuts
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowRight" || e.key === " " || e.key === "Enter") {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        prevSlide();
+      } else if (e.key === "t" || e.key === "T") {
+        e.preventDefault();
+        toggleMode();
+      } else if (e.key >= "1" && e.key <= "7") {
+        const stepNum = parseInt(e.key, 10);
+        goToStep(stepNum - 1);
+      }
+    });
+
+    // Initialize
+    updateView();
+  </script>
+</body>
+</html>

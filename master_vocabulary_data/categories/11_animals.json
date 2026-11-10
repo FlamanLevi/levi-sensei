@@ -1,0 +1,5003 @@
+[
+  {
+    "id": "word_0006",
+    "english": "animal",
+    "canonical_key": "animal",
+    "disambiguation": "",
+    "display_label": "animal",
+    "normalized_english": "animal",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "動物",
+    "ja_hiragana": "どうぶつ",
+    "en_katakana": "アニマル",
+    "ruby": [
+      {
+        "base": "動物",
+        "ruby": "どうぶつ"
+      }
+    ],
+    "ruby_html": "<ruby>動物<rt>どうぶつ</rt></ruby>",
+    "ruby_text": "[動物|どうぶつ]",
+    "sound_file": "dic_wb_11animals_animal_1485.mp3",
+    "card_image": "",
+    "card_image_kana": "",
+    "card_image_en": "",
+    "card_image_bilingual": "",
+    "card_variants": [],
+    "token": "borderlink_animal",
+    "grades": [
+      "ES_G1"
+    ],
+    "themes": [
+      "Review"
+    ],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like animal."
+    ],
+    "tags": [
+      "animal"
+    ],
+    "lemma": "animal",
+    "is_plural": false,
+    "letter_count": 6,
+    "syllable_count": 3,
+    "first_letter": "A",
+    "is_compound": false,
+    "phonics_initial": "a",
+    "difficulty_tier": 2,
+    "primary_image": "",
+    "primary_audio": "dic_wb_11animals_animal_1485.mp3",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as '動物' (どうぶつ) in Japanese.",
+      "letter_hint": "It starts with the letter A."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like animal.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {}
+  },
+  {
+    "id": "word_0026",
+    "english": "bird",
+    "canonical_key": "bird",
+    "disambiguation": "",
+    "display_label": "bird",
+    "normalized_english": "bird",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "鳥",
+    "ja_hiragana": "とり",
+    "en_katakana": "バード",
+    "ruby": [
+      {
+        "base": "鳥",
+        "ruby": "とり"
+      }
+    ],
+    "ruby_html": "<ruby>鳥<rt>とり</rt></ruby>",
+    "ruby_text": "[鳥|とり]",
+    "sound_file": "",
+    "card_image": "cards/full/hwg6_u11_24_bird_full.png",
+    "card_image_kana": "cards/full/hwg6_u11_24_bird_full.png",
+    "card_image_en": "cards/full/hwg6_u11_24_bird_full.png",
+    "card_image_bilingual": "cards/full/hwg6_u11_24_bird_full.png",
+    "card_variants": [],
+    "token": "hwg_bird",
+    "grades": [
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like bird."
+    ],
+    "tags": [
+      "animal",
+      "bird"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u11_24_bird_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u11_24_bird_illust.png",
+    "hwg_card_text": "cards/text/hwg6_u11_24_bird_text.png",
+    "lemma": "bird",
+    "is_plural": false,
+    "letter_count": 4,
+    "syllable_count": 1,
+    "first_letter": "B",
+    "is_compound": false,
+    "phonics_initial": "b",
+    "difficulty_tier": 3,
+    "primary_image": "cards/full/hwg6_u11_24_bird_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as '鳥' (とり) in Japanese.",
+      "letter_hint": "It starts with the letter B."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like bird.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u11_24_bird_illust.png",
+        "card_full": "cards/full/hwg6_u11_24_bird_full.png",
+        "card_text": "cards/text/hwg6_u11_24_bird_text.png",
+        "unit": "Unit 11: Unit 11: Living Things",
+        "source": "here_we_go_6",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0027",
+    "english": "black cat",
+    "canonical_key": "black cat",
+    "disambiguation": "",
+    "display_label": "black cat",
+    "normalized_english": "black cat",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "黒猫",
+    "ja_hiragana": "くろねこ",
+    "en_katakana": "ブラックキャット",
+    "ruby": [
+      {
+        "base": "黒猫",
+        "ruby": "くろねこ"
+      }
+    ],
+    "ruby_html": "<ruby>黒猫<rt>くろねこ</rt></ruby>",
+    "ruby_text": "[黒猫|くろねこ]",
+    "sound_file": "",
+    "card_image": "",
+    "card_image_kana": "",
+    "card_image_en": "",
+    "card_image_bilingual": "",
+    "card_variants": [],
+    "token": "borderlink_black cat",
+    "grades": [
+      "ES_G1"
+    ],
+    "themes": [
+      "Halloween"
+    ],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like black cat."
+    ],
+    "tags": [
+      "animal",
+      "pet"
+    ],
+    "lemma": "cat",
+    "is_plural": false,
+    "letter_count": 8,
+    "syllable_count": 2,
+    "first_letter": "B",
+    "is_compound": true,
+    "phonics_initial": "bl",
+    "difficulty_tier": 3,
+    "primary_image": "dic_wb_11animals_cat_1487_1_c.png",
+    "primary_audio": "dic_wb_11animals_cat_1487.mp3",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as '黒猫' (くろねこ) in Japanese.",
+      "letter_hint": "It starts with the letter B."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like black cat.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G1": {
+        "card_image": "dic_wb_11animals_cat_1487_1_c.png",
+        "sound_file": "",
+        "source": "borderlink_elementary",
+        "card_full": "dic_wb_11animals_cat_1487_1_ce.png",
+        "card_bw": "dic_wb_11animals_cat_1487_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0035",
+    "english": "bugs",
+    "canonical_key": "bugs",
+    "disambiguation": "",
+    "display_label": "bugs",
+    "normalized_english": "bugs",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "虫",
+    "ja_hiragana": "むし",
+    "en_katakana": "バグズ",
+    "ruby": [
+      {
+        "base": "虫",
+        "ruby": "むし"
+      }
+    ],
+    "ruby_html": "<ruby>虫<rt>むし</rt></ruby>",
+    "ruby_text": "[虫|むし]",
+    "sound_file": "",
+    "card_image": "cards/full/hwg6_u10_21_bugs_full.png",
+    "card_image_kana": "cards/full/hwg6_u10_21_bugs_full.png",
+    "card_image_en": "cards/full/hwg6_u10_21_bugs_full.png",
+    "card_image_bilingual": "cards/full/hwg6_u10_21_bugs_full.png",
+    "card_variants": [],
+    "token": "hwg_bugs",
+    "grades": [
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like bugs."
+    ],
+    "tags": [
+      "animal",
+      "bug"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u10_21_bugs_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u10_21_bugs_illust.png",
+    "hwg_card_text": "cards/text/hwg6_u10_21_bugs_text.png",
+    "lemma": "bug",
+    "is_plural": true,
+    "letter_count": 4,
+    "syllable_count": 1,
+    "first_letter": "B",
+    "is_compound": false,
+    "phonics_initial": "b",
+    "difficulty_tier": 3,
+    "primary_image": "cards/full/hwg6_u10_21_bugs_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as '虫' (むし) in Japanese.",
+      "letter_hint": "It starts with the letter B."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like bugs.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u10_21_bugs_illust.png",
+        "card_full": "cards/full/hwg6_u10_21_bugs_full.png",
+        "card_text": "cards/text/hwg6_u10_21_bugs_text.png",
+        "unit": "Unit 10: Unit 10: Nature",
+        "source": "here_we_go_6",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0045",
+    "english": "caterpillar",
+    "canonical_key": "caterpillar",
+    "disambiguation": "",
+    "display_label": "caterpillar",
+    "normalized_english": "caterpillar",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "毛虫",
+    "ja_hiragana": "けむし",
+    "en_katakana": "キャタピラー",
+    "ruby": [
+      {
+        "base": "毛虫",
+        "ruby": "けむし"
+      }
+    ],
+    "ruby_html": "<ruby>毛虫<rt>けむし</rt></ruby>",
+    "ruby_text": "[毛虫|けむし]",
+    "sound_file": "",
+    "card_image": "cards/full/hwg6_u11_28_caterpillar_full.png",
+    "card_image_kana": "cards/full/hwg6_u11_28_caterpillar_full.png",
+    "card_image_en": "cards/full/hwg6_u11_28_caterpillar_full.png",
+    "card_image_bilingual": "cards/full/hwg6_u11_28_caterpillar_full.png",
+    "card_variants": [],
+    "token": "hwg_caterpillar",
+    "grades": [
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like caterpillar."
+    ],
+    "tags": [
+      "animal",
+      "bug"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u11_28_caterpillar_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u11_28_caterpillar_illust.png",
+    "hwg_card_text": "cards/text/hwg6_u11_28_caterpillar_text.png",
+    "lemma": "caterpillar",
+    "is_plural": false,
+    "letter_count": 11,
+    "syllable_count": 4,
+    "first_letter": "C",
+    "is_compound": false,
+    "phonics_initial": "c",
+    "difficulty_tier": 3,
+    "primary_image": "cards/full/hwg6_u11_28_caterpillar_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as '毛虫' (けむし) in Japanese.",
+      "letter_hint": "It starts with the letter C."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like caterpillar.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u11_28_caterpillar_illust.png",
+        "card_full": "cards/full/hwg6_u11_28_caterpillar_full.png",
+        "card_text": "cards/text/hwg6_u11_28_caterpillar_text.png",
+        "unit": "Unit 11: Unit 11: Living Things",
+        "source": "here_we_go_6",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0046",
+    "english": "cats",
+    "canonical_key": "cats",
+    "disambiguation": "",
+    "display_label": "cats",
+    "normalized_english": "cats",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "猫",
+    "ja_hiragana": "ねこ",
+    "en_katakana": "キャッツ",
+    "ruby": [
+      {
+        "base": "猫",
+        "ruby": "ねこ"
+      }
+    ],
+    "ruby_html": "<ruby>猫<rt>ねこ</rt></ruby>",
+    "ruby_text": "[猫|ねこ]",
+    "sound_file": "dic_wb_11animals_cat_1487.mp3",
+    "card_image": "",
+    "card_image_kana": "",
+    "card_image_en": "",
+    "card_image_bilingual": "",
+    "card_variants": [],
+    "token": "borderlink_cats",
+    "grades": [
+      "ES_G1"
+    ],
+    "themes": [
+      "Farm Animals"
+    ],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like cats."
+    ],
+    "tags": [
+      "animal",
+      "pet",
+      "plural"
+    ],
+    "lemma": "cat",
+    "is_plural": true,
+    "letter_count": 4,
+    "syllable_count": 1,
+    "first_letter": "C",
+    "is_compound": false,
+    "phonics_initial": "c",
+    "difficulty_tier": 1,
+    "primary_image": "dic_wb_11animals_cat_1487_1_c.png",
+    "primary_audio": "dic_wb_11animals_cat_1487.mp3",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as '猫' (ねこ) in Japanese.",
+      "letter_hint": "It starts with the letter C."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like cats.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G1": {
+        "card_image": "dic_wb_11animals_cat_1487_1_c.png",
+        "sound_file": "dic_wb_11animals_cat_1487.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_wb_11animals_cat_1487_1_ce.png",
+        "card_bw": "dic_wb_11animals_cat_1487_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0053",
+    "english": "chimpanzee",
+    "canonical_key": "chimpanzee",
+    "disambiguation": "",
+    "display_label": "chimpanzee",
+    "normalized_english": "chimpanzee",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "チンパンジー",
+    "ja_hiragana": "ちんぱんじー",
+    "en_katakana": "チンパンジー",
+    "ruby": [
+      {
+        "base": "チンパンジー",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "チンパンジー",
+    "ruby_text": "チンパンジー",
+    "sound_file": "",
+    "card_image": "cards/full/hwg6_u11_02_chimpanzee_full.png",
+    "card_image_kana": "cards/full/hwg6_u11_02_chimpanzee_full.png",
+    "card_image_en": "cards/full/hwg6_u11_02_chimpanzee_full.png",
+    "card_image_bilingual": "cards/full/hwg6_u11_02_chimpanzee_full.png",
+    "card_variants": [],
+    "token": "hwg_chimpanzee",
+    "grades": [
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like chimpanzee."
+    ],
+    "tags": [
+      "animal",
+      "wild"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u11_02_chimpanzee_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u11_02_chimpanzee_illust.png",
+    "hwg_card_text": "cards/text/hwg6_u11_02_chimpanzee_text.png",
+    "lemma": "chimpanzee",
+    "is_plural": false,
+    "letter_count": 10,
+    "syllable_count": 3,
+    "first_letter": "C",
+    "is_compound": false,
+    "phonics_initial": "ch",
+    "difficulty_tier": 3,
+    "primary_image": "cards/full/hwg6_u11_02_chimpanzee_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as 'チンパンジー' (ちんぱんじー) in Japanese.",
+      "letter_hint": "It starts with the letter C."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like chimpanzee.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u11_02_chimpanzee_illust.png",
+        "card_full": "cards/full/hwg6_u11_02_chimpanzee_full.png",
+        "card_text": "cards/text/hwg6_u11_02_chimpanzee_text.png",
+        "unit": "Unit 11: Unit 11: Living Things",
+        "source": "here_we_go_6",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0062",
+    "english": "cows",
+    "canonical_key": "cows",
+    "disambiguation": "",
+    "display_label": "cows",
+    "normalized_english": "cows",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "牛",
+    "ja_hiragana": "うし",
+    "en_katakana": "カウズ",
+    "ruby": [
+      {
+        "base": "牛",
+        "ruby": "うし"
+      }
+    ],
+    "ruby_html": "<ruby>牛<rt>うし</rt></ruby>",
+    "ruby_text": "[牛|うし]",
+    "sound_file": "dic_wb_11animals_cow_1489.mp3",
+    "card_image": "",
+    "card_image_kana": "",
+    "card_image_en": "",
+    "card_image_bilingual": "",
+    "card_variants": [],
+    "token": "borderlink_cows",
+    "grades": [
+      "ES_G1"
+    ],
+    "themes": [
+      "Farm Animals"
+    ],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like cows."
+    ],
+    "tags": [
+      "animal",
+      "farm",
+      "plural"
+    ],
+    "lemma": "cow",
+    "is_plural": true,
+    "letter_count": 4,
+    "syllable_count": 1,
+    "first_letter": "C",
+    "is_compound": false,
+    "phonics_initial": "c",
+    "difficulty_tier": 1,
+    "primary_image": "dic_wb_11animals_cow_1489_1_c.png",
+    "primary_audio": "dic_wb_11animals_cow_1489.mp3",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as '牛' (うし) in Japanese.",
+      "letter_hint": "It starts with the letter C."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like cows.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G1": {
+        "card_image": "dic_wb_11animals_cow_1489_1_c.png",
+        "sound_file": "dic_wb_11animals_cow_1489.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_wb_11animals_cow_1489_1_ce.png",
+        "card_bw": "dic_wb_11animals_cow_1489_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0063",
+    "english": "crab",
+    "canonical_key": "crab",
+    "disambiguation": "",
+    "display_label": "crab",
+    "normalized_english": "crab",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "カニ",
+    "ja_hiragana": "かに",
+    "en_katakana": "クラブ",
+    "ruby": [
+      {
+        "base": "カニ",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "カニ",
+    "ruby_text": "カニ",
+    "sound_file": "",
+    "card_image": "cards/full/hwg5_u07_07_crab_full.png",
+    "card_image_kana": "cards/full/hwg5_u07_07_crab_full.png",
+    "card_image_en": "cards/full/hwg5_u07_07_crab_full.png",
+    "card_image_bilingual": "cards/full/hwg5_u07_07_crab_full.png",
+    "card_variants": [],
+    "token": "hwg_crab",
+    "grades": [
+      "ES_G5"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like crab."
+    ],
+    "tags": [
+      "animal",
+      "sea"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u07_07_crab_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u07_07_crab_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u07_07_crab_text.png",
+    "lemma": "crab",
+    "is_plural": false,
+    "letter_count": 4,
+    "syllable_count": 1,
+    "first_letter": "C",
+    "is_compound": false,
+    "phonics_initial": "cr",
+    "difficulty_tier": 2,
+    "primary_image": "cards/full/hwg5_u07_07_crab_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as 'カニ' (かに) in Japanese.",
+      "letter_hint": "It starts with the letter C."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like crab.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u07_07_crab_illust.png",
+        "card_full": "cards/full/hwg5_u07_07_crab_full.png",
+        "card_text": "cards/text/hwg5_u07_07_crab_text.png",
+        "unit": "Unit 7: Unit 7: Ingredients",
+        "source": "here_we_go_5",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0075",
+    "english": "dinosaur",
+    "canonical_key": "dinosaur",
+    "disambiguation": "",
+    "display_label": "dinosaur",
+    "normalized_english": "dinosaur",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "恐竜",
+    "ja_hiragana": "きょうりゅう",
+    "en_katakana": "ダイナソー",
+    "ruby": [
+      {
+        "base": "恐竜",
+        "ruby": "きょうりゅう"
+      }
+    ],
+    "ruby_html": "<ruby>恐竜<rt>きょうりゅう</rt></ruby>",
+    "ruby_text": "[恐竜|きょうりゅう]",
+    "sound_file": "",
+    "card_image": "",
+    "card_image_kana": "",
+    "card_image_en": "",
+    "card_image_bilingual": "",
+    "card_variants": [],
+    "token": "borderlink_dinosaur",
+    "grades": [
+      "ES_G1",
+      "ES_G2",
+      "ES_G3"
+    ],
+    "themes": [
+      "If I were you, I would"
+    ],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like dinosaur."
+    ],
+    "tags": [
+      "ancient",
+      "animal"
+    ],
+    "lemma": "dinosaur",
+    "is_plural": false,
+    "letter_count": 8,
+    "syllable_count": 3,
+    "first_letter": "D",
+    "is_compound": false,
+    "phonics_initial": "d",
+    "difficulty_tier": 2,
+    "primary_image": "",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as '恐竜' (きょうりゅう) in Japanese.",
+      "letter_hint": "It starts with the letter D."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like dinosaur.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {}
+  },
+  {
+    "id": "word_0079",
+    "english": "dogs",
+    "canonical_key": "dogs",
+    "disambiguation": "",
+    "display_label": "dogs",
+    "normalized_english": "dogs",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "犬",
+    "ja_hiragana": "いぬ",
+    "en_katakana": "ドッグス",
+    "ruby": [
+      {
+        "base": "犬",
+        "ruby": "いぬ"
+      }
+    ],
+    "ruby_html": "<ruby>犬<rt>いぬ</rt></ruby>",
+    "ruby_text": "[犬|いぬ]",
+    "sound_file": "dic_wb_11animals_dog_1490.mp3",
+    "card_image": "",
+    "card_image_kana": "",
+    "card_image_en": "",
+    "card_image_bilingual": "",
+    "card_variants": [],
+    "token": "borderlink_dogs",
+    "grades": [
+      "ES_G1"
+    ],
+    "themes": [
+      "Farm Animals"
+    ],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like dogs."
+    ],
+    "tags": [
+      "animal",
+      "pet",
+      "plural"
+    ],
+    "lemma": "dog",
+    "is_plural": true,
+    "letter_count": 4,
+    "syllable_count": 1,
+    "first_letter": "D",
+    "is_compound": false,
+    "phonics_initial": "d",
+    "difficulty_tier": 1,
+    "primary_image": "dic_wb_11animals_dog_1490_1_c.png",
+    "primary_audio": "dic_wb_11animals_dog_1490.mp3",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as '犬' (いぬ) in Japanese.",
+      "letter_hint": "It starts with the letter D."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like dogs.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G1": {
+        "card_image": "dic_wb_11animals_dog_1490_1_c.png",
+        "sound_file": "dic_wb_11animals_dog_1490.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_wb_11animals_dog_1490_1_ce.png",
+        "card_bw": "dic_wb_11animals_dog_1490_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0080",
+    "english": "dolphin",
+    "canonical_key": "dolphin",
+    "disambiguation": "",
+    "display_label": "dolphin",
+    "normalized_english": "dolphin",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "イルカ",
+    "ja_hiragana": "いるか",
+    "en_katakana": "ドルフィン",
+    "ruby": [
+      {
+        "base": "イルカ",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "イルカ",
+    "ruby_text": "イルカ",
+    "sound_file": "",
+    "card_image": "cards/full/hwg6_u11_31_dolphin_full.png",
+    "card_image_kana": "cards/full/hwg6_u11_31_dolphin_full.png",
+    "card_image_en": "cards/full/hwg6_u11_31_dolphin_full.png",
+    "card_image_bilingual": "cards/full/hwg6_u11_31_dolphin_full.png",
+    "card_variants": [],
+    "token": "hwg_dolphin",
+    "grades": [
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like dolphin."
+    ],
+    "tags": [
+      "animal",
+      "sea"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u11_31_dolphin_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u11_31_dolphin_illust.png",
+    "hwg_card_text": "cards/text/hwg6_u11_31_dolphin_text.png",
+    "lemma": "dolphin",
+    "is_plural": false,
+    "letter_count": 7,
+    "syllable_count": 2,
+    "first_letter": "D",
+    "is_compound": false,
+    "phonics_initial": "d",
+    "difficulty_tier": 3,
+    "primary_image": "cards/full/hwg6_u11_31_dolphin_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as 'イルカ' (いるか) in Japanese.",
+      "letter_hint": "It starts with the letter D."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like dolphin.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u11_31_dolphin_illust.png",
+        "card_full": "cards/full/hwg6_u11_31_dolphin_full.png",
+        "card_text": "cards/text/hwg6_u11_31_dolphin_text.png",
+        "unit": "Unit 11: Unit 11: Living Things",
+        "source": "here_we_go_6",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0081",
+    "english": "dragon",
+    "canonical_key": "dragon",
+    "disambiguation": "",
+    "display_label": "dragon",
+    "normalized_english": "dragon",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "ドラゴン",
+    "ja_hiragana": "どらごん",
+    "en_katakana": "ドラゴン",
+    "ruby": [
+      {
+        "base": "ドラゴン",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "ドラゴン",
+    "ruby_text": "ドラゴン",
+    "sound_file": "dic_3_card_dragon_2132.mp3",
+    "card_image": "dic_3_card_dragon_2132_1_c.png",
+    "card_image_kana": "dic_3_card_dragon_2132_1_c.png",
+    "card_image_en": "dic_3_card_dragon_2132_1_e.png",
+    "card_image_bilingual": "dic_3_card_dragon_2132_1_ce.png",
+    "card_variants": [
+      "dic_3_card_dragon_2132_1.png"
+    ],
+    "token": "dic_3_card_dragon_2132&dic_3_card_dragon_2132&dic_3_card_dragon_2132",
+    "grades": [
+      "ES_G3"
+    ],
+    "themes": [
+      "Who are you? きみはだれ？"
+    ],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like dragon."
+    ],
+    "tags": [
+      "animal",
+      "fantasy"
+    ],
+    "lemma": "dragon",
+    "is_plural": false,
+    "letter_count": 6,
+    "syllable_count": 2,
+    "first_letter": "D",
+    "is_compound": false,
+    "phonics_initial": "dr",
+    "difficulty_tier": 2,
+    "primary_image": "dic_3_card_dragon_2132_1_c.png",
+    "primary_audio": "dic_3_card_dragon_2132.mp3",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as 'ドラゴン' (どらごん) in Japanese.",
+      "letter_hint": "It starts with the letter D."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like dragon.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_dragon_2132_1_c.png",
+        "sound_file": "dic_3_card_dragon_2132.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_dragon_2132_1_ce.png",
+        "card_bw": "dic_3_card_dragon_2132_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0086",
+    "english": "ducks",
+    "canonical_key": "ducks",
+    "disambiguation": "",
+    "display_label": "ducks",
+    "normalized_english": "ducks",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "アヒル",
+    "ja_hiragana": "あひる",
+    "en_katakana": "ダックス",
+    "ruby": [
+      {
+        "base": "アヒル",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "アヒル",
+    "ruby_text": "アヒル",
+    "sound_file": "",
+    "card_image": "",
+    "card_image_kana": "",
+    "card_image_en": "",
+    "card_image_bilingual": "",
+    "card_variants": [],
+    "token": "borderlink_ducks",
+    "grades": [
+      "ES_G1"
+    ],
+    "themes": [
+      "Farm Animals"
+    ],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like ducks."
+    ],
+    "tags": [
+      "animal",
+      "bird",
+      "plural"
+    ],
+    "lemma": "duck",
+    "is_plural": true,
+    "letter_count": 5,
+    "syllable_count": 1,
+    "first_letter": "D",
+    "is_compound": false,
+    "phonics_initial": "d",
+    "difficulty_tier": 1,
+    "primary_image": "",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as 'アヒル' (あひる) in Japanese.",
+      "letter_hint": "It starts with the letter D."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like ducks.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {}
+  },
+  {
+    "id": "word_0087",
+    "english": "dugong",
+    "canonical_key": "dugong",
+    "disambiguation": "",
+    "display_label": "dugong",
+    "normalized_english": "dugong",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "ジュゴン",
+    "ja_hiragana": "じゅごん",
+    "en_katakana": "ジュゴン",
+    "ruby": [
+      {
+        "base": "ジュゴン",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "ジュゴン",
+    "ruby_text": "ジュゴン",
+    "sound_file": "",
+    "card_image": "cards/full/hwg6_u11_32_dugong_full.png",
+    "card_image_kana": "cards/full/hwg6_u11_32_dugong_full.png",
+    "card_image_en": "cards/full/hwg6_u11_32_dugong_full.png",
+    "card_image_bilingual": "cards/full/hwg6_u11_32_dugong_full.png",
+    "card_variants": [],
+    "token": "hwg_dugong",
+    "grades": [
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like dugong."
+    ],
+    "tags": [
+      "animal",
+      "sea"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u11_32_dugong_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u11_32_dugong_illust.png",
+    "hwg_card_text": "cards/text/hwg6_u11_32_dugong_text.png",
+    "lemma": "dugong",
+    "is_plural": false,
+    "letter_count": 6,
+    "syllable_count": 2,
+    "first_letter": "D",
+    "is_compound": false,
+    "phonics_initial": "d",
+    "difficulty_tier": 3,
+    "primary_image": "cards/full/hwg6_u11_32_dugong_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as 'ジュゴン' (じゅごん) in Japanese.",
+      "letter_hint": "It starts with the letter D."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like dugong.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u11_32_dugong_illust.png",
+        "card_full": "cards/full/hwg6_u11_32_dugong_full.png",
+        "card_text": "cards/text/hwg6_u11_32_dugong_text.png",
+        "unit": "Unit 11: Unit 11: Living Things",
+        "source": "here_we_go_6",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0090",
+    "english": "eagle",
+    "canonical_key": "eagle",
+    "disambiguation": "",
+    "display_label": "eagle",
+    "normalized_english": "eagle",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "ワシ",
+    "ja_hiragana": "わし",
+    "en_katakana": "イーグル",
+    "ruby": [
+      {
+        "base": "ワシ",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "ワシ",
+    "ruby_text": "ワシ",
+    "sound_file": "",
+    "card_image": "cards/full/hwg6_u11_25_eagle_full.png",
+    "card_image_kana": "cards/full/hwg6_u11_25_eagle_full.png",
+    "card_image_en": "cards/full/hwg6_u11_25_eagle_full.png",
+    "card_image_bilingual": "cards/full/hwg6_u11_25_eagle_full.png",
+    "card_variants": [],
+    "token": "hwg_eagle",
+    "grades": [
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like eagle."
+    ],
+    "tags": [
+      "animal",
+      "bird"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u11_25_eagle_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u11_25_eagle_illust.png",
+    "hwg_card_text": "cards/text/hwg6_u11_25_eagle_text.png",
+    "lemma": "eagle",
+    "is_plural": false,
+    "letter_count": 5,
+    "syllable_count": 1,
+    "first_letter": "E",
+    "is_compound": false,
+    "phonics_initial": "e",
+    "difficulty_tier": 3,
+    "primary_image": "cards/full/hwg6_u11_25_eagle_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as 'ワシ' (わし) in Japanese.",
+      "letter_hint": "It starts with the letter E."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like eagle.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u11_25_eagle_illust.png",
+        "card_full": "cards/full/hwg6_u11_25_eagle_full.png",
+        "card_text": "cards/text/hwg6_u11_25_eagle_text.png",
+        "unit": "Unit 11: Unit 11: Living Things",
+        "source": "here_we_go_6",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0094",
+    "english": "elephants",
+    "canonical_key": "elephants",
+    "disambiguation": "",
+    "display_label": "elephants",
+    "normalized_english": "elephants",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "象",
+    "ja_hiragana": "ぞう",
+    "en_katakana": "エレファンツ",
+    "ruby": [
+      {
+        "base": "象",
+        "ruby": "ぞう"
+      }
+    ],
+    "ruby_html": "<ruby>象<rt>ぞう</rt></ruby>",
+    "ruby_text": "[象|ぞう]",
+    "sound_file": "dic_wb_11animals_elephant_1491.mp3",
+    "card_image": "",
+    "card_image_kana": "",
+    "card_image_en": "",
+    "card_image_bilingual": "",
+    "card_variants": [],
+    "token": "borderlink_elephants",
+    "grades": [
+      "ES_G2"
+    ],
+    "themes": [
+      "Zoo Animals"
+    ],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like elephants."
+    ],
+    "tags": [
+      "animal",
+      "plural",
+      "wild"
+    ],
+    "lemma": "elephant",
+    "is_plural": true,
+    "letter_count": 9,
+    "syllable_count": 3,
+    "first_letter": "E",
+    "is_compound": false,
+    "phonics_initial": "e",
+    "difficulty_tier": 3,
+    "primary_image": "dic_wb_11animals_elephant_1491_1_c.png",
+    "primary_audio": "dic_wb_11animals_elephant_1491.mp3",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as '象' (ぞう) in Japanese.",
+      "letter_hint": "It starts with the letter E."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like elephants.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G2": {
+        "card_image": "dic_wb_11animals_elephant_1491_1_c.png",
+        "sound_file": "dic_wb_11animals_elephant_1491.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_wb_11animals_elephant_1491_1_ce.png",
+        "card_bw": "dic_wb_11animals_elephant_1491_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0127",
+    "english": "giraffe",
+    "canonical_key": "giraffe",
+    "disambiguation": "",
+    "display_label": "giraffe",
+    "normalized_english": "giraffe",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "キリン",
+    "ja_hiragana": "きりん",
+    "en_katakana": "ジラフ",
+    "ruby": [
+      {
+        "base": "キリン",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "キリン",
+    "ruby_text": "キリン",
+    "sound_file": "",
+    "card_image": "cards/full/hwg6_u11_06_giraffe_full.png",
+    "card_image_kana": "cards/full/hwg6_u11_06_giraffe_full.png",
+    "card_image_en": "cards/full/hwg6_u11_06_giraffe_full.png",
+    "card_image_bilingual": "cards/full/hwg6_u11_06_giraffe_full.png",
+    "card_variants": [],
+    "token": "hwg_giraffe",
+    "grades": [
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like giraffe."
+    ],
+    "tags": [
+      "animal",
+      "wild"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u11_06_giraffe_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u11_06_giraffe_illust.png",
+    "hwg_card_text": "cards/text/hwg6_u11_06_giraffe_text.png",
+    "lemma": "giraffe",
+    "is_plural": false,
+    "letter_count": 7,
+    "syllable_count": 2,
+    "first_letter": "G",
+    "is_compound": false,
+    "phonics_initial": "g",
+    "difficulty_tier": 3,
+    "primary_image": "cards/full/hwg6_u11_06_giraffe_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as 'キリン' (きりん) in Japanese.",
+      "letter_hint": "It starts with the letter G."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like giraffe.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u11_06_giraffe_illust.png",
+        "card_full": "cards/full/hwg6_u11_06_giraffe_full.png",
+        "card_text": "cards/text/hwg6_u11_06_giraffe_text.png",
+        "unit": "Unit 11: Unit 11: Living Things",
+        "source": "here_we_go_6",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0128",
+    "english": "giraffes",
+    "canonical_key": "giraffes",
+    "disambiguation": "",
+    "display_label": "giraffes",
+    "normalized_english": "giraffes",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "キリン",
+    "ja_hiragana": "きりん",
+    "en_katakana": "ジラフス",
+    "ruby": [
+      {
+        "base": "キリン",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "キリン",
+    "ruby_text": "キリン",
+    "sound_file": "",
+    "card_image": "",
+    "card_image_kana": "",
+    "card_image_en": "",
+    "card_image_bilingual": "",
+    "card_variants": [],
+    "token": "borderlink_giraffes",
+    "grades": [
+      "ES_G2"
+    ],
+    "themes": [
+      "Zoo Animals"
+    ],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like giraffes."
+    ],
+    "tags": [
+      "animal",
+      "plural",
+      "wild"
+    ],
+    "lemma": "giraffe",
+    "is_plural": true,
+    "letter_count": 8,
+    "syllable_count": 2,
+    "first_letter": "G",
+    "is_compound": false,
+    "phonics_initial": "g",
+    "difficulty_tier": 2,
+    "primary_image": "cards/full/hwg6_u11_06_giraffe_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as 'キリン' (きりん) in Japanese.",
+      "letter_hint": "It starts with the letter G."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like giraffes.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G2": {
+        "card_image": "cards/full/hwg6_u11_06_giraffe_full.png",
+        "sound_file": "",
+        "source": "borderlink_elementary"
+      }
+    }
+  },
+  {
+    "id": "word_0137",
+    "english": "grasshopper",
+    "canonical_key": "grasshopper",
+    "disambiguation": "",
+    "display_label": "grasshopper",
+    "normalized_english": "grasshopper",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "バッタ",
+    "ja_hiragana": "ばった",
+    "en_katakana": "グラスホッパー",
+    "ruby": [
+      {
+        "base": "バッタ",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "バッタ",
+    "ruby_text": "バッタ",
+    "sound_file": "dic_wb_11animals_grasshopper_1506.mp3",
+    "card_image": "cards/full/hwg6_u11_29_grasshopper_full.png",
+    "card_image_kana": "cards/full/hwg6_u11_29_grasshopper_full.png",
+    "card_image_en": "cards/full/hwg6_u11_29_grasshopper_full.png",
+    "card_image_bilingual": "cards/full/hwg6_u11_29_grasshopper_full.png",
+    "card_variants": [],
+    "token": "hwg_grasshopper",
+    "grades": [
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like grasshopper."
+    ],
+    "tags": [
+      "animal",
+      "bug"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u11_29_grasshopper_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u11_29_grasshopper_illust.png",
+    "hwg_card_text": "cards/text/hwg6_u11_29_grasshopper_text.png",
+    "lemma": "grasshopper",
+    "is_plural": false,
+    "letter_count": 11,
+    "syllable_count": 3,
+    "first_letter": "G",
+    "is_compound": false,
+    "phonics_initial": "gr",
+    "difficulty_tier": 3,
+    "primary_image": "cards/full/hwg6_u11_29_grasshopper_full.png",
+    "primary_audio": "dic_wb_11animals_grasshopper_1506.mp3",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as 'バッタ' (ばった) in Japanese.",
+      "letter_hint": "It starts with the letter G."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like grasshopper.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u11_29_grasshopper_illust.png",
+        "card_full": "cards/full/hwg6_u11_29_grasshopper_full.png",
+        "card_text": "cards/text/hwg6_u11_29_grasshopper_text.png",
+        "unit": "Unit 11: Unit 11: Living Things",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_11animals_grasshopper_1506.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0142",
+    "english": "hamster",
+    "canonical_key": "hamster",
+    "disambiguation": "",
+    "display_label": "hamster",
+    "normalized_english": "hamster",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "ハムスター",
+    "ja_hiragana": "はむすたー",
+    "en_katakana": "ハムスター",
+    "ruby": [
+      {
+        "base": "ハムスター",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "ハムスター",
+    "ruby_text": "ハムスター",
+    "sound_file": "",
+    "card_image": "cards/full/hwg5_u05_03_hamster_full.png",
+    "card_image_kana": "cards/full/hwg5_u05_03_hamster_full.png",
+    "card_image_en": "cards/full/hwg5_u05_03_hamster_full.png",
+    "card_image_bilingual": "cards/full/hwg5_u05_03_hamster_full.png",
+    "card_variants": [],
+    "token": "hwg_hamster",
+    "grades": [
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like hamster."
+    ],
+    "tags": [
+      "animal",
+      "pet"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u05_03_hamster_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u05_03_hamster_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u05_03_hamster_text.png",
+    "lemma": "hamster",
+    "is_plural": false,
+    "letter_count": 7,
+    "syllable_count": 2,
+    "first_letter": "H",
+    "is_compound": false,
+    "phonics_initial": "h",
+    "difficulty_tier": 3,
+    "primary_image": "cards/full/hwg5_u05_03_hamster_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as 'ハムスター' (はむすたー) in Japanese.",
+      "letter_hint": "It starts with the letter H."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like hamster.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u05_03_hamster_illust.png",
+        "card_full": "cards/full/hwg5_u05_03_hamster_full.png",
+        "card_text": "cards/text/hwg5_u05_03_hamster_text.png",
+        "unit": "Unit 5: Unit 5: Animals",
+        "source": "here_we_go_5",
+        "sound_file": ""
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u11_08_hamster_illust.png",
+        "card_full": "cards/full/hwg6_u11_08_hamster_full.png",
+        "card_text": "cards/text/hwg6_u11_08_hamster_text.png",
+        "unit": "Unit 11: Unit 11: Living Things",
+        "source": "here_we_go_6",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0149",
+    "english": "hippo",
+    "canonical_key": "hippo",
+    "disambiguation": "",
+    "display_label": "hippo",
+    "normalized_english": "hippo",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "カバ",
+    "ja_hiragana": "かば",
+    "en_katakana": "ヒッポ",
+    "ruby": [
+      {
+        "base": "カバ",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "カバ",
+    "ruby_text": "カバ",
+    "sound_file": "",
+    "card_image": "cards/full/hwg6_u11_09_hippo_full.png",
+    "card_image_kana": "cards/full/hwg6_u11_09_hippo_full.png",
+    "card_image_en": "cards/full/hwg6_u11_09_hippo_full.png",
+    "card_image_bilingual": "cards/full/hwg6_u11_09_hippo_full.png",
+    "card_variants": [],
+    "token": "hwg_hippo",
+    "grades": [
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like hippo."
+    ],
+    "tags": [
+      "animal",
+      "wild"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u11_09_hippo_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u11_09_hippo_illust.png",
+    "hwg_card_text": "cards/text/hwg6_u11_09_hippo_text.png",
+    "lemma": "hippo",
+    "is_plural": false,
+    "letter_count": 5,
+    "syllable_count": 2,
+    "first_letter": "H",
+    "is_compound": false,
+    "phonics_initial": "h",
+    "difficulty_tier": 3,
+    "primary_image": "cards/full/hwg6_u11_09_hippo_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as 'カバ' (かば) in Japanese.",
+      "letter_hint": "It starts with the letter H."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like hippo.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u11_09_hippo_illust.png",
+        "card_full": "cards/full/hwg6_u11_09_hippo_full.png",
+        "card_text": "cards/text/hwg6_u11_09_hippo_text.png",
+        "unit": "Unit 11: Unit 11: Living Things",
+        "source": "here_we_go_6",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0150",
+    "english": "hippos",
+    "canonical_key": "hippos",
+    "disambiguation": "",
+    "display_label": "hippos",
+    "normalized_english": "hippos",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "カバ",
+    "ja_hiragana": "かば",
+    "en_katakana": "ヒッポーズ",
+    "ruby": [
+      {
+        "base": "カバ",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "カバ",
+    "ruby_text": "カバ",
+    "sound_file": "",
+    "card_image": "",
+    "card_image_kana": "",
+    "card_image_en": "",
+    "card_image_bilingual": "",
+    "card_variants": [],
+    "token": "borderlink_hippos",
+    "grades": [
+      "ES_G2"
+    ],
+    "themes": [
+      "Zoo Animals"
+    ],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like hippos."
+    ],
+    "tags": [
+      "animal",
+      "plural",
+      "wild"
+    ],
+    "lemma": "hippo",
+    "is_plural": true,
+    "letter_count": 6,
+    "syllable_count": 2,
+    "first_letter": "H",
+    "is_compound": false,
+    "phonics_initial": "h",
+    "difficulty_tier": 2,
+    "primary_image": "cards/full/hwg6_u11_09_hippo_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as 'カバ' (かば) in Japanese.",
+      "letter_hint": "It starts with the letter H."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like hippos.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G2": {
+        "card_image": "cards/full/hwg6_u11_09_hippo_full.png",
+        "sound_file": "",
+        "source": "borderlink_elementary"
+      }
+    }
+  },
+  {
+    "id": "word_0153",
+    "english": "horses",
+    "canonical_key": "horses",
+    "disambiguation": "",
+    "display_label": "horses",
+    "normalized_english": "horses",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "馬",
+    "ja_hiragana": "うま",
+    "en_katakana": "ホーシーズ",
+    "ruby": [
+      {
+        "base": "馬",
+        "ruby": "うま"
+      }
+    ],
+    "ruby_html": "<ruby>馬<rt>うま</rt></ruby>",
+    "ruby_text": "[馬|うま]",
+    "sound_file": "dic_wb_11animals_horse_1493.mp3",
+    "card_image": "",
+    "card_image_kana": "",
+    "card_image_en": "",
+    "card_image_bilingual": "",
+    "card_variants": [],
+    "token": "borderlink_horses",
+    "grades": [
+      "ES_G1"
+    ],
+    "themes": [
+      "Farm Animals"
+    ],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like horses."
+    ],
+    "tags": [
+      "animal",
+      "farm",
+      "plural"
+    ],
+    "lemma": "horse",
+    "is_plural": true,
+    "letter_count": 6,
+    "syllable_count": 1,
+    "first_letter": "H",
+    "is_compound": false,
+    "phonics_initial": "h",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_11animals_horse_1493_1_c.png",
+    "primary_audio": "dic_wb_11animals_horse_1493.mp3",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as '馬' (うま) in Japanese.",
+      "letter_hint": "It starts with the letter H."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like horses.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G1": {
+        "card_image": "dic_wb_11animals_horse_1493_1_c.png",
+        "sound_file": "dic_wb_11animals_horse_1493.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_wb_11animals_horse_1493_1_ce.png",
+        "card_bw": "dic_wb_11animals_horse_1493_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0169",
+    "english": "jellyfish",
+    "canonical_key": "jellyfish",
+    "disambiguation": "",
+    "display_label": "jellyfish",
+    "normalized_english": "jellyfish",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "クラゲ",
+    "ja_hiragana": "くらげ",
+    "en_katakana": "ジェリーフィッシュ",
+    "ruby": [
+      {
+        "base": "クラゲ",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "クラゲ",
+    "ruby_text": "クラゲ",
+    "sound_file": "",
+    "card_image": "cards/full/hwg6_u11_34_jellyfish_full.png",
+    "card_image_kana": "cards/full/hwg6_u11_34_jellyfish_full.png",
+    "card_image_en": "cards/full/hwg6_u11_34_jellyfish_full.png",
+    "card_image_bilingual": "cards/full/hwg6_u11_34_jellyfish_full.png",
+    "card_variants": [],
+    "token": "hwg_jellyfish",
+    "grades": [
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like jellyfish."
+    ],
+    "tags": [
+      "animal",
+      "sea"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u11_34_jellyfish_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u11_34_jellyfish_illust.png",
+    "hwg_card_text": "cards/text/hwg6_u11_34_jellyfish_text.png",
+    "lemma": "jellyfish",
+    "is_plural": false,
+    "letter_count": 9,
+    "syllable_count": 3,
+    "first_letter": "J",
+    "is_compound": false,
+    "phonics_initial": "j",
+    "difficulty_tier": 3,
+    "primary_image": "cards/full/hwg6_u11_34_jellyfish_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as 'クラゲ' (くらげ) in Japanese.",
+      "letter_hint": "It starts with the letter J."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like jellyfish.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u11_34_jellyfish_illust.png",
+        "card_full": "cards/full/hwg6_u11_34_jellyfish_full.png",
+        "card_text": "cards/text/hwg6_u11_34_jellyfish_text.png",
+        "unit": "Unit 11: Unit 11: Living Things",
+        "source": "here_we_go_6",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0175",
+    "english": "kangaroo",
+    "canonical_key": "kangaroo",
+    "disambiguation": "",
+    "display_label": "kangaroo",
+    "normalized_english": "kangaroo",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "カンガルー",
+    "ja_hiragana": "かんがるー",
+    "en_katakana": "カンガルー",
+    "ruby": [
+      {
+        "base": "カンガルー",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "カンガルー",
+    "ruby_text": "カンガルー",
+    "sound_file": "",
+    "card_image": "cards/full/hwg6_u11_11_kangaroo_full.png",
+    "card_image_kana": "cards/full/hwg6_u11_11_kangaroo_full.png",
+    "card_image_en": "cards/full/hwg6_u11_11_kangaroo_full.png",
+    "card_image_bilingual": "cards/full/hwg6_u11_11_kangaroo_full.png",
+    "card_variants": [],
+    "token": "hwg_kangaroo",
+    "grades": [
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like kangaroo."
+    ],
+    "tags": [
+      "animal",
+      "wild"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u11_11_kangaroo_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u11_11_kangaroo_illust.png",
+    "hwg_card_text": "cards/text/hwg6_u11_11_kangaroo_text.png",
+    "lemma": "kangaroo",
+    "is_plural": false,
+    "letter_count": 8,
+    "syllable_count": 3,
+    "first_letter": "K",
+    "is_compound": false,
+    "phonics_initial": "k",
+    "difficulty_tier": 3,
+    "primary_image": "cards/full/hwg6_u11_11_kangaroo_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as 'カンガルー' (かんがるー) in Japanese.",
+      "letter_hint": "It starts with the letter K."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like kangaroo.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u11_11_kangaroo_illust.png",
+        "card_full": "cards/full/hwg6_u11_11_kangaroo_full.png",
+        "card_text": "cards/text/hwg6_u11_11_kangaroo_text.png",
+        "unit": "Unit 11: Unit 11: Living Things",
+        "source": "here_we_go_6",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0200",
+    "english": "monkeys",
+    "canonical_key": "monkeys",
+    "disambiguation": "",
+    "display_label": "monkeys",
+    "normalized_english": "monkeys",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "猿",
+    "ja_hiragana": "さる",
+    "en_katakana": "モンキーズ",
+    "ruby": [
+      {
+        "base": "猿",
+        "ruby": "さる"
+      }
+    ],
+    "ruby_html": "<ruby>猿<rt>さる</rt></ruby>",
+    "ruby_text": "[猿|さる]",
+    "sound_file": "dic_wb_11animals_monkey_1494.mp3",
+    "card_image": "",
+    "card_image_kana": "",
+    "card_image_en": "",
+    "card_image_bilingual": "",
+    "card_variants": [],
+    "token": "borderlink_monkeys",
+    "grades": [
+      "ES_G2"
+    ],
+    "themes": [
+      "Zoo Animals"
+    ],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like monkeys."
+    ],
+    "tags": [
+      "animal",
+      "plural",
+      "wild"
+    ],
+    "lemma": "monkey",
+    "is_plural": true,
+    "letter_count": 7,
+    "syllable_count": 2,
+    "first_letter": "M",
+    "is_compound": false,
+    "phonics_initial": "m",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_11animals_monkey_1494_1_c.png",
+    "primary_audio": "dic_wb_11animals_monkey_1494.mp3",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as '猿' (さる) in Japanese.",
+      "letter_hint": "It starts with the letter M."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like monkeys.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G2": {
+        "card_image": "dic_wb_11animals_monkey_1494_1_c.png",
+        "sound_file": "dic_wb_11animals_monkey_1494.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_wb_11animals_monkey_1494_1_ce.png",
+        "card_bw": "dic_wb_11animals_monkey_1494_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0222",
+    "english": "octopus",
+    "canonical_key": "octopus",
+    "disambiguation": "",
+    "display_label": "octopus",
+    "normalized_english": "octopus",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "タコ",
+    "ja_hiragana": "たこ",
+    "en_katakana": "オクトパス",
+    "ruby": [
+      {
+        "base": "タコ",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "タコ",
+    "ruby_text": "タコ",
+    "sound_file": "",
+    "card_image": "cards/full/hwg5_u07_06_octopus_full.png",
+    "card_image_kana": "cards/full/hwg5_u07_06_octopus_full.png",
+    "card_image_en": "cards/full/hwg5_u07_06_octopus_full.png",
+    "card_image_bilingual": "cards/full/hwg5_u07_06_octopus_full.png",
+    "card_variants": [],
+    "token": "hwg_octopus",
+    "grades": [
+      "ES_G5"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like octopus."
+    ],
+    "tags": [
+      "animal",
+      "sea"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u07_06_octopus_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u07_06_octopus_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u07_06_octopus_text.png",
+    "lemma": "octopus",
+    "is_plural": false,
+    "letter_count": 7,
+    "syllable_count": 3,
+    "first_letter": "O",
+    "is_compound": false,
+    "phonics_initial": "o",
+    "difficulty_tier": 2,
+    "primary_image": "cards/full/hwg5_u07_06_octopus_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as 'タコ' (たこ) in Japanese.",
+      "letter_hint": "It starts with the letter O."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like octopus.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u07_06_octopus_illust.png",
+        "card_full": "cards/full/hwg5_u07_06_octopus_full.png",
+        "card_text": "cards/text/hwg5_u07_06_octopus_text.png",
+        "unit": "Unit 7: Unit 7: Ingredients",
+        "source": "here_we_go_5",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0226",
+    "english": "orangutan",
+    "canonical_key": "orangutan",
+    "disambiguation": "",
+    "display_label": "orangutan",
+    "normalized_english": "orangutan",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "オランウータン",
+    "ja_hiragana": "おらんうーたん",
+    "en_katakana": "オランウータン",
+    "ruby": [
+      {
+        "base": "オランウータン",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "オランウータン",
+    "ruby_text": "オランウータン",
+    "sound_file": "",
+    "card_image": "cards/full/hwg6_u11_16_orangutan_full.png",
+    "card_image_kana": "cards/full/hwg6_u11_16_orangutan_full.png",
+    "card_image_en": "cards/full/hwg6_u11_16_orangutan_full.png",
+    "card_image_bilingual": "cards/full/hwg6_u11_16_orangutan_full.png",
+    "card_variants": [],
+    "token": "hwg_orangutan",
+    "grades": [
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like orangutan."
+    ],
+    "tags": [
+      "animal",
+      "wild"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u11_16_orangutan_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u11_16_orangutan_illust.png",
+    "hwg_card_text": "cards/text/hwg6_u11_16_orangutan_text.png",
+    "lemma": "orangutan",
+    "is_plural": false,
+    "letter_count": 9,
+    "syllable_count": 4,
+    "first_letter": "O",
+    "is_compound": false,
+    "phonics_initial": "o",
+    "difficulty_tier": 3,
+    "primary_image": "cards/full/hwg6_u11_16_orangutan_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as 'オランウータン' (おらんうーたん) in Japanese.",
+      "letter_hint": "It starts with the letter O."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like orangutan.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u11_16_orangutan_illust.png",
+        "card_full": "cards/full/hwg6_u11_16_orangutan_full.png",
+        "card_text": "cards/text/hwg6_u11_16_orangutan_text.png",
+        "unit": "Unit 11: Unit 11: Living Things",
+        "source": "here_we_go_6",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0228",
+    "english": "owl",
+    "canonical_key": "owl",
+    "disambiguation": "",
+    "display_label": "owl",
+    "normalized_english": "owl",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "フクロウ",
+    "ja_hiragana": "ふくろう",
+    "en_katakana": "オウル",
+    "ruby": [
+      {
+        "base": "フクロウ",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "フクロウ",
+    "ruby_text": "フクロウ",
+    "sound_file": "dic_wb_11animals_owl_1496.mp3",
+    "card_image": "cards/full/hwg6_u11_26_owl_full.png",
+    "card_image_kana": "cards/full/hwg6_u11_26_owl_full.png",
+    "card_image_en": "cards/full/hwg6_u11_26_owl_full.png",
+    "card_image_bilingual": "cards/full/hwg6_u11_26_owl_full.png",
+    "card_variants": [],
+    "token": "hwg_owl",
+    "grades": [
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like owl."
+    ],
+    "tags": [
+      "animal",
+      "bird"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u11_26_owl_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u11_26_owl_illust.png",
+    "hwg_card_text": "cards/text/hwg6_u11_26_owl_text.png",
+    "lemma": "owl",
+    "is_plural": false,
+    "letter_count": 3,
+    "syllable_count": 1,
+    "first_letter": "O",
+    "is_compound": false,
+    "phonics_initial": "o",
+    "difficulty_tier": 3,
+    "primary_image": "cards/full/hwg6_u11_26_owl_full.png",
+    "primary_audio": "dic_wb_11animals_owl_1496.mp3",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as 'フクロウ' (ふくろう) in Japanese.",
+      "letter_hint": "It starts with the letter O."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like owl.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u11_26_owl_illust.png",
+        "card_full": "cards/full/hwg6_u11_26_owl_full.png",
+        "card_text": "cards/text/hwg6_u11_26_owl_text.png",
+        "unit": "Unit 11: Unit 11: Living Things",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_11animals_owl_1496.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0234",
+    "english": "penguin",
+    "canonical_key": "penguin",
+    "disambiguation": "",
+    "display_label": "penguin",
+    "normalized_english": "penguin",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "ペンギン",
+    "ja_hiragana": "ぺんぎん",
+    "en_katakana": "ペンギン",
+    "ruby": [
+      {
+        "base": "ペンギン",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "ペンギン",
+    "ruby_text": "ペンギン",
+    "sound_file": "",
+    "card_image": "cards/full/hwg6_u11_27_penguin_full.png",
+    "card_image_kana": "cards/full/hwg6_u11_27_penguin_full.png",
+    "card_image_en": "cards/full/hwg6_u11_27_penguin_full.png",
+    "card_image_bilingual": "cards/full/hwg6_u11_27_penguin_full.png",
+    "card_variants": [],
+    "token": "hwg_penguin",
+    "grades": [
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like penguin."
+    ],
+    "tags": [
+      "animal",
+      "bird",
+      "sea"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u11_27_penguin_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u11_27_penguin_illust.png",
+    "hwg_card_text": "cards/text/hwg6_u11_27_penguin_text.png",
+    "lemma": "penguin",
+    "is_plural": false,
+    "letter_count": 7,
+    "syllable_count": 2,
+    "first_letter": "P",
+    "is_compound": false,
+    "phonics_initial": "p",
+    "difficulty_tier": 3,
+    "primary_image": "cards/full/hwg6_u11_27_penguin_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as 'ペンギン' (ぺんぎん) in Japanese.",
+      "letter_hint": "It starts with the letter P."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like penguin.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u11_27_penguin_illust.png",
+        "card_full": "cards/full/hwg6_u11_27_penguin_full.png",
+        "card_text": "cards/text/hwg6_u11_27_penguin_text.png",
+        "unit": "Unit 11: Unit 11: Living Things",
+        "source": "here_we_go_6",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0238",
+    "english": "pigs",
+    "canonical_key": "pigs",
+    "disambiguation": "",
+    "display_label": "pigs",
+    "normalized_english": "pigs",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "豚",
+    "ja_hiragana": "ぶた",
+    "en_katakana": "ピッグス",
+    "ruby": [
+      {
+        "base": "豚",
+        "ruby": "ぶた"
+      }
+    ],
+    "ruby_html": "<ruby>豚<rt>ぶた</rt></ruby>",
+    "ruby_text": "[豚|ぶた]",
+    "sound_file": "dic_wb_11animals_pig_1498.mp3",
+    "card_image": "",
+    "card_image_kana": "",
+    "card_image_en": "",
+    "card_image_bilingual": "",
+    "card_variants": [],
+    "token": "borderlink_pigs",
+    "grades": [
+      "ES_G1"
+    ],
+    "themes": [
+      "Farm Animals"
+    ],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like pigs."
+    ],
+    "tags": [
+      "animal",
+      "farm",
+      "plural"
+    ],
+    "lemma": "pig",
+    "is_plural": true,
+    "letter_count": 4,
+    "syllable_count": 1,
+    "first_letter": "P",
+    "is_compound": false,
+    "phonics_initial": "p",
+    "difficulty_tier": 1,
+    "primary_image": "dic_5_sal_pig_0032_1_c.png",
+    "primary_audio": "dic_wb_11animals_pig_1498.mp3",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as '豚' (ぶた) in Japanese.",
+      "letter_hint": "It starts with the letter P."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like pigs.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G1": {
+        "card_image": "dic_5_sal_pig_0032_1_c.png",
+        "sound_file": "dic_wb_11animals_pig_1498.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_5_sal_pig_0032_1_ce.png",
+        "card_bw": "dic_5_sal_pig_0032_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0247",
+    "english": "polar bear",
+    "canonical_key": "polar bear",
+    "disambiguation": "",
+    "display_label": "polar bear",
+    "normalized_english": "polar bear",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "北極熊",
+    "ja_hiragana": "ほっきょくぐま",
+    "en_katakana": "ポーラーベア",
+    "ruby": [
+      {
+        "base": "北極熊",
+        "ruby": "ほっきょくぐま"
+      }
+    ],
+    "ruby_html": "<ruby>北極熊<rt>ほっきょくぐま</rt></ruby>",
+    "ruby_text": "[北極熊|ほっきょくぐま]",
+    "sound_file": "",
+    "card_image": "cards/full/hwg6_u11_19_polar_bear_full.png",
+    "card_image_kana": "cards/full/hwg6_u11_19_polar_bear_full.png",
+    "card_image_en": "cards/full/hwg6_u11_19_polar_bear_full.png",
+    "card_image_bilingual": "cards/full/hwg6_u11_19_polar_bear_full.png",
+    "card_variants": [],
+    "token": "hwg_polar bear",
+    "grades": [
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like polar bear."
+    ],
+    "tags": [
+      "animal",
+      "wild"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u11_19_polar_bear_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u11_19_polar_bear_illust.png",
+    "hwg_card_text": "cards/text/hwg6_u11_19_polar_bear_text.png",
+    "lemma": "polar bear",
+    "is_plural": false,
+    "letter_count": 9,
+    "syllable_count": 3,
+    "first_letter": "P",
+    "is_compound": true,
+    "phonics_initial": "p",
+    "difficulty_tier": 3,
+    "primary_image": "cards/full/hwg6_u11_19_polar_bear_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as '北極熊' (ほっきょくぐま) in Japanese.",
+      "letter_hint": "It starts with the letter P."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like polar bear.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u11_19_polar_bear_illust.png",
+        "card_full": "cards/full/hwg6_u11_19_polar_bear_full.png",
+        "card_text": "cards/text/hwg6_u11_19_polar_bear_text.png",
+        "unit": "Unit 11: Unit 11: Living Things",
+        "source": "here_we_go_6",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0262",
+    "english": "red panda",
+    "canonical_key": "red panda",
+    "disambiguation": "",
+    "display_label": "red panda",
+    "normalized_english": "red panda",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "レッサーパンダ",
+    "ja_hiragana": "れっさーぱんだ",
+    "en_katakana": "レッドパンダ",
+    "ruby": [
+      {
+        "base": "レッサーパンダ",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "レッサーパンダ",
+    "ruby_text": "レッサーパンダ",
+    "sound_file": "",
+    "card_image": "cards/full/hwg6_u11_21_red_panda_full.png",
+    "card_image_kana": "cards/full/hwg6_u11_21_red_panda_full.png",
+    "card_image_en": "cards/full/hwg6_u11_21_red_panda_full.png",
+    "card_image_bilingual": "cards/full/hwg6_u11_21_red_panda_full.png",
+    "card_variants": [],
+    "token": "hwg_red panda",
+    "grades": [
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like red panda."
+    ],
+    "tags": [
+      "animal",
+      "wild"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u11_21_red_panda_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u11_21_red_panda_illust.png",
+    "hwg_card_text": "cards/text/hwg6_u11_21_red_panda_text.png",
+    "lemma": "red panda",
+    "is_plural": false,
+    "letter_count": 8,
+    "syllable_count": 3,
+    "first_letter": "R",
+    "is_compound": true,
+    "phonics_initial": "r",
+    "difficulty_tier": 3,
+    "primary_image": "cards/full/hwg6_u11_21_red_panda_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as 'レッサーパンダ' (れっさーぱんだ) in Japanese.",
+      "letter_hint": "It starts with the letter R."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like red panda.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u11_21_red_panda_illust.png",
+        "card_full": "cards/full/hwg6_u11_21_red_panda_full.png",
+        "card_text": "cards/text/hwg6_u11_21_red_panda_text.png",
+        "unit": "Unit 11: Unit 11: Living Things",
+        "source": "here_we_go_6",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0285",
+    "english": "sea turtle",
+    "canonical_key": "sea turtle",
+    "disambiguation": "",
+    "display_label": "sea turtle",
+    "normalized_english": "sea turtle",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "ウミガメ",
+    "ja_hiragana": "うみがめ",
+    "en_katakana": "シータートル",
+    "ruby": [
+      {
+        "base": "ウミガメ",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "ウミガメ",
+    "ruby_text": "ウミガメ",
+    "sound_file": "",
+    "card_image": "cards/full/hwg6_u11_35_sea_turtle_full.png",
+    "card_image_kana": "cards/full/hwg6_u11_35_sea_turtle_full.png",
+    "card_image_en": "cards/full/hwg6_u11_35_sea_turtle_full.png",
+    "card_image_bilingual": "cards/full/hwg6_u11_35_sea_turtle_full.png",
+    "card_variants": [],
+    "token": "hwg_sea turtle",
+    "grades": [
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like sea turtle."
+    ],
+    "tags": [
+      "animal",
+      "sea"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u11_35_sea_turtle_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u11_35_sea_turtle_illust.png",
+    "hwg_card_text": "cards/text/hwg6_u11_35_sea_turtle_text.png",
+    "lemma": "sea turtle",
+    "is_plural": false,
+    "letter_count": 9,
+    "syllable_count": 2,
+    "first_letter": "S",
+    "is_compound": true,
+    "phonics_initial": "s",
+    "difficulty_tier": 3,
+    "primary_image": "cards/full/hwg6_u11_35_sea_turtle_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as 'ウミガメ' (うみがめ) in Japanese.",
+      "letter_hint": "It starts with the letter S."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like sea turtle.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u11_35_sea_turtle_illust.png",
+        "card_full": "cards/full/hwg6_u11_35_sea_turtle_full.png",
+        "card_text": "cards/text/hwg6_u11_35_sea_turtle_text.png",
+        "unit": "Unit 11: Unit 11: Living Things",
+        "source": "here_we_go_6",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0286",
+    "english": "seal",
+    "canonical_key": "seal",
+    "disambiguation": "",
+    "display_label": "seal",
+    "normalized_english": "seal",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "アザラシ",
+    "ja_hiragana": "あざらし",
+    "en_katakana": "シール",
+    "ruby": [
+      {
+        "base": "アザラシ",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "アザラシ",
+    "ruby_text": "アザラシ",
+    "sound_file": "",
+    "card_image": "cards/full/hwg6_u11_36_seal_full.png",
+    "card_image_kana": "cards/full/hwg6_u11_36_seal_full.png",
+    "card_image_en": "cards/full/hwg6_u11_36_seal_full.png",
+    "card_image_bilingual": "cards/full/hwg6_u11_36_seal_full.png",
+    "card_variants": [],
+    "token": "hwg_seal",
+    "grades": [
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like seal."
+    ],
+    "tags": [
+      "animal",
+      "sea"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u11_36_seal_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u11_36_seal_illust.png",
+    "hwg_card_text": "cards/text/hwg6_u11_36_seal_text.png",
+    "lemma": "seal",
+    "is_plural": false,
+    "letter_count": 4,
+    "syllable_count": 1,
+    "first_letter": "S",
+    "is_compound": false,
+    "phonics_initial": "s",
+    "difficulty_tier": 3,
+    "primary_image": "cards/full/hwg6_u11_36_seal_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as 'アザラシ' (あざらし) in Japanese.",
+      "letter_hint": "It starts with the letter S."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like seal.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u11_36_seal_illust.png",
+        "card_full": "cards/full/hwg6_u11_36_seal_full.png",
+        "card_text": "cards/text/hwg6_u11_36_seal_text.png",
+        "unit": "Unit 11: Unit 11: Living Things",
+        "source": "here_we_go_6",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0294",
+    "english": "shark",
+    "canonical_key": "shark",
+    "disambiguation": "",
+    "display_label": "shark",
+    "normalized_english": "shark",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "サメ",
+    "ja_hiragana": "さめ",
+    "en_katakana": "シャーク",
+    "ruby": [
+      {
+        "base": "サメ",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "サメ",
+    "ruby_text": "サメ",
+    "sound_file": "",
+    "card_image": "cards/full/hwg6_u11_37_shark_full.png",
+    "card_image_kana": "cards/full/hwg6_u11_37_shark_full.png",
+    "card_image_en": "cards/full/hwg6_u11_37_shark_full.png",
+    "card_image_bilingual": "cards/full/hwg6_u11_37_shark_full.png",
+    "card_variants": [],
+    "token": "hwg_shark",
+    "grades": [
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like shark."
+    ],
+    "tags": [
+      "animal",
+      "sea"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u11_37_shark_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u11_37_shark_illust.png",
+    "hwg_card_text": "cards/text/hwg6_u11_37_shark_text.png",
+    "lemma": "shark",
+    "is_plural": false,
+    "letter_count": 5,
+    "syllable_count": 1,
+    "first_letter": "S",
+    "is_compound": false,
+    "phonics_initial": "sh",
+    "difficulty_tier": 3,
+    "primary_image": "cards/full/hwg6_u11_37_shark_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as 'サメ' (さめ) in Japanese.",
+      "letter_hint": "It starts with the letter S."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like shark.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u11_37_shark_illust.png",
+        "card_full": "cards/full/hwg6_u11_37_shark_full.png",
+        "card_text": "cards/text/hwg6_u11_37_shark_text.png",
+        "unit": "Unit 11: Unit 11: Living Things",
+        "source": "here_we_go_6",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0301",
+    "english": "shrimp",
+    "canonical_key": "shrimp",
+    "disambiguation": "",
+    "display_label": "shrimp",
+    "normalized_english": "shrimp",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "エビ",
+    "ja_hiragana": "えび",
+    "en_katakana": "シュリンプ",
+    "ruby": [
+      {
+        "base": "エビ",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "エビ",
+    "ruby_text": "エビ",
+    "sound_file": "",
+    "card_image": "cards/full/hwg5_u07_10_shrimp_full.png",
+    "card_image_kana": "cards/full/hwg5_u07_10_shrimp_full.png",
+    "card_image_en": "cards/full/hwg5_u07_10_shrimp_full.png",
+    "card_image_bilingual": "cards/full/hwg5_u07_10_shrimp_full.png",
+    "card_variants": [],
+    "token": "hwg_shrimp",
+    "grades": [
+      "ES_G5"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like shrimp."
+    ],
+    "tags": [
+      "animal",
+      "sea"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u07_10_shrimp_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u07_10_shrimp_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u07_10_shrimp_text.png",
+    "lemma": "shrimp",
+    "is_plural": false,
+    "letter_count": 6,
+    "syllable_count": 1,
+    "first_letter": "S",
+    "is_compound": false,
+    "phonics_initial": "sh",
+    "difficulty_tier": 2,
+    "primary_image": "cards/full/hwg5_u07_10_shrimp_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as 'エビ' (えび) in Japanese.",
+      "letter_hint": "It starts with the letter S."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like shrimp.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u07_10_shrimp_illust.png",
+        "card_full": "cards/full/hwg5_u07_10_shrimp_full.png",
+        "card_text": "cards/text/hwg5_u07_10_shrimp_text.png",
+        "unit": "Unit 7: Unit 7: Ingredients",
+        "source": "here_we_go_5",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0321",
+    "english": "squid",
+    "canonical_key": "squid",
+    "disambiguation": "",
+    "display_label": "squid",
+    "normalized_english": "squid",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "イカ",
+    "ja_hiragana": "いか",
+    "en_katakana": "スクイッド",
+    "ruby": [
+      {
+        "base": "イカ",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "イカ",
+    "ruby_text": "イカ",
+    "sound_file": "",
+    "card_image": "cards/full/hwg5_u07_08_squid_full.png",
+    "card_image_kana": "cards/full/hwg5_u07_08_squid_full.png",
+    "card_image_en": "cards/full/hwg5_u07_08_squid_full.png",
+    "card_image_bilingual": "cards/full/hwg5_u07_08_squid_full.png",
+    "card_variants": [],
+    "token": "hwg_squid",
+    "grades": [
+      "ES_G5"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like squid."
+    ],
+    "tags": [
+      "animal",
+      "sea"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u07_08_squid_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u07_08_squid_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u07_08_squid_text.png",
+    "lemma": "squid",
+    "is_plural": false,
+    "letter_count": 5,
+    "syllable_count": 1,
+    "first_letter": "S",
+    "is_compound": false,
+    "phonics_initial": "s",
+    "difficulty_tier": 2,
+    "primary_image": "cards/full/hwg5_u07_08_squid_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as 'イカ' (いか) in Japanese.",
+      "letter_hint": "It starts with the letter S."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like squid.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u07_08_squid_illust.png",
+        "card_full": "cards/full/hwg5_u07_08_squid_full.png",
+        "card_text": "cards/text/hwg5_u07_08_squid_text.png",
+        "unit": "Unit 7: Unit 7: Ingredients",
+        "source": "here_we_go_5",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0356",
+    "english": "tigers",
+    "canonical_key": "tigers",
+    "disambiguation": "",
+    "display_label": "tigers",
+    "normalized_english": "tigers",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "虎",
+    "ja_hiragana": "とら",
+    "en_katakana": "タイガーズ",
+    "ruby": [
+      {
+        "base": "虎",
+        "ruby": "とら"
+      }
+    ],
+    "ruby_html": "<ruby>虎<rt>とら</rt></ruby>",
+    "ruby_text": "[虎|とら]",
+    "sound_file": "dic_wb_11animals_tiger_1503.mp3",
+    "card_image": "",
+    "card_image_kana": "",
+    "card_image_en": "",
+    "card_image_bilingual": "",
+    "card_variants": [],
+    "token": "borderlink_tigers",
+    "grades": [
+      "ES_G2"
+    ],
+    "themes": [
+      "Zoo Animals"
+    ],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like tigers."
+    ],
+    "tags": [
+      "animal",
+      "plural",
+      "wild"
+    ],
+    "lemma": "tiger",
+    "is_plural": true,
+    "letter_count": 6,
+    "syllable_count": 2,
+    "first_letter": "T",
+    "is_compound": false,
+    "phonics_initial": "t",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_11animals_tiger_1503_1_c.png",
+    "primary_audio": "dic_wb_11animals_tiger_1503.mp3",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as '虎' (とら) in Japanese.",
+      "letter_hint": "It starts with the letter T."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like tigers.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G2": {
+        "card_image": "dic_wb_11animals_tiger_1503_1_c.png",
+        "sound_file": "dic_wb_11animals_tiger_1503.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_wb_11animals_tiger_1503_1_ce.png",
+        "card_bw": "dic_wb_11animals_tiger_1503_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0395",
+    "english": "whale",
+    "canonical_key": "whale",
+    "disambiguation": "",
+    "display_label": "whale",
+    "normalized_english": "whale",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "クジラ",
+    "ja_hiragana": "くじら",
+    "en_katakana": "ホエール",
+    "ruby": [
+      {
+        "base": "クジラ",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "クジラ",
+    "ruby_text": "クジラ",
+    "sound_file": "",
+    "card_image": "cards/full/hwg6_u11_38_whale_full.png",
+    "card_image_kana": "cards/full/hwg6_u11_38_whale_full.png",
+    "card_image_en": "cards/full/hwg6_u11_38_whale_full.png",
+    "card_image_bilingual": "cards/full/hwg6_u11_38_whale_full.png",
+    "card_variants": [],
+    "token": "hwg_whale",
+    "grades": [
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like whale."
+    ],
+    "tags": [
+      "animal",
+      "sea"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u11_38_whale_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u11_38_whale_illust.png",
+    "hwg_card_text": "cards/text/hwg6_u11_38_whale_text.png",
+    "lemma": "whale",
+    "is_plural": false,
+    "letter_count": 5,
+    "syllable_count": 1,
+    "first_letter": "W",
+    "is_compound": false,
+    "phonics_initial": "wh",
+    "difficulty_tier": 3,
+    "primary_image": "cards/full/hwg6_u11_38_whale_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as 'クジラ' (くじら) in Japanese.",
+      "letter_hint": "It starts with the letter W."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like whale.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u11_38_whale_illust.png",
+        "card_full": "cards/full/hwg6_u11_38_whale_full.png",
+        "card_text": "cards/text/hwg6_u11_38_whale_text.png",
+        "unit": "Unit 11: Unit 11: Living Things",
+        "source": "here_we_go_6",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0396",
+    "english": "wild boar",
+    "canonical_key": "wild boar",
+    "disambiguation": "",
+    "display_label": "wild boar",
+    "normalized_english": "wild boar",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "イノシシ",
+    "ja_hiragana": "いのしし",
+    "en_katakana": "ワイルドボア",
+    "ruby": [
+      {
+        "base": "イノシシ",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "イノシシ",
+    "ruby_text": "イノシシ",
+    "sound_file": "dic_3_card_wildboar_2139.mp3",
+    "card_image": "dic_3_card_wildboar_2139_1_c.png",
+    "card_image_kana": "dic_3_card_wildboar_2139_1_c.png",
+    "card_image_en": "dic_3_card_wildboar_2139_1_e.png",
+    "card_image_bilingual": "dic_3_card_wildboar_2139_1_ce.png",
+    "card_variants": [
+      "dic_3_card_wildboar_2139_1.png"
+    ],
+    "token": "dic_3_card_wildboar_2139&dic_3_card_wildboar_2139&dic_3_card_wildboar_2139",
+    "grades": [
+      "ES_G3"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like wild boar."
+    ],
+    "tags": [
+      "animal",
+      "wild"
+    ],
+    "lemma": "wild boar",
+    "is_plural": false,
+    "letter_count": 8,
+    "syllable_count": 2,
+    "first_letter": "W",
+    "is_compound": true,
+    "phonics_initial": "w",
+    "difficulty_tier": 3,
+    "primary_image": "dic_3_card_wildboar_2139_1_c.png",
+    "primary_audio": "dic_3_card_wildboar_2139.mp3",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as 'イノシシ' (いのしし) in Japanese.",
+      "letter_hint": "It starts with the letter W."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like wild boar.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_wildboar_2139_1_c.png",
+        "sound_file": "dic_3_card_wildboar_2139.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_wildboar_2139_1_ce.png",
+        "card_bw": "dic_3_card_wildboar_2139_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0409",
+    "english": "zebra",
+    "canonical_key": "zebra",
+    "disambiguation": "",
+    "display_label": "zebra",
+    "normalized_english": "zebra",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "シマウマ",
+    "ja_hiragana": "しまうま",
+    "en_katakana": "ゼブラ",
+    "ruby": [
+      {
+        "base": "シマウマ",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "シマウマ",
+    "ruby_text": "シマウマ",
+    "sound_file": "",
+    "card_image": "cards/full/hwg6_u11_23_zebra_full.png",
+    "card_image_kana": "cards/full/hwg6_u11_23_zebra_full.png",
+    "card_image_en": "cards/full/hwg6_u11_23_zebra_full.png",
+    "card_image_bilingual": "cards/full/hwg6_u11_23_zebra_full.png",
+    "card_variants": [],
+    "token": "hwg_zebra",
+    "grades": [
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like zebra."
+    ],
+    "tags": [
+      "animal",
+      "wild"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u11_23_zebra_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u11_23_zebra_illust.png",
+    "hwg_card_text": "cards/text/hwg6_u11_23_zebra_text.png",
+    "lemma": "zebra",
+    "is_plural": false,
+    "letter_count": 5,
+    "syllable_count": 2,
+    "first_letter": "Z",
+    "is_compound": false,
+    "phonics_initial": "z",
+    "difficulty_tier": 3,
+    "primary_image": "cards/full/hwg6_u11_23_zebra_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as 'シマウマ' (しまうま) in Japanese.",
+      "letter_hint": "It starts with the letter Z."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like zebra.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u11_23_zebra_illust.png",
+        "card_full": "cards/full/hwg6_u11_23_zebra_full.png",
+        "card_text": "cards/text/hwg6_u11_23_zebra_text.png",
+        "unit": "Unit 11: Unit 11: Living Things",
+        "source": "here_we_go_6",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0498",
+    "english": "fish",
+    "canonical_key": "fish",
+    "disambiguation": "",
+    "display_label": "fish",
+    "normalized_english": "fish",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "魚",
+    "ja_hiragana": "さかな",
+    "en_katakana": "フィッシュ",
+    "ruby": [
+      {
+        "base": "魚",
+        "ruby": "さかな"
+      }
+    ],
+    "ruby_html": "<ruby>魚<rt>さかな</rt></ruby>",
+    "ruby_text": "[魚|さかな]",
+    "sound_file": "dic_wb_03fooddrink_fish_1124.mp3",
+    "card_image": "dic_wb_03fooddrink_fish_1124_1_c.png",
+    "card_image_kana": "dic_wb_03fooddrink_fish_1124_1_c.png",
+    "card_image_en": "dic_wb_03fooddrink_fish_1124_1_e.png",
+    "card_image_bilingual": "dic_wb_03fooddrink_fish_1124_1_ce.png",
+    "card_variants": [
+      "dic_wb_03fooddrink_fish_1124_1.png"
+    ],
+    "token": "dic_wb_03fooddrink_fish_1124&dic_wb_03fooddrink_fish_1124&dic_wb_03fooddrink_fish_1124",
+    "grades": [
+      "ES_G3",
+      "ES_G6"
+    ],
+    "themes": [
+      "ALPHABET アルファベットとなかよし"
+    ],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like fish."
+    ],
+    "tags": [
+      "animal",
+      "sea"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u11_33_fish_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u11_33_fish_illust.png",
+    "hwg_card_text": "cards/text/hwg6_u11_33_fish_text.png",
+    "lemma": "fish",
+    "is_plural": false,
+    "letter_count": 4,
+    "syllable_count": 1,
+    "first_letter": "F",
+    "is_compound": false,
+    "phonics_initial": "f",
+    "difficulty_tier": 1,
+    "primary_image": "dic_wb_03fooddrink_fish_1124_1_c.png",
+    "primary_audio": "dic_wb_03fooddrink_fish_1124.mp3",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as '魚' (さかな) in Japanese.",
+      "letter_hint": "It starts with the letter F."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like fish.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_wb_03fooddrink_fish_1124_1_c.png",
+        "sound_file": "dic_wb_03fooddrink_fish_1124.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_wb_03fooddrink_fish_1124_1_ce.png",
+        "card_bw": "dic_wb_03fooddrink_fish_1124_1.png"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u11_33_fish_illust.png",
+        "card_full": "cards/full/hwg6_u11_33_fish_full.png",
+        "card_text": "cards/text/hwg6_u11_33_fish_text.png",
+        "unit": "Unit 11: Unit 11: Living Things",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_03fooddrink_fish_1124.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0775",
+    "english": "bear",
+    "canonical_key": "bear",
+    "disambiguation": "",
+    "display_label": "bear",
+    "normalized_english": "bear",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "熊",
+    "ja_hiragana": "くま",
+    "en_katakana": "ベアー",
+    "ruby": [
+      {
+        "base": "熊",
+        "ruby": "くま"
+      }
+    ],
+    "ruby_html": "<ruby>熊<rt>くま</rt></ruby>",
+    "ruby_text": "[熊|くま]",
+    "sound_file": "dic_wb_11animals_bear_1486.mp3",
+    "card_image": "dic_wb_11animals_bear_1486_1_c.png",
+    "card_image_kana": "dic_wb_11animals_bear_1486_1_c.png",
+    "card_image_en": "dic_wb_11animals_bear_1486_1_e.png",
+    "card_image_bilingual": "dic_wb_11animals_bear_1486_1_ce.png",
+    "card_variants": [
+      "dic_wb_11animals_bear_1486_1.png"
+    ],
+    "token": "dic_wb_11animals_bear_1486&dic_wb_11animals_bear_1486&dic_wb_11animals_bear_1486",
+    "grades": [
+      "ES_G3",
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like bear."
+    ],
+    "tags": [
+      "animal",
+      "wild"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u05_05_bear_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u05_05_bear_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u05_05_bear_text.png",
+    "lemma": "bear",
+    "is_plural": false,
+    "letter_count": 4,
+    "syllable_count": 1,
+    "first_letter": "B",
+    "is_compound": false,
+    "phonics_initial": "b",
+    "difficulty_tier": 1,
+    "primary_image": "dic_wb_11animals_bear_1486_1_c.png",
+    "primary_audio": "dic_wb_11animals_bear_1486.mp3",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as '熊' (くま) in Japanese.",
+      "letter_hint": "It starts with the letter B."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like bear.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_wb_11animals_bear_1486_1_c.png",
+        "sound_file": "dic_wb_11animals_bear_1486.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_wb_11animals_bear_1486_1_ce.png",
+        "card_bw": "dic_wb_11animals_bear_1486_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u05_05_bear_illust.png",
+        "card_full": "cards/full/hwg5_u05_05_bear_full.png",
+        "card_text": "cards/text/hwg5_u05_05_bear_text.png",
+        "unit": "Unit 5: Unit 5: Animals",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_11animals_bear_1486.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u11_00_bear_illust.png",
+        "card_full": "cards/full/hwg6_u11_00_bear_full.png",
+        "card_text": "cards/text/hwg6_u11_00_bear_text.png",
+        "unit": "Unit 11: Unit 11: Living Things",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_11animals_bear_1486.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0776",
+    "english": "cat",
+    "canonical_key": "cat",
+    "disambiguation": "",
+    "display_label": "cat",
+    "normalized_english": "cat",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "猫",
+    "ja_hiragana": "ねこ",
+    "en_katakana": "キャット",
+    "ruby": [
+      {
+        "base": "猫",
+        "ruby": "ねこ"
+      }
+    ],
+    "ruby_html": "<ruby>猫<rt>ねこ</rt></ruby>",
+    "ruby_text": "[猫|ねこ]",
+    "sound_file": "dic_wb_11animals_cat_1487.mp3",
+    "card_image": "dic_wb_11animals_cat_1487_1_c.png",
+    "card_image_kana": "dic_wb_11animals_cat_1487_1_c.png",
+    "card_image_en": "dic_wb_11animals_cat_1487_1_e.png",
+    "card_image_bilingual": "dic_wb_11animals_cat_1487_1_ce.png",
+    "card_variants": [
+      "dic_wb_11animals_cat_1487_1.png"
+    ],
+    "token": "dic_wb_11animals_cat_1487&dic_wb_11animals_cat_1487&dic_wb_11animals_cat_1487",
+    "grades": [
+      "ES_G2",
+      "ES_G3",
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [
+      "Halloween",
+      "This is for you. カードをおくろう"
+    ],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like cat."
+    ],
+    "tags": [
+      "animal",
+      "pet"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u05_00_cat_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u05_00_cat_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u05_00_cat_text.png",
+    "lemma": "cat",
+    "is_plural": false,
+    "letter_count": 3,
+    "syllable_count": 1,
+    "first_letter": "C",
+    "is_compound": false,
+    "phonics_initial": "c",
+    "difficulty_tier": 1,
+    "primary_image": "dic_wb_11animals_cat_1487_1_c.png",
+    "primary_audio": "dic_wb_11animals_cat_1487.mp3",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as '猫' (ねこ) in Japanese.",
+      "letter_hint": "It starts with the letter C."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like cat.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_wb_11animals_cat_1487_1_c.png",
+        "sound_file": "dic_wb_11animals_cat_1487.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_wb_11animals_cat_1487_1_ce.png",
+        "card_bw": "dic_wb_11animals_cat_1487_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u05_00_cat_illust.png",
+        "card_full": "cards/full/hwg5_u05_00_cat_full.png",
+        "card_text": "cards/text/hwg5_u05_00_cat_text.png",
+        "unit": "Unit 5: Unit 5: Animals",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_11animals_cat_1487.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u11_01_cat_illust.png",
+        "card_full": "cards/full/hwg6_u11_01_cat_full.png",
+        "card_text": "cards/text/hwg6_u11_01_cat_text.png",
+        "unit": "Unit 11: Unit 11: Living Things",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_11animals_cat_1487.mp3"
+      },
+      "ES_G2": {
+        "card_image": "dic_wb_11animals_cat_1487_1_c.png",
+        "sound_file": "dic_wb_11animals_cat_1487.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_wb_11animals_cat_1487_1_ce.png",
+        "card_bw": "dic_wb_11animals_cat_1487_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0777",
+    "english": "chicken",
+    "canonical_key": "chicken",
+    "disambiguation": "",
+    "display_label": "chicken",
+    "normalized_english": "chicken",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "鶏",
+    "ja_hiragana": "にわとり",
+    "en_katakana": "チキン",
+    "ruby": [
+      {
+        "base": "鶏",
+        "ruby": "にわとり"
+      }
+    ],
+    "ruby_html": "<ruby>鶏<rt>にわとり</rt></ruby>",
+    "ruby_text": "[鶏|にわとり]",
+    "sound_file": "dic_wb_11animals_chicken_1488.mp3",
+    "card_image": "dic_wb_11animals_chicken_1488_1_c.png",
+    "card_image_kana": "dic_wb_11animals_chicken_1488_1_c.png",
+    "card_image_en": "dic_wb_11animals_chicken_1488_1_e.png",
+    "card_image_bilingual": "dic_wb_11animals_chicken_1488_1_ce.png",
+    "card_variants": [
+      "dic_wb_11animals_chicken_1488_1.png"
+    ],
+    "token": "dic_wb_11animals_chicken_1488&dic_wb_11animals_chicken_1488&dic_wb_11animals_chicken_1488",
+    "grades": [
+      "ES_G3",
+      "ES_G5"
+    ],
+    "themes": [
+      "Who are you? きみはだれ？"
+    ],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like chicken."
+    ],
+    "tags": [
+      "animal",
+      "bird",
+      "farm"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u07_02_chicken_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u07_02_chicken_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u07_02_chicken_text.png",
+    "lemma": "chicken",
+    "is_plural": false,
+    "letter_count": 7,
+    "syllable_count": 2,
+    "first_letter": "C",
+    "is_compound": false,
+    "phonics_initial": "ch",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_11animals_chicken_1488_1_c.png",
+    "primary_audio": "dic_wb_11animals_chicken_1488.mp3",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as '鶏' (にわとり) in Japanese.",
+      "letter_hint": "It starts with the letter C."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like chicken.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_wb_11animals_chicken_1488_1_c.png",
+        "sound_file": "dic_wb_11animals_chicken_1488.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_wb_11animals_chicken_1488_1_ce.png",
+        "card_bw": "dic_wb_11animals_chicken_1488_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u07_02_chicken_illust.png",
+        "card_full": "cards/full/hwg5_u07_02_chicken_full.png",
+        "card_text": "cards/text/hwg5_u07_02_chicken_text.png",
+        "unit": "Unit 7: Unit 7: Ingredients",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_11animals_chicken_1488.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0778",
+    "english": "cow",
+    "canonical_key": "cow",
+    "disambiguation": "",
+    "display_label": "cow",
+    "normalized_english": "cow",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "牛",
+    "ja_hiragana": "うし",
+    "en_katakana": "カウ",
+    "ruby": [
+      {
+        "base": "牛",
+        "ruby": "うし"
+      }
+    ],
+    "ruby_html": "<ruby>牛<rt>うし</rt></ruby>",
+    "ruby_text": "[牛|うし]",
+    "sound_file": "dic_wb_11animals_cow_1489.mp3",
+    "card_image": "dic_wb_11animals_cow_1489_1_c.png",
+    "card_image_kana": "dic_wb_11animals_cow_1489_1_c.png",
+    "card_image_en": "dic_wb_11animals_cow_1489_1_e.png",
+    "card_image_bilingual": "dic_wb_11animals_cow_1489_1_ce.png",
+    "card_variants": [
+      "dic_wb_11animals_cow_1489_1.png"
+    ],
+    "token": "dic_wb_11animals_cow_1489&dic_wb_11animals_cow_1489&dic_wb_11animals_cow_1489",
+    "grades": [
+      "ES_G3",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like cow."
+    ],
+    "tags": [
+      "animal",
+      "farm"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u11_03_cow_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u11_03_cow_illust.png",
+    "hwg_card_text": "cards/text/hwg6_u11_03_cow_text.png",
+    "lemma": "cow",
+    "is_plural": false,
+    "letter_count": 3,
+    "syllable_count": 1,
+    "first_letter": "C",
+    "is_compound": false,
+    "phonics_initial": "c",
+    "difficulty_tier": 1,
+    "primary_image": "dic_wb_11animals_cow_1489_1_c.png",
+    "primary_audio": "dic_wb_11animals_cow_1489.mp3",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as '牛' (うし) in Japanese.",
+      "letter_hint": "It starts with the letter C."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like cow.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_wb_11animals_cow_1489_1_c.png",
+        "sound_file": "dic_wb_11animals_cow_1489.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_wb_11animals_cow_1489_1_ce.png",
+        "card_bw": "dic_wb_11animals_cow_1489_1.png"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u11_03_cow_illust.png",
+        "card_full": "cards/full/hwg6_u11_03_cow_full.png",
+        "card_text": "cards/text/hwg6_u11_03_cow_text.png",
+        "unit": "Unit 11: Unit 11: Living Things",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_11animals_cow_1489.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0779",
+    "english": "dog",
+    "canonical_key": "dog",
+    "disambiguation": "",
+    "display_label": "dog",
+    "normalized_english": "dog",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "犬",
+    "ja_hiragana": "いぬ",
+    "en_katakana": "ドッグ",
+    "ruby": [
+      {
+        "base": "犬",
+        "ruby": "いぬ"
+      }
+    ],
+    "ruby_html": "<ruby>犬<rt>いぬ</rt></ruby>",
+    "ruby_text": "[犬|いぬ]",
+    "sound_file": "dic_wb_11animals_dog_1490.mp3",
+    "card_image": "dic_wb_11animals_dog_1490_1_c.png",
+    "card_image_kana": "dic_wb_11animals_dog_1490_1_c.png",
+    "card_image_en": "dic_wb_11animals_dog_1490_1_e.png",
+    "card_image_bilingual": "dic_wb_11animals_dog_1490_1_ce.png",
+    "card_variants": [
+      "dic_wb_11animals_dog_1490_1.png"
+    ],
+    "token": "dic_wb_11animals_dog_1490&dic_wb_11animals_dog_1490&dic_wb_11animals_dog_1490",
+    "grades": [
+      "ES_G3",
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like dog."
+    ],
+    "tags": [
+      "animal",
+      "pet"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u05_01_dog_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u05_01_dog_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u05_01_dog_text.png",
+    "lemma": "dog",
+    "is_plural": false,
+    "letter_count": 3,
+    "syllable_count": 1,
+    "first_letter": "D",
+    "is_compound": false,
+    "phonics_initial": "d",
+    "difficulty_tier": 1,
+    "primary_image": "dic_wb_11animals_dog_1490_1_c.png",
+    "primary_audio": "dic_wb_11animals_dog_1490.mp3",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as '犬' (いぬ) in Japanese.",
+      "letter_hint": "It starts with the letter D."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like dog.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_wb_11animals_dog_1490_1_c.png",
+        "sound_file": "dic_wb_11animals_dog_1490.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_wb_11animals_dog_1490_1_ce.png",
+        "card_bw": "dic_wb_11animals_dog_1490_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u05_01_dog_illust.png",
+        "card_full": "cards/full/hwg5_u05_01_dog_full.png",
+        "card_text": "cards/text/hwg5_u05_01_dog_text.png",
+        "unit": "Unit 5: Unit 5: Animals",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_11animals_dog_1490.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u11_04_dog_illust.png",
+        "card_full": "cards/full/hwg6_u11_04_dog_full.png",
+        "card_text": "cards/text/hwg6_u11_04_dog_text.png",
+        "unit": "Unit 11: Unit 11: Living Things",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_11animals_dog_1490.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0780",
+    "english": "elephant",
+    "canonical_key": "elephant",
+    "disambiguation": "",
+    "display_label": "elephant",
+    "normalized_english": "elephant",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "象",
+    "ja_hiragana": "ぞう",
+    "en_katakana": "エレファント",
+    "ruby": [
+      {
+        "base": "象",
+        "ruby": "ぞう"
+      }
+    ],
+    "ruby_html": "<ruby>象<rt>ぞう</rt></ruby>",
+    "ruby_text": "[象|ぞう]",
+    "sound_file": "dic_wb_11animals_elephant_1491.mp3",
+    "card_image": "dic_wb_11animals_elephant_1491_1_c.png",
+    "card_image_kana": "dic_wb_11animals_elephant_1491_1_c.png",
+    "card_image_en": "dic_wb_11animals_elephant_1491_1_e.png",
+    "card_image_bilingual": "dic_wb_11animals_elephant_1491_1_ce.png",
+    "card_variants": [
+      "dic_wb_11animals_elephant_1491_1.png"
+    ],
+    "token": "dic_wb_11animals_elephant_1491&dic_wb_11animals_elephant_1491&dic_wb_11animals_elephant_1491",
+    "grades": [
+      "ES_G3",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like elephant."
+    ],
+    "tags": [
+      "animal",
+      "wild"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u11_05_elephant_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u11_05_elephant_illust.png",
+    "hwg_card_text": "cards/text/hwg6_u11_05_elephant_text.png",
+    "lemma": "elephant",
+    "is_plural": false,
+    "letter_count": 8,
+    "syllable_count": 3,
+    "first_letter": "E",
+    "is_compound": false,
+    "phonics_initial": "e",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_11animals_elephant_1491_1_c.png",
+    "primary_audio": "dic_wb_11animals_elephant_1491.mp3",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as '象' (ぞう) in Japanese.",
+      "letter_hint": "It starts with the letter E."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like elephant.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_wb_11animals_elephant_1491_1_c.png",
+        "sound_file": "dic_wb_11animals_elephant_1491.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_wb_11animals_elephant_1491_1_ce.png",
+        "card_bw": "dic_wb_11animals_elephant_1491_1.png"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u11_05_elephant_illust.png",
+        "card_full": "cards/full/hwg6_u11_05_elephant_full.png",
+        "card_text": "cards/text/hwg6_u11_05_elephant_text.png",
+        "unit": "Unit 11: Unit 11: Living Things",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_11animals_elephant_1491.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0781",
+    "english": "frog",
+    "canonical_key": "frog",
+    "disambiguation": "",
+    "display_label": "frog",
+    "normalized_english": "frog",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "カエル",
+    "ja_hiragana": "かえる",
+    "en_katakana": "フロッグ",
+    "ruby": [
+      {
+        "base": "カエル",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "カエル",
+    "ruby_text": "カエル",
+    "sound_file": "dic_wb_11animals_frog_1670.mp3",
+    "card_image": "dic_wb_11animals_frog_1670_1_c.png",
+    "card_image_kana": "dic_wb_11animals_frog_1670_1_c.png",
+    "card_image_en": "dic_wb_11animals_frog_1670_1_e.png",
+    "card_image_bilingual": "dic_wb_11animals_frog_1670_1_ce.png",
+    "card_variants": [
+      "dic_wb_11animals_frog_1670_1.png"
+    ],
+    "token": "dic_wb_11animals_frog_1670&dic_wb_11animals_frog_1670&dic_wb_11animals_frog_1670",
+    "grades": [
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like frog."
+    ],
+    "tags": [
+      "amphibian",
+      "animal"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u11_30_frog_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u11_30_frog_illust.png",
+    "hwg_card_text": "cards/text/hwg6_u11_30_frog_text.png",
+    "lemma": "frog",
+    "is_plural": false,
+    "letter_count": 4,
+    "syllable_count": 1,
+    "first_letter": "F",
+    "is_compound": false,
+    "phonics_initial": "fr",
+    "difficulty_tier": 3,
+    "primary_image": "dic_wb_11animals_frog_1670_1_c.png",
+    "primary_audio": "dic_wb_11animals_frog_1670.mp3",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as 'カエル' (かえる) in Japanese.",
+      "letter_hint": "It starts with the letter F."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like frog.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u11_30_frog_illust.png",
+        "card_full": "cards/full/hwg6_u11_30_frog_full.png",
+        "card_text": "cards/text/hwg6_u11_30_frog_text.png",
+        "unit": "Unit 11: Unit 11: Living Things",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_11animals_frog_1670.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0782",
+    "english": "gorilla",
+    "canonical_key": "gorilla",
+    "disambiguation": "",
+    "display_label": "gorilla",
+    "normalized_english": "gorilla",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "ゴリラ",
+    "ja_hiragana": "ごりら",
+    "en_katakana": "ゴリラ",
+    "ruby": [
+      {
+        "base": "ゴリラ",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "ゴリラ",
+    "ruby_text": "ゴリラ",
+    "sound_file": "dic_wb_11animals_gorilla_1492.mp3",
+    "card_image": "dic_5_sal_gorilla_0014_1_c.png",
+    "card_image_kana": "dic_5_sal_gorilla_0014_1_c.png",
+    "card_image_en": "dic_5_sal_gorilla_0014_1_e.png",
+    "card_image_bilingual": "dic_5_sal_gorilla_0014_1_ce.png",
+    "card_variants": [
+      "dic_5_sal_gorilla_0014_1.png"
+    ],
+    "token": "dic_wb_11animals_gorilla_1492&dic_wb_11animals_gorilla_1492&dic_5_sal_gorilla_0014",
+    "grades": [
+      "ES_G3",
+      "ES_G6"
+    ],
+    "themes": [
+      "ALPHABET アルファベットとなかよし"
+    ],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like gorilla."
+    ],
+    "tags": [
+      "animal",
+      "wild"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u11_07_gorilla_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u11_07_gorilla_illust.png",
+    "hwg_card_text": "cards/text/hwg6_u11_07_gorilla_text.png",
+    "lemma": "gorilla",
+    "is_plural": false,
+    "letter_count": 7,
+    "syllable_count": 3,
+    "first_letter": "G",
+    "is_compound": false,
+    "phonics_initial": "g",
+    "difficulty_tier": 2,
+    "primary_image": "dic_5_sal_gorilla_0014_1_c.png",
+    "primary_audio": "dic_wb_11animals_gorilla_1492.mp3",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as 'ゴリラ' (ごりら) in Japanese.",
+      "letter_hint": "It starts with the letter G."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like gorilla.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_5_sal_gorilla_0014_1_c.png",
+        "sound_file": "dic_wb_11animals_gorilla_1492.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_5_sal_gorilla_0014_1_ce.png",
+        "card_bw": "dic_5_sal_gorilla_0014_1.png"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u11_07_gorilla_illust.png",
+        "card_full": "cards/full/hwg6_u11_07_gorilla_full.png",
+        "card_text": "cards/text/hwg6_u11_07_gorilla_text.png",
+        "unit": "Unit 11: Unit 11: Living Things",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_11animals_gorilla_1492.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0783",
+    "english": "horse",
+    "canonical_key": "horse",
+    "disambiguation": "",
+    "display_label": "horse",
+    "normalized_english": "horse",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "馬",
+    "ja_hiragana": "うま",
+    "en_katakana": "ホース",
+    "ruby": [
+      {
+        "base": "馬",
+        "ruby": "うま"
+      }
+    ],
+    "ruby_html": "<ruby>馬<rt>うま</rt></ruby>",
+    "ruby_text": "[馬|うま]",
+    "sound_file": "dic_wb_11animals_horse_1493.mp3",
+    "card_image": "dic_wb_11animals_horse_1493_1_c.png",
+    "card_image_kana": "dic_wb_11animals_horse_1493_1_c.png",
+    "card_image_en": "dic_wb_11animals_horse_1493_1_e.png",
+    "card_image_bilingual": "dic_wb_11animals_horse_1493_1_ce.png",
+    "card_variants": [
+      "dic_wb_11animals_horse_1493_1.png"
+    ],
+    "token": "dic_wb_11animals_horse_1493&dic_wb_11animals_horse_1493&dic_wb_11animals_horse_1493",
+    "grades": [
+      "ES_G3",
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [
+      "What's this? これなあに？"
+    ],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like horse."
+    ],
+    "tags": [
+      "animal",
+      "farm"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u05_06_horse_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u05_06_horse_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u05_06_horse_text.png",
+    "lemma": "horse",
+    "is_plural": false,
+    "letter_count": 5,
+    "syllable_count": 1,
+    "first_letter": "H",
+    "is_compound": false,
+    "phonics_initial": "h",
+    "difficulty_tier": 1,
+    "primary_image": "dic_wb_11animals_horse_1493_1_c.png",
+    "primary_audio": "dic_wb_11animals_horse_1493.mp3",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as '馬' (うま) in Japanese.",
+      "letter_hint": "It starts with the letter H."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like horse.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_wb_11animals_horse_1493_1_c.png",
+        "sound_file": "dic_wb_11animals_horse_1493.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_wb_11animals_horse_1493_1_ce.png",
+        "card_bw": "dic_wb_11animals_horse_1493_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u05_06_horse_illust.png",
+        "card_full": "cards/full/hwg5_u05_06_horse_full.png",
+        "card_text": "cards/text/hwg5_u05_06_horse_text.png",
+        "unit": "Unit 5: Unit 5: Animals",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_11animals_horse_1493.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u11_10_horse_illust.png",
+        "card_full": "cards/full/hwg6_u11_10_horse_full.png",
+        "card_text": "cards/text/hwg6_u11_10_horse_text.png",
+        "unit": "Unit 11: Unit 11: Living Things",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_11animals_horse_1493.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0784",
+    "english": "koala",
+    "canonical_key": "koala",
+    "disambiguation": "",
+    "display_label": "koala",
+    "normalized_english": "koala",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "コアラ",
+    "ja_hiragana": "こあら",
+    "en_katakana": "コアラ",
+    "ruby": [
+      {
+        "base": "コアラ",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "コアラ",
+    "ruby_text": "コアラ",
+    "sound_file": "dic_wb_11animals_koala_1672.mp3",
+    "card_image": "dic_5_sal_koala_0022_1_c.png",
+    "card_image_kana": "dic_5_sal_koala_0022_1_c.png",
+    "card_image_en": "dic_5_sal_koala_0022_1_e.png",
+    "card_image_bilingual": "dic_5_sal_koala_0022_1_ce.png",
+    "card_variants": [
+      "dic_5_sal_koala_0022_1.png"
+    ],
+    "token": "dic_wb_11animals_koala_1672&dic_wb_11animals_koala_1672&dic_5_sal_koala_0022",
+    "grades": [
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like koala."
+    ],
+    "tags": [
+      "animal",
+      "wild"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u11_12_koala_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u11_12_koala_illust.png",
+    "hwg_card_text": "cards/text/hwg6_u11_12_koala_text.png",
+    "lemma": "koala",
+    "is_plural": false,
+    "letter_count": 5,
+    "syllable_count": 2,
+    "first_letter": "K",
+    "is_compound": false,
+    "phonics_initial": "k",
+    "difficulty_tier": 3,
+    "primary_image": "dic_5_sal_koala_0022_1_c.png",
+    "primary_audio": "dic_wb_11animals_koala_1672.mp3",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as 'コアラ' (こあら) in Japanese.",
+      "letter_hint": "It starts with the letter K."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like koala.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u11_12_koala_illust.png",
+        "card_full": "cards/full/hwg6_u11_12_koala_full.png",
+        "card_text": "cards/text/hwg6_u11_12_koala_text.png",
+        "unit": "Unit 11: Unit 11: Living Things",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_11animals_koala_1672.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0785",
+    "english": "lion",
+    "canonical_key": "lion",
+    "disambiguation": "",
+    "display_label": "lion",
+    "normalized_english": "lion",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "ライオン",
+    "ja_hiragana": "らいおん",
+    "en_katakana": "ライオン",
+    "ruby": [
+      {
+        "base": "ライオン",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "ライオン",
+    "ruby_text": "ライオン",
+    "sound_file": "dic_wb_11animals_lion_1673.mp3",
+    "card_image": "dic_5_sal_lion_0024_1_c.png",
+    "card_image_kana": "dic_5_sal_lion_0024_1_c.png",
+    "card_image_en": "dic_5_sal_lion_0024_1_e.png",
+    "card_image_bilingual": "dic_5_sal_lion_0024_1_ce.png",
+    "card_variants": [
+      "dic_5_sal_lion_0024_1.png"
+    ],
+    "token": "dic_wb_11animals_lion_1673&dic_wb_11animals_lion_1673&dic_5_sal_lion_0024",
+    "grades": [
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like lion."
+    ],
+    "tags": [
+      "animal",
+      "wild"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u11_13_lion_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u11_13_lion_illust.png",
+    "hwg_card_text": "cards/text/hwg6_u11_13_lion_text.png",
+    "lemma": "lion",
+    "is_plural": false,
+    "letter_count": 4,
+    "syllable_count": 1,
+    "first_letter": "L",
+    "is_compound": false,
+    "phonics_initial": "l",
+    "difficulty_tier": 3,
+    "primary_image": "dic_5_sal_lion_0024_1_c.png",
+    "primary_audio": "dic_wb_11animals_lion_1673.mp3",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as 'ライオン' (らいおん) in Japanese.",
+      "letter_hint": "It starts with the letter L."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like lion.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u11_13_lion_illust.png",
+        "card_full": "cards/full/hwg6_u11_13_lion_full.png",
+        "card_text": "cards/text/hwg6_u11_13_lion_text.png",
+        "unit": "Unit 11: Unit 11: Living Things",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_11animals_lion_1673.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0786",
+    "english": "monkey",
+    "canonical_key": "monkey",
+    "disambiguation": "",
+    "display_label": "monkey",
+    "normalized_english": "monkey",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "猿",
+    "ja_hiragana": "さる",
+    "en_katakana": "モンキー",
+    "ruby": [
+      {
+        "base": "猿",
+        "ruby": "さる"
+      }
+    ],
+    "ruby_html": "<ruby>猿<rt>さる</rt></ruby>",
+    "ruby_text": "[猿|さる]",
+    "sound_file": "dic_wb_11animals_monkey_1494.mp3",
+    "card_image": "dic_wb_11animals_monkey_1494_1_c.png",
+    "card_image_kana": "dic_wb_11animals_monkey_1494_1_c.png",
+    "card_image_en": "dic_wb_11animals_monkey_1494_1_e.png",
+    "card_image_bilingual": "dic_wb_11animals_monkey_1494_1_ce.png",
+    "card_variants": [
+      "dic_wb_11animals_monkey_1494_1.png"
+    ],
+    "token": "dic_wb_11animals_monkey_1494&dic_wb_11animals_monkey_1494&dic_wb_11animals_monkey_1494",
+    "grades": [
+      "ES_G3",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like monkey."
+    ],
+    "tags": [
+      "animal",
+      "wild"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u11_14_monkey_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u11_14_monkey_illust.png",
+    "hwg_card_text": "cards/text/hwg6_u11_14_monkey_text.png",
+    "lemma": "monkey",
+    "is_plural": false,
+    "letter_count": 6,
+    "syllable_count": 2,
+    "first_letter": "M",
+    "is_compound": false,
+    "phonics_initial": "m",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_11animals_monkey_1494_1_c.png",
+    "primary_audio": "dic_wb_11animals_monkey_1494.mp3",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as '猿' (さる) in Japanese.",
+      "letter_hint": "It starts with the letter M."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like monkey.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_wb_11animals_monkey_1494_1_c.png",
+        "sound_file": "dic_wb_11animals_monkey_1494.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_wb_11animals_monkey_1494_1_ce.png",
+        "card_bw": "dic_wb_11animals_monkey_1494_1.png"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u11_14_monkey_illust.png",
+        "card_full": "cards/full/hwg6_u11_14_monkey_full.png",
+        "card_text": "cards/text/hwg6_u11_14_monkey_text.png",
+        "unit": "Unit 11: Unit 11: Living Things",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_11animals_monkey_1494.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0787",
+    "english": "mouse",
+    "canonical_key": "mouse",
+    "disambiguation": "",
+    "display_label": "mouse",
+    "normalized_english": "mouse",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "ねずみ",
+    "ja_hiragana": "ねずみ",
+    "en_katakana": "マウス",
+    "ruby": [
+      {
+        "base": "ねずみ",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "ねずみ",
+    "ruby_text": "ねずみ",
+    "sound_file": "dic_wb_11animals_mouse_1495.mp3",
+    "card_image": "dic_wb_11animals_mouse_1495_1_c.png",
+    "card_image_kana": "dic_wb_11animals_mouse_1495_1_c.png",
+    "card_image_en": "dic_wb_11animals_mouse_1495_1_e.png",
+    "card_image_bilingual": "dic_wb_11animals_mouse_1495_1_ce.png",
+    "card_variants": [
+      "dic_wb_11animals_mouse_1495_1.png"
+    ],
+    "token": "dic_wb_11animals_mouse_1495&dic_wb_11animals_mouse_1495&dic_wb_11animals_mouse_1495",
+    "grades": [
+      "ES_G3",
+      "ES_G6"
+    ],
+    "themes": [
+      "This is for you. カードをおくろう"
+    ],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like mouse."
+    ],
+    "tags": [
+      "animal"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u11_15_mouse_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u11_15_mouse_illust.png",
+    "hwg_card_text": "cards/text/hwg6_u11_15_mouse_text.png",
+    "lemma": "mouse",
+    "is_plural": false,
+    "letter_count": 5,
+    "syllable_count": 1,
+    "first_letter": "M",
+    "is_compound": false,
+    "phonics_initial": "m",
+    "difficulty_tier": 1,
+    "primary_image": "dic_wb_11animals_mouse_1495_1_c.png",
+    "primary_audio": "dic_wb_11animals_mouse_1495.mp3",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as 'ねずみ' (ねずみ) in Japanese.",
+      "letter_hint": "It starts with the letter M."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like mouse.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_wb_11animals_mouse_1495_1_c.png",
+        "sound_file": "dic_wb_11animals_mouse_1495.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_wb_11animals_mouse_1495_1_ce.png",
+        "card_bw": "dic_wb_11animals_mouse_1495_1.png"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u11_15_mouse_illust.png",
+        "card_full": "cards/full/hwg6_u11_15_mouse_full.png",
+        "card_text": "cards/text/hwg6_u11_15_mouse_text.png",
+        "unit": "Unit 11: Unit 11: Living Things",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_11animals_mouse_1495.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0788",
+    "english": "panda",
+    "canonical_key": "panda",
+    "disambiguation": "",
+    "display_label": "panda",
+    "normalized_english": "panda",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "パンダ",
+    "ja_hiragana": "ぱんだ",
+    "en_katakana": "パンダ",
+    "ruby": [
+      {
+        "base": "パンダ",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "パンダ",
+    "ruby_text": "パンダ",
+    "sound_file": "dic_wb_11animals_panda_1497.mp3",
+    "card_image": "dic_wb_11animals_panda_1497_1_c.png",
+    "card_image_kana": "dic_wb_11animals_panda_1497_1_c.png",
+    "card_image_en": "dic_wb_11animals_panda_1497_1_e.png",
+    "card_image_bilingual": "dic_wb_11animals_panda_1497_1_ce.png",
+    "card_variants": [
+      "dic_wb_11animals_panda_1497_1.png"
+    ],
+    "token": "dic_wb_11animals_panda_1497&dic_wb_11animals_panda_1497&dic_wb_11animals_panda_1497",
+    "grades": [
+      "ES_G3",
+      "ES_G6"
+    ],
+    "themes": [
+      "This is for you. カードをおくろう"
+    ],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like panda."
+    ],
+    "tags": [
+      "animal",
+      "wild"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u11_17_panda_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u11_17_panda_illust.png",
+    "hwg_card_text": "cards/text/hwg6_u11_17_panda_text.png",
+    "lemma": "panda",
+    "is_plural": false,
+    "letter_count": 5,
+    "syllable_count": 2,
+    "first_letter": "P",
+    "is_compound": false,
+    "phonics_initial": "p",
+    "difficulty_tier": 1,
+    "primary_image": "dic_wb_11animals_panda_1497_1_c.png",
+    "primary_audio": "dic_wb_11animals_panda_1497.mp3",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as 'パンダ' (ぱんだ) in Japanese.",
+      "letter_hint": "It starts with the letter P."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like panda.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_wb_11animals_panda_1497_1_c.png",
+        "sound_file": "dic_wb_11animals_panda_1497.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_wb_11animals_panda_1497_1_ce.png",
+        "card_bw": "dic_wb_11animals_panda_1497_1.png"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u11_17_panda_illust.png",
+        "card_full": "cards/full/hwg6_u11_17_panda_full.png",
+        "card_text": "cards/text/hwg6_u11_17_panda_text.png",
+        "unit": "Unit 11: Unit 11: Living Things",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_11animals_panda_1497.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0789",
+    "english": "pig",
+    "canonical_key": "pig",
+    "disambiguation": "",
+    "display_label": "pig",
+    "normalized_english": "pig",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "豚",
+    "ja_hiragana": "ぶた",
+    "en_katakana": "ピッグ",
+    "ruby": [
+      {
+        "base": "豚",
+        "ruby": "ぶた"
+      }
+    ],
+    "ruby_html": "<ruby>豚<rt>ぶた</rt></ruby>",
+    "ruby_text": "[豚|ぶた]",
+    "sound_file": "dic_wb_11animals_pig_1498.mp3",
+    "card_image": "dic_5_sal_pig_0032_1_c.png",
+    "card_image_kana": "dic_5_sal_pig_0032_1_c.png",
+    "card_image_en": "dic_5_sal_pig_0032_1_e.png",
+    "card_image_bilingual": "dic_5_sal_pig_0032_1_ce.png",
+    "card_variants": [
+      "dic_5_sal_pig_0032_1.png"
+    ],
+    "token": "dic_wb_11animals_pig_1498&dic_wb_11animals_pig_1498&dic_5_sal_pig_0032",
+    "grades": [
+      "ES_G3",
+      "ES_G6"
+    ],
+    "themes": [
+      "How many? 数えてあそぼう"
+    ],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like pig."
+    ],
+    "tags": [
+      "animal",
+      "farm"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u11_18_pig_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u11_18_pig_illust.png",
+    "hwg_card_text": "cards/text/hwg6_u11_18_pig_text.png",
+    "lemma": "pig",
+    "is_plural": false,
+    "letter_count": 3,
+    "syllable_count": 1,
+    "first_letter": "P",
+    "is_compound": false,
+    "phonics_initial": "p",
+    "difficulty_tier": 1,
+    "primary_image": "dic_5_sal_pig_0032_1_c.png",
+    "primary_audio": "dic_wb_11animals_pig_1498.mp3",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as '豚' (ぶた) in Japanese.",
+      "letter_hint": "It starts with the letter P."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like pig.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_5_sal_pig_0032_1_c.png",
+        "sound_file": "dic_wb_11animals_pig_1498.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_5_sal_pig_0032_1_ce.png",
+        "card_bw": "dic_5_sal_pig_0032_1.png"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u11_18_pig_illust.png",
+        "card_full": "cards/full/hwg6_u11_18_pig_full.png",
+        "card_text": "cards/text/hwg6_u11_18_pig_text.png",
+        "unit": "Unit 11: Unit 11: Living Things",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_11animals_pig_1498.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0790",
+    "english": "rabbit",
+    "canonical_key": "rabbit",
+    "disambiguation": "",
+    "display_label": "rabbit",
+    "normalized_english": "rabbit",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "うさぎ",
+    "ja_hiragana": "うさぎ",
+    "en_katakana": "ラビット",
+    "ruby": [
+      {
+        "base": "うさぎ",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "うさぎ",
+    "ruby_text": "うさぎ",
+    "sound_file": "dic_wb_11animals_rabbit_1499.mp3",
+    "card_image": "dic_wb_11animals_rabbit_1499_1_c.png",
+    "card_image_kana": "dic_wb_11animals_rabbit_1499_1_c.png",
+    "card_image_en": "dic_wb_11animals_rabbit_1499_1_e.png",
+    "card_image_bilingual": "dic_wb_11animals_rabbit_1499_1_ce.png",
+    "card_variants": [
+      "dic_wb_11animals_rabbit_1499_1.png"
+    ],
+    "token": "dic_wb_11animals_rabbit_1499&dic_wb_11animals_rabbit_1499&dic_wb_11animals_rabbit_1499",
+    "grades": [
+      "ES_G3",
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [
+      "How many? 数えてあそぼう"
+    ],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like rabbit."
+    ],
+    "tags": [
+      "animal",
+      "pet"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u05_02_rabbit_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u05_02_rabbit_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u05_02_rabbit_text.png",
+    "lemma": "rabbit",
+    "is_plural": false,
+    "letter_count": 6,
+    "syllable_count": 2,
+    "first_letter": "R",
+    "is_compound": false,
+    "phonics_initial": "r",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_11animals_rabbit_1499_1_c.png",
+    "primary_audio": "dic_wb_11animals_rabbit_1499.mp3",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as 'うさぎ' (うさぎ) in Japanese.",
+      "letter_hint": "It starts with the letter R."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like rabbit.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_wb_11animals_rabbit_1499_1_c.png",
+        "sound_file": "dic_wb_11animals_rabbit_1499.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_wb_11animals_rabbit_1499_1_ce.png",
+        "card_bw": "dic_wb_11animals_rabbit_1499_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u05_02_rabbit_illust.png",
+        "card_full": "cards/full/hwg5_u05_02_rabbit_full.png",
+        "card_text": "cards/text/hwg5_u05_02_rabbit_text.png",
+        "unit": "Unit 5: Unit 5: Animals",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_11animals_rabbit_1499.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u11_20_rabbit_illust.png",
+        "card_full": "cards/full/hwg6_u11_20_rabbit_full.png",
+        "card_text": "cards/text/hwg6_u11_20_rabbit_text.png",
+        "unit": "Unit 11: Unit 11: Living Things",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_11animals_rabbit_1499.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0791",
+    "english": "sheep",
+    "canonical_key": "sheep",
+    "disambiguation": "",
+    "display_label": "sheep",
+    "normalized_english": "sheep",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "羊",
+    "ja_hiragana": "ひつじ",
+    "en_katakana": "シープ",
+    "ruby": [
+      {
+        "base": "羊",
+        "ruby": "ひつじ"
+      }
+    ],
+    "ruby_html": "<ruby>羊<rt>ひつじ</rt></ruby>",
+    "ruby_text": "[羊|ひつじ]",
+    "sound_file": "dic_wb_11animals_sheep_1501.mp3",
+    "card_image": "dic_wb_11animals_sheep_1501_1_c.png",
+    "card_image_kana": "dic_wb_11animals_sheep_1501_1_c.png",
+    "card_image_en": "dic_wb_11animals_sheep_1501_1_e.png",
+    "card_image_bilingual": "dic_wb_11animals_sheep_1501_1_ce.png",
+    "card_variants": [
+      "dic_wb_11animals_sheep_1501_1.png",
+      "dic_3_card_sheep_2135_1.png"
+    ],
+    "token": "dic_wb_11animals_sheep_1501&dic_wb_11animals_sheep_1501&dic_wb_11animals_sheep_1501",
+    "grades": [
+      "ES_G3"
+    ],
+    "themes": [
+      "Who are you? きみはだれ？"
+    ],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like sheep."
+    ],
+    "tags": [
+      "animal",
+      "farm"
+    ],
+    "lemma": "sheep",
+    "is_plural": false,
+    "letter_count": 5,
+    "syllable_count": 1,
+    "first_letter": "S",
+    "is_compound": false,
+    "phonics_initial": "sh",
+    "difficulty_tier": 1,
+    "primary_image": "dic_wb_11animals_sheep_1501_1_c.png",
+    "primary_audio": "dic_wb_11animals_sheep_1501.mp3",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as '羊' (ひつじ) in Japanese.",
+      "letter_hint": "It starts with the letter S."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like sheep.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_sheep_2135_1_c.png",
+        "sound_file": "dic_wb_11animals_sheep_1501.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_sheep_2135_1_ce.png",
+        "card_bw": "dic_3_card_sheep_2135_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0792",
+    "english": "snake",
+    "canonical_key": "snake",
+    "disambiguation": "",
+    "display_label": "snake",
+    "normalized_english": "snake",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "蛇",
+    "ja_hiragana": "へび",
+    "en_katakana": "スネーク",
+    "ruby": [
+      {
+        "base": "蛇",
+        "ruby": "へび"
+      }
+    ],
+    "ruby_html": "<ruby>蛇<rt>へび</rt></ruby>",
+    "ruby_text": "[蛇|へび]",
+    "sound_file": "dic_wb_11animals_snake_1502.mp3",
+    "card_image": "dic_wb_11animals_snake_1502_1_c.png",
+    "card_image_kana": "dic_wb_11animals_snake_1502_1_c.png",
+    "card_image_en": "dic_wb_11animals_snake_1502_1_e.png",
+    "card_image_bilingual": "dic_wb_11animals_snake_1502_1_ce.png",
+    "card_variants": [
+      "dic_wb_11animals_snake_1502_1.png"
+    ],
+    "token": "dic_wb_11animals_snake_1502&dic_wb_11animals_snake_1502&dic_wb_11animals_snake_1502",
+    "grades": [
+      "ES_G3"
+    ],
+    "themes": [
+      "Who are you? きみはだれ？"
+    ],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like snake."
+    ],
+    "tags": [
+      "animal"
+    ],
+    "lemma": "snake",
+    "is_plural": false,
+    "letter_count": 5,
+    "syllable_count": 1,
+    "first_letter": "S",
+    "is_compound": false,
+    "phonics_initial": "sn",
+    "difficulty_tier": 1,
+    "primary_image": "dic_wb_11animals_snake_1502_1_c.png",
+    "primary_audio": "dic_wb_11animals_snake_1502.mp3",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as '蛇' (へび) in Japanese.",
+      "letter_hint": "It starts with the letter S."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like snake.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_wb_11animals_snake_1502_1_c.png",
+        "sound_file": "dic_wb_11animals_snake_1502.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_wb_11animals_snake_1502_1_ce.png",
+        "card_bw": "dic_wb_11animals_snake_1502_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0793",
+    "english": "spider",
+    "canonical_key": "spider",
+    "disambiguation": "",
+    "display_label": "spider",
+    "normalized_english": "spider",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "蜘蛛",
+    "ja_hiragana": "くも",
+    "en_katakana": "スパイダー",
+    "ruby": [
+      {
+        "base": "蜘蛛",
+        "ruby": "くも"
+      }
+    ],
+    "ruby_html": "<ruby>蜘蛛<rt>くも</rt></ruby>",
+    "ruby_text": "[蜘蛛|くも]",
+    "sound_file": "dic_wb_11animals_spider_1508.mp3",
+    "card_image": "dic_wb_11animals_spider_1508_1_c.png",
+    "card_image_kana": "dic_wb_11animals_spider_1508_1_c.png",
+    "card_image_en": "dic_wb_11animals_spider_1508_1_e.png",
+    "card_image_bilingual": "dic_wb_11animals_spider_1508_1_ce.png",
+    "card_variants": [
+      "dic_wb_11animals_spider_1508_1.png"
+    ],
+    "token": "dic_wb_11animals_spider_1508&dic_wb_11animals_spider_1508&dic_wb_11animals_spider_1508",
+    "grades": [
+      "ES_G3"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like spider."
+    ],
+    "tags": [
+      "animal",
+      "bug"
+    ],
+    "lemma": "spider",
+    "is_plural": false,
+    "letter_count": 6,
+    "syllable_count": 2,
+    "first_letter": "S",
+    "is_compound": false,
+    "phonics_initial": "sp",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_11animals_spider_1508_1_c.png",
+    "primary_audio": "dic_wb_11animals_spider_1508.mp3",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as '蜘蛛' (くも) in Japanese.",
+      "letter_hint": "It starts with the letter S."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like spider.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_wb_11animals_spider_1508_1_c.png",
+        "sound_file": "dic_wb_11animals_spider_1508.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_wb_11animals_spider_1508_1_ce.png",
+        "card_bw": "dic_wb_11animals_spider_1508_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0794",
+    "english": "tiger",
+    "canonical_key": "tiger",
+    "disambiguation": "",
+    "display_label": "tiger",
+    "normalized_english": "tiger",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "虎",
+    "ja_hiragana": "とら",
+    "en_katakana": "タイガー",
+    "ruby": [
+      {
+        "base": "虎",
+        "ruby": "とら"
+      }
+    ],
+    "ruby_html": "<ruby>虎<rt>とら</rt></ruby>",
+    "ruby_text": "[虎|とら]",
+    "sound_file": "dic_wb_11animals_tiger_1503.mp3",
+    "card_image": "dic_wb_11animals_tiger_1503_1_c.png",
+    "card_image_kana": "dic_wb_11animals_tiger_1503_1_c.png",
+    "card_image_en": "dic_wb_11animals_tiger_1503_1_e.png",
+    "card_image_bilingual": "dic_wb_11animals_tiger_1503_1_ce.png",
+    "card_variants": [
+      "dic_wb_11animals_tiger_1503_1.png"
+    ],
+    "token": "dic_wb_11animals_tiger_1503&dic_wb_11animals_tiger_1503&dic_wb_11animals_tiger_1503",
+    "grades": [
+      "ES_G3",
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [
+      "Who are you? きみはだれ？"
+    ],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like tiger."
+    ],
+    "tags": [
+      "animal",
+      "wild"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u05_04_tiger_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u05_04_tiger_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u05_04_tiger_text.png",
+    "lemma": "tiger",
+    "is_plural": false,
+    "letter_count": 5,
+    "syllable_count": 2,
+    "first_letter": "T",
+    "is_compound": false,
+    "phonics_initial": "t",
+    "difficulty_tier": 1,
+    "primary_image": "dic_wb_11animals_tiger_1503_1_c.png",
+    "primary_audio": "dic_wb_11animals_tiger_1503.mp3",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as '虎' (とら) in Japanese.",
+      "letter_hint": "It starts with the letter T."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like tiger.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_wb_11animals_tiger_1503_1_c.png",
+        "sound_file": "dic_wb_11animals_tiger_1503.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_wb_11animals_tiger_1503_1_ce.png",
+        "card_bw": "dic_wb_11animals_tiger_1503_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u05_04_tiger_illust.png",
+        "card_full": "cards/full/hwg5_u05_04_tiger_full.png",
+        "card_text": "cards/text/hwg5_u05_04_tiger_text.png",
+        "unit": "Unit 5: Unit 5: Animals",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_11animals_tiger_1503.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u11_22_tiger_illust.png",
+        "card_full": "cards/full/hwg6_u11_22_tiger_full.png",
+        "card_text": "cards/text/hwg6_u11_22_tiger_text.png",
+        "unit": "Unit 11: Unit 11: Living Things",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_11animals_tiger_1503.mp3"
+      }
+    }
+  }
+]

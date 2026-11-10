@@ -1,0 +1,1899 @@
+{
+  "ES_G6": {
+    "total": 621,
+    "ok": 426,
+    "missing": [],
+    "anomalies": [
+      {
+        "id": "word_0004",
+        "english": "always",
+        "card_image": "cards/illustration/hwg6_u07_11_always_illust.webp",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\illustration/hwg6_u07_11_always_illust.webp",
+        "issues": [
+          "EXTREME_ASPECT_RATIO (10.73)"
+        ]
+      },
+      {
+        "id": "word_0210",
+        "english": "never",
+        "card_image": "cards/illustration/hwg6_u07_14_never_illust.webp",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\illustration/hwg6_u07_14_never_illust.webp",
+        "issues": [
+          "EXTREME_ASPECT_RATIO (10.89)"
+        ]
+      },
+      {
+        "id": "word_0315",
+        "english": "sometimes",
+        "card_image": "cards/illustration/hwg6_u07_13_sometimes_illust.webp",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\illustration/hwg6_u07_13_sometimes_illust.webp",
+        "issues": [
+          "EXTREME_ASPECT_RATIO (9.96)"
+        ]
+      },
+      {
+        "id": "word_0353",
+        "english": "the UK",
+        "card_image": "cards/illustration/hwg6_u01_24_the_U_K__illust.webp",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\illustration/hwg6_u01_24_the_U_K__illust.webp",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0354",
+        "english": "the USA",
+        "card_image": "cards/illustration/hwg6_u01_25_the_U_S__illust.webp",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\illustration/hwg6_u01_25_the_U_S__illust.webp",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0376",
+        "english": "usually",
+        "card_image": "cards/illustration/hwg6_u07_12_usually_illust.webp",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\illustration/hwg6_u07_12_usually_illust.webp",
+        "issues": [
+          "EXTREME_ASPECT_RATIO (10.33)"
+        ]
+      },
+      {
+        "id": "word_0549",
+        "english": "five",
+        "card_image": "cards/illustration/hwg6_u19_05_five_illust.webp",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\illustration/hwg6_u19_05_five_illust.webp",
+        "issues": [
+          "EXTREME_ASPECT_RATIO (4.68)"
+        ]
+      },
+      {
+        "id": "word_0558",
+        "english": "seven",
+        "card_image": "cards/illustration/hwg6_u19_07_seven_illust.webp",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\illustration/hwg6_u19_07_seven_illust.webp",
+        "issues": [
+          "EXTREME_ASPECT_RATIO (4.68)"
+        ]
+      },
+      {
+        "id": "word_0559",
+        "english": "seventeen",
+        "card_image": "cards/illustration/hwg6_u19_17_seventeen_illust.webp",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\illustration/hwg6_u19_17_seventeen_illust.webp",
+        "issues": [
+          "EXTREME_ASPECT_RATIO (5.21)"
+        ]
+      },
+      {
+        "id": "word_0561",
+        "english": "six",
+        "card_image": "cards/illustration/hwg6_u19_06_six_illust.webp",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\illustration/hwg6_u19_06_six_illust.webp",
+        "issues": [
+          "EXTREME_ASPECT_RATIO (4.68)"
+        ]
+      },
+      {
+        "id": "word_0562",
+        "english": "sixteen",
+        "card_image": "cards/illustration/hwg6_u19_16_sixteen_illust.webp",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\illustration/hwg6_u19_16_sixteen_illust.webp",
+        "issues": [
+          "EXTREME_ASPECT_RATIO (5.21)"
+        ]
+      },
+      {
+        "id": "word_0567",
+        "english": "three",
+        "card_image": "cards/illustration/hwg6_u19_03_three_illust.webp",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\illustration/hwg6_u19_03_three_illust.webp",
+        "issues": [
+          "EXTREME_ASPECT_RATIO (5.02)"
+        ]
+      },
+      {
+        "id": "word_0858",
+        "english": "Andorra",
+        "card_image": "cards/world_flags/flag_ad_andorra.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_ad_andorra.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0859",
+        "english": "United Arab Emirates",
+        "card_image": "cards/world_flags/flag_ae_united_arab_emirates.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_ae_united_arab_emirates.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0860",
+        "english": "Afghanistan",
+        "card_image": "cards/world_flags/flag_af_afghanistan.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_af_afghanistan.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0861",
+        "english": "Antigua and Barbuda",
+        "card_image": "cards/world_flags/flag_ag_antigua_and_barbuda.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_ag_antigua_and_barbuda.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0862",
+        "english": "Anguilla",
+        "card_image": "cards/world_flags/flag_ai_anguilla.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_ai_anguilla.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0863",
+        "english": "Albania",
+        "card_image": "cards/world_flags/flag_al_albania.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_al_albania.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0864",
+        "english": "Armenia",
+        "card_image": "cards/world_flags/flag_am_armenia.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_am_armenia.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=False, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0865",
+        "english": "Angola",
+        "card_image": "cards/world_flags/flag_ao_angola.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_ao_angola.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0868",
+        "english": "American Samoa",
+        "card_image": "cards/world_flags/flag_as_american_samoa.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_as_american_samoa.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=False)"
+        ]
+      },
+      {
+        "id": "word_0869",
+        "english": "Austria",
+        "card_image": "cards/world_flags/flag_at_austria.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_at_austria.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0871",
+        "english": "Åland Islands",
+        "card_image": "cards/world_flags/flag_ax_aland_islands.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_ax_aland_islands.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0872",
+        "english": "Bosnia and Herzegovina",
+        "card_image": "cards/world_flags/flag_ba_bosnia_and_herzegovina.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_ba_bosnia_and_herzegovina.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0873",
+        "english": "Barbados",
+        "card_image": "cards/world_flags/flag_bb_barbados.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_bb_barbados.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0874",
+        "english": "Bangladesh",
+        "card_image": "cards/world_flags/flag_bd_bangladesh.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_bd_bangladesh.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0875",
+        "english": "Belgium",
+        "card_image": "cards/world_flags/flag_be_belgium.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_be_belgium.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=False, bot=False, L=True, R=False)"
+        ]
+      },
+      {
+        "id": "word_0877",
+        "english": "Bulgaria",
+        "card_image": "cards/world_flags/flag_bg_bulgaria.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_bg_bulgaria.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=False, bot=True, L=False, R=False)"
+        ]
+      },
+      {
+        "id": "word_0878",
+        "english": "Bahrain",
+        "card_image": "cards/world_flags/flag_bh_bahrain.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_bh_bahrain.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=False, R=True)"
+        ]
+      },
+      {
+        "id": "word_0879",
+        "english": "Burundi",
+        "card_image": "cards/world_flags/flag_bi_burundi.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_bi_burundi.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=False, R=False)"
+        ]
+      },
+      {
+        "id": "word_0880",
+        "english": "Benin",
+        "card_image": "cards/world_flags/flag_bj_benin.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_bj_benin.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=False, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0882",
+        "english": "Bermuda",
+        "card_image": "cards/world_flags/flag_bm_bermuda.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_bm_bermuda.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0884",
+        "english": "Bolivia",
+        "card_image": "cards/world_flags/flag_bo_bolivia.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_bo_bolivia.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0885",
+        "english": "Caribbean Netherlands",
+        "card_image": "cards/world_flags/flag_bq_caribbean_netherlands.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_bq_caribbean_netherlands.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=False, bot=True, L=False, R=True)"
+        ]
+      },
+      {
+        "id": "word_0886",
+        "english": "Bahamas",
+        "card_image": "cards/world_flags/flag_bs_bahamas.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_bs_bahamas.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0888",
+        "english": "Bouvet Island",
+        "card_image": "cards/world_flags/flag_bv_bouvet_island.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_bv_bouvet_island.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0890",
+        "english": "Belarus",
+        "card_image": "cards/world_flags/flag_by_belarus.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_by_belarus.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0891",
+        "english": "Belize",
+        "card_image": "cards/world_flags/flag_bz_belize.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_bz_belize.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0892",
+        "english": "Cocos (Keeling) Islands",
+        "card_image": "cards/world_flags/flag_cc_cocos_keeling_islands.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_cc_cocos_keeling_islands.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0894",
+        "english": "Central African Republic",
+        "card_image": "cards/world_flags/flag_cf_central_african_republic.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_cf_central_african_republic.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=False, L=False, R=False)"
+        ]
+      },
+      {
+        "id": "word_0895",
+        "english": "Republic of the Congo",
+        "card_image": "cards/world_flags/flag_cg_republic_of_the_congo.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_cg_republic_of_the_congo.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0896",
+        "english": "Switzerland",
+        "card_image": "cards/world_flags/flag_ch_switzerland.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_ch_switzerland.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0898",
+        "english": "Cook Islands",
+        "card_image": "cards/world_flags/flag_ck_cook_islands.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_ck_cook_islands.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0899",
+        "english": "Cameroon",
+        "card_image": "cards/world_flags/flag_cm_cameroon.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_cm_cameroon.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=False)"
+        ]
+      },
+      {
+        "id": "word_0900",
+        "english": "Colombia",
+        "card_image": "cards/world_flags/flag_co_colombia.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_co_colombia.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=False, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0901",
+        "english": "Costa Rica",
+        "card_image": "cards/world_flags/flag_cr_costa_rica.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_cr_costa_rica.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0902",
+        "english": "Cuba",
+        "card_image": "cards/world_flags/flag_cu_cuba.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_cu_cuba.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0903",
+        "english": "Cape Verde",
+        "card_image": "cards/world_flags/flag_cv_cape_verde.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_cv_cape_verde.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0904",
+        "english": "Curaçao",
+        "card_image": "cards/world_flags/flag_cw_curacao.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_cw_curacao.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0905",
+        "english": "Christmas Island",
+        "card_image": "cards/world_flags/flag_cx_christmas_island.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_cx_christmas_island.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=False, bot=True, L=True, R=False)"
+        ]
+      },
+      {
+        "id": "word_0907",
+        "english": "Czechia",
+        "card_image": "cards/world_flags/flag_cz_czechia.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_cz_czechia.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=False, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0909",
+        "english": "Denmark",
+        "card_image": "cards/world_flags/flag_dk_denmark.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_dk_denmark.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0910",
+        "english": "Dominica",
+        "card_image": "cards/world_flags/flag_dm_dominica.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_dm_dominica.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0911",
+        "english": "Dominican Republic",
+        "card_image": "cards/world_flags/flag_do_dominican_republic.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_do_dominican_republic.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0912",
+        "english": "Algeria",
+        "card_image": "cards/world_flags/flag_dz_algeria.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_dz_algeria.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=False)"
+        ]
+      },
+      {
+        "id": "word_0913",
+        "english": "Ecuador",
+        "card_image": "cards/world_flags/flag_ec_ecuador.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_ec_ecuador.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=False, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0914",
+        "english": "Estonia",
+        "card_image": "cards/world_flags/flag_ee_estonia.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_ee_estonia.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=False, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0915",
+        "english": "Western Sahara",
+        "card_image": "cards/world_flags/flag_eh_western_sahara.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_eh_western_sahara.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0916",
+        "english": "Eritrea",
+        "card_image": "cards/world_flags/flag_er_eritrea.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_er_eritrea.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=False, bot=False, L=True, R=False)"
+        ]
+      },
+      {
+        "id": "word_0917",
+        "english": "Spain",
+        "card_image": "cards/world_flags/flag_es_spain.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_es_spain.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0918",
+        "english": "Ethiopia",
+        "card_image": "cards/world_flags/flag_et_ethiopia.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_et_ethiopia.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0920",
+        "english": "Falkland Islands",
+        "card_image": "cards/world_flags/flag_fk_falkland_islands.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_fk_falkland_islands.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0926",
+        "english": "Scotland",
+        "card_image": "cards/world_flags/flag_gb_sct_scotland.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_gb_sct_scotland.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0928",
+        "english": "Grenada",
+        "card_image": "cards/world_flags/flag_gd_grenada.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_gd_grenada.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0930",
+        "english": "French Guiana",
+        "card_image": "cards/world_flags/flag_gf_french_guiana.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_gf_french_guiana.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=False, L=False, R=True)"
+        ]
+      },
+      {
+        "id": "word_0932",
+        "english": "Ghana",
+        "card_image": "cards/world_flags/flag_gh_ghana.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_gh_ghana.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0933",
+        "english": "Gibraltar",
+        "card_image": "cards/world_flags/flag_gi_gibraltar.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_gi_gibraltar.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=False, bot=True, L=False, R=False)"
+        ]
+      },
+      {
+        "id": "word_0934",
+        "english": "Greenland",
+        "card_image": "cards/world_flags/flag_gl_greenland.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_gl_greenland.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=False, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0935",
+        "english": "Gambia",
+        "card_image": "cards/world_flags/flag_gm_gambia.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_gm_gambia.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0936",
+        "english": "Guinea",
+        "card_image": "cards/world_flags/flag_gn_guinea.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_gn_guinea.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0937",
+        "english": "Guadeloupe",
+        "card_image": "cards/world_flags/flag_gp_guadeloupe.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_gp_guadeloupe.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0938",
+        "english": "Equatorial Guinea",
+        "card_image": "cards/world_flags/flag_gq_equatorial_guinea.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_gq_equatorial_guinea.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=False, bot=True, L=True, R=False)"
+        ]
+      },
+      {
+        "id": "word_0939",
+        "english": "Greece",
+        "card_image": "cards/world_flags/flag_gr_greece.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_gr_greece.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0940",
+        "english": "South Georgia",
+        "card_image": "cards/world_flags/flag_gs_south_georgia.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_gs_south_georgia.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0942",
+        "english": "Guam",
+        "card_image": "cards/world_flags/flag_gu_guam.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_gu_guam.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0943",
+        "english": "Guinea-Bissau",
+        "card_image": "cards/world_flags/flag_gw_guinea_bissau.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_gw_guinea_bissau.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=False, bot=False, L=True, R=False)"
+        ]
+      },
+      {
+        "id": "word_0944",
+        "english": "Guyana",
+        "card_image": "cards/world_flags/flag_gy_guyana.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_gy_guyana.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=False, bot=False, L=True, R=False)"
+        ]
+      },
+      {
+        "id": "word_0945",
+        "english": "Hong Kong",
+        "card_image": "cards/world_flags/flag_hk_hong_kong.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_hk_hong_kong.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0946",
+        "english": "Heard Island and McDonald Islands",
+        "card_image": "cards/world_flags/flag_hm_heard_island_and_mcdonald_islands.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_hm_heard_island_and_mcdonald_islands.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0948",
+        "english": "Croatia",
+        "card_image": "cards/world_flags/flag_hr_croatia.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_hr_croatia.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0949",
+        "english": "Haiti",
+        "card_image": "cards/world_flags/flag_ht_haiti.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_ht_haiti.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0950",
+        "english": "Hungary",
+        "card_image": "cards/world_flags/flag_hu_hungary.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_hu_hungary.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0951",
+        "english": "Indonesia",
+        "card_image": "cards/world_flags/flag_id_indonesia.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_id_indonesia.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=False, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0954",
+        "english": "Isle of Man",
+        "card_image": "cards/world_flags/flag_im_isle_of_man.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_im_isle_of_man.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0955",
+        "english": "British Indian Ocean Territory",
+        "card_image": "cards/world_flags/flag_io_british_indian_ocean_territory.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_io_british_indian_ocean_territory.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=False, bot=False, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0956",
+        "english": "Iraq",
+        "card_image": "cards/world_flags/flag_iq_iraq.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_iq_iraq.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0957",
+        "english": "Iran",
+        "card_image": "cards/world_flags/flag_ir_iran.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_ir_iran.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=False, bot=True, L=False, R=False)"
+        ]
+      },
+      {
+        "id": "word_0958",
+        "english": "Iceland",
+        "card_image": "cards/world_flags/flag_is_iceland.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_is_iceland.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0960",
+        "english": "Jamaica",
+        "card_image": "cards/world_flags/flag_jm_jamaica.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_jm_jamaica.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0961",
+        "english": "Jordan",
+        "card_image": "cards/world_flags/flag_jo_jordan.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_jo_jordan.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0962",
+        "english": "Kyrgyzstan",
+        "card_image": "cards/world_flags/flag_kg_kyrgyzstan.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_kg_kyrgyzstan.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0963",
+        "english": "Cambodia",
+        "card_image": "cards/world_flags/flag_kh_cambodia.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_kh_cambodia.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0964",
+        "english": "Kiribati",
+        "card_image": "cards/world_flags/flag_ki_kiribati.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_ki_kiribati.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0965",
+        "english": "Comoros",
+        "card_image": "cards/world_flags/flag_km_comoros.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_km_comoros.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=False, bot=True, L=True, R=False)"
+        ]
+      },
+      {
+        "id": "word_0966",
+        "english": "Saint Kitts and Nevis",
+        "card_image": "cards/world_flags/flag_kn_saint_kitts_and_nevis.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_kn_saint_kitts_and_nevis.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0967",
+        "english": "North Korea",
+        "card_image": "cards/world_flags/flag_kp_north_korea.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_kp_north_korea.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0968",
+        "english": "Kuwait",
+        "card_image": "cards/world_flags/flag_kw_kuwait.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_kw_kuwait.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0969",
+        "english": "Cayman Islands",
+        "card_image": "cards/world_flags/flag_ky_cayman_islands.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_ky_cayman_islands.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0971",
+        "english": "Laos",
+        "card_image": "cards/world_flags/flag_la_laos.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_la_laos.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0972",
+        "english": "Lebanon",
+        "card_image": "cards/world_flags/flag_lb_lebanon.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_lb_lebanon.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0974",
+        "english": "Liechtenstein",
+        "card_image": "cards/world_flags/flag_li_liechtenstein.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_li_liechtenstein.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0976",
+        "english": "Liberia",
+        "card_image": "cards/world_flags/flag_lr_liberia.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_lr_liberia.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0977",
+        "english": "Lesotho",
+        "card_image": "cards/world_flags/flag_ls_lesotho.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_ls_lesotho.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0978",
+        "english": "Lithuania",
+        "card_image": "cards/world_flags/flag_lt_lithuania.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_lt_lithuania.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=False, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0980",
+        "english": "Latvia",
+        "card_image": "cards/world_flags/flag_lv_latvia.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_lv_latvia.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0981",
+        "english": "Libya",
+        "card_image": "cards/world_flags/flag_ly_libya.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_ly_libya.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=False, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0982",
+        "english": "Morocco",
+        "card_image": "cards/world_flags/flag_ma_morocco.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_ma_morocco.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0983",
+        "english": "Monaco",
+        "card_image": "cards/world_flags/flag_mc_monaco.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_mc_monaco.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=False, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0984",
+        "english": "Moldova",
+        "card_image": "cards/world_flags/flag_md_moldova.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_md_moldova.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0986",
+        "english": "Saint Martin",
+        "card_image": "cards/world_flags/flag_mf_saint_martin.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_mf_saint_martin.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0987",
+        "english": "Madagascar",
+        "card_image": "cards/world_flags/flag_mg_madagascar.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_mg_madagascar.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=False, bot=True, L=False, R=True)"
+        ]
+      },
+      {
+        "id": "word_0988",
+        "english": "Marshall Islands",
+        "card_image": "cards/world_flags/flag_mh_marshall_islands.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_mh_marshall_islands.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0989",
+        "english": "North Macedonia",
+        "card_image": "cards/world_flags/flag_mk_north_macedonia.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_mk_north_macedonia.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0990",
+        "english": "Mali",
+        "card_image": "cards/world_flags/flag_ml_mali.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_ml_mali.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=False, bot=False, L=False, R=True)"
+        ]
+      },
+      {
+        "id": "word_0992",
+        "english": "Mongolia",
+        "card_image": "cards/world_flags/flag_mn_mongolia.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_mn_mongolia.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0993",
+        "english": "Macau",
+        "card_image": "cards/world_flags/flag_mo_macau.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_mo_macau.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0994",
+        "english": "Northern Mariana Islands",
+        "card_image": "cards/world_flags/flag_mp_northern_mariana_islands.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_mp_northern_mariana_islands.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0995",
+        "english": "Martinique",
+        "card_image": "cards/world_flags/flag_mq_martinique.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_mq_martinique.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=False, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0996",
+        "english": "Mauritania",
+        "card_image": "cards/world_flags/flag_mr_mauritania.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_mr_mauritania.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0997",
+        "english": "Montserrat",
+        "card_image": "cards/world_flags/flag_ms_montserrat.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_ms_montserrat.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_0998",
+        "english": "Malta",
+        "card_image": "cards/world_flags/flag_mt_malta.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_mt_malta.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=False, R=True)"
+        ]
+      },
+      {
+        "id": "word_1000",
+        "english": "Malawi",
+        "card_image": "cards/world_flags/flag_mw_malawi.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_mw_malawi.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=False, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_1001",
+        "english": "Mexico",
+        "card_image": "cards/world_flags/flag_mx_mexico.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_mx_mexico.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_1002",
+        "english": "Malaysia",
+        "card_image": "cards/world_flags/flag_my_malaysia.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_my_malaysia.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=False, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_1003",
+        "english": "Mozambique",
+        "card_image": "cards/world_flags/flag_mz_mozambique.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_mz_mozambique.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=False, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_1004",
+        "english": "Namibia",
+        "card_image": "cards/world_flags/flag_na_namibia.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_na_namibia.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_1005",
+        "english": "New Caledonia",
+        "card_image": "cards/world_flags/flag_nc_new_caledonia.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_nc_new_caledonia.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_1007",
+        "english": "Norfolk Island",
+        "card_image": "cards/world_flags/flag_nf_norfolk_island.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_nf_norfolk_island.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_1008",
+        "english": "Nigeria",
+        "card_image": "cards/world_flags/flag_ng_nigeria.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_ng_nigeria.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_1009",
+        "english": "Nicaragua",
+        "card_image": "cards/world_flags/flag_ni_nicaragua.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_ni_nicaragua.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_1010",
+        "english": "Netherlands",
+        "card_image": "cards/world_flags/flag_nl_netherlands.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_nl_netherlands.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_1011",
+        "english": "Nepal",
+        "card_image": "cards/world_flags/flag_np_nepal.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_np_nepal.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_1012",
+        "english": "Nauru",
+        "card_image": "cards/world_flags/flag_nr_nauru.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_nr_nauru.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_1014",
+        "english": "Oman",
+        "card_image": "cards/world_flags/flag_om_oman.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_om_oman.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=False, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_1015",
+        "english": "Panama",
+        "card_image": "cards/world_flags/flag_pa_panama.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_pa_panama.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_1016",
+        "english": "French Polynesia",
+        "card_image": "cards/world_flags/flag_pf_french_polynesia.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_pf_french_polynesia.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_1017",
+        "english": "Papua New Guinea",
+        "card_image": "cards/world_flags/flag_pg_papua_new_guinea.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_pg_papua_new_guinea.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_1018",
+        "english": "Pakistan",
+        "card_image": "cards/world_flags/flag_pk_pakistan.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_pk_pakistan.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=False, R=True)"
+        ]
+      },
+      {
+        "id": "word_1019",
+        "english": "Poland",
+        "card_image": "cards/world_flags/flag_pl_poland.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_pl_poland.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=False, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_1020",
+        "english": "Saint Pierre and Miquelon",
+        "card_image": "cards/world_flags/flag_pm_saint_pierre_and_miquelon.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_pm_saint_pierre_and_miquelon.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=False, bot=False, L=True, R=False)"
+        ]
+      },
+      {
+        "id": "word_1021",
+        "english": "Pitcairn Islands",
+        "card_image": "cards/world_flags/flag_pn_pitcairn_islands.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_pn_pitcairn_islands.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_1022",
+        "english": "Puerto Rico",
+        "card_image": "cards/world_flags/flag_pr_puerto_rico.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_pr_puerto_rico.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_1023",
+        "english": "Palestine",
+        "card_image": "cards/world_flags/flag_ps_palestine.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_ps_palestine.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=False, R=True)"
+        ]
+      },
+      {
+        "id": "word_1024",
+        "english": "Portugal",
+        "card_image": "cards/world_flags/flag_pt_portugal.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_pt_portugal.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_1026",
+        "english": "Paraguay",
+        "card_image": "cards/world_flags/flag_py_paraguay.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_py_paraguay.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_1027",
+        "english": "Qatar",
+        "card_image": "cards/world_flags/flag_qa_qatar.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_qa_qatar.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=False, R=True)"
+        ]
+      },
+      {
+        "id": "word_1028",
+        "english": "Réunion",
+        "card_image": "cards/world_flags/flag_re_reunion.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_re_reunion.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=False, bot=True, L=False, R=False)"
+        ]
+      },
+      {
+        "id": "word_1029",
+        "english": "Romania",
+        "card_image": "cards/world_flags/flag_ro_romania.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_ro_romania.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_1030",
+        "english": "Serbia",
+        "card_image": "cards/world_flags/flag_rs_serbia.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_rs_serbia.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=False, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_1031",
+        "english": "Rwanda",
+        "card_image": "cards/world_flags/flag_rw_rwanda.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_rw_rwanda.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=False, bot=True, L=False, R=False)"
+        ]
+      },
+      {
+        "id": "word_1032",
+        "english": "Solomon Islands",
+        "card_image": "cards/world_flags/flag_sb_solomon_islands.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_sb_solomon_islands.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_1033",
+        "english": "Seychelles",
+        "card_image": "cards/world_flags/flag_sc_seychelles.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_sc_seychelles.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_1034",
+        "english": "Sudan",
+        "card_image": "cards/world_flags/flag_sd_sudan.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_sd_sudan.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_1035",
+        "english": "Sweden",
+        "card_image": "cards/world_flags/flag_se_sweden.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_se_sweden.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_1037",
+        "english": "Saint Helena, Ascension and Tristan da Cunha",
+        "card_image": "cards/world_flags/flag_sh_saint_helena_ascension_and_tristan_da_cunha.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_sh_saint_helena_ascension_and_tristan_da_cunha.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_1038",
+        "english": "Slovenia",
+        "card_image": "cards/world_flags/flag_si_slovenia.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_si_slovenia.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=False, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_1039",
+        "english": "Svalbard and Jan Mayen",
+        "card_image": "cards/world_flags/flag_sj_svalbard_and_jan_mayen.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_sj_svalbard_and_jan_mayen.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_1040",
+        "english": "Slovakia",
+        "card_image": "cards/world_flags/flag_sk_slovakia.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_sk_slovakia.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=False, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_1041",
+        "english": "Sierra Leone",
+        "card_image": "cards/world_flags/flag_sl_sierra_leone.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_sl_sierra_leone.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=False, bot=True, L=False, R=False)"
+        ]
+      },
+      {
+        "id": "word_1043",
+        "english": "Senegal",
+        "card_image": "cards/world_flags/flag_sn_senegal.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_sn_senegal.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_1045",
+        "english": "Suriname",
+        "card_image": "cards/world_flags/flag_sr_suriname.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_sr_suriname.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_1046",
+        "english": "South Sudan",
+        "card_image": "cards/world_flags/flag_ss_south_sudan.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_ss_south_sudan.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=False, R=True)"
+        ]
+      },
+      {
+        "id": "word_1047",
+        "english": "São Tomé and Príncipe",
+        "card_image": "cards/world_flags/flag_st_sao_tome_and_principe.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_st_sao_tome_and_principe.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=False, R=True)"
+        ]
+      },
+      {
+        "id": "word_1048",
+        "english": "El Salvador",
+        "card_image": "cards/world_flags/flag_sv_el_salvador.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_sv_el_salvador.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_1049",
+        "english": "Sint Maarten",
+        "card_image": "cards/world_flags/flag_sx_sint_maarten.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_sx_sint_maarten.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=False, R=True)"
+        ]
+      },
+      {
+        "id": "word_1050",
+        "english": "Syria",
+        "card_image": "cards/world_flags/flag_sy_syria.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_sy_syria.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_1051",
+        "english": "Eswatini (Swaziland)",
+        "card_image": "cards/world_flags/flag_sz_eswatini_swaziland.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_sz_eswatini_swaziland.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_1052",
+        "english": "Turks and Caicos Islands",
+        "card_image": "cards/world_flags/flag_tc_turks_and_caicos_islands.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_tc_turks_and_caicos_islands.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_1053",
+        "english": "Chad",
+        "card_image": "cards/world_flags/flag_td_chad.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_td_chad.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_1054",
+        "english": "French Southern and Antarctic Lands",
+        "card_image": "cards/world_flags/flag_tf_french_southern_and_antarctic_lands.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_tf_french_southern_and_antarctic_lands.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_1055",
+        "english": "Togo",
+        "card_image": "cards/world_flags/flag_tg_togo.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_tg_togo.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_1056",
+        "english": "Tajikistan",
+        "card_image": "cards/world_flags/flag_tj_tajikistan.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_tj_tajikistan.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_1057",
+        "english": "Tokelau",
+        "card_image": "cards/world_flags/flag_tk_tokelau.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_tk_tokelau.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_1058",
+        "english": "Timor-Leste",
+        "card_image": "cards/world_flags/flag_tl_timor_leste.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_tl_timor_leste.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_1059",
+        "english": "Turkmenistan",
+        "card_image": "cards/world_flags/flag_tm_turkmenistan.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_tm_turkmenistan.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_1060",
+        "english": "Tunisia",
+        "card_image": "cards/world_flags/flag_tn_tunisia.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_tn_tunisia.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_1061",
+        "english": "Tonga",
+        "card_image": "cards/world_flags/flag_to_tonga.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_to_tonga.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_1062",
+        "english": "Turkey",
+        "card_image": "cards/world_flags/flag_tr_turkey.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_tr_turkey.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_1063",
+        "english": "Trinidad and Tobago",
+        "card_image": "cards/world_flags/flag_tt_trinidad_and_tobago.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_tt_trinidad_and_tobago.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_1065",
+        "english": "Taiwan",
+        "card_image": "cards/world_flags/flag_tw_taiwan.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_tw_taiwan.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_1067",
+        "english": "Ukraine",
+        "card_image": "cards/world_flags/flag_ua_ukraine.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_ua_ukraine.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=False, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_1068",
+        "english": "Uganda",
+        "card_image": "cards/world_flags/flag_ug_uganda.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_ug_uganda.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_1069",
+        "english": "United States Minor Outlying Islands",
+        "card_image": "cards/world_flags/flag_um_united_states_minor_outlying_islands.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_um_united_states_minor_outlying_islands.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_1070",
+        "english": "Uruguay",
+        "card_image": "cards/world_flags/flag_uy_uruguay.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_uy_uruguay.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=False, bot=False, L=False, R=True)"
+        ]
+      },
+      {
+        "id": "word_1073",
+        "english": "Saint Vincent and the Grenadines",
+        "card_image": "cards/world_flags/flag_vc_saint_vincent_and_the_grenadines.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_vc_saint_vincent_and_the_grenadines.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_1074",
+        "english": "Venezuela",
+        "card_image": "cards/world_flags/flag_ve_venezuela.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_ve_venezuela.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=False, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_1075",
+        "english": "British Virgin Islands",
+        "card_image": "cards/world_flags/flag_vg_british_virgin_islands.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_vg_british_virgin_islands.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_1077",
+        "english": "Vietnam",
+        "card_image": "cards/world_flags/flag_vn_vietnam.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_vn_vietnam.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_1078",
+        "english": "Vanuatu",
+        "card_image": "cards/world_flags/flag_vu_vanuatu.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_vu_vanuatu.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_1079",
+        "english": "Wallis and Futuna",
+        "card_image": "cards/world_flags/flag_wf_wallis_and_futuna.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_wf_wallis_and_futuna.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_1080",
+        "english": "Samoa",
+        "card_image": "cards/world_flags/flag_ws_samoa.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_ws_samoa.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_1081",
+        "english": "Kosovo",
+        "card_image": "cards/world_flags/flag_xk_kosovo.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_xk_kosovo.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_1082",
+        "english": "Yemen",
+        "card_image": "cards/world_flags/flag_ye_yemen.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_ye_yemen.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=True)"
+        ]
+      },
+      {
+        "id": "word_1084",
+        "english": "Zambia",
+        "card_image": "cards/world_flags/flag_zm_zambia.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_zm_zambia.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=True, R=False)"
+        ]
+      },
+      {
+        "id": "word_1085",
+        "english": "Zimbabwe",
+        "card_image": "cards/world_flags/flag_zw_zimbabwe.png",
+        "disk_path": "C:\\Antigravity\\levi-sensei (new)\\trimmed_assets\\cards\\world_flags/flag_zw_zimbabwe.png",
+        "issues": [
+          "BORDER_BLEED_ARTIFACT (top=True, bot=True, L=False, R=True)"
+        ]
+      }
+    ]
+  },
+  "ES_G5": {
+    "total": 381,
+    "ok": 381,
+    "missing": [],
+    "anomalies": []
+  },
+  "ES_G4": {
+    "total": 184,
+    "ok": 181,
+    "missing": [
+      {
+        "id": "word_0161",
+        "english": "inventor",
+        "reason": "NO_CARD_IMAGE_DEFINED"
+      },
+      {
+        "id": "word_0214",
+        "english": "no",
+        "reason": "NO_CARD_IMAGE_DEFINED"
+      },
+      {
+        "id": "word_0246",
+        "english": "please",
+        "reason": "NO_CARD_IMAGE_DEFINED"
+      }
+    ],
+    "anomalies": []
+  },
+  "ES_G3": {
+    "total": 240,
+    "ok": 220,
+    "missing": [
+      {
+        "id": "word_0041",
+        "english": "candy",
+        "reason": "NO_CARD_IMAGE_DEFINED"
+      },
+      {
+        "id": "word_0043",
+        "english": "car",
+        "reason": "NO_CARD_IMAGE_DEFINED"
+      },
+      {
+        "id": "word_0071",
+        "english": "decision",
+        "reason": "NO_CARD_IMAGE_DEFINED"
+      },
+      {
+        "id": "word_0075",
+        "english": "dinosaur",
+        "reason": "NO_CARD_IMAGE_DEFINED"
+      },
+      {
+        "id": "word_0129",
+        "english": "glad",
+        "reason": "NO_CARD_IMAGE_DEFINED"
+      },
+      {
+        "id": "word_0146",
+        "english": "hear",
+        "reason": "NO_CARD_IMAGE_DEFINED"
+      },
+      {
+        "id": "word_0147",
+        "english": "hello",
+        "reason": "NO_CARD_IMAGE_DEFINED"
+      },
+      {
+        "id": "word_0158",
+        "english": "imagine",
+        "reason": "NO_CARD_IMAGE_DEFINED"
+      },
+      {
+        "id": "word_0198",
+        "english": "mistake",
+        "reason": "NO_CARD_IMAGE_DEFINED"
+      },
+      {
+        "id": "word_0214",
+        "english": "no",
+        "reason": "NO_CARD_IMAGE_DEFINED"
+      },
+      {
+        "id": "word_0246",
+        "english": "please",
+        "reason": "NO_CARD_IMAGE_DEFINED"
+      },
+      {
+        "id": "word_0253",
+        "english": "present",
+        "reason": "NO_CARD_IMAGE_DEFINED"
+      },
+      {
+        "id": "word_0293",
+        "english": "shapes",
+        "reason": "NO_CARD_IMAGE_DEFINED"
+      },
+      {
+        "id": "word_0299",
+        "english": "shop",
+        "reason": "NO_CARD_IMAGE_DEFINED"
+      },
+      {
+        "id": "word_0333",
+        "english": "sure",
+        "reason": "NO_CARD_IMAGE_DEFINED"
+      },
+      {
+        "id": "word_0334",
+        "english": "surprised",
+        "reason": "NO_CARD_IMAGE_DEFINED"
+      },
+      {
+        "id": "word_0345",
+        "english": "tall",
+        "reason": "NO_CARD_IMAGE_DEFINED"
+      },
+      {
+        "id": "word_0350",
+        "english": "thank you",
+        "reason": "NO_CARD_IMAGE_DEFINED"
+      },
+      {
+        "id": "word_0404",
+        "english": "yes",
+        "reason": "NO_CARD_IMAGE_DEFINED"
+      },
+      {
+        "id": "word_0406",
+        "english": "you're welcome",
+        "reason": "NO_CARD_IMAGE_DEFINED"
+      }
+    ],
+    "anomalies": []
+  }
+}

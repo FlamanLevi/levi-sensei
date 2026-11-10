@@ -1,0 +1,3974 @@
+[
+  {
+    "id": "word_0006",
+    "english": "animal",
+    "canonical_key": "animal",
+    "disambiguation": "",
+    "display_label": "animal",
+    "normalized_english": "animal",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "動物",
+    "ja_hiragana": "どうぶつ",
+    "en_katakana": "アニマル",
+    "ruby": [
+      {
+        "base": "動物",
+        "ruby": "どうぶつ"
+      }
+    ],
+    "ruby_html": "<ruby>動物<rt>どうぶつ</rt></ruby>",
+    "ruby_text": "[動物|どうぶつ]",
+    "sound_file": "dic_wb_11animals_animal_1485.mp3",
+    "card_image": "",
+    "card_image_kana": "",
+    "card_image_en": "",
+    "card_image_bilingual": "",
+    "card_variants": [],
+    "token": "borderlink_animal",
+    "grades": [
+      "ES_G1"
+    ],
+    "themes": [
+      "Review"
+    ],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like animal."
+    ],
+    "tags": [
+      "animal"
+    ],
+    "lemma": "animal",
+    "is_plural": false,
+    "letter_count": 6,
+    "syllable_count": 3,
+    "first_letter": "A",
+    "is_compound": false,
+    "phonics_initial": "a",
+    "difficulty_tier": 2,
+    "primary_image": "",
+    "primary_audio": "dic_wb_11animals_animal_1485.mp3",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as '動物' (どうぶつ) in Japanese.",
+      "letter_hint": "It starts with the letter A."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like animal.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {}
+  },
+  {
+    "id": "word_0007",
+    "english": "arm",
+    "canonical_key": "arm",
+    "disambiguation": "",
+    "display_label": "arm",
+    "normalized_english": "arm",
+    "part_of_speech": "noun",
+    "category": "14_body_family",
+    "category_name": "Body Parts & People",
+    "ja_kanji": "腕",
+    "ja_hiragana": "うで",
+    "en_katakana": "アーム",
+    "ruby": [
+      {
+        "base": "腕",
+        "ruby": "うで"
+      }
+    ],
+    "ruby_html": "<ruby>腕<rt>うで</rt></ruby>",
+    "ruby_text": "[腕|うで]",
+    "sound_file": "",
+    "card_image": "",
+    "card_image_kana": "",
+    "card_image_en": "",
+    "card_image_bilingual": "",
+    "card_variants": [],
+    "token": "borderlink_arm",
+    "grades": [
+      "ES_G1"
+    ],
+    "themes": [
+      "Review"
+    ],
+    "target_sentences": [
+      "Q: Touch your arm! / A: This is my arm."
+    ],
+    "tags": [
+      "body"
+    ],
+    "lemma": "arm",
+    "is_plural": false,
+    "letter_count": 3,
+    "syllable_count": 1,
+    "first_letter": "A",
+    "is_compound": false,
+    "phonics_initial": "a",
+    "difficulty_tier": 1,
+    "primary_image": "",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is a part of the body.",
+      "feature_hint": "A body part known as '腕' (うで) in Japanese.",
+      "letter_hint": "It starts with the letter A."
+    },
+    "target_dialogues": [
+      {
+        "question": "Touch your arm!",
+        "answer": "This is my arm.",
+        "context": "Body parts TPR and identification"
+      }
+    ],
+    "media_by_grade": {}
+  },
+  {
+    "id": "word_0027",
+    "english": "black cat",
+    "canonical_key": "black cat",
+    "disambiguation": "",
+    "display_label": "black cat",
+    "normalized_english": "black cat",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "黒猫",
+    "ja_hiragana": "くろねこ",
+    "en_katakana": "ブラックキャット",
+    "ruby": [
+      {
+        "base": "黒猫",
+        "ruby": "くろねこ"
+      }
+    ],
+    "ruby_html": "<ruby>黒猫<rt>くろねこ</rt></ruby>",
+    "ruby_text": "[黒猫|くろねこ]",
+    "sound_file": "",
+    "card_image": "",
+    "card_image_kana": "",
+    "card_image_en": "",
+    "card_image_bilingual": "",
+    "card_variants": [],
+    "token": "borderlink_black cat",
+    "grades": [
+      "ES_G1"
+    ],
+    "themes": [
+      "Halloween"
+    ],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like black cat."
+    ],
+    "tags": [
+      "animal",
+      "pet"
+    ],
+    "lemma": "cat",
+    "is_plural": false,
+    "letter_count": 8,
+    "syllable_count": 2,
+    "first_letter": "B",
+    "is_compound": true,
+    "phonics_initial": "bl",
+    "difficulty_tier": 3,
+    "primary_image": "dic_wb_11animals_cat_1487_1_c.png",
+    "primary_audio": "dic_wb_11animals_cat_1487.mp3",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as '黒猫' (くろねこ) in Japanese.",
+      "letter_hint": "It starts with the letter B."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like black cat.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G1": {
+        "card_image": "dic_wb_11animals_cat_1487_1_c.png",
+        "sound_file": "",
+        "source": "borderlink_elementary",
+        "card_full": "dic_wb_11animals_cat_1487_1_ce.png",
+        "card_bw": "dic_wb_11animals_cat_1487_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0029",
+    "english": "boat",
+    "canonical_key": "boat",
+    "disambiguation": "",
+    "display_label": "boat",
+    "normalized_english": "boat",
+    "part_of_speech": "noun",
+    "category": "07_dailylife",
+    "category_name": "Daily Life, Routines & Objects",
+    "ja_kanji": "船",
+    "ja_hiragana": "ふね",
+    "en_katakana": "ボート",
+    "ruby": [
+      {
+        "base": "船",
+        "ruby": "ふね"
+      }
+    ],
+    "ruby_html": "<ruby>船<rt>ふね</rt></ruby>",
+    "ruby_text": "[船|ふね]",
+    "sound_file": "",
+    "card_image": "",
+    "card_image_kana": "",
+    "card_image_en": "",
+    "card_image_bilingual": "",
+    "card_variants": [],
+    "token": "borderlink_boat",
+    "grades": [
+      "ES_G1"
+    ],
+    "themes": [
+      "Opposites",
+      "Transportation"
+    ],
+    "target_sentences": [
+      "Q: Do you have a boat? / A: Yes, I do."
+    ],
+    "tags": [
+      "vehicle"
+    ],
+    "lemma": "boat",
+    "is_plural": false,
+    "letter_count": 4,
+    "syllable_count": 1,
+    "first_letter": "B",
+    "is_compound": false,
+    "phonics_initial": "b",
+    "difficulty_tier": 1,
+    "primary_image": "",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is an item used in daily life.",
+      "feature_hint": "An everyday item or clothing known as '船' (ふね) in Japanese.",
+      "letter_hint": "It starts with the letter B."
+    },
+    "target_dialogues": [
+      {
+        "question": "Do you have a boat?",
+        "answer": "Yes, I do.",
+        "context": "Talking about daily personal items"
+      }
+    ],
+    "media_by_grade": {}
+  },
+  {
+    "id": "word_0042",
+    "english": "candycane",
+    "canonical_key": "candycane",
+    "disambiguation": "",
+    "display_label": "candycane",
+    "normalized_english": "candycane",
+    "part_of_speech": "noun",
+    "category": "03_fooddrink",
+    "category_name": "Food & Drinks",
+    "ja_kanji": "キャンディケイン",
+    "ja_hiragana": "きゃんでぃけいん",
+    "en_katakana": "キャンディケイン",
+    "ruby": [
+      {
+        "base": "キャンディケイン",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "キャンディケイン",
+    "ruby_text": "キャンディケイン",
+    "sound_file": "",
+    "card_image": "",
+    "card_image_kana": "",
+    "card_image_en": "",
+    "card_image_bilingual": "",
+    "card_variants": [],
+    "token": "borderlink_candycane",
+    "grades": [
+      "ES_G1"
+    ],
+    "themes": [
+      "Christmas"
+    ],
+    "target_sentences": [
+      "Q: What do you want to eat? / A: I want to eat candycane."
+    ],
+    "tags": [
+      "christmas",
+      "food",
+      "sweet"
+    ],
+    "lemma": "candy",
+    "is_plural": false,
+    "letter_count": 9,
+    "syllable_count": 3,
+    "first_letter": "C",
+    "is_compound": false,
+    "phonics_initial": "c",
+    "difficulty_tier": 3,
+    "primary_image": "",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is something delicious to eat.",
+      "feature_hint": "A tasty food known as 'キャンディケイン' in Japanese.",
+      "letter_hint": "It starts with the letter C."
+    },
+    "target_dialogues": [
+      {
+        "question": "What do you want to eat?",
+        "answer": "I want to eat candycane.",
+        "context": "Talking about favorite foods"
+      }
+    ],
+    "media_by_grade": {}
+  },
+  {
+    "id": "word_0043",
+    "english": "car",
+    "canonical_key": "car",
+    "disambiguation": "",
+    "display_label": "car",
+    "normalized_english": "car",
+    "part_of_speech": "noun",
+    "category": "07_dailylife",
+    "category_name": "Daily Life, Routines & Objects",
+    "ja_kanji": "車",
+    "ja_hiragana": "くるま",
+    "en_katakana": "カー",
+    "ruby": [
+      {
+        "base": "車",
+        "ruby": "くるま"
+      }
+    ],
+    "ruby_html": "<ruby>車<rt>くるま</rt></ruby>",
+    "ruby_text": "[車|くるま]",
+    "sound_file": "",
+    "card_image": "",
+    "card_image_kana": "",
+    "card_image_en": "",
+    "card_image_bilingual": "",
+    "card_variants": [],
+    "token": "borderlink_car",
+    "grades": [
+      "ES_G1",
+      "ES_G3"
+    ],
+    "themes": [
+      "Opposites",
+      "This is for you. カードをおくろう",
+      "Transportation"
+    ],
+    "target_sentences": [
+      "Q: Do you have a car? / A: Yes, I do."
+    ],
+    "tags": [
+      "vehicle"
+    ],
+    "lemma": "car",
+    "is_plural": false,
+    "letter_count": 3,
+    "syllable_count": 1,
+    "first_letter": "C",
+    "is_compound": false,
+    "phonics_initial": "c",
+    "difficulty_tier": 1,
+    "primary_image": "",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is an item used in daily life.",
+      "feature_hint": "An everyday item or clothing known as '車' (くるま) in Japanese.",
+      "letter_hint": "It starts with the letter C."
+    },
+    "target_dialogues": [
+      {
+        "question": "Do you have a car?",
+        "answer": "Yes, I do.",
+        "context": "Talking about daily personal items"
+      }
+    ],
+    "media_by_grade": {}
+  },
+  {
+    "id": "word_0046",
+    "english": "cats",
+    "canonical_key": "cats",
+    "disambiguation": "",
+    "display_label": "cats",
+    "normalized_english": "cats",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "猫",
+    "ja_hiragana": "ねこ",
+    "en_katakana": "キャッツ",
+    "ruby": [
+      {
+        "base": "猫",
+        "ruby": "ねこ"
+      }
+    ],
+    "ruby_html": "<ruby>猫<rt>ねこ</rt></ruby>",
+    "ruby_text": "[猫|ねこ]",
+    "sound_file": "dic_wb_11animals_cat_1487.mp3",
+    "card_image": "",
+    "card_image_kana": "",
+    "card_image_en": "",
+    "card_image_bilingual": "",
+    "card_variants": [],
+    "token": "borderlink_cats",
+    "grades": [
+      "ES_G1"
+    ],
+    "themes": [
+      "Farm Animals"
+    ],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like cats."
+    ],
+    "tags": [
+      "animal",
+      "pet",
+      "plural"
+    ],
+    "lemma": "cat",
+    "is_plural": true,
+    "letter_count": 4,
+    "syllable_count": 1,
+    "first_letter": "C",
+    "is_compound": false,
+    "phonics_initial": "c",
+    "difficulty_tier": 1,
+    "primary_image": "dic_wb_11animals_cat_1487_1_c.png",
+    "primary_audio": "dic_wb_11animals_cat_1487.mp3",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as '猫' (ねこ) in Japanese.",
+      "letter_hint": "It starts with the letter C."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like cats.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G1": {
+        "card_image": "dic_wb_11animals_cat_1487_1_c.png",
+        "sound_file": "dic_wb_11animals_cat_1487.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_wb_11animals_cat_1487_1_ce.png",
+        "card_bw": "dic_wb_11animals_cat_1487_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0062",
+    "english": "cows",
+    "canonical_key": "cows",
+    "disambiguation": "",
+    "display_label": "cows",
+    "normalized_english": "cows",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "牛",
+    "ja_hiragana": "うし",
+    "en_katakana": "カウズ",
+    "ruby": [
+      {
+        "base": "牛",
+        "ruby": "うし"
+      }
+    ],
+    "ruby_html": "<ruby>牛<rt>うし</rt></ruby>",
+    "ruby_text": "[牛|うし]",
+    "sound_file": "dic_wb_11animals_cow_1489.mp3",
+    "card_image": "",
+    "card_image_kana": "",
+    "card_image_en": "",
+    "card_image_bilingual": "",
+    "card_variants": [],
+    "token": "borderlink_cows",
+    "grades": [
+      "ES_G1"
+    ],
+    "themes": [
+      "Farm Animals"
+    ],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like cows."
+    ],
+    "tags": [
+      "animal",
+      "farm",
+      "plural"
+    ],
+    "lemma": "cow",
+    "is_plural": true,
+    "letter_count": 4,
+    "syllable_count": 1,
+    "first_letter": "C",
+    "is_compound": false,
+    "phonics_initial": "c",
+    "difficulty_tier": 1,
+    "primary_image": "dic_wb_11animals_cow_1489_1_c.png",
+    "primary_audio": "dic_wb_11animals_cow_1489.mp3",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as '牛' (うし) in Japanese.",
+      "letter_hint": "It starts with the letter C."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like cows.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G1": {
+        "card_image": "dic_wb_11animals_cow_1489_1_c.png",
+        "sound_file": "dic_wb_11animals_cow_1489.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_wb_11animals_cow_1489_1_ce.png",
+        "card_bw": "dic_wb_11animals_cow_1489_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0075",
+    "english": "dinosaur",
+    "canonical_key": "dinosaur",
+    "disambiguation": "",
+    "display_label": "dinosaur",
+    "normalized_english": "dinosaur",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "恐竜",
+    "ja_hiragana": "きょうりゅう",
+    "en_katakana": "ダイナソー",
+    "ruby": [
+      {
+        "base": "恐竜",
+        "ruby": "きょうりゅう"
+      }
+    ],
+    "ruby_html": "<ruby>恐竜<rt>きょうりゅう</rt></ruby>",
+    "ruby_text": "[恐竜|きょうりゅう]",
+    "sound_file": "",
+    "card_image": "",
+    "card_image_kana": "",
+    "card_image_en": "",
+    "card_image_bilingual": "",
+    "card_variants": [],
+    "token": "borderlink_dinosaur",
+    "grades": [
+      "ES_G1",
+      "ES_G2",
+      "ES_G3"
+    ],
+    "themes": [
+      "If I were you, I would"
+    ],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like dinosaur."
+    ],
+    "tags": [
+      "ancient",
+      "animal"
+    ],
+    "lemma": "dinosaur",
+    "is_plural": false,
+    "letter_count": 8,
+    "syllable_count": 3,
+    "first_letter": "D",
+    "is_compound": false,
+    "phonics_initial": "d",
+    "difficulty_tier": 2,
+    "primary_image": "",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as '恐竜' (きょうりゅう) in Japanese.",
+      "letter_hint": "It starts with the letter D."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like dinosaur.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {}
+  },
+  {
+    "id": "word_0079",
+    "english": "dogs",
+    "canonical_key": "dogs",
+    "disambiguation": "",
+    "display_label": "dogs",
+    "normalized_english": "dogs",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "犬",
+    "ja_hiragana": "いぬ",
+    "en_katakana": "ドッグス",
+    "ruby": [
+      {
+        "base": "犬",
+        "ruby": "いぬ"
+      }
+    ],
+    "ruby_html": "<ruby>犬<rt>いぬ</rt></ruby>",
+    "ruby_text": "[犬|いぬ]",
+    "sound_file": "dic_wb_11animals_dog_1490.mp3",
+    "card_image": "",
+    "card_image_kana": "",
+    "card_image_en": "",
+    "card_image_bilingual": "",
+    "card_variants": [],
+    "token": "borderlink_dogs",
+    "grades": [
+      "ES_G1"
+    ],
+    "themes": [
+      "Farm Animals"
+    ],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like dogs."
+    ],
+    "tags": [
+      "animal",
+      "pet",
+      "plural"
+    ],
+    "lemma": "dog",
+    "is_plural": true,
+    "letter_count": 4,
+    "syllable_count": 1,
+    "first_letter": "D",
+    "is_compound": false,
+    "phonics_initial": "d",
+    "difficulty_tier": 1,
+    "primary_image": "dic_wb_11animals_dog_1490_1_c.png",
+    "primary_audio": "dic_wb_11animals_dog_1490.mp3",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as '犬' (いぬ) in Japanese.",
+      "letter_hint": "It starts with the letter D."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like dogs.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G1": {
+        "card_image": "dic_wb_11animals_dog_1490_1_c.png",
+        "sound_file": "dic_wb_11animals_dog_1490.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_wb_11animals_dog_1490_1_ce.png",
+        "card_bw": "dic_wb_11animals_dog_1490_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0086",
+    "english": "ducks",
+    "canonical_key": "ducks",
+    "disambiguation": "",
+    "display_label": "ducks",
+    "normalized_english": "ducks",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "アヒル",
+    "ja_hiragana": "あひる",
+    "en_katakana": "ダックス",
+    "ruby": [
+      {
+        "base": "アヒル",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "アヒル",
+    "ruby_text": "アヒル",
+    "sound_file": "",
+    "card_image": "",
+    "card_image_kana": "",
+    "card_image_en": "",
+    "card_image_bilingual": "",
+    "card_variants": [],
+    "token": "borderlink_ducks",
+    "grades": [
+      "ES_G1"
+    ],
+    "themes": [
+      "Farm Animals"
+    ],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like ducks."
+    ],
+    "tags": [
+      "animal",
+      "bird",
+      "plural"
+    ],
+    "lemma": "duck",
+    "is_plural": true,
+    "letter_count": 5,
+    "syllable_count": 1,
+    "first_letter": "D",
+    "is_compound": false,
+    "phonics_initial": "d",
+    "difficulty_tier": 1,
+    "primary_image": "",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as 'アヒル' (あひる) in Japanese.",
+      "letter_hint": "It starts with the letter D."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like ducks.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {}
+  },
+  {
+    "id": "word_0091",
+    "english": "ears",
+    "canonical_key": "ears",
+    "disambiguation": "",
+    "display_label": "ears",
+    "normalized_english": "ears",
+    "part_of_speech": "noun",
+    "category": "14_body_family",
+    "category_name": "Body Parts & People",
+    "ja_kanji": "耳",
+    "ja_hiragana": "みみ",
+    "en_katakana": "イヤーズ",
+    "ruby": [
+      {
+        "base": "耳",
+        "ruby": "みみ"
+      }
+    ],
+    "ruby_html": "<ruby>耳<rt>みみ</rt></ruby>",
+    "ruby_text": "[耳|みみ]",
+    "sound_file": "dic_3_card_ears_2144.mp3",
+    "card_image": "dic_3_card_ears_2144_1_c.png",
+    "card_image_kana": "dic_3_card_ears_2144_1_c.png",
+    "card_image_en": "dic_3_card_ears_2144_1_e.png",
+    "card_image_bilingual": "dic_3_card_ears_2144_1_ce.png",
+    "card_variants": [
+      "dic_3_card_ears_2144_1.png"
+    ],
+    "token": "dic_3_card_ears_2144&dic_3_card_ears_2144&dic_3_card_ears_2144",
+    "grades": [
+      "ES_G1",
+      "ES_G2",
+      "ES_G3"
+    ],
+    "themes": [
+      "Body Parts"
+    ],
+    "target_sentences": [
+      "Q: Touch your ears! / A: This is my ears."
+    ],
+    "tags": [
+      "body",
+      "plural"
+    ],
+    "lemma": "ear",
+    "is_plural": true,
+    "letter_count": 4,
+    "syllable_count": 1,
+    "first_letter": "E",
+    "is_compound": false,
+    "phonics_initial": "e",
+    "difficulty_tier": 1,
+    "primary_image": "dic_3_card_ears_2144_1_c.png",
+    "primary_audio": "dic_3_card_ears_2144.mp3",
+    "three_hints": {
+      "category_hint": "It is a part of the body.",
+      "feature_hint": "A body part known as '耳' (みみ) in Japanese.",
+      "letter_hint": "It starts with the letter E."
+    },
+    "target_dialogues": [
+      {
+        "question": "Touch your ears!",
+        "answer": "This is my ears.",
+        "context": "Body parts TPR and identification"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_ears_2144_1_c.png",
+        "sound_file": "dic_3_card_ears_2144.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_ears_2144_1_ce.png",
+        "card_bw": "dic_3_card_ears_2144_1.png"
+      },
+      "ES_G1": {
+        "card_image": "dic_3_card_ears_2144_1_c.png",
+        "sound_file": "dic_3_card_ears_2144.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_3_card_ears_2144_1_ce.png",
+        "card_bw": "dic_3_card_ears_2144_1.png"
+      },
+      "ES_G2": {
+        "card_image": "dic_3_card_ears_2144_1_c.png",
+        "sound_file": "dic_3_card_ears_2144.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_3_card_ears_2144_1_ce.png",
+        "card_bw": "dic_3_card_ears_2144_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0100",
+    "english": "eyes",
+    "canonical_key": "eyes",
+    "disambiguation": "",
+    "display_label": "eyes",
+    "normalized_english": "eyes",
+    "part_of_speech": "noun",
+    "category": "14_body_family",
+    "category_name": "Body Parts & People",
+    "ja_kanji": "目",
+    "ja_hiragana": "め",
+    "en_katakana": "アイズ",
+    "ruby": [
+      {
+        "base": "目",
+        "ruby": "め"
+      }
+    ],
+    "ruby_html": "<ruby>目<rt>め</rt></ruby>",
+    "ruby_text": "[目|め]",
+    "sound_file": "dic_3_card_eyes_2145.mp3",
+    "card_image": "dic_3_card_eyes_2145_1_c.png",
+    "card_image_kana": "dic_3_card_eyes_2145_1_c.png",
+    "card_image_en": "dic_3_card_eyes_2145_1_e.png",
+    "card_image_bilingual": "dic_3_card_eyes_2145_1_ce.png",
+    "card_variants": [
+      "dic_3_card_eyes_2145_1.png"
+    ],
+    "token": "dic_3_card_eyes_2145&dic_3_card_eyes_2145&dic_3_card_eyes_2145",
+    "grades": [
+      "ES_G1",
+      "ES_G2",
+      "ES_G3"
+    ],
+    "themes": [
+      "Body Parts",
+      "Who are you? きみはだれ？"
+    ],
+    "target_sentences": [
+      "Q: Touch your eyes! / A: This is my eyes."
+    ],
+    "tags": [
+      "body",
+      "plural"
+    ],
+    "lemma": "eye",
+    "is_plural": true,
+    "letter_count": 4,
+    "syllable_count": 1,
+    "first_letter": "E",
+    "is_compound": false,
+    "phonics_initial": "e",
+    "difficulty_tier": 1,
+    "primary_image": "dic_3_card_eyes_2145_1_c.png",
+    "primary_audio": "dic_3_card_eyes_2145.mp3",
+    "three_hints": {
+      "category_hint": "It is a part of the body.",
+      "feature_hint": "A body part known as '目' (め) in Japanese.",
+      "letter_hint": "It starts with the letter E."
+    },
+    "target_dialogues": [
+      {
+        "question": "Touch your eyes!",
+        "answer": "This is my eyes.",
+        "context": "Body parts TPR and identification"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_eyes_2145_1_c.png",
+        "sound_file": "dic_3_card_eyes_2145.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_eyes_2145_1_ce.png",
+        "card_bw": "dic_3_card_eyes_2145_1.png"
+      },
+      "ES_G1": {
+        "card_image": "dic_3_card_eyes_2145_1_c.png",
+        "sound_file": "dic_3_card_eyes_2145.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_3_card_eyes_2145_1_ce.png",
+        "card_bw": "dic_3_card_eyes_2145_1.png"
+      },
+      "ES_G2": {
+        "card_image": "dic_3_card_eyes_2145_1_c.png",
+        "sound_file": "dic_3_card_eyes_2145.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_3_card_eyes_2145_1_ce.png",
+        "card_bw": "dic_3_card_eyes_2145_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0153",
+    "english": "horses",
+    "canonical_key": "horses",
+    "disambiguation": "",
+    "display_label": "horses",
+    "normalized_english": "horses",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "馬",
+    "ja_hiragana": "うま",
+    "en_katakana": "ホーシーズ",
+    "ruby": [
+      {
+        "base": "馬",
+        "ruby": "うま"
+      }
+    ],
+    "ruby_html": "<ruby>馬<rt>うま</rt></ruby>",
+    "ruby_text": "[馬|うま]",
+    "sound_file": "dic_wb_11animals_horse_1493.mp3",
+    "card_image": "",
+    "card_image_kana": "",
+    "card_image_en": "",
+    "card_image_bilingual": "",
+    "card_variants": [],
+    "token": "borderlink_horses",
+    "grades": [
+      "ES_G1"
+    ],
+    "themes": [
+      "Farm Animals"
+    ],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like horses."
+    ],
+    "tags": [
+      "animal",
+      "farm",
+      "plural"
+    ],
+    "lemma": "horse",
+    "is_plural": true,
+    "letter_count": 6,
+    "syllable_count": 1,
+    "first_letter": "H",
+    "is_compound": false,
+    "phonics_initial": "h",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_11animals_horse_1493_1_c.png",
+    "primary_audio": "dic_wb_11animals_horse_1493.mp3",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as '馬' (うま) in Japanese.",
+      "letter_hint": "It starts with the letter H."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like horses.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G1": {
+        "card_image": "dic_wb_11animals_horse_1493_1_c.png",
+        "sound_file": "dic_wb_11animals_horse_1493.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_wb_11animals_horse_1493_1_ce.png",
+        "card_bw": "dic_wb_11animals_horse_1493_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0231",
+    "english": "paper",
+    "canonical_key": "paper",
+    "disambiguation": "",
+    "display_label": "paper",
+    "normalized_english": "paper",
+    "part_of_speech": "noun",
+    "category": "05_schoollife",
+    "category_name": "School Life & Stationery",
+    "ja_kanji": "紙",
+    "ja_hiragana": "かみ",
+    "en_katakana": "ペーパー",
+    "ruby": [
+      {
+        "base": "紙",
+        "ruby": "かみ"
+      }
+    ],
+    "ruby_html": "<ruby>紙<rt>かみ</rt></ruby>",
+    "ruby_text": "[紙|かみ]",
+    "sound_file": "",
+    "card_image": "",
+    "card_image_kana": "",
+    "card_image_en": "",
+    "card_image_bilingual": "",
+    "card_variants": [],
+    "token": "borderlink_paper",
+    "grades": [
+      "ES_G1",
+      "ES_G2"
+    ],
+    "themes": [
+      "Classroom Objects"
+    ],
+    "target_sentences": [
+      "Q: Do you have a paper? / A: Yes, I do. Here you are."
+    ],
+    "tags": [
+      "stationery"
+    ],
+    "lemma": "paper",
+    "is_plural": false,
+    "letter_count": 5,
+    "syllable_count": 2,
+    "first_letter": "P",
+    "is_compound": false,
+    "phonics_initial": "p",
+    "difficulty_tier": 1,
+    "primary_image": "",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is a classroom stationery item.",
+      "feature_hint": "Something in your pencil case or desk known as '紙' (かみ).",
+      "letter_hint": "It starts with the letter P."
+    },
+    "target_dialogues": [
+      {
+        "question": "Do you have a paper?",
+        "answer": "Yes, I do. Here you are.",
+        "context": "Borrowing and sharing stationery"
+      }
+    ],
+    "media_by_grade": {}
+  },
+  {
+    "id": "word_0238",
+    "english": "pigs",
+    "canonical_key": "pigs",
+    "disambiguation": "",
+    "display_label": "pigs",
+    "normalized_english": "pigs",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "category_name": "Animals & Pets",
+    "ja_kanji": "豚",
+    "ja_hiragana": "ぶた",
+    "en_katakana": "ピッグス",
+    "ruby": [
+      {
+        "base": "豚",
+        "ruby": "ぶた"
+      }
+    ],
+    "ruby_html": "<ruby>豚<rt>ぶた</rt></ruby>",
+    "ruby_text": "[豚|ぶた]",
+    "sound_file": "dic_wb_11animals_pig_1498.mp3",
+    "card_image": "",
+    "card_image_kana": "",
+    "card_image_en": "",
+    "card_image_bilingual": "",
+    "card_variants": [],
+    "token": "borderlink_pigs",
+    "grades": [
+      "ES_G1"
+    ],
+    "themes": [
+      "Farm Animals"
+    ],
+    "target_sentences": [
+      "Q: What animal do you like? / A: I like pigs."
+    ],
+    "tags": [
+      "animal",
+      "farm",
+      "plural"
+    ],
+    "lemma": "pig",
+    "is_plural": true,
+    "letter_count": 4,
+    "syllable_count": 1,
+    "first_letter": "P",
+    "is_compound": false,
+    "phonics_initial": "p",
+    "difficulty_tier": 1,
+    "primary_image": "dic_5_sal_pig_0032_1_c.png",
+    "primary_audio": "dic_wb_11animals_pig_1498.mp3",
+    "three_hints": {
+      "category_hint": "It is an animal.",
+      "feature_hint": "A creature known as '豚' (ぶた) in Japanese.",
+      "letter_hint": "It starts with the letter P."
+    },
+    "target_dialogues": [
+      {
+        "question": "What animal do you like?",
+        "answer": "I like pigs.",
+        "context": "Talking about favorite animals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G1": {
+        "card_image": "dic_5_sal_pig_0032_1_c.png",
+        "sound_file": "dic_wb_11animals_pig_1498.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_5_sal_pig_0032_1_ce.png",
+        "card_bw": "dic_5_sal_pig_0032_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0276",
+    "english": "Santa Claus",
+    "canonical_key": "santa claus",
+    "disambiguation": "",
+    "display_label": "Santa Claus",
+    "normalized_english": "santa",
+    "part_of_speech": "noun",
+    "category": "15_festalday",
+    "category_name": "Holidays, Events & Games",
+    "ja_kanji": "サンタクロース",
+    "ja_hiragana": "さんたくろーす",
+    "en_katakana": "サンタクロース",
+    "ruby": [
+      {
+        "base": "サンタクロース",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "サンタクロース",
+    "ruby_text": "サンタクロース",
+    "sound_file": "",
+    "card_image": "",
+    "card_image_kana": "",
+    "card_image_en": "",
+    "card_image_bilingual": "",
+    "card_variants": [],
+    "token": "borderlink_santa",
+    "grades": [
+      "ES_G1",
+      "ES_G2"
+    ],
+    "themes": [
+      "Christmas"
+    ],
+    "target_sentences": [
+      "Q: What do you do on Santa Claus? / A: We have fun and celebrate Santa Claus."
+    ],
+    "tags": [
+      "christmas"
+    ],
+    "lemma": "Santa Claus",
+    "is_plural": false,
+    "letter_count": 10,
+    "syllable_count": 3,
+    "first_letter": "S",
+    "is_compound": true,
+    "phonics_initial": "s",
+    "difficulty_tier": 3,
+    "primary_image": "",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is a holiday, festival, or celebration.",
+      "feature_hint": "A special event known as 'サンタクロース' (さんたくろーす) in Japanese.",
+      "letter_hint": "It starts with the letter S."
+    },
+    "target_dialogues": [
+      {
+        "question": "What do you do on Santa Claus?",
+        "answer": "We have fun and celebrate Santa Claus.",
+        "context": "Talking about holidays and festivals"
+      }
+    ],
+    "media_by_grade": {}
+  },
+  {
+    "id": "word_0308",
+    "english": "slow",
+    "canonical_key": "slow",
+    "disambiguation": "",
+    "display_label": "slow",
+    "normalized_english": "slow",
+    "part_of_speech": "adjective",
+    "category": "02_state",
+    "category_name": "States, Feelings & Adjectives",
+    "ja_kanji": "遅い",
+    "ja_hiragana": "おそい",
+    "en_katakana": "スロー",
+    "ruby": [
+      {
+        "base": "遅",
+        "ruby": "おそ"
+      },
+      {
+        "base": "い",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "<ruby>遅<rt>おそ</rt></ruby>い",
+    "ruby_text": "[遅|おそ]い",
+    "sound_file": "",
+    "card_image": "",
+    "card_image_kana": "",
+    "card_image_en": "",
+    "card_image_bilingual": "",
+    "card_variants": [],
+    "token": "borderlink_slow",
+    "grades": [
+      "ES_G1",
+      "ES_G2"
+    ],
+    "themes": [
+      "Opposites",
+      "反意語(Opposites)"
+    ],
+    "target_sentences": [
+      "Q: How is it? / A: It is very slow."
+    ],
+    "tags": [
+      "speed"
+    ],
+    "lemma": "slow",
+    "is_plural": false,
+    "letter_count": 4,
+    "syllable_count": 1,
+    "first_letter": "S",
+    "is_compound": false,
+    "phonics_initial": "sl",
+    "difficulty_tier": 1,
+    "primary_image": "",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It describes the condition or quality of something.",
+      "feature_hint": "A descriptive word meaning '遅い' (おそい) in Japanese.",
+      "letter_hint": "It starts with the letter S."
+    },
+    "target_dialogues": [
+      {
+        "question": "How is it?",
+        "answer": "It is very slow.",
+        "context": "Describing qualities and characteristics"
+      }
+    ],
+    "media_by_grade": {}
+  },
+  {
+    "id": "word_0326",
+    "english": "stocking",
+    "canonical_key": "stocking",
+    "disambiguation": "",
+    "display_label": "stocking",
+    "normalized_english": "stocking",
+    "part_of_speech": "noun",
+    "category": "15_festalday",
+    "category_name": "Holidays, Events & Games",
+    "ja_kanji": "靴下",
+    "ja_hiragana": "くつした",
+    "en_katakana": "ストッキング",
+    "ruby": [
+      {
+        "base": "靴下",
+        "ruby": "くつした"
+      }
+    ],
+    "ruby_html": "<ruby>靴下<rt>くつした</rt></ruby>",
+    "ruby_text": "[靴下|くつした]",
+    "sound_file": "",
+    "card_image": "",
+    "card_image_kana": "",
+    "card_image_en": "",
+    "card_image_bilingual": "",
+    "card_variants": [],
+    "token": "borderlink_stocking",
+    "grades": [
+      "ES_G1"
+    ],
+    "themes": [
+      "Christmas"
+    ],
+    "target_sentences": [
+      "Q: What do you do on stocking? / A: We have fun and celebrate stocking."
+    ],
+    "tags": [
+      "christmas"
+    ],
+    "lemma": "stocking",
+    "is_plural": false,
+    "letter_count": 8,
+    "syllable_count": 2,
+    "first_letter": "S",
+    "is_compound": false,
+    "phonics_initial": "st",
+    "difficulty_tier": 2,
+    "primary_image": "",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is a holiday, festival, or celebration.",
+      "feature_hint": "A special event known as '靴下' (くつした) in Japanese.",
+      "letter_hint": "It starts with the letter S."
+    },
+    "target_dialogues": [
+      {
+        "question": "What do you do on stocking?",
+        "answer": "We have fun and celebrate stocking.",
+        "context": "Talking about holidays and festivals"
+      }
+    ],
+    "media_by_grade": {}
+  },
+  {
+    "id": "word_0358",
+    "english": "toys",
+    "canonical_key": "toys",
+    "disambiguation": "",
+    "display_label": "toys",
+    "normalized_english": "toys",
+    "part_of_speech": "noun",
+    "category": "15_festalday",
+    "category_name": "Holidays, Events & Games",
+    "ja_kanji": "おもちゃ",
+    "ja_hiragana": "おもちゃ",
+    "en_katakana": "トイズ",
+    "ruby": [
+      {
+        "base": "おもちゃ",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "おもちゃ",
+    "ruby_text": "おもちゃ",
+    "sound_file": "",
+    "card_image": "",
+    "card_image_kana": "",
+    "card_image_en": "",
+    "card_image_bilingual": "",
+    "card_variants": [],
+    "token": "borderlink_toys",
+    "grades": [
+      "ES_G1"
+    ],
+    "themes": [
+      "Christmas"
+    ],
+    "target_sentences": [
+      "Q: What do you do on toys? / A: We have fun and celebrate toys."
+    ],
+    "tags": [
+      "item",
+      "toy"
+    ],
+    "lemma": "toy",
+    "is_plural": true,
+    "letter_count": 4,
+    "syllable_count": 1,
+    "first_letter": "T",
+    "is_compound": false,
+    "phonics_initial": "t",
+    "difficulty_tier": 1,
+    "primary_image": "",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is a holiday, festival, or celebration.",
+      "feature_hint": "A special event known as 'おもちゃ' (おもちゃ) in Japanese.",
+      "letter_hint": "It starts with the letter T."
+    },
+    "target_dialogues": [
+      {
+        "question": "What do you do on toys?",
+        "answer": "We have fun and celebrate toys.",
+        "context": "Talking about holidays and festivals"
+      }
+    ],
+    "media_by_grade": {}
+  },
+  {
+    "id": "word_0360",
+    "english": "train",
+    "canonical_key": "train",
+    "disambiguation": "",
+    "display_label": "train",
+    "normalized_english": "train",
+    "part_of_speech": "noun",
+    "category": "07_dailylife",
+    "category_name": "Daily Life, Routines & Objects",
+    "ja_kanji": "電車",
+    "ja_hiragana": "でんしゃ",
+    "en_katakana": "トレイン",
+    "ruby": [
+      {
+        "base": "電車",
+        "ruby": "でんしゃ"
+      }
+    ],
+    "ruby_html": "<ruby>電車<rt>でんしゃ</rt></ruby>",
+    "ruby_text": "[電車|でんしゃ]",
+    "sound_file": "",
+    "card_image": "",
+    "card_image_kana": "",
+    "card_image_en": "",
+    "card_image_bilingual": "",
+    "card_variants": [],
+    "token": "borderlink_train",
+    "grades": [
+      "ES_G1"
+    ],
+    "themes": [
+      "Opposites",
+      "Transportation"
+    ],
+    "target_sentences": [
+      "Q: Do you have a train? / A: Yes, I do."
+    ],
+    "tags": [
+      "vehicle"
+    ],
+    "lemma": "train",
+    "is_plural": false,
+    "letter_count": 5,
+    "syllable_count": 1,
+    "first_letter": "T",
+    "is_compound": false,
+    "phonics_initial": "tr",
+    "difficulty_tier": 1,
+    "primary_image": "",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is an item used in daily life.",
+      "feature_hint": "An everyday item or clothing known as '電車' (でんしゃ) in Japanese.",
+      "letter_hint": "It starts with the letter T."
+    },
+    "target_dialogues": [
+      {
+        "question": "Do you have a train?",
+        "answer": "Yes, I do.",
+        "context": "Talking about daily personal items"
+      }
+    ],
+    "media_by_grade": {}
+  },
+  {
+    "id": "word_0461",
+    "english": "good",
+    "canonical_key": "good",
+    "disambiguation": "",
+    "display_label": "good",
+    "normalized_english": "good",
+    "part_of_speech": "adjective",
+    "category": "02_state",
+    "category_name": "States, Feelings & Adjectives",
+    "ja_kanji": "良い",
+    "ja_hiragana": "よい",
+    "en_katakana": "グッド",
+    "ruby": [
+      {
+        "base": "良",
+        "ruby": "よ"
+      },
+      {
+        "base": "い",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "<ruby>良<rt>よ</rt></ruby>い",
+    "ruby_text": "[良|よ]い",
+    "sound_file": "dic_wb_02state_good_1109.mp3",
+    "card_image": "dic_6_card_good_0776_1_c.png",
+    "card_image_kana": "dic_6_card_good_0776_1_c.png",
+    "card_image_en": "dic_6_card_good_0776_1_e.png",
+    "card_image_bilingual": "dic_6_card_good_0776_1_ce.png",
+    "card_variants": [
+      "dic_6_card_good_0776_1.png"
+    ],
+    "token": "dic_wb_02state_good_1109&dic_wb_02state_good_1109&dic_6_card_good_0776",
+    "grades": [
+      "ES_G1",
+      "ES_G2",
+      "ES_G3",
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [
+      "How are you? ごきげんいかが？",
+      "Self Introduction",
+      "Self-Introduction/Praise Materials: Borderlink CD1, flashcards (self-introduction,"
+    ],
+    "target_sentences": [
+      "Q: How are you today? / A: I am good."
+    ],
+    "tags": [
+      "eval",
+      "feeling"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u01_02_good_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u01_02_good_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u01_02_good_text.png",
+    "lemma": "good",
+    "is_plural": false,
+    "letter_count": 4,
+    "syllable_count": 1,
+    "first_letter": "G",
+    "is_compound": false,
+    "phonics_initial": "g",
+    "difficulty_tier": 1,
+    "primary_image": "dic_6_card_good_0776_1_c.png",
+    "primary_audio": "dic_wb_02state_good_1109.mp3",
+    "three_hints": {
+      "category_hint": "It is a feeling or emotion.",
+      "feature_hint": "A feeling meaning '良い' (よい) in Japanese.",
+      "letter_hint": "It starts with the letter G."
+    },
+    "target_dialogues": [
+      {
+        "question": "How are you today?",
+        "answer": "I am good.",
+        "context": "Expressing feelings and emotions"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_6_card_good_0776_1_c.png",
+        "sound_file": "dic_wb_02state_good_1109.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_6_card_good_0776_1_ce.png",
+        "card_bw": "dic_6_card_good_0776_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u01_02_good_illust.png",
+        "card_full": "cards/full/hwg5_u01_02_good_full.png",
+        "card_text": "cards/text/hwg5_u01_02_good_text.png",
+        "unit": "Unit 1: Unit 1: Feelings",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_02state_good_1109.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u18_01_good_illust.png",
+        "card_full": "cards/full/hwg6_u18_01_good_full.png",
+        "card_text": "cards/text/hwg6_u18_01_good_text.png",
+        "unit": "Unit 18: Unit 18: Impressions",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_02state_good_1109.mp3"
+      },
+      "ES_G1": {
+        "card_image": "dic_6_card_good_0776_1_c.png",
+        "sound_file": "dic_wb_02state_good_1109.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_6_card_good_0776_1_ce.png",
+        "card_bw": "dic_6_card_good_0776_1.png"
+      },
+      "ES_G2": {
+        "card_image": "dic_6_card_good_0776_1_c.png",
+        "sound_file": "dic_wb_02state_good_1109.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_6_card_good_0776_1_ce.png",
+        "card_bw": "dic_6_card_good_0776_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0462",
+    "english": "great",
+    "canonical_key": "great",
+    "disambiguation": "",
+    "display_label": "great",
+    "normalized_english": "great",
+    "part_of_speech": "adjective",
+    "category": "02_state",
+    "category_name": "States, Feelings & Adjectives",
+    "ja_kanji": "すばらしい",
+    "ja_hiragana": "すばらしい",
+    "en_katakana": "グレイト",
+    "ruby": [
+      {
+        "base": "すばらしい",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "すばらしい",
+    "ruby_text": "すばらしい",
+    "sound_file": "dic_wb_02state_great_1110.mp3",
+    "card_image": "dic_5_card_great_0329_1_c.png",
+    "card_image_kana": "dic_5_card_great_0329_1_c.png",
+    "card_image_en": "dic_5_card_great_0329_1_e.png",
+    "card_image_bilingual": "dic_5_card_great_0329_1_ce.png",
+    "card_variants": [
+      "dic_5_card_great_0329_1.png"
+    ],
+    "token": "dic_wb_02state_great_1110&dic_wb_02state_great_1110&dic_5_card_great_0329",
+    "grades": [
+      "ES_G1",
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [
+      "Self Introduction"
+    ],
+    "target_sentences": [
+      "Q: How are you today? / A: I am great."
+    ],
+    "tags": [
+      "feeling"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u01_03_great_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u01_03_great_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u01_03_great_text.png",
+    "lemma": "great",
+    "is_plural": false,
+    "letter_count": 5,
+    "syllable_count": 1,
+    "first_letter": "G",
+    "is_compound": false,
+    "phonics_initial": "gr",
+    "difficulty_tier": 1,
+    "primary_image": "dic_5_card_great_0329_1_c.png",
+    "primary_audio": "dic_wb_02state_great_1110.mp3",
+    "three_hints": {
+      "category_hint": "It is a feeling or emotion.",
+      "feature_hint": "A feeling meaning 'すばらしい' (すばらしい) in Japanese.",
+      "letter_hint": "It starts with the letter G."
+    },
+    "target_dialogues": [
+      {
+        "question": "How are you today?",
+        "answer": "I am great.",
+        "context": "Expressing feelings and emotions"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u01_03_great_illust.png",
+        "card_full": "cards/full/hwg5_u01_03_great_full.png",
+        "card_text": "cards/text/hwg5_u01_03_great_text.png",
+        "unit": "Unit 1: Unit 1: Feelings",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_02state_great_1110.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u18_02_great_illust.png",
+        "card_full": "cards/full/hwg6_u18_02_great_full.png",
+        "card_text": "cards/text/hwg6_u18_02_great_text.png",
+        "unit": "Unit 18: Unit 18: Impressions",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_02state_great_1110.mp3"
+      },
+      "ES_G1": {
+        "card_image": "dic_5_card_great_0329_1_c.png",
+        "sound_file": "dic_wb_02state_great_1110.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_5_card_great_0329_1_ce.png",
+        "card_bw": "dic_5_card_great_0329_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0469",
+    "english": "new",
+    "canonical_key": "new",
+    "disambiguation": "",
+    "display_label": "new",
+    "normalized_english": "new",
+    "part_of_speech": "adjective",
+    "category": "02_state",
+    "category_name": "States, Feelings & Adjectives",
+    "ja_kanji": "新しい",
+    "ja_hiragana": "あたらしい",
+    "en_katakana": "ニュー",
+    "ruby": [
+      {
+        "base": "新",
+        "ruby": "あたら"
+      },
+      {
+        "base": "しい",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "<ruby>新<rt>あたら</rt></ruby>しい",
+    "ruby_text": "[新|あたら]しい",
+    "sound_file": "dic_wb_02state_new_1084.mp3",
+    "card_image": "dic_wb_02state_new_1084_1_c.png",
+    "card_image_kana": "dic_wb_02state_new_1084_1_c.png",
+    "card_image_en": "dic_wb_02state_new_1084_1_e.png",
+    "card_image_bilingual": "dic_wb_02state_new_1084_1_ce.png",
+    "card_variants": [
+      "dic_wb_02state_new_1084_1.png"
+    ],
+    "token": "dic_wb_02state_new_1084&dic_wb_02state_new_1084&dic_wb_02state_new_1084",
+    "grades": [
+      "ES_G1",
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [
+      "Opposites"
+    ],
+    "target_sentences": [
+      "Q: How is it? / A: It is very new."
+    ],
+    "tags": [
+      "adjective",
+      "attribute"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u23_03_new_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u23_03_new_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u23_03_new_text.png",
+    "lemma": "new",
+    "is_plural": false,
+    "letter_count": 3,
+    "syllable_count": 1,
+    "first_letter": "N",
+    "is_compound": false,
+    "phonics_initial": "n",
+    "difficulty_tier": 1,
+    "primary_image": "dic_wb_02state_new_1084_1_c.png",
+    "primary_audio": "dic_wb_02state_new_1084.mp3",
+    "three_hints": {
+      "category_hint": "It describes the condition or quality of something.",
+      "feature_hint": "A descriptive word meaning '新しい' (あたらしい) in Japanese.",
+      "letter_hint": "It starts with the letter N."
+    },
+    "target_dialogues": [
+      {
+        "question": "How is it?",
+        "answer": "It is very new.",
+        "context": "Describing qualities and characteristics"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u23_03_new_illust.png",
+        "card_full": "cards/full/hwg5_u23_03_new_full.png",
+        "card_text": "cards/text/hwg5_u23_03_new_text.png",
+        "unit": "Unit 23: Unit 23: Attributes",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_02state_new_1084.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u17_03_new_illust.png",
+        "card_full": "cards/full/hwg6_u17_03_new_full.png",
+        "card_text": "cards/text/hwg6_u17_03_new_text.png",
+        "unit": "Unit 17: Unit 17: Attributes",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_02state_new_1084.mp3"
+      },
+      "ES_G1": {
+        "card_image": "dic_wb_02state_new_1084_1_c.png",
+        "sound_file": "dic_wb_02state_new_1084.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_wb_02state_new_1084_1_ce.png",
+        "card_bw": "dic_wb_02state_new_1084_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0471",
+    "english": "old",
+    "canonical_key": "old",
+    "disambiguation": "",
+    "display_label": "old",
+    "normalized_english": "old",
+    "part_of_speech": "adjective",
+    "category": "02_state",
+    "category_name": "States, Feelings & Adjectives",
+    "ja_kanji": "古い",
+    "ja_hiragana": "ふるい",
+    "en_katakana": "オールド",
+    "ruby": [
+      {
+        "base": "古",
+        "ruby": "ふる"
+      },
+      {
+        "base": "い",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "<ruby>古<rt>ふる</rt></ruby>い",
+    "ruby_text": "[古|ふる]い",
+    "sound_file": "dic_wb_02state_old_1085.mp3",
+    "card_image": "dic_wb_02state_old_1085_1_c.png",
+    "card_image_kana": "dic_wb_02state_old_1085_1_c.png",
+    "card_image_en": "dic_wb_02state_old_1085_1_e.png",
+    "card_image_bilingual": "dic_wb_02state_old_1085_1_ce.png",
+    "card_variants": [
+      "dic_wb_02state_old_1085_1.png"
+    ],
+    "token": "dic_wb_02state_old_1085&dic_wb_02state_old_1085&dic_wb_02state_old_1085",
+    "grades": [
+      "ES_G1",
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [
+      "Opposites"
+    ],
+    "target_sentences": [
+      "Q: How is it? / A: It is very old."
+    ],
+    "tags": [
+      "adjective",
+      "attribute"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u23_02_old_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u23_02_old_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u23_02_old_text.png",
+    "lemma": "old",
+    "is_plural": false,
+    "letter_count": 3,
+    "syllable_count": 1,
+    "first_letter": "O",
+    "is_compound": false,
+    "phonics_initial": "o",
+    "difficulty_tier": 1,
+    "primary_image": "dic_wb_02state_old_1085_1_c.png",
+    "primary_audio": "dic_wb_02state_old_1085.mp3",
+    "three_hints": {
+      "category_hint": "It describes the condition or quality of something.",
+      "feature_hint": "A descriptive word meaning '古い' (ふるい) in Japanese.",
+      "letter_hint": "It starts with the letter O."
+    },
+    "target_dialogues": [
+      {
+        "question": "How is it?",
+        "answer": "It is very old.",
+        "context": "Describing qualities and characteristics"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u23_02_old_illust.png",
+        "card_full": "cards/full/hwg5_u23_02_old_full.png",
+        "card_text": "cards/text/hwg5_u23_02_old_text.png",
+        "unit": "Unit 23: Unit 23: Attributes",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_02state_old_1085.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u17_02_old_illust.png",
+        "card_full": "cards/full/hwg6_u17_02_old_full.png",
+        "card_text": "cards/text/hwg6_u17_02_old_text.png",
+        "unit": "Unit 17: Unit 17: Attributes",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_02state_old_1085.mp3"
+      },
+      "ES_G1": {
+        "card_image": "dic_wb_02state_old_1085_1_c.png",
+        "sound_file": "dic_wb_02state_old_1085.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_wb_02state_old_1085_1_ce.png",
+        "card_bw": "dic_wb_02state_old_1085_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0553",
+    "english": "hundred",
+    "canonical_key": "hundred",
+    "disambiguation": "",
+    "display_label": "hundred",
+    "normalized_english": "hundred",
+    "part_of_speech": "noun",
+    "category": "04_number",
+    "category_name": "Numbers & Counting",
+    "ja_kanji": "百",
+    "ja_hiragana": "ひゃく",
+    "en_katakana": "ハンドレッド",
+    "ruby": [
+      {
+        "base": "百",
+        "ruby": "ひゃく"
+      }
+    ],
+    "ruby_html": "<ruby>百<rt>ひゃく</rt></ruby>",
+    "ruby_text": "[百|ひゃく]",
+    "sound_file": "dic_wb_04number_hundred_1212.mp3",
+    "card_image": "dic_wb_04number_hundred_1212_1_c.png",
+    "card_image_kana": "dic_wb_04number_hundred_1212_1_c.png",
+    "card_image_en": "dic_wb_04number_hundred_1212_1_e.png",
+    "card_image_bilingual": "dic_wb_04number_hundred_1212_1_ce.png",
+    "card_variants": [
+      "dic_wb_04number_hundred_1212_1.png"
+    ],
+    "token": "dic_wb_04number_hundred_1212&dic_wb_04number_hundred_1212&dic_wb_04number_hundred_1212",
+    "grades": [
+      "ES_G1",
+      "ES_G2",
+      "ES_G3"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: How many do you want? / A: Hundred, please."
+    ],
+    "tags": [
+      "counting",
+      "number"
+    ],
+    "lemma": "hundred",
+    "is_plural": false,
+    "letter_count": 7,
+    "syllable_count": 1,
+    "first_letter": "H",
+    "is_compound": false,
+    "phonics_initial": "h",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_04number_hundred_1212_1_c.png",
+    "primary_audio": "dic_wb_04number_hundred_1212.mp3",
+    "three_hints": {
+      "category_hint": "It is a number or quantity.",
+      "feature_hint": "This number means '百' (ひゃく) in Japanese.",
+      "letter_hint": "In Japanese, this number is 'ひゃく'."
+    },
+    "target_dialogues": [
+      {
+        "question": "How many do you want?",
+        "answer": "Hundred, please.",
+        "context": "Counting and stating quantities"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_wb_04number_hundred_1212_1_c.png",
+        "sound_file": "dic_wb_04number_hundred_1212.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_wb_04number_hundred_1212_1_ce.png",
+        "card_bw": "dic_wb_04number_hundred_1212_1.png"
+      },
+      "ES_G1": {
+        "card_image": "dic_wb_04number_hundred_1212_1_c.png",
+        "sound_file": "dic_wb_04number_hundred_1212.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_wb_04number_hundred_1212_1_ce.png",
+        "card_bw": "dic_wb_04number_hundred_1212_1.png"
+      },
+      "ES_G2": {
+        "card_image": "dic_wb_04number_hundred_1212_1_c.png",
+        "sound_file": "dic_wb_04number_hundred_1212.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_wb_04number_hundred_1212_1_ce.png",
+        "card_bw": "dic_wb_04number_hundred_1212_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0582",
+    "english": "eraser",
+    "canonical_key": "eraser",
+    "disambiguation": "",
+    "display_label": "eraser",
+    "normalized_english": "eraser",
+    "part_of_speech": "noun",
+    "category": "05_schoollife",
+    "category_name": "School Life & Stationery",
+    "ja_kanji": "消しゴム",
+    "ja_hiragana": "けしごむ",
+    "en_katakana": "イレイサー",
+    "ruby": [
+      {
+        "base": "消",
+        "ruby": "け"
+      },
+      {
+        "base": "しゴム",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "<ruby>消<rt>け</rt></ruby>しゴム",
+    "ruby_text": "[消|け]しゴム",
+    "sound_file": "dic_wb_05schoollife_eraser_1266.mp3",
+    "card_image": "dic_wb_05schoollife_eraser_1266_1_c.png",
+    "card_image_kana": "dic_wb_05schoollife_eraser_1266_1_c.png",
+    "card_image_en": "dic_wb_05schoollife_eraser_1266_1_e.png",
+    "card_image_bilingual": "dic_wb_05schoollife_eraser_1266_1_ce.png",
+    "card_variants": [
+      "dic_wb_05schoollife_eraser_1266_1.png"
+    ],
+    "token": "dic_wb_05schoollife_eraser_1266&dic_wb_05schoollife_eraser_1266&dic_wb_05schoollife_eraser_1266",
+    "grades": [
+      "ES_G1",
+      "ES_G4",
+      "ES_G5"
+    ],
+    "themes": [
+      "Classroom Objects"
+    ],
+    "target_sentences": [
+      "Q: Do you have an eraser? / A: Yes, I do. Here you are."
+    ],
+    "tags": [
+      "stationery"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u12_02_eraser_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u12_02_eraser_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u12_02_eraser_text.png",
+    "lemma": "eraser",
+    "is_plural": false,
+    "letter_count": 6,
+    "syllable_count": 3,
+    "first_letter": "E",
+    "is_compound": false,
+    "phonics_initial": "e",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_05schoollife_eraser_1266_1_c.png",
+    "primary_audio": "dic_wb_05schoollife_eraser_1266.mp3",
+    "three_hints": {
+      "category_hint": "It is a classroom stationery item.",
+      "feature_hint": "Something in your pencil case or desk known as '消しゴム' (けしごむ).",
+      "letter_hint": "It starts with the letter E."
+    },
+    "target_dialogues": [
+      {
+        "question": "Do you have an eraser?",
+        "answer": "Yes, I do. Here you are.",
+        "context": "Borrowing and sharing stationery"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G4": {
+        "card_image": "dic_wb_05schoollife_eraser_1266_1_c.png",
+        "sound_file": "dic_wb_05schoollife_eraser_1266.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_wb_05schoollife_eraser_1266_1_ce.png",
+        "card_bw": "dic_wb_05schoollife_eraser_1266_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u12_02_eraser_illust.png",
+        "card_full": "cards/full/hwg5_u12_02_eraser_full.png",
+        "card_text": "cards/text/hwg5_u12_02_eraser_text.png",
+        "unit": "Unit 12: Unit 12: Things Around You",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_05schoollife_eraser_1266.mp3"
+      },
+      "ES_G1": {
+        "card_image": "dic_wb_05schoollife_eraser_1266_1_c.png",
+        "sound_file": "dic_wb_05schoollife_eraser_1266.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_wb_05schoollife_eraser_1266_1_ce.png",
+        "card_bw": "dic_wb_05schoollife_eraser_1266_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0599",
+    "english": "pencil",
+    "canonical_key": "pencil",
+    "disambiguation": "",
+    "display_label": "pencil",
+    "normalized_english": "pencil",
+    "part_of_speech": "noun",
+    "category": "05_schoollife",
+    "category_name": "School Life & Stationery",
+    "ja_kanji": "鉛筆",
+    "ja_hiragana": "えんぴつ",
+    "en_katakana": "ペンシル",
+    "ruby": [
+      {
+        "base": "鉛筆",
+        "ruby": "えんぴつ"
+      }
+    ],
+    "ruby_html": "<ruby>鉛筆<rt>えんぴつ</rt></ruby>",
+    "ruby_text": "[鉛筆|えんぴつ]",
+    "sound_file": "dic_wb_05schoollife_pencil_1273.mp3",
+    "card_image": "dic_wb_05schoollife_pencil_1273_1_c.png",
+    "card_image_kana": "dic_wb_05schoollife_pencil_1273_1_c.png",
+    "card_image_en": "dic_wb_05schoollife_pencil_1273_1_e.png",
+    "card_image_bilingual": "dic_wb_05schoollife_pencil_1273_1_ce.png",
+    "card_variants": [
+      "dic_wb_05schoollife_pencil_1273_1.png"
+    ],
+    "token": "dic_wb_05schoollife_pencil_1273&dic_wb_05schoollife_pencil_1273&dic_wb_05schoollife_pencil_1273",
+    "grades": [
+      "ES_G1",
+      "ES_G4",
+      "ES_G5"
+    ],
+    "themes": [
+      "Classroom Objects"
+    ],
+    "target_sentences": [
+      "Q: Do you have a pencil? / A: Yes, I do. Here you are."
+    ],
+    "tags": [
+      "stationery"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u12_01_pencil_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u12_01_pencil_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u12_01_pencil_text.png",
+    "lemma": "pencil",
+    "is_plural": false,
+    "letter_count": 6,
+    "syllable_count": 2,
+    "first_letter": "P",
+    "is_compound": false,
+    "phonics_initial": "p",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_05schoollife_pencil_1273_1_c.png",
+    "primary_audio": "dic_wb_05schoollife_pencil_1273.mp3",
+    "three_hints": {
+      "category_hint": "It is a classroom stationery item.",
+      "feature_hint": "Something in your pencil case or desk known as '鉛筆' (えんぴつ).",
+      "letter_hint": "It starts with the letter P."
+    },
+    "target_dialogues": [
+      {
+        "question": "Do you have a pencil?",
+        "answer": "Yes, I do. Here you are.",
+        "context": "Borrowing and sharing stationery"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G4": {
+        "card_image": "dic_wb_05schoollife_pencil_1273_1_c.png",
+        "sound_file": "dic_wb_05schoollife_pencil_1273.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_wb_05schoollife_pencil_1273_1_ce.png",
+        "card_bw": "dic_wb_05schoollife_pencil_1273_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u12_01_pencil_illust.png",
+        "card_full": "cards/full/hwg5_u12_01_pencil_full.png",
+        "card_text": "cards/text/hwg5_u12_01_pencil_text.png",
+        "unit": "Unit 12: Unit 12: Things Around You",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_05schoollife_pencil_1273.mp3"
+      },
+      "ES_G1": {
+        "card_image": "dic_wb_05schoollife_pencil_1273_1_c.png",
+        "sound_file": "dic_wb_05schoollife_pencil_1273.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_wb_05schoollife_pencil_1273_1_ce.png",
+        "card_bw": "dic_wb_05schoollife_pencil_1273_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0604",
+    "english": "ruler",
+    "canonical_key": "ruler",
+    "disambiguation": "",
+    "display_label": "ruler",
+    "normalized_english": "ruler",
+    "part_of_speech": "noun",
+    "category": "05_schoollife",
+    "category_name": "School Life & Stationery",
+    "ja_kanji": "定規",
+    "ja_hiragana": "じょうぎ",
+    "en_katakana": "ルーラー",
+    "ruby": [
+      {
+        "base": "定規",
+        "ruby": "じょうぎ"
+      }
+    ],
+    "ruby_html": "<ruby>定規<rt>じょうぎ</rt></ruby>",
+    "ruby_text": "[定規|じょうぎ]",
+    "sound_file": "dic_wb_05schoollife_ruler_1276.mp3",
+    "card_image": "dic_wb_05schoollife_ruler_1276_1_c.png",
+    "card_image_kana": "dic_wb_05schoollife_ruler_1276_1_c.png",
+    "card_image_en": "dic_wb_05schoollife_ruler_1276_1_e.png",
+    "card_image_bilingual": "dic_wb_05schoollife_ruler_1276_1_ce.png",
+    "card_variants": [
+      "dic_wb_05schoollife_ruler_1276_1.png"
+    ],
+    "token": "dic_wb_05schoollife_ruler_1276&dic_wb_05schoollife_ruler_1276&dic_wb_05schoollife_ruler_1276",
+    "grades": [
+      "ES_G1",
+      "ES_G4",
+      "ES_G5"
+    ],
+    "themes": [
+      "Classroom Objects"
+    ],
+    "target_sentences": [
+      "Q: Do you have a ruler? / A: Yes, I do. Here you are."
+    ],
+    "tags": [
+      "stationery"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u12_07_ruler_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u12_07_ruler_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u12_07_ruler_text.png",
+    "lemma": "ruler",
+    "is_plural": false,
+    "letter_count": 5,
+    "syllable_count": 2,
+    "first_letter": "R",
+    "is_compound": false,
+    "phonics_initial": "r",
+    "difficulty_tier": 1,
+    "primary_image": "dic_wb_05schoollife_ruler_1276_1_c.png",
+    "primary_audio": "dic_wb_05schoollife_ruler_1276.mp3",
+    "three_hints": {
+      "category_hint": "It is a classroom stationery item.",
+      "feature_hint": "Something in your pencil case or desk known as '定規' (じょうぎ).",
+      "letter_hint": "It starts with the letter R."
+    },
+    "target_dialogues": [
+      {
+        "question": "Do you have a ruler?",
+        "answer": "Yes, I do. Here you are.",
+        "context": "Borrowing and sharing stationery"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G4": {
+        "card_image": "dic_wb_05schoollife_ruler_1276_1_c.png",
+        "sound_file": "dic_wb_05schoollife_ruler_1276.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_wb_05schoollife_ruler_1276_1_ce.png",
+        "card_bw": "dic_wb_05schoollife_ruler_1276_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u12_07_ruler_illust.png",
+        "card_full": "cards/full/hwg5_u12_07_ruler_full.png",
+        "card_text": "cards/text/hwg5_u12_07_ruler_text.png",
+        "unit": "Unit 12: Unit 12: Things Around You",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_05schoollife_ruler_1276.mp3"
+      },
+      "ES_G1": {
+        "card_image": "dic_wb_05schoollife_ruler_1276_1_c.png",
+        "sound_file": "dic_wb_05schoollife_ruler_1276.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_wb_05schoollife_ruler_1276_1_ce.png",
+        "card_bw": "dic_wb_05schoollife_ruler_1276_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0669",
+    "english": "bicycle",
+    "canonical_key": "bicycle",
+    "disambiguation": "",
+    "display_label": "bicycle",
+    "normalized_english": "bicycle",
+    "part_of_speech": "noun",
+    "category": "07_dailylife",
+    "category_name": "Daily Life, Routines & Objects",
+    "ja_kanji": "自転車",
+    "ja_hiragana": "じてんしゃ",
+    "en_katakana": "バイシクル",
+    "ruby": [
+      {
+        "base": "自転車",
+        "ruby": "じてんしゃ"
+      }
+    ],
+    "ruby_html": "<ruby>自転車<rt>じてんしゃ</rt></ruby>",
+    "ruby_text": "[自転車|じてんしゃ]",
+    "sound_file": "dic_wb_07dailylife_bicycle_1346.mp3",
+    "card_image": "dic_wb_07dailylife_bicycle_1346_1_c.png",
+    "card_image_kana": "dic_wb_07dailylife_bicycle_1346_1_c.png",
+    "card_image_en": "dic_wb_07dailylife_bicycle_1346_1_e.png",
+    "card_image_bilingual": "dic_wb_07dailylife_bicycle_1346_1_ce.png",
+    "card_variants": [
+      "dic_wb_07dailylife_bicycle_1346_1.png"
+    ],
+    "token": "dic_wb_07dailylife_bicycle_1346&dic_wb_07dailylife_bicycle_1346&dic_wb_07dailylife_bicycle_1346",
+    "grades": [
+      "ES_G1"
+    ],
+    "themes": [
+      "Opposites",
+      "Transportation"
+    ],
+    "target_sentences": [
+      "Q: Do you have a bicycle? / A: Yes, I do."
+    ],
+    "tags": [
+      "vehicle"
+    ],
+    "lemma": "bicycle",
+    "is_plural": false,
+    "letter_count": 7,
+    "syllable_count": 2,
+    "first_letter": "B",
+    "is_compound": false,
+    "phonics_initial": "b",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_07dailylife_bicycle_1346_1_c.png",
+    "primary_audio": "dic_wb_07dailylife_bicycle_1346.mp3",
+    "three_hints": {
+      "category_hint": "It is an item used in daily life.",
+      "feature_hint": "An everyday item or clothing known as '自転車' (じてんしゃ) in Japanese.",
+      "letter_hint": "It starts with the letter B."
+    },
+    "target_dialogues": [
+      {
+        "question": "Do you have a bicycle?",
+        "answer": "Yes, I do.",
+        "context": "Talking about daily personal items"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G1": {
+        "card_image": "dic_wb_07dailylife_bicycle_1346_1_c.png",
+        "sound_file": "dic_wb_07dailylife_bicycle_1346.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_wb_07dailylife_bicycle_1346_1_ce.png",
+        "card_bw": "dic_wb_07dailylife_bicycle_1346_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0670",
+    "english": "book",
+    "canonical_key": "book",
+    "disambiguation": "",
+    "display_label": "book",
+    "normalized_english": "book",
+    "part_of_speech": "noun",
+    "category": "05_schoollife",
+    "category_name": "School Life & Stationery",
+    "ja_kanji": "本",
+    "ja_hiragana": "ほん",
+    "en_katakana": "ブック",
+    "ruby": [
+      {
+        "base": "本",
+        "ruby": "ほん"
+      }
+    ],
+    "ruby_html": "<ruby>本<rt>ほん</rt></ruby>",
+    "ruby_text": "[本|ほん]",
+    "sound_file": "dic_wb_07dailylife_book_1347.mp3",
+    "card_image": "dic_5_card_book_0268_1_c.png",
+    "card_image_kana": "dic_5_card_book_0268_1_c.png",
+    "card_image_en": "dic_5_card_book_0268_1_e.png",
+    "card_image_bilingual": "dic_5_card_book_0268_1_ce.png",
+    "card_variants": [
+      "dic_5_card_book_0268_1.png"
+    ],
+    "token": "dic_wb_07dailylife_book_1347&dic_wb_07dailylife_book_1347&dic_5_card_book_0268",
+    "grades": [
+      "ES_G1",
+      "ES_G3",
+      "ES_G5"
+    ],
+    "themes": [
+      "ALPHABET アルファベットとなかよし",
+      "Classroom Objects"
+    ],
+    "target_sentences": [
+      "Q: Do you have a book? / A: Yes, I do. Here you are."
+    ],
+    "tags": [
+      "item",
+      "stationery"
+    ],
+    "lemma": "book",
+    "is_plural": false,
+    "letter_count": 4,
+    "syllable_count": 1,
+    "first_letter": "B",
+    "is_compound": false,
+    "phonics_initial": "b",
+    "difficulty_tier": 1,
+    "primary_image": "dic_5_card_book_0268_1_c.png",
+    "primary_audio": "dic_wb_07dailylife_book_1347.mp3",
+    "three_hints": {
+      "category_hint": "It is a classroom stationery item.",
+      "feature_hint": "Something in your pencil case or desk known as '本' (ほん).",
+      "letter_hint": "It starts with the letter B."
+    },
+    "target_dialogues": [
+      {
+        "question": "Do you have a book?",
+        "answer": "Yes, I do. Here you are.",
+        "context": "Borrowing and sharing stationery"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_5_card_book_0268_1_c.png",
+        "sound_file": "dic_wb_07dailylife_book_1347.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_5_card_book_0268_1_ce.png",
+        "card_bw": "dic_5_card_book_0268_1.png"
+      },
+      "ES_G5": {
+        "card_image": "dic_5_card_book_0268_1_c.png",
+        "sound_file": "dic_wb_07dailylife_book_1347.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_5_card_book_0268_1_ce.png",
+        "card_bw": "dic_5_card_book_0268_1.png"
+      },
+      "ES_G1": {
+        "card_image": "dic_5_card_book_0268_1_c.png",
+        "sound_file": "dic_wb_07dailylife_book_1347.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_5_card_book_0268_1_ce.png",
+        "card_bw": "dic_5_card_book_0268_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0732",
+    "english": "blue",
+    "canonical_key": "blue",
+    "disambiguation": "",
+    "display_label": "blue",
+    "normalized_english": "blue",
+    "part_of_speech": "noun",
+    "category": "09_color_shape",
+    "category_name": "Colors & Shapes",
+    "ja_kanji": "青",
+    "ja_hiragana": "あお",
+    "en_katakana": "ブルー",
+    "ruby": [
+      {
+        "base": "青",
+        "ruby": "あお"
+      }
+    ],
+    "ruby_html": "<ruby>青<rt>あお</rt></ruby>",
+    "ruby_text": "[青|あお]",
+    "sound_file": "dic_wb_09color_blue_1420.mp3",
+    "card_image": "dic_wb_09color_blue_1420_1_c.png",
+    "card_image_kana": "dic_wb_09color_blue_1420_1_c.png",
+    "card_image_en": "dic_wb_09color_blue_1420_1_e.png",
+    "card_image_bilingual": "dic_wb_09color_blue_1420_1_ce.png",
+    "card_variants": [
+      "dic_wb_09color_blue_1420_1.png"
+    ],
+    "token": "dic_wb_09color_blue_1420&dic_wb_09color_blue_1420&dic_wb_09color_blue_1420",
+    "grades": [
+      "ES_G1",
+      "ES_G3",
+      "ES_G4",
+      "ES_G5"
+    ],
+    "themes": [
+      "Colors",
+      "I like blue. すきなものをつたえよう"
+    ],
+    "target_sentences": [
+      "Q: What color do you like? / A: I like blue."
+    ],
+    "tags": [
+      "basic",
+      "color"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u03_01_blue_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u03_01_blue_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u03_01_blue_text.png",
+    "lemma": "blue",
+    "is_plural": false,
+    "letter_count": 4,
+    "syllable_count": 1,
+    "first_letter": "B",
+    "is_compound": false,
+    "phonics_initial": "bl",
+    "difficulty_tier": 1,
+    "primary_image": "dic_wb_09color_blue_1420_1_c.png",
+    "primary_audio": "dic_wb_09color_blue_1420.mp3",
+    "three_hints": {
+      "category_hint": "It is a color.",
+      "feature_hint": "In Japanese, this color is called '青' (あお).",
+      "letter_hint": "It starts with the letter B."
+    },
+    "target_dialogues": [
+      {
+        "question": "What color do you like?",
+        "answer": "I like blue.",
+        "context": "Expressing favorite colors"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_wb_09color_blue_1420_1_c.png",
+        "sound_file": "dic_wb_09color_blue_1420.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_wb_09color_blue_1420_1_ce.png",
+        "card_bw": "dic_wb_09color_blue_1420_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_wb_09color_blue_1420_1_c.png",
+        "sound_file": "dic_wb_09color_blue_1420.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_wb_09color_blue_1420_1_ce.png",
+        "card_bw": "dic_wb_09color_blue_1420_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u03_01_blue_illust.png",
+        "card_full": "cards/full/hwg5_u03_01_blue_full.png",
+        "card_text": "cards/text/hwg5_u03_01_blue_text.png",
+        "unit": "Unit 3: Unit 3: Colors and Shapes",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_09color_blue_1420.mp3"
+      },
+      "ES_G1": {
+        "card_image": "dic_wb_09color_blue_1420_1_c.png",
+        "sound_file": "dic_wb_09color_blue_1420.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_wb_09color_blue_1420_1_ce.png",
+        "card_bw": "dic_wb_09color_blue_1420_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0734",
+    "english": "circle",
+    "canonical_key": "circle",
+    "disambiguation": "",
+    "display_label": "circle",
+    "normalized_english": "circle",
+    "part_of_speech": "noun",
+    "category": "09_color_shape",
+    "category_name": "Colors & Shapes",
+    "ja_kanji": "丸",
+    "ja_hiragana": "まる",
+    "en_katakana": "サークル",
+    "ruby": [
+      {
+        "base": "丸",
+        "ruby": "まる"
+      }
+    ],
+    "ruby_html": "<ruby>丸<rt>まる</rt></ruby>",
+    "ruby_text": "[丸|まる]",
+    "sound_file": "dic_wb_09color_circle_1429.mp3",
+    "card_image": "dic_wb_09color_circle_1429_1_c.png",
+    "card_image_kana": "dic_wb_09color_circle_1429_1_c.png",
+    "card_image_en": "dic_wb_09color_circle_1429_1_e.png",
+    "card_image_bilingual": "dic_wb_09color_circle_1429_1_ce.png",
+    "card_variants": [
+      "dic_wb_09color_circle_1429_1.png",
+      "dic_3_card_circle_2094_1.png",
+      "dic_3_card_circle_2101_1.png",
+      "dic_3_card_circle_2108_1.png",
+      "dic_3_card_circle_2115_1.png"
+    ],
+    "token": "dic_wb_09color_circle_1429&dic_wb_09color_circle_1429&dic_wb_09color_circle_1429",
+    "grades": [
+      "ES_G1",
+      "ES_G2",
+      "ES_G3",
+      "ES_G5"
+    ],
+    "themes": [
+      "Shape",
+      "Shapes"
+    ],
+    "target_sentences": [
+      "Q: What shape is this? / A: It is a circle."
+    ],
+    "tags": [
+      "basic",
+      "shape"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u03_11_circle_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u03_11_circle_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u03_11_circle_text.png",
+    "lemma": "circle",
+    "is_plural": false,
+    "letter_count": 6,
+    "syllable_count": 1,
+    "first_letter": "C",
+    "is_compound": false,
+    "phonics_initial": "c",
+    "difficulty_tier": 1,
+    "primary_image": "dic_wb_09color_circle_1429_1_c.png",
+    "primary_audio": "dic_wb_09color_circle_1429.mp3",
+    "three_hints": {
+      "category_hint": "It is a geometric shape.",
+      "feature_hint": "In Japanese, this shape is called '丸' (まる).",
+      "letter_hint": "It starts with the letter C."
+    },
+    "target_dialogues": [
+      {
+        "question": "What shape is this?",
+        "answer": "It is a circle.",
+        "context": "Identifying shapes"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_circle_2115_1_c.png",
+        "sound_file": "dic_wb_09color_circle_1429.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_circle_2115_1_ce.png",
+        "card_bw": "dic_3_card_circle_2115_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u03_11_circle_illust.png",
+        "card_full": "cards/full/hwg5_u03_11_circle_full.png",
+        "card_text": "cards/text/hwg5_u03_11_circle_text.png",
+        "unit": "Unit 3: Unit 3: Colors and Shapes",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_09color_circle_1429.mp3"
+      },
+      "ES_G1": {
+        "card_image": "dic_wb_09color_circle_1429_1_c.png",
+        "sound_file": "dic_wb_09color_circle_1429.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_wb_09color_circle_1429_1_ce.png",
+        "card_bw": "dic_wb_09color_circle_1429_1.png"
+      },
+      "ES_G2": {
+        "card_image": "dic_wb_09color_circle_1429_1_c.png",
+        "sound_file": "dic_wb_09color_circle_1429.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_wb_09color_circle_1429_1_ce.png",
+        "card_bw": "dic_wb_09color_circle_1429_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0736",
+    "english": "diamond",
+    "canonical_key": "diamond",
+    "disambiguation": "",
+    "display_label": "diamond",
+    "normalized_english": "diamond",
+    "part_of_speech": "noun",
+    "category": "09_color_shape",
+    "category_name": "Colors & Shapes",
+    "ja_kanji": "ひし形",
+    "ja_hiragana": "ひしがた",
+    "en_katakana": "ダイアモンド",
+    "ruby": [
+      {
+        "base": "ひし",
+        "ruby": ""
+      },
+      {
+        "base": "形",
+        "ruby": "がた"
+      }
+    ],
+    "ruby_html": "ひし<ruby>形<rt>がた</rt></ruby>",
+    "ruby_text": "ひし[形|がた]",
+    "sound_file": "dic_wb_09color_diamond_1431.mp3",
+    "card_image": "dic_wb_09color_diamond_1431_1_c.png",
+    "card_image_kana": "dic_wb_09color_diamond_1431_1_c.png",
+    "card_image_en": "dic_wb_09color_diamond_1431_1_e.png",
+    "card_image_bilingual": "dic_wb_09color_diamond_1431_1_ce.png",
+    "card_variants": [
+      "dic_wb_09color_diamond_1431_1.png",
+      "dic_3_card_diamond_2099_1.png",
+      "dic_3_card_diamond_2106_1.png",
+      "dic_3_card_diamond_2113_1.png",
+      "dic_3_card_diamond_2120_1.png"
+    ],
+    "token": "dic_wb_09color_diamond_1431&dic_wb_09color_diamond_1431&dic_wb_09color_diamond_1431",
+    "grades": [
+      "ES_G1",
+      "ES_G3",
+      "ES_G5"
+    ],
+    "themes": [
+      "Shape",
+      "This is for you. カードをおくろう"
+    ],
+    "target_sentences": [
+      "Q: What shape is this? / A: It is a diamond."
+    ],
+    "tags": [
+      "shape"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u03_18_diamond_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u03_18_diamond_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u03_18_diamond_text.png",
+    "lemma": "diamond",
+    "is_plural": false,
+    "letter_count": 7,
+    "syllable_count": 2,
+    "first_letter": "D",
+    "is_compound": false,
+    "phonics_initial": "d",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_09color_diamond_1431_1_c.png",
+    "primary_audio": "dic_wb_09color_diamond_1431.mp3",
+    "three_hints": {
+      "category_hint": "It is a geometric shape.",
+      "feature_hint": "In Japanese, this shape is called 'ひし形' (ひしがた).",
+      "letter_hint": "It starts with the letter D."
+    },
+    "target_dialogues": [
+      {
+        "question": "What shape is this?",
+        "answer": "It is a diamond.",
+        "context": "Identifying shapes"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_diamond_2120_1_c.png",
+        "sound_file": "dic_wb_09color_diamond_1431.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_diamond_2120_1_ce.png",
+        "card_bw": "dic_3_card_diamond_2120_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u03_18_diamond_illust.png",
+        "card_full": "cards/full/hwg5_u03_18_diamond_full.png",
+        "card_text": "cards/text/hwg5_u03_18_diamond_text.png",
+        "unit": "Unit 3: Unit 3: Colors and Shapes",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_09color_diamond_1431.mp3"
+      },
+      "ES_G1": {
+        "card_image": "dic_wb_09color_diamond_1431_1_c.png",
+        "sound_file": "dic_wb_09color_diamond_1431.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_wb_09color_diamond_1431_1_ce.png",
+        "card_bw": "dic_wb_09color_diamond_1431_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0737",
+    "english": "green",
+    "canonical_key": "green",
+    "disambiguation": "",
+    "display_label": "green",
+    "normalized_english": "green",
+    "part_of_speech": "noun",
+    "category": "09_color_shape",
+    "category_name": "Colors & Shapes",
+    "ja_kanji": "緑",
+    "ja_hiragana": "みどり",
+    "en_katakana": "グリーン",
+    "ruby": [
+      {
+        "base": "緑",
+        "ruby": "みどり"
+      }
+    ],
+    "ruby_html": "<ruby>緑<rt>みどり</rt></ruby>",
+    "ruby_text": "[緑|みどり]",
+    "sound_file": "dic_wb_09color_green_1422.mp3",
+    "card_image": "dic_wb_09color_green_1422_1_c.png",
+    "card_image_kana": "dic_wb_09color_green_1422_1_c.png",
+    "card_image_en": "dic_wb_09color_green_1422_1_e.png",
+    "card_image_bilingual": "dic_wb_09color_green_1422_1_ce.png",
+    "card_variants": [
+      "dic_wb_09color_green_1422_1.png"
+    ],
+    "token": "dic_wb_09color_green_1422&dic_wb_09color_green_1422&dic_wb_09color_green_1422",
+    "grades": [
+      "ES_G1",
+      "ES_G3",
+      "ES_G4",
+      "ES_G5"
+    ],
+    "themes": [
+      "Colors",
+      "I like blue. すきなものをつたえよう"
+    ],
+    "target_sentences": [
+      "Q: What color do you like? / A: I like green."
+    ],
+    "tags": [
+      "basic",
+      "color"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u03_02_green_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u03_02_green_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u03_02_green_text.png",
+    "lemma": "green",
+    "is_plural": false,
+    "letter_count": 5,
+    "syllable_count": 1,
+    "first_letter": "G",
+    "is_compound": false,
+    "phonics_initial": "gr",
+    "difficulty_tier": 1,
+    "primary_image": "dic_wb_09color_green_1422_1_c.png",
+    "primary_audio": "dic_wb_09color_green_1422.mp3",
+    "three_hints": {
+      "category_hint": "It is a color.",
+      "feature_hint": "In Japanese, this color is called '緑' (みどり).",
+      "letter_hint": "It starts with the letter G."
+    },
+    "target_dialogues": [
+      {
+        "question": "What color do you like?",
+        "answer": "I like green.",
+        "context": "Expressing favorite colors"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_wb_09color_green_1422_1_c.png",
+        "sound_file": "dic_wb_09color_green_1422.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_wb_09color_green_1422_1_ce.png",
+        "card_bw": "dic_wb_09color_green_1422_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_wb_09color_green_1422_1_c.png",
+        "sound_file": "dic_wb_09color_green_1422.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_wb_09color_green_1422_1_ce.png",
+        "card_bw": "dic_wb_09color_green_1422_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u03_02_green_illust.png",
+        "card_full": "cards/full/hwg5_u03_02_green_full.png",
+        "card_text": "cards/text/hwg5_u03_02_green_text.png",
+        "unit": "Unit 3: Unit 3: Colors and Shapes",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_09color_green_1422.mp3"
+      },
+      "ES_G1": {
+        "card_image": "dic_wb_09color_green_1422_1_c.png",
+        "sound_file": "dic_wb_09color_green_1422.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_wb_09color_green_1422_1_ce.png",
+        "card_bw": "dic_wb_09color_green_1422_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0738",
+    "english": "heart",
+    "canonical_key": "heart",
+    "disambiguation": "",
+    "display_label": "heart",
+    "normalized_english": "heart",
+    "part_of_speech": "noun",
+    "category": "09_color_shape",
+    "category_name": "Colors & Shapes",
+    "ja_kanji": "ハート",
+    "ja_hiragana": "はーと",
+    "en_katakana": "ハート",
+    "ruby": [
+      {
+        "base": "ハート",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "ハート",
+    "ruby_text": "ハート",
+    "sound_file": "dic_wb_09color_heart_1432.mp3",
+    "card_image": "dic_wb_09color_heart_1432_1_c.png",
+    "card_image_kana": "dic_wb_09color_heart_1432_1_c.png",
+    "card_image_en": "dic_wb_09color_heart_1432_1_e.png",
+    "card_image_bilingual": "dic_wb_09color_heart_1432_1_ce.png",
+    "card_variants": [
+      "dic_wb_09color_heart_1432_1.png",
+      "dic_3_card_heart_2098_1.png",
+      "dic_3_card_heart_2105_1.png",
+      "dic_3_card_heart_2112_1.png",
+      "dic_3_card_heart_2119_1.png"
+    ],
+    "token": "dic_wb_09color_heart_1432&dic_wb_09color_heart_1432&dic_wb_09color_heart_1432",
+    "grades": [
+      "ES_G1",
+      "ES_G2",
+      "ES_G3",
+      "ES_G5"
+    ],
+    "themes": [
+      "Shape",
+      "Shapes"
+    ],
+    "target_sentences": [
+      "Q: What shape is this? / A: It is a heart."
+    ],
+    "tags": [
+      "shape"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u03_14_heart_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u03_14_heart_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u03_14_heart_text.png",
+    "lemma": "heart",
+    "is_plural": false,
+    "letter_count": 5,
+    "syllable_count": 1,
+    "first_letter": "H",
+    "is_compound": false,
+    "phonics_initial": "h",
+    "difficulty_tier": 1,
+    "primary_image": "dic_wb_09color_heart_1432_1_c.png",
+    "primary_audio": "dic_wb_09color_heart_1432.mp3",
+    "three_hints": {
+      "category_hint": "It is a geometric shape.",
+      "feature_hint": "In Japanese, this shape is called 'ハート' (はーと).",
+      "letter_hint": "It starts with the letter H."
+    },
+    "target_dialogues": [
+      {
+        "question": "What shape is this?",
+        "answer": "It is a heart.",
+        "context": "Identifying shapes"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_heart_2119_1_c.png",
+        "sound_file": "dic_wb_09color_heart_1432.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_heart_2119_1_ce.png",
+        "card_bw": "dic_3_card_heart_2119_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u03_14_heart_illust.png",
+        "card_full": "cards/full/hwg5_u03_14_heart_full.png",
+        "card_text": "cards/text/hwg5_u03_14_heart_text.png",
+        "unit": "Unit 3: Unit 3: Colors and Shapes",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_09color_heart_1432.mp3"
+      },
+      "ES_G1": {
+        "card_image": "dic_wb_09color_heart_1432_1_c.png",
+        "sound_file": "dic_wb_09color_heart_1432.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_wb_09color_heart_1432_1_ce.png",
+        "card_bw": "dic_wb_09color_heart_1432_1.png"
+      },
+      "ES_G2": {
+        "card_image": "dic_wb_09color_heart_1432_1_c.png",
+        "sound_file": "dic_wb_09color_heart_1432.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_wb_09color_heart_1432_1_ce.png",
+        "card_bw": "dic_wb_09color_heart_1432_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0740",
+    "english": "pink",
+    "canonical_key": "pink",
+    "disambiguation": "",
+    "display_label": "pink",
+    "normalized_english": "pink",
+    "part_of_speech": "noun",
+    "category": "09_color_shape",
+    "category_name": "Colors & Shapes",
+    "ja_kanji": "ピンク",
+    "ja_hiragana": "ぴんく",
+    "en_katakana": "ピンク",
+    "ruby": [
+      {
+        "base": "ピンク",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "ピンク",
+    "ruby_text": "ピンク",
+    "sound_file": "dic_wb_09color_pink_1424.mp3",
+    "card_image": "dic_wb_09color_pink_1424_1_c.png",
+    "card_image_kana": "dic_wb_09color_pink_1424_1_c.png",
+    "card_image_en": "dic_wb_09color_pink_1424_1_e.png",
+    "card_image_bilingual": "dic_wb_09color_pink_1424_1_ce.png",
+    "card_variants": [
+      "dic_wb_09color_pink_1424_1.png"
+    ],
+    "token": "dic_wb_09color_pink_1424&dic_wb_09color_pink_1424&dic_wb_09color_pink_1424",
+    "grades": [
+      "ES_G1",
+      "ES_G3",
+      "ES_G4",
+      "ES_G5"
+    ],
+    "themes": [
+      "Colors",
+      "I like blue. すきなものをつたえよう"
+    ],
+    "target_sentences": [
+      "Q: What color do you like? / A: I like pink."
+    ],
+    "tags": [
+      "color"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u03_04_pink_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u03_04_pink_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u03_04_pink_text.png",
+    "lemma": "pink",
+    "is_plural": false,
+    "letter_count": 4,
+    "syllable_count": 1,
+    "first_letter": "P",
+    "is_compound": false,
+    "phonics_initial": "p",
+    "difficulty_tier": 1,
+    "primary_image": "dic_wb_09color_pink_1424_1_c.png",
+    "primary_audio": "dic_wb_09color_pink_1424.mp3",
+    "three_hints": {
+      "category_hint": "It is a color.",
+      "feature_hint": "In Japanese, this color is called 'ピンク' (ぴんく).",
+      "letter_hint": "It starts with the letter P."
+    },
+    "target_dialogues": [
+      {
+        "question": "What color do you like?",
+        "answer": "I like pink.",
+        "context": "Expressing favorite colors"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_wb_09color_pink_1424_1_c.png",
+        "sound_file": "dic_wb_09color_pink_1424.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_wb_09color_pink_1424_1_ce.png",
+        "card_bw": "dic_wb_09color_pink_1424_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_wb_09color_pink_1424_1_c.png",
+        "sound_file": "dic_wb_09color_pink_1424.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_wb_09color_pink_1424_1_ce.png",
+        "card_bw": "dic_wb_09color_pink_1424_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u03_04_pink_illust.png",
+        "card_full": "cards/full/hwg5_u03_04_pink_full.png",
+        "card_text": "cards/text/hwg5_u03_04_pink_text.png",
+        "unit": "Unit 3: Unit 3: Colors and Shapes",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_09color_pink_1424.mp3"
+      },
+      "ES_G1": {
+        "card_image": "dic_wb_09color_pink_1424_1_c.png",
+        "sound_file": "dic_wb_09color_pink_1424.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_wb_09color_pink_1424_1_ce.png",
+        "card_bw": "dic_wb_09color_pink_1424_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0741",
+    "english": "purple",
+    "canonical_key": "purple",
+    "disambiguation": "",
+    "display_label": "purple",
+    "normalized_english": "purple",
+    "part_of_speech": "noun",
+    "category": "09_color_shape",
+    "category_name": "Colors & Shapes",
+    "ja_kanji": "紫",
+    "ja_hiragana": "むらさき",
+    "en_katakana": "パープル",
+    "ruby": [
+      {
+        "base": "紫",
+        "ruby": "むらさき"
+      }
+    ],
+    "ruby_html": "<ruby>紫<rt>むらさき</rt></ruby>",
+    "ruby_text": "[紫|むらさき]",
+    "sound_file": "dic_wb_09color_purple_1425.mp3",
+    "card_image": "dic_wb_09color_purple_1425_1_c.png",
+    "card_image_kana": "dic_wb_09color_purple_1425_1_c.png",
+    "card_image_en": "dic_wb_09color_purple_1425_1_e.png",
+    "card_image_bilingual": "dic_wb_09color_purple_1425_1_ce.png",
+    "card_variants": [
+      "dic_wb_09color_purple_1425_1.png"
+    ],
+    "token": "dic_wb_09color_purple_1425&dic_wb_09color_purple_1425&dic_wb_09color_purple_1425",
+    "grades": [
+      "ES_G1",
+      "ES_G3",
+      "ES_G4",
+      "ES_G5"
+    ],
+    "themes": [
+      "Colors",
+      "I like blue. すきなものをつたえよう"
+    ],
+    "target_sentences": [
+      "Q: What color do you like? / A: I like purple."
+    ],
+    "tags": [
+      "color"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u03_07_purple_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u03_07_purple_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u03_07_purple_text.png",
+    "lemma": "purple",
+    "is_plural": false,
+    "letter_count": 6,
+    "syllable_count": 1,
+    "first_letter": "P",
+    "is_compound": false,
+    "phonics_initial": "p",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_09color_purple_1425_1_c.png",
+    "primary_audio": "dic_wb_09color_purple_1425.mp3",
+    "three_hints": {
+      "category_hint": "It is a color.",
+      "feature_hint": "In Japanese, this color is called '紫' (むらさき).",
+      "letter_hint": "It starts with the letter P."
+    },
+    "target_dialogues": [
+      {
+        "question": "What color do you like?",
+        "answer": "I like purple.",
+        "context": "Expressing favorite colors"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_wb_09color_purple_1425_1_c.png",
+        "sound_file": "dic_wb_09color_purple_1425.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_wb_09color_purple_1425_1_ce.png",
+        "card_bw": "dic_wb_09color_purple_1425_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_wb_09color_purple_1425_1_c.png",
+        "sound_file": "dic_wb_09color_purple_1425.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_wb_09color_purple_1425_1_ce.png",
+        "card_bw": "dic_wb_09color_purple_1425_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u03_07_purple_illust.png",
+        "card_full": "cards/full/hwg5_u03_07_purple_full.png",
+        "card_text": "cards/text/hwg5_u03_07_purple_text.png",
+        "unit": "Unit 3: Unit 3: Colors and Shapes",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_09color_purple_1425.mp3"
+      },
+      "ES_G1": {
+        "card_image": "dic_wb_09color_purple_1425_1_c.png",
+        "sound_file": "dic_wb_09color_purple_1425.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_wb_09color_purple_1425_1_ce.png",
+        "card_bw": "dic_wb_09color_purple_1425_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0743",
+    "english": "red",
+    "canonical_key": "red",
+    "disambiguation": "",
+    "display_label": "red",
+    "normalized_english": "red",
+    "part_of_speech": "noun",
+    "category": "09_color_shape",
+    "category_name": "Colors & Shapes",
+    "ja_kanji": "赤",
+    "ja_hiragana": "あか",
+    "en_katakana": "レッド",
+    "ruby": [
+      {
+        "base": "赤",
+        "ruby": "あか"
+      }
+    ],
+    "ruby_html": "<ruby>赤<rt>あか</rt></ruby>",
+    "ruby_text": "[赤|あか]",
+    "sound_file": "dic_wb_09color_red_1426.mp3",
+    "card_image": "dic_wb_09color_red_1426_1_c.png",
+    "card_image_kana": "dic_wb_09color_red_1426_1_c.png",
+    "card_image_en": "dic_wb_09color_red_1426_1_e.png",
+    "card_image_bilingual": "dic_wb_09color_red_1426_1_ce.png",
+    "card_variants": [
+      "dic_wb_09color_red_1426_1.png"
+    ],
+    "token": "dic_wb_09color_red_1426&dic_wb_09color_red_1426&dic_wb_09color_red_1426",
+    "grades": [
+      "ES_G1",
+      "ES_G3",
+      "ES_G4",
+      "ES_G5"
+    ],
+    "themes": [
+      "Colors",
+      "I like blue. すきなものをつたえよう"
+    ],
+    "target_sentences": [
+      "Q: What color do you like? / A: I like red."
+    ],
+    "tags": [
+      "basic",
+      "color"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u03_00_red_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u03_00_red_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u03_00_red_text.png",
+    "lemma": "red",
+    "is_plural": false,
+    "letter_count": 3,
+    "syllable_count": 1,
+    "first_letter": "R",
+    "is_compound": false,
+    "phonics_initial": "r",
+    "difficulty_tier": 1,
+    "primary_image": "dic_wb_09color_red_1426_1_c.png",
+    "primary_audio": "dic_wb_09color_red_1426.mp3",
+    "three_hints": {
+      "category_hint": "It is a color.",
+      "feature_hint": "In Japanese, this color is called '赤' (あか).",
+      "letter_hint": "It starts with the letter R."
+    },
+    "target_dialogues": [
+      {
+        "question": "What color do you like?",
+        "answer": "I like red.",
+        "context": "Expressing favorite colors"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_wb_09color_red_1426_1_c.png",
+        "sound_file": "dic_wb_09color_red_1426.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_wb_09color_red_1426_1_ce.png",
+        "card_bw": "dic_wb_09color_red_1426_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_wb_09color_red_1426_1_c.png",
+        "sound_file": "dic_wb_09color_red_1426.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_wb_09color_red_1426_1_ce.png",
+        "card_bw": "dic_wb_09color_red_1426_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u03_00_red_illust.png",
+        "card_full": "cards/full/hwg5_u03_00_red_full.png",
+        "card_text": "cards/text/hwg5_u03_00_red_text.png",
+        "unit": "Unit 3: Unit 3: Colors and Shapes",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_09color_red_1426.mp3"
+      },
+      "ES_G1": {
+        "card_image": "dic_wb_09color_red_1426_1_c.png",
+        "sound_file": "dic_wb_09color_red_1426.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_wb_09color_red_1426_1_ce.png",
+        "card_bw": "dic_wb_09color_red_1426_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0744",
+    "english": "square",
+    "canonical_key": "square",
+    "disambiguation": "",
+    "display_label": "square",
+    "normalized_english": "square",
+    "part_of_speech": "noun",
+    "category": "09_color_shape",
+    "category_name": "Colors & Shapes",
+    "ja_kanji": "四角",
+    "ja_hiragana": "しかく",
+    "en_katakana": "スクエア",
+    "ruby": [
+      {
+        "base": "四角",
+        "ruby": "しかく"
+      }
+    ],
+    "ruby_html": "<ruby>四角<rt>しかく</rt></ruby>",
+    "ruby_text": "[四角|しかく]",
+    "sound_file": "dic_wb_09color_square_1434.mp3",
+    "card_image": "dic_wb_09color_square_1434_1_c.png",
+    "card_image_kana": "dic_wb_09color_square_1434_1_c.png",
+    "card_image_en": "dic_wb_09color_square_1434_1_e.png",
+    "card_image_bilingual": "dic_wb_09color_square_1434_1_ce.png",
+    "card_variants": [
+      "dic_wb_09color_square_1434_1.png",
+      "dic_3_card_square_2096_1.png",
+      "dic_3_card_square_2103_1.png",
+      "dic_3_card_square_2110_1.png",
+      "dic_3_card_square_2117_1.png"
+    ],
+    "token": "dic_wb_09color_square_1434&dic_wb_09color_square_1434&dic_wb_09color_square_1434",
+    "grades": [
+      "ES_G1",
+      "ES_G2",
+      "ES_G3",
+      "ES_G5"
+    ],
+    "themes": [
+      "Shape",
+      "Shapes"
+    ],
+    "target_sentences": [
+      "Q: What shape is this? / A: It is a square."
+    ],
+    "tags": [
+      "basic",
+      "shape"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u03_15_square_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u03_15_square_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u03_15_square_text.png",
+    "lemma": "square",
+    "is_plural": false,
+    "letter_count": 6,
+    "syllable_count": 1,
+    "first_letter": "S",
+    "is_compound": false,
+    "phonics_initial": "s",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_09color_square_1434_1_c.png",
+    "primary_audio": "dic_wb_09color_square_1434.mp3",
+    "three_hints": {
+      "category_hint": "It is a geometric shape.",
+      "feature_hint": "In Japanese, this shape is called '四角' (しかく).",
+      "letter_hint": "It starts with the letter S."
+    },
+    "target_dialogues": [
+      {
+        "question": "What shape is this?",
+        "answer": "It is a square.",
+        "context": "Identifying shapes"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_square_2117_1_c.png",
+        "sound_file": "dic_wb_09color_square_1434.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_square_2117_1_ce.png",
+        "card_bw": "dic_3_card_square_2117_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u03_15_square_illust.png",
+        "card_full": "cards/full/hwg5_u03_15_square_full.png",
+        "card_text": "cards/text/hwg5_u03_15_square_text.png",
+        "unit": "Unit 3: Unit 3: Colors and Shapes",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_09color_square_1434.mp3"
+      },
+      "ES_G1": {
+        "card_image": "dic_wb_09color_square_1434_1_c.png",
+        "sound_file": "dic_wb_09color_square_1434.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_wb_09color_square_1434_1_ce.png",
+        "card_bw": "dic_wb_09color_square_1434_1.png"
+      },
+      "ES_G2": {
+        "card_image": "dic_wb_09color_square_1434_1_c.png",
+        "sound_file": "dic_wb_09color_square_1434.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_wb_09color_square_1434_1_ce.png",
+        "card_bw": "dic_wb_09color_square_1434_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0746",
+    "english": "triangle",
+    "canonical_key": "triangle",
+    "disambiguation": "",
+    "display_label": "triangle",
+    "normalized_english": "triangle",
+    "part_of_speech": "noun",
+    "category": "09_color_shape",
+    "category_name": "Colors & Shapes",
+    "ja_kanji": "三角",
+    "ja_hiragana": "さんかく",
+    "en_katakana": "トライアングル",
+    "ruby": [
+      {
+        "base": "三角",
+        "ruby": "さんかく"
+      }
+    ],
+    "ruby_html": "<ruby>三角<rt>さんかく</rt></ruby>",
+    "ruby_text": "[三角|さんかく]",
+    "sound_file": "dic_wb_09color_triangle_1436.mp3",
+    "card_image": "dic_wb_09color_triangle_1436_1_c.png",
+    "card_image_kana": "dic_wb_09color_triangle_1436_1_c.png",
+    "card_image_en": "dic_wb_09color_triangle_1436_1_e.png",
+    "card_image_bilingual": "dic_wb_09color_triangle_1436_1_ce.png",
+    "card_variants": [
+      "dic_wb_09color_triangle_1436_1.png",
+      "dic_3_card_triangle_2095_1.png",
+      "dic_3_card_triangle_2102_1.png",
+      "dic_3_card_triangle_2109_1.png",
+      "dic_3_card_triangle_2116_1.png"
+    ],
+    "token": "dic_wb_09color_triangle_1436&dic_wb_09color_triangle_1436&dic_wb_09color_triangle_1436",
+    "grades": [
+      "ES_G1",
+      "ES_G2",
+      "ES_G3",
+      "ES_G5"
+    ],
+    "themes": [
+      "Shape",
+      "Shapes"
+    ],
+    "target_sentences": [
+      "Q: What shape is this? / A: It is a triangle."
+    ],
+    "tags": [
+      "basic",
+      "shape"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u03_12_triangle_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u03_12_triangle_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u03_12_triangle_text.png",
+    "lemma": "triangle",
+    "is_plural": false,
+    "letter_count": 8,
+    "syllable_count": 1,
+    "first_letter": "T",
+    "is_compound": false,
+    "phonics_initial": "tr",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_09color_triangle_1436_1_c.png",
+    "primary_audio": "dic_wb_09color_triangle_1436.mp3",
+    "three_hints": {
+      "category_hint": "It is a geometric shape.",
+      "feature_hint": "In Japanese, this shape is called '三角' (さんかく).",
+      "letter_hint": "It starts with the letter T."
+    },
+    "target_dialogues": [
+      {
+        "question": "What shape is this?",
+        "answer": "It is a triangle.",
+        "context": "Identifying shapes"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_triangle_2116_1_c.png",
+        "sound_file": "dic_wb_09color_triangle_1436.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_triangle_2116_1_ce.png",
+        "card_bw": "dic_3_card_triangle_2116_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u03_12_triangle_illust.png",
+        "card_full": "cards/full/hwg5_u03_12_triangle_full.png",
+        "card_text": "cards/text/hwg5_u03_12_triangle_text.png",
+        "unit": "Unit 3: Unit 3: Colors and Shapes",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_09color_triangle_1436.mp3"
+      },
+      "ES_G1": {
+        "card_image": "dic_wb_09color_triangle_1436_1_c.png",
+        "sound_file": "dic_wb_09color_triangle_1436.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_wb_09color_triangle_1436_1_ce.png",
+        "card_bw": "dic_wb_09color_triangle_1436_1.png"
+      },
+      "ES_G2": {
+        "card_image": "dic_wb_09color_triangle_1436_1_c.png",
+        "sound_file": "dic_wb_09color_triangle_1436.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_wb_09color_triangle_1436_1_ce.png",
+        "card_bw": "dic_wb_09color_triangle_1436_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0748",
+    "english": "yellow",
+    "canonical_key": "yellow",
+    "disambiguation": "",
+    "display_label": "yellow",
+    "normalized_english": "yellow",
+    "part_of_speech": "noun",
+    "category": "09_color_shape",
+    "category_name": "Colors & Shapes",
+    "ja_kanji": "黄色",
+    "ja_hiragana": "きいろ",
+    "en_katakana": "イエロー",
+    "ruby": [
+      {
+        "base": "黄色",
+        "ruby": "きいろ"
+      }
+    ],
+    "ruby_html": "<ruby>黄色<rt>きいろ</rt></ruby>",
+    "ruby_text": "[黄色|きいろ]",
+    "sound_file": "dic_wb_09color_yellow_1428.mp3",
+    "card_image": "dic_wb_09color_yellow_1428_1_c.png",
+    "card_image_kana": "dic_wb_09color_yellow_1428_1_c.png",
+    "card_image_en": "dic_wb_09color_yellow_1428_1_e.png",
+    "card_image_bilingual": "dic_wb_09color_yellow_1428_1_ce.png",
+    "card_variants": [
+      "dic_wb_09color_yellow_1428_1.png"
+    ],
+    "token": "dic_wb_09color_yellow_1428&dic_wb_09color_yellow_1428&dic_wb_09color_yellow_1428",
+    "grades": [
+      "ES_G1",
+      "ES_G3",
+      "ES_G4",
+      "ES_G5"
+    ],
+    "themes": [
+      "Colors",
+      "I like blue. すきなものをつたえよう"
+    ],
+    "target_sentences": [
+      "Q: What color do you like? / A: I like yellow."
+    ],
+    "tags": [
+      "basic",
+      "color"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u03_03_yellow_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u03_03_yellow_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u03_03_yellow_text.png",
+    "lemma": "yellow",
+    "is_plural": false,
+    "letter_count": 6,
+    "syllable_count": 2,
+    "first_letter": "Y",
+    "is_compound": false,
+    "phonics_initial": "y",
+    "difficulty_tier": 1,
+    "primary_image": "dic_wb_09color_yellow_1428_1_c.png",
+    "primary_audio": "dic_wb_09color_yellow_1428.mp3",
+    "three_hints": {
+      "category_hint": "It is a color.",
+      "feature_hint": "In Japanese, this color is called '黄色' (きいろ).",
+      "letter_hint": "It starts with the letter Y."
+    },
+    "target_dialogues": [
+      {
+        "question": "What color do you like?",
+        "answer": "I like yellow.",
+        "context": "Expressing favorite colors"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_wb_09color_yellow_1428_1_c.png",
+        "sound_file": "dic_wb_09color_yellow_1428.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_wb_09color_yellow_1428_1_ce.png",
+        "card_bw": "dic_wb_09color_yellow_1428_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_wb_09color_yellow_1428_1_c.png",
+        "sound_file": "dic_wb_09color_yellow_1428.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_wb_09color_yellow_1428_1_ce.png",
+        "card_bw": "dic_wb_09color_yellow_1428_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u03_03_yellow_illust.png",
+        "card_full": "cards/full/hwg5_u03_03_yellow_full.png",
+        "card_text": "cards/text/hwg5_u03_03_yellow_text.png",
+        "unit": "Unit 3: Unit 3: Colors and Shapes",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_09color_yellow_1428.mp3"
+      },
+      "ES_G1": {
+        "card_image": "dic_wb_09color_yellow_1428_1_c.png",
+        "sound_file": "dic_wb_09color_yellow_1428.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_wb_09color_yellow_1428_1_ce.png",
+        "card_bw": "dic_wb_09color_yellow_1428_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0819",
+    "english": "eye",
+    "canonical_key": "eye",
+    "disambiguation": "",
+    "display_label": "eye",
+    "normalized_english": "eye",
+    "part_of_speech": "noun",
+    "category": "14_body_family",
+    "category_name": "Body Parts & People",
+    "ja_kanji": "目",
+    "ja_hiragana": "め",
+    "en_katakana": "アイ",
+    "ruby": [
+      {
+        "base": "目",
+        "ruby": "め"
+      }
+    ],
+    "ruby_html": "<ruby>目<rt>め</rt></ruby>",
+    "ruby_text": "[目|め]",
+    "sound_file": "dic_wb_14body_eye_1571.mp3",
+    "card_image": "dic_wb_14body_eye_1571_1_c.png",
+    "card_image_kana": "dic_wb_14body_eye_1571_1_c.png",
+    "card_image_en": "dic_wb_14body_eye_1571_1_e.png",
+    "card_image_bilingual": "dic_wb_14body_eye_1571_1_ce.png",
+    "card_variants": [
+      "dic_wb_14body_eye_1571_1.png"
+    ],
+    "token": "dic_wb_14body_eye_1571&dic_wb_14body_eye_1571&dic_wb_14body_eye_1571",
+    "grades": [
+      "ES_G1",
+      "ES_G6"
+    ],
+    "themes": [
+      "Review"
+    ],
+    "target_sentences": [
+      "Q: Touch your eye! / A: This is my eye."
+    ],
+    "tags": [
+      "body"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u12_06_eye_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u12_06_eye_illust.png",
+    "hwg_card_text": "cards/text/hwg6_u12_06_eye_text.png",
+    "lemma": "eye",
+    "is_plural": false,
+    "letter_count": 3,
+    "syllable_count": 1,
+    "first_letter": "E",
+    "is_compound": false,
+    "phonics_initial": "e",
+    "difficulty_tier": 1,
+    "primary_image": "dic_wb_14body_eye_1571_1_c.png",
+    "primary_audio": "dic_wb_14body_eye_1571.mp3",
+    "three_hints": {
+      "category_hint": "It is a part of the body.",
+      "feature_hint": "A body part known as '目' (め) in Japanese.",
+      "letter_hint": "It starts with the letter E."
+    },
+    "target_dialogues": [
+      {
+        "question": "Touch your eye!",
+        "answer": "This is my eye.",
+        "context": "Body parts TPR and identification"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u12_06_eye_illust.png",
+        "card_full": "cards/full/hwg6_u12_06_eye_full.png",
+        "card_text": "cards/text/hwg6_u12_06_eye_text.png",
+        "unit": "Unit 12: Unit 12: Body",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_14body_eye_1571.mp3"
+      },
+      "ES_G1": {
+        "card_image": "dic_wb_14body_eye_1571_1_c.png",
+        "sound_file": "dic_wb_14body_eye_1571.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_wb_14body_eye_1571_1_ce.png",
+        "card_bw": "dic_wb_14body_eye_1571_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0827",
+    "english": "head",
+    "canonical_key": "head",
+    "disambiguation": "",
+    "display_label": "head",
+    "normalized_english": "head",
+    "part_of_speech": "noun",
+    "category": "14_body_family",
+    "category_name": "Body Parts & People",
+    "ja_kanji": "頭",
+    "ja_hiragana": "あたま",
+    "en_katakana": "ヘッド",
+    "ruby": [
+      {
+        "base": "頭",
+        "ruby": "あたま"
+      }
+    ],
+    "ruby_html": "<ruby>頭<rt>あたま</rt></ruby>",
+    "ruby_text": "[頭|あたま]",
+    "sound_file": "dic_wb_14body_head_1574.mp3",
+    "card_image": "dic_wb_14body_head_1574_1_c.png",
+    "card_image_kana": "dic_wb_14body_head_1574_1_c.png",
+    "card_image_en": "dic_wb_14body_head_1574_1_e.png",
+    "card_image_bilingual": "dic_wb_14body_head_1574_1_ce.png",
+    "card_variants": [
+      "dic_wb_14body_head_1574_1.png",
+      "dic_3_card_head_2140_1.png"
+    ],
+    "token": "dic_wb_14body_head_1574&dic_wb_14body_head_1574&dic_wb_14body_head_1574",
+    "grades": [
+      "ES_G1",
+      "ES_G2",
+      "ES_G3",
+      "ES_G6"
+    ],
+    "themes": [
+      "Body Parts",
+      "Review"
+    ],
+    "target_sentences": [
+      "Q: Touch your head! / A: This is my head."
+    ],
+    "tags": [
+      "body"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u12_00_head_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u12_00_head_illust.png",
+    "hwg_card_text": "cards/text/hwg6_u12_00_head_text.png",
+    "lemma": "head",
+    "is_plural": false,
+    "letter_count": 4,
+    "syllable_count": 1,
+    "first_letter": "H",
+    "is_compound": false,
+    "phonics_initial": "h",
+    "difficulty_tier": 1,
+    "primary_image": "dic_wb_14body_head_1574_1_c.png",
+    "primary_audio": "dic_wb_14body_head_1574.mp3",
+    "three_hints": {
+      "category_hint": "It is a part of the body.",
+      "feature_hint": "A body part known as '頭' (あたま) in Japanese.",
+      "letter_hint": "It starts with the letter H."
+    },
+    "target_dialogues": [
+      {
+        "question": "Touch your head!",
+        "answer": "This is my head.",
+        "context": "Body parts TPR and identification"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_head_2140_1_c.png",
+        "sound_file": "dic_3_card_head_2140.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_head_2140_1_ce.png",
+        "card_bw": "dic_3_card_head_2140_1.png"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u12_00_head_illust.png",
+        "card_full": "cards/full/hwg6_u12_00_head_full.png",
+        "card_text": "cards/text/hwg6_u12_00_head_text.png",
+        "unit": "Unit 12: Unit 12: Body",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_14body_head_1574.mp3"
+      },
+      "ES_G1": {
+        "card_image": "dic_wb_14body_head_1574_1_c.png",
+        "sound_file": "dic_wb_14body_head_1574.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_wb_14body_head_1574_1_ce.png",
+        "card_bw": "dic_wb_14body_head_1574_1.png"
+      },
+      "ES_G2": {
+        "card_image": "dic_wb_14body_head_1574_1_c.png",
+        "sound_file": "dic_wb_14body_head_1574.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_wb_14body_head_1574_1_ce.png",
+        "card_bw": "dic_wb_14body_head_1574_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0831",
+    "english": "mouth",
+    "canonical_key": "mouth",
+    "disambiguation": "",
+    "display_label": "mouth",
+    "normalized_english": "mouth",
+    "part_of_speech": "noun",
+    "category": "14_body_family",
+    "category_name": "Body Parts & People",
+    "ja_kanji": "口",
+    "ja_hiragana": "くち",
+    "en_katakana": "マウス",
+    "ruby": [
+      {
+        "base": "口",
+        "ruby": "くち"
+      }
+    ],
+    "ruby_html": "<ruby>口<rt>くち</rt></ruby>",
+    "ruby_text": "[口|くち]",
+    "sound_file": "dic_wb_14body_mouth_1577.mp3",
+    "card_image": "dic_wb_14body_mouth_1577_1_c.png",
+    "card_image_kana": "dic_wb_14body_mouth_1577_1_c.png",
+    "card_image_en": "dic_wb_14body_mouth_1577_1_e.png",
+    "card_image_bilingual": "dic_wb_14body_mouth_1577_1_ce.png",
+    "card_variants": [
+      "dic_wb_14body_mouth_1577_1.png",
+      "dic_3_card_mouth_2146_1.png"
+    ],
+    "token": "dic_wb_14body_mouth_1577&dic_wb_14body_mouth_1577&dic_wb_14body_mouth_1577",
+    "grades": [
+      "ES_G1",
+      "ES_G3",
+      "ES_G6"
+    ],
+    "themes": [
+      "Body Parts"
+    ],
+    "target_sentences": [
+      "Q: Touch your mouth! / A: This is my mouth."
+    ],
+    "tags": [
+      "body"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u12_08_mouth_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u12_08_mouth_illust.png",
+    "hwg_card_text": "cards/text/hwg6_u12_08_mouth_text.png",
+    "lemma": "mouth",
+    "is_plural": false,
+    "letter_count": 5,
+    "syllable_count": 1,
+    "first_letter": "M",
+    "is_compound": false,
+    "phonics_initial": "m",
+    "difficulty_tier": 1,
+    "primary_image": "dic_wb_14body_mouth_1577_1_c.png",
+    "primary_audio": "dic_wb_14body_mouth_1577.mp3",
+    "three_hints": {
+      "category_hint": "It is a part of the body.",
+      "feature_hint": "A body part known as '口' (くち) in Japanese.",
+      "letter_hint": "It starts with the letter M."
+    },
+    "target_dialogues": [
+      {
+        "question": "Touch your mouth!",
+        "answer": "This is my mouth.",
+        "context": "Body parts TPR and identification"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_mouth_2146_1_c.png",
+        "sound_file": "dic_wb_14body_mouth_1577.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_mouth_2146_1_ce.png",
+        "card_bw": "dic_3_card_mouth_2146_1.png"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u12_08_mouth_illust.png",
+        "card_full": "cards/full/hwg6_u12_08_mouth_full.png",
+        "card_text": "cards/text/hwg6_u12_08_mouth_text.png",
+        "unit": "Unit 12: Unit 12: Body",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_14body_mouth_1577.mp3"
+      },
+      "ES_G1": {
+        "card_image": "dic_wb_14body_mouth_1577_1_c.png",
+        "sound_file": "dic_wb_14body_mouth_1577.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_wb_14body_mouth_1577_1_ce.png",
+        "card_bw": "dic_wb_14body_mouth_1577_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0832",
+    "english": "nose",
+    "canonical_key": "nose",
+    "disambiguation": "",
+    "display_label": "nose",
+    "normalized_english": "nose",
+    "part_of_speech": "noun",
+    "category": "14_body_family",
+    "category_name": "Body Parts & People",
+    "ja_kanji": "鼻",
+    "ja_hiragana": "はな",
+    "en_katakana": "ノーズ",
+    "ruby": [
+      {
+        "base": "鼻",
+        "ruby": "はな"
+      }
+    ],
+    "ruby_html": "<ruby>鼻<rt>はな</rt></ruby>",
+    "ruby_text": "[鼻|はな]",
+    "sound_file": "dic_wb_14body_nose_1578.mp3",
+    "card_image": "dic_wb_14body_nose_1578_1_c.png",
+    "card_image_kana": "dic_wb_14body_nose_1578_1_c.png",
+    "card_image_en": "dic_wb_14body_nose_1578_1_e.png",
+    "card_image_bilingual": "dic_wb_14body_nose_1578_1_ce.png",
+    "card_variants": [
+      "dic_wb_14body_nose_1578_1.png",
+      "dic_3_card_nose_2147_1.png"
+    ],
+    "token": "dic_wb_14body_nose_1578&dic_wb_14body_nose_1578&dic_wb_14body_nose_1578",
+    "grades": [
+      "ES_G1",
+      "ES_G3",
+      "ES_G6"
+    ],
+    "themes": [
+      "Body Parts",
+      "Review",
+      "Who are you? きみはだれ？"
+    ],
+    "target_sentences": [
+      "Q: Touch your nose! / A: This is my nose."
+    ],
+    "tags": [
+      "body"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u12_07_nose_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u12_07_nose_illust.png",
+    "hwg_card_text": "cards/text/hwg6_u12_07_nose_text.png",
+    "lemma": "nose",
+    "is_plural": false,
+    "letter_count": 4,
+    "syllable_count": 1,
+    "first_letter": "N",
+    "is_compound": false,
+    "phonics_initial": "n",
+    "difficulty_tier": 1,
+    "primary_image": "dic_wb_14body_nose_1578_1_c.png",
+    "primary_audio": "dic_wb_14body_nose_1578.mp3",
+    "three_hints": {
+      "category_hint": "It is a part of the body.",
+      "feature_hint": "A body part known as '鼻' (はな) in Japanese.",
+      "letter_hint": "It starts with the letter N."
+    },
+    "target_dialogues": [
+      {
+        "question": "Touch your nose!",
+        "answer": "This is my nose.",
+        "context": "Body parts TPR and identification"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_nose_2147_1_c.png",
+        "sound_file": "dic_wb_14body_nose_1578.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_nose_2147_1_ce.png",
+        "card_bw": "dic_3_card_nose_2147_1.png"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u12_07_nose_illust.png",
+        "card_full": "cards/full/hwg6_u12_07_nose_full.png",
+        "card_text": "cards/text/hwg6_u12_07_nose_text.png",
+        "unit": "Unit 12: Unit 12: Body",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_14body_nose_1578.mp3"
+      },
+      "ES_G1": {
+        "card_image": "dic_wb_14body_nose_1578_1_c.png",
+        "sound_file": "dic_wb_14body_nose_1578.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_wb_14body_nose_1578_1_ce.png",
+        "card_bw": "dic_wb_14body_nose_1578_1.png"
+      }
+    }
+  }
+]

@@ -1,0 +1,2324 @@
+[
+  {
+    "id": "word_0069",
+    "english": "dancing",
+    "canonical_key": "dancing",
+    "disambiguation": "",
+    "display_label": "dancing",
+    "normalized_english": "dancing",
+    "part_of_speech": "noun",
+    "category": "08_sports",
+    "category_name": "Sports & Activities",
+    "ja_kanji": "ダンス",
+    "ja_hiragana": "だんす",
+    "en_katakana": "ダンシング",
+    "ruby": [
+      {
+        "base": "ダンス",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "ダンス",
+    "ruby_text": "ダンス",
+    "sound_file": "",
+    "card_image": "cards/full/hwg5_u04_09_dancing_full.png",
+    "card_image_kana": "cards/full/hwg5_u04_09_dancing_full.png",
+    "card_image_en": "cards/full/hwg5_u04_09_dancing_full.png",
+    "card_image_bilingual": "cards/full/hwg5_u04_09_dancing_full.png",
+    "card_variants": [],
+    "token": "hwg_dancing",
+    "grades": [
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Do you like dancing? / A: Yes, I like dancing."
+    ],
+    "tags": [
+      "activity",
+      "sports"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u04_09_dancing_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u04_09_dancing_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u04_09_dancing_text.png",
+    "lemma": "dancing",
+    "is_plural": false,
+    "letter_count": 7,
+    "syllable_count": 2,
+    "first_letter": "D",
+    "is_compound": false,
+    "phonics_initial": "d",
+    "difficulty_tier": 3,
+    "primary_image": "cards/full/hwg5_u04_09_dancing_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is a sport or physical activity.",
+      "feature_hint": "An active sport known as 'ダンス' (だんす) in Japanese.",
+      "letter_hint": "It starts with the letter D."
+    },
+    "target_dialogues": [
+      {
+        "question": "Do you like dancing?",
+        "answer": "Yes, I like dancing.",
+        "context": "Asking about sports interests and skills"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u04_09_dancing_illust.png",
+        "card_full": "cards/full/hwg5_u04_09_dancing_full.png",
+        "card_text": "cards/text/hwg5_u04_09_dancing_text.png",
+        "unit": "Unit 4: Unit 4: Sports",
+        "source": "here_we_go_5",
+        "sound_file": ""
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u02_04_dancing_illust.png",
+        "card_full": "cards/full/hwg6_u02_04_dancing_full.png",
+        "card_text": "cards/text/hwg6_u02_04_dancing_text.png",
+        "unit": "Unit 2: Unit 2: Skills",
+        "source": "here_we_go_6",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0306",
+    "english": "skiing",
+    "canonical_key": "skiing",
+    "disambiguation": "",
+    "display_label": "skiing",
+    "normalized_english": "skiing",
+    "part_of_speech": "noun",
+    "category": "08_sports",
+    "category_name": "Sports & Activities",
+    "ja_kanji": "スキー",
+    "ja_hiragana": "すきー",
+    "en_katakana": "スキーイング",
+    "ruby": [
+      {
+        "base": "スキー",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "スキー",
+    "ruby_text": "スキー",
+    "sound_file": "",
+    "card_image": "cards/full/hwg5_u04_10_skiing_full.png",
+    "card_image_kana": "cards/full/hwg5_u04_10_skiing_full.png",
+    "card_image_en": "cards/full/hwg5_u04_10_skiing_full.png",
+    "card_image_bilingual": "cards/full/hwg5_u04_10_skiing_full.png",
+    "card_variants": [],
+    "token": "hwg_skiing",
+    "grades": [
+      "ES_G5"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Do you like skiing? / A: Yes, I like skiing."
+    ],
+    "tags": [
+      "sports",
+      "winter"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u04_10_skiing_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u04_10_skiing_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u04_10_skiing_text.png",
+    "lemma": "skiing",
+    "is_plural": false,
+    "letter_count": 6,
+    "syllable_count": 1,
+    "first_letter": "S",
+    "is_compound": false,
+    "phonics_initial": "sk",
+    "difficulty_tier": 2,
+    "primary_image": "cards/full/hwg5_u04_10_skiing_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is a sport or physical activity.",
+      "feature_hint": "An active sport known as 'スキー' (すきー) in Japanese.",
+      "letter_hint": "It starts with the letter S."
+    },
+    "target_dialogues": [
+      {
+        "question": "Do you like skiing?",
+        "answer": "Yes, I like skiing.",
+        "context": "Asking about sports interests and skills"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u04_10_skiing_illust.png",
+        "card_full": "cards/full/hwg5_u04_10_skiing_full.png",
+        "card_text": "cards/text/hwg5_u04_10_skiing_text.png",
+        "unit": "Unit 4: Unit 4: Sports",
+        "source": "here_we_go_5",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0666",
+    "english": "bat",
+    "canonical_key": "bat",
+    "disambiguation": "",
+    "display_label": "bat",
+    "normalized_english": "bat",
+    "part_of_speech": "noun",
+    "category": "08_sports",
+    "category_name": "Sports & Activities",
+    "ja_kanji": "バット",
+    "ja_hiragana": "ばっと",
+    "en_katakana": "バット",
+    "ruby": [
+      {
+        "base": "バット",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "バット",
+    "ruby_text": "バット",
+    "sound_file": "dic_wb_07dailylife_bat_1416.mp3",
+    "card_image": "dic_5_card_bat_0267_1_c.png",
+    "card_image_kana": "dic_5_card_bat_0267_1_c.png",
+    "card_image_en": "dic_5_card_bat_0267_1_e.png",
+    "card_image_bilingual": "dic_5_card_bat_0267_1_ce.png",
+    "card_variants": [
+      "dic_5_card_bat_0267_1.png"
+    ],
+    "token": "dic_wb_07dailylife_bat_1416&dic_wb_07dailylife_bat_1416&dic_5_card_bat_0267",
+    "grades": [
+      "ES_G5"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Can you play bat? / A: Yes, I can play bat."
+    ],
+    "tags": [
+      "baseball",
+      "item",
+      "sports"
+    ],
+    "lemma": "bat",
+    "is_plural": false,
+    "letter_count": 3,
+    "syllable_count": 1,
+    "first_letter": "B",
+    "is_compound": false,
+    "phonics_initial": "b",
+    "difficulty_tier": 2,
+    "primary_image": "dic_5_card_bat_0267_1_c.png",
+    "primary_audio": "dic_wb_07dailylife_bat_1416.mp3",
+    "three_hints": {
+      "category_hint": "It is a sport or physical activity.",
+      "feature_hint": "An active sport known as 'バット' (ばっと) in Japanese.",
+      "letter_hint": "It starts with the letter B."
+    },
+    "target_dialogues": [
+      {
+        "question": "Can you play bat?",
+        "answer": "Yes, I can play bat.",
+        "context": "Asking about sports interests and skills"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "dic_5_card_bat_0267_1_c.png",
+        "sound_file": "dic_wb_07dailylife_bat_1416.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_5_card_bat_0267_1_ce.png",
+        "card_bw": "dic_5_card_bat_0267_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0685",
+    "english": "glove",
+    "canonical_key": "glove",
+    "disambiguation": "",
+    "display_label": "glove",
+    "normalized_english": "glove",
+    "part_of_speech": "noun",
+    "category": "08_sports",
+    "category_name": "Sports & Activities",
+    "ja_kanji": "グローブ",
+    "ja_hiragana": "ぐろーぶ",
+    "en_katakana": "グローブ",
+    "ruby": [
+      {
+        "base": "グローブ",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "グローブ",
+    "ruby_text": "グローブ",
+    "sound_file": "dic_wb_07dailylife_gloves_1368.mp3",
+    "card_image": "dic_wb_07dailylife_gloves_1368_1_c.png",
+    "card_image_kana": "dic_wb_07dailylife_gloves_1368_1_c.png",
+    "card_image_en": "dic_wb_07dailylife_gloves_1368_1_e.png",
+    "card_image_bilingual": "dic_wb_07dailylife_gloves_1368_1_ce.png",
+    "card_variants": [
+      "dic_wb_07dailylife_gloves_1368_1.png"
+    ],
+    "token": "dic_wb_07dailylife_gloves_1368&dic_wb_07dailylife_gloves_1368&dic_wb_07dailylife_gloves_1368",
+    "grades": [
+      "ES_G3"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Can you play glove? / A: Yes, I can play glove."
+    ],
+    "tags": [
+      "baseball",
+      "item",
+      "sports"
+    ],
+    "lemma": "glove",
+    "is_plural": false,
+    "letter_count": 5,
+    "syllable_count": 1,
+    "first_letter": "G",
+    "is_compound": false,
+    "phonics_initial": "gl",
+    "difficulty_tier": 1,
+    "primary_image": "dic_wb_07dailylife_gloves_1368_1_c.png",
+    "primary_audio": "dic_wb_07dailylife_gloves_1368.mp3",
+    "three_hints": {
+      "category_hint": "It is a sport or physical activity.",
+      "feature_hint": "An active sport known as 'グローブ' (ぐろーぶ) in Japanese.",
+      "letter_hint": "It starts with the letter G."
+    },
+    "target_dialogues": [
+      {
+        "question": "Can you play glove?",
+        "answer": "Yes, I can play glove.",
+        "context": "Asking about sports interests and skills"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_wb_07dailylife_gloves_1368_1_c.png",
+        "sound_file": "dic_wb_07dailylife_gloves_1368.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_wb_07dailylife_gloves_1368_1_ce.png",
+        "card_bw": "dic_wb_07dailylife_gloves_1368_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0694",
+    "english": "racket",
+    "canonical_key": "racket",
+    "disambiguation": "",
+    "display_label": "racket",
+    "normalized_english": "racket",
+    "part_of_speech": "noun",
+    "category": "08_sports",
+    "category_name": "Sports & Activities",
+    "ja_kanji": "ラケット",
+    "ja_hiragana": "らけっと",
+    "en_katakana": "ラケット",
+    "ruby": [
+      {
+        "base": "ラケット",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "ラケット",
+    "ruby_text": "ラケット",
+    "sound_file": "dic_wb_07dailylife_racket_1417.mp3",
+    "card_image": "dic_wb_07dailylife_racket_1417_1_c.png",
+    "card_image_kana": "dic_wb_07dailylife_racket_1417_1_c.png",
+    "card_image_en": "dic_wb_07dailylife_racket_1417_1_e.png",
+    "card_image_bilingual": "dic_wb_07dailylife_racket_1417_1_ce.png",
+    "card_variants": [
+      "dic_wb_07dailylife_racket_1417_1.png"
+    ],
+    "token": "dic_wb_07dailylife_racket_1417&dic_wb_07dailylife_racket_1417&dic_wb_07dailylife_racket_1417",
+    "grades": [
+      "ES_G5"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Can you play racket? / A: Yes, I can play racket."
+    ],
+    "tags": [
+      "item",
+      "sports",
+      "tennis"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u12_15_racket_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u12_15_racket_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u12_15_racket_text.png",
+    "lemma": "racket",
+    "is_plural": false,
+    "letter_count": 6,
+    "syllable_count": 2,
+    "first_letter": "R",
+    "is_compound": false,
+    "phonics_initial": "r",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_07dailylife_racket_1417_1_c.png",
+    "primary_audio": "dic_wb_07dailylife_racket_1417.mp3",
+    "three_hints": {
+      "category_hint": "It is a sport or physical activity.",
+      "feature_hint": "An active sport known as 'ラケット' (らけっと) in Japanese.",
+      "letter_hint": "It starts with the letter R."
+    },
+    "target_dialogues": [
+      {
+        "question": "Can you play racket?",
+        "answer": "Yes, I can play racket.",
+        "context": "Asking about sports interests and skills"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u12_15_racket_illust.png",
+        "card_full": "cards/full/hwg5_u12_15_racket_full.png",
+        "card_text": "cards/text/hwg5_u12_15_racket_text.png",
+        "unit": "Unit 12: Unit 12: Things Around You",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_07dailylife_racket_1417.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0707",
+    "english": "archery",
+    "canonical_key": "archery",
+    "disambiguation": "",
+    "display_label": "archery",
+    "normalized_english": "archery",
+    "part_of_speech": "noun",
+    "category": "08_sports",
+    "category_name": "Sports & Activities",
+    "ja_kanji": "アーチェリー",
+    "ja_hiragana": "あーちぇりー",
+    "en_katakana": "アーチェリー",
+    "ruby": [
+      {
+        "base": "アーチェリー",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "アーチェリー",
+    "ruby_text": "アーチェリー",
+    "sound_file": "dic_wb_08sports_archery_1389.mp3",
+    "card_image": "dic_wb_08sports_archery_1389_1_c.png",
+    "card_image_kana": "dic_wb_08sports_archery_1389_1_c.png",
+    "card_image_en": "dic_wb_08sports_archery_1389_1_e.png",
+    "card_image_bilingual": "dic_wb_08sports_archery_1389_1_ce.png",
+    "card_variants": [
+      "dic_wb_08sports_archery_1389_1.png"
+    ],
+    "token": "dic_wb_08sports_archery_1389&dic_wb_08sports_archery_1389&dic_wb_08sports_archery_1389",
+    "grades": [
+      "ES_G3"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Can you play archery? / A: Yes, I can play archery."
+    ],
+    "tags": [
+      "sports"
+    ],
+    "lemma": "archery",
+    "is_plural": false,
+    "letter_count": 7,
+    "syllable_count": 3,
+    "first_letter": "A",
+    "is_compound": false,
+    "phonics_initial": "a",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_08sports_archery_1389_1_c.png",
+    "primary_audio": "dic_wb_08sports_archery_1389.mp3",
+    "three_hints": {
+      "category_hint": "It is a sport or physical activity.",
+      "feature_hint": "An active sport known as 'アーチェリー' (あーちぇりー) in Japanese.",
+      "letter_hint": "It starts with the letter A."
+    },
+    "target_dialogues": [
+      {
+        "question": "Can you play archery?",
+        "answer": "Yes, I can play archery.",
+        "context": "Asking about sports interests and skills"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_wb_08sports_archery_1389_1_c.png",
+        "sound_file": "dic_wb_08sports_archery_1389.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_wb_08sports_archery_1389_1_ce.png",
+        "card_bw": "dic_wb_08sports_archery_1389_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0708",
+    "english": "athletics",
+    "canonical_key": "athletics",
+    "disambiguation": "",
+    "display_label": "athletics",
+    "normalized_english": "athletics",
+    "part_of_speech": "noun",
+    "category": "08_sports",
+    "category_name": "Sports & Activities",
+    "ja_kanji": "陸上競技",
+    "ja_hiragana": "りくじょうきょうぎ",
+    "en_katakana": "アスレティクス",
+    "ruby": [
+      {
+        "base": "陸上競技",
+        "ruby": "りくじょうきょうぎ"
+      }
+    ],
+    "ruby_html": "<ruby>陸上競技<rt>りくじょうきょうぎ</rt></ruby>",
+    "ruby_text": "[陸上競技|りくじょうきょうぎ]",
+    "sound_file": "dic_wb_08sports_athletics_1390.mp3",
+    "card_image": "dic_wb_08sports_athletics_1390_1_c.png",
+    "card_image_kana": "dic_wb_08sports_athletics_1390_1_c.png",
+    "card_image_en": "dic_wb_08sports_athletics_1390_1_e.png",
+    "card_image_bilingual": "dic_wb_08sports_athletics_1390_1_ce.png",
+    "card_variants": [
+      "dic_wb_08sports_athletics_1390_1.png"
+    ],
+    "token": "dic_wb_08sports_athletics_1390&dic_wb_08sports_athletics_1390&dic_wb_08sports_athletics_1390",
+    "grades": [
+      "ES_G3"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Can you play athletics? / A: Yes, I can play athletics."
+    ],
+    "tags": [
+      "sports"
+    ],
+    "lemma": "athletics",
+    "is_plural": false,
+    "letter_count": 9,
+    "syllable_count": 3,
+    "first_letter": "A",
+    "is_compound": false,
+    "phonics_initial": "a",
+    "difficulty_tier": 3,
+    "primary_image": "dic_wb_08sports_athletics_1390_1_c.png",
+    "primary_audio": "dic_wb_08sports_athletics_1390.mp3",
+    "three_hints": {
+      "category_hint": "It is a sport or physical activity.",
+      "feature_hint": "An active sport known as '陸上競技' (りくじょうきょうぎ) in Japanese.",
+      "letter_hint": "It starts with the letter A."
+    },
+    "target_dialogues": [
+      {
+        "question": "Can you play athletics?",
+        "answer": "Yes, I can play athletics.",
+        "context": "Asking about sports interests and skills"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_wb_08sports_athletics_1390_1_c.png",
+        "sound_file": "dic_wb_08sports_athletics_1390.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_wb_08sports_athletics_1390_1_ce.png",
+        "card_bw": "dic_wb_08sports_athletics_1390_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0709",
+    "english": "badminton",
+    "canonical_key": "badminton",
+    "disambiguation": "",
+    "display_label": "badminton",
+    "normalized_english": "badminton",
+    "part_of_speech": "noun",
+    "category": "08_sports",
+    "category_name": "Sports & Activities",
+    "ja_kanji": "バドミントン",
+    "ja_hiragana": "ばどみんとん",
+    "en_katakana": "バドミントン",
+    "ruby": [
+      {
+        "base": "バドミントン",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "バドミントン",
+    "ruby_text": "バドミントン",
+    "sound_file": "dic_wb_08sports_badminton_1391.mp3",
+    "card_image": "dic_wb_08sports_badminton_1391_1_c.png",
+    "card_image_kana": "dic_wb_08sports_badminton_1391_1_c.png",
+    "card_image_en": "dic_wb_08sports_badminton_1391_1_e.png",
+    "card_image_bilingual": "dic_wb_08sports_badminton_1391_1_ce.png",
+    "card_variants": [
+      "dic_wb_08sports_badminton_1391_1.png"
+    ],
+    "token": "dic_wb_08sports_badminton_1391&dic_wb_08sports_badminton_1391&dic_wb_08sports_badminton_1391",
+    "grades": [
+      "ES_G5"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Can you play badminton? / A: Yes, I can play badminton."
+    ],
+    "tags": [
+      "racket",
+      "sports"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u04_08_badminton_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u04_08_badminton_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u04_08_badminton_text.png",
+    "lemma": "badminton",
+    "is_plural": false,
+    "letter_count": 9,
+    "syllable_count": 3,
+    "first_letter": "B",
+    "is_compound": false,
+    "phonics_initial": "b",
+    "difficulty_tier": 3,
+    "primary_image": "dic_wb_08sports_badminton_1391_1_c.png",
+    "primary_audio": "dic_wb_08sports_badminton_1391.mp3",
+    "three_hints": {
+      "category_hint": "It is a sport or physical activity.",
+      "feature_hint": "An active sport known as 'バドミントン' (ばどみんとん) in Japanese.",
+      "letter_hint": "It starts with the letter B."
+    },
+    "target_dialogues": [
+      {
+        "question": "Can you play badminton?",
+        "answer": "Yes, I can play badminton.",
+        "context": "Asking about sports interests and skills"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u04_08_badminton_illust.png",
+        "card_full": "cards/full/hwg5_u04_08_badminton_full.png",
+        "card_text": "cards/text/hwg5_u04_08_badminton_text.png",
+        "unit": "Unit 4: Unit 4: Sports",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_08sports_badminton_1391.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0710",
+    "english": "baseball",
+    "canonical_key": "baseball",
+    "disambiguation": "",
+    "display_label": "baseball",
+    "normalized_english": "baseball",
+    "part_of_speech": "noun",
+    "category": "08_sports",
+    "category_name": "Sports & Activities",
+    "ja_kanji": "野球",
+    "ja_hiragana": "やきゅう",
+    "en_katakana": "ベースボール",
+    "ruby": [
+      {
+        "base": "野球",
+        "ruby": "やきゅう"
+      }
+    ],
+    "ruby_html": "<ruby>野球<rt>やきゅう</rt></ruby>",
+    "ruby_text": "[野球|やきゅう]",
+    "sound_file": "dic_wb_08sports_baseball_1392.mp3",
+    "card_image": "dic_wb_08sports_baseball_1392_1_c.png",
+    "card_image_kana": "dic_wb_08sports_baseball_1392_1_c.png",
+    "card_image_en": "dic_wb_08sports_baseball_1392_1_e.png",
+    "card_image_bilingual": "dic_wb_08sports_baseball_1392_1_ce.png",
+    "card_variants": [
+      "dic_wb_08sports_baseball_1392_1.png",
+      "dic_3_card_baseball_2034_1.png"
+    ],
+    "token": "dic_wb_08sports_baseball_1392&dic_wb_08sports_baseball_1392&dic_wb_08sports_baseball_1392",
+    "grades": [
+      "ES_G3",
+      "ES_G5"
+    ],
+    "themes": [
+      "I like blue. すきなものをつたえよう"
+    ],
+    "target_sentences": [
+      "Q: Can you play baseball? / A: Yes, I can play baseball."
+    ],
+    "tags": [
+      "ball_game",
+      "sports"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u04_00_baseball_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u04_00_baseball_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u04_00_baseball_text.png",
+    "lemma": "baseball",
+    "is_plural": false,
+    "letter_count": 8,
+    "syllable_count": 2,
+    "first_letter": "B",
+    "is_compound": false,
+    "phonics_initial": "b",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_08sports_baseball_1392_1_c.png",
+    "primary_audio": "dic_wb_08sports_baseball_1392.mp3",
+    "three_hints": {
+      "category_hint": "It is a sport or physical activity.",
+      "feature_hint": "An active sport known as '野球' (やきゅう) in Japanese.",
+      "letter_hint": "It starts with the letter B."
+    },
+    "target_dialogues": [
+      {
+        "question": "Can you play baseball?",
+        "answer": "Yes, I can play baseball.",
+        "context": "Asking about sports interests and skills"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_baseball_2034_1_c.png",
+        "sound_file": "dic_wb_08sports_baseball_1392.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_baseball_2034_1_ce.png",
+        "card_bw": "dic_3_card_baseball_2034_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u04_00_baseball_illust.png",
+        "card_full": "cards/full/hwg5_u04_00_baseball_full.png",
+        "card_text": "cards/text/hwg5_u04_00_baseball_text.png",
+        "unit": "Unit 4: Unit 4: Sports",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_08sports_baseball_1392.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0711",
+    "english": "basketball",
+    "canonical_key": "basketball",
+    "disambiguation": "",
+    "display_label": "basketball",
+    "normalized_english": "basketball",
+    "part_of_speech": "noun",
+    "category": "08_sports",
+    "category_name": "Sports & Activities",
+    "ja_kanji": "バスケットボール",
+    "ja_hiragana": "ばすけっとぼーる",
+    "en_katakana": "バスケットボール",
+    "ruby": [
+      {
+        "base": "バスケットボール",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "バスケットボール",
+    "ruby_text": "バスケットボール",
+    "sound_file": "dic_wb_08sports_basketball_1393.mp3",
+    "card_image": "dic_wb_08sports_basketball_1393_1_c.png",
+    "card_image_kana": "dic_wb_08sports_basketball_1393_1_c.png",
+    "card_image_en": "dic_wb_08sports_basketball_1393_1_e.png",
+    "card_image_bilingual": "dic_wb_08sports_basketball_1393_1_ce.png",
+    "card_variants": [
+      "dic_wb_08sports_basketball_1393_1.png",
+      "dic_3_card_basketball_2037_1.png"
+    ],
+    "token": "dic_wb_08sports_basketball_1393&dic_wb_08sports_basketball_1393&dic_wb_08sports_basketball_1393",
+    "grades": [
+      "ES_G3",
+      "ES_G5"
+    ],
+    "themes": [
+      "I like blue. すきなものをつたえよう"
+    ],
+    "target_sentences": [
+      "Q: Can you play basketball? / A: Yes, I can play basketball."
+    ],
+    "tags": [
+      "ball_game",
+      "sports"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u04_01_basketball_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u04_01_basketball_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u04_01_basketball_text.png",
+    "lemma": "basketball",
+    "is_plural": false,
+    "letter_count": 10,
+    "syllable_count": 3,
+    "first_letter": "B",
+    "is_compound": false,
+    "phonics_initial": "b",
+    "difficulty_tier": 3,
+    "primary_image": "dic_wb_08sports_basketball_1393_1_c.png",
+    "primary_audio": "dic_wb_08sports_basketball_1393.mp3",
+    "three_hints": {
+      "category_hint": "It is a sport or physical activity.",
+      "feature_hint": "An active sport known as 'バスケットボール' (ばすけっとぼーる) in Japanese.",
+      "letter_hint": "It starts with the letter B."
+    },
+    "target_dialogues": [
+      {
+        "question": "Can you play basketball?",
+        "answer": "Yes, I can play basketball.",
+        "context": "Asking about sports interests and skills"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_basketball_2037_1_c.png",
+        "sound_file": "dic_wb_08sports_basketball_1393.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_basketball_2037_1_ce.png",
+        "card_bw": "dic_3_card_basketball_2037_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u04_01_basketball_illust.png",
+        "card_full": "cards/full/hwg5_u04_01_basketball_full.png",
+        "card_text": "cards/text/hwg5_u04_01_basketball_text.png",
+        "unit": "Unit 4: Unit 4: Sports",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_08sports_basketball_1393.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0712",
+    "english": "boxing",
+    "canonical_key": "boxing",
+    "disambiguation": "",
+    "display_label": "boxing",
+    "normalized_english": "boxing",
+    "part_of_speech": "noun",
+    "category": "08_sports",
+    "category_name": "Sports & Activities",
+    "ja_kanji": "ボクシング",
+    "ja_hiragana": "ぼくしんぐ",
+    "en_katakana": "ボクシング",
+    "ruby": [
+      {
+        "base": "ボクシング",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "ボクシング",
+    "ruby_text": "ボクシング",
+    "sound_file": "dic_wb_08sports_boxing_1394.mp3",
+    "card_image": "dic_wb_08sports_boxing_1394_1_c.png",
+    "card_image_kana": "dic_wb_08sports_boxing_1394_1_c.png",
+    "card_image_en": "dic_wb_08sports_boxing_1394_1_e.png",
+    "card_image_bilingual": "dic_wb_08sports_boxing_1394_1_ce.png",
+    "card_variants": [
+      "dic_wb_08sports_boxing_1394_1.png"
+    ],
+    "token": "dic_wb_08sports_boxing_1394&dic_wb_08sports_boxing_1394&dic_wb_08sports_boxing_1394",
+    "grades": [
+      "ES_G3"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Can you play boxing? / A: Yes, I can play boxing."
+    ],
+    "tags": [
+      "sports"
+    ],
+    "lemma": "boxing",
+    "is_plural": false,
+    "letter_count": 6,
+    "syllable_count": 2,
+    "first_letter": "B",
+    "is_compound": false,
+    "phonics_initial": "b",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_08sports_boxing_1394_1_c.png",
+    "primary_audio": "dic_wb_08sports_boxing_1394.mp3",
+    "three_hints": {
+      "category_hint": "It is a sport or physical activity.",
+      "feature_hint": "An active sport known as 'ボクシング' (ぼくしんぐ) in Japanese.",
+      "letter_hint": "It starts with the letter B."
+    },
+    "target_dialogues": [
+      {
+        "question": "Can you play boxing?",
+        "answer": "Yes, I can play boxing.",
+        "context": "Asking about sports interests and skills"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_wb_08sports_boxing_1394_1_c.png",
+        "sound_file": "dic_wb_08sports_boxing_1394.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_wb_08sports_boxing_1394_1_ce.png",
+        "card_bw": "dic_wb_08sports_boxing_1394_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0713",
+    "english": "canoe",
+    "canonical_key": "canoe",
+    "disambiguation": "",
+    "display_label": "canoe",
+    "normalized_english": "canoe",
+    "part_of_speech": "noun",
+    "category": "08_sports",
+    "category_name": "Sports & Activities",
+    "ja_kanji": "カヌー",
+    "ja_hiragana": "かぬー",
+    "en_katakana": "カヌー",
+    "ruby": [
+      {
+        "base": "カヌー",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "カヌー",
+    "ruby_text": "カヌー",
+    "sound_file": "dic_wb_08sports_canoe_1395.mp3",
+    "card_image": "dic_wb_08sports_canoe_1395_1_c.png",
+    "card_image_kana": "dic_wb_08sports_canoe_1395_1_c.png",
+    "card_image_en": "dic_wb_08sports_canoe_1395_1_e.png",
+    "card_image_bilingual": "dic_wb_08sports_canoe_1395_1_ce.png",
+    "card_variants": [
+      "dic_wb_08sports_canoe_1395_1.png"
+    ],
+    "token": "dic_wb_08sports_canoe_1395&dic_wb_08sports_canoe_1395&dic_wb_08sports_canoe_1395",
+    "grades": [
+      "ES_G3"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Can you play canoe? / A: Yes, I can play canoe."
+    ],
+    "tags": [
+      "sports",
+      "water"
+    ],
+    "lemma": "canoe",
+    "is_plural": false,
+    "letter_count": 5,
+    "syllable_count": 2,
+    "first_letter": "C",
+    "is_compound": false,
+    "phonics_initial": "c",
+    "difficulty_tier": 1,
+    "primary_image": "dic_wb_08sports_canoe_1395_1_c.png",
+    "primary_audio": "dic_wb_08sports_canoe_1395.mp3",
+    "three_hints": {
+      "category_hint": "It is a sport or physical activity.",
+      "feature_hint": "An active sport known as 'カヌー' (かぬー) in Japanese.",
+      "letter_hint": "It starts with the letter C."
+    },
+    "target_dialogues": [
+      {
+        "question": "Can you play canoe?",
+        "answer": "Yes, I can play canoe.",
+        "context": "Asking about sports interests and skills"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_wb_08sports_canoe_1395_1_c.png",
+        "sound_file": "dic_wb_08sports_canoe_1395.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_wb_08sports_canoe_1395_1_ce.png",
+        "card_bw": "dic_wb_08sports_canoe_1395_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0714",
+    "english": "climbing",
+    "canonical_key": "climbing",
+    "disambiguation": "",
+    "display_label": "climbing",
+    "normalized_english": "climbing",
+    "part_of_speech": "noun",
+    "category": "08_sports",
+    "category_name": "Sports & Activities",
+    "ja_kanji": "クライミング",
+    "ja_hiragana": "くらいみんぐ",
+    "en_katakana": "クライミング",
+    "ruby": [
+      {
+        "base": "クライミング",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "クライミング",
+    "ruby_text": "クライミング",
+    "sound_file": "dic_wb_08sports_climbing_1396.mp3",
+    "card_image": "dic_wb_08sports_climbing_1396_1_c.png",
+    "card_image_kana": "dic_wb_08sports_climbing_1396_1_c.png",
+    "card_image_en": "dic_wb_08sports_climbing_1396_1_e.png",
+    "card_image_bilingual": "dic_wb_08sports_climbing_1396_1_ce.png",
+    "card_variants": [
+      "dic_wb_08sports_climbing_1396_1.png"
+    ],
+    "token": "dic_wb_08sports_climbing_1396&dic_wb_08sports_climbing_1396&dic_wb_08sports_climbing_1396",
+    "grades": [
+      "ES_G3"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Can you play climbing? / A: Yes, I can play climbing."
+    ],
+    "tags": [
+      "sports"
+    ],
+    "lemma": "climbing",
+    "is_plural": false,
+    "letter_count": 8,
+    "syllable_count": 2,
+    "first_letter": "C",
+    "is_compound": false,
+    "phonics_initial": "cl",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_08sports_climbing_1396_1_c.png",
+    "primary_audio": "dic_wb_08sports_climbing_1396.mp3",
+    "three_hints": {
+      "category_hint": "It is a sport or physical activity.",
+      "feature_hint": "An active sport known as 'クライミング' (くらいみんぐ) in Japanese.",
+      "letter_hint": "It starts with the letter C."
+    },
+    "target_dialogues": [
+      {
+        "question": "Can you play climbing?",
+        "answer": "Yes, I can play climbing.",
+        "context": "Asking about sports interests and skills"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_wb_08sports_climbing_1396_1_c.png",
+        "sound_file": "dic_wb_08sports_climbing_1396.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_wb_08sports_climbing_1396_1_ce.png",
+        "card_bw": "dic_wb_08sports_climbing_1396_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0715",
+    "english": "cycling",
+    "canonical_key": "cycling",
+    "disambiguation": "",
+    "display_label": "cycling",
+    "normalized_english": "cycling",
+    "part_of_speech": "noun",
+    "category": "08_sports",
+    "category_name": "Sports & Activities",
+    "ja_kanji": "サイクリング",
+    "ja_hiragana": "さいくりんぐ",
+    "en_katakana": "サイクリング",
+    "ruby": [
+      {
+        "base": "サイクリング",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "サイクリング",
+    "ruby_text": "サイクリング",
+    "sound_file": "dic_wb_08sports_cycling_1397.mp3",
+    "card_image": "dic_wb_08sports_cycling_1397_1_c.png",
+    "card_image_kana": "dic_wb_08sports_cycling_1397_1_c.png",
+    "card_image_en": "dic_wb_08sports_cycling_1397_1_e.png",
+    "card_image_bilingual": "dic_wb_08sports_cycling_1397_1_ce.png",
+    "card_variants": [
+      "dic_wb_08sports_cycling_1397_1.png"
+    ],
+    "token": "dic_wb_08sports_cycling_1397&dic_wb_08sports_cycling_1397&dic_wb_08sports_cycling_1397",
+    "grades": [
+      "ES_G3"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Can you play cycling? / A: Yes, I can play cycling."
+    ],
+    "tags": [
+      "sports"
+    ],
+    "lemma": "cycling",
+    "is_plural": false,
+    "letter_count": 7,
+    "syllable_count": 2,
+    "first_letter": "C",
+    "is_compound": false,
+    "phonics_initial": "c",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_08sports_cycling_1397_1_c.png",
+    "primary_audio": "dic_wb_08sports_cycling_1397.mp3",
+    "three_hints": {
+      "category_hint": "It is a sport or physical activity.",
+      "feature_hint": "An active sport known as 'サイクリング' (さいくりんぐ) in Japanese.",
+      "letter_hint": "It starts with the letter C."
+    },
+    "target_dialogues": [
+      {
+        "question": "Can you play cycling?",
+        "answer": "Yes, I can play cycling.",
+        "context": "Asking about sports interests and skills"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_wb_08sports_cycling_1397_1_c.png",
+        "sound_file": "dic_wb_08sports_cycling_1397.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_wb_08sports_cycling_1397_1_ce.png",
+        "card_bw": "dic_wb_08sports_cycling_1397_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0716",
+    "english": "dodgeball",
+    "canonical_key": "dodgeball",
+    "disambiguation": "",
+    "display_label": "dodgeball",
+    "normalized_english": "dodgeball",
+    "part_of_speech": "noun",
+    "category": "08_sports",
+    "category_name": "Sports & Activities",
+    "ja_kanji": "ドッジボール",
+    "ja_hiragana": "どっじぼーる",
+    "en_katakana": "ドッジボール",
+    "ruby": [
+      {
+        "base": "ドッジボール",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "ドッジボール",
+    "ruby_text": "ドッジボール",
+    "sound_file": "dic_wb_08sports_dodgeball_1398.mp3",
+    "card_image": "dic_wb_08sports_dodgeball_1398_1_c.png",
+    "card_image_kana": "dic_wb_08sports_dodgeball_1398_1_c.png",
+    "card_image_en": "dic_wb_08sports_dodgeball_1398_1_e.png",
+    "card_image_bilingual": "dic_wb_08sports_dodgeball_1398_1_ce.png",
+    "card_variants": [
+      "dic_wb_08sports_dodgeball_1398_1.png"
+    ],
+    "token": "dic_wb_08sports_dodgeball_1398&dic_wb_08sports_dodgeball_1398&dic_wb_08sports_dodgeball_1398",
+    "grades": [
+      "ES_G3",
+      "ES_G5"
+    ],
+    "themes": [
+      "I like blue. すきなものをつたえよう"
+    ],
+    "target_sentences": [
+      "Q: Can you play dodgeball? / A: Yes, I can play dodgeball."
+    ],
+    "tags": [
+      "ball_game",
+      "sports"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u04_02_dodgeball_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u04_02_dodgeball_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u04_02_dodgeball_text.png",
+    "lemma": "dodgeball",
+    "is_plural": false,
+    "letter_count": 9,
+    "syllable_count": 2,
+    "first_letter": "D",
+    "is_compound": false,
+    "phonics_initial": "d",
+    "difficulty_tier": 3,
+    "primary_image": "dic_wb_08sports_dodgeball_1398_1_c.png",
+    "primary_audio": "dic_wb_08sports_dodgeball_1398.mp3",
+    "three_hints": {
+      "category_hint": "It is a sport or physical activity.",
+      "feature_hint": "An active sport known as 'ドッジボール' (どっじぼーる) in Japanese.",
+      "letter_hint": "It starts with the letter D."
+    },
+    "target_dialogues": [
+      {
+        "question": "Can you play dodgeball?",
+        "answer": "Yes, I can play dodgeball.",
+        "context": "Asking about sports interests and skills"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_wb_08sports_dodgeball_1398_1_c.png",
+        "sound_file": "dic_wb_08sports_dodgeball_1398.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_wb_08sports_dodgeball_1398_1_ce.png",
+        "card_bw": "dic_wb_08sports_dodgeball_1398_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u04_02_dodgeball_illust.png",
+        "card_full": "cards/full/hwg5_u04_02_dodgeball_full.png",
+        "card_text": "cards/text/hwg5_u04_02_dodgeball_text.png",
+        "unit": "Unit 4: Unit 4: Sports",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_08sports_dodgeball_1398.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0717",
+    "english": "football",
+    "canonical_key": "football",
+    "disambiguation": "",
+    "display_label": "football",
+    "normalized_english": "football",
+    "part_of_speech": "noun",
+    "category": "08_sports",
+    "category_name": "Sports & Activities",
+    "ja_kanji": "サッカー",
+    "ja_hiragana": "さっかー",
+    "en_katakana": "フットボール",
+    "ruby": [
+      {
+        "base": "サッカー",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "サッカー",
+    "ruby_text": "サッカー",
+    "sound_file": "dic_wb_08sports_football_1399.mp3",
+    "card_image": "dic_wb_08sports_football_1399_1_c.png",
+    "card_image_kana": "dic_wb_08sports_football_1399_1_c.png",
+    "card_image_en": "dic_wb_08sports_football_1399_1_e.png",
+    "card_image_bilingual": "dic_wb_08sports_football_1399_1_ce.png",
+    "card_variants": [
+      "dic_wb_08sports_football_1399_1.png"
+    ],
+    "token": "dic_wb_08sports_football_1399&dic_wb_08sports_football_1399&dic_wb_08sports_football_1399",
+    "grades": [
+      "ES_G3"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Can you play football? / A: Yes, I can play football."
+    ],
+    "tags": [
+      "ball_game",
+      "sports"
+    ],
+    "lemma": "football",
+    "is_plural": false,
+    "letter_count": 8,
+    "syllable_count": 2,
+    "first_letter": "F",
+    "is_compound": false,
+    "phonics_initial": "f",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_08sports_football_1399_1_c.png",
+    "primary_audio": "dic_wb_08sports_football_1399.mp3",
+    "three_hints": {
+      "category_hint": "It is a sport or physical activity.",
+      "feature_hint": "An active sport known as 'サッカー' (さっかー) in Japanese.",
+      "letter_hint": "It starts with the letter F."
+    },
+    "target_dialogues": [
+      {
+        "question": "Can you play football?",
+        "answer": "Yes, I can play football.",
+        "context": "Asking about sports interests and skills"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_wb_08sports_football_1399_1_c.png",
+        "sound_file": "dic_wb_08sports_football_1399.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_wb_08sports_football_1399_1_ce.png",
+        "card_bw": "dic_wb_08sports_football_1399_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0718",
+    "english": "gymnastics",
+    "canonical_key": "gymnastics",
+    "disambiguation": "",
+    "display_label": "gymnastics",
+    "normalized_english": "gymnastics",
+    "part_of_speech": "noun",
+    "category": "08_sports",
+    "category_name": "Sports & Activities",
+    "ja_kanji": "体操",
+    "ja_hiragana": "たいそう",
+    "en_katakana": "ジムナスティクス",
+    "ruby": [
+      {
+        "base": "体操",
+        "ruby": "たいそう"
+      }
+    ],
+    "ruby_html": "<ruby>体操<rt>たいそう</rt></ruby>",
+    "ruby_text": "[体操|たいそう]",
+    "sound_file": "dic_wb_08sports_gymnastics_1400.mp3",
+    "card_image": "dic_wb_08sports_gymnastics_1400_1_c.png",
+    "card_image_kana": "dic_wb_08sports_gymnastics_1400_1_c.png",
+    "card_image_en": "dic_wb_08sports_gymnastics_1400_1_e.png",
+    "card_image_bilingual": "dic_wb_08sports_gymnastics_1400_1_ce.png",
+    "card_variants": [
+      "dic_wb_08sports_gymnastics_1400_1.png"
+    ],
+    "token": "dic_wb_08sports_gymnastics_1400&dic_wb_08sports_gymnastics_1400&dic_wb_08sports_gymnastics_1400",
+    "grades": [
+      "ES_G3"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Can you play gymnastics? / A: Yes, I can play gymnastics."
+    ],
+    "tags": [
+      "sports"
+    ],
+    "lemma": "gymnastics",
+    "is_plural": false,
+    "letter_count": 10,
+    "syllable_count": 3,
+    "first_letter": "G",
+    "is_compound": false,
+    "phonics_initial": "g",
+    "difficulty_tier": 3,
+    "primary_image": "dic_wb_08sports_gymnastics_1400_1_c.png",
+    "primary_audio": "dic_wb_08sports_gymnastics_1400.mp3",
+    "three_hints": {
+      "category_hint": "It is a sport or physical activity.",
+      "feature_hint": "An active sport known as '体操' (たいそう) in Japanese.",
+      "letter_hint": "It starts with the letter G."
+    },
+    "target_dialogues": [
+      {
+        "question": "Can you play gymnastics?",
+        "answer": "Yes, I can play gymnastics.",
+        "context": "Asking about sports interests and skills"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_wb_08sports_gymnastics_1400_1_c.png",
+        "sound_file": "dic_wb_08sports_gymnastics_1400.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_wb_08sports_gymnastics_1400_1_ce.png",
+        "card_bw": "dic_wb_08sports_gymnastics_1400_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0719",
+    "english": "marathon",
+    "canonical_key": "marathon",
+    "disambiguation": "",
+    "display_label": "marathon",
+    "normalized_english": "marathon",
+    "part_of_speech": "noun",
+    "category": "08_sports",
+    "category_name": "Sports & Activities",
+    "ja_kanji": "マラソン",
+    "ja_hiragana": "まらそん",
+    "en_katakana": "マラソン",
+    "ruby": [
+      {
+        "base": "マラソン",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "マラソン",
+    "ruby_text": "マラソン",
+    "sound_file": "dic_wb_08sports_marathon_1669.mp3",
+    "card_image": "dic_wb_08sports_marathon_1669_1_c.png",
+    "card_image_kana": "dic_wb_08sports_marathon_1669_1_c.png",
+    "card_image_en": "dic_wb_08sports_marathon_1669_1_e.png",
+    "card_image_bilingual": "dic_wb_08sports_marathon_1669_1_ce.png",
+    "card_variants": [
+      "dic_wb_08sports_marathon_1669_1.png"
+    ],
+    "token": "dic_wb_08sports_marathon_1669&dic_wb_08sports_marathon_1669&dic_wb_08sports_marathon_1669",
+    "grades": [
+      "ES_G3"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Can you play marathon? / A: Yes, I can play marathon."
+    ],
+    "tags": [
+      "sports"
+    ],
+    "lemma": "marathon",
+    "is_plural": false,
+    "letter_count": 8,
+    "syllable_count": 3,
+    "first_letter": "M",
+    "is_compound": false,
+    "phonics_initial": "m",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_08sports_marathon_1669_1_c.png",
+    "primary_audio": "dic_wb_08sports_marathon_1669.mp3",
+    "three_hints": {
+      "category_hint": "It is a sport or physical activity.",
+      "feature_hint": "An active sport known as 'マラソン' (まらそん) in Japanese.",
+      "letter_hint": "It starts with the letter M."
+    },
+    "target_dialogues": [
+      {
+        "question": "Can you play marathon?",
+        "answer": "Yes, I can play marathon.",
+        "context": "Asking about sports interests and skills"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_wb_08sports_marathon_1669_1_c.png",
+        "sound_file": "dic_wb_08sports_marathon_1669.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_wb_08sports_marathon_1669_1_ce.png",
+        "card_bw": "dic_wb_08sports_marathon_1669_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0720",
+    "english": "rugby",
+    "canonical_key": "rugby",
+    "disambiguation": "",
+    "display_label": "rugby",
+    "normalized_english": "rugby",
+    "part_of_speech": "noun",
+    "category": "08_sports",
+    "category_name": "Sports & Activities",
+    "ja_kanji": "ラグビー",
+    "ja_hiragana": "らぐびー",
+    "en_katakana": "ラグビー",
+    "ruby": [
+      {
+        "base": "ラグビー",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "ラグビー",
+    "ruby_text": "ラグビー",
+    "sound_file": "dic_wb_08sports_rugby_1401.mp3",
+    "card_image": "dic_wb_08sports_rugby_1401_1_c.png",
+    "card_image_kana": "dic_wb_08sports_rugby_1401_1_c.png",
+    "card_image_en": "dic_wb_08sports_rugby_1401_1_e.png",
+    "card_image_bilingual": "dic_wb_08sports_rugby_1401_1_ce.png",
+    "card_variants": [
+      "dic_wb_08sports_rugby_1401_1.png"
+    ],
+    "token": "dic_wb_08sports_rugby_1401&dic_wb_08sports_rugby_1401&dic_wb_08sports_rugby_1401",
+    "grades": [
+      "ES_G3"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Can you play rugby? / A: Yes, I can play rugby."
+    ],
+    "tags": [
+      "ball_game",
+      "sports"
+    ],
+    "lemma": "rugby",
+    "is_plural": false,
+    "letter_count": 5,
+    "syllable_count": 2,
+    "first_letter": "R",
+    "is_compound": false,
+    "phonics_initial": "r",
+    "difficulty_tier": 1,
+    "primary_image": "dic_wb_08sports_rugby_1401_1_c.png",
+    "primary_audio": "dic_wb_08sports_rugby_1401.mp3",
+    "three_hints": {
+      "category_hint": "It is a sport or physical activity.",
+      "feature_hint": "An active sport known as 'ラグビー' (らぐびー) in Japanese.",
+      "letter_hint": "It starts with the letter R."
+    },
+    "target_dialogues": [
+      {
+        "question": "Can you play rugby?",
+        "answer": "Yes, I can play rugby.",
+        "context": "Asking about sports interests and skills"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_wb_08sports_rugby_1401_1_c.png",
+        "sound_file": "dic_wb_08sports_rugby_1401.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_wb_08sports_rugby_1401_1_ce.png",
+        "card_bw": "dic_wb_08sports_rugby_1401_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0721",
+    "english": "sailing",
+    "canonical_key": "sailing",
+    "disambiguation": "",
+    "display_label": "sailing",
+    "normalized_english": "sailing",
+    "part_of_speech": "noun",
+    "category": "08_sports",
+    "category_name": "Sports & Activities",
+    "ja_kanji": "セーリング",
+    "ja_hiragana": "せーりんぐ",
+    "en_katakana": "セーリング",
+    "ruby": [
+      {
+        "base": "セーリング",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "セーリング",
+    "ruby_text": "セーリング",
+    "sound_file": "dic_wb_08sports_sailing_1402.mp3",
+    "card_image": "dic_wb_08sports_sailing_1402_1_c.png",
+    "card_image_kana": "dic_wb_08sports_sailing_1402_1_c.png",
+    "card_image_en": "dic_wb_08sports_sailing_1402_1_e.png",
+    "card_image_bilingual": "dic_wb_08sports_sailing_1402_1_ce.png",
+    "card_variants": [
+      "dic_wb_08sports_sailing_1402_1.png"
+    ],
+    "token": "dic_wb_08sports_sailing_1402&dic_wb_08sports_sailing_1402&dic_wb_08sports_sailing_1402",
+    "grades": [
+      "ES_G3"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Can you play sailing? / A: Yes, I can play sailing."
+    ],
+    "tags": [
+      "sports",
+      "water"
+    ],
+    "lemma": "sailing",
+    "is_plural": false,
+    "letter_count": 7,
+    "syllable_count": 2,
+    "first_letter": "S",
+    "is_compound": false,
+    "phonics_initial": "s",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_08sports_sailing_1402_1_c.png",
+    "primary_audio": "dic_wb_08sports_sailing_1402.mp3",
+    "three_hints": {
+      "category_hint": "It is a sport or physical activity.",
+      "feature_hint": "An active sport known as 'セーリング' (せーりんぐ) in Japanese.",
+      "letter_hint": "It starts with the letter S."
+    },
+    "target_dialogues": [
+      {
+        "question": "Can you play sailing?",
+        "answer": "Yes, I can play sailing.",
+        "context": "Asking about sports interests and skills"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_wb_08sports_sailing_1402_1_c.png",
+        "sound_file": "dic_wb_08sports_sailing_1402.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_wb_08sports_sailing_1402_1_ce.png",
+        "card_bw": "dic_wb_08sports_sailing_1402_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0722",
+    "english": "soccer",
+    "canonical_key": "soccer",
+    "disambiguation": "",
+    "display_label": "soccer",
+    "normalized_english": "soccer",
+    "part_of_speech": "noun",
+    "category": "08_sports",
+    "category_name": "Sports & Activities",
+    "ja_kanji": "サッカー",
+    "ja_hiragana": "さっかー",
+    "en_katakana": "サッカー",
+    "ruby": [
+      {
+        "base": "サッカー",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "サッカー",
+    "ruby_text": "サッカー",
+    "sound_file": "dic_wb_08sports_soccer_1403.mp3",
+    "card_image": "dic_wb_08sports_soccer_1403_1_c.png",
+    "card_image_kana": "dic_wb_08sports_soccer_1403_1_c.png",
+    "card_image_en": "dic_wb_08sports_soccer_1403_1_e.png",
+    "card_image_bilingual": "dic_wb_08sports_soccer_1403_1_ce.png",
+    "card_variants": [
+      "dic_wb_08sports_soccer_1403_1.png",
+      "dic_3_card_soccer_2036_1.png"
+    ],
+    "token": "dic_wb_08sports_soccer_1403&dic_wb_08sports_soccer_1403&dic_wb_08sports_soccer_1403",
+    "grades": [
+      "ES_G3",
+      "ES_G5"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Can you play soccer? / A: Yes, I can play soccer."
+    ],
+    "tags": [
+      "ball_game",
+      "sports"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u04_04_soccer_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u04_04_soccer_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u04_04_soccer_text.png",
+    "lemma": "soccer",
+    "is_plural": false,
+    "letter_count": 6,
+    "syllable_count": 2,
+    "first_letter": "S",
+    "is_compound": false,
+    "phonics_initial": "s",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_08sports_soccer_1403_1_c.png",
+    "primary_audio": "dic_wb_08sports_soccer_1403.mp3",
+    "three_hints": {
+      "category_hint": "It is a sport or physical activity.",
+      "feature_hint": "An active sport known as 'サッカー' (さっかー) in Japanese.",
+      "letter_hint": "It starts with the letter S."
+    },
+    "target_dialogues": [
+      {
+        "question": "Can you play soccer?",
+        "answer": "Yes, I can play soccer.",
+        "context": "Asking about sports interests and skills"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_soccer_2036_1_c.png",
+        "sound_file": "dic_wb_08sports_soccer_1403.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_soccer_2036_1_ce.png",
+        "card_bw": "dic_3_card_soccer_2036_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u04_04_soccer_illust.png",
+        "card_full": "cards/full/hwg5_u04_04_soccer_full.png",
+        "card_text": "cards/text/hwg5_u04_04_soccer_text.png",
+        "unit": "Unit 4: Unit 4: Sports",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_08sports_soccer_1403.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0723",
+    "english": "surfing",
+    "canonical_key": "surfing",
+    "disambiguation": "",
+    "display_label": "surfing",
+    "normalized_english": "surfing",
+    "part_of_speech": "noun",
+    "category": "08_sports",
+    "category_name": "Sports & Activities",
+    "ja_kanji": "サーフィン",
+    "ja_hiragana": "さーふぃん",
+    "en_katakana": "サーフィン",
+    "ruby": [
+      {
+        "base": "サーフィン",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "サーフィン",
+    "ruby_text": "サーフィン",
+    "sound_file": "dic_wb_08sports_surfing_1404.mp3",
+    "card_image": "dic_wb_08sports_surfing_1404_1_c.png",
+    "card_image_kana": "dic_wb_08sports_surfing_1404_1_c.png",
+    "card_image_en": "dic_wb_08sports_surfing_1404_1_e.png",
+    "card_image_bilingual": "dic_wb_08sports_surfing_1404_1_ce.png",
+    "card_variants": [
+      "dic_wb_08sports_surfing_1404_1.png"
+    ],
+    "token": "dic_wb_08sports_surfing_1404&dic_wb_08sports_surfing_1404&dic_wb_08sports_surfing_1404",
+    "grades": [
+      "ES_G3"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Can you play surfing? / A: Yes, I can play surfing."
+    ],
+    "tags": [
+      "sports",
+      "water"
+    ],
+    "lemma": "surfing",
+    "is_plural": false,
+    "letter_count": 7,
+    "syllable_count": 2,
+    "first_letter": "S",
+    "is_compound": false,
+    "phonics_initial": "s",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_08sports_surfing_1404_1_c.png",
+    "primary_audio": "dic_wb_08sports_surfing_1404.mp3",
+    "three_hints": {
+      "category_hint": "It is a sport or physical activity.",
+      "feature_hint": "An active sport known as 'サーフィン' (さーふぃん) in Japanese.",
+      "letter_hint": "It starts with the letter S."
+    },
+    "target_dialogues": [
+      {
+        "question": "Can you play surfing?",
+        "answer": "Yes, I can play surfing.",
+        "context": "Asking about sports interests and skills"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_wb_08sports_surfing_1404_1_c.png",
+        "sound_file": "dic_wb_08sports_surfing_1404.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_wb_08sports_surfing_1404_1_ce.png",
+        "card_bw": "dic_wb_08sports_surfing_1404_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0724",
+    "english": "swimming",
+    "canonical_key": "swimming",
+    "disambiguation": "",
+    "display_label": "swimming",
+    "normalized_english": "swimming",
+    "part_of_speech": "noun",
+    "category": "08_sports",
+    "category_name": "Sports & Activities",
+    "ja_kanji": "水泳",
+    "ja_hiragana": "すいえい",
+    "en_katakana": "スイミング",
+    "ruby": [
+      {
+        "base": "水泳",
+        "ruby": "すいえい"
+      }
+    ],
+    "ruby_html": "<ruby>水泳<rt>すいえい</rt></ruby>",
+    "ruby_text": "[水泳|すいえい]",
+    "sound_file": "dic_wb_08sports_swimming_1405.mp3",
+    "card_image": "dic_wb_08sports_swimming_1405_1_c.png",
+    "card_image_kana": "dic_wb_08sports_swimming_1405_1_c.png",
+    "card_image_en": "dic_wb_08sports_swimming_1405_1_e.png",
+    "card_image_bilingual": "dic_wb_08sports_swimming_1405_1_ce.png",
+    "card_variants": [
+      "dic_wb_08sports_swimming_1405_1.png",
+      "dic_3_card_swimming_2038_1.png"
+    ],
+    "token": "dic_wb_08sports_swimming_1405&dic_wb_08sports_swimming_1405&dic_wb_08sports_swimming_1405",
+    "grades": [
+      "ES_G3",
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [
+      "I like blue. すきなものをつたえよう"
+    ],
+    "target_sentences": [
+      "Q: Do you like swimming? / A: Yes, I like swimming."
+    ],
+    "tags": [
+      "sports",
+      "water"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u04_05_swimming_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u04_05_swimming_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u04_05_swimming_text.png",
+    "lemma": "swim",
+    "is_plural": false,
+    "letter_count": 8,
+    "syllable_count": 2,
+    "first_letter": "S",
+    "is_compound": false,
+    "phonics_initial": "sw",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_08sports_swimming_1405_1_c.png",
+    "primary_audio": "dic_wb_08sports_swimming_1405.mp3",
+    "three_hints": {
+      "category_hint": "It is a sport or physical activity.",
+      "feature_hint": "An active sport known as '水泳' (すいえい) in Japanese.",
+      "letter_hint": "It starts with the letter S."
+    },
+    "target_dialogues": [
+      {
+        "question": "Do you like swimming?",
+        "answer": "Yes, I like swimming.",
+        "context": "Asking about sports interests and skills"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_swimming_2038_1_c.png",
+        "sound_file": "dic_wb_08sports_swimming_1405.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_swimming_2038_1_ce.png",
+        "card_bw": "dic_3_card_swimming_2038_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u04_05_swimming_illust.png",
+        "card_full": "cards/full/hwg5_u04_05_swimming_full.png",
+        "card_text": "cards/text/hwg5_u04_05_swimming_text.png",
+        "unit": "Unit 4: Unit 4: Sports",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_08sports_swimming_1405.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u02_02_swimming_illust.png",
+        "card_full": "cards/full/hwg6_u02_02_swimming_full.png",
+        "card_text": "cards/text/hwg6_u02_02_swimming_text.png",
+        "unit": "Unit 2: Unit 2: Skills",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_08sports_swimming_1405.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0725",
+    "english": "table tennis",
+    "canonical_key": "table tennis",
+    "disambiguation": "",
+    "display_label": "table tennis",
+    "normalized_english": "table tennis",
+    "part_of_speech": "noun",
+    "category": "08_sports",
+    "category_name": "Sports & Activities",
+    "ja_kanji": "卓球",
+    "ja_hiragana": "たっきゅう",
+    "en_katakana": "テーブルテニス",
+    "ruby": [
+      {
+        "base": "卓球",
+        "ruby": "たっきゅう"
+      }
+    ],
+    "ruby_html": "<ruby>卓球<rt>たっきゅう</rt></ruby>",
+    "ruby_text": "[卓球|たっきゅう]",
+    "sound_file": "dic_wb_08sports_tabletennis_1406.mp3",
+    "card_image": "dic_wb_08sports_tabletennis_1406_1_c.png",
+    "card_image_kana": "dic_wb_08sports_tabletennis_1406_1_c.png",
+    "card_image_en": "dic_wb_08sports_tabletennis_1406_1_e.png",
+    "card_image_bilingual": "dic_wb_08sports_tabletennis_1406_1_ce.png",
+    "card_variants": [
+      "dic_wb_08sports_tabletennis_1406_1.png",
+      "dic_3_card_tabletennis_2066_1.png"
+    ],
+    "token": "dic_wb_08sports_tabletennis_1406&dic_wb_08sports_tabletennis_1406&dic_wb_08sports_tabletennis_1406",
+    "grades": [
+      "ES_G3",
+      "ES_G5"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Can you play table tennis? / A: Yes, I can play table tennis."
+    ],
+    "tags": [
+      "sports"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u04_06_table_tennis_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u04_06_table_tennis_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u04_06_table_tennis_text.png",
+    "lemma": "table tennis",
+    "is_plural": false,
+    "letter_count": 11,
+    "syllable_count": 4,
+    "first_letter": "T",
+    "is_compound": true,
+    "phonics_initial": "t",
+    "difficulty_tier": 3,
+    "primary_image": "dic_wb_08sports_tabletennis_1406_1_c.png",
+    "primary_audio": "dic_wb_08sports_tabletennis_1406.mp3",
+    "three_hints": {
+      "category_hint": "It is a sport or physical activity.",
+      "feature_hint": "An active sport known as '卓球' (たっきゅう) in Japanese.",
+      "letter_hint": "It starts with the letter T."
+    },
+    "target_dialogues": [
+      {
+        "question": "Can you play table tennis?",
+        "answer": "Yes, I can play table tennis.",
+        "context": "Asking about sports interests and skills"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_tabletennis_2066_1_c.png",
+        "sound_file": "dic_wb_08sports_tabletennis_1406.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_tabletennis_2066_1_ce.png",
+        "card_bw": "dic_3_card_tabletennis_2066_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u04_06_table_tennis_illust.png",
+        "card_full": "cards/full/hwg5_u04_06_table_tennis_full.png",
+        "card_text": "cards/text/hwg5_u04_06_table_tennis_text.png",
+        "unit": "Unit 4: Unit 4: Sports",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_08sports_tabletennis_1406.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0726",
+    "english": "tennis",
+    "canonical_key": "tennis",
+    "disambiguation": "",
+    "display_label": "tennis",
+    "normalized_english": "tennis",
+    "part_of_speech": "noun",
+    "category": "08_sports",
+    "category_name": "Sports & Activities",
+    "ja_kanji": "テニス",
+    "ja_hiragana": "てにす",
+    "en_katakana": "テニス",
+    "ruby": [
+      {
+        "base": "テニス",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "テニス",
+    "ruby_text": "テニス",
+    "sound_file": "dic_wb_08sports_tennis_1407.mp3",
+    "card_image": "dic_wb_08sports_tennis_1407_1_c.png",
+    "card_image_kana": "dic_wb_08sports_tennis_1407_1_c.png",
+    "card_image_en": "dic_wb_08sports_tennis_1407_1_e.png",
+    "card_image_bilingual": "dic_wb_08sports_tennis_1407_1_ce.png",
+    "card_variants": [
+      "dic_wb_08sports_tennis_1407_1.png"
+    ],
+    "token": "dic_wb_08sports_tennis_1407&dic_wb_08sports_tennis_1407&dic_wb_08sports_tennis_1407",
+    "grades": [
+      "ES_G5"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Can you play tennis? / A: Yes, I can play tennis."
+    ],
+    "tags": [
+      "racket",
+      "sports"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u04_07_tennis_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u04_07_tennis_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u04_07_tennis_text.png",
+    "lemma": "tennis",
+    "is_plural": false,
+    "letter_count": 6,
+    "syllable_count": 2,
+    "first_letter": "T",
+    "is_compound": false,
+    "phonics_initial": "t",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_08sports_tennis_1407_1_c.png",
+    "primary_audio": "dic_wb_08sports_tennis_1407.mp3",
+    "three_hints": {
+      "category_hint": "It is a sport or physical activity.",
+      "feature_hint": "An active sport known as 'テニス' (てにす) in Japanese.",
+      "letter_hint": "It starts with the letter T."
+    },
+    "target_dialogues": [
+      {
+        "question": "Can you play tennis?",
+        "answer": "Yes, I can play tennis.",
+        "context": "Asking about sports interests and skills"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u04_07_tennis_illust.png",
+        "card_full": "cards/full/hwg5_u04_07_tennis_full.png",
+        "card_text": "cards/text/hwg5_u04_07_tennis_text.png",
+        "unit": "Unit 4: Unit 4: Sports",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_08sports_tennis_1407.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0727",
+    "english": "track and field",
+    "canonical_key": "track and field",
+    "disambiguation": "",
+    "display_label": "track and field",
+    "normalized_english": "track and field",
+    "part_of_speech": "noun",
+    "category": "08_sports",
+    "category_name": "Sports & Activities",
+    "ja_kanji": "陸上競技",
+    "ja_hiragana": "りくじょうきょうぎ",
+    "en_katakana": "トラックアンドフィールド",
+    "ruby": [
+      {
+        "base": "陸上競技",
+        "ruby": "りくじょうきょうぎ"
+      }
+    ],
+    "ruby_html": "<ruby>陸上競技<rt>りくじょうきょうぎ</rt></ruby>",
+    "ruby_text": "[陸上競技|りくじょうきょうぎ]",
+    "sound_file": "dic_wb_08sports_trackandfield_1408.mp3",
+    "card_image": "dic_wb_08sports_trackandfield_1408_1_c.png",
+    "card_image_kana": "dic_wb_08sports_trackandfield_1408_1_c.png",
+    "card_image_en": "dic_wb_08sports_trackandfield_1408_1_e.png",
+    "card_image_bilingual": "dic_wb_08sports_trackandfield_1408_1_ce.png",
+    "card_variants": [
+      "dic_wb_08sports_trackandfield_1408_1.png"
+    ],
+    "token": "dic_wb_08sports_trackandfield_1408&dic_wb_08sports_trackandfield_1408&dic_wb_08sports_trackandfield_1408",
+    "grades": [
+      "ES_G3"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Can you play track and field? / A: Yes, I can play track and field."
+    ],
+    "tags": [
+      "sports"
+    ],
+    "lemma": "track and field",
+    "is_plural": false,
+    "letter_count": 13,
+    "syllable_count": 3,
+    "first_letter": "T",
+    "is_compound": true,
+    "phonics_initial": "tr",
+    "difficulty_tier": 3,
+    "primary_image": "dic_wb_08sports_trackandfield_1408_1_c.png",
+    "primary_audio": "dic_wb_08sports_trackandfield_1408.mp3",
+    "three_hints": {
+      "category_hint": "It is a sport or physical activity.",
+      "feature_hint": "An active sport known as '陸上競技' (りくじょうきょうぎ) in Japanese.",
+      "letter_hint": "It starts with the letter T."
+    },
+    "target_dialogues": [
+      {
+        "question": "Can you play track and field?",
+        "answer": "Yes, I can play track and field.",
+        "context": "Asking about sports interests and skills"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_wb_08sports_trackandfield_1408_1_c.png",
+        "sound_file": "dic_wb_08sports_trackandfield_1408.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_wb_08sports_trackandfield_1408_1_ce.png",
+        "card_bw": "dic_wb_08sports_trackandfield_1408_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0728",
+    "english": "volleyball",
+    "canonical_key": "volleyball",
+    "disambiguation": "",
+    "display_label": "volleyball",
+    "normalized_english": "volleyball",
+    "part_of_speech": "noun",
+    "category": "08_sports",
+    "category_name": "Sports & Activities",
+    "ja_kanji": "バレーボール",
+    "ja_hiragana": "ばれーぼーる",
+    "en_katakana": "バレーボール",
+    "ruby": [
+      {
+        "base": "バレーボール",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "バレーボール",
+    "ruby_text": "バレーボール",
+    "sound_file": "dic_wb_08sports_volleyball_1409.mp3",
+    "card_image": "dic_wb_08sports_volleyball_1409_1_c.png",
+    "card_image_kana": "dic_wb_08sports_volleyball_1409_1_c.png",
+    "card_image_en": "dic_wb_08sports_volleyball_1409_1_e.png",
+    "card_image_bilingual": "dic_wb_08sports_volleyball_1409_1_ce.png",
+    "card_variants": [
+      "dic_wb_08sports_volleyball_1409_1.png",
+      "dic_3_card_volleyball_2067_1.png"
+    ],
+    "token": "dic_wb_08sports_volleyball_1409&dic_wb_08sports_volleyball_1409&dic_wb_08sports_volleyball_1409",
+    "grades": [
+      "ES_G3",
+      "ES_G5"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Can you play volleyball? / A: Yes, I can play volleyball."
+    ],
+    "tags": [
+      "ball_game",
+      "sports"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u04_03_volleyball_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u04_03_volleyball_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u04_03_volleyball_text.png",
+    "lemma": "volleyball",
+    "is_plural": false,
+    "letter_count": 10,
+    "syllable_count": 3,
+    "first_letter": "V",
+    "is_compound": false,
+    "phonics_initial": "v",
+    "difficulty_tier": 3,
+    "primary_image": "dic_wb_08sports_volleyball_1409_1_c.png",
+    "primary_audio": "dic_wb_08sports_volleyball_1409.mp3",
+    "three_hints": {
+      "category_hint": "It is a sport or physical activity.",
+      "feature_hint": "An active sport known as 'バレーボール' (ばれーぼーる) in Japanese.",
+      "letter_hint": "It starts with the letter V."
+    },
+    "target_dialogues": [
+      {
+        "question": "Can you play volleyball?",
+        "answer": "Yes, I can play volleyball.",
+        "context": "Asking about sports interests and skills"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_volleyball_2067_1_c.png",
+        "sound_file": "dic_wb_08sports_volleyball_1409.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_volleyball_2067_1_ce.png",
+        "card_bw": "dic_3_card_volleyball_2067_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u04_03_volleyball_illust.png",
+        "card_full": "cards/full/hwg5_u04_03_volleyball_full.png",
+        "card_text": "cards/text/hwg5_u04_03_volleyball_text.png",
+        "unit": "Unit 4: Unit 4: Sports",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_08sports_volleyball_1409.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0729",
+    "english": "weightlifting",
+    "canonical_key": "weightlifting",
+    "disambiguation": "",
+    "display_label": "weightlifting",
+    "normalized_english": "weightlifting",
+    "part_of_speech": "noun",
+    "category": "08_sports",
+    "category_name": "Sports & Activities",
+    "ja_kanji": "ウエイトリフティング",
+    "ja_hiragana": "うえいとりふてぃんぐ",
+    "en_katakana": "ウェイトリフティング",
+    "ruby": [
+      {
+        "base": "ウエイトリフティング",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "ウエイトリフティング",
+    "ruby_text": "ウエイトリフティング",
+    "sound_file": "dic_wb_08sports_weightlifting_1410.mp3",
+    "card_image": "dic_wb_08sports_weightlifting_1410_1_c.png",
+    "card_image_kana": "dic_wb_08sports_weightlifting_1410_1_c.png",
+    "card_image_en": "dic_wb_08sports_weightlifting_1410_1_e.png",
+    "card_image_bilingual": "dic_wb_08sports_weightlifting_1410_1_ce.png",
+    "card_variants": [
+      "dic_wb_08sports_weightlifting_1410_1.png"
+    ],
+    "token": "dic_wb_08sports_weightlifting_1410&dic_wb_08sports_weightlifting_1410&dic_wb_08sports_weightlifting_1410",
+    "grades": [
+      "ES_G3"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Can you play weightlifting? / A: Yes, I can play weightlifting."
+    ],
+    "tags": [
+      "sports"
+    ],
+    "lemma": "weightlifting",
+    "is_plural": false,
+    "letter_count": 13,
+    "syllable_count": 3,
+    "first_letter": "W",
+    "is_compound": false,
+    "phonics_initial": "w",
+    "difficulty_tier": 3,
+    "primary_image": "dic_wb_08sports_weightlifting_1410_1_c.png",
+    "primary_audio": "dic_wb_08sports_weightlifting_1410.mp3",
+    "three_hints": {
+      "category_hint": "It is a sport or physical activity.",
+      "feature_hint": "An active sport known as 'ウエイトリフティング' (うえいとりふてぃんぐ) in Japanese.",
+      "letter_hint": "It starts with the letter W."
+    },
+    "target_dialogues": [
+      {
+        "question": "Can you play weightlifting?",
+        "answer": "Yes, I can play weightlifting.",
+        "context": "Asking about sports interests and skills"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_wb_08sports_weightlifting_1410_1_c.png",
+        "sound_file": "dic_wb_08sports_weightlifting_1410.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_wb_08sports_weightlifting_1410_1_ce.png",
+        "card_bw": "dic_wb_08sports_weightlifting_1410_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0730",
+    "english": "wrestling",
+    "canonical_key": "wrestling",
+    "disambiguation": "",
+    "display_label": "wrestling",
+    "normalized_english": "wrestling",
+    "part_of_speech": "noun",
+    "category": "08_sports",
+    "category_name": "Sports & Activities",
+    "ja_kanji": "レスリング",
+    "ja_hiragana": "れすりんぐ",
+    "en_katakana": "レスリング",
+    "ruby": [
+      {
+        "base": "レスリング",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "レスリング",
+    "ruby_text": "レスリング",
+    "sound_file": "dic_wb_08sports_wrestling_1411.mp3",
+    "card_image": "dic_wb_08sports_wrestling_1411_1_c.png",
+    "card_image_kana": "dic_wb_08sports_wrestling_1411_1_c.png",
+    "card_image_en": "dic_wb_08sports_wrestling_1411_1_e.png",
+    "card_image_bilingual": "dic_wb_08sports_wrestling_1411_1_ce.png",
+    "card_variants": [
+      "dic_wb_08sports_wrestling_1411_1.png"
+    ],
+    "token": "dic_wb_08sports_wrestling_1411&dic_wb_08sports_wrestling_1411&dic_wb_08sports_wrestling_1411",
+    "grades": [
+      "ES_G3"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Can you play wrestling? / A: Yes, I can play wrestling."
+    ],
+    "tags": [
+      "sports"
+    ],
+    "lemma": "wrestling",
+    "is_plural": false,
+    "letter_count": 9,
+    "syllable_count": 2,
+    "first_letter": "W",
+    "is_compound": false,
+    "phonics_initial": "wr",
+    "difficulty_tier": 3,
+    "primary_image": "dic_wb_08sports_wrestling_1411_1_c.png",
+    "primary_audio": "dic_wb_08sports_wrestling_1411.mp3",
+    "three_hints": {
+      "category_hint": "It is a sport or physical activity.",
+      "feature_hint": "An active sport known as 'レスリング' (れすりんぐ) in Japanese.",
+      "letter_hint": "It starts with the letter W."
+    },
+    "target_dialogues": [
+      {
+        "question": "Can you play wrestling?",
+        "answer": "Yes, I can play wrestling.",
+        "context": "Asking about sports interests and skills"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_wb_08sports_wrestling_1411_1_c.png",
+        "sound_file": "dic_wb_08sports_wrestling_1411.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_wb_08sports_wrestling_1411_1_ce.png",
+        "card_bw": "dic_wb_08sports_wrestling_1411_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0847",
+    "english": "jump rope",
+    "canonical_key": "jump rope",
+    "disambiguation": "",
+    "display_label": "jump rope",
+    "normalized_english": "jump rope",
+    "part_of_speech": "noun",
+    "category": "08_sports",
+    "category_name": "Sports & Activities",
+    "ja_kanji": "縄跳び",
+    "ja_hiragana": "なわとび",
+    "en_katakana": "ジャンプロープ",
+    "ruby": [
+      {
+        "base": "縄跳",
+        "ruby": "なわと"
+      },
+      {
+        "base": "び",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "<ruby>縄跳<rt>なわと</rt></ruby>び",
+    "ruby_text": "[縄跳|なわと]び",
+    "sound_file": "dic_wb_15festalday_jumprope_1546.mp3",
+    "card_image": "dic_wb_15festalday_jumprope_1546_1_c.png",
+    "card_image_kana": "dic_wb_15festalday_jumprope_1546_1_c.png",
+    "card_image_en": "dic_wb_15festalday_jumprope_1546_1_e.png",
+    "card_image_bilingual": "dic_wb_15festalday_jumprope_1546_1_ce.png",
+    "card_variants": [
+      "dic_wb_15festalday_jumprope_1546_1.png"
+    ],
+    "token": "dic_wb_15festalday_jumprope_1546&dic_wb_15festalday_jumprope_1546&dic_wb_15festalday_jumprope_1546",
+    "grades": [
+      "ES_G5"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Can you play jump rope? / A: Yes, I can play jump rope."
+    ],
+    "tags": [
+      "play",
+      "sports"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u15_05_jump_rope_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u15_05_jump_rope_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u15_05_jump_rope_text.png",
+    "lemma": "jump rope",
+    "is_plural": false,
+    "letter_count": 8,
+    "syllable_count": 2,
+    "first_letter": "J",
+    "is_compound": true,
+    "phonics_initial": "j",
+    "difficulty_tier": 3,
+    "primary_image": "dic_wb_15festalday_jumprope_1546_1_c.png",
+    "primary_audio": "dic_wb_15festalday_jumprope_1546.mp3",
+    "three_hints": {
+      "category_hint": "It is a sport or physical activity.",
+      "feature_hint": "An active sport known as '縄跳び' (なわとび) in Japanese.",
+      "letter_hint": "It starts with the letter J."
+    },
+    "target_dialogues": [
+      {
+        "question": "Can you play jump rope?",
+        "answer": "Yes, I can play jump rope.",
+        "context": "Asking about sports interests and skills"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u15_05_jump_rope_illust.png",
+        "card_full": "cards/full/hwg5_u15_05_jump_rope_full.png",
+        "card_text": "cards/text/hwg5_u15_05_jump_rope_text.png",
+        "unit": "Unit 15: Unit 15: What you Can and Can't Do",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_15festalday_jumprope_1546.mp3"
+      }
+    }
+  }
+]

@@ -1,0 +1,72 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Production build output
+dist/
+dist-ssr/
+
+# Firebase cache & logs
+.firebase/
+firebase-debug.log*
+
+# Large static raw textbook media & archives (streamed/synced via scripts, not tracked in git)
+letstry1/
+letstry2/
+letstry_data/
+manabi_assets/
+trimmed_assets/
+new_assets/
+sound_suite/
+extracted_lesson_plans/
+Next Week Web Lesson Plans/
+7bc4708c-0521-4ed9-b094-08835c648283/
+__pycache__/
+debug_*.png
+test_*.png
+test_*.mp3
+temp_*
+num_cleaned_*.png
+scratch/
+*.zip
+*.pdf
+*-codebase.txt
+*-src.txt
+*-export.json
+*.backup.json
+context_bundles/
+3d_city_builder_txt/
+math_game_txt_bundle/
+AI Studio/
+reports/
+scripts/pipeline/temp_*/
+Argon Improvements/
+.wrangler/
+
+# Logs & Debug
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# OS & Editor files
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

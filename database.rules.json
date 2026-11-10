@@ -1,0 +1,125 @@
+{
+  "rules": {
+    "rooms": {
+      ".read": true,
+      ".write": false,
+      ".indexOn": ["status", "createdAt"],
+      "$roomCode": {
+        ".read": true,
+        ".write": "auth != null && (!data.exists() || !newData.exists() || data.child('hostId').val() === auth.uid || data.child('metadata/hostId').val() === auth.uid || data.child('status').val() === 'CLOSED' || data.child('metadata/status').val() === 'CLOSED')",
+        "status": {
+          ".validate": "newData.isString()"
+        },
+        "players": {
+          "$playerId": {
+            ".read": true,
+            ".write": "auth != null && (auth.uid === $playerId || root.child('rooms/' + $roomCode + '/hostId').val() === auth.uid || root.child('rooms/' + $roomCode + '/metadata/hostId').val() === auth.uid)",
+            ".validate": "newData.hasChildren(['id', 'nickname', 'score'])"
+          }
+        },
+        "responses": {
+          "$playerId": {
+            ".read": true,
+            ".write": "auth != null && (auth.uid === $playerId || root.child('rooms/' + $roomCode + '/hostId').val() === auth.uid)"
+          }
+        },
+        "playerActions": {
+          "$playerId": {
+            ".read": true,
+            ".write": "auth != null && (auth.uid === $playerId || root.child('rooms/' + $roomCode + '/metadata/hostId').val() === auth.uid)"
+          }
+        },
+        "teamScores": {
+          ".read": true,
+          ".write": "auth != null && (root.child('rooms/' + $roomCode + '/hostId').val() === auth.uid || root.child('rooms/' + $roomCode + '/metadata/hostId').val() === auth.uid)"
+        },
+        "teams": {
+          ".read": true,
+          ".write": "auth != null && (root.child('rooms/' + $roomCode + '/hostId').val() === auth.uid || root.child('rooms/' + $roomCode + '/metadata/hostId').val() === auth.uid)"
+        },
+        "boundStudents": {
+          "$attendanceNumber": {
+            ".read": true,
+            ".write": "auth != null"
+          }
+        },
+        "analytics": {
+          ".read": true,
+          ".write": "auth != null"
+        }
+      }
+    },
+    "roomResponses": {
+      "$roomCode": {
+        ".read": true,
+        ".write": "auth != null && (!root.child('rooms/' + $roomCode).exists() || root.child('rooms/' + $roomCode + '/hostId').val() === auth.uid || root.child('rooms/' + $roomCode + '/metadata/hostId').val() === auth.uid || !newData.exists())",
+        "$playerId": {
+          ".read": true,
+          ".write": "auth != null && (auth.uid === $playerId || root.child('rooms/' + $roomCode + '/hostId').val() === auth.uid || root.child('rooms/' + $roomCode + '/metadata/hostId').val() === auth.uid)"
+        }
+      }
+    },
+    "roomPlayers": {
+      "$roomCode": {
+        ".read": true,
+        ".write": "auth != null && (!root.child('rooms/' + $roomCode).exists() || root.child('rooms/' + $roomCode + '/hostId').val() === auth.uid || root.child('rooms/' + $roomCode + '/metadata/hostId').val() === auth.uid || !newData.exists())",
+        "$playerId": {
+          ".read": true,
+          ".write": "auth != null && (auth.uid === $playerId || root.child('rooms/' + $roomCode + '/hostId').val() === auth.uid || root.child('rooms/' + $roomCode + '/metadata/hostId').val() === auth.uid)"
+        }
+      }
+    },
+    "hostSessions": {
+      "$roomCode": {
+        ".read": "auth != null && (root.child('rooms/' + $roomCode + '/hostId').val() === auth.uid || root.child('rooms/' + $roomCode + '/metadata/hostId').val() === auth.uid)",
+        ".write": "auth != null && (root.child('rooms/' + $roomCode + '/hostId').val() === auth.uid || root.child('rooms/' + $roomCode + '/metadata/hostId').val() === auth.uid || !newData.exists())"
+      }
+    },
+    "setupRooms": {
+      "$roomCode": {
+        ".read": true,
+        ".write": true
+      }
+    },
+    "users": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid",
+        ".validate": "newData.hasChildren(['schoolId', 'classId', 'attendanceNumber', 'nickname'])"
+      }
+    },
+    "schools": {
+      "$schoolId": {
+        "classes": {
+          "$classId": {
+            "students": {
+              ".read": true,
+              ".indexOn": ["xp", "attendanceNumber"],
+              "$attendanceNumber": {
+                ".read": true,
+                ".write": true,
+                ".validate": "newData.hasChildren(['attendanceNumber', 'nickname'])"
+              }
+            },
+            "sessions": {
+              ".read": true,
+              ".write": true,
+              "$sessionId": {
+                ".read": true,
+                ".write": true
+              }
+            },
+            "analyticsSummary": {
+              ".read": true,
+              ".write": true
+            },
+            "classVault": {
+              ".read": true,
+              ".write": true
+            }
+          }
+        }
+      }
+    }
+  }
+}

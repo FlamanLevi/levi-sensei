@@ -1,0 +1,3738 @@
+[
+  {
+    "id": "word_0023",
+    "english": "bath time",
+    "canonical_key": "bath time",
+    "disambiguation": "",
+    "display_label": "bath time",
+    "normalized_english": "bath time",
+    "part_of_speech": "phrase",
+    "category": "10_calendar_time",
+    "category_name": "Calendar, Days & Time",
+    "ja_kanji": "お風呂の時間",
+    "ja_hiragana": "おふろのじかん",
+    "en_katakana": "バスタイム",
+    "ruby": [
+      {
+        "base": "お",
+        "ruby": ""
+      },
+      {
+        "base": "風呂",
+        "ruby": "ふろ"
+      },
+      {
+        "base": "の",
+        "ruby": ""
+      },
+      {
+        "base": "時間",
+        "ruby": "じかん"
+      }
+    ],
+    "ruby_html": "お<ruby>風呂<rt>ふろ</rt></ruby>の<ruby>時間<rt>じかん</rt></ruby>",
+    "ruby_text": "お[風呂|ふろ]の[時間|じかん]",
+    "sound_file": "dic_4_card_bathtime_2530.mp3",
+    "card_image": "dic_4_card_bathtime_2530_1_c.png",
+    "card_image_kana": "dic_4_card_bathtime_2530_1_c.png",
+    "card_image_en": "dic_4_card_bathtime_2530_1_e.png",
+    "card_image_bilingual": "dic_4_card_bathtime_2530_1_ce.png",
+    "card_variants": [
+      "dic_4_card_bathtime_2530_1.png"
+    ],
+    "token": "dic_4_card_bathtime_2530&dic_4_card_bathtime_2530&dic_4_card_bathtime_2530",
+    "grades": [
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What time is it now? / A: It's bath time."
+    ],
+    "tags": [
+      "daily_routine",
+      "time"
+    ],
+    "lemma": "bath time",
+    "is_plural": false,
+    "letter_count": 8,
+    "syllable_count": 2,
+    "first_letter": "B",
+    "is_compound": true,
+    "phonics_initial": "b",
+    "difficulty_tier": 3,
+    "primary_image": "dic_4_card_bathtime_2530_1_c.png",
+    "primary_audio": "dic_4_card_bathtime_2530.mp3",
+    "three_hints": {
+      "category_hint": "It is related to time and calendar.",
+      "feature_hint": "A time expression known as 'お風呂の時間' (おふろのじかん) in Japanese.",
+      "letter_hint": "It starts with the letter B."
+    },
+    "target_dialogues": [
+      {
+        "question": "What time is it now?",
+        "answer": "It's bath time.",
+        "context": "Telling the time"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G4": {
+        "card_image": "dic_4_card_bathtime_2530_1_c.png",
+        "sound_file": "dic_4_card_bathtime_2530.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_4_card_bathtime_2530_1_ce.png",
+        "card_bw": "dic_4_card_bathtime_2530_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0024",
+    "english": "bed time",
+    "canonical_key": "bed time",
+    "disambiguation": "",
+    "display_label": "bed time",
+    "normalized_english": "bed time",
+    "part_of_speech": "phrase",
+    "category": "10_calendar_time",
+    "category_name": "Calendar, Days & Time",
+    "ja_kanji": "寝る時間",
+    "ja_hiragana": "ねるじかん",
+    "en_katakana": "ベッドタイム",
+    "ruby": [
+      {
+        "base": "寝",
+        "ruby": "ね"
+      },
+      {
+        "base": "る",
+        "ruby": ""
+      },
+      {
+        "base": "時間",
+        "ruby": "じかん"
+      }
+    ],
+    "ruby_html": "<ruby>寝<rt>ね</rt></ruby>る<ruby>時間<rt>じかん</rt></ruby>",
+    "ruby_text": "[寝|ね]る[時間|じかん]",
+    "sound_file": "dic_4_card_bedtime_2532.mp3",
+    "card_image": "dic_4_card_bedtime_2532_1_c.png",
+    "card_image_kana": "dic_4_card_bedtime_2532_1_c.png",
+    "card_image_en": "dic_4_card_bedtime_2532_1_e.png",
+    "card_image_bilingual": "dic_4_card_bedtime_2532_1_ce.png",
+    "card_variants": [
+      "dic_4_card_bedtime_2532_1.png"
+    ],
+    "token": "dic_4_card_bedtime_2532&dic_4_card_bedtime_2532&dic_4_card_bedtime_2532",
+    "grades": [
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What time is it now? / A: It's bed time."
+    ],
+    "tags": [
+      "daily_routine",
+      "time"
+    ],
+    "lemma": "bed time",
+    "is_plural": false,
+    "letter_count": 7,
+    "syllable_count": 2,
+    "first_letter": "B",
+    "is_compound": true,
+    "phonics_initial": "b",
+    "difficulty_tier": 3,
+    "primary_image": "dic_4_card_bedtime_2532_1_c.png",
+    "primary_audio": "dic_4_card_bedtime_2532.mp3",
+    "three_hints": {
+      "category_hint": "It is related to time and calendar.",
+      "feature_hint": "A time expression known as '寝る時間' (ねるじかん) in Japanese.",
+      "letter_hint": "It starts with the letter B."
+    },
+    "target_dialogues": [
+      {
+        "question": "What time is it now?",
+        "answer": "It's bed time.",
+        "context": "Telling the time"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G4": {
+        "card_image": "dic_4_card_bedtime_2532_1_c.png",
+        "sound_file": "dic_4_card_bedtime_2532.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_4_card_bedtime_2532_1_ce.png",
+        "card_bw": "dic_4_card_bedtime_2532_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0033",
+    "english": "breakfast time",
+    "canonical_key": "breakfast time",
+    "disambiguation": "",
+    "display_label": "breakfast time",
+    "normalized_english": "breakfast time",
+    "part_of_speech": "phrase",
+    "category": "10_calendar_time",
+    "category_name": "Calendar, Days & Time",
+    "ja_kanji": "朝ごはんの時間",
+    "ja_hiragana": "あさごはんのじかん",
+    "en_katakana": "ブレックファストタイム",
+    "ruby": [
+      {
+        "base": "朝",
+        "ruby": "あさ"
+      },
+      {
+        "base": "ごはんの",
+        "ruby": ""
+      },
+      {
+        "base": "時間",
+        "ruby": "じかん"
+      }
+    ],
+    "ruby_html": "<ruby>朝<rt>あさ</rt></ruby>ごはんの<ruby>時間<rt>じかん</rt></ruby>",
+    "ruby_text": "[朝|あさ]ごはんの[時間|じかん]",
+    "sound_file": "dic_4_card_breakfasttime_2525.mp3",
+    "card_image": "dic_4_card_breakfasttime_2525_1_c.png",
+    "card_image_kana": "dic_4_card_breakfasttime_2525_1_c.png",
+    "card_image_en": "dic_4_card_breakfasttime_2525_1_e.png",
+    "card_image_bilingual": "dic_4_card_breakfasttime_2525_1_ce.png",
+    "card_variants": [
+      "dic_4_card_breakfasttime_2525_1.png"
+    ],
+    "token": "dic_4_card_breakfasttime_2525&dic_4_card_breakfasttime_2525&dic_4_card_breakfasttime_2525",
+    "grades": [
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What time is it now? / A: It's breakfast time."
+    ],
+    "tags": [
+      "daily_routine",
+      "time"
+    ],
+    "lemma": "breakfast time",
+    "is_plural": false,
+    "letter_count": 13,
+    "syllable_count": 3,
+    "first_letter": "B",
+    "is_compound": true,
+    "phonics_initial": "br",
+    "difficulty_tier": 3,
+    "primary_image": "dic_4_card_breakfasttime_2525_1_c.png",
+    "primary_audio": "dic_4_card_breakfasttime_2525.mp3",
+    "three_hints": {
+      "category_hint": "It is related to time and calendar.",
+      "feature_hint": "A time expression known as '朝ごはんの時間' (あさごはんのじかん) in Japanese.",
+      "letter_hint": "It starts with the letter B."
+    },
+    "target_dialogues": [
+      {
+        "question": "What time is it now?",
+        "answer": "It's breakfast time.",
+        "context": "Telling the time"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G4": {
+        "card_image": "dic_4_card_breakfasttime_2525_1_c.png",
+        "sound_file": "dic_4_card_breakfasttime_2525.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_4_card_breakfasttime_2525_1_ce.png",
+        "card_bw": "dic_4_card_breakfasttime_2525_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0070",
+    "english": "date",
+    "canonical_key": "date",
+    "disambiguation": "",
+    "display_label": "date",
+    "normalized_english": "date",
+    "part_of_speech": "noun",
+    "category": "10_calendar_time",
+    "category_name": "Calendar, Days & Time",
+    "ja_kanji": "日付",
+    "ja_hiragana": "ひづけ",
+    "en_katakana": "デート",
+    "ruby": [
+      {
+        "base": "日付",
+        "ruby": "ひづけ"
+      }
+    ],
+    "ruby_html": "<ruby>日付<rt>ひづけ</rt></ruby>",
+    "ruby_text": "[日付|ひづけ]",
+    "sound_file": "",
+    "card_image": "",
+    "card_image_kana": "",
+    "card_image_en": "",
+    "card_image_bilingual": "",
+    "card_variants": [],
+    "token": "borderlink_date",
+    "grades": [
+      "ES_G5"
+    ],
+    "themes": [
+      "Birthdays ①"
+    ],
+    "target_sentences": [
+      "Q: What time is it now? / A: It's date."
+    ],
+    "tags": [
+      "calendar"
+    ],
+    "lemma": "date",
+    "is_plural": false,
+    "letter_count": 4,
+    "syllable_count": 1,
+    "first_letter": "D",
+    "is_compound": false,
+    "phonics_initial": "d",
+    "difficulty_tier": 2,
+    "primary_image": "",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is related to time and calendar.",
+      "feature_hint": "A time expression known as '日付' (ひづけ) in Japanese.",
+      "letter_hint": "It starts with the letter D."
+    },
+    "target_dialogues": [
+      {
+        "question": "What time is it now?",
+        "answer": "It's date.",
+        "context": "Telling the time"
+      }
+    ],
+    "media_by_grade": {}
+  },
+  {
+    "id": "word_0074",
+    "english": "dinner time",
+    "canonical_key": "dinner time",
+    "disambiguation": "",
+    "display_label": "dinner time",
+    "normalized_english": "dinner time",
+    "part_of_speech": "phrase",
+    "category": "10_calendar_time",
+    "category_name": "Calendar, Days & Time",
+    "ja_kanji": "晩ごはんの時間",
+    "ja_hiragana": "ばんごはんのじかん",
+    "en_katakana": "ディナータイム",
+    "ruby": [
+      {
+        "base": "晩",
+        "ruby": "ばん"
+      },
+      {
+        "base": "ごはんの",
+        "ruby": ""
+      },
+      {
+        "base": "時間",
+        "ruby": "じかん"
+      }
+    ],
+    "ruby_html": "<ruby>晩<rt>ばん</rt></ruby>ごはんの<ruby>時間<rt>じかん</rt></ruby>",
+    "ruby_text": "[晩|ばん]ごはんの[時間|じかん]",
+    "sound_file": "dic_4_card_dinnertime_2531.mp3",
+    "card_image": "dic_4_card_dinnertime_2531_1_c.png",
+    "card_image_kana": "dic_4_card_dinnertime_2531_1_c.png",
+    "card_image_en": "dic_4_card_dinnertime_2531_1_e.png",
+    "card_image_bilingual": "dic_4_card_dinnertime_2531_1_ce.png",
+    "card_variants": [
+      "dic_4_card_dinnertime_2531_1.png"
+    ],
+    "token": "dic_4_card_dinnertime_2531&dic_4_card_dinnertime_2531&dic_4_card_dinnertime_2531",
+    "grades": [
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What time is it now? / A: It's dinner time."
+    ],
+    "tags": [
+      "daily_routine",
+      "time"
+    ],
+    "lemma": "dinner time",
+    "is_plural": false,
+    "letter_count": 10,
+    "syllable_count": 3,
+    "first_letter": "D",
+    "is_compound": true,
+    "phonics_initial": "d",
+    "difficulty_tier": 3,
+    "primary_image": "dic_4_card_dinnertime_2531_1_c.png",
+    "primary_audio": "dic_4_card_dinnertime_2531.mp3",
+    "three_hints": {
+      "category_hint": "It is related to time and calendar.",
+      "feature_hint": "A time expression known as '晩ごはんの時間' (ばんごはんのじかん) in Japanese.",
+      "letter_hint": "It starts with the letter D."
+    },
+    "target_dialogues": [
+      {
+        "question": "What time is it now?",
+        "answer": "It's dinner time.",
+        "context": "Telling the time"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G4": {
+        "card_image": "dic_4_card_dinnertime_2531_1_c.png",
+        "sound_file": "dic_4_card_dinnertime_2531.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_4_card_dinnertime_2531_1_ce.png",
+        "card_bw": "dic_4_card_dinnertime_2531_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0085",
+    "english": "dream time",
+    "canonical_key": "dream time",
+    "disambiguation": "",
+    "display_label": "dream time",
+    "normalized_english": "dream time",
+    "part_of_speech": "phrase",
+    "category": "10_calendar_time",
+    "category_name": "Calendar, Days & Time",
+    "ja_kanji": "夢の時間",
+    "ja_hiragana": "ゆめのじかん",
+    "en_katakana": "ドリームタイム",
+    "ruby": [
+      {
+        "base": "夢",
+        "ruby": "ゆめ"
+      },
+      {
+        "base": "の",
+        "ruby": ""
+      },
+      {
+        "base": "時間",
+        "ruby": "じかん"
+      }
+    ],
+    "ruby_html": "<ruby>夢<rt>ゆめ</rt></ruby>の<ruby>時間<rt>じかん</rt></ruby>",
+    "ruby_text": "[夢|ゆめ]の[時間|じかん]",
+    "sound_file": "dic_4_card_dreamtime_2533.mp3",
+    "card_image": "dic_4_card_dreamtime_2533_1_c.png",
+    "card_image_kana": "dic_4_card_dreamtime_2533_1_c.png",
+    "card_image_en": "dic_4_card_dreamtime_2533_1_e.png",
+    "card_image_bilingual": "dic_4_card_dreamtime_2533_1_ce.png",
+    "card_variants": [
+      "dic_4_card_dreamtime_2533_1.png"
+    ],
+    "token": "dic_4_card_dreamtime_2533&dic_4_card_dreamtime_2533&dic_4_card_dreamtime_2533",
+    "grades": [
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What time is it now? / A: It's dream time."
+    ],
+    "tags": [
+      "daily_routine",
+      "time"
+    ],
+    "lemma": "dream time",
+    "is_plural": false,
+    "letter_count": 9,
+    "syllable_count": 2,
+    "first_letter": "D",
+    "is_compound": true,
+    "phonics_initial": "dr",
+    "difficulty_tier": 3,
+    "primary_image": "dic_4_card_dreamtime_2533_1_c.png",
+    "primary_audio": "dic_4_card_dreamtime_2533.mp3",
+    "three_hints": {
+      "category_hint": "It is related to time and calendar.",
+      "feature_hint": "A time expression known as '夢の時間' (ゆめのじかん) in Japanese.",
+      "letter_hint": "It starts with the letter D."
+    },
+    "target_dialogues": [
+      {
+        "question": "What time is it now?",
+        "answer": "It's dream time.",
+        "context": "Telling the time"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G4": {
+        "card_image": "dic_4_card_dreamtime_2533_1_c.png",
+        "sound_file": "dic_4_card_dreamtime_2533.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_4_card_dreamtime_2533_1_ce.png",
+        "card_bw": "dic_4_card_dreamtime_2533_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0098",
+    "english": "evening",
+    "canonical_key": "evening",
+    "disambiguation": "",
+    "display_label": "evening",
+    "normalized_english": "evening",
+    "part_of_speech": "noun",
+    "category": "10_calendar_time",
+    "category_name": "Calendar, Days & Time",
+    "ja_kanji": "夕方",
+    "ja_hiragana": "ゆうがた",
+    "en_katakana": "イブニング",
+    "ruby": [
+      {
+        "base": "夕方",
+        "ruby": "ゆうがた"
+      }
+    ],
+    "ruby_html": "<ruby>夕方<rt>ゆうがた</rt></ruby>",
+    "ruby_text": "[夕方|ゆうがた]",
+    "sound_file": "",
+    "card_image": "cards/full/hwg6_u07_02_evening_full.png",
+    "card_image_kana": "cards/full/hwg6_u07_02_evening_full.png",
+    "card_image_en": "cards/full/hwg6_u07_02_evening_full.png",
+    "card_image_bilingual": "cards/full/hwg6_u07_02_evening_full.png",
+    "card_variants": [],
+    "token": "hwg_evening",
+    "grades": [
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What time is it now? / A: It's evening."
+    ],
+    "tags": [
+      "calendar",
+      "time"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u07_02_evening_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u07_02_evening_illust.png",
+    "hwg_card_text": "cards/text/hwg6_u07_02_evening_text.png",
+    "lemma": "evening",
+    "is_plural": false,
+    "letter_count": 7,
+    "syllable_count": 3,
+    "first_letter": "E",
+    "is_compound": false,
+    "phonics_initial": "e",
+    "difficulty_tier": 3,
+    "primary_image": "cards/full/hwg6_u07_02_evening_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is related to time and calendar.",
+      "feature_hint": "A time expression known as '夕方' (ゆうがた) in Japanese.",
+      "letter_hint": "It starts with the letter E."
+    },
+    "target_dialogues": [
+      {
+        "question": "What time is it now?",
+        "answer": "It's evening.",
+        "context": "Telling the time"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u07_02_evening_illust.png",
+        "card_full": "cards/full/hwg6_u07_02_evening_full.png",
+        "card_text": "cards/text/hwg6_u07_02_evening_text.png",
+        "unit": "Unit 7: Unit 7: When and How Often",
+        "source": "here_we_go_6",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0143",
+    "english": "hanami",
+    "canonical_key": "hanami",
+    "disambiguation": "",
+    "display_label": "hanami",
+    "normalized_english": "hanami",
+    "part_of_speech": "noun",
+    "category": "10_calendar_time",
+    "category_name": "Calendar, Days & Time",
+    "ja_kanji": "花見",
+    "ja_hiragana": "はなみ",
+    "en_katakana": "ハナミ",
+    "ruby": [
+      {
+        "base": "花見",
+        "ruby": "はなみ"
+      }
+    ],
+    "ruby_html": "<ruby>花見<rt>はなみ</rt></ruby>",
+    "ruby_text": "[花見|はなみ]",
+    "sound_file": "",
+    "card_image": "cards/full/hwg6_u05_00_hanami_full.png",
+    "card_image_kana": "cards/full/hwg6_u05_00_hanami_full.png",
+    "card_image_en": "cards/full/hwg6_u05_00_hanami_full.png",
+    "card_image_bilingual": "cards/full/hwg6_u05_00_hanami_full.png",
+    "card_variants": [],
+    "token": "hwg_hanami",
+    "grades": [
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What time is it now? / A: It's hanami."
+    ],
+    "tags": [
+      "calendar",
+      "time"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u05_00_hanami_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u05_00_hanami_illust.png",
+    "hwg_card_text": "cards/text/hwg6_u05_00_hanami_text.png",
+    "lemma": "hanami",
+    "is_plural": false,
+    "letter_count": 6,
+    "syllable_count": 3,
+    "first_letter": "H",
+    "is_compound": false,
+    "phonics_initial": "h",
+    "difficulty_tier": 3,
+    "primary_image": "cards/full/hwg6_u05_00_hanami_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is related to time and calendar.",
+      "feature_hint": "A time expression known as '花見' (はなみ) in Japanese.",
+      "letter_hint": "It starts with the letter H."
+    },
+    "target_dialogues": [
+      {
+        "question": "What time is it now?",
+        "answer": "It's hanami.",
+        "context": "Telling the time"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u05_00_hanami_illust.png",
+        "card_full": "cards/full/hwg6_u05_00_hanami_full.png",
+        "card_text": "cards/text/hwg6_u05_00_hanami_text.png",
+        "unit": "Unit 5: Unit 5: Seasonal Events",
+        "source": "here_we_go_6",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0151",
+    "english": "homework time",
+    "canonical_key": "homework time",
+    "disambiguation": "",
+    "display_label": "homework time",
+    "normalized_english": "homework time",
+    "part_of_speech": "phrase",
+    "category": "10_calendar_time",
+    "category_name": "Calendar, Days & Time",
+    "ja_kanji": "宿題の時間",
+    "ja_hiragana": "しゅくだいのじかん",
+    "en_katakana": "ホームワークタイム",
+    "ruby": [
+      {
+        "base": "宿題",
+        "ruby": "しゅくだい"
+      },
+      {
+        "base": "の",
+        "ruby": ""
+      },
+      {
+        "base": "時間",
+        "ruby": "じかん"
+      }
+    ],
+    "ruby_html": "<ruby>宿題<rt>しゅくだい</rt></ruby>の<ruby>時間<rt>じかん</rt></ruby>",
+    "ruby_text": "[宿題|しゅくだい]の[時間|じかん]",
+    "sound_file": "dic_4_card_homeworktime_2528.mp3",
+    "card_image": "dic_4_card_homeworktime_2528_1_c.png",
+    "card_image_kana": "dic_4_card_homeworktime_2528_1_c.png",
+    "card_image_en": "dic_4_card_homeworktime_2528_1_e.png",
+    "card_image_bilingual": "dic_4_card_homeworktime_2528_1_ce.png",
+    "card_variants": [
+      "dic_4_card_homeworktime_2528_1.png"
+    ],
+    "token": "dic_4_card_homeworktime_2528&dic_4_card_homeworktime_2528&dic_4_card_homeworktime_2528",
+    "grades": [
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What time is it now? / A: It's homework time."
+    ],
+    "tags": [
+      "daily_routine",
+      "time"
+    ],
+    "lemma": "homework time",
+    "is_plural": false,
+    "letter_count": 12,
+    "syllable_count": 4,
+    "first_letter": "H",
+    "is_compound": true,
+    "phonics_initial": "h",
+    "difficulty_tier": 3,
+    "primary_image": "dic_4_card_homeworktime_2528_1_c.png",
+    "primary_audio": "dic_4_card_homeworktime_2528.mp3",
+    "three_hints": {
+      "category_hint": "It is related to time and calendar.",
+      "feature_hint": "A time expression known as '宿題の時間' (しゅくだいのじかん) in Japanese.",
+      "letter_hint": "It starts with the letter H."
+    },
+    "target_dialogues": [
+      {
+        "question": "What time is it now?",
+        "answer": "It's homework time.",
+        "context": "Telling the time"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G4": {
+        "card_image": "dic_4_card_homeworktime_2528_1_c.png",
+        "sound_file": "dic_4_card_homeworktime_2528.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_4_card_homeworktime_2528_1_ce.png",
+        "card_bw": "dic_4_card_homeworktime_2528_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0189",
+    "english": "lunch time",
+    "canonical_key": "lunch time",
+    "disambiguation": "",
+    "display_label": "lunch time",
+    "normalized_english": "lunch time",
+    "part_of_speech": "phrase",
+    "category": "10_calendar_time",
+    "category_name": "Calendar, Days & Time",
+    "ja_kanji": "昼ごはんの時間",
+    "ja_hiragana": "ひるごはんのじかん",
+    "en_katakana": "ランチタイム",
+    "ruby": [
+      {
+        "base": "昼",
+        "ruby": "ひる"
+      },
+      {
+        "base": "ごはんの",
+        "ruby": ""
+      },
+      {
+        "base": "時間",
+        "ruby": "じかん"
+      }
+    ],
+    "ruby_html": "<ruby>昼<rt>ひる</rt></ruby>ごはんの<ruby>時間<rt>じかん</rt></ruby>",
+    "ruby_text": "[昼|ひる]ごはんの[時間|じかん]",
+    "sound_file": "dic_4_card_lunchtime_2527.mp3",
+    "card_image": "dic_4_card_lunchtime_2527_1_c.png",
+    "card_image_kana": "dic_4_card_lunchtime_2527_1_c.png",
+    "card_image_en": "dic_4_card_lunchtime_2527_1_e.png",
+    "card_image_bilingual": "dic_4_card_lunchtime_2527_1_ce.png",
+    "card_variants": [
+      "dic_4_card_lunchtime_2527_1.png"
+    ],
+    "token": "dic_4_card_lunchtime_2527&dic_4_card_lunchtime_2527&dic_4_card_lunchtime_2527",
+    "grades": [
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What time is it now? / A: It's lunch time."
+    ],
+    "tags": [
+      "daily_routine",
+      "time"
+    ],
+    "lemma": "lunch time",
+    "is_plural": false,
+    "letter_count": 9,
+    "syllable_count": 2,
+    "first_letter": "L",
+    "is_compound": true,
+    "phonics_initial": "l",
+    "difficulty_tier": 3,
+    "primary_image": "dic_4_card_lunchtime_2527_1_c.png",
+    "primary_audio": "dic_4_card_lunchtime_2527.mp3",
+    "three_hints": {
+      "category_hint": "It is related to time and calendar.",
+      "feature_hint": "A time expression known as '昼ごはんの時間' (ひるごはんのじかん) in Japanese.",
+      "letter_hint": "It starts with the letter L."
+    },
+    "target_dialogues": [
+      {
+        "question": "What time is it now?",
+        "answer": "It's lunch time.",
+        "context": "Telling the time"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G4": {
+        "card_image": "dic_4_card_lunchtime_2527_1_c.png",
+        "sound_file": "dic_4_card_lunchtime_2527.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_4_card_lunchtime_2527_1_ce.png",
+        "card_bw": "dic_4_card_lunchtime_2527_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0199",
+    "english": "momijigari",
+    "canonical_key": "momijigari",
+    "disambiguation": "",
+    "display_label": "momijigari",
+    "normalized_english": "momijigari",
+    "part_of_speech": "noun",
+    "category": "10_calendar_time",
+    "category_name": "Calendar, Days & Time",
+    "ja_kanji": "紅葉狩り",
+    "ja_hiragana": "もみじがり",
+    "en_katakana": "モミジガリ",
+    "ruby": [
+      {
+        "base": "紅葉狩",
+        "ruby": "もみじが"
+      },
+      {
+        "base": "り",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "<ruby>紅葉狩<rt>もみじが</rt></ruby>り",
+    "ruby_text": "[紅葉狩|もみじが]り",
+    "sound_file": "",
+    "card_image": "cards/full/hwg6_u05_07_momijigari_full.png",
+    "card_image_kana": "cards/full/hwg6_u05_07_momijigari_full.png",
+    "card_image_en": "cards/full/hwg6_u05_07_momijigari_full.png",
+    "card_image_bilingual": "cards/full/hwg6_u05_07_momijigari_full.png",
+    "card_variants": [],
+    "token": "hwg_momijigari",
+    "grades": [
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What time is it now? / A: It's momijigari."
+    ],
+    "tags": [
+      "calendar",
+      "time"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u05_07_momijigari_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u05_07_momijigari_illust.png",
+    "hwg_card_text": "cards/text/hwg6_u05_07_momijigari_text.png",
+    "lemma": "momijigari",
+    "is_plural": false,
+    "letter_count": 10,
+    "syllable_count": 5,
+    "first_letter": "M",
+    "is_compound": false,
+    "phonics_initial": "m",
+    "difficulty_tier": 3,
+    "primary_image": "cards/full/hwg6_u05_07_momijigari_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is related to time and calendar.",
+      "feature_hint": "A time expression known as '紅葉狩り' (もみじがり) in Japanese.",
+      "letter_hint": "It starts with the letter M."
+    },
+    "target_dialogues": [
+      {
+        "question": "What time is it now?",
+        "answer": "It's momijigari.",
+        "context": "Telling the time"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u05_07_momijigari_illust.png",
+        "card_full": "cards/full/hwg6_u05_07_momijigari_full.png",
+        "card_text": "cards/text/hwg6_u05_07_momijigari_text.png",
+        "unit": "Unit 5: Unit 5: Seasonal Events",
+        "source": "here_we_go_6",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0201",
+    "english": "month",
+    "canonical_key": "month",
+    "disambiguation": "",
+    "display_label": "month",
+    "normalized_english": "month",
+    "part_of_speech": "noun",
+    "category": "10_calendar_time",
+    "category_name": "Calendar, Days & Time",
+    "ja_kanji": "月",
+    "ja_hiragana": "つき",
+    "en_katakana": "マンス",
+    "ruby": [
+      {
+        "base": "月",
+        "ruby": "つき"
+      }
+    ],
+    "ruby_html": "<ruby>月<rt>つき</rt></ruby>",
+    "ruby_text": "[月|つき]",
+    "sound_file": "",
+    "card_image": "",
+    "card_image_kana": "",
+    "card_image_en": "",
+    "card_image_bilingual": "",
+    "card_variants": [],
+    "token": "borderlink_month",
+    "grades": [
+      "ES_G5"
+    ],
+    "themes": [
+      "Birthdays ①"
+    ],
+    "target_sentences": [
+      "Q: What time is it now? / A: It's month."
+    ],
+    "tags": [
+      "calendar"
+    ],
+    "lemma": "month",
+    "is_plural": false,
+    "letter_count": 5,
+    "syllable_count": 1,
+    "first_letter": "M",
+    "is_compound": false,
+    "phonics_initial": "m",
+    "difficulty_tier": 2,
+    "primary_image": "",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is related to time and calendar.",
+      "feature_hint": "A time expression known as '月' (つき) in Japanese.",
+      "letter_hint": "It starts with the letter M."
+    },
+    "target_dialogues": [
+      {
+        "question": "What time is it now?",
+        "answer": "It's month.",
+        "context": "Telling the time"
+      }
+    ],
+    "media_by_grade": {}
+  },
+  {
+    "id": "word_0227",
+    "english": "oshogatsu",
+    "canonical_key": "oshogatsu",
+    "disambiguation": "",
+    "display_label": "oshogatsu",
+    "normalized_english": "oshogatsu",
+    "part_of_speech": "noun",
+    "category": "10_calendar_time",
+    "category_name": "Calendar, Days & Time",
+    "ja_kanji": "お正月",
+    "ja_hiragana": "おしょうがつ",
+    "en_katakana": "オショウガツ",
+    "ruby": [
+      {
+        "base": "お",
+        "ruby": ""
+      },
+      {
+        "base": "正月",
+        "ruby": "しょうがつ"
+      }
+    ],
+    "ruby_html": "お<ruby>正月<rt>しょうがつ</rt></ruby>",
+    "ruby_text": "お[正月|しょうがつ]",
+    "sound_file": "",
+    "card_image": "cards/full/hwg6_u05_09_oshogatsu_full.png",
+    "card_image_kana": "cards/full/hwg6_u05_09_oshogatsu_full.png",
+    "card_image_en": "cards/full/hwg6_u05_09_oshogatsu_full.png",
+    "card_image_bilingual": "cards/full/hwg6_u05_09_oshogatsu_full.png",
+    "card_variants": [],
+    "token": "hwg_oshogatsu",
+    "grades": [
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What time is it now? / A: It's oshogatsu."
+    ],
+    "tags": [
+      "calendar",
+      "time"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u05_09_oshogatsu_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u05_09_oshogatsu_illust.png",
+    "hwg_card_text": "cards/text/hwg6_u05_09_oshogatsu_text.png",
+    "lemma": "oshogatsu",
+    "is_plural": false,
+    "letter_count": 9,
+    "syllable_count": 4,
+    "first_letter": "O",
+    "is_compound": false,
+    "phonics_initial": "o",
+    "difficulty_tier": 3,
+    "primary_image": "cards/full/hwg6_u05_09_oshogatsu_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is related to time and calendar.",
+      "feature_hint": "A time expression known as 'お正月' (おしょうがつ) in Japanese.",
+      "letter_hint": "It starts with the letter O."
+    },
+    "target_dialogues": [
+      {
+        "question": "What time is it now?",
+        "answer": "It's oshogatsu.",
+        "context": "Telling the time"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u05_09_oshogatsu_illust.png",
+        "card_full": "cards/full/hwg6_u05_09_oshogatsu_full.png",
+        "card_text": "cards/text/hwg6_u05_09_oshogatsu_text.png",
+        "unit": "Unit 5: Unit 5: Seasonal Events",
+        "source": "here_we_go_6",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0291",
+    "english": "setsubun",
+    "canonical_key": "setsubun",
+    "disambiguation": "",
+    "display_label": "setsubun",
+    "normalized_english": "setsubun",
+    "part_of_speech": "noun",
+    "category": "10_calendar_time",
+    "category_name": "Calendar, Days & Time",
+    "ja_kanji": "節分",
+    "ja_hiragana": "せつぶん",
+    "en_katakana": "セツブン",
+    "ruby": [
+      {
+        "base": "節分",
+        "ruby": "せつぶん"
+      }
+    ],
+    "ruby_html": "<ruby>節分<rt>せつぶん</rt></ruby>",
+    "ruby_text": "[節分|せつぶん]",
+    "sound_file": "",
+    "card_image": "cards/full/hwg6_u05_10_setsubun_full.png",
+    "card_image_kana": "cards/full/hwg6_u05_10_setsubun_full.png",
+    "card_image_en": "cards/full/hwg6_u05_10_setsubun_full.png",
+    "card_image_bilingual": "cards/full/hwg6_u05_10_setsubun_full.png",
+    "card_variants": [],
+    "token": "hwg_setsubun",
+    "grades": [
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What time is it now? / A: It's setsubun."
+    ],
+    "tags": [
+      "calendar",
+      "time"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u05_10_setsubun_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u05_10_setsubun_illust.png",
+    "hwg_card_text": "cards/text/hwg6_u05_10_setsubun_text.png",
+    "lemma": "setsubun",
+    "is_plural": false,
+    "letter_count": 8,
+    "syllable_count": 3,
+    "first_letter": "S",
+    "is_compound": false,
+    "phonics_initial": "s",
+    "difficulty_tier": 3,
+    "primary_image": "cards/full/hwg6_u05_10_setsubun_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is related to time and calendar.",
+      "feature_hint": "A time expression known as '節分' (せつぶん) in Japanese.",
+      "letter_hint": "It starts with the letter S."
+    },
+    "target_dialogues": [
+      {
+        "question": "What time is it now?",
+        "answer": "It's setsubun.",
+        "context": "Telling the time"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u05_10_setsubun_illust.png",
+        "card_full": "cards/full/hwg6_u05_10_setsubun_full.png",
+        "card_text": "cards/text/hwg6_u05_10_setsubun_text.png",
+        "unit": "Unit 5: Unit 5: Seasonal Events",
+        "source": "here_we_go_6",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0296",
+    "english": "shichi-go-san",
+    "canonical_key": "shichi-go-san",
+    "disambiguation": "",
+    "display_label": "shichi-go-san",
+    "normalized_english": "shichi-go-san",
+    "part_of_speech": "noun",
+    "category": "10_calendar_time",
+    "category_name": "Calendar, Days & Time",
+    "ja_kanji": "七五三",
+    "ja_hiragana": "しちごさん",
+    "en_katakana": "シチゴサン",
+    "ruby": [
+      {
+        "base": "七五三",
+        "ruby": "しちごさん"
+      }
+    ],
+    "ruby_html": "<ruby>七五三<rt>しちごさん</rt></ruby>",
+    "ruby_text": "[七五三|しちごさん]",
+    "sound_file": "",
+    "card_image": "cards/full/hwg6_u05_08_shichi-go-san_full.png",
+    "card_image_kana": "cards/full/hwg6_u05_08_shichi-go-san_full.png",
+    "card_image_en": "cards/full/hwg6_u05_08_shichi-go-san_full.png",
+    "card_image_bilingual": "cards/full/hwg6_u05_08_shichi-go-san_full.png",
+    "card_variants": [],
+    "token": "hwg_shichi-go-san",
+    "grades": [
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What time is it now? / A: It's shichi-go-san."
+    ],
+    "tags": [
+      "calendar",
+      "time"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u05_08_shichi-go-san_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u05_08_shichi-go-san_illust.png",
+    "hwg_card_text": "cards/text/hwg6_u05_08_shichi-go-san_text.png",
+    "lemma": "shichi-go-san",
+    "is_plural": false,
+    "letter_count": 11,
+    "syllable_count": 4,
+    "first_letter": "S",
+    "is_compound": true,
+    "phonics_initial": "sh",
+    "difficulty_tier": 3,
+    "primary_image": "cards/full/hwg6_u05_08_shichi-go-san_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is related to time and calendar.",
+      "feature_hint": "A time expression known as '七五三' (しちごさん) in Japanese.",
+      "letter_hint": "It starts with the letter S."
+    },
+    "target_dialogues": [
+      {
+        "question": "What time is it now?",
+        "answer": "It's shichi-go-san.",
+        "context": "Telling the time"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u05_08_shichi-go-san_illust.png",
+        "card_full": "cards/full/hwg6_u05_08_shichi-go-san_full.png",
+        "card_text": "cards/text/hwg6_u05_08_shichi-go-san_text.png",
+        "unit": "Unit 5: Unit 5: Seasonal Events",
+        "source": "here_we_go_6",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0311",
+    "english": "snack time",
+    "canonical_key": "snack time",
+    "disambiguation": "",
+    "display_label": "snack time",
+    "normalized_english": "snack time",
+    "part_of_speech": "phrase",
+    "category": "10_calendar_time",
+    "category_name": "Calendar, Days & Time",
+    "ja_kanji": "おやつの時間",
+    "ja_hiragana": "おやつのじかん",
+    "en_katakana": "スナックタイム",
+    "ruby": [
+      {
+        "base": "おやつの",
+        "ruby": ""
+      },
+      {
+        "base": "時間",
+        "ruby": "じかん"
+      }
+    ],
+    "ruby_html": "おやつの<ruby>時間<rt>じかん</rt></ruby>",
+    "ruby_text": "おやつの[時間|じかん]",
+    "sound_file": "dic_4_card_snacktime_2529.mp3",
+    "card_image": "dic_4_card_snacktime_2529_1_c.png",
+    "card_image_kana": "dic_4_card_snacktime_2529_1_c.png",
+    "card_image_en": "dic_4_card_snacktime_2529_1_e.png",
+    "card_image_bilingual": "dic_4_card_snacktime_2529_1_ce.png",
+    "card_variants": [
+      "dic_4_card_snacktime_2529_1.png"
+    ],
+    "token": "dic_4_card_snacktime_2529&dic_4_card_snacktime_2529&dic_4_card_snacktime_2529",
+    "grades": [
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What time is it now? / A: It's snack time."
+    ],
+    "tags": [
+      "daily_routine",
+      "time"
+    ],
+    "lemma": "snack time",
+    "is_plural": false,
+    "letter_count": 9,
+    "syllable_count": 2,
+    "first_letter": "S",
+    "is_compound": true,
+    "phonics_initial": "sn",
+    "difficulty_tier": 3,
+    "primary_image": "dic_4_card_snacktime_2529_1_c.png",
+    "primary_audio": "dic_4_card_snacktime_2529.mp3",
+    "three_hints": {
+      "category_hint": "It is related to time and calendar.",
+      "feature_hint": "A time expression known as 'おやつの時間' (おやつのじかん) in Japanese.",
+      "letter_hint": "It starts with the letter S."
+    },
+    "target_dialogues": [
+      {
+        "question": "What time is it now?",
+        "answer": "It's snack time.",
+        "context": "Telling the time"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G4": {
+        "card_image": "dic_4_card_snacktime_2529_1_c.png",
+        "sound_file": "dic_4_card_snacktime_2529.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_4_card_snacktime_2529_1_ce.png",
+        "card_bw": "dic_4_card_snacktime_2529_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0328",
+    "english": "study time",
+    "canonical_key": "study time",
+    "disambiguation": "",
+    "display_label": "study time",
+    "normalized_english": "study time",
+    "part_of_speech": "phrase",
+    "category": "10_calendar_time",
+    "category_name": "Calendar, Days & Time",
+    "ja_kanji": "勉強の時間",
+    "ja_hiragana": "べんきょうのじかん",
+    "en_katakana": "スタディタイム",
+    "ruby": [
+      {
+        "base": "勉強",
+        "ruby": "べんきょう"
+      },
+      {
+        "base": "の",
+        "ruby": ""
+      },
+      {
+        "base": "時間",
+        "ruby": "じかん"
+      }
+    ],
+    "ruby_html": "<ruby>勉強<rt>べんきょう</rt></ruby>の<ruby>時間<rt>じかん</rt></ruby>",
+    "ruby_text": "[勉強|べんきょう]の[時間|じかん]",
+    "sound_file": "dic_4_card_studytime_2526.mp3",
+    "card_image": "dic_4_card_studytime_2526_1_c.png",
+    "card_image_kana": "dic_4_card_studytime_2526_1_c.png",
+    "card_image_en": "dic_4_card_studytime_2526_1_e.png",
+    "card_image_bilingual": "dic_4_card_studytime_2526_1_ce.png",
+    "card_variants": [
+      "dic_4_card_studytime_2526_1.png"
+    ],
+    "token": "dic_4_card_studytime_2526&dic_4_card_studytime_2526&dic_4_card_studytime_2526",
+    "grades": [
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What time is it now? / A: It's study time."
+    ],
+    "tags": [
+      "daily_routine",
+      "time"
+    ],
+    "lemma": "study time",
+    "is_plural": false,
+    "letter_count": 9,
+    "syllable_count": 3,
+    "first_letter": "S",
+    "is_compound": true,
+    "phonics_initial": "st",
+    "difficulty_tier": 3,
+    "primary_image": "dic_4_card_studytime_2526_1_c.png",
+    "primary_audio": "dic_4_card_studytime_2526.mp3",
+    "three_hints": {
+      "category_hint": "It is related to time and calendar.",
+      "feature_hint": "A time expression known as '勉強の時間' (べんきょうのじかん) in Japanese.",
+      "letter_hint": "It starts with the letter S."
+    },
+    "target_dialogues": [
+      {
+        "question": "What time is it now?",
+        "answer": "It's study time.",
+        "context": "Telling the time"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G4": {
+        "card_image": "dic_4_card_studytime_2526_1_c.png",
+        "sound_file": "dic_4_card_studytime_2526.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_4_card_studytime_2526_1_ce.png",
+        "card_bw": "dic_4_card_studytime_2526_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0361",
+    "english": "tsukimi",
+    "canonical_key": "tsukimi",
+    "disambiguation": "",
+    "display_label": "tsukimi",
+    "normalized_english": "tsukimi",
+    "part_of_speech": "noun",
+    "category": "10_calendar_time",
+    "category_name": "Calendar, Days & Time",
+    "ja_kanji": "お月見",
+    "ja_hiragana": "おつきみ",
+    "en_katakana": "ツキミ",
+    "ruby": [
+      {
+        "base": "お",
+        "ruby": ""
+      },
+      {
+        "base": "月見",
+        "ruby": "つきみ"
+      }
+    ],
+    "ruby_html": "お<ruby>月見<rt>つきみ</rt></ruby>",
+    "ruby_text": "お[月見|つきみ]",
+    "sound_file": "",
+    "card_image": "cards/full/hwg6_u05_06_tsukimi_full.png",
+    "card_image_kana": "cards/full/hwg6_u05_06_tsukimi_full.png",
+    "card_image_en": "cards/full/hwg6_u05_06_tsukimi_full.png",
+    "card_image_bilingual": "cards/full/hwg6_u05_06_tsukimi_full.png",
+    "card_variants": [],
+    "token": "hwg_tsukimi",
+    "grades": [
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What time is it now? / A: It's tsukimi."
+    ],
+    "tags": [
+      "calendar",
+      "time"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u05_06_tsukimi_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u05_06_tsukimi_illust.png",
+    "hwg_card_text": "cards/text/hwg6_u05_06_tsukimi_text.png",
+    "lemma": "tsukimi",
+    "is_plural": false,
+    "letter_count": 7,
+    "syllable_count": 3,
+    "first_letter": "T",
+    "is_compound": false,
+    "phonics_initial": "t",
+    "difficulty_tier": 3,
+    "primary_image": "cards/full/hwg6_u05_06_tsukimi_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is related to time and calendar.",
+      "feature_hint": "A time expression known as 'お月見' (おつきみ) in Japanese.",
+      "letter_hint": "It starts with the letter T."
+    },
+    "target_dialogues": [
+      {
+        "question": "What time is it now?",
+        "answer": "It's tsukimi.",
+        "context": "Telling the time"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u05_06_tsukimi_illust.png",
+        "card_full": "cards/full/hwg6_u05_06_tsukimi_full.png",
+        "card_text": "cards/text/hwg6_u05_06_tsukimi_text.png",
+        "unit": "Unit 5: Unit 5: Seasonal Events",
+        "source": "here_we_go_6",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0386",
+    "english": "wake-up time",
+    "canonical_key": "wake-up time",
+    "disambiguation": "",
+    "display_label": "wake-up time",
+    "normalized_english": "wake-up time",
+    "part_of_speech": "phrase",
+    "category": "10_calendar_time",
+    "category_name": "Calendar, Days & Time",
+    "ja_kanji": "起きる時間",
+    "ja_hiragana": "おきるじかん",
+    "en_katakana": "ウェイクアップタイム",
+    "ruby": [
+      {
+        "base": "起",
+        "ruby": "お"
+      },
+      {
+        "base": "きる",
+        "ruby": ""
+      },
+      {
+        "base": "時間",
+        "ruby": "じかん"
+      }
+    ],
+    "ruby_html": "<ruby>起<rt>お</rt></ruby>きる<ruby>時間<rt>じかん</rt></ruby>",
+    "ruby_text": "[起|お]きる[時間|じかん]",
+    "sound_file": "dic_4_card_wakeuptime_2524.mp3",
+    "card_image": "dic_4_card_wakeuptime_2524_1_c.png",
+    "card_image_kana": "dic_4_card_wakeuptime_2524_1_c.png",
+    "card_image_en": "dic_4_card_wakeuptime_2524_1_e.png",
+    "card_image_bilingual": "dic_4_card_wakeuptime_2524_1_ce.png",
+    "card_variants": [
+      "dic_4_card_wakeuptime_2524_1.png"
+    ],
+    "token": "dic_4_card_wakeuptime_2524&dic_4_card_wakeuptime_2524&dic_4_card_wakeuptime_2524",
+    "grades": [
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What time is it now? / A: It's wake-up time."
+    ],
+    "tags": [
+      "daily_routine",
+      "time"
+    ],
+    "lemma": "wake-up time",
+    "is_plural": false,
+    "letter_count": 10,
+    "syllable_count": 3,
+    "first_letter": "W",
+    "is_compound": true,
+    "phonics_initial": "w",
+    "difficulty_tier": 3,
+    "primary_image": "dic_4_card_wakeuptime_2524_1_c.png",
+    "primary_audio": "dic_4_card_wakeuptime_2524.mp3",
+    "three_hints": {
+      "category_hint": "It is related to time and calendar.",
+      "feature_hint": "A time expression known as '起きる時間' (おきるじかん) in Japanese.",
+      "letter_hint": "It starts with the letter W."
+    },
+    "target_dialogues": [
+      {
+        "question": "What time is it now?",
+        "answer": "It's wake-up time.",
+        "context": "Telling the time"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G4": {
+        "card_image": "dic_4_card_wakeuptime_2524_1_c.png",
+        "sound_file": "dic_4_card_wakeuptime_2524.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_4_card_wakeuptime_2524_1_ce.png",
+        "card_bw": "dic_4_card_wakeuptime_2524_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0749",
+    "english": "afternoon",
+    "canonical_key": "afternoon",
+    "disambiguation": "",
+    "display_label": "afternoon",
+    "normalized_english": "afternoon",
+    "part_of_speech": "noun",
+    "category": "10_calendar_time",
+    "category_name": "Calendar, Days & Time",
+    "ja_kanji": "午後",
+    "ja_hiragana": "ごご",
+    "en_katakana": "アフタヌーン",
+    "ruby": [
+      {
+        "base": "午後",
+        "ruby": "ごご"
+      }
+    ],
+    "ruby_html": "<ruby>午後<rt>ごご</rt></ruby>",
+    "ruby_text": "[午後|ごご]",
+    "sound_file": "dic_wb_10season_afternoon_1465.mp3",
+    "card_image": "dic_wb_10season_afternoon_1465_1_c.png",
+    "card_image_kana": "dic_wb_10season_afternoon_1465_1_c.png",
+    "card_image_en": "dic_wb_10season_afternoon_1465_1_e.png",
+    "card_image_bilingual": "dic_wb_10season_afternoon_1465_1_ce.png",
+    "card_variants": [
+      "dic_wb_10season_afternoon_1465_1.png"
+    ],
+    "token": "dic_wb_10season_afternoon_1465&dic_wb_10season_afternoon_1465&dic_wb_10season_afternoon_1465",
+    "grades": [
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What time is it now? / A: It's afternoon."
+    ],
+    "tags": [
+      "adverb",
+      "frequency"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u07_01_afternoon_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u07_01_afternoon_illust.png",
+    "hwg_card_text": "cards/text/hwg6_u07_01_afternoon_text.png",
+    "lemma": "afternoon",
+    "is_plural": false,
+    "letter_count": 9,
+    "syllable_count": 3,
+    "first_letter": "A",
+    "is_compound": false,
+    "phonics_initial": "a",
+    "difficulty_tier": 3,
+    "primary_image": "dic_wb_10season_afternoon_1465_1_c.png",
+    "primary_audio": "dic_wb_10season_afternoon_1465.mp3",
+    "three_hints": {
+      "category_hint": "It is related to time and calendar.",
+      "feature_hint": "A time expression known as '午後' (ごご) in Japanese.",
+      "letter_hint": "It starts with the letter A."
+    },
+    "target_dialogues": [
+      {
+        "question": "What time is it now?",
+        "answer": "It's afternoon.",
+        "context": "Telling the time"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u07_01_afternoon_illust.png",
+        "card_full": "cards/full/hwg6_u07_01_afternoon_full.png",
+        "card_text": "cards/text/hwg6_u07_01_afternoon_text.png",
+        "unit": "Unit 7: Unit 7: When and How Often",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_10season_afternoon_1465.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0750",
+    "english": "April",
+    "canonical_key": "april",
+    "disambiguation": "",
+    "display_label": "April",
+    "normalized_english": "april",
+    "part_of_speech": "noun",
+    "category": "10_calendar_time",
+    "category_name": "Calendar, Days & Time",
+    "ja_kanji": "4月",
+    "ja_hiragana": "しがつ",
+    "en_katakana": "エイプリル",
+    "ruby": [
+      {
+        "base": "4月",
+        "ruby": "しがつ"
+      }
+    ],
+    "ruby_html": "<ruby>4月<rt>しがつ</rt></ruby>",
+    "ruby_text": "[4月|しがつ]",
+    "sound_file": "dic_wb_10season_april_1445.mp3",
+    "card_image": "dic_5_card_april_0165_1_c.png",
+    "card_image_kana": "dic_5_card_april_0165_1_c.png",
+    "card_image_en": "dic_5_card_april_0165_1_e.png",
+    "card_image_bilingual": "dic_5_card_april_0165_1_ce.png",
+    "card_variants": [
+      "dic_5_card_april_0165_1.png"
+    ],
+    "token": "dic_wb_10season_april_1445&dic_wb_10season_april_1445&dic_5_card_april_0165",
+    "grades": [
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: When is your birthday? / A: My birthday is in April."
+    ],
+    "tags": [
+      "calendar",
+      "month"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u11_03_April_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u11_03_April_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u11_03_April_text.png",
+    "lemma": "April",
+    "is_plural": false,
+    "letter_count": 5,
+    "syllable_count": 2,
+    "first_letter": "A",
+    "is_compound": false,
+    "phonics_initial": "a",
+    "difficulty_tier": 3,
+    "primary_image": "dic_5_card_april_0165_1_c.png",
+    "primary_audio": "dic_wb_10season_april_1445.mp3",
+    "three_hints": {
+      "category_hint": "It is a month of the year.",
+      "feature_hint": "The month known as '4月' (しがつ) in Japanese.",
+      "letter_hint": "It starts with the letter A."
+    },
+    "target_dialogues": [
+      {
+        "question": "When is your birthday?",
+        "answer": "My birthday is in April.",
+        "context": "Asking about birthdays and calendar months"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u11_03_April_illust.png",
+        "card_full": "cards/full/hwg5_u11_03_April_full.png",
+        "card_text": "cards/text/hwg5_u11_03_April_text.png",
+        "unit": "Unit 11: Unit 11: Months and Days",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_10season_april_1445.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u04_03_April_illust.png",
+        "card_full": "cards/full/hwg6_u04_03_April_full.png",
+        "card_text": "cards/text/hwg6_u04_03_April_text.png",
+        "unit": "Unit 4: Unit 4: Months",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_10season_april_1445.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0751",
+    "english": "August",
+    "canonical_key": "august",
+    "disambiguation": "",
+    "display_label": "August",
+    "normalized_english": "august",
+    "part_of_speech": "noun",
+    "category": "10_calendar_time",
+    "category_name": "Calendar, Days & Time",
+    "ja_kanji": "8月",
+    "ja_hiragana": "はちがつ",
+    "en_katakana": "オーガスト",
+    "ruby": [
+      {
+        "base": "8月",
+        "ruby": "はちがつ"
+      }
+    ],
+    "ruby_html": "<ruby>8月<rt>はちがつ</rt></ruby>",
+    "ruby_text": "[8月|はちがつ]",
+    "sound_file": "dic_wb_10season_august_1449.mp3",
+    "card_image": "dic_5_card_august_0169_1_c.png",
+    "card_image_kana": "dic_5_card_august_0169_1_c.png",
+    "card_image_en": "dic_5_card_august_0169_1_e.png",
+    "card_image_bilingual": "dic_5_card_august_0169_1_ce.png",
+    "card_variants": [
+      "dic_5_card_august_0169_1.png"
+    ],
+    "token": "dic_wb_10season_august_1449&dic_wb_10season_august_1449&dic_5_card_august_0169",
+    "grades": [
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: When is your birthday? / A: My birthday is in August."
+    ],
+    "tags": [
+      "calendar",
+      "month"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u11_07_August_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u11_07_August_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u11_07_August_text.png",
+    "lemma": "August",
+    "is_plural": false,
+    "letter_count": 6,
+    "syllable_count": 2,
+    "first_letter": "A",
+    "is_compound": false,
+    "phonics_initial": "a",
+    "difficulty_tier": 3,
+    "primary_image": "dic_5_card_august_0169_1_c.png",
+    "primary_audio": "dic_wb_10season_august_1449.mp3",
+    "three_hints": {
+      "category_hint": "It is a month of the year.",
+      "feature_hint": "The month known as '8月' (はちがつ) in Japanese.",
+      "letter_hint": "It starts with the letter A."
+    },
+    "target_dialogues": [
+      {
+        "question": "When is your birthday?",
+        "answer": "My birthday is in August.",
+        "context": "Asking about birthdays and calendar months"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u11_07_August_illust.png",
+        "card_full": "cards/full/hwg5_u11_07_August_full.png",
+        "card_text": "cards/text/hwg5_u11_07_August_text.png",
+        "unit": "Unit 11: Unit 11: Months and Days",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_10season_august_1449.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u04_07_August_illust.png",
+        "card_full": "cards/full/hwg6_u04_07_August_full.png",
+        "card_text": "cards/text/hwg6_u04_07_August_text.png",
+        "unit": "Unit 4: Unit 4: Months",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_10season_august_1449.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0752",
+    "english": "fall",
+    "canonical_key": "fall",
+    "disambiguation": "",
+    "display_label": "fall",
+    "normalized_english": "fall",
+    "part_of_speech": "noun",
+    "category": "10_calendar_time",
+    "category_name": "Calendar, Days & Time",
+    "ja_kanji": "秋",
+    "ja_hiragana": "あき",
+    "en_katakana": "フォール",
+    "ruby": [
+      {
+        "base": "秋",
+        "ruby": "あき"
+      }
+    ],
+    "ruby_html": "<ruby>秋<rt>あき</rt></ruby>",
+    "ruby_text": "[秋|あき]",
+    "sound_file": "dic_wb_10season_autumnfall_1439.mp3",
+    "card_image": "cards/illustration/hwg6_u03_02_fall_illust.png",
+    "card_image_kana": "cards/illustration/hwg6_u03_02_fall_illust.png",
+    "card_image_en": "cards/illustration/hwg6_u03_02_fall_illust.png",
+    "card_image_bilingual": "cards/illustration/hwg6_u03_02_fall_illust.png",
+    "card_variants": [
+      "dic_wb_10season_autumnfall_1439_1.png"
+    ],
+    "token": "dic_wb_10season_autumnfall_1439&dic_wb_10season_autumnfall_1439&dic_wb_10season_autumnfall_1439",
+    "grades": [
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What season do you like? / A: I like fall."
+    ],
+    "tags": [
+      "calendar",
+      "season",
+      "fall",
+      "autumn"
+    ],
+    "lemma": "fall",
+    "is_plural": false,
+    "letter_count": 4,
+    "syllable_count": 1,
+    "first_letter": "F",
+    "is_compound": false,
+    "phonics_initial": "f",
+    "difficulty_tier": 3,
+    "primary_image": "cards/illustration/hwg6_u03_02_fall_illust.png",
+    "primary_audio": "dic_wb_10season_autumnfall_1439.mp3",
+    "three_hints": {
+      "category_hint": "It is a season of the year.",
+      "feature_hint": "The season known as '秋' (あき) in Japanese.",
+      "letter_hint": "It starts with the letter F."
+    },
+    "target_dialogues": [
+      {
+        "question": "What season do you like?",
+        "answer": "I like fall.",
+        "context": "Talking about favorite seasons"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u03_02_fall_illust.png",
+        "card_full": "cards/full/hwg6_u03_02_fall_full.png",
+        "card_text": "cards/text/hwg6_u03_02_fall_text.png",
+        "unit": "Unit 3: Seasons",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_10season_autumnfall_1439.mp3"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg6_u03_02_fall_illust.png",
+        "card_full": "cards/full/hwg6_u03_02_fall_full.png",
+        "card_text": "cards/text/hwg6_u03_02_fall_text.png",
+        "unit": "Unit 3: Seasons",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_10season_autumnfall_1439.mp3"
+      }
+    },
+    "hwg_card_illust": "cards/illustration/hwg6_u03_02_fall_illust.png",
+    "hwg_card_full": "cards/full/hwg6_u03_02_fall_full.png",
+    "hwg_card_text": "cards/text/hwg6_u03_02_fall_text.png"
+  },
+  {
+    "id": "word_0753",
+    "english": "December",
+    "canonical_key": "december",
+    "disambiguation": "",
+    "display_label": "December",
+    "normalized_english": "december",
+    "part_of_speech": "noun",
+    "category": "10_calendar_time",
+    "category_name": "Calendar, Days & Time",
+    "ja_kanji": "12月",
+    "ja_hiragana": "じゅうにがつ",
+    "en_katakana": "ディセンバー",
+    "ruby": [
+      {
+        "base": "12月",
+        "ruby": "じゅうにがつ"
+      }
+    ],
+    "ruby_html": "<ruby>12月<rt>じゅうにがつ</rt></ruby>",
+    "ruby_text": "[12月|じゅうにがつ]",
+    "sound_file": "dic_wb_10season_december_1453.mp3",
+    "card_image": "dic_5_card_december_0173_1_c.png",
+    "card_image_kana": "dic_5_card_december_0173_1_c.png",
+    "card_image_en": "dic_5_card_december_0173_1_e.png",
+    "card_image_bilingual": "dic_5_card_december_0173_1_ce.png",
+    "card_variants": [
+      "dic_5_card_december_0173_1.png"
+    ],
+    "token": "dic_wb_10season_december_1453&dic_wb_10season_december_1453&dic_5_card_december_0173",
+    "grades": [
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: When is your birthday? / A: My birthday is in December."
+    ],
+    "tags": [
+      "calendar",
+      "month"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u11_11_December_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u11_11_December_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u11_11_December_text.png",
+    "lemma": "December",
+    "is_plural": false,
+    "letter_count": 8,
+    "syllable_count": 3,
+    "first_letter": "D",
+    "is_compound": false,
+    "phonics_initial": "d",
+    "difficulty_tier": 3,
+    "primary_image": "dic_5_card_december_0173_1_c.png",
+    "primary_audio": "dic_wb_10season_december_1453.mp3",
+    "three_hints": {
+      "category_hint": "It is a month of the year.",
+      "feature_hint": "The month known as '12月' (じゅうにがつ) in Japanese.",
+      "letter_hint": "It starts with the letter D."
+    },
+    "target_dialogues": [
+      {
+        "question": "When is your birthday?",
+        "answer": "My birthday is in December.",
+        "context": "Asking about birthdays and calendar months"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u11_11_December_illust.png",
+        "card_full": "cards/full/hwg5_u11_11_December_full.png",
+        "card_text": "cards/text/hwg5_u11_11_December_text.png",
+        "unit": "Unit 11: Unit 11: Months and Days",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_10season_december_1453.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u04_11_December_illust.png",
+        "card_full": "cards/full/hwg6_u04_11_December_full.png",
+        "card_text": "cards/text/hwg6_u04_11_December_text.png",
+        "unit": "Unit 4: Unit 4: Months",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_10season_december_1453.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0754",
+    "english": "February",
+    "canonical_key": "february",
+    "disambiguation": "",
+    "display_label": "February",
+    "normalized_english": "february",
+    "part_of_speech": "noun",
+    "category": "10_calendar_time",
+    "category_name": "Calendar, Days & Time",
+    "ja_kanji": "2月",
+    "ja_hiragana": "にがつ",
+    "en_katakana": "フェブラリー",
+    "ruby": [
+      {
+        "base": "2月",
+        "ruby": "にがつ"
+      }
+    ],
+    "ruby_html": "<ruby>2月<rt>にがつ</rt></ruby>",
+    "ruby_text": "[2月|にがつ]",
+    "sound_file": "dic_wb_10season_february_1443.mp3",
+    "card_image": "dic_5_card_february_0163_1_c.png",
+    "card_image_kana": "dic_5_card_february_0163_1_c.png",
+    "card_image_en": "dic_5_card_february_0163_1_e.png",
+    "card_image_bilingual": "dic_5_card_february_0163_1_ce.png",
+    "card_variants": [
+      "dic_5_card_february_0163_1.png"
+    ],
+    "token": "dic_wb_10season_february_1443&dic_wb_10season_february_1443&dic_5_card_february_0163",
+    "grades": [
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: When is your birthday? / A: My birthday is in February."
+    ],
+    "tags": [
+      "calendar",
+      "month"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u11_01_February_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u11_01_February_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u11_01_February_text.png",
+    "lemma": "February",
+    "is_plural": false,
+    "letter_count": 8,
+    "syllable_count": 3,
+    "first_letter": "F",
+    "is_compound": false,
+    "phonics_initial": "f",
+    "difficulty_tier": 3,
+    "primary_image": "dic_5_card_february_0163_1_c.png",
+    "primary_audio": "dic_wb_10season_february_1443.mp3",
+    "three_hints": {
+      "category_hint": "It is a month of the year.",
+      "feature_hint": "The month known as '2月' (にがつ) in Japanese.",
+      "letter_hint": "It starts with the letter F."
+    },
+    "target_dialogues": [
+      {
+        "question": "When is your birthday?",
+        "answer": "My birthday is in February.",
+        "context": "Asking about birthdays and calendar months"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u11_01_February_illust.png",
+        "card_full": "cards/full/hwg5_u11_01_February_full.png",
+        "card_text": "cards/text/hwg5_u11_01_February_text.png",
+        "unit": "Unit 11: Unit 11: Months and Days",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_10season_february_1443.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u04_01_February_illust.png",
+        "card_full": "cards/full/hwg6_u04_01_February_full.png",
+        "card_text": "cards/text/hwg6_u04_01_February_text.png",
+        "unit": "Unit 4: Unit 4: Months",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_10season_february_1443.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0755",
+    "english": "Friday",
+    "canonical_key": "friday",
+    "disambiguation": "",
+    "display_label": "Friday",
+    "normalized_english": "friday",
+    "part_of_speech": "noun",
+    "category": "10_calendar_time",
+    "category_name": "Calendar, Days & Time",
+    "ja_kanji": "金曜日",
+    "ja_hiragana": "きんようび",
+    "en_katakana": "フライデー",
+    "ruby": [
+      {
+        "base": "金曜日",
+        "ruby": "きんようび"
+      }
+    ],
+    "ruby_html": "<ruby>金曜日<rt>きんようび</rt></ruby>",
+    "ruby_text": "[金曜日|きんようび]",
+    "sound_file": "dic_wb_10season_friday_1459.mp3",
+    "card_image": "dic_5_card_friday_0194_1_c.png",
+    "card_image_kana": "dic_5_card_friday_0194_1_c.png",
+    "card_image_en": "dic_5_card_friday_0194_1_e.png",
+    "card_image_bilingual": "dic_5_card_friday_0194_1_ce.png",
+    "card_variants": [
+      "dic_5_card_friday_0194_1.png"
+    ],
+    "token": "dic_wb_10season_friday_1459&dic_wb_10season_friday_1459&dic_5_card_friday_0194",
+    "grades": [
+      "ES_G4",
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What day is it today? / A: It's Friday."
+    ],
+    "tags": [
+      "calendar",
+      "day"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u11_17_Friday_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u11_17_Friday_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u11_17_Friday_text.png",
+    "lemma": "Friday",
+    "is_plural": false,
+    "letter_count": 6,
+    "syllable_count": 2,
+    "first_letter": "F",
+    "is_compound": false,
+    "phonics_initial": "fr",
+    "difficulty_tier": 3,
+    "primary_image": "dic_5_card_friday_0194_1_c.png",
+    "primary_audio": "dic_wb_10season_friday_1459.mp3",
+    "three_hints": {
+      "category_hint": "It is a day of the week.",
+      "feature_hint": "The day known as '金曜日' (きんようび) in Japanese.",
+      "letter_hint": "It starts with the letter F."
+    },
+    "target_dialogues": [
+      {
+        "question": "What day is it today?",
+        "answer": "It's Friday.",
+        "context": "Asking about days of the week"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G4": {
+        "card_image": "dic_5_card_friday_0194_1_c.png",
+        "sound_file": "dic_wb_10season_friday_1459.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_5_card_friday_0194_1_ce.png",
+        "card_bw": "dic_5_card_friday_0194_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u11_17_Friday_illust.png",
+        "card_full": "cards/full/hwg5_u11_17_Friday_full.png",
+        "card_text": "cards/text/hwg5_u11_17_Friday_text.png",
+        "unit": "Unit 11: Unit 11: Months and Days",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_10season_friday_1459.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u07_09_Friday_illust.png",
+        "card_full": "cards/full/hwg6_u07_09_Friday_full.png",
+        "card_text": "cards/text/hwg6_u07_09_Friday_text.png",
+        "unit": "Unit 7: Unit 7: When and How Often",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_10season_friday_1459.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0756",
+    "english": "January",
+    "canonical_key": "january",
+    "disambiguation": "",
+    "display_label": "January",
+    "normalized_english": "january",
+    "part_of_speech": "noun",
+    "category": "10_calendar_time",
+    "category_name": "Calendar, Days & Time",
+    "ja_kanji": "1月",
+    "ja_hiragana": "いちがつ",
+    "en_katakana": "ジャニュアリー",
+    "ruby": [
+      {
+        "base": "1月",
+        "ruby": "いちがつ"
+      }
+    ],
+    "ruby_html": "<ruby>1月<rt>いちがつ</rt></ruby>",
+    "ruby_text": "[1月|いちがつ]",
+    "sound_file": "dic_wb_10season_january_1442.mp3",
+    "card_image": "dic_5_card_january_0162_1_c.png",
+    "card_image_kana": "dic_5_card_january_0162_1_c.png",
+    "card_image_en": "dic_5_card_january_0162_1_e.png",
+    "card_image_bilingual": "dic_5_card_january_0162_1_ce.png",
+    "card_variants": [
+      "dic_5_card_january_0162_1.png"
+    ],
+    "token": "dic_wb_10season_january_1442&dic_wb_10season_january_1442&dic_5_card_january_0162",
+    "grades": [
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: When is your birthday? / A: My birthday is in January."
+    ],
+    "tags": [
+      "calendar",
+      "month"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u11_00_January_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u11_00_January_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u11_00_January_text.png",
+    "lemma": "January",
+    "is_plural": false,
+    "letter_count": 7,
+    "syllable_count": 3,
+    "first_letter": "J",
+    "is_compound": false,
+    "phonics_initial": "j",
+    "difficulty_tier": 3,
+    "primary_image": "dic_5_card_january_0162_1_c.png",
+    "primary_audio": "dic_wb_10season_january_1442.mp3",
+    "three_hints": {
+      "category_hint": "It is a month of the year.",
+      "feature_hint": "The month known as '1月' (いちがつ) in Japanese.",
+      "letter_hint": "It starts with the letter J."
+    },
+    "target_dialogues": [
+      {
+        "question": "When is your birthday?",
+        "answer": "My birthday is in January.",
+        "context": "Asking about birthdays and calendar months"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u11_00_January_illust.png",
+        "card_full": "cards/full/hwg5_u11_00_January_full.png",
+        "card_text": "cards/text/hwg5_u11_00_January_text.png",
+        "unit": "Unit 11: Unit 11: Months and Days",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_10season_january_1442.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u04_00_January_illust.png",
+        "card_full": "cards/full/hwg6_u04_00_January_full.png",
+        "card_text": "cards/text/hwg6_u04_00_January_text.png",
+        "unit": "Unit 4: Unit 4: Months",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_10season_january_1442.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0757",
+    "english": "July",
+    "canonical_key": "july",
+    "disambiguation": "",
+    "display_label": "July",
+    "normalized_english": "july",
+    "part_of_speech": "noun",
+    "category": "10_calendar_time",
+    "category_name": "Calendar, Days & Time",
+    "ja_kanji": "7月",
+    "ja_hiragana": "しちがつ",
+    "en_katakana": "ジュライ",
+    "ruby": [
+      {
+        "base": "7月",
+        "ruby": "しちがつ"
+      }
+    ],
+    "ruby_html": "<ruby>7月<rt>しちがつ</rt></ruby>",
+    "ruby_text": "[7月|しちがつ]",
+    "sound_file": "dic_wb_10season_july_1448.mp3",
+    "card_image": "dic_5_card_july_0168_1_c.png",
+    "card_image_kana": "dic_5_card_july_0168_1_c.png",
+    "card_image_en": "dic_5_card_july_0168_1_e.png",
+    "card_image_bilingual": "dic_5_card_july_0168_1_ce.png",
+    "card_variants": [
+      "dic_5_card_july_0168_1.png"
+    ],
+    "token": "dic_wb_10season_july_1448&dic_wb_10season_july_1448&dic_5_card_july_0168",
+    "grades": [
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: When is your birthday? / A: My birthday is in July."
+    ],
+    "tags": [
+      "calendar",
+      "month"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u11_06_July_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u11_06_July_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u11_06_July_text.png",
+    "lemma": "July",
+    "is_plural": false,
+    "letter_count": 4,
+    "syllable_count": 2,
+    "first_letter": "J",
+    "is_compound": false,
+    "phonics_initial": "j",
+    "difficulty_tier": 3,
+    "primary_image": "dic_5_card_july_0168_1_c.png",
+    "primary_audio": "dic_wb_10season_july_1448.mp3",
+    "three_hints": {
+      "category_hint": "It is a month of the year.",
+      "feature_hint": "The month known as '7月' (しちがつ) in Japanese.",
+      "letter_hint": "It starts with the letter J."
+    },
+    "target_dialogues": [
+      {
+        "question": "When is your birthday?",
+        "answer": "My birthday is in July.",
+        "context": "Asking about birthdays and calendar months"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u11_06_July_illust.png",
+        "card_full": "cards/full/hwg5_u11_06_July_full.png",
+        "card_text": "cards/text/hwg5_u11_06_July_text.png",
+        "unit": "Unit 11: Unit 11: Months and Days",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_10season_july_1448.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u04_06_July_illust.png",
+        "card_full": "cards/full/hwg6_u04_06_July_full.png",
+        "card_text": "cards/text/hwg6_u04_06_July_text.png",
+        "unit": "Unit 4: Unit 4: Months",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_10season_july_1448.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0758",
+    "english": "June",
+    "canonical_key": "june",
+    "disambiguation": "",
+    "display_label": "June",
+    "normalized_english": "june",
+    "part_of_speech": "noun",
+    "category": "10_calendar_time",
+    "category_name": "Calendar, Days & Time",
+    "ja_kanji": "6月",
+    "ja_hiragana": "ろくがつ",
+    "en_katakana": "ジューン",
+    "ruby": [
+      {
+        "base": "6月",
+        "ruby": "ろくがつ"
+      }
+    ],
+    "ruby_html": "<ruby>6月<rt>ろくがつ</rt></ruby>",
+    "ruby_text": "[6月|ろくがつ]",
+    "sound_file": "dic_wb_10season_june_1447.mp3",
+    "card_image": "dic_5_card_june_0167_1_c.png",
+    "card_image_kana": "dic_5_card_june_0167_1_c.png",
+    "card_image_en": "dic_5_card_june_0167_1_e.png",
+    "card_image_bilingual": "dic_5_card_june_0167_1_ce.png",
+    "card_variants": [
+      "dic_5_card_june_0167_1.png"
+    ],
+    "token": "dic_wb_10season_june_1447&dic_wb_10season_june_1447&dic_5_card_june_0167",
+    "grades": [
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: When is your birthday? / A: My birthday is in June."
+    ],
+    "tags": [
+      "calendar",
+      "month"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u11_05_June_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u11_05_June_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u11_05_June_text.png",
+    "lemma": "June",
+    "is_plural": false,
+    "letter_count": 4,
+    "syllable_count": 1,
+    "first_letter": "J",
+    "is_compound": false,
+    "phonics_initial": "j",
+    "difficulty_tier": 3,
+    "primary_image": "dic_5_card_june_0167_1_c.png",
+    "primary_audio": "dic_wb_10season_june_1447.mp3",
+    "three_hints": {
+      "category_hint": "It is a month of the year.",
+      "feature_hint": "The month known as '6月' (ろくがつ) in Japanese.",
+      "letter_hint": "It starts with the letter J."
+    },
+    "target_dialogues": [
+      {
+        "question": "When is your birthday?",
+        "answer": "My birthday is in June.",
+        "context": "Asking about birthdays and calendar months"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u11_05_June_illust.png",
+        "card_full": "cards/full/hwg5_u11_05_June_full.png",
+        "card_text": "cards/text/hwg5_u11_05_June_text.png",
+        "unit": "Unit 11: Unit 11: Months and Days",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_10season_june_1447.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u04_05_June_illust.png",
+        "card_full": "cards/full/hwg6_u04_05_June_full.png",
+        "card_text": "cards/text/hwg6_u04_05_June_text.png",
+        "unit": "Unit 4: Unit 4: Months",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_10season_june_1447.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0759",
+    "english": "March",
+    "canonical_key": "march",
+    "disambiguation": "",
+    "display_label": "March",
+    "normalized_english": "march",
+    "part_of_speech": "noun",
+    "category": "10_calendar_time",
+    "category_name": "Calendar, Days & Time",
+    "ja_kanji": "3月",
+    "ja_hiragana": "さんがつ",
+    "en_katakana": "マーチ",
+    "ruby": [
+      {
+        "base": "3月",
+        "ruby": "さんがつ"
+      }
+    ],
+    "ruby_html": "<ruby>3月<rt>さんがつ</rt></ruby>",
+    "ruby_text": "[3月|さんがつ]",
+    "sound_file": "dic_wb_10season_march_1444.mp3",
+    "card_image": "dic_5_card_march_0164_1_c.png",
+    "card_image_kana": "dic_5_card_march_0164_1_c.png",
+    "card_image_en": "dic_5_card_march_0164_1_e.png",
+    "card_image_bilingual": "dic_5_card_march_0164_1_ce.png",
+    "card_variants": [
+      "dic_5_card_march_0164_1.png"
+    ],
+    "token": "dic_wb_10season_march_1444&dic_wb_10season_march_1444&dic_5_card_march_0164",
+    "grades": [
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: When is your birthday? / A: My birthday is in March."
+    ],
+    "tags": [
+      "calendar",
+      "month"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u11_02_March_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u11_02_March_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u11_02_March_text.png",
+    "lemma": "March",
+    "is_plural": false,
+    "letter_count": 5,
+    "syllable_count": 1,
+    "first_letter": "M",
+    "is_compound": false,
+    "phonics_initial": "m",
+    "difficulty_tier": 3,
+    "primary_image": "dic_5_card_march_0164_1_c.png",
+    "primary_audio": "dic_wb_10season_march_1444.mp3",
+    "three_hints": {
+      "category_hint": "It is a month of the year.",
+      "feature_hint": "The month known as '3月' (さんがつ) in Japanese.",
+      "letter_hint": "It starts with the letter M."
+    },
+    "target_dialogues": [
+      {
+        "question": "When is your birthday?",
+        "answer": "My birthday is in March.",
+        "context": "Asking about birthdays and calendar months"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u11_02_March_illust.png",
+        "card_full": "cards/full/hwg5_u11_02_March_full.png",
+        "card_text": "cards/text/hwg5_u11_02_March_text.png",
+        "unit": "Unit 11: Unit 11: Months and Days",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_10season_march_1444.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u04_02_March_illust.png",
+        "card_full": "cards/full/hwg6_u04_02_March_full.png",
+        "card_text": "cards/text/hwg6_u04_02_March_text.png",
+        "unit": "Unit 4: Unit 4: Months",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_10season_march_1444.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0760",
+    "english": "May",
+    "canonical_key": "may",
+    "disambiguation": "",
+    "display_label": "May",
+    "normalized_english": "may",
+    "part_of_speech": "noun",
+    "category": "10_calendar_time",
+    "category_name": "Calendar, Days & Time",
+    "ja_kanji": "5月",
+    "ja_hiragana": "ごがつ",
+    "en_katakana": "メイ",
+    "ruby": [
+      {
+        "base": "5月",
+        "ruby": "ごがつ"
+      }
+    ],
+    "ruby_html": "<ruby>5月<rt>ごがつ</rt></ruby>",
+    "ruby_text": "[5月|ごがつ]",
+    "sound_file": "dic_wb_10season_may_1446.mp3",
+    "card_image": "dic_5_card_may_0166_1_c.png",
+    "card_image_kana": "dic_5_card_may_0166_1_c.png",
+    "card_image_en": "dic_5_card_may_0166_1_e.png",
+    "card_image_bilingual": "dic_5_card_may_0166_1_ce.png",
+    "card_variants": [
+      "dic_5_card_may_0166_1.png"
+    ],
+    "token": "dic_wb_10season_may_1446&dic_wb_10season_may_1446&dic_5_card_may_0166",
+    "grades": [
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: When is your birthday? / A: My birthday is in May."
+    ],
+    "tags": [
+      "calendar",
+      "month"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u11_04_May_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u11_04_May_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u11_04_May_text.png",
+    "lemma": "May",
+    "is_plural": false,
+    "letter_count": 3,
+    "syllable_count": 1,
+    "first_letter": "M",
+    "is_compound": false,
+    "phonics_initial": "m",
+    "difficulty_tier": 3,
+    "primary_image": "dic_5_card_may_0166_1_c.png",
+    "primary_audio": "dic_wb_10season_may_1446.mp3",
+    "three_hints": {
+      "category_hint": "It is a month of the year.",
+      "feature_hint": "The month known as '5月' (ごがつ) in Japanese.",
+      "letter_hint": "It starts with the letter M."
+    },
+    "target_dialogues": [
+      {
+        "question": "When is your birthday?",
+        "answer": "My birthday is in May.",
+        "context": "Asking about birthdays and calendar months"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u11_04_May_illust.png",
+        "card_full": "cards/full/hwg5_u11_04_May_full.png",
+        "card_text": "cards/text/hwg5_u11_04_May_text.png",
+        "unit": "Unit 11: Unit 11: Months and Days",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_10season_may_1446.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u04_04_May_illust.png",
+        "card_full": "cards/full/hwg6_u04_04_May_full.png",
+        "card_text": "cards/text/hwg6_u04_04_May_text.png",
+        "unit": "Unit 4: Unit 4: Months",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_10season_may_1446.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0761",
+    "english": "Monday",
+    "canonical_key": "monday",
+    "disambiguation": "",
+    "display_label": "Monday",
+    "normalized_english": "monday",
+    "part_of_speech": "noun",
+    "category": "10_calendar_time",
+    "category_name": "Calendar, Days & Time",
+    "ja_kanji": "月曜日",
+    "ja_hiragana": "げつようび",
+    "en_katakana": "マンデー",
+    "ruby": [
+      {
+        "base": "月曜日",
+        "ruby": "げつようび"
+      }
+    ],
+    "ruby_html": "<ruby>月曜日<rt>げつようび</rt></ruby>",
+    "ruby_text": "[月曜日|げつようび]",
+    "sound_file": "dic_wb_10season_monday_1455.mp3",
+    "card_image": "dic_5_card_monday_0190_1_c.png",
+    "card_image_kana": "dic_5_card_monday_0190_1_c.png",
+    "card_image_en": "dic_5_card_monday_0190_1_e.png",
+    "card_image_bilingual": "dic_5_card_monday_0190_1_ce.png",
+    "card_variants": [
+      "dic_5_card_monday_0190_1.png"
+    ],
+    "token": "dic_wb_10season_monday_1455&dic_wb_10season_monday_1455&dic_5_card_monday_0190",
+    "grades": [
+      "ES_G4",
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What day is it today? / A: It's Monday."
+    ],
+    "tags": [
+      "calendar",
+      "day"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u11_13_Monday_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u11_13_Monday_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u11_13_Monday_text.png",
+    "lemma": "Monday",
+    "is_plural": false,
+    "letter_count": 6,
+    "syllable_count": 2,
+    "first_letter": "M",
+    "is_compound": false,
+    "phonics_initial": "m",
+    "difficulty_tier": 3,
+    "primary_image": "dic_5_card_monday_0190_1_c.png",
+    "primary_audio": "dic_wb_10season_monday_1455.mp3",
+    "three_hints": {
+      "category_hint": "It is a day of the week.",
+      "feature_hint": "The day known as '月曜日' (げつようび) in Japanese.",
+      "letter_hint": "It starts with the letter M."
+    },
+    "target_dialogues": [
+      {
+        "question": "What day is it today?",
+        "answer": "It's Monday.",
+        "context": "Asking about days of the week"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G4": {
+        "card_image": "dic_5_card_monday_0190_1_c.png",
+        "sound_file": "dic_wb_10season_monday_1455.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_5_card_monday_0190_1_ce.png",
+        "card_bw": "dic_5_card_monday_0190_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u11_13_Monday_illust.png",
+        "card_full": "cards/full/hwg5_u11_13_Monday_full.png",
+        "card_text": "cards/text/hwg5_u11_13_Monday_text.png",
+        "unit": "Unit 11: Unit 11: Months and Days",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_10season_monday_1455.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u07_05_Monday_illust.png",
+        "card_full": "cards/full/hwg6_u07_05_Monday_full.png",
+        "card_text": "cards/text/hwg6_u07_05_Monday_text.png",
+        "unit": "Unit 7: Unit 7: When and How Often",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_10season_monday_1455.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0762",
+    "english": "morning",
+    "canonical_key": "morning",
+    "disambiguation": "",
+    "display_label": "morning",
+    "normalized_english": "morning",
+    "part_of_speech": "noun",
+    "category": "10_calendar_time",
+    "category_name": "Calendar, Days & Time",
+    "ja_kanji": "朝",
+    "ja_hiragana": "あさ",
+    "en_katakana": "モーニング",
+    "ruby": [
+      {
+        "base": "朝",
+        "ruby": "あさ"
+      }
+    ],
+    "ruby_html": "<ruby>朝<rt>あさ</rt></ruby>",
+    "ruby_text": "[朝|あさ]",
+    "sound_file": "dic_wb_10season_morning_1464.mp3",
+    "card_image": "dic_wb_10season_morning_1464_1_c.png",
+    "card_image_kana": "dic_wb_10season_morning_1464_1_c.png",
+    "card_image_en": "dic_wb_10season_morning_1464_1_e.png",
+    "card_image_bilingual": "dic_wb_10season_morning_1464_1_ce.png",
+    "card_variants": [
+      "dic_wb_10season_morning_1464_1.png"
+    ],
+    "token": "dic_wb_10season_morning_1464&dic_wb_10season_morning_1464&dic_wb_10season_morning_1464",
+    "grades": [
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What time is it now? / A: It's morning."
+    ],
+    "tags": [
+      "adverb",
+      "frequency"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u07_00_morning_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u07_00_morning_illust.png",
+    "hwg_card_text": "cards/text/hwg6_u07_00_morning_text.png",
+    "lemma": "morning",
+    "is_plural": false,
+    "letter_count": 7,
+    "syllable_count": 2,
+    "first_letter": "M",
+    "is_compound": false,
+    "phonics_initial": "m",
+    "difficulty_tier": 3,
+    "primary_image": "dic_wb_10season_morning_1464_1_c.png",
+    "primary_audio": "dic_wb_10season_morning_1464.mp3",
+    "three_hints": {
+      "category_hint": "It is related to time and calendar.",
+      "feature_hint": "A time expression known as '朝' (あさ) in Japanese.",
+      "letter_hint": "It starts with the letter M."
+    },
+    "target_dialogues": [
+      {
+        "question": "What time is it now?",
+        "answer": "It's morning.",
+        "context": "Telling the time"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u07_00_morning_illust.png",
+        "card_full": "cards/full/hwg6_u07_00_morning_full.png",
+        "card_text": "cards/text/hwg6_u07_00_morning_text.png",
+        "unit": "Unit 7: Unit 7: When and How Often",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_10season_morning_1464.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0763",
+    "english": "night",
+    "canonical_key": "night",
+    "disambiguation": "",
+    "display_label": "night",
+    "normalized_english": "night",
+    "part_of_speech": "noun",
+    "category": "10_calendar_time",
+    "category_name": "Calendar, Days & Time",
+    "ja_kanji": "夜",
+    "ja_hiragana": "よる",
+    "en_katakana": "ナイト",
+    "ruby": [
+      {
+        "base": "夜",
+        "ruby": "よる"
+      }
+    ],
+    "ruby_html": "<ruby>夜<rt>よる</rt></ruby>",
+    "ruby_text": "[夜|よる]",
+    "sound_file": "dic_wb_10season_night_1680.mp3",
+    "card_image": "dic_wb_10season_night_1680_1_c.png",
+    "card_image_kana": "dic_wb_10season_night_1680_1_c.png",
+    "card_image_en": "dic_wb_10season_night_1680_1_e.png",
+    "card_image_bilingual": "dic_wb_10season_night_1680_1_ce.png",
+    "card_variants": [
+      "dic_wb_10season_night_1680_1.png"
+    ],
+    "token": "dic_wb_10season_night_1680&dic_wb_10season_night_1680&dic_wb_10season_night_1680",
+    "grades": [
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What time is it now? / A: It's night."
+    ],
+    "tags": [
+      "adverb",
+      "frequency"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u07_03_night_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u07_03_night_illust.png",
+    "hwg_card_text": "cards/text/hwg6_u07_03_night_text.png",
+    "lemma": "night",
+    "is_plural": false,
+    "letter_count": 5,
+    "syllable_count": 1,
+    "first_letter": "N",
+    "is_compound": false,
+    "phonics_initial": "n",
+    "difficulty_tier": 3,
+    "primary_image": "dic_wb_10season_night_1680_1_c.png",
+    "primary_audio": "dic_wb_10season_night_1680.mp3",
+    "three_hints": {
+      "category_hint": "It is related to time and calendar.",
+      "feature_hint": "A time expression known as '夜' (よる) in Japanese.",
+      "letter_hint": "It starts with the letter N."
+    },
+    "target_dialogues": [
+      {
+        "question": "What time is it now?",
+        "answer": "It's night.",
+        "context": "Telling the time"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u07_03_night_illust.png",
+        "card_full": "cards/full/hwg6_u07_03_night_full.png",
+        "card_text": "cards/text/hwg6_u07_03_night_text.png",
+        "unit": "Unit 7: Unit 7: When and How Often",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_10season_night_1680.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0764",
+    "english": "November",
+    "canonical_key": "november",
+    "disambiguation": "",
+    "display_label": "November",
+    "normalized_english": "november",
+    "part_of_speech": "noun",
+    "category": "10_calendar_time",
+    "category_name": "Calendar, Days & Time",
+    "ja_kanji": "11月",
+    "ja_hiragana": "じゅういちがつ",
+    "en_katakana": "ノーベンバー",
+    "ruby": [
+      {
+        "base": "11月",
+        "ruby": "じゅういちがつ"
+      }
+    ],
+    "ruby_html": "<ruby>11月<rt>じゅういちがつ</rt></ruby>",
+    "ruby_text": "[11月|じゅういちがつ]",
+    "sound_file": "dic_wb_10season_november_1452.mp3",
+    "card_image": "dic_5_card_november_0172_1_c.png",
+    "card_image_kana": "dic_5_card_november_0172_1_c.png",
+    "card_image_en": "dic_5_card_november_0172_1_e.png",
+    "card_image_bilingual": "dic_5_card_november_0172_1_ce.png",
+    "card_variants": [
+      "dic_5_card_november_0172_1.png"
+    ],
+    "token": "dic_wb_10season_november_1452&dic_wb_10season_november_1452&dic_5_card_november_0172",
+    "grades": [
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: When is your birthday? / A: My birthday is in November."
+    ],
+    "tags": [
+      "calendar",
+      "month"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u11_10_November_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u11_10_November_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u11_10_November_text.png",
+    "lemma": "November",
+    "is_plural": false,
+    "letter_count": 8,
+    "syllable_count": 3,
+    "first_letter": "N",
+    "is_compound": false,
+    "phonics_initial": "n",
+    "difficulty_tier": 3,
+    "primary_image": "dic_5_card_november_0172_1_c.png",
+    "primary_audio": "dic_wb_10season_november_1452.mp3",
+    "three_hints": {
+      "category_hint": "It is a month of the year.",
+      "feature_hint": "The month known as '11月' (じゅういちがつ) in Japanese.",
+      "letter_hint": "It starts with the letter N."
+    },
+    "target_dialogues": [
+      {
+        "question": "When is your birthday?",
+        "answer": "My birthday is in November.",
+        "context": "Asking about birthdays and calendar months"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u11_10_November_illust.png",
+        "card_full": "cards/full/hwg5_u11_10_November_full.png",
+        "card_text": "cards/text/hwg5_u11_10_November_text.png",
+        "unit": "Unit 11: Unit 11: Months and Days",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_10season_november_1452.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u04_10_November_illust.png",
+        "card_full": "cards/full/hwg6_u04_10_November_full.png",
+        "card_text": "cards/text/hwg6_u04_10_November_text.png",
+        "unit": "Unit 4: Unit 4: Months",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_10season_november_1452.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0765",
+    "english": "October",
+    "canonical_key": "october",
+    "disambiguation": "",
+    "display_label": "October",
+    "normalized_english": "october",
+    "part_of_speech": "noun",
+    "category": "10_calendar_time",
+    "category_name": "Calendar, Days & Time",
+    "ja_kanji": "10月",
+    "ja_hiragana": "じゅうがつ",
+    "en_katakana": "オクトーバー",
+    "ruby": [
+      {
+        "base": "10月",
+        "ruby": "じゅうがつ"
+      }
+    ],
+    "ruby_html": "<ruby>10月<rt>じゅうがつ</rt></ruby>",
+    "ruby_text": "[10月|じゅうがつ]",
+    "sound_file": "dic_wb_10season_october_1451.mp3",
+    "card_image": "dic_5_card_october_0171_1_c.png",
+    "card_image_kana": "dic_5_card_october_0171_1_c.png",
+    "card_image_en": "dic_5_card_october_0171_1_e.png",
+    "card_image_bilingual": "dic_5_card_october_0171_1_ce.png",
+    "card_variants": [
+      "dic_5_card_october_0171_1.png"
+    ],
+    "token": "dic_wb_10season_october_1451&dic_wb_10season_october_1451&dic_5_card_october_0171",
+    "grades": [
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: When is your birthday? / A: My birthday is in October."
+    ],
+    "tags": [
+      "calendar",
+      "month"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u11_09_October_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u11_09_October_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u11_09_October_text.png",
+    "lemma": "October",
+    "is_plural": false,
+    "letter_count": 7,
+    "syllable_count": 3,
+    "first_letter": "O",
+    "is_compound": false,
+    "phonics_initial": "o",
+    "difficulty_tier": 3,
+    "primary_image": "dic_5_card_october_0171_1_c.png",
+    "primary_audio": "dic_wb_10season_october_1451.mp3",
+    "three_hints": {
+      "category_hint": "It is a month of the year.",
+      "feature_hint": "The month known as '10月' (じゅうがつ) in Japanese.",
+      "letter_hint": "It starts with the letter O."
+    },
+    "target_dialogues": [
+      {
+        "question": "When is your birthday?",
+        "answer": "My birthday is in October.",
+        "context": "Asking about birthdays and calendar months"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u11_09_October_illust.png",
+        "card_full": "cards/full/hwg5_u11_09_October_full.png",
+        "card_text": "cards/text/hwg5_u11_09_October_text.png",
+        "unit": "Unit 11: Unit 11: Months and Days",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_10season_october_1451.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u04_09_October_illust.png",
+        "card_full": "cards/full/hwg6_u04_09_October_full.png",
+        "card_text": "cards/text/hwg6_u04_09_October_text.png",
+        "unit": "Unit 4: Unit 4: Months",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_10season_october_1451.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0766",
+    "english": "Saturday",
+    "canonical_key": "saturday",
+    "disambiguation": "",
+    "display_label": "Saturday",
+    "normalized_english": "saturday",
+    "part_of_speech": "noun",
+    "category": "10_calendar_time",
+    "category_name": "Calendar, Days & Time",
+    "ja_kanji": "土曜日",
+    "ja_hiragana": "どようび",
+    "en_katakana": "サタデー",
+    "ruby": [
+      {
+        "base": "土曜日",
+        "ruby": "どようび"
+      }
+    ],
+    "ruby_html": "<ruby>土曜日<rt>どようび</rt></ruby>",
+    "ruby_text": "[土曜日|どようび]",
+    "sound_file": "dic_wb_10season_saturday_1460.mp3",
+    "card_image": "dic_5_card_saturday_0195_1_c.png",
+    "card_image_kana": "dic_5_card_saturday_0195_1_c.png",
+    "card_image_en": "dic_5_card_saturday_0195_1_e.png",
+    "card_image_bilingual": "dic_5_card_saturday_0195_1_ce.png",
+    "card_variants": [
+      "dic_5_card_saturday_0195_1.png"
+    ],
+    "token": "dic_wb_10season_saturday_1460&dic_wb_10season_saturday_1460&dic_5_card_saturday_0195",
+    "grades": [
+      "ES_G4",
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What day is it today? / A: It's Saturday."
+    ],
+    "tags": [
+      "calendar",
+      "day"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u11_18_Saturday_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u11_18_Saturday_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u11_18_Saturday_text.png",
+    "lemma": "Saturday",
+    "is_plural": false,
+    "letter_count": 8,
+    "syllable_count": 3,
+    "first_letter": "S",
+    "is_compound": false,
+    "phonics_initial": "s",
+    "difficulty_tier": 3,
+    "primary_image": "dic_5_card_saturday_0195_1_c.png",
+    "primary_audio": "dic_wb_10season_saturday_1460.mp3",
+    "three_hints": {
+      "category_hint": "It is a day of the week.",
+      "feature_hint": "The day known as '土曜日' (どようび) in Japanese.",
+      "letter_hint": "It starts with the letter S."
+    },
+    "target_dialogues": [
+      {
+        "question": "What day is it today?",
+        "answer": "It's Saturday.",
+        "context": "Asking about days of the week"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G4": {
+        "card_image": "dic_5_card_saturday_0195_1_c.png",
+        "sound_file": "dic_wb_10season_saturday_1460.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_5_card_saturday_0195_1_ce.png",
+        "card_bw": "dic_5_card_saturday_0195_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u11_18_Saturday_illust.png",
+        "card_full": "cards/full/hwg5_u11_18_Saturday_full.png",
+        "card_text": "cards/text/hwg5_u11_18_Saturday_text.png",
+        "unit": "Unit 11: Unit 11: Months and Days",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_10season_saturday_1460.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u07_10_Saturday_illust.png",
+        "card_full": "cards/full/hwg6_u07_10_Saturday_full.png",
+        "card_text": "cards/text/hwg6_u07_10_Saturday_text.png",
+        "unit": "Unit 7: Unit 7: When and How Often",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_10season_saturday_1460.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0767",
+    "english": "September",
+    "canonical_key": "september",
+    "disambiguation": "",
+    "display_label": "September",
+    "normalized_english": "september",
+    "part_of_speech": "noun",
+    "category": "10_calendar_time",
+    "category_name": "Calendar, Days & Time",
+    "ja_kanji": "9月",
+    "ja_hiragana": "くがつ",
+    "en_katakana": "セプテンバー",
+    "ruby": [
+      {
+        "base": "9月",
+        "ruby": "くがつ"
+      }
+    ],
+    "ruby_html": "<ruby>9月<rt>くがつ</rt></ruby>",
+    "ruby_text": "[9月|くがつ]",
+    "sound_file": "dic_wb_10season_september_1450.mp3",
+    "card_image": "dic_5_card_september_0170_1_c.png",
+    "card_image_kana": "dic_5_card_september_0170_1_c.png",
+    "card_image_en": "dic_5_card_september_0170_1_e.png",
+    "card_image_bilingual": "dic_5_card_september_0170_1_ce.png",
+    "card_variants": [
+      "dic_5_card_september_0170_1.png"
+    ],
+    "token": "dic_wb_10season_september_1450&dic_wb_10season_september_1450&dic_5_card_september_0170",
+    "grades": [
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: When is your birthday? / A: My birthday is in September."
+    ],
+    "tags": [
+      "calendar",
+      "month"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u11_08_September_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u11_08_September_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u11_08_September_text.png",
+    "lemma": "September",
+    "is_plural": false,
+    "letter_count": 9,
+    "syllable_count": 3,
+    "first_letter": "S",
+    "is_compound": false,
+    "phonics_initial": "s",
+    "difficulty_tier": 3,
+    "primary_image": "dic_5_card_september_0170_1_c.png",
+    "primary_audio": "dic_wb_10season_september_1450.mp3",
+    "three_hints": {
+      "category_hint": "It is a month of the year.",
+      "feature_hint": "The month known as '9月' (くがつ) in Japanese.",
+      "letter_hint": "It starts with the letter S."
+    },
+    "target_dialogues": [
+      {
+        "question": "When is your birthday?",
+        "answer": "My birthday is in September.",
+        "context": "Asking about birthdays and calendar months"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u11_08_September_illust.png",
+        "card_full": "cards/full/hwg5_u11_08_September_full.png",
+        "card_text": "cards/text/hwg5_u11_08_September_text.png",
+        "unit": "Unit 11: Unit 11: Months and Days",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_10season_september_1450.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u04_08_September_illust.png",
+        "card_full": "cards/full/hwg6_u04_08_September_full.png",
+        "card_text": "cards/text/hwg6_u04_08_September_text.png",
+        "unit": "Unit 4: Unit 4: Months",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_10season_september_1450.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0768",
+    "english": "spring",
+    "canonical_key": "spring",
+    "disambiguation": "",
+    "display_label": "spring",
+    "normalized_english": "spring",
+    "part_of_speech": "noun",
+    "category": "10_calendar_time",
+    "category_name": "Calendar, Days & Time",
+    "ja_kanji": "春",
+    "ja_hiragana": "はる",
+    "en_katakana": "スプリング",
+    "ruby": [
+      {
+        "base": "春",
+        "ruby": "はる"
+      }
+    ],
+    "ruby_html": "<ruby>春<rt>はる</rt></ruby>",
+    "ruby_text": "[春|はる]",
+    "sound_file": "dic_wb_10season_spring_1437.mp3",
+    "card_image": "dic_5_card_spring_0158_1_c.png",
+    "card_image_kana": "dic_5_card_spring_0158_1_c.png",
+    "card_image_en": "dic_5_card_spring_0158_1_e.png",
+    "card_image_bilingual": "dic_5_card_spring_0158_1_ce.png",
+    "card_variants": [
+      "dic_5_card_spring_0158_1.png"
+    ],
+    "token": "dic_wb_10season_spring_1437&dic_wb_10season_spring_1437&dic_5_card_spring_0158",
+    "grades": [
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What season do you like? / A: I like spring."
+    ],
+    "tags": [
+      "season"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u03_00_spring_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u03_00_spring_illust.png",
+    "hwg_card_text": "cards/text/hwg6_u03_00_spring_text.png",
+    "lemma": "spring",
+    "is_plural": false,
+    "letter_count": 6,
+    "syllable_count": 1,
+    "first_letter": "S",
+    "is_compound": false,
+    "phonics_initial": "spr",
+    "difficulty_tier": 3,
+    "primary_image": "dic_5_card_spring_0158_1_c.png",
+    "primary_audio": "dic_wb_10season_spring_1437.mp3",
+    "three_hints": {
+      "category_hint": "It is a season of the year.",
+      "feature_hint": "The season known as '春' (はる) in Japanese.",
+      "letter_hint": "It starts with the letter S."
+    },
+    "target_dialogues": [
+      {
+        "question": "What season do you like?",
+        "answer": "I like spring.",
+        "context": "Talking about favorite seasons"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg6_u03_00_spring_illust.png",
+        "card_full": "cards/full/hwg6_u03_00_spring_full.png",
+        "card_text": "cards/text/hwg6_u03_00_spring_text.png",
+        "sound_file": "dic_wb_10season_spring_1437.mp3",
+        "source": "here_we_go_5"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u03_00_spring_illust.png",
+        "card_full": "cards/full/hwg6_u03_00_spring_full.png",
+        "card_text": "cards/text/hwg6_u03_00_spring_text.png",
+        "unit": "Unit 3: Unit 3: Seasons",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_10season_spring_1437.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0769",
+    "english": "summer",
+    "canonical_key": "summer",
+    "disambiguation": "",
+    "display_label": "summer",
+    "normalized_english": "summer",
+    "part_of_speech": "noun",
+    "category": "10_calendar_time",
+    "category_name": "Calendar, Days & Time",
+    "ja_kanji": "夏",
+    "ja_hiragana": "なつ",
+    "en_katakana": "サマー",
+    "ruby": [
+      {
+        "base": "夏",
+        "ruby": "なつ"
+      }
+    ],
+    "ruby_html": "<ruby>夏<rt>なつ</rt></ruby>",
+    "ruby_text": "[夏|なつ]",
+    "sound_file": "dic_wb_10season_summer_1438.mp3",
+    "card_image": "dic_5_card_summer_0159_1_c.png",
+    "card_image_kana": "dic_5_card_summer_0159_1_c.png",
+    "card_image_en": "dic_5_card_summer_0159_1_e.png",
+    "card_image_bilingual": "dic_5_card_summer_0159_1_ce.png",
+    "card_variants": [
+      "dic_5_card_summer_0159_1.png"
+    ],
+    "token": "dic_wb_10season_summer_1438&dic_wb_10season_summer_1438&dic_5_card_summer_0159",
+    "grades": [
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What season do you like? / A: I like summer."
+    ],
+    "tags": [
+      "season"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u03_01_summer_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u03_01_summer_illust.png",
+    "hwg_card_text": "cards/text/hwg6_u03_01_summer_text.png",
+    "lemma": "summer",
+    "is_plural": false,
+    "letter_count": 6,
+    "syllable_count": 2,
+    "first_letter": "S",
+    "is_compound": false,
+    "phonics_initial": "s",
+    "difficulty_tier": 3,
+    "primary_image": "dic_5_card_summer_0159_1_c.png",
+    "primary_audio": "dic_wb_10season_summer_1438.mp3",
+    "three_hints": {
+      "category_hint": "It is a season of the year.",
+      "feature_hint": "The season known as '夏' (なつ) in Japanese.",
+      "letter_hint": "It starts with the letter S."
+    },
+    "target_dialogues": [
+      {
+        "question": "What season do you like?",
+        "answer": "I like summer.",
+        "context": "Talking about favorite seasons"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg6_u03_01_summer_illust.png",
+        "card_full": "cards/full/hwg6_u03_01_summer_full.png",
+        "card_text": "cards/text/hwg6_u03_01_summer_text.png",
+        "sound_file": "dic_wb_10season_summer_1438.mp3",
+        "source": "here_we_go_5"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u03_01_summer_illust.png",
+        "card_full": "cards/full/hwg6_u03_01_summer_full.png",
+        "card_text": "cards/text/hwg6_u03_01_summer_text.png",
+        "unit": "Unit 3: Unit 3: Seasons",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_10season_summer_1438.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0770",
+    "english": "Sunday",
+    "canonical_key": "sunday",
+    "disambiguation": "",
+    "display_label": "Sunday",
+    "normalized_english": "sunday",
+    "part_of_speech": "noun",
+    "category": "10_calendar_time",
+    "category_name": "Calendar, Days & Time",
+    "ja_kanji": "日曜日",
+    "ja_hiragana": "にちようび",
+    "en_katakana": "サンデー",
+    "ruby": [
+      {
+        "base": "日曜日",
+        "ruby": "にちようび"
+      }
+    ],
+    "ruby_html": "<ruby>日曜日<rt>にちようび</rt></ruby>",
+    "ruby_text": "[日曜日|にちようび]",
+    "sound_file": "dic_wb_10season_sunday_1454.mp3",
+    "card_image": "dic_5_card_sunday_0189_1_c.png",
+    "card_image_kana": "dic_5_card_sunday_0189_1_c.png",
+    "card_image_en": "dic_5_card_sunday_0189_1_e.png",
+    "card_image_bilingual": "dic_5_card_sunday_0189_1_ce.png",
+    "card_variants": [
+      "dic_5_card_sunday_0189_1.png"
+    ],
+    "token": "dic_wb_10season_sunday_1454&dic_wb_10season_sunday_1454&dic_5_card_sunday_0189",
+    "grades": [
+      "ES_G4",
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What day is it today? / A: It's Sunday."
+    ],
+    "tags": [
+      "calendar",
+      "day"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u11_12_Sunday_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u11_12_Sunday_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u11_12_Sunday_text.png",
+    "lemma": "Sunday",
+    "is_plural": false,
+    "letter_count": 6,
+    "syllable_count": 2,
+    "first_letter": "S",
+    "is_compound": false,
+    "phonics_initial": "s",
+    "difficulty_tier": 3,
+    "primary_image": "dic_5_card_sunday_0189_1_c.png",
+    "primary_audio": "dic_wb_10season_sunday_1454.mp3",
+    "three_hints": {
+      "category_hint": "It is a day of the week.",
+      "feature_hint": "The day known as '日曜日' (にちようび) in Japanese.",
+      "letter_hint": "It starts with the letter S."
+    },
+    "target_dialogues": [
+      {
+        "question": "What day is it today?",
+        "answer": "It's Sunday.",
+        "context": "Asking about days of the week"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G4": {
+        "card_image": "dic_5_card_sunday_0189_1_c.png",
+        "sound_file": "dic_wb_10season_sunday_1454.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_5_card_sunday_0189_1_ce.png",
+        "card_bw": "dic_5_card_sunday_0189_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u11_12_Sunday_illust.png",
+        "card_full": "cards/full/hwg5_u11_12_Sunday_full.png",
+        "card_text": "cards/text/hwg5_u11_12_Sunday_text.png",
+        "unit": "Unit 11: Unit 11: Months and Days",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_10season_sunday_1454.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u07_04_Sunday_illust.png",
+        "card_full": "cards/full/hwg6_u07_04_Sunday_full.png",
+        "card_text": "cards/text/hwg6_u07_04_Sunday_text.png",
+        "unit": "Unit 7: Unit 7: When and How Often",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_10season_sunday_1454.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0771",
+    "english": "Thursday",
+    "canonical_key": "thursday",
+    "disambiguation": "",
+    "display_label": "Thursday",
+    "normalized_english": "thursday",
+    "part_of_speech": "noun",
+    "category": "10_calendar_time",
+    "category_name": "Calendar, Days & Time",
+    "ja_kanji": "木曜日",
+    "ja_hiragana": "もくようび",
+    "en_katakana": "サーズデー",
+    "ruby": [
+      {
+        "base": "木曜日",
+        "ruby": "もくようび"
+      }
+    ],
+    "ruby_html": "<ruby>木曜日<rt>もくようび</rt></ruby>",
+    "ruby_text": "[木曜日|もくようび]",
+    "sound_file": "dic_wb_10season_thursday_1458.mp3",
+    "card_image": "dic_5_card_thursday_0193_1_c.png",
+    "card_image_kana": "dic_5_card_thursday_0193_1_c.png",
+    "card_image_en": "dic_5_card_thursday_0193_1_e.png",
+    "card_image_bilingual": "dic_5_card_thursday_0193_1_ce.png",
+    "card_variants": [
+      "dic_5_card_thursday_0193_1.png"
+    ],
+    "token": "dic_wb_10season_thursday_1458&dic_wb_10season_thursday_1458&dic_5_card_thursday_0193",
+    "grades": [
+      "ES_G4",
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What day is it today? / A: It's Thursday."
+    ],
+    "tags": [
+      "calendar",
+      "day"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u11_16_Thursday_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u11_16_Thursday_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u11_16_Thursday_text.png",
+    "lemma": "Thursday",
+    "is_plural": false,
+    "letter_count": 8,
+    "syllable_count": 2,
+    "first_letter": "T",
+    "is_compound": false,
+    "phonics_initial": "th",
+    "difficulty_tier": 3,
+    "primary_image": "dic_5_card_thursday_0193_1_c.png",
+    "primary_audio": "dic_wb_10season_thursday_1458.mp3",
+    "three_hints": {
+      "category_hint": "It is a day of the week.",
+      "feature_hint": "The day known as '木曜日' (もくようび) in Japanese.",
+      "letter_hint": "It starts with the letter T."
+    },
+    "target_dialogues": [
+      {
+        "question": "What day is it today?",
+        "answer": "It's Thursday.",
+        "context": "Asking about days of the week"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G4": {
+        "card_image": "dic_5_card_thursday_0193_1_c.png",
+        "sound_file": "dic_wb_10season_thursday_1458.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_5_card_thursday_0193_1_ce.png",
+        "card_bw": "dic_5_card_thursday_0193_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u11_16_Thursday_illust.png",
+        "card_full": "cards/full/hwg5_u11_16_Thursday_full.png",
+        "card_text": "cards/text/hwg5_u11_16_Thursday_text.png",
+        "unit": "Unit 11: Unit 11: Months and Days",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_10season_thursday_1458.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u07_08_Thursday_illust.png",
+        "card_full": "cards/full/hwg6_u07_08_Thursday_full.png",
+        "card_text": "cards/text/hwg6_u07_08_Thursday_text.png",
+        "unit": "Unit 7: Unit 7: When and How Often",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_10season_thursday_1458.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0772",
+    "english": "Tuesday",
+    "canonical_key": "tuesday",
+    "disambiguation": "",
+    "display_label": "Tuesday",
+    "normalized_english": "tuesday",
+    "part_of_speech": "noun",
+    "category": "10_calendar_time",
+    "category_name": "Calendar, Days & Time",
+    "ja_kanji": "火曜日",
+    "ja_hiragana": "かようび",
+    "en_katakana": "チューズデー",
+    "ruby": [
+      {
+        "base": "火曜日",
+        "ruby": "かようび"
+      }
+    ],
+    "ruby_html": "<ruby>火曜日<rt>かようび</rt></ruby>",
+    "ruby_text": "[火曜日|かようび]",
+    "sound_file": "dic_wb_10season_tuesday_1456.mp3",
+    "card_image": "dic_5_card_tuesday_0191_1_c.png",
+    "card_image_kana": "dic_5_card_tuesday_0191_1_c.png",
+    "card_image_en": "dic_5_card_tuesday_0191_1_e.png",
+    "card_image_bilingual": "dic_5_card_tuesday_0191_1_ce.png",
+    "card_variants": [
+      "dic_5_card_tuesday_0191_1.png"
+    ],
+    "token": "dic_wb_10season_tuesday_1456&dic_wb_10season_tuesday_1456&dic_5_card_tuesday_0191",
+    "grades": [
+      "ES_G4",
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What day is it today? / A: It's Tuesday."
+    ],
+    "tags": [
+      "calendar",
+      "day"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u11_14_Tuesday_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u11_14_Tuesday_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u11_14_Tuesday_text.png",
+    "lemma": "Tuesday",
+    "is_plural": false,
+    "letter_count": 7,
+    "syllable_count": 2,
+    "first_letter": "T",
+    "is_compound": false,
+    "phonics_initial": "t",
+    "difficulty_tier": 3,
+    "primary_image": "dic_5_card_tuesday_0191_1_c.png",
+    "primary_audio": "dic_wb_10season_tuesday_1456.mp3",
+    "three_hints": {
+      "category_hint": "It is a day of the week.",
+      "feature_hint": "The day known as '火曜日' (かようび) in Japanese.",
+      "letter_hint": "It starts with the letter T."
+    },
+    "target_dialogues": [
+      {
+        "question": "What day is it today?",
+        "answer": "It's Tuesday.",
+        "context": "Asking about days of the week"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G4": {
+        "card_image": "dic_5_card_tuesday_0191_1_c.png",
+        "sound_file": "dic_wb_10season_tuesday_1456.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_5_card_tuesday_0191_1_ce.png",
+        "card_bw": "dic_5_card_tuesday_0191_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u11_14_Tuesday_illust.png",
+        "card_full": "cards/full/hwg5_u11_14_Tuesday_full.png",
+        "card_text": "cards/text/hwg5_u11_14_Tuesday_text.png",
+        "unit": "Unit 11: Unit 11: Months and Days",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_10season_tuesday_1456.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u07_06_Tuesday_illust.png",
+        "card_full": "cards/full/hwg6_u07_06_Tuesday_full.png",
+        "card_text": "cards/text/hwg6_u07_06_Tuesday_text.png",
+        "unit": "Unit 7: Unit 7: When and How Often",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_10season_tuesday_1456.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0773",
+    "english": "Wednesday",
+    "canonical_key": "wednesday",
+    "disambiguation": "",
+    "display_label": "Wednesday",
+    "normalized_english": "wednesday",
+    "part_of_speech": "noun",
+    "category": "10_calendar_time",
+    "category_name": "Calendar, Days & Time",
+    "ja_kanji": "水曜日",
+    "ja_hiragana": "すいようび",
+    "en_katakana": "ウェンズデー",
+    "ruby": [
+      {
+        "base": "水曜日",
+        "ruby": "すいようび"
+      }
+    ],
+    "ruby_html": "<ruby>水曜日<rt>すいようび</rt></ruby>",
+    "ruby_text": "[水曜日|すいようび]",
+    "sound_file": "dic_wb_10season_wednesday_1457.mp3",
+    "card_image": "dic_5_card_wednesday_0192_1_c.png",
+    "card_image_kana": "dic_5_card_wednesday_0192_1_c.png",
+    "card_image_en": "dic_5_card_wednesday_0192_1_e.png",
+    "card_image_bilingual": "dic_5_card_wednesday_0192_1_ce.png",
+    "card_variants": [
+      "dic_5_card_wednesday_0192_1.png"
+    ],
+    "token": "dic_wb_10season_wednesday_1457&dic_wb_10season_wednesday_1457&dic_5_card_wednesday_0192",
+    "grades": [
+      "ES_G4",
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What day is it today? / A: It's Wednesday."
+    ],
+    "tags": [
+      "calendar",
+      "day"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u11_15_Wednesday_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u11_15_Wednesday_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u11_15_Wednesday_text.png",
+    "lemma": "Wednesday",
+    "is_plural": false,
+    "letter_count": 9,
+    "syllable_count": 3,
+    "first_letter": "W",
+    "is_compound": false,
+    "phonics_initial": "w",
+    "difficulty_tier": 3,
+    "primary_image": "dic_5_card_wednesday_0192_1_c.png",
+    "primary_audio": "dic_wb_10season_wednesday_1457.mp3",
+    "three_hints": {
+      "category_hint": "It is a day of the week.",
+      "feature_hint": "The day known as '水曜日' (すいようび) in Japanese.",
+      "letter_hint": "It starts with the letter W."
+    },
+    "target_dialogues": [
+      {
+        "question": "What day is it today?",
+        "answer": "It's Wednesday.",
+        "context": "Asking about days of the week"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G4": {
+        "card_image": "dic_5_card_wednesday_0192_1_c.png",
+        "sound_file": "dic_wb_10season_wednesday_1457.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_5_card_wednesday_0192_1_ce.png",
+        "card_bw": "dic_5_card_wednesday_0192_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u11_15_Wednesday_illust.png",
+        "card_full": "cards/full/hwg5_u11_15_Wednesday_full.png",
+        "card_text": "cards/text/hwg5_u11_15_Wednesday_text.png",
+        "unit": "Unit 11: Unit 11: Months and Days",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_10season_wednesday_1457.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u07_07_Wednesday_illust.png",
+        "card_full": "cards/full/hwg6_u07_07_Wednesday_full.png",
+        "card_text": "cards/text/hwg6_u07_07_Wednesday_text.png",
+        "unit": "Unit 7: Unit 7: When and How Often",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_10season_wednesday_1457.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0774",
+    "english": "winter",
+    "canonical_key": "winter",
+    "disambiguation": "",
+    "display_label": "winter",
+    "normalized_english": "winter",
+    "part_of_speech": "noun",
+    "category": "10_calendar_time",
+    "category_name": "Calendar, Days & Time",
+    "ja_kanji": "冬",
+    "ja_hiragana": "ふゆ",
+    "en_katakana": "ウィンター",
+    "ruby": [
+      {
+        "base": "冬",
+        "ruby": "ふゆ"
+      }
+    ],
+    "ruby_html": "<ruby>冬<rt>ふゆ</rt></ruby>",
+    "ruby_text": "[冬|ふゆ]",
+    "sound_file": "dic_wb_10season_winter_1441.mp3",
+    "card_image": "dic_5_card_winter_0161_1_c.png",
+    "card_image_kana": "dic_5_card_winter_0161_1_c.png",
+    "card_image_en": "dic_5_card_winter_0161_1_e.png",
+    "card_image_bilingual": "dic_5_card_winter_0161_1_ce.png",
+    "card_variants": [
+      "dic_5_card_winter_0161_1.png"
+    ],
+    "token": "dic_wb_10season_winter_1441&dic_wb_10season_winter_1441&dic_5_card_winter_0161",
+    "grades": [
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What season do you like? / A: I like winter."
+    ],
+    "tags": [
+      "season"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u03_03_winter_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u03_03_winter_illust.png",
+    "hwg_card_text": "cards/text/hwg6_u03_03_winter_text.png",
+    "lemma": "winter",
+    "is_plural": false,
+    "letter_count": 6,
+    "syllable_count": 2,
+    "first_letter": "W",
+    "is_compound": false,
+    "phonics_initial": "w",
+    "difficulty_tier": 3,
+    "primary_image": "dic_5_card_winter_0161_1_c.png",
+    "primary_audio": "dic_wb_10season_winter_1441.mp3",
+    "three_hints": {
+      "category_hint": "It is a season of the year.",
+      "feature_hint": "The season known as '冬' (ふゆ) in Japanese.",
+      "letter_hint": "It starts with the letter W."
+    },
+    "target_dialogues": [
+      {
+        "question": "What season do you like?",
+        "answer": "I like winter.",
+        "context": "Talking about favorite seasons"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg6_u03_03_winter_illust.png",
+        "card_full": "cards/full/hwg6_u03_03_winter_full.png",
+        "card_text": "cards/text/hwg6_u03_03_winter_text.png",
+        "sound_file": "dic_wb_10season_winter_1441.mp3",
+        "source": "here_we_go_5"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u03_03_winter_illust.png",
+        "card_full": "cards/full/hwg6_u03_03_winter_full.png",
+        "card_text": "cards/text/hwg6_u03_03_winter_text.png",
+        "unit": "Unit 3: Unit 3: Seasons",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_10season_winter_1441.mp3"
+      }
+    }
+  }
+]

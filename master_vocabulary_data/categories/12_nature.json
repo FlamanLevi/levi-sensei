@@ -1,0 +1,2372 @@
+[
+  {
+    "id": "word_0015",
+    "english": "autumn leaves",
+    "canonical_key": "autumn leaves",
+    "disambiguation": "",
+    "display_label": "autumn leaves",
+    "normalized_english": "autumn leaves",
+    "part_of_speech": "noun",
+    "category": "12_nature",
+    "category_name": "Nature & Weather",
+    "ja_kanji": "紅葉",
+    "ja_hiragana": "こうよう",
+    "en_katakana": "オータムリーブズ",
+    "ruby": [
+      {
+        "base": "紅葉",
+        "ruby": "こうよう"
+      }
+    ],
+    "ruby_html": "<ruby>紅葉<rt>こうよう</rt></ruby>",
+    "ruby_text": "[紅葉|こうよう]",
+    "sound_file": "",
+    "card_image": "cards/full/hwg5_u20_18_autumn_leaves_full.png",
+    "card_image_kana": "cards/full/hwg5_u20_18_autumn_leaves_full.png",
+    "card_image_en": "cards/full/hwg5_u20_18_autumn_leaves_full.png",
+    "card_image_bilingual": "cards/full/hwg5_u20_18_autumn_leaves_full.png",
+    "card_variants": [],
+    "token": "hwg_autumn leaves",
+    "grades": [
+      "ES_G5"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What can you see? / A: I can see autumn leaves."
+    ],
+    "tags": [
+      "autumn",
+      "nature"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u20_18_autumn_leaves_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u20_18_autumn_leaves_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u20_18_autumn_leaves_text.png",
+    "lemma": "autumn leaves",
+    "is_plural": false,
+    "letter_count": 12,
+    "syllable_count": 3,
+    "first_letter": "A",
+    "is_compound": true,
+    "phonics_initial": "a",
+    "difficulty_tier": 3,
+    "primary_image": "cards/full/hwg5_u20_18_autumn_leaves_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is a feature of nature or scenery.",
+      "feature_hint": "Part of nature known as '紅葉' (こうよう) in Japanese.",
+      "letter_hint": "It starts with the letter A."
+    },
+    "target_dialogues": [
+      {
+        "question": "What can you see?",
+        "answer": "I can see autumn leaves.",
+        "context": "Talking about nature and scenery"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u20_18_autumn_leaves_illust.png",
+        "card_full": "cards/full/hwg5_u20_18_autumn_leaves_full.png",
+        "card_text": "cards/text/hwg5_u20_18_autumn_leaves_text.png",
+        "unit": "Unit 20: Unit 20: Nature",
+        "source": "here_we_go_5",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0051",
+    "english": "cherry blossoms",
+    "canonical_key": "cherry blossoms",
+    "disambiguation": "",
+    "display_label": "cherry blossoms",
+    "normalized_english": "cherry blossoms",
+    "part_of_speech": "noun",
+    "category": "12_nature",
+    "category_name": "Nature & Weather",
+    "ja_kanji": "桜",
+    "ja_hiragana": "さくら",
+    "en_katakana": "チェリーブロッサムズ",
+    "ruby": [
+      {
+        "base": "桜",
+        "ruby": "さくら"
+      }
+    ],
+    "ruby_html": "<ruby>桜<rt>さくら</rt></ruby>",
+    "ruby_text": "[桜|さくら]",
+    "sound_file": "",
+    "card_image": "cards/full/hwg5_u20_11_cherry_blossoms_full.png",
+    "card_image_kana": "cards/full/hwg5_u20_11_cherry_blossoms_full.png",
+    "card_image_en": "cards/full/hwg5_u20_11_cherry_blossoms_full.png",
+    "card_image_bilingual": "cards/full/hwg5_u20_11_cherry_blossoms_full.png",
+    "card_variants": [],
+    "token": "hwg_cherry blossoms",
+    "grades": [
+      "ES_G5"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What can you see? / A: I can see cherry blossoms."
+    ],
+    "tags": [
+      "nature",
+      "spring"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u20_11_cherry_blossoms_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u20_11_cherry_blossoms_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u20_11_cherry_blossoms_text.png",
+    "lemma": "cherry blossoms",
+    "is_plural": false,
+    "letter_count": 14,
+    "syllable_count": 4,
+    "first_letter": "C",
+    "is_compound": true,
+    "phonics_initial": "ch",
+    "difficulty_tier": 3,
+    "primary_image": "cards/full/hwg5_u20_11_cherry_blossoms_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is a feature of nature or scenery.",
+      "feature_hint": "Part of nature known as '桜' (さくら) in Japanese.",
+      "letter_hint": "It starts with the letter C."
+    },
+    "target_dialogues": [
+      {
+        "question": "What can you see?",
+        "answer": "I can see cherry blossoms.",
+        "context": "Talking about nature and scenery"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u20_11_cherry_blossoms_illust.png",
+        "card_full": "cards/full/hwg5_u20_11_cherry_blossoms_full.png",
+        "card_text": "cards/text/hwg5_u20_11_cherry_blossoms_text.png",
+        "unit": "Unit 20: Unit 20: Nature",
+        "source": "here_we_go_5",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0072",
+    "english": "desert",
+    "canonical_key": "desert",
+    "disambiguation": "",
+    "display_label": "desert",
+    "normalized_english": "desert",
+    "part_of_speech": "noun",
+    "category": "12_nature",
+    "category_name": "Nature & Weather",
+    "ja_kanji": "砂漠",
+    "ja_hiragana": "さばく",
+    "en_katakana": "デザート",
+    "ruby": [
+      {
+        "base": "砂漠",
+        "ruby": "さばく"
+      }
+    ],
+    "ruby_html": "<ruby>砂漠<rt>さばく</rt></ruby>",
+    "ruby_text": "[砂漠|さばく]",
+    "sound_file": "",
+    "card_image": "cards/full/hwg6_u10_05_desert_full.png",
+    "card_image_kana": "cards/full/hwg6_u10_05_desert_full.png",
+    "card_image_en": "cards/full/hwg6_u10_05_desert_full.png",
+    "card_image_bilingual": "cards/full/hwg6_u10_05_desert_full.png",
+    "card_variants": [],
+    "token": "hwg_desert",
+    "grades": [
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What can you see? / A: I can see a desert."
+    ],
+    "tags": [
+      "nature"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u10_05_desert_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u10_05_desert_illust.png",
+    "hwg_card_text": "cards/text/hwg6_u10_05_desert_text.png",
+    "lemma": "desert",
+    "is_plural": false,
+    "letter_count": 6,
+    "syllable_count": 2,
+    "first_letter": "D",
+    "is_compound": false,
+    "phonics_initial": "d",
+    "difficulty_tier": 3,
+    "primary_image": "cards/full/hwg6_u10_05_desert_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is a feature of nature or scenery.",
+      "feature_hint": "Part of nature known as '砂漠' (さばく) in Japanese.",
+      "letter_hint": "It starts with the letter D."
+    },
+    "target_dialogues": [
+      {
+        "question": "What can you see?",
+        "answer": "I can see a desert.",
+        "context": "Talking about nature and scenery"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u10_05_desert_illust.png",
+        "card_full": "cards/full/hwg6_u10_05_desert_full.png",
+        "card_text": "cards/text/hwg6_u10_05_desert_text.png",
+        "unit": "Unit 10: Unit 10: Nature",
+        "source": "here_we_go_6",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0111",
+    "english": "flowers",
+    "canonical_key": "flowers",
+    "disambiguation": "",
+    "display_label": "flowers",
+    "normalized_english": "flowers",
+    "part_of_speech": "noun",
+    "category": "12_nature",
+    "category_name": "Nature & Weather",
+    "ja_kanji": "花",
+    "ja_hiragana": "はな",
+    "en_katakana": "フラワーズ",
+    "ruby": [
+      {
+        "base": "花",
+        "ruby": "はな"
+      }
+    ],
+    "ruby_html": "<ruby>花<rt>はな</rt></ruby>",
+    "ruby_text": "[花|はな]",
+    "sound_file": "dic_4_card_flowers_2613.mp3",
+    "card_image": "dic_4_card_flowers_2613_1_c.png",
+    "card_image_kana": "dic_4_card_flowers_2613_1_c.png",
+    "card_image_en": "dic_4_card_flowers_2613_1_e.png",
+    "card_image_bilingual": "dic_4_card_flowers_2613_1_ce.png",
+    "card_variants": [
+      "dic_4_card_flowers_2613_1.png"
+    ],
+    "token": "dic_4_card_flowers_2613&dic_4_card_flowers_2613&dic_4_card_flowers_2613",
+    "grades": [
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What can you see? / A: I can see flowers."
+    ],
+    "tags": [
+      "nature",
+      "plant",
+      "plural"
+    ],
+    "lemma": "flower",
+    "is_plural": true,
+    "letter_count": 7,
+    "syllable_count": 2,
+    "first_letter": "F",
+    "is_compound": false,
+    "phonics_initial": "fl",
+    "difficulty_tier": 2,
+    "primary_image": "dic_4_card_flowers_2613_1_c.png",
+    "primary_audio": "dic_4_card_flowers_2613.mp3",
+    "three_hints": {
+      "category_hint": "It is a feature of nature or scenery.",
+      "feature_hint": "Part of nature known as '花' (はな) in Japanese.",
+      "letter_hint": "It starts with the letter F."
+    },
+    "target_dialogues": [
+      {
+        "question": "What can you see?",
+        "answer": "I can see flowers.",
+        "context": "Talking about nature and scenery"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G4": {
+        "card_image": "dic_4_card_flowers_2613_1_c.png",
+        "sound_file": "dic_4_card_flowers_2613.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_4_card_flowers_2613_1_ce.png",
+        "card_bw": "dic_4_card_flowers_2613_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0113",
+    "english": "forest",
+    "canonical_key": "forest",
+    "disambiguation": "",
+    "display_label": "forest",
+    "normalized_english": "forest",
+    "part_of_speech": "noun",
+    "category": "12_nature",
+    "category_name": "Nature & Weather",
+    "ja_kanji": "森",
+    "ja_hiragana": "もり",
+    "en_katakana": "フォレスト",
+    "ruby": [
+      {
+        "base": "森",
+        "ruby": "もり"
+      }
+    ],
+    "ruby_html": "<ruby>森<rt>もり</rt></ruby>",
+    "ruby_text": "[森|もり]",
+    "sound_file": "",
+    "card_image": "cards/full/hwg5_u20_06_forest_full.png",
+    "card_image_kana": "cards/full/hwg5_u20_06_forest_full.png",
+    "card_image_en": "cards/full/hwg5_u20_06_forest_full.png",
+    "card_image_bilingual": "cards/full/hwg5_u20_06_forest_full.png",
+    "card_variants": [],
+    "token": "hwg_forest",
+    "grades": [
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What can you see? / A: I can see a forest."
+    ],
+    "tags": [
+      "nature"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u20_06_forest_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u20_06_forest_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u20_06_forest_text.png",
+    "lemma": "forest",
+    "is_plural": false,
+    "letter_count": 6,
+    "syllable_count": 2,
+    "first_letter": "F",
+    "is_compound": false,
+    "phonics_initial": "f",
+    "difficulty_tier": 3,
+    "primary_image": "cards/full/hwg5_u20_06_forest_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is a feature of nature or scenery.",
+      "feature_hint": "Part of nature known as '森' (もり) in Japanese.",
+      "letter_hint": "It starts with the letter F."
+    },
+    "target_dialogues": [
+      {
+        "question": "What can you see?",
+        "answer": "I can see a forest.",
+        "context": "Talking about nature and scenery"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u20_06_forest_illust.png",
+        "card_full": "cards/full/hwg5_u20_06_forest_full.png",
+        "card_text": "cards/text/hwg5_u20_06_forest_text.png",
+        "unit": "Unit 20: Unit 20: Nature",
+        "source": "here_we_go_5",
+        "sound_file": ""
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u10_03_forest_illust.png",
+        "card_full": "cards/full/hwg6_u10_03_forest_full.png",
+        "card_text": "cards/text/hwg6_u10_03_forest_text.png",
+        "unit": "Unit 10: Unit 10: Nature",
+        "source": "here_we_go_6",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0136",
+    "english": "grass",
+    "canonical_key": "grass",
+    "disambiguation": "",
+    "display_label": "grass",
+    "normalized_english": "grass",
+    "part_of_speech": "noun",
+    "category": "12_nature",
+    "category_name": "Nature & Weather",
+    "ja_kanji": "草",
+    "ja_hiragana": "くさ",
+    "en_katakana": "グラス",
+    "ruby": [
+      {
+        "base": "草",
+        "ruby": "くさ"
+      }
+    ],
+    "ruby_html": "<ruby>草<rt>くさ</rt></ruby>",
+    "ruby_text": "[草|くさ]",
+    "sound_file": "",
+    "card_image": "cards/full/hwg6_u10_18_grass_full.png",
+    "card_image_kana": "cards/full/hwg6_u10_18_grass_full.png",
+    "card_image_en": "cards/full/hwg6_u10_18_grass_full.png",
+    "card_image_bilingual": "cards/full/hwg6_u10_18_grass_full.png",
+    "card_variants": [],
+    "token": "hwg_grass",
+    "grades": [
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What can you see? / A: I can see a grass."
+    ],
+    "tags": [
+      "nature"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u10_18_grass_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u10_18_grass_illust.png",
+    "hwg_card_text": "cards/text/hwg6_u10_18_grass_text.png",
+    "lemma": "grass",
+    "is_plural": false,
+    "letter_count": 5,
+    "syllable_count": 1,
+    "first_letter": "G",
+    "is_compound": false,
+    "phonics_initial": "gr",
+    "difficulty_tier": 3,
+    "primary_image": "cards/full/hwg6_u10_18_grass_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is a feature of nature or scenery.",
+      "feature_hint": "Part of nature known as '草' (くさ) in Japanese.",
+      "letter_hint": "It starts with the letter G."
+    },
+    "target_dialogues": [
+      {
+        "question": "What can you see?",
+        "answer": "I can see a grass.",
+        "context": "Talking about nature and scenery"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u10_18_grass_illust.png",
+        "card_full": "cards/full/hwg6_u10_18_grass_full.png",
+        "card_text": "cards/text/hwg6_u10_18_grass_text.png",
+        "unit": "Unit 10: Unit 10: Nature",
+        "source": "here_we_go_6",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0162",
+    "english": "island",
+    "canonical_key": "island",
+    "disambiguation": "",
+    "display_label": "island",
+    "normalized_english": "island",
+    "part_of_speech": "noun",
+    "category": "12_nature",
+    "category_name": "Nature & Weather",
+    "ja_kanji": "島",
+    "ja_hiragana": "しま",
+    "en_katakana": "アイランド",
+    "ruby": [
+      {
+        "base": "島",
+        "ruby": "しま"
+      }
+    ],
+    "ruby_html": "<ruby>島<rt>しま</rt></ruby>",
+    "ruby_text": "[島|しま]",
+    "sound_file": "",
+    "card_image": "cards/full/hwg5_u20_07_island_full.png",
+    "card_image_kana": "cards/full/hwg5_u20_07_island_full.png",
+    "card_image_en": "cards/full/hwg5_u20_07_island_full.png",
+    "card_image_bilingual": "cards/full/hwg5_u20_07_island_full.png",
+    "card_variants": [],
+    "token": "hwg_island",
+    "grades": [
+      "ES_G5"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What can you see? / A: I can see an island."
+    ],
+    "tags": [
+      "nature"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u20_07_island_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u20_07_island_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u20_07_island_text.png",
+    "lemma": "island",
+    "is_plural": false,
+    "letter_count": 6,
+    "syllable_count": 2,
+    "first_letter": "I",
+    "is_compound": false,
+    "phonics_initial": "i",
+    "difficulty_tier": 2,
+    "primary_image": "cards/full/hwg5_u20_07_island_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is a feature of nature or scenery.",
+      "feature_hint": "Part of nature known as '島' (しま) in Japanese.",
+      "letter_hint": "It starts with the letter I."
+    },
+    "target_dialogues": [
+      {
+        "question": "What can you see?",
+        "answer": "I can see an island.",
+        "context": "Talking about nature and scenery"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u20_07_island_illust.png",
+        "card_full": "cards/full/hwg5_u20_07_island_full.png",
+        "card_text": "cards/text/hwg5_u20_07_island_text.png",
+        "unit": "Unit 20: Unit 20: Nature",
+        "source": "here_we_go_5",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0184",
+    "english": "leaves",
+    "canonical_key": "leaves",
+    "disambiguation": "",
+    "display_label": "leaves",
+    "normalized_english": "leaves",
+    "part_of_speech": "noun",
+    "category": "12_nature",
+    "category_name": "Nature & Weather",
+    "ja_kanji": "葉",
+    "ja_hiragana": "はっぱ",
+    "en_katakana": "リーブズ",
+    "ruby": [
+      {
+        "base": "葉",
+        "ruby": "はっぱ"
+      }
+    ],
+    "ruby_html": "<ruby>葉<rt>はっぱ</rt></ruby>",
+    "ruby_text": "[葉|はっぱ]",
+    "sound_file": "dic_wb_01action_leave_1017.mp3",
+    "card_image": "cards/full/hwg6_u10_17_leaves_full.png",
+    "card_image_kana": "cards/full/hwg6_u10_17_leaves_full.png",
+    "card_image_en": "cards/full/hwg6_u10_17_leaves_full.png",
+    "card_image_bilingual": "cards/full/hwg6_u10_17_leaves_full.png",
+    "card_variants": [],
+    "token": "hwg_leaves",
+    "grades": [
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What can you see? / A: I can see leaves."
+    ],
+    "tags": [
+      "nature"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u10_17_leaves_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u10_17_leaves_illust.png",
+    "hwg_card_text": "cards/text/hwg6_u10_17_leaves_text.png",
+    "lemma": "leaf",
+    "is_plural": true,
+    "letter_count": 6,
+    "syllable_count": 1,
+    "first_letter": "L",
+    "is_compound": false,
+    "phonics_initial": "l",
+    "difficulty_tier": 3,
+    "primary_image": "cards/full/hwg6_u10_17_leaves_full.png",
+    "primary_audio": "dic_wb_01action_leave_1017.mp3",
+    "three_hints": {
+      "category_hint": "It is a feature of nature or scenery.",
+      "feature_hint": "Part of nature known as '葉' (はっぱ) in Japanese.",
+      "letter_hint": "It starts with the letter L."
+    },
+    "target_dialogues": [
+      {
+        "question": "What can you see?",
+        "answer": "I can see leaves.",
+        "context": "Talking about nature and scenery"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u10_17_leaves_illust.png",
+        "card_full": "cards/full/hwg6_u10_17_leaves_full.png",
+        "card_text": "cards/text/hwg6_u10_17_leaves_text.png",
+        "unit": "Unit 10: Unit 10: Nature",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_01action_leave_1017.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0248",
+    "english": "pond",
+    "canonical_key": "pond",
+    "disambiguation": "",
+    "display_label": "pond",
+    "normalized_english": "pond",
+    "part_of_speech": "noun",
+    "category": "12_nature",
+    "category_name": "Nature & Weather",
+    "ja_kanji": "池",
+    "ja_hiragana": "いけ",
+    "en_katakana": "ポンド",
+    "ruby": [
+      {
+        "base": "池",
+        "ruby": "いけ"
+      }
+    ],
+    "ruby_html": "<ruby>池<rt>いけ</rt></ruby>",
+    "ruby_text": "[池|いけ]",
+    "sound_file": "",
+    "card_image": "cards/full/hwg5_u20_05_pond_full.png",
+    "card_image_kana": "cards/full/hwg5_u20_05_pond_full.png",
+    "card_image_en": "cards/full/hwg5_u20_05_pond_full.png",
+    "card_image_bilingual": "cards/full/hwg5_u20_05_pond_full.png",
+    "card_variants": [],
+    "token": "hwg_pond",
+    "grades": [
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What can you see? / A: I can see a pond."
+    ],
+    "tags": [
+      "nature"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u20_05_pond_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u20_05_pond_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u20_05_pond_text.png",
+    "lemma": "pond",
+    "is_plural": false,
+    "letter_count": 4,
+    "syllable_count": 1,
+    "first_letter": "P",
+    "is_compound": false,
+    "phonics_initial": "p",
+    "difficulty_tier": 3,
+    "primary_image": "cards/full/hwg5_u20_05_pond_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is a feature of nature or scenery.",
+      "feature_hint": "Part of nature known as '池' (いけ) in Japanese.",
+      "letter_hint": "It starts with the letter P."
+    },
+    "target_dialogues": [
+      {
+        "question": "What can you see?",
+        "answer": "I can see a pond.",
+        "context": "Talking about nature and scenery"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u20_05_pond_illust.png",
+        "card_full": "cards/full/hwg5_u20_05_pond_full.png",
+        "card_text": "cards/text/hwg5_u20_05_pond_text.png",
+        "unit": "Unit 20: Unit 20: Nature",
+        "source": "here_we_go_5",
+        "sound_file": ""
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u10_08_pond_illust.png",
+        "card_full": "cards/full/hwg6_u10_08_pond_full.png",
+        "card_text": "cards/text/hwg6_u10_08_pond_text.png",
+        "unit": "Unit 10: Unit 10: Nature",
+        "source": "here_we_go_6",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0260",
+    "english": "rain forest",
+    "canonical_key": "rain forest",
+    "disambiguation": "",
+    "display_label": "rain forest",
+    "normalized_english": "rain forest",
+    "part_of_speech": "noun",
+    "category": "12_nature",
+    "category_name": "Nature & Weather",
+    "ja_kanji": "熱帯雨林",
+    "ja_hiragana": "ねったいうりん",
+    "en_katakana": "レインフォレスト",
+    "ruby": [
+      {
+        "base": "熱帯雨林",
+        "ruby": "ねったいうりん"
+      }
+    ],
+    "ruby_html": "<ruby>熱帯雨林<rt>ねったいうりん</rt></ruby>",
+    "ruby_text": "[熱帯雨林|ねったいうりん]",
+    "sound_file": "",
+    "card_image": "cards/full/hwg6_u10_04_rain_forest_full.png",
+    "card_image_kana": "cards/full/hwg6_u10_04_rain_forest_full.png",
+    "card_image_en": "cards/full/hwg6_u10_04_rain_forest_full.png",
+    "card_image_bilingual": "cards/full/hwg6_u10_04_rain_forest_full.png",
+    "card_variants": [],
+    "token": "hwg_rain forest",
+    "grades": [
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What can you see? / A: I can see a rain forest."
+    ],
+    "tags": [
+      "nature"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u10_04_rain_forest_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u10_04_rain_forest_illust.png",
+    "hwg_card_text": "cards/text/hwg6_u10_04_rain_forest_text.png",
+    "lemma": "rain forest",
+    "is_plural": false,
+    "letter_count": 10,
+    "syllable_count": 3,
+    "first_letter": "R",
+    "is_compound": true,
+    "phonics_initial": "r",
+    "difficulty_tier": 3,
+    "primary_image": "cards/full/hwg6_u10_04_rain_forest_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is a feature of nature or scenery.",
+      "feature_hint": "Part of nature known as '熱帯雨林' (ねったいうりん) in Japanese.",
+      "letter_hint": "It starts with the letter R."
+    },
+    "target_dialogues": [
+      {
+        "question": "What can you see?",
+        "answer": "I can see a rain forest.",
+        "context": "Talking about nature and scenery"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u10_04_rain_forest_illust.png",
+        "card_full": "cards/full/hwg6_u10_04_rain_forest_full.png",
+        "card_text": "cards/text/hwg6_u10_04_rain_forest_text.png",
+        "unit": "Unit 10: Unit 10: Nature",
+        "source": "here_we_go_6",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0278",
+    "english": "savanna",
+    "canonical_key": "savanna",
+    "disambiguation": "",
+    "display_label": "savanna",
+    "normalized_english": "savanna",
+    "part_of_speech": "noun",
+    "category": "12_nature",
+    "category_name": "Nature & Weather",
+    "ja_kanji": "サバンナ",
+    "ja_hiragana": "さばんな",
+    "en_katakana": "サバンナ",
+    "ruby": [
+      {
+        "base": "サバンナ",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "サバンナ",
+    "ruby_text": "サバンナ",
+    "sound_file": "",
+    "card_image": "cards/full/hwg6_u10_06_savanna_full.png",
+    "card_image_kana": "cards/full/hwg6_u10_06_savanna_full.png",
+    "card_image_en": "cards/full/hwg6_u10_06_savanna_full.png",
+    "card_image_bilingual": "cards/full/hwg6_u10_06_savanna_full.png",
+    "card_variants": [],
+    "token": "hwg_savanna",
+    "grades": [
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What can you see? / A: I can see a savanna."
+    ],
+    "tags": [
+      "nature"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u10_06_savanna_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u10_06_savanna_illust.png",
+    "hwg_card_text": "cards/text/hwg6_u10_06_savanna_text.png",
+    "lemma": "savanna",
+    "is_plural": false,
+    "letter_count": 7,
+    "syllable_count": 3,
+    "first_letter": "S",
+    "is_compound": false,
+    "phonics_initial": "s",
+    "difficulty_tier": 3,
+    "primary_image": "cards/full/hwg6_u10_06_savanna_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is a feature of nature or scenery.",
+      "feature_hint": "Part of nature known as 'サバンナ' (さばんな) in Japanese.",
+      "letter_hint": "It starts with the letter S."
+    },
+    "target_dialogues": [
+      {
+        "question": "What can you see?",
+        "answer": "I can see a savanna.",
+        "context": "Talking about nature and scenery"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u10_06_savanna_illust.png",
+        "card_full": "cards/full/hwg6_u10_06_savanna_full.png",
+        "card_text": "cards/text/hwg6_u10_06_savanna_text.png",
+        "unit": "Unit 10: Unit 10: Nature",
+        "source": "here_we_go_6",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0307",
+    "english": "sky",
+    "canonical_key": "sky",
+    "disambiguation": "",
+    "display_label": "sky",
+    "normalized_english": "sky",
+    "part_of_speech": "noun",
+    "category": "12_nature",
+    "category_name": "Nature & Weather",
+    "ja_kanji": "空",
+    "ja_hiragana": "そら",
+    "en_katakana": "スカイ",
+    "ruby": [
+      {
+        "base": "空",
+        "ruby": "そら"
+      }
+    ],
+    "ruby_html": "<ruby>空<rt>そら</rt></ruby>",
+    "ruby_text": "[空|そら]",
+    "sound_file": "",
+    "card_image": "cards/full/hwg6_u10_12_sky_full.png",
+    "card_image_kana": "cards/full/hwg6_u10_12_sky_full.png",
+    "card_image_en": "cards/full/hwg6_u10_12_sky_full.png",
+    "card_image_bilingual": "cards/full/hwg6_u10_12_sky_full.png",
+    "card_variants": [],
+    "token": "hwg_sky",
+    "grades": [
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: How is the weather today? / A: It's sky."
+    ],
+    "tags": [
+      "nature",
+      "weather"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u10_12_sky_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u10_12_sky_illust.png",
+    "hwg_card_text": "cards/text/hwg6_u10_12_sky_text.png",
+    "lemma": "sky",
+    "is_plural": false,
+    "letter_count": 3,
+    "syllable_count": 1,
+    "first_letter": "S",
+    "is_compound": false,
+    "phonics_initial": "sk",
+    "difficulty_tier": 3,
+    "primary_image": "cards/full/hwg6_u10_12_sky_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is a weather condition.",
+      "feature_hint": "Weather known as '空' (そら) in Japanese.",
+      "letter_hint": "It starts with the letter S."
+    },
+    "target_dialogues": [
+      {
+        "question": "How is the weather today?",
+        "answer": "It's sky.",
+        "context": "Asking and answering about today's weather"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u10_12_sky_illust.png",
+        "card_full": "cards/full/hwg6_u10_12_sky_full.png",
+        "card_text": "cards/text/hwg6_u10_12_sky_text.png",
+        "unit": "Unit 10: Unit 10: Nature",
+        "source": "here_we_go_6",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0324",
+    "english": "stars",
+    "canonical_key": "stars",
+    "disambiguation": "",
+    "display_label": "stars",
+    "normalized_english": "stars",
+    "part_of_speech": "noun",
+    "category": "12_nature",
+    "category_name": "Nature & Weather",
+    "ja_kanji": "星",
+    "ja_hiragana": "ほし",
+    "en_katakana": "スターズ",
+    "ruby": [
+      {
+        "base": "星",
+        "ruby": "ほし"
+      }
+    ],
+    "ruby_html": "<ruby>星<rt>ほし</rt></ruby>",
+    "ruby_text": "[星|ほし]",
+    "sound_file": "dic_wb_09color_star_1435.mp3",
+    "card_image": "cards/full/hwg5_u20_16_stars_full.png",
+    "card_image_kana": "cards/full/hwg5_u20_16_stars_full.png",
+    "card_image_en": "cards/full/hwg5_u20_16_stars_full.png",
+    "card_image_bilingual": "cards/full/hwg5_u20_16_stars_full.png",
+    "card_variants": [],
+    "token": "hwg_stars",
+    "grades": [
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What can you see? / A: I can see stars."
+    ],
+    "tags": [
+      "nature",
+      "night"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u20_16_stars_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u20_16_stars_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u20_16_stars_text.png",
+    "lemma": "star",
+    "is_plural": true,
+    "letter_count": 5,
+    "syllable_count": 1,
+    "first_letter": "S",
+    "is_compound": false,
+    "phonics_initial": "st",
+    "difficulty_tier": 3,
+    "primary_image": "cards/full/hwg5_u20_16_stars_full.png",
+    "primary_audio": "dic_wb_09color_star_1435.mp3",
+    "three_hints": {
+      "category_hint": "It is a feature of nature or scenery.",
+      "feature_hint": "Part of nature known as '星' (ほし) in Japanese.",
+      "letter_hint": "It starts with the letter S."
+    },
+    "target_dialogues": [
+      {
+        "question": "What can you see?",
+        "answer": "I can see stars.",
+        "context": "Talking about nature and scenery"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u20_16_stars_illust.png",
+        "card_full": "cards/full/hwg5_u20_16_stars_full.png",
+        "card_text": "cards/text/hwg5_u20_16_stars_text.png",
+        "unit": "Unit 20: Unit 20: Nature",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_09color_star_1435.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u10_14_stars_illust.png",
+        "card_full": "cards/full/hwg6_u10_14_stars_full.png",
+        "card_text": "cards/text/hwg6_u10_14_stars_text.png",
+        "unit": "Unit 10: Unit 10: Nature",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_09color_star_1435.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0330",
+    "english": "sun",
+    "canonical_key": "sun",
+    "disambiguation": "",
+    "display_label": "sun",
+    "normalized_english": "sun",
+    "part_of_speech": "noun",
+    "category": "12_nature",
+    "category_name": "Nature & Weather",
+    "ja_kanji": "太陽",
+    "ja_hiragana": "たいよう",
+    "en_katakana": "サン",
+    "ruby": [
+      {
+        "base": "太陽",
+        "ruby": "たいよう"
+      }
+    ],
+    "ruby_html": "<ruby>太陽<rt>たいよう</rt></ruby>",
+    "ruby_text": "[太陽|たいよう]",
+    "sound_file": "dic_wb_12nature_sun_1519.mp3",
+    "card_image": "cards/full/hwg5_u20_12_sun_full.png",
+    "card_image_kana": "cards/full/hwg5_u20_12_sun_full.png",
+    "card_image_en": "cards/full/hwg5_u20_12_sun_full.png",
+    "card_image_bilingual": "cards/full/hwg5_u20_12_sun_full.png",
+    "card_variants": [],
+    "token": "borderlink_sun",
+    "grades": [
+      "ES_G3",
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [
+      "How many? 数えてあそぼう"
+    ],
+    "target_sentences": [
+      "Q: What can you see? / A: I can see a sun."
+    ],
+    "tags": [
+      "nature",
+      "sky"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u20_12_sun_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u20_12_sun_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u20_12_sun_text.png",
+    "lemma": "sun",
+    "is_plural": false,
+    "letter_count": 3,
+    "syllable_count": 1,
+    "first_letter": "S",
+    "is_compound": false,
+    "phonics_initial": "s",
+    "difficulty_tier": 1,
+    "primary_image": "cards/full/hwg5_u20_12_sun_full.png",
+    "primary_audio": "dic_wb_12nature_sun_1519.mp3",
+    "three_hints": {
+      "category_hint": "It is a feature of nature or scenery.",
+      "feature_hint": "Part of nature known as '太陽' (たいよう) in Japanese.",
+      "letter_hint": "It starts with the letter S."
+    },
+    "target_dialogues": [
+      {
+        "question": "What can you see?",
+        "answer": "I can see a sun.",
+        "context": "Talking about nature and scenery"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "cards/full/hwg5_u20_12_sun_full.png",
+        "sound_file": "dic_wb_12nature_sun_1519.mp3",
+        "source": "lets_try_dictionary"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u20_12_sun_illust.png",
+        "card_full": "cards/full/hwg5_u20_12_sun_full.png",
+        "card_text": "cards/text/hwg5_u20_12_sun_text.png",
+        "unit": "Unit 20: Unit 20: Nature",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_12nature_sun_1519.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u10_13_sun_illust.png",
+        "card_full": "cards/full/hwg6_u10_13_sun_full.png",
+        "card_text": "cards/text/hwg6_u10_13_sun_text.png",
+        "unit": "Unit 10: Unit 10: Nature",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_12nature_sun_1519.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0331",
+    "english": "sunrise",
+    "canonical_key": "sunrise",
+    "disambiguation": "",
+    "display_label": "sunrise",
+    "normalized_english": "sunrise",
+    "part_of_speech": "noun",
+    "category": "12_nature",
+    "category_name": "Nature & Weather",
+    "ja_kanji": "日の出",
+    "ja_hiragana": "ひので",
+    "en_katakana": "サンライズ",
+    "ruby": [
+      {
+        "base": "日",
+        "ruby": "ひ"
+      },
+      {
+        "base": "の",
+        "ruby": ""
+      },
+      {
+        "base": "出",
+        "ruby": "で"
+      }
+    ],
+    "ruby_html": "<ruby>日<rt>ひ</rt></ruby>の<ruby>出<rt>で</rt></ruby>",
+    "ruby_text": "[日|ひ]の[出|で]",
+    "sound_file": "",
+    "card_image": "cards/full/hwg5_u20_13_sunrise_full.png",
+    "card_image_kana": "cards/full/hwg5_u20_13_sunrise_full.png",
+    "card_image_en": "cards/full/hwg5_u20_13_sunrise_full.png",
+    "card_image_bilingual": "cards/full/hwg5_u20_13_sunrise_full.png",
+    "card_variants": [],
+    "token": "hwg_sunrise",
+    "grades": [
+      "ES_G5"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What can you see? / A: I can see a sunrise."
+    ],
+    "tags": [
+      "morning",
+      "nature"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u20_13_sunrise_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u20_13_sunrise_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u20_13_sunrise_text.png",
+    "lemma": "sunrise",
+    "is_plural": false,
+    "letter_count": 7,
+    "syllable_count": 2,
+    "first_letter": "S",
+    "is_compound": false,
+    "phonics_initial": "s",
+    "difficulty_tier": 2,
+    "primary_image": "cards/full/hwg5_u20_13_sunrise_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is a feature of nature or scenery.",
+      "feature_hint": "Part of nature known as '日の出' (ひので) in Japanese.",
+      "letter_hint": "It starts with the letter S."
+    },
+    "target_dialogues": [
+      {
+        "question": "What can you see?",
+        "answer": "I can see a sunrise.",
+        "context": "Talking about nature and scenery"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u20_13_sunrise_illust.png",
+        "card_full": "cards/full/hwg5_u20_13_sunrise_full.png",
+        "card_text": "cards/text/hwg5_u20_13_sunrise_text.png",
+        "unit": "Unit 20: Unit 20: Nature",
+        "source": "here_we_go_5",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0332",
+    "english": "sunset",
+    "canonical_key": "sunset",
+    "disambiguation": "",
+    "display_label": "sunset",
+    "normalized_english": "sunset",
+    "part_of_speech": "noun",
+    "category": "12_nature",
+    "category_name": "Nature & Weather",
+    "ja_kanji": "日没",
+    "ja_hiragana": "にちぼつ",
+    "en_katakana": "サンセット",
+    "ruby": [
+      {
+        "base": "日没",
+        "ruby": "にちぼつ"
+      }
+    ],
+    "ruby_html": "<ruby>日没<rt>にちぼつ</rt></ruby>",
+    "ruby_text": "[日没|にちぼつ]",
+    "sound_file": "",
+    "card_image": "cards/full/hwg5_u20_14_sunset_full.png",
+    "card_image_kana": "cards/full/hwg5_u20_14_sunset_full.png",
+    "card_image_en": "cards/full/hwg5_u20_14_sunset_full.png",
+    "card_image_bilingual": "cards/full/hwg5_u20_14_sunset_full.png",
+    "card_variants": [],
+    "token": "hwg_sunset",
+    "grades": [
+      "ES_G5"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What can you see? / A: I can see a sunset."
+    ],
+    "tags": [
+      "evening",
+      "nature"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u20_14_sunset_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u20_14_sunset_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u20_14_sunset_text.png",
+    "lemma": "sunset",
+    "is_plural": false,
+    "letter_count": 6,
+    "syllable_count": 2,
+    "first_letter": "S",
+    "is_compound": false,
+    "phonics_initial": "s",
+    "difficulty_tier": 2,
+    "primary_image": "cards/full/hwg5_u20_14_sunset_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is a feature of nature or scenery.",
+      "feature_hint": "Part of nature known as '日没' (にちぼつ) in Japanese.",
+      "letter_hint": "It starts with the letter S."
+    },
+    "target_dialogues": [
+      {
+        "question": "What can you see?",
+        "answer": "I can see a sunset.",
+        "context": "Talking about nature and scenery"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u20_14_sunset_illust.png",
+        "card_full": "cards/full/hwg5_u20_14_sunset_full.png",
+        "card_text": "cards/text/hwg5_u20_14_sunset_text.png",
+        "unit": "Unit 20: Unit 20: Nature",
+        "source": "here_we_go_5",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0393",
+    "english": "waterfall",
+    "canonical_key": "waterfall",
+    "disambiguation": "",
+    "display_label": "waterfall",
+    "normalized_english": "waterfall",
+    "part_of_speech": "noun",
+    "category": "12_nature",
+    "category_name": "Nature & Weather",
+    "ja_kanji": "滝",
+    "ja_hiragana": "たき",
+    "en_katakana": "ウォーターフォール",
+    "ruby": [
+      {
+        "base": "滝",
+        "ruby": "たき"
+      }
+    ],
+    "ruby_html": "<ruby>滝<rt>たき</rt></ruby>",
+    "ruby_text": "[滝|たき]",
+    "sound_file": "",
+    "card_image": "cards/full/hwg5_u20_08_waterfall_full.png",
+    "card_image_kana": "cards/full/hwg5_u20_08_waterfall_full.png",
+    "card_image_en": "cards/full/hwg5_u20_08_waterfall_full.png",
+    "card_image_bilingual": "cards/full/hwg5_u20_08_waterfall_full.png",
+    "card_variants": [],
+    "token": "hwg_waterfall",
+    "grades": [
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What can you see? / A: I can see a waterfall."
+    ],
+    "tags": [
+      "nature"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u20_08_waterfall_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u20_08_waterfall_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u20_08_waterfall_text.png",
+    "lemma": "waterfall",
+    "is_plural": false,
+    "letter_count": 9,
+    "syllable_count": 3,
+    "first_letter": "W",
+    "is_compound": false,
+    "phonics_initial": "w",
+    "difficulty_tier": 3,
+    "primary_image": "cards/full/hwg5_u20_08_waterfall_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is a feature of nature or scenery.",
+      "feature_hint": "Part of nature known as '滝' (たき) in Japanese.",
+      "letter_hint": "It starts with the letter W."
+    },
+    "target_dialogues": [
+      {
+        "question": "What can you see?",
+        "answer": "I can see a waterfall.",
+        "context": "Talking about nature and scenery"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u20_08_waterfall_illust.png",
+        "card_full": "cards/full/hwg5_u20_08_waterfall_full.png",
+        "card_text": "cards/text/hwg5_u20_08_waterfall_text.png",
+        "unit": "Unit 20: Unit 20: Nature",
+        "source": "here_we_go_5",
+        "sound_file": ""
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u10_10_waterfall_illust.png",
+        "card_full": "cards/full/hwg6_u10_10_waterfall_full.png",
+        "card_text": "cards/text/hwg6_u10_10_waterfall_text.png",
+        "unit": "Unit 10: Unit 10: Nature",
+        "source": "here_we_go_6",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0795",
+    "english": "beach",
+    "canonical_key": "beach",
+    "disambiguation": "",
+    "display_label": "beach",
+    "normalized_english": "beach",
+    "part_of_speech": "noun",
+    "category": "12_nature",
+    "category_name": "Nature & Weather",
+    "ja_kanji": "砂浜",
+    "ja_hiragana": "すなはま",
+    "en_katakana": "ビーチ",
+    "ruby": [
+      {
+        "base": "砂浜",
+        "ruby": "すなはま"
+      }
+    ],
+    "ruby_html": "<ruby>砂浜<rt>すなはま</rt></ruby>",
+    "ruby_text": "[砂浜|すなはま]",
+    "sound_file": "dic_wb_12nature_beach_1513.mp3",
+    "card_image": "dic_6_card_beach_0770_1_c.png",
+    "card_image_kana": "dic_6_card_beach_0770_1_c.png",
+    "card_image_en": "dic_6_card_beach_0770_1_e.png",
+    "card_image_bilingual": "dic_6_card_beach_0770_1_ce.png",
+    "card_variants": [
+      "dic_6_card_beach_0770_1.png"
+    ],
+    "token": "dic_wb_12nature_beach_1513&dic_wb_12nature_beach_1513&dic_6_card_beach_0770",
+    "grades": [
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What can you see? / A: I can see a beach."
+    ],
+    "tags": [
+      "nature",
+      "place"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u20_01_beach_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u20_01_beach_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u20_01_beach_text.png",
+    "lemma": "beach",
+    "is_plural": false,
+    "letter_count": 5,
+    "syllable_count": 1,
+    "first_letter": "B",
+    "is_compound": false,
+    "phonics_initial": "b",
+    "difficulty_tier": 3,
+    "primary_image": "dic_6_card_beach_0770_1_c.png",
+    "primary_audio": "dic_wb_12nature_beach_1513.mp3",
+    "three_hints": {
+      "category_hint": "It is a feature of nature or scenery.",
+      "feature_hint": "Part of nature known as '砂浜' (すなはま) in Japanese.",
+      "letter_hint": "It starts with the letter B."
+    },
+    "target_dialogues": [
+      {
+        "question": "What can you see?",
+        "answer": "I can see a beach.",
+        "context": "Talking about nature and scenery"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u20_01_beach_illust.png",
+        "card_full": "cards/full/hwg5_u20_01_beach_full.png",
+        "card_text": "cards/text/hwg5_u20_01_beach_text.png",
+        "unit": "Unit 20: Unit 20: Nature",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_12nature_beach_1513.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u10_01_beach_illust.png",
+        "card_full": "cards/full/hwg6_u10_01_beach_full.png",
+        "card_text": "cards/text/hwg6_u10_01_beach_text.png",
+        "unit": "Unit 10: Unit 10: Nature",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_12nature_beach_1513.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0796",
+    "english": "cloudy",
+    "canonical_key": "cloudy",
+    "disambiguation": "",
+    "display_label": "cloudy",
+    "normalized_english": "cloudy",
+    "part_of_speech": "adjective",
+    "category": "12_nature",
+    "category_name": "Nature & Weather",
+    "ja_kanji": "曇り",
+    "ja_hiragana": "くもり",
+    "en_katakana": "クラウディ",
+    "ruby": [
+      {
+        "base": "曇",
+        "ruby": "くも"
+      },
+      {
+        "base": "り",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "<ruby>曇<rt>くも</rt></ruby>り",
+    "ruby_text": "[曇|くも]り",
+    "sound_file": "dic_wb_12nature_cloudy_1520.mp3",
+    "card_image": "dic_wb_12nature_cloudy_1520_1_c.png",
+    "card_image_kana": "dic_wb_12nature_cloudy_1520_1_c.png",
+    "card_image_en": "dic_wb_12nature_cloudy_1520_1_e.png",
+    "card_image_bilingual": "dic_wb_12nature_cloudy_1520_1_ce.png",
+    "card_variants": [
+      "dic_wb_12nature_cloudy_1520_1.png"
+    ],
+    "token": "dic_wb_12nature_cloudy_1520&dic_wb_12nature_cloudy_1520&dic_wb_12nature_cloudy_1520",
+    "grades": [
+      "ES_G4",
+      "ES_G5"
+    ],
+    "themes": [
+      "Let's play cards."
+    ],
+    "target_sentences": [
+      "Q: How is the weather today? / A: It's cloudy."
+    ],
+    "tags": [
+      "weather"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u02_02_cloudy_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u02_02_cloudy_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u02_02_cloudy_text.png",
+    "lemma": "cloudy",
+    "is_plural": false,
+    "letter_count": 6,
+    "syllable_count": 2,
+    "first_letter": "C",
+    "is_compound": false,
+    "phonics_initial": "cl",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_12nature_cloudy_1520_1_c.png",
+    "primary_audio": "dic_wb_12nature_cloudy_1520.mp3",
+    "three_hints": {
+      "category_hint": "It is a weather condition.",
+      "feature_hint": "Weather known as '曇り' (くもり) in Japanese.",
+      "letter_hint": "It starts with the letter C."
+    },
+    "target_dialogues": [
+      {
+        "question": "How is the weather today?",
+        "answer": "It's cloudy.",
+        "context": "Asking and answering about today's weather"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G4": {
+        "card_image": "dic_wb_12nature_cloudy_1520_1_c.png",
+        "sound_file": "dic_wb_12nature_cloudy_1520.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_wb_12nature_cloudy_1520_1_ce.png",
+        "card_bw": "dic_wb_12nature_cloudy_1520_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u02_02_cloudy_illust.png",
+        "card_full": "cards/full/hwg5_u02_02_cloudy_full.png",
+        "card_text": "cards/text/hwg5_u02_02_cloudy_text.png",
+        "unit": "Unit 2: Unit 2: Weather",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_12nature_cloudy_1520.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0797",
+    "english": "flower",
+    "canonical_key": "flower",
+    "disambiguation": "",
+    "display_label": "flower",
+    "normalized_english": "flower",
+    "part_of_speech": "noun",
+    "category": "12_nature",
+    "category_name": "Nature & Weather",
+    "ja_kanji": "花",
+    "ja_hiragana": "はな",
+    "en_katakana": "フラワー",
+    "ruby": [
+      {
+        "base": "花",
+        "ruby": "はな"
+      }
+    ],
+    "ruby_html": "<ruby>花<rt>はな</rt></ruby>",
+    "ruby_text": "[花|はな]",
+    "sound_file": "dic_wb_12nature_flower_1510.mp3",
+    "card_image": "dic_wb_12nature_flower_1510_1_c.png",
+    "card_image_kana": "dic_wb_12nature_flower_1510_1_c.png",
+    "card_image_en": "dic_wb_12nature_flower_1510_1_e.png",
+    "card_image_bilingual": "dic_wb_12nature_flower_1510_1_ce.png",
+    "card_variants": [
+      "dic_wb_12nature_flower_1510_1.png"
+    ],
+    "token": "dic_wb_12nature_flower_1510&dic_wb_12nature_flower_1510&dic_wb_12nature_flower_1510",
+    "grades": [
+      "ES_G3",
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [
+      "This is for you. カードをおくろう"
+    ],
+    "target_sentences": [
+      "Q: What can you see? / A: I can see a flower."
+    ],
+    "tags": [
+      "nature",
+      "plant"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u20_10_flower_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u20_10_flower_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u20_10_flower_text.png",
+    "lemma": "flower",
+    "is_plural": false,
+    "letter_count": 6,
+    "syllable_count": 2,
+    "first_letter": "F",
+    "is_compound": false,
+    "phonics_initial": "fl",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_12nature_flower_1510_1_c.png",
+    "primary_audio": "dic_wb_12nature_flower_1510.mp3",
+    "three_hints": {
+      "category_hint": "It is a feature of nature or scenery.",
+      "feature_hint": "Part of nature known as '花' (はな) in Japanese.",
+      "letter_hint": "It starts with the letter F."
+    },
+    "target_dialogues": [
+      {
+        "question": "What can you see?",
+        "answer": "I can see a flower.",
+        "context": "Talking about nature and scenery"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_wb_12nature_flower_1510_1_c.png",
+        "sound_file": "dic_wb_12nature_flower_1510.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_wb_12nature_flower_1510_1_ce.png",
+        "card_bw": "dic_wb_12nature_flower_1510_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u20_10_flower_illust.png",
+        "card_full": "cards/full/hwg5_u20_10_flower_full.png",
+        "card_text": "cards/text/hwg5_u20_10_flower_text.png",
+        "unit": "Unit 20: Unit 20: Nature",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_12nature_flower_1510.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u10_19_flower_illust.png",
+        "card_full": "cards/full/hwg6_u10_19_flower_full.png",
+        "card_text": "cards/text/hwg6_u10_19_flower_text.png",
+        "unit": "Unit 10: Unit 10: Nature",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_12nature_flower_1510.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0798",
+    "english": "lake",
+    "canonical_key": "lake",
+    "disambiguation": "",
+    "display_label": "lake",
+    "normalized_english": "lake",
+    "part_of_speech": "noun",
+    "category": "12_nature",
+    "category_name": "Nature & Weather",
+    "ja_kanji": "湖",
+    "ja_hiragana": "みずうみ",
+    "en_katakana": "レイク",
+    "ruby": [
+      {
+        "base": "湖",
+        "ruby": "みずうみ"
+      }
+    ],
+    "ruby_html": "<ruby>湖<rt>みずうみ</rt></ruby>",
+    "ruby_text": "[湖|みずうみ]",
+    "sound_file": "dic_wb_12nature_lake_1514.mp3",
+    "card_image": "dic_6_card_lake_0769_1_c.png",
+    "card_image_kana": "dic_6_card_lake_0769_1_c.png",
+    "card_image_en": "dic_6_card_lake_0769_1_e.png",
+    "card_image_bilingual": "dic_6_card_lake_0769_1_ce.png",
+    "card_variants": [
+      "dic_6_card_lake_0769_1.png"
+    ],
+    "token": "dic_wb_12nature_lake_1514&dic_wb_12nature_lake_1514&dic_6_card_lake_0769",
+    "grades": [
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What can you see? / A: I can see a lake."
+    ],
+    "tags": [
+      "nature",
+      "place"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u20_04_lake_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u20_04_lake_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u20_04_lake_text.png",
+    "lemma": "lake",
+    "is_plural": false,
+    "letter_count": 4,
+    "syllable_count": 1,
+    "first_letter": "L",
+    "is_compound": false,
+    "phonics_initial": "l",
+    "difficulty_tier": 3,
+    "primary_image": "dic_6_card_lake_0769_1_c.png",
+    "primary_audio": "dic_wb_12nature_lake_1514.mp3",
+    "three_hints": {
+      "category_hint": "It is a feature of nature or scenery.",
+      "feature_hint": "Part of nature known as '湖' (みずうみ) in Japanese.",
+      "letter_hint": "It starts with the letter L."
+    },
+    "target_dialogues": [
+      {
+        "question": "What can you see?",
+        "answer": "I can see a lake.",
+        "context": "Talking about nature and scenery"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u20_04_lake_illust.png",
+        "card_full": "cards/full/hwg5_u20_04_lake_full.png",
+        "card_text": "cards/text/hwg5_u20_04_lake_text.png",
+        "unit": "Unit 20: Unit 20: Nature",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_12nature_lake_1514.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u10_07_lake_illust.png",
+        "card_full": "cards/full/hwg6_u10_07_lake_full.png",
+        "card_text": "cards/text/hwg6_u10_07_lake_text.png",
+        "unit": "Unit 10: Unit 10: Nature",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_12nature_lake_1514.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0799",
+    "english": "mountain",
+    "canonical_key": "mountain",
+    "disambiguation": "",
+    "display_label": "mountain",
+    "normalized_english": "mountain",
+    "part_of_speech": "noun",
+    "category": "12_nature",
+    "category_name": "Nature & Weather",
+    "ja_kanji": "山",
+    "ja_hiragana": "やま",
+    "en_katakana": "マウンテン",
+    "ruby": [
+      {
+        "base": "山",
+        "ruby": "やま"
+      }
+    ],
+    "ruby_html": "<ruby>山<rt>やま</rt></ruby>",
+    "ruby_text": "[山|やま]",
+    "sound_file": "dic_wb_12nature_mountain_1515.mp3",
+    "card_image": "dic_wb_12nature_mountain_1515_1_c.png",
+    "card_image_kana": "dic_wb_12nature_mountain_1515_1_c.png",
+    "card_image_en": "dic_wb_12nature_mountain_1515_1_e.png",
+    "card_image_bilingual": "dic_wb_12nature_mountain_1515_1_ce.png",
+    "card_variants": [
+      "dic_wb_12nature_mountain_1515_1.png"
+    ],
+    "token": "dic_wb_12nature_mountain_1515&dic_wb_12nature_mountain_1515&dic_wb_12nature_mountain_1515",
+    "grades": [
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What can you see? / A: I can see a mountain."
+    ],
+    "tags": [
+      "nature"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u20_03_mountain_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u20_03_mountain_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u20_03_mountain_text.png",
+    "lemma": "mountain",
+    "is_plural": false,
+    "letter_count": 8,
+    "syllable_count": 2,
+    "first_letter": "M",
+    "is_compound": false,
+    "phonics_initial": "m",
+    "difficulty_tier": 3,
+    "primary_image": "dic_wb_12nature_mountain_1515_1_c.png",
+    "primary_audio": "dic_wb_12nature_mountain_1515.mp3",
+    "three_hints": {
+      "category_hint": "It is a feature of nature or scenery.",
+      "feature_hint": "Part of nature known as '山' (やま) in Japanese.",
+      "letter_hint": "It starts with the letter M."
+    },
+    "target_dialogues": [
+      {
+        "question": "What can you see?",
+        "answer": "I can see a mountain.",
+        "context": "Talking about nature and scenery"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u20_03_mountain_illust.png",
+        "card_full": "cards/full/hwg5_u20_03_mountain_full.png",
+        "card_text": "cards/text/hwg5_u20_03_mountain_text.png",
+        "unit": "Unit 20: Unit 20: Nature",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_12nature_mountain_1515.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u10_02_mountain_illust.png",
+        "card_full": "cards/full/hwg6_u10_02_mountain_full.png",
+        "card_text": "cards/text/hwg6_u10_02_mountain_text.png",
+        "unit": "Unit 10: Unit 10: Nature",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_12nature_mountain_1515.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0800",
+    "english": "rainbow",
+    "canonical_key": "rainbow",
+    "disambiguation": "",
+    "display_label": "rainbow",
+    "normalized_english": "rainbow",
+    "part_of_speech": "noun",
+    "category": "12_nature",
+    "category_name": "Nature & Weather",
+    "ja_kanji": "虹",
+    "ja_hiragana": "にじ",
+    "en_katakana": "レインボー",
+    "ruby": [
+      {
+        "base": "虹",
+        "ruby": "にじ"
+      }
+    ],
+    "ruby_html": "<ruby>虹<rt>にじ</rt></ruby>",
+    "ruby_text": "[虹|にじ]",
+    "sound_file": "dic_wb_12nature_rainbow_1525.mp3",
+    "card_image": "dic_wb_12nature_rainbow_1525_1_c.png",
+    "card_image_kana": "dic_wb_12nature_rainbow_1525_1_c.png",
+    "card_image_en": "dic_wb_12nature_rainbow_1525_1_e.png",
+    "card_image_bilingual": "dic_wb_12nature_rainbow_1525_1_ce.png",
+    "card_variants": [
+      "dic_wb_12nature_rainbow_1525_1.png"
+    ],
+    "token": "dic_wb_12nature_rainbow_1525&dic_wb_12nature_rainbow_1525&dic_wb_12nature_rainbow_1525",
+    "grades": [
+      "ES_G5"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What can you see? / A: I can see a rainbow."
+    ],
+    "tags": [
+      "nature",
+      "sky"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u20_15_rainbow_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u20_15_rainbow_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u20_15_rainbow_text.png",
+    "lemma": "rainbow",
+    "is_plural": false,
+    "letter_count": 7,
+    "syllable_count": 2,
+    "first_letter": "R",
+    "is_compound": false,
+    "phonics_initial": "r",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_12nature_rainbow_1525_1_c.png",
+    "primary_audio": "dic_wb_12nature_rainbow_1525.mp3",
+    "three_hints": {
+      "category_hint": "It is a feature of nature or scenery.",
+      "feature_hint": "Part of nature known as '虹' (にじ) in Japanese.",
+      "letter_hint": "It starts with the letter R."
+    },
+    "target_dialogues": [
+      {
+        "question": "What can you see?",
+        "answer": "I can see a rainbow.",
+        "context": "Talking about nature and scenery"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u20_15_rainbow_illust.png",
+        "card_full": "cards/full/hwg5_u20_15_rainbow_full.png",
+        "card_text": "cards/text/hwg5_u20_15_rainbow_text.png",
+        "unit": "Unit 20: Unit 20: Nature",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_12nature_rainbow_1525.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0801",
+    "english": "rainy",
+    "canonical_key": "rainy",
+    "disambiguation": "",
+    "display_label": "rainy",
+    "normalized_english": "rainy",
+    "part_of_speech": "adjective",
+    "category": "12_nature",
+    "category_name": "Nature & Weather",
+    "ja_kanji": "雨",
+    "ja_hiragana": "あめ",
+    "en_katakana": "レイニー",
+    "ruby": [
+      {
+        "base": "雨",
+        "ruby": "あめ"
+      }
+    ],
+    "ruby_html": "<ruby>雨<rt>あめ</rt></ruby>",
+    "ruby_text": "[雨|あめ]",
+    "sound_file": "dic_wb_12nature_rainy_1521.mp3",
+    "card_image": "dic_wb_12nature_rainy_1521_1_c.png",
+    "card_image_kana": "dic_wb_12nature_rainy_1521_1_c.png",
+    "card_image_en": "dic_wb_12nature_rainy_1521_1_e.png",
+    "card_image_bilingual": "dic_wb_12nature_rainy_1521_1_ce.png",
+    "card_variants": [
+      "dic_wb_12nature_rainy_1521_1.png"
+    ],
+    "token": "dic_wb_12nature_rainy_1521&dic_wb_12nature_rainy_1521&dic_wb_12nature_rainy_1521",
+    "grades": [
+      "ES_G4",
+      "ES_G5"
+    ],
+    "themes": [
+      "Let's play cards."
+    ],
+    "target_sentences": [
+      "Q: How is the weather today? / A: It's rainy."
+    ],
+    "tags": [
+      "weather"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u02_01_rainy_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u02_01_rainy_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u02_01_rainy_text.png",
+    "lemma": "rainy",
+    "is_plural": false,
+    "letter_count": 5,
+    "syllable_count": 2,
+    "first_letter": "R",
+    "is_compound": false,
+    "phonics_initial": "r",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_12nature_rainy_1521_1_c.png",
+    "primary_audio": "dic_wb_12nature_rainy_1521.mp3",
+    "three_hints": {
+      "category_hint": "It is a weather condition.",
+      "feature_hint": "Weather known as '雨' (あめ) in Japanese.",
+      "letter_hint": "It starts with the letter R."
+    },
+    "target_dialogues": [
+      {
+        "question": "How is the weather today?",
+        "answer": "It's rainy.",
+        "context": "Asking and answering about today's weather"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G4": {
+        "card_image": "dic_wb_12nature_rainy_1521_1_c.png",
+        "sound_file": "dic_wb_12nature_rainy_1521.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_wb_12nature_rainy_1521_1_ce.png",
+        "card_bw": "dic_wb_12nature_rainy_1521_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u02_01_rainy_illust.png",
+        "card_full": "cards/full/hwg5_u02_01_rainy_full.png",
+        "card_text": "cards/text/hwg5_u02_01_rainy_text.png",
+        "unit": "Unit 2: Unit 2: Weather",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_12nature_rainy_1521.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0802",
+    "english": "river",
+    "canonical_key": "river",
+    "disambiguation": "",
+    "display_label": "river",
+    "normalized_english": "river",
+    "part_of_speech": "noun",
+    "category": "12_nature",
+    "category_name": "Nature & Weather",
+    "ja_kanji": "川",
+    "ja_hiragana": "かわ",
+    "en_katakana": "リバー",
+    "ruby": [
+      {
+        "base": "川",
+        "ruby": "かわ"
+      }
+    ],
+    "ruby_html": "<ruby>川<rt>かわ</rt></ruby>",
+    "ruby_text": "[川|かわ]",
+    "sound_file": "dic_wb_12nature_river_1516.mp3",
+    "card_image": "dic_wb_12nature_river_1516_1_c.png",
+    "card_image_kana": "dic_wb_12nature_river_1516_1_c.png",
+    "card_image_en": "dic_wb_12nature_river_1516_1_e.png",
+    "card_image_bilingual": "dic_wb_12nature_river_1516_1_ce.png",
+    "card_variants": [
+      "dic_wb_12nature_river_1516_1.png"
+    ],
+    "token": "dic_wb_12nature_river_1516&dic_wb_12nature_river_1516&dic_wb_12nature_river_1516",
+    "grades": [
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What can you see? / A: I can see a river."
+    ],
+    "tags": [
+      "nature"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u20_02_river_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u20_02_river_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u20_02_river_text.png",
+    "lemma": "river",
+    "is_plural": false,
+    "letter_count": 5,
+    "syllable_count": 2,
+    "first_letter": "R",
+    "is_compound": false,
+    "phonics_initial": "r",
+    "difficulty_tier": 3,
+    "primary_image": "dic_wb_12nature_river_1516_1_c.png",
+    "primary_audio": "dic_wb_12nature_river_1516.mp3",
+    "three_hints": {
+      "category_hint": "It is a feature of nature or scenery.",
+      "feature_hint": "Part of nature known as '川' (かわ) in Japanese.",
+      "letter_hint": "It starts with the letter R."
+    },
+    "target_dialogues": [
+      {
+        "question": "What can you see?",
+        "answer": "I can see a river.",
+        "context": "Talking about nature and scenery"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u20_02_river_illust.png",
+        "card_full": "cards/full/hwg5_u20_02_river_full.png",
+        "card_text": "cards/text/hwg5_u20_02_river_text.png",
+        "unit": "Unit 20: Unit 20: Nature",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_12nature_river_1516.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u10_09_river_illust.png",
+        "card_full": "cards/full/hwg6_u10_09_river_full.png",
+        "card_text": "cards/text/hwg6_u10_09_river_text.png",
+        "unit": "Unit 10: Unit 10: Nature",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_12nature_river_1516.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0803",
+    "english": "sea",
+    "canonical_key": "sea",
+    "disambiguation": "",
+    "display_label": "sea",
+    "normalized_english": "sea",
+    "part_of_speech": "noun",
+    "category": "12_nature",
+    "category_name": "Nature & Weather",
+    "ja_kanji": "海",
+    "ja_hiragana": "うみ",
+    "en_katakana": "シー",
+    "ruby": [
+      {
+        "base": "海",
+        "ruby": "うみ"
+      }
+    ],
+    "ruby_html": "<ruby>海<rt>うみ</rt></ruby>",
+    "ruby_text": "[海|うみ]",
+    "sound_file": "dic_wb_12nature_sea_1517.mp3",
+    "card_image": "dic_wb_12nature_sea_1517_1_c.png",
+    "card_image_kana": "dic_wb_12nature_sea_1517_1_c.png",
+    "card_image_en": "dic_wb_12nature_sea_1517_1_e.png",
+    "card_image_bilingual": "dic_wb_12nature_sea_1517_1_ce.png",
+    "card_variants": [
+      "dic_wb_12nature_sea_1517_1.png"
+    ],
+    "token": "dic_wb_12nature_sea_1517&dic_wb_12nature_sea_1517&dic_wb_12nature_sea_1517",
+    "grades": [
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What can you see? / A: I can see a sea."
+    ],
+    "tags": [
+      "nature"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u20_00_sea_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u20_00_sea_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u20_00_sea_text.png",
+    "lemma": "sea",
+    "is_plural": false,
+    "letter_count": 3,
+    "syllable_count": 1,
+    "first_letter": "S",
+    "is_compound": false,
+    "phonics_initial": "s",
+    "difficulty_tier": 3,
+    "primary_image": "dic_wb_12nature_sea_1517_1_c.png",
+    "primary_audio": "dic_wb_12nature_sea_1517.mp3",
+    "three_hints": {
+      "category_hint": "It is a feature of nature or scenery.",
+      "feature_hint": "Part of nature known as '海' (うみ) in Japanese.",
+      "letter_hint": "It starts with the letter S."
+    },
+    "target_dialogues": [
+      {
+        "question": "What can you see?",
+        "answer": "I can see a sea.",
+        "context": "Talking about nature and scenery"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u20_00_sea_illust.png",
+        "card_full": "cards/full/hwg5_u20_00_sea_full.png",
+        "card_text": "cards/text/hwg5_u20_00_sea_text.png",
+        "unit": "Unit 20: Unit 20: Nature",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_12nature_sea_1517.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u10_00_sea_illust.png",
+        "card_full": "cards/full/hwg6_u10_00_sea_full.png",
+        "card_text": "cards/text/hwg6_u10_00_sea_text.png",
+        "unit": "Unit 10: Unit 10: Nature",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_12nature_sea_1517.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0804",
+    "english": "snowy",
+    "canonical_key": "snowy",
+    "disambiguation": "",
+    "display_label": "snowy",
+    "normalized_english": "snowy",
+    "part_of_speech": "adjective",
+    "category": "12_nature",
+    "category_name": "Nature & Weather",
+    "ja_kanji": "雪",
+    "ja_hiragana": "ゆき",
+    "en_katakana": "スノーウィ",
+    "ruby": [
+      {
+        "base": "雪",
+        "ruby": "ゆき"
+      }
+    ],
+    "ruby_html": "<ruby>雪<rt>ゆき</rt></ruby>",
+    "ruby_text": "[雪|ゆき]",
+    "sound_file": "dic_wb_12nature_snowy_1522.mp3",
+    "card_image": "dic_wb_12nature_snowy_1522_1_c.png",
+    "card_image_kana": "dic_wb_12nature_snowy_1522_1_c.png",
+    "card_image_en": "dic_wb_12nature_snowy_1522_1_e.png",
+    "card_image_bilingual": "dic_wb_12nature_snowy_1522_1_ce.png",
+    "card_variants": [
+      "dic_wb_12nature_snowy_1522_1.png"
+    ],
+    "token": "dic_wb_12nature_snowy_1522&dic_wb_12nature_snowy_1522&dic_wb_12nature_snowy_1522",
+    "grades": [
+      "ES_G4",
+      "ES_G5"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: How is the weather today? / A: It's snowy."
+    ],
+    "tags": [
+      "weather"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u02_03_snowy_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u02_03_snowy_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u02_03_snowy_text.png",
+    "lemma": "snowy",
+    "is_plural": false,
+    "letter_count": 5,
+    "syllable_count": 2,
+    "first_letter": "S",
+    "is_compound": false,
+    "phonics_initial": "sn",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_12nature_snowy_1522_1_c.png",
+    "primary_audio": "dic_wb_12nature_snowy_1522.mp3",
+    "three_hints": {
+      "category_hint": "It is a weather condition.",
+      "feature_hint": "Weather known as '雪' (ゆき) in Japanese.",
+      "letter_hint": "It starts with the letter S."
+    },
+    "target_dialogues": [
+      {
+        "question": "How is the weather today?",
+        "answer": "It's snowy.",
+        "context": "Asking and answering about today's weather"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G4": {
+        "card_image": "dic_wb_12nature_snowy_1522_1_c.png",
+        "sound_file": "dic_wb_12nature_snowy_1522.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_wb_12nature_snowy_1522_1_ce.png",
+        "card_bw": "dic_wb_12nature_snowy_1522_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u02_03_snowy_illust.png",
+        "card_full": "cards/full/hwg5_u02_03_snowy_full.png",
+        "card_text": "cards/text/hwg5_u02_03_snowy_text.png",
+        "unit": "Unit 2: Unit 2: Weather",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_12nature_snowy_1522.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0805",
+    "english": "sunny",
+    "canonical_key": "sunny",
+    "disambiguation": "",
+    "display_label": "sunny",
+    "normalized_english": "sunny",
+    "part_of_speech": "adjective",
+    "category": "12_nature",
+    "category_name": "Nature & Weather",
+    "ja_kanji": "晴れ",
+    "ja_hiragana": "はれ",
+    "en_katakana": "サニー",
+    "ruby": [
+      {
+        "base": "晴",
+        "ruby": "は"
+      },
+      {
+        "base": "れ",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "<ruby>晴<rt>は</rt></ruby>れ",
+    "ruby_text": "[晴|は]れ",
+    "sound_file": "dic_wb_12nature_sunny_1523.mp3",
+    "card_image": "dic_wb_12nature_sunny_1523_1_c.png",
+    "card_image_kana": "dic_wb_12nature_sunny_1523_1_c.png",
+    "card_image_en": "dic_wb_12nature_sunny_1523_1_e.png",
+    "card_image_bilingual": "dic_wb_12nature_sunny_1523_1_ce.png",
+    "card_variants": [
+      "dic_wb_12nature_sunny_1523_1.png"
+    ],
+    "token": "dic_wb_12nature_sunny_1523&dic_wb_12nature_sunny_1523&dic_wb_12nature_sunny_1523",
+    "grades": [
+      "ES_G4",
+      "ES_G5"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: How is the weather today? / A: It's sunny."
+    ],
+    "tags": [
+      "weather"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u02_00_sunny_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u02_00_sunny_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u02_00_sunny_text.png",
+    "lemma": "sunny",
+    "is_plural": false,
+    "letter_count": 5,
+    "syllable_count": 2,
+    "first_letter": "S",
+    "is_compound": false,
+    "phonics_initial": "s",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_12nature_sunny_1523_1_c.png",
+    "primary_audio": "dic_wb_12nature_sunny_1523.mp3",
+    "three_hints": {
+      "category_hint": "It is a weather condition.",
+      "feature_hint": "Weather known as '晴れ' (はれ) in Japanese.",
+      "letter_hint": "It starts with the letter S."
+    },
+    "target_dialogues": [
+      {
+        "question": "How is the weather today?",
+        "answer": "It's sunny.",
+        "context": "Asking and answering about today's weather"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G4": {
+        "card_image": "dic_wb_12nature_sunny_1523_1_c.png",
+        "sound_file": "dic_wb_12nature_sunny_1523.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_wb_12nature_sunny_1523_1_ce.png",
+        "card_bw": "dic_wb_12nature_sunny_1523_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u02_00_sunny_illust.png",
+        "card_full": "cards/full/hwg5_u02_00_sunny_full.png",
+        "card_text": "cards/text/hwg5_u02_00_sunny_text.png",
+        "unit": "Unit 2: Unit 2: Weather",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_12nature_sunny_1523.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0806",
+    "english": "tree",
+    "canonical_key": "tree",
+    "disambiguation": "",
+    "display_label": "tree",
+    "normalized_english": "tree",
+    "part_of_speech": "noun",
+    "category": "12_nature",
+    "category_name": "Nature & Weather",
+    "ja_kanji": "木",
+    "ja_hiragana": "き",
+    "en_katakana": "ツリー",
+    "ruby": [
+      {
+        "base": "木",
+        "ruby": "き"
+      }
+    ],
+    "ruby_html": "<ruby>木<rt>き</rt></ruby>",
+    "ruby_text": "[木|き]",
+    "sound_file": "dic_wb_12nature_tree_1512.mp3",
+    "card_image": "dic_wb_12nature_tree_1512_1_c.png",
+    "card_image_kana": "dic_wb_12nature_tree_1512_1_c.png",
+    "card_image_en": "dic_wb_12nature_tree_1512_1_e.png",
+    "card_image_bilingual": "dic_wb_12nature_tree_1512_1_ce.png",
+    "card_variants": [
+      "dic_wb_12nature_tree_1512_1.png"
+    ],
+    "token": "dic_wb_12nature_tree_1512&dic_wb_12nature_tree_1512&dic_wb_12nature_tree_1512",
+    "grades": [
+      "ES_G3",
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [
+      "How many? 数えてあそぼう"
+    ],
+    "target_sentences": [
+      "Q: What can you see? / A: I can see a tree."
+    ],
+    "tags": [
+      "nature",
+      "plant"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u20_09_tree_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u20_09_tree_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u20_09_tree_text.png",
+    "lemma": "tree",
+    "is_plural": false,
+    "letter_count": 4,
+    "syllable_count": 1,
+    "first_letter": "T",
+    "is_compound": false,
+    "phonics_initial": "tr",
+    "difficulty_tier": 1,
+    "primary_image": "dic_wb_12nature_tree_1512_1_c.png",
+    "primary_audio": "dic_wb_12nature_tree_1512.mp3",
+    "three_hints": {
+      "category_hint": "It is a feature of nature or scenery.",
+      "feature_hint": "Part of nature known as '木' (き) in Japanese.",
+      "letter_hint": "It starts with the letter T."
+    },
+    "target_dialogues": [
+      {
+        "question": "What can you see?",
+        "answer": "I can see a tree.",
+        "context": "Talking about nature and scenery"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_wb_12nature_tree_1512_1_c.png",
+        "sound_file": "dic_wb_12nature_tree_1512.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_wb_12nature_tree_1512_1_ce.png",
+        "card_bw": "dic_wb_12nature_tree_1512_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u20_09_tree_illust.png",
+        "card_full": "cards/full/hwg5_u20_09_tree_full.png",
+        "card_text": "cards/text/hwg5_u20_09_tree_text.png",
+        "unit": "Unit 20: Unit 20: Nature",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_12nature_tree_1512.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u10_15_tree_illust.png",
+        "card_full": "cards/full/hwg6_u10_15_tree_full.png",
+        "card_text": "cards/text/hwg6_u10_15_tree_text.png",
+        "unit": "Unit 10: Unit 10: Nature",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_12nature_tree_1512.mp3"
+      }
+    }
+  }
+]

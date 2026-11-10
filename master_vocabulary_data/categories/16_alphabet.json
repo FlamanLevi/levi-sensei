@@ -1,0 +1,4266 @@
+[
+  {
+    "id": "word_0001",
+    "english": "A",
+    "canonical_key": "letter_A_upper",
+    "disambiguation": "uppercase",
+    "display_label": "A (uppercase)",
+    "normalized_english": "a",
+    "part_of_speech": "alphabet",
+    "category": "16_alphabet",
+    "category_name": "Alphabet & Phonics",
+    "ja_kanji": "A",
+    "ja_hiragana": "えー",
+    "en_katakana": "エイ",
+    "ruby": [
+      {
+        "base": "A",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "A",
+    "ruby_text": "A",
+    "sound_file": "dic_3_card_a_2068.mp3",
+    "card_image": "dic_3_card_a_2068_1_c.png",
+    "card_image_kana": "dic_3_card_a_2068_1_c.png",
+    "card_image_en": "dic_3_card_a_2068_1_e.png",
+    "card_image_bilingual": "dic_3_card_a_2068_1_ce.png",
+    "card_variants": [
+      "dic_3_card_a_2068_1.png"
+    ],
+    "token": "dic_3_card_a_2068&dic_3_card_a_2068&dic_3_card_a_2068",
+    "grades": [
+      "ES_G3",
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What letter is this? / A: It is the letter A."
+    ],
+    "tags": [
+      "alphabet",
+      "letter",
+      "uppercase"
+    ],
+    "lemma": "A",
+    "is_plural": false,
+    "letter_count": 1,
+    "syllable_count": 1,
+    "first_letter": "A",
+    "is_compound": false,
+    "phonics_initial": "a",
+    "difficulty_tier": 1,
+    "primary_image": "dic_3_card_a_2068_1_c.png",
+    "primary_audio": "dic_3_card_a_2068.mp3",
+    "three_hints": {
+      "category_hint": "It is a letter of the English alphabet.",
+      "feature_hint": "It is letter number 1 of the 26 English alphabet letters.",
+      "letter_hint": "It is the uppercase letter A."
+    },
+    "target_dialogues": [
+      {
+        "question": "What letter is this?",
+        "answer": "It is the letter A.",
+        "context": "Identifying English alphabet letters"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_a_2068_1_c.png",
+        "sound_file": "dic_3_card_a_2068.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_a_2068_1_ce.png",
+        "card_bw": "dic_3_card_a_2068_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_3_card_a_2068_1_c.png",
+        "sound_file": "dic_3_card_a_2068.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_3_card_a_2068_1_ce.png",
+        "card_bw": "dic_3_card_a_2068_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0002",
+    "english": "a",
+    "canonical_key": "letter_a_lower",
+    "disambiguation": "lowercase",
+    "display_label": "a (lowercase)",
+    "normalized_english": "a",
+    "part_of_speech": "alphabet",
+    "category": "16_alphabet",
+    "category_name": "Alphabet & Phonics",
+    "ja_kanji": "a",
+    "ja_hiragana": "えー",
+    "en_katakana": "エイ",
+    "ruby": [
+      {
+        "base": "a",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "a",
+    "ruby_text": "a",
+    "sound_file": "dic_3_card_a_2068.mp3",
+    "card_image": "dic_4_card_a_2551_1_c.png",
+    "card_image_kana": "dic_4_card_a_2551_1_c.png",
+    "card_image_en": "dic_4_card_a_2551_1_e.png",
+    "card_image_bilingual": "dic_4_card_a_2551_1_ce.png",
+    "card_variants": [
+      "dic_4_card_a_2551_1.png"
+    ],
+    "token": "dic_4_card_a_2551&dic_3_card_a_2068&dic_4_card_a_2551",
+    "grades": [
+      "ES_G3",
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What letter is this? / A: It is the letter a."
+    ],
+    "tags": [
+      "alphabet",
+      "letter",
+      "lowercase"
+    ],
+    "lemma": "a",
+    "is_plural": false,
+    "letter_count": 1,
+    "syllable_count": 1,
+    "first_letter": "A",
+    "is_compound": false,
+    "phonics_initial": "a",
+    "difficulty_tier": 1,
+    "primary_image": "dic_4_card_a_2551_1_c.png",
+    "primary_audio": "dic_3_card_a_2068.mp3",
+    "three_hints": {
+      "category_hint": "It is a letter of the English alphabet.",
+      "feature_hint": "It is letter number 1 of the 26 English alphabet letters.",
+      "letter_hint": "It is the lowercase letter a."
+    },
+    "target_dialogues": [
+      {
+        "question": "What letter is this?",
+        "answer": "It is the letter a.",
+        "context": "Identifying English alphabet letters"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_a_2068_1_c.png",
+        "sound_file": "dic_3_card_a_2068.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_a_2068_1_ce.png",
+        "card_bw": "dic_3_card_a_2068_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_3_card_a_2068_1_c.png",
+        "sound_file": "dic_3_card_a_2068.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_3_card_a_2068_1_ce.png",
+        "card_bw": "dic_3_card_a_2068_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0017",
+    "english": "B",
+    "canonical_key": "letter_B_upper",
+    "disambiguation": "uppercase",
+    "display_label": "B (uppercase)",
+    "normalized_english": "b",
+    "part_of_speech": "alphabet",
+    "category": "16_alphabet",
+    "category_name": "Alphabet & Phonics",
+    "ja_kanji": "B",
+    "ja_hiragana": "びー",
+    "en_katakana": "ビー",
+    "ruby": [
+      {
+        "base": "B",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "B",
+    "ruby_text": "B",
+    "sound_file": "dic_3_card_b_2069.mp3",
+    "card_image": "dic_3_card_b_2069_1_c.png",
+    "card_image_kana": "dic_3_card_b_2069_1_c.png",
+    "card_image_en": "dic_3_card_b_2069_1_e.png",
+    "card_image_bilingual": "dic_3_card_b_2069_1_ce.png",
+    "card_variants": [
+      "dic_3_card_b_2069_1.png"
+    ],
+    "token": "dic_3_card_b_2069&dic_3_card_b_2069&dic_3_card_b_2069",
+    "grades": [
+      "ES_G3",
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What letter is this? / A: It is the letter B."
+    ],
+    "tags": [
+      "alphabet",
+      "letter",
+      "uppercase"
+    ],
+    "lemma": "B",
+    "is_plural": false,
+    "letter_count": 1,
+    "syllable_count": 1,
+    "first_letter": "B",
+    "is_compound": false,
+    "phonics_initial": "b",
+    "difficulty_tier": 1,
+    "primary_image": "dic_3_card_b_2069_1_c.png",
+    "primary_audio": "dic_3_card_b_2069.mp3",
+    "three_hints": {
+      "category_hint": "It is a letter of the English alphabet.",
+      "feature_hint": "It is letter number 2 of the 26 English alphabet letters.",
+      "letter_hint": "It is the uppercase letter B."
+    },
+    "target_dialogues": [
+      {
+        "question": "What letter is this?",
+        "answer": "It is the letter B.",
+        "context": "Identifying English alphabet letters"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_b_2069_1_c.png",
+        "sound_file": "dic_3_card_b_2069.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_b_2069_1_ce.png",
+        "card_bw": "dic_3_card_b_2069_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_3_card_b_2069_1_c.png",
+        "sound_file": "dic_3_card_b_2069.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_3_card_b_2069_1_ce.png",
+        "card_bw": "dic_3_card_b_2069_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0018",
+    "english": "b",
+    "canonical_key": "letter_b_lower",
+    "disambiguation": "lowercase",
+    "display_label": "b (lowercase)",
+    "normalized_english": "b",
+    "part_of_speech": "alphabet",
+    "category": "16_alphabet",
+    "category_name": "Alphabet & Phonics",
+    "ja_kanji": "b",
+    "ja_hiragana": "びー",
+    "en_katakana": "ビー",
+    "ruby": [
+      {
+        "base": "b",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "b",
+    "ruby_text": "b",
+    "sound_file": "dic_3_card_b_2069.mp3",
+    "card_image": "dic_4_card_b_2552_1_c.png",
+    "card_image_kana": "dic_4_card_b_2552_1_c.png",
+    "card_image_en": "dic_4_card_b_2552_1_e.png",
+    "card_image_bilingual": "dic_4_card_b_2552_1_ce.png",
+    "card_variants": [
+      "dic_4_card_b_2552_1.png"
+    ],
+    "token": "dic_4_card_b_2552&dic_3_card_b_2069&dic_4_card_b_2552",
+    "grades": [
+      "ES_G3",
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What letter is this? / A: It is the letter b."
+    ],
+    "tags": [
+      "alphabet",
+      "letter",
+      "lowercase"
+    ],
+    "lemma": "b",
+    "is_plural": false,
+    "letter_count": 1,
+    "syllable_count": 1,
+    "first_letter": "B",
+    "is_compound": false,
+    "phonics_initial": "b",
+    "difficulty_tier": 1,
+    "primary_image": "dic_4_card_b_2552_1_c.png",
+    "primary_audio": "dic_3_card_b_2069.mp3",
+    "three_hints": {
+      "category_hint": "It is a letter of the English alphabet.",
+      "feature_hint": "It is letter number 2 of the 26 English alphabet letters.",
+      "letter_hint": "It is the lowercase letter b."
+    },
+    "target_dialogues": [
+      {
+        "question": "What letter is this?",
+        "answer": "It is the letter b.",
+        "context": "Identifying English alphabet letters"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_b_2069_1_c.png",
+        "sound_file": "dic_3_card_b_2069.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_b_2069_1_ce.png",
+        "card_bw": "dic_3_card_b_2069_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_3_card_b_2069_1_c.png",
+        "sound_file": "dic_3_card_b_2069.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_3_card_b_2069_1_ce.png",
+        "card_bw": "dic_3_card_b_2069_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0037",
+    "english": "C",
+    "canonical_key": "letter_C_upper",
+    "disambiguation": "uppercase",
+    "display_label": "C (uppercase)",
+    "normalized_english": "c",
+    "part_of_speech": "alphabet",
+    "category": "16_alphabet",
+    "category_name": "Alphabet & Phonics",
+    "ja_kanji": "C",
+    "ja_hiragana": "しー",
+    "en_katakana": "シー",
+    "ruby": [
+      {
+        "base": "C",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "C",
+    "ruby_text": "C",
+    "sound_file": "dic_3_card_c_2070.mp3",
+    "card_image": "dic_3_card_c_2070_1_c.png",
+    "card_image_kana": "dic_3_card_c_2070_1_c.png",
+    "card_image_en": "dic_3_card_c_2070_1_e.png",
+    "card_image_bilingual": "dic_3_card_c_2070_1_ce.png",
+    "card_variants": [
+      "dic_3_card_c_2070_1.png"
+    ],
+    "token": "dic_3_card_c_2070&dic_3_card_c_2070&dic_3_card_c_2070",
+    "grades": [
+      "ES_G3",
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What letter is this? / A: It is the letter C."
+    ],
+    "tags": [
+      "alphabet",
+      "letter",
+      "uppercase"
+    ],
+    "lemma": "C",
+    "is_plural": false,
+    "letter_count": 1,
+    "syllable_count": 1,
+    "first_letter": "C",
+    "is_compound": false,
+    "phonics_initial": "c",
+    "difficulty_tier": 1,
+    "primary_image": "dic_3_card_c_2070_1_c.png",
+    "primary_audio": "dic_3_card_c_2070.mp3",
+    "three_hints": {
+      "category_hint": "It is a letter of the English alphabet.",
+      "feature_hint": "It is letter number 3 of the 26 English alphabet letters.",
+      "letter_hint": "It is the uppercase letter C."
+    },
+    "target_dialogues": [
+      {
+        "question": "What letter is this?",
+        "answer": "It is the letter C.",
+        "context": "Identifying English alphabet letters"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_c_2070_1_c.png",
+        "sound_file": "dic_3_card_c_2070.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_c_2070_1_ce.png",
+        "card_bw": "dic_3_card_c_2070_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_3_card_c_2070_1_c.png",
+        "sound_file": "dic_3_card_c_2070.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_3_card_c_2070_1_ce.png",
+        "card_bw": "dic_3_card_c_2070_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0038",
+    "english": "c",
+    "canonical_key": "letter_c_lower",
+    "disambiguation": "lowercase",
+    "display_label": "c (lowercase)",
+    "normalized_english": "c",
+    "part_of_speech": "alphabet",
+    "category": "16_alphabet",
+    "category_name": "Alphabet & Phonics",
+    "ja_kanji": "c",
+    "ja_hiragana": "しー",
+    "en_katakana": "シー",
+    "ruby": [
+      {
+        "base": "c",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "c",
+    "ruby_text": "c",
+    "sound_file": "dic_3_card_c_2070.mp3",
+    "card_image": "dic_4_card_c_2553_1_c.png",
+    "card_image_kana": "dic_4_card_c_2553_1_c.png",
+    "card_image_en": "dic_4_card_c_2553_1_e.png",
+    "card_image_bilingual": "dic_4_card_c_2553_1_ce.png",
+    "card_variants": [
+      "dic_4_card_c_2553_1.png"
+    ],
+    "token": "dic_4_card_c_2553&dic_3_card_c_2070&dic_4_card_c_2553",
+    "grades": [
+      "ES_G3",
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What letter is this? / A: It is the letter c."
+    ],
+    "tags": [
+      "alphabet",
+      "letter",
+      "lowercase"
+    ],
+    "lemma": "c",
+    "is_plural": false,
+    "letter_count": 1,
+    "syllable_count": 1,
+    "first_letter": "C",
+    "is_compound": false,
+    "phonics_initial": "c",
+    "difficulty_tier": 1,
+    "primary_image": "dic_4_card_c_2553_1_c.png",
+    "primary_audio": "dic_3_card_c_2070.mp3",
+    "three_hints": {
+      "category_hint": "It is a letter of the English alphabet.",
+      "feature_hint": "It is letter number 3 of the 26 English alphabet letters.",
+      "letter_hint": "It is the lowercase letter c."
+    },
+    "target_dialogues": [
+      {
+        "question": "What letter is this?",
+        "answer": "It is the letter c.",
+        "context": "Identifying English alphabet letters"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_c_2070_1_c.png",
+        "sound_file": "dic_3_card_c_2070.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_c_2070_1_ce.png",
+        "card_bw": "dic_3_card_c_2070_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_3_card_c_2070_1_c.png",
+        "sound_file": "dic_3_card_c_2070.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_3_card_c_2070_1_ce.png",
+        "card_bw": "dic_3_card_c_2070_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0066",
+    "english": "D",
+    "canonical_key": "letter_D_upper",
+    "disambiguation": "uppercase",
+    "display_label": "D (uppercase)",
+    "normalized_english": "d",
+    "part_of_speech": "alphabet",
+    "category": "16_alphabet",
+    "category_name": "Alphabet & Phonics",
+    "ja_kanji": "D",
+    "ja_hiragana": "でぃー",
+    "en_katakana": "ディー",
+    "ruby": [
+      {
+        "base": "D",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "D",
+    "ruby_text": "D",
+    "sound_file": "dic_3_card_d_2071.mp3",
+    "card_image": "dic_3_card_d_2071_1_c.png",
+    "card_image_kana": "dic_3_card_d_2071_1_c.png",
+    "card_image_en": "dic_3_card_d_2071_1_e.png",
+    "card_image_bilingual": "dic_3_card_d_2071_1_ce.png",
+    "card_variants": [
+      "dic_3_card_d_2071_1.png"
+    ],
+    "token": "dic_3_card_d_2071&dic_3_card_d_2071&dic_3_card_d_2071",
+    "grades": [
+      "ES_G3",
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What letter is this? / A: It is the letter D."
+    ],
+    "tags": [
+      "alphabet",
+      "letter",
+      "uppercase"
+    ],
+    "lemma": "D",
+    "is_plural": false,
+    "letter_count": 1,
+    "syllable_count": 1,
+    "first_letter": "D",
+    "is_compound": false,
+    "phonics_initial": "d",
+    "difficulty_tier": 1,
+    "primary_image": "dic_3_card_d_2071_1_c.png",
+    "primary_audio": "dic_3_card_d_2071.mp3",
+    "three_hints": {
+      "category_hint": "It is a letter of the English alphabet.",
+      "feature_hint": "It is letter number 4 of the 26 English alphabet letters.",
+      "letter_hint": "It is the uppercase letter D."
+    },
+    "target_dialogues": [
+      {
+        "question": "What letter is this?",
+        "answer": "It is the letter D.",
+        "context": "Identifying English alphabet letters"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_d_2071_1_c.png",
+        "sound_file": "dic_3_card_d_2071.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_d_2071_1_ce.png",
+        "card_bw": "dic_3_card_d_2071_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_3_card_d_2071_1_c.png",
+        "sound_file": "dic_3_card_d_2071.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_3_card_d_2071_1_ce.png",
+        "card_bw": "dic_3_card_d_2071_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0067",
+    "english": "d",
+    "canonical_key": "letter_d_lower",
+    "disambiguation": "lowercase",
+    "display_label": "d (lowercase)",
+    "normalized_english": "d",
+    "part_of_speech": "alphabet",
+    "category": "16_alphabet",
+    "category_name": "Alphabet & Phonics",
+    "ja_kanji": "d",
+    "ja_hiragana": "でぃー",
+    "en_katakana": "ディー",
+    "ruby": [
+      {
+        "base": "d",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "d",
+    "ruby_text": "d",
+    "sound_file": "dic_3_card_d_2071.mp3",
+    "card_image": "dic_4_card_d_2554_1_c.png",
+    "card_image_kana": "dic_4_card_d_2554_1_c.png",
+    "card_image_en": "dic_4_card_d_2554_1_e.png",
+    "card_image_bilingual": "dic_4_card_d_2554_1_ce.png",
+    "card_variants": [
+      "dic_4_card_d_2554_1.png"
+    ],
+    "token": "dic_4_card_d_2554&dic_3_card_d_2071&dic_4_card_d_2554",
+    "grades": [
+      "ES_G3",
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What letter is this? / A: It is the letter d."
+    ],
+    "tags": [
+      "alphabet",
+      "letter",
+      "lowercase"
+    ],
+    "lemma": "d",
+    "is_plural": false,
+    "letter_count": 1,
+    "syllable_count": 1,
+    "first_letter": "D",
+    "is_compound": false,
+    "phonics_initial": "d",
+    "difficulty_tier": 1,
+    "primary_image": "dic_4_card_d_2554_1_c.png",
+    "primary_audio": "dic_3_card_d_2071.mp3",
+    "three_hints": {
+      "category_hint": "It is a letter of the English alphabet.",
+      "feature_hint": "It is letter number 4 of the 26 English alphabet letters.",
+      "letter_hint": "It is the lowercase letter d."
+    },
+    "target_dialogues": [
+      {
+        "question": "What letter is this?",
+        "answer": "It is the letter d.",
+        "context": "Identifying English alphabet letters"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_d_2071_1_c.png",
+        "sound_file": "dic_3_card_d_2071.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_d_2071_1_ce.png",
+        "card_bw": "dic_3_card_d_2071_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_3_card_d_2071_1_c.png",
+        "sound_file": "dic_3_card_d_2071.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_3_card_d_2071_1_ce.png",
+        "card_bw": "dic_3_card_d_2071_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0088",
+    "english": "E",
+    "canonical_key": "letter_E_upper",
+    "disambiguation": "uppercase",
+    "display_label": "E (uppercase)",
+    "normalized_english": "e",
+    "part_of_speech": "alphabet",
+    "category": "16_alphabet",
+    "category_name": "Alphabet & Phonics",
+    "ja_kanji": "E",
+    "ja_hiragana": "いー",
+    "en_katakana": "イー",
+    "ruby": [
+      {
+        "base": "E",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "E",
+    "ruby_text": "E",
+    "sound_file": "dic_3_card_e_2072.mp3",
+    "card_image": "dic_3_card_e_2072_1_c.png",
+    "card_image_kana": "dic_3_card_e_2072_1_c.png",
+    "card_image_en": "dic_3_card_e_2072_1_e.png",
+    "card_image_bilingual": "dic_3_card_e_2072_1_ce.png",
+    "card_variants": [
+      "dic_3_card_e_2072_1.png"
+    ],
+    "token": "dic_3_card_e_2072&dic_3_card_e_2072&dic_3_card_e_2072",
+    "grades": [
+      "ES_G3",
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What letter is this? / A: It is the letter E."
+    ],
+    "tags": [
+      "alphabet",
+      "letter",
+      "uppercase"
+    ],
+    "lemma": "E",
+    "is_plural": false,
+    "letter_count": 1,
+    "syllable_count": 1,
+    "first_letter": "E",
+    "is_compound": false,
+    "phonics_initial": "e",
+    "difficulty_tier": 1,
+    "primary_image": "dic_3_card_e_2072_1_c.png",
+    "primary_audio": "dic_3_card_e_2072.mp3",
+    "three_hints": {
+      "category_hint": "It is a letter of the English alphabet.",
+      "feature_hint": "It is letter number 5 of the 26 English alphabet letters.",
+      "letter_hint": "It is the uppercase letter E."
+    },
+    "target_dialogues": [
+      {
+        "question": "What letter is this?",
+        "answer": "It is the letter E.",
+        "context": "Identifying English alphabet letters"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_e_2072_1_c.png",
+        "sound_file": "dic_3_card_e_2072.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_e_2072_1_ce.png",
+        "card_bw": "dic_3_card_e_2072_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_3_card_e_2072_1_c.png",
+        "sound_file": "dic_3_card_e_2072.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_3_card_e_2072_1_ce.png",
+        "card_bw": "dic_3_card_e_2072_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0089",
+    "english": "e",
+    "canonical_key": "letter_e_lower",
+    "disambiguation": "lowercase",
+    "display_label": "e (lowercase)",
+    "normalized_english": "e",
+    "part_of_speech": "alphabet",
+    "category": "16_alphabet",
+    "category_name": "Alphabet & Phonics",
+    "ja_kanji": "e",
+    "ja_hiragana": "いー",
+    "en_katakana": "イー",
+    "ruby": [
+      {
+        "base": "e",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "e",
+    "ruby_text": "e",
+    "sound_file": "dic_3_card_e_2072.mp3",
+    "card_image": "dic_4_card_e_2555_1_c.png",
+    "card_image_kana": "dic_4_card_e_2555_1_c.png",
+    "card_image_en": "dic_4_card_e_2555_1_e.png",
+    "card_image_bilingual": "dic_4_card_e_2555_1_ce.png",
+    "card_variants": [
+      "dic_4_card_e_2555_1.png"
+    ],
+    "token": "dic_4_card_e_2555&dic_3_card_e_2072&dic_4_card_e_2555",
+    "grades": [
+      "ES_G3",
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What letter is this? / A: It is the letter e."
+    ],
+    "tags": [
+      "alphabet",
+      "letter",
+      "lowercase"
+    ],
+    "lemma": "e",
+    "is_plural": false,
+    "letter_count": 1,
+    "syllable_count": 1,
+    "first_letter": "E",
+    "is_compound": false,
+    "phonics_initial": "e",
+    "difficulty_tier": 1,
+    "primary_image": "dic_4_card_e_2555_1_c.png",
+    "primary_audio": "dic_3_card_e_2072.mp3",
+    "three_hints": {
+      "category_hint": "It is a letter of the English alphabet.",
+      "feature_hint": "It is letter number 5 of the 26 English alphabet letters.",
+      "letter_hint": "It is the lowercase letter e."
+    },
+    "target_dialogues": [
+      {
+        "question": "What letter is this?",
+        "answer": "It is the letter e.",
+        "context": "Identifying English alphabet letters"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_e_2072_1_c.png",
+        "sound_file": "dic_3_card_e_2072.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_e_2072_1_ce.png",
+        "card_bw": "dic_3_card_e_2072_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_3_card_e_2072_1_c.png",
+        "sound_file": "dic_3_card_e_2072.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_3_card_e_2072_1_ce.png",
+        "card_bw": "dic_3_card_e_2072_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0101",
+    "english": "F",
+    "canonical_key": "letter_F_upper",
+    "disambiguation": "uppercase",
+    "display_label": "F (uppercase)",
+    "normalized_english": "f",
+    "part_of_speech": "alphabet",
+    "category": "16_alphabet",
+    "category_name": "Alphabet & Phonics",
+    "ja_kanji": "F",
+    "ja_hiragana": "えふ",
+    "en_katakana": "エフ",
+    "ruby": [
+      {
+        "base": "F",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "F",
+    "ruby_text": "F",
+    "sound_file": "dic_3_card_f_2073.mp3",
+    "card_image": "dic_3_card_f_2073_1_c.png",
+    "card_image_kana": "dic_3_card_f_2073_1_c.png",
+    "card_image_en": "dic_3_card_f_2073_1_e.png",
+    "card_image_bilingual": "dic_3_card_f_2073_1_ce.png",
+    "card_variants": [
+      "dic_3_card_f_2073_1.png"
+    ],
+    "token": "dic_3_card_f_2073&dic_3_card_f_2073&dic_3_card_f_2073",
+    "grades": [
+      "ES_G3",
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What letter is this? / A: It is the letter F."
+    ],
+    "tags": [
+      "alphabet",
+      "letter",
+      "uppercase"
+    ],
+    "lemma": "F",
+    "is_plural": false,
+    "letter_count": 1,
+    "syllable_count": 1,
+    "first_letter": "F",
+    "is_compound": false,
+    "phonics_initial": "f",
+    "difficulty_tier": 1,
+    "primary_image": "dic_3_card_f_2073_1_c.png",
+    "primary_audio": "dic_3_card_f_2073.mp3",
+    "three_hints": {
+      "category_hint": "It is a letter of the English alphabet.",
+      "feature_hint": "It is letter number 6 of the 26 English alphabet letters.",
+      "letter_hint": "It is the uppercase letter F."
+    },
+    "target_dialogues": [
+      {
+        "question": "What letter is this?",
+        "answer": "It is the letter F.",
+        "context": "Identifying English alphabet letters"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_f_2073_1_c.png",
+        "sound_file": "dic_3_card_f_2073.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_f_2073_1_ce.png",
+        "card_bw": "dic_3_card_f_2073_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_3_card_f_2073_1_c.png",
+        "sound_file": "dic_3_card_f_2073.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_3_card_f_2073_1_ce.png",
+        "card_bw": "dic_3_card_f_2073_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0102",
+    "english": "f",
+    "canonical_key": "letter_f_lower",
+    "disambiguation": "lowercase",
+    "display_label": "f (lowercase)",
+    "normalized_english": "f",
+    "part_of_speech": "alphabet",
+    "category": "16_alphabet",
+    "category_name": "Alphabet & Phonics",
+    "ja_kanji": "f",
+    "ja_hiragana": "えふ",
+    "en_katakana": "エフ",
+    "ruby": [
+      {
+        "base": "f",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "f",
+    "ruby_text": "f",
+    "sound_file": "dic_3_card_f_2073.mp3",
+    "card_image": "dic_4_card_f_2556_1_c.png",
+    "card_image_kana": "dic_4_card_f_2556_1_c.png",
+    "card_image_en": "dic_4_card_f_2556_1_e.png",
+    "card_image_bilingual": "dic_4_card_f_2556_1_ce.png",
+    "card_variants": [
+      "dic_4_card_f_2556_1.png"
+    ],
+    "token": "dic_4_card_f_2556&dic_3_card_f_2073&dic_4_card_f_2556",
+    "grades": [
+      "ES_G3",
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What letter is this? / A: It is the letter f."
+    ],
+    "tags": [
+      "alphabet",
+      "letter",
+      "lowercase"
+    ],
+    "lemma": "f",
+    "is_plural": false,
+    "letter_count": 1,
+    "syllable_count": 1,
+    "first_letter": "F",
+    "is_compound": false,
+    "phonics_initial": "f",
+    "difficulty_tier": 1,
+    "primary_image": "dic_4_card_f_2556_1_c.png",
+    "primary_audio": "dic_3_card_f_2073.mp3",
+    "three_hints": {
+      "category_hint": "It is a letter of the English alphabet.",
+      "feature_hint": "It is letter number 6 of the 26 English alphabet letters.",
+      "letter_hint": "It is the lowercase letter f."
+    },
+    "target_dialogues": [
+      {
+        "question": "What letter is this?",
+        "answer": "It is the letter f.",
+        "context": "Identifying English alphabet letters"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_f_2073_1_c.png",
+        "sound_file": "dic_3_card_f_2073.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_f_2073_1_ce.png",
+        "card_bw": "dic_3_card_f_2073_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_3_card_f_2073_1_c.png",
+        "sound_file": "dic_3_card_f_2073.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_3_card_f_2073_1_ce.png",
+        "card_bw": "dic_3_card_f_2073_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0121",
+    "english": "G",
+    "canonical_key": "letter_G_upper",
+    "disambiguation": "uppercase",
+    "display_label": "G (uppercase)",
+    "normalized_english": "g",
+    "part_of_speech": "alphabet",
+    "category": "16_alphabet",
+    "category_name": "Alphabet & Phonics",
+    "ja_kanji": "G",
+    "ja_hiragana": "じー",
+    "en_katakana": "ジー",
+    "ruby": [
+      {
+        "base": "G",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "G",
+    "ruby_text": "G",
+    "sound_file": "dic_3_card_g_2074.mp3",
+    "card_image": "dic_3_card_g_2074_1_c.png",
+    "card_image_kana": "dic_3_card_g_2074_1_c.png",
+    "card_image_en": "dic_3_card_g_2074_1_e.png",
+    "card_image_bilingual": "dic_3_card_g_2074_1_ce.png",
+    "card_variants": [
+      "dic_3_card_g_2074_1.png"
+    ],
+    "token": "dic_3_card_g_2074&dic_3_card_g_2074&dic_3_card_g_2074",
+    "grades": [
+      "ES_G3",
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What letter is this? / A: It is the letter G."
+    ],
+    "tags": [
+      "alphabet",
+      "letter",
+      "uppercase"
+    ],
+    "lemma": "G",
+    "is_plural": false,
+    "letter_count": 1,
+    "syllable_count": 1,
+    "first_letter": "G",
+    "is_compound": false,
+    "phonics_initial": "g",
+    "difficulty_tier": 1,
+    "primary_image": "dic_3_card_g_2074_1_c.png",
+    "primary_audio": "dic_3_card_g_2074.mp3",
+    "three_hints": {
+      "category_hint": "It is a letter of the English alphabet.",
+      "feature_hint": "It is letter number 7 of the 26 English alphabet letters.",
+      "letter_hint": "It is the uppercase letter G."
+    },
+    "target_dialogues": [
+      {
+        "question": "What letter is this?",
+        "answer": "It is the letter G.",
+        "context": "Identifying English alphabet letters"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_g_2074_1_c.png",
+        "sound_file": "dic_3_card_g_2074.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_g_2074_1_ce.png",
+        "card_bw": "dic_3_card_g_2074_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_3_card_g_2074_1_c.png",
+        "sound_file": "dic_3_card_g_2074.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_3_card_g_2074_1_ce.png",
+        "card_bw": "dic_3_card_g_2074_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0122",
+    "english": "g",
+    "canonical_key": "letter_g_lower",
+    "disambiguation": "lowercase",
+    "display_label": "g (lowercase)",
+    "normalized_english": "g",
+    "part_of_speech": "alphabet",
+    "category": "16_alphabet",
+    "category_name": "Alphabet & Phonics",
+    "ja_kanji": "g",
+    "ja_hiragana": "じー",
+    "en_katakana": "ジー",
+    "ruby": [
+      {
+        "base": "g",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "g",
+    "ruby_text": "g",
+    "sound_file": "dic_3_card_g_2074.mp3",
+    "card_image": "dic_4_card_g_2557_1_c.png",
+    "card_image_kana": "dic_4_card_g_2557_1_c.png",
+    "card_image_en": "dic_4_card_g_2557_1_e.png",
+    "card_image_bilingual": "dic_4_card_g_2557_1_ce.png",
+    "card_variants": [
+      "dic_4_card_g_2557_1.png"
+    ],
+    "token": "dic_4_card_g_2557&dic_3_card_g_2074&dic_4_card_g_2557",
+    "grades": [
+      "ES_G3",
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What letter is this? / A: It is the letter g."
+    ],
+    "tags": [
+      "alphabet",
+      "letter",
+      "lowercase"
+    ],
+    "lemma": "g",
+    "is_plural": false,
+    "letter_count": 1,
+    "syllable_count": 1,
+    "first_letter": "G",
+    "is_compound": false,
+    "phonics_initial": "g",
+    "difficulty_tier": 1,
+    "primary_image": "dic_4_card_g_2557_1_c.png",
+    "primary_audio": "dic_3_card_g_2074.mp3",
+    "three_hints": {
+      "category_hint": "It is a letter of the English alphabet.",
+      "feature_hint": "It is letter number 7 of the 26 English alphabet letters.",
+      "letter_hint": "It is the lowercase letter g."
+    },
+    "target_dialogues": [
+      {
+        "question": "What letter is this?",
+        "answer": "It is the letter g.",
+        "context": "Identifying English alphabet letters"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_g_2074_1_c.png",
+        "sound_file": "dic_3_card_g_2074.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_g_2074_1_ce.png",
+        "card_bw": "dic_3_card_g_2074_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_3_card_g_2074_1_c.png",
+        "sound_file": "dic_3_card_g_2074.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_3_card_g_2074_1_ce.png",
+        "card_bw": "dic_3_card_g_2074_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0139",
+    "english": "H",
+    "canonical_key": "letter_H_upper",
+    "disambiguation": "uppercase",
+    "display_label": "H (uppercase)",
+    "normalized_english": "h",
+    "part_of_speech": "alphabet",
+    "category": "16_alphabet",
+    "category_name": "Alphabet & Phonics",
+    "ja_kanji": "H",
+    "ja_hiragana": "えいち",
+    "en_katakana": "エイチ",
+    "ruby": [
+      {
+        "base": "H",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "H",
+    "ruby_text": "H",
+    "sound_file": "dic_3_card_h_2075.mp3",
+    "card_image": "dic_3_card_h_2075_1_c.png",
+    "card_image_kana": "dic_3_card_h_2075_1_c.png",
+    "card_image_en": "dic_3_card_h_2075_1_e.png",
+    "card_image_bilingual": "dic_3_card_h_2075_1_ce.png",
+    "card_variants": [
+      "dic_3_card_h_2075_1.png"
+    ],
+    "token": "dic_3_card_h_2075&dic_3_card_h_2075&dic_3_card_h_2075",
+    "grades": [
+      "ES_G3",
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What letter is this? / A: It is the letter H."
+    ],
+    "tags": [
+      "alphabet",
+      "letter",
+      "uppercase"
+    ],
+    "lemma": "H",
+    "is_plural": false,
+    "letter_count": 1,
+    "syllable_count": 1,
+    "first_letter": "H",
+    "is_compound": false,
+    "phonics_initial": "h",
+    "difficulty_tier": 1,
+    "primary_image": "dic_3_card_h_2075_1_c.png",
+    "primary_audio": "dic_3_card_h_2075.mp3",
+    "three_hints": {
+      "category_hint": "It is a letter of the English alphabet.",
+      "feature_hint": "It is letter number 8 of the 26 English alphabet letters.",
+      "letter_hint": "It is the uppercase letter H."
+    },
+    "target_dialogues": [
+      {
+        "question": "What letter is this?",
+        "answer": "It is the letter H.",
+        "context": "Identifying English alphabet letters"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_h_2075_1_c.png",
+        "sound_file": "dic_3_card_h_2075.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_h_2075_1_ce.png",
+        "card_bw": "dic_3_card_h_2075_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_3_card_h_2075_1_c.png",
+        "sound_file": "dic_3_card_h_2075.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_3_card_h_2075_1_ce.png",
+        "card_bw": "dic_3_card_h_2075_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0140",
+    "english": "h",
+    "canonical_key": "letter_h_lower",
+    "disambiguation": "lowercase",
+    "display_label": "h (lowercase)",
+    "normalized_english": "h",
+    "part_of_speech": "alphabet",
+    "category": "16_alphabet",
+    "category_name": "Alphabet & Phonics",
+    "ja_kanji": "h",
+    "ja_hiragana": "えいち",
+    "en_katakana": "エイチ",
+    "ruby": [
+      {
+        "base": "h",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "h",
+    "ruby_text": "h",
+    "sound_file": "dic_3_card_h_2075.mp3",
+    "card_image": "dic_4_card_h_2558_1_c.png",
+    "card_image_kana": "dic_4_card_h_2558_1_c.png",
+    "card_image_en": "dic_4_card_h_2558_1_e.png",
+    "card_image_bilingual": "dic_4_card_h_2558_1_ce.png",
+    "card_variants": [
+      "dic_4_card_h_2558_1.png"
+    ],
+    "token": "dic_4_card_h_2558&dic_3_card_h_2075&dic_4_card_h_2558",
+    "grades": [
+      "ES_G3",
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What letter is this? / A: It is the letter h."
+    ],
+    "tags": [
+      "alphabet",
+      "letter",
+      "lowercase"
+    ],
+    "lemma": "h",
+    "is_plural": false,
+    "letter_count": 1,
+    "syllable_count": 1,
+    "first_letter": "H",
+    "is_compound": false,
+    "phonics_initial": "h",
+    "difficulty_tier": 1,
+    "primary_image": "dic_4_card_h_2558_1_c.png",
+    "primary_audio": "dic_3_card_h_2075.mp3",
+    "three_hints": {
+      "category_hint": "It is a letter of the English alphabet.",
+      "feature_hint": "It is letter number 8 of the 26 English alphabet letters.",
+      "letter_hint": "It is the lowercase letter h."
+    },
+    "target_dialogues": [
+      {
+        "question": "What letter is this?",
+        "answer": "It is the letter h.",
+        "context": "Identifying English alphabet letters"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_h_2075_1_c.png",
+        "sound_file": "dic_3_card_h_2075.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_h_2075_1_ce.png",
+        "card_bw": "dic_3_card_h_2075_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_3_card_h_2075_1_c.png",
+        "sound_file": "dic_3_card_h_2075.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_3_card_h_2075_1_ce.png",
+        "card_bw": "dic_3_card_h_2075_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0156",
+    "english": "I",
+    "canonical_key": "letter_I_upper",
+    "disambiguation": "uppercase",
+    "display_label": "I (uppercase)",
+    "normalized_english": "i",
+    "part_of_speech": "alphabet",
+    "category": "16_alphabet",
+    "category_name": "Alphabet & Phonics",
+    "ja_kanji": "I",
+    "ja_hiragana": "あい",
+    "en_katakana": "アイ",
+    "ruby": [
+      {
+        "base": "I",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "I",
+    "ruby_text": "I",
+    "sound_file": "dic_3_card_i_2076.mp3",
+    "card_image": "dic_3_card_i_2076_1_c.png",
+    "card_image_kana": "dic_3_card_i_2076_1_c.png",
+    "card_image_en": "dic_3_card_i_2076_1_e.png",
+    "card_image_bilingual": "dic_3_card_i_2076_1_ce.png",
+    "card_variants": [
+      "dic_3_card_i_2076_1.png"
+    ],
+    "token": "dic_3_card_i_2076&dic_3_card_i_2076&dic_3_card_i_2076",
+    "grades": [
+      "ES_G3",
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What letter is this? / A: It is the letter I."
+    ],
+    "tags": [
+      "alphabet",
+      "letter",
+      "uppercase"
+    ],
+    "lemma": "I",
+    "is_plural": false,
+    "letter_count": 1,
+    "syllable_count": 1,
+    "first_letter": "I",
+    "is_compound": false,
+    "phonics_initial": "i",
+    "difficulty_tier": 1,
+    "primary_image": "dic_3_card_i_2076_1_c.png",
+    "primary_audio": "dic_3_card_i_2076.mp3",
+    "three_hints": {
+      "category_hint": "It is a letter of the English alphabet.",
+      "feature_hint": "It is letter number 9 of the 26 English alphabet letters.",
+      "letter_hint": "It is the uppercase letter I."
+    },
+    "target_dialogues": [
+      {
+        "question": "What letter is this?",
+        "answer": "It is the letter I.",
+        "context": "Identifying English alphabet letters"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_i_2076_1_c.png",
+        "sound_file": "dic_3_card_i_2076.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_i_2076_1_ce.png",
+        "card_bw": "dic_3_card_i_2076_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_3_card_i_2076_1_c.png",
+        "sound_file": "dic_3_card_i_2076.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_3_card_i_2076_1_ce.png",
+        "card_bw": "dic_3_card_i_2076_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0157",
+    "english": "i",
+    "canonical_key": "letter_i_lower",
+    "disambiguation": "lowercase",
+    "display_label": "i (lowercase)",
+    "normalized_english": "i",
+    "part_of_speech": "alphabet",
+    "category": "16_alphabet",
+    "category_name": "Alphabet & Phonics",
+    "ja_kanji": "i",
+    "ja_hiragana": "あい",
+    "en_katakana": "アイ",
+    "ruby": [
+      {
+        "base": "i",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "i",
+    "ruby_text": "i",
+    "sound_file": "dic_3_card_i_2076.mp3",
+    "card_image": "dic_4_card_i_2559_1_c.png",
+    "card_image_kana": "dic_4_card_i_2559_1_c.png",
+    "card_image_en": "dic_4_card_i_2559_1_e.png",
+    "card_image_bilingual": "dic_4_card_i_2559_1_ce.png",
+    "card_variants": [
+      "dic_4_card_i_2559_1.png"
+    ],
+    "token": "dic_4_card_i_2559&dic_3_card_i_2076&dic_4_card_i_2559",
+    "grades": [
+      "ES_G3",
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What letter is this? / A: It is the letter i."
+    ],
+    "tags": [
+      "alphabet",
+      "letter",
+      "lowercase"
+    ],
+    "lemma": "i",
+    "is_plural": false,
+    "letter_count": 1,
+    "syllable_count": 1,
+    "first_letter": "I",
+    "is_compound": false,
+    "phonics_initial": "i",
+    "difficulty_tier": 1,
+    "primary_image": "dic_4_card_i_2559_1_c.png",
+    "primary_audio": "dic_3_card_i_2076.mp3",
+    "three_hints": {
+      "category_hint": "It is a letter of the English alphabet.",
+      "feature_hint": "It is letter number 9 of the 26 English alphabet letters.",
+      "letter_hint": "It is the lowercase letter i."
+    },
+    "target_dialogues": [
+      {
+        "question": "What letter is this?",
+        "answer": "It is the letter i.",
+        "context": "Identifying English alphabet letters"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_i_2076_1_c.png",
+        "sound_file": "dic_3_card_i_2076.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_i_2076_1_ce.png",
+        "card_bw": "dic_3_card_i_2076_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_3_card_i_2076_1_c.png",
+        "sound_file": "dic_3_card_i_2076.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_3_card_i_2076_1_ce.png",
+        "card_bw": "dic_3_card_i_2076_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0164",
+    "english": "J",
+    "canonical_key": "letter_J_upper",
+    "disambiguation": "uppercase",
+    "display_label": "J (uppercase)",
+    "normalized_english": "j",
+    "part_of_speech": "alphabet",
+    "category": "16_alphabet",
+    "category_name": "Alphabet & Phonics",
+    "ja_kanji": "J",
+    "ja_hiragana": "じぇい",
+    "en_katakana": "ジェイ",
+    "ruby": [
+      {
+        "base": "J",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "J",
+    "ruby_text": "J",
+    "sound_file": "dic_3_card_j_2077.mp3",
+    "card_image": "dic_3_card_j_2077_1_c.png",
+    "card_image_kana": "dic_3_card_j_2077_1_c.png",
+    "card_image_en": "dic_3_card_j_2077_1_e.png",
+    "card_image_bilingual": "dic_3_card_j_2077_1_ce.png",
+    "card_variants": [
+      "dic_3_card_j_2077_1.png"
+    ],
+    "token": "dic_3_card_j_2077&dic_3_card_j_2077&dic_3_card_j_2077",
+    "grades": [
+      "ES_G3",
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What letter is this? / A: It is the letter J."
+    ],
+    "tags": [
+      "alphabet",
+      "letter",
+      "uppercase"
+    ],
+    "lemma": "J",
+    "is_plural": false,
+    "letter_count": 1,
+    "syllable_count": 1,
+    "first_letter": "J",
+    "is_compound": false,
+    "phonics_initial": "j",
+    "difficulty_tier": 1,
+    "primary_image": "dic_3_card_j_2077_1_c.png",
+    "primary_audio": "dic_3_card_j_2077.mp3",
+    "three_hints": {
+      "category_hint": "It is a letter of the English alphabet.",
+      "feature_hint": "It is letter number 10 of the 26 English alphabet letters.",
+      "letter_hint": "It is the uppercase letter J."
+    },
+    "target_dialogues": [
+      {
+        "question": "What letter is this?",
+        "answer": "It is the letter J.",
+        "context": "Identifying English alphabet letters"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_j_2077_1_c.png",
+        "sound_file": "dic_3_card_j_2077.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_j_2077_1_ce.png",
+        "card_bw": "dic_3_card_j_2077_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_3_card_j_2077_1_c.png",
+        "sound_file": "dic_3_card_j_2077.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_3_card_j_2077_1_ce.png",
+        "card_bw": "dic_3_card_j_2077_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0165",
+    "english": "j",
+    "canonical_key": "letter_j_lower",
+    "disambiguation": "lowercase",
+    "display_label": "j (lowercase)",
+    "normalized_english": "j",
+    "part_of_speech": "alphabet",
+    "category": "16_alphabet",
+    "category_name": "Alphabet & Phonics",
+    "ja_kanji": "j",
+    "ja_hiragana": "じぇい",
+    "en_katakana": "ジェイ",
+    "ruby": [
+      {
+        "base": "j",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "j",
+    "ruby_text": "j",
+    "sound_file": "dic_3_card_j_2077.mp3",
+    "card_image": "dic_4_card_j_2560_1_c.png",
+    "card_image_kana": "dic_4_card_j_2560_1_c.png",
+    "card_image_en": "dic_4_card_j_2560_1_e.png",
+    "card_image_bilingual": "dic_4_card_j_2560_1_ce.png",
+    "card_variants": [
+      "dic_4_card_j_2560_1.png"
+    ],
+    "token": "dic_4_card_j_2560&dic_3_card_j_2077&dic_4_card_j_2560",
+    "grades": [
+      "ES_G3",
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What letter is this? / A: It is the letter j."
+    ],
+    "tags": [
+      "alphabet",
+      "letter",
+      "lowercase"
+    ],
+    "lemma": "j",
+    "is_plural": false,
+    "letter_count": 1,
+    "syllable_count": 1,
+    "first_letter": "J",
+    "is_compound": false,
+    "phonics_initial": "j",
+    "difficulty_tier": 1,
+    "primary_image": "dic_4_card_j_2560_1_c.png",
+    "primary_audio": "dic_3_card_j_2077.mp3",
+    "three_hints": {
+      "category_hint": "It is a letter of the English alphabet.",
+      "feature_hint": "It is letter number 10 of the 26 English alphabet letters.",
+      "letter_hint": "It is the lowercase letter j."
+    },
+    "target_dialogues": [
+      {
+        "question": "What letter is this?",
+        "answer": "It is the letter j.",
+        "context": "Identifying English alphabet letters"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_j_2077_1_c.png",
+        "sound_file": "dic_3_card_j_2077.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_j_2077_1_ce.png",
+        "card_bw": "dic_3_card_j_2077_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_3_card_j_2077_1_c.png",
+        "sound_file": "dic_3_card_j_2077.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_3_card_j_2077_1_ce.png",
+        "card_bw": "dic_3_card_j_2077_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0173",
+    "english": "K",
+    "canonical_key": "letter_K_upper",
+    "disambiguation": "uppercase",
+    "display_label": "K (uppercase)",
+    "normalized_english": "k",
+    "part_of_speech": "alphabet",
+    "category": "16_alphabet",
+    "category_name": "Alphabet & Phonics",
+    "ja_kanji": "K",
+    "ja_hiragana": "けい",
+    "en_katakana": "ケイ",
+    "ruby": [
+      {
+        "base": "K",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "K",
+    "ruby_text": "K",
+    "sound_file": "dic_3_card_k_2078.mp3",
+    "card_image": "dic_3_card_k_2078_1_c.png",
+    "card_image_kana": "dic_3_card_k_2078_1_c.png",
+    "card_image_en": "dic_3_card_k_2078_1_e.png",
+    "card_image_bilingual": "dic_3_card_k_2078_1_ce.png",
+    "card_variants": [
+      "dic_3_card_k_2078_1.png"
+    ],
+    "token": "dic_3_card_k_2078&dic_3_card_k_2078&dic_3_card_k_2078",
+    "grades": [
+      "ES_G3",
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What letter is this? / A: It is the letter K."
+    ],
+    "tags": [
+      "alphabet",
+      "letter",
+      "uppercase"
+    ],
+    "lemma": "K",
+    "is_plural": false,
+    "letter_count": 1,
+    "syllable_count": 1,
+    "first_letter": "K",
+    "is_compound": false,
+    "phonics_initial": "k",
+    "difficulty_tier": 1,
+    "primary_image": "dic_3_card_k_2078_1_c.png",
+    "primary_audio": "dic_3_card_k_2078.mp3",
+    "three_hints": {
+      "category_hint": "It is a letter of the English alphabet.",
+      "feature_hint": "It is letter number 11 of the 26 English alphabet letters.",
+      "letter_hint": "It is the uppercase letter K."
+    },
+    "target_dialogues": [
+      {
+        "question": "What letter is this?",
+        "answer": "It is the letter K.",
+        "context": "Identifying English alphabet letters"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_k_2078_1_c.png",
+        "sound_file": "dic_3_card_k_2078.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_k_2078_1_ce.png",
+        "card_bw": "dic_3_card_k_2078_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_3_card_k_2078_1_c.png",
+        "sound_file": "dic_3_card_k_2078.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_3_card_k_2078_1_ce.png",
+        "card_bw": "dic_3_card_k_2078_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0174",
+    "english": "k",
+    "canonical_key": "letter_k_lower",
+    "disambiguation": "lowercase",
+    "display_label": "k (lowercase)",
+    "normalized_english": "k",
+    "part_of_speech": "alphabet",
+    "category": "16_alphabet",
+    "category_name": "Alphabet & Phonics",
+    "ja_kanji": "k",
+    "ja_hiragana": "けい",
+    "en_katakana": "ケイ",
+    "ruby": [
+      {
+        "base": "k",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "k",
+    "ruby_text": "k",
+    "sound_file": "dic_3_card_k_2078.mp3",
+    "card_image": "dic_4_card_k_2561_1_c.png",
+    "card_image_kana": "dic_4_card_k_2561_1_c.png",
+    "card_image_en": "dic_4_card_k_2561_1_e.png",
+    "card_image_bilingual": "dic_4_card_k_2561_1_ce.png",
+    "card_variants": [
+      "dic_4_card_k_2561_1.png"
+    ],
+    "token": "dic_4_card_k_2561&dic_3_card_k_2078&dic_4_card_k_2561",
+    "grades": [
+      "ES_G3",
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What letter is this? / A: It is the letter k."
+    ],
+    "tags": [
+      "alphabet",
+      "letter",
+      "lowercase"
+    ],
+    "lemma": "k",
+    "is_plural": false,
+    "letter_count": 1,
+    "syllable_count": 1,
+    "first_letter": "K",
+    "is_compound": false,
+    "phonics_initial": "k",
+    "difficulty_tier": 1,
+    "primary_image": "dic_4_card_k_2561_1_c.png",
+    "primary_audio": "dic_3_card_k_2078.mp3",
+    "three_hints": {
+      "category_hint": "It is a letter of the English alphabet.",
+      "feature_hint": "It is letter number 11 of the 26 English alphabet letters.",
+      "letter_hint": "It is the lowercase letter k."
+    },
+    "target_dialogues": [
+      {
+        "question": "What letter is this?",
+        "answer": "It is the letter k.",
+        "context": "Identifying English alphabet letters"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_k_2078_1_c.png",
+        "sound_file": "dic_3_card_k_2078.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_k_2078_1_ce.png",
+        "card_bw": "dic_3_card_k_2078_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_3_card_k_2078_1_c.png",
+        "sound_file": "dic_3_card_k_2078.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_3_card_k_2078_1_ce.png",
+        "card_bw": "dic_3_card_k_2078_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0181",
+    "english": "L",
+    "canonical_key": "letter_L_upper",
+    "disambiguation": "uppercase",
+    "display_label": "L (uppercase)",
+    "normalized_english": "l",
+    "part_of_speech": "alphabet",
+    "category": "16_alphabet",
+    "category_name": "Alphabet & Phonics",
+    "ja_kanji": "L",
+    "ja_hiragana": "える",
+    "en_katakana": "エル",
+    "ruby": [
+      {
+        "base": "L",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "L",
+    "ruby_text": "L",
+    "sound_file": "dic_3_card_l_2079.mp3",
+    "card_image": "dic_3_card_l_2079_1_c.png",
+    "card_image_kana": "dic_3_card_l_2079_1_c.png",
+    "card_image_en": "dic_3_card_l_2079_1_e.png",
+    "card_image_bilingual": "dic_3_card_l_2079_1_ce.png",
+    "card_variants": [
+      "dic_3_card_l_2079_1.png"
+    ],
+    "token": "dic_3_card_l_2079&dic_3_card_l_2079&dic_3_card_l_2079",
+    "grades": [
+      "ES_G3",
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What letter is this? / A: It is the letter L."
+    ],
+    "tags": [
+      "alphabet",
+      "letter",
+      "uppercase"
+    ],
+    "lemma": "L",
+    "is_plural": false,
+    "letter_count": 1,
+    "syllable_count": 1,
+    "first_letter": "L",
+    "is_compound": false,
+    "phonics_initial": "l",
+    "difficulty_tier": 1,
+    "primary_image": "dic_3_card_l_2079_1_c.png",
+    "primary_audio": "dic_3_card_l_2079.mp3",
+    "three_hints": {
+      "category_hint": "It is a letter of the English alphabet.",
+      "feature_hint": "It is letter number 12 of the 26 English alphabet letters.",
+      "letter_hint": "It is the uppercase letter L."
+    },
+    "target_dialogues": [
+      {
+        "question": "What letter is this?",
+        "answer": "It is the letter L.",
+        "context": "Identifying English alphabet letters"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_l_2079_1_c.png",
+        "sound_file": "dic_3_card_l_2079.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_l_2079_1_ce.png",
+        "card_bw": "dic_3_card_l_2079_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_3_card_l_2079_1_c.png",
+        "sound_file": "dic_3_card_l_2079.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_3_card_l_2079_1_ce.png",
+        "card_bw": "dic_3_card_l_2079_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0182",
+    "english": "l",
+    "canonical_key": "letter_l_lower",
+    "disambiguation": "lowercase",
+    "display_label": "l (lowercase)",
+    "normalized_english": "l",
+    "part_of_speech": "alphabet",
+    "category": "16_alphabet",
+    "category_name": "Alphabet & Phonics",
+    "ja_kanji": "l",
+    "ja_hiragana": "える",
+    "en_katakana": "エル",
+    "ruby": [
+      {
+        "base": "l",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "l",
+    "ruby_text": "l",
+    "sound_file": "dic_3_card_l_2079.mp3",
+    "card_image": "dic_4_card_l_2562_1_c.png",
+    "card_image_kana": "dic_4_card_l_2562_1_c.png",
+    "card_image_en": "dic_4_card_l_2562_1_e.png",
+    "card_image_bilingual": "dic_4_card_l_2562_1_ce.png",
+    "card_variants": [
+      "dic_4_card_l_2562_1.png"
+    ],
+    "token": "dic_4_card_l_2562&dic_3_card_l_2079&dic_4_card_l_2562",
+    "grades": [
+      "ES_G3",
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What letter is this? / A: It is the letter l."
+    ],
+    "tags": [
+      "alphabet",
+      "letter",
+      "lowercase"
+    ],
+    "lemma": "l",
+    "is_plural": false,
+    "letter_count": 1,
+    "syllable_count": 1,
+    "first_letter": "L",
+    "is_compound": false,
+    "phonics_initial": "l",
+    "difficulty_tier": 1,
+    "primary_image": "dic_4_card_l_2562_1_c.png",
+    "primary_audio": "dic_3_card_l_2079.mp3",
+    "three_hints": {
+      "category_hint": "It is a letter of the English alphabet.",
+      "feature_hint": "It is letter number 12 of the 26 English alphabet letters.",
+      "letter_hint": "It is the lowercase letter l."
+    },
+    "target_dialogues": [
+      {
+        "question": "What letter is this?",
+        "answer": "It is the letter l.",
+        "context": "Identifying English alphabet letters"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_l_2079_1_c.png",
+        "sound_file": "dic_3_card_l_2079.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_l_2079_1_ce.png",
+        "card_bw": "dic_3_card_l_2079_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_3_card_l_2079_1_c.png",
+        "sound_file": "dic_3_card_l_2079.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_3_card_l_2079_1_ce.png",
+        "card_bw": "dic_3_card_l_2079_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0190",
+    "english": "M",
+    "canonical_key": "letter_M_upper",
+    "disambiguation": "uppercase",
+    "display_label": "M (uppercase)",
+    "normalized_english": "m",
+    "part_of_speech": "alphabet",
+    "category": "16_alphabet",
+    "category_name": "Alphabet & Phonics",
+    "ja_kanji": "M",
+    "ja_hiragana": "えむ",
+    "en_katakana": "エム",
+    "ruby": [
+      {
+        "base": "M",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "M",
+    "ruby_text": "M",
+    "sound_file": "dic_3_card_m_2080.mp3",
+    "card_image": "dic_3_card_m_2080_1_c.png",
+    "card_image_kana": "dic_3_card_m_2080_1_c.png",
+    "card_image_en": "dic_3_card_m_2080_1_e.png",
+    "card_image_bilingual": "dic_3_card_m_2080_1_ce.png",
+    "card_variants": [
+      "dic_3_card_m_2080_1.png"
+    ],
+    "token": "dic_3_card_m_2080&dic_3_card_m_2080&dic_3_card_m_2080",
+    "grades": [
+      "ES_G3",
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What letter is this? / A: It is the letter M."
+    ],
+    "tags": [
+      "alphabet",
+      "letter",
+      "uppercase"
+    ],
+    "lemma": "M",
+    "is_plural": false,
+    "letter_count": 1,
+    "syllable_count": 1,
+    "first_letter": "M",
+    "is_compound": false,
+    "phonics_initial": "m",
+    "difficulty_tier": 1,
+    "primary_image": "dic_3_card_m_2080_1_c.png",
+    "primary_audio": "dic_3_card_m_2080.mp3",
+    "three_hints": {
+      "category_hint": "It is a letter of the English alphabet.",
+      "feature_hint": "It is letter number 13 of the 26 English alphabet letters.",
+      "letter_hint": "It is the uppercase letter M."
+    },
+    "target_dialogues": [
+      {
+        "question": "What letter is this?",
+        "answer": "It is the letter M.",
+        "context": "Identifying English alphabet letters"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_m_2080_1_c.png",
+        "sound_file": "dic_3_card_m_2080.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_m_2080_1_ce.png",
+        "card_bw": "dic_3_card_m_2080_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_3_card_m_2080_1_c.png",
+        "sound_file": "dic_3_card_m_2080.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_3_card_m_2080_1_ce.png",
+        "card_bw": "dic_3_card_m_2080_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0191",
+    "english": "m",
+    "canonical_key": "letter_m_lower",
+    "disambiguation": "lowercase",
+    "display_label": "m (lowercase)",
+    "normalized_english": "m",
+    "part_of_speech": "alphabet",
+    "category": "16_alphabet",
+    "category_name": "Alphabet & Phonics",
+    "ja_kanji": "m",
+    "ja_hiragana": "えむ",
+    "en_katakana": "エム",
+    "ruby": [
+      {
+        "base": "m",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "m",
+    "ruby_text": "m",
+    "sound_file": "dic_3_card_m_2080.mp3",
+    "card_image": "dic_4_card_m_2563_1_c.png",
+    "card_image_kana": "dic_4_card_m_2563_1_c.png",
+    "card_image_en": "dic_4_card_m_2563_1_e.png",
+    "card_image_bilingual": "dic_4_card_m_2563_1_ce.png",
+    "card_variants": [
+      "dic_4_card_m_2563_1.png"
+    ],
+    "token": "dic_4_card_m_2563&dic_3_card_m_2080&dic_4_card_m_2563",
+    "grades": [
+      "ES_G3",
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What letter is this? / A: It is the letter m."
+    ],
+    "tags": [
+      "alphabet",
+      "letter",
+      "lowercase"
+    ],
+    "lemma": "m",
+    "is_plural": false,
+    "letter_count": 1,
+    "syllable_count": 1,
+    "first_letter": "M",
+    "is_compound": false,
+    "phonics_initial": "m",
+    "difficulty_tier": 1,
+    "primary_image": "dic_4_card_m_2563_1_c.png",
+    "primary_audio": "dic_3_card_m_2080.mp3",
+    "three_hints": {
+      "category_hint": "It is a letter of the English alphabet.",
+      "feature_hint": "It is letter number 13 of the 26 English alphabet letters.",
+      "letter_hint": "It is the lowercase letter m."
+    },
+    "target_dialogues": [
+      {
+        "question": "What letter is this?",
+        "answer": "It is the letter m.",
+        "context": "Identifying English alphabet letters"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_m_2080_1_c.png",
+        "sound_file": "dic_3_card_m_2080.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_m_2080_1_ce.png",
+        "card_bw": "dic_3_card_m_2080_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_3_card_m_2080_1_c.png",
+        "sound_file": "dic_3_card_m_2080.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_3_card_m_2080_1_ce.png",
+        "card_bw": "dic_3_card_m_2080_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0204",
+    "english": "N",
+    "canonical_key": "letter_N_upper",
+    "disambiguation": "uppercase",
+    "display_label": "N (uppercase)",
+    "normalized_english": "n",
+    "part_of_speech": "alphabet",
+    "category": "16_alphabet",
+    "category_name": "Alphabet & Phonics",
+    "ja_kanji": "N",
+    "ja_hiragana": "えぬ",
+    "en_katakana": "エヌ",
+    "ruby": [
+      {
+        "base": "N",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "N",
+    "ruby_text": "N",
+    "sound_file": "dic_3_card_n_2081.mp3",
+    "card_image": "dic_3_card_n_2081_1_c.png",
+    "card_image_kana": "dic_3_card_n_2081_1_c.png",
+    "card_image_en": "dic_3_card_n_2081_1_e.png",
+    "card_image_bilingual": "dic_3_card_n_2081_1_ce.png",
+    "card_variants": [
+      "dic_3_card_n_2081_1.png"
+    ],
+    "token": "dic_3_card_n_2081&dic_3_card_n_2081&dic_3_card_n_2081",
+    "grades": [
+      "ES_G3",
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What letter is this? / A: It is the letter N."
+    ],
+    "tags": [
+      "alphabet",
+      "letter",
+      "uppercase"
+    ],
+    "lemma": "N",
+    "is_plural": false,
+    "letter_count": 1,
+    "syllable_count": 1,
+    "first_letter": "N",
+    "is_compound": false,
+    "phonics_initial": "n",
+    "difficulty_tier": 1,
+    "primary_image": "dic_3_card_n_2081_1_c.png",
+    "primary_audio": "dic_3_card_n_2081.mp3",
+    "three_hints": {
+      "category_hint": "It is a letter of the English alphabet.",
+      "feature_hint": "It is letter number 14 of the 26 English alphabet letters.",
+      "letter_hint": "It is the uppercase letter N."
+    },
+    "target_dialogues": [
+      {
+        "question": "What letter is this?",
+        "answer": "It is the letter N.",
+        "context": "Identifying English alphabet letters"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_n_2081_1_c.png",
+        "sound_file": "dic_3_card_n_2081.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_n_2081_1_ce.png",
+        "card_bw": "dic_3_card_n_2081_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_3_card_n_2081_1_c.png",
+        "sound_file": "dic_3_card_n_2081.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_3_card_n_2081_1_ce.png",
+        "card_bw": "dic_3_card_n_2081_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0205",
+    "english": "n",
+    "canonical_key": "letter_n_lower",
+    "disambiguation": "lowercase",
+    "display_label": "n (lowercase)",
+    "normalized_english": "n",
+    "part_of_speech": "alphabet",
+    "category": "16_alphabet",
+    "category_name": "Alphabet & Phonics",
+    "ja_kanji": "n",
+    "ja_hiragana": "えぬ",
+    "en_katakana": "エヌ",
+    "ruby": [
+      {
+        "base": "n",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "n",
+    "ruby_text": "n",
+    "sound_file": "dic_3_card_n_2081.mp3",
+    "card_image": "dic_4_card_n_2564_1_c.png",
+    "card_image_kana": "dic_4_card_n_2564_1_c.png",
+    "card_image_en": "dic_4_card_n_2564_1_e.png",
+    "card_image_bilingual": "dic_4_card_n_2564_1_ce.png",
+    "card_variants": [
+      "dic_4_card_n_2564_1.png"
+    ],
+    "token": "dic_4_card_n_2564&dic_3_card_n_2081&dic_4_card_n_2564",
+    "grades": [
+      "ES_G3",
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What letter is this? / A: It is the letter n."
+    ],
+    "tags": [
+      "alphabet",
+      "letter",
+      "lowercase"
+    ],
+    "lemma": "n",
+    "is_plural": false,
+    "letter_count": 1,
+    "syllable_count": 1,
+    "first_letter": "N",
+    "is_compound": false,
+    "phonics_initial": "n",
+    "difficulty_tier": 1,
+    "primary_image": "dic_4_card_n_2564_1_c.png",
+    "primary_audio": "dic_3_card_n_2081.mp3",
+    "three_hints": {
+      "category_hint": "It is a letter of the English alphabet.",
+      "feature_hint": "It is letter number 14 of the 26 English alphabet letters.",
+      "letter_hint": "It is the lowercase letter n."
+    },
+    "target_dialogues": [
+      {
+        "question": "What letter is this?",
+        "answer": "It is the letter n.",
+        "context": "Identifying English alphabet letters"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_n_2081_1_c.png",
+        "sound_file": "dic_3_card_n_2081.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_n_2081_1_ce.png",
+        "card_bw": "dic_3_card_n_2081_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_3_card_n_2081_1_c.png",
+        "sound_file": "dic_3_card_n_2081.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_3_card_n_2081_1_ce.png",
+        "card_bw": "dic_3_card_n_2081_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0220",
+    "english": "O",
+    "canonical_key": "letter_O_upper",
+    "disambiguation": "uppercase",
+    "display_label": "O (uppercase)",
+    "normalized_english": "o",
+    "part_of_speech": "alphabet",
+    "category": "16_alphabet",
+    "category_name": "Alphabet & Phonics",
+    "ja_kanji": "O",
+    "ja_hiragana": "おー",
+    "en_katakana": "オー",
+    "ruby": [
+      {
+        "base": "O",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "O",
+    "ruby_text": "O",
+    "sound_file": "dic_3_card_o_2082.mp3",
+    "card_image": "dic_3_card_o_2082_1_c.png",
+    "card_image_kana": "dic_3_card_o_2082_1_c.png",
+    "card_image_en": "dic_3_card_o_2082_1_e.png",
+    "card_image_bilingual": "dic_3_card_o_2082_1_ce.png",
+    "card_variants": [
+      "dic_3_card_o_2082_1.png"
+    ],
+    "token": "dic_3_card_o_2082&dic_3_card_o_2082&dic_3_card_o_2082",
+    "grades": [
+      "ES_G3",
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What letter is this? / A: It is the letter O."
+    ],
+    "tags": [
+      "alphabet",
+      "letter",
+      "uppercase"
+    ],
+    "lemma": "O",
+    "is_plural": false,
+    "letter_count": 1,
+    "syllable_count": 1,
+    "first_letter": "O",
+    "is_compound": false,
+    "phonics_initial": "o",
+    "difficulty_tier": 1,
+    "primary_image": "dic_3_card_o_2082_1_c.png",
+    "primary_audio": "dic_3_card_o_2082.mp3",
+    "three_hints": {
+      "category_hint": "It is a letter of the English alphabet.",
+      "feature_hint": "It is letter number 15 of the 26 English alphabet letters.",
+      "letter_hint": "It is the uppercase letter O."
+    },
+    "target_dialogues": [
+      {
+        "question": "What letter is this?",
+        "answer": "It is the letter O.",
+        "context": "Identifying English alphabet letters"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_o_2082_1_c.png",
+        "sound_file": "dic_3_card_o_2082.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_o_2082_1_ce.png",
+        "card_bw": "dic_3_card_o_2082_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_3_card_o_2082_1_c.png",
+        "sound_file": "dic_3_card_o_2082.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_3_card_o_2082_1_ce.png",
+        "card_bw": "dic_3_card_o_2082_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0221",
+    "english": "o",
+    "canonical_key": "letter_o_lower",
+    "disambiguation": "lowercase",
+    "display_label": "o (lowercase)",
+    "normalized_english": "o",
+    "part_of_speech": "alphabet",
+    "category": "16_alphabet",
+    "category_name": "Alphabet & Phonics",
+    "ja_kanji": "o",
+    "ja_hiragana": "おー",
+    "en_katakana": "オー",
+    "ruby": [
+      {
+        "base": "o",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "o",
+    "ruby_text": "o",
+    "sound_file": "dic_3_card_o_2082.mp3",
+    "card_image": "dic_4_card_o_2565_1_c.png",
+    "card_image_kana": "dic_4_card_o_2565_1_c.png",
+    "card_image_en": "dic_4_card_o_2565_1_e.png",
+    "card_image_bilingual": "dic_4_card_o_2565_1_ce.png",
+    "card_variants": [
+      "dic_4_card_o_2565_1.png"
+    ],
+    "token": "dic_4_card_o_2565&dic_3_card_o_2082&dic_4_card_o_2565",
+    "grades": [
+      "ES_G3",
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What letter is this? / A: It is the letter o."
+    ],
+    "tags": [
+      "alphabet",
+      "letter",
+      "lowercase"
+    ],
+    "lemma": "o",
+    "is_plural": false,
+    "letter_count": 1,
+    "syllable_count": 1,
+    "first_letter": "O",
+    "is_compound": false,
+    "phonics_initial": "o",
+    "difficulty_tier": 1,
+    "primary_image": "dic_4_card_o_2565_1_c.png",
+    "primary_audio": "dic_3_card_o_2082.mp3",
+    "three_hints": {
+      "category_hint": "It is a letter of the English alphabet.",
+      "feature_hint": "It is letter number 15 of the 26 English alphabet letters.",
+      "letter_hint": "It is the lowercase letter o."
+    },
+    "target_dialogues": [
+      {
+        "question": "What letter is this?",
+        "answer": "It is the letter o.",
+        "context": "Identifying English alphabet letters"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_o_2082_1_c.png",
+        "sound_file": "dic_3_card_o_2082.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_o_2082_1_ce.png",
+        "card_bw": "dic_3_card_o_2082_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_3_card_o_2082_1_c.png",
+        "sound_file": "dic_3_card_o_2082.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_3_card_o_2082_1_ce.png",
+        "card_bw": "dic_3_card_o_2082_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0229",
+    "english": "P",
+    "canonical_key": "letter_P_upper",
+    "disambiguation": "uppercase",
+    "display_label": "P (uppercase)",
+    "normalized_english": "p",
+    "part_of_speech": "alphabet",
+    "category": "16_alphabet",
+    "category_name": "Alphabet & Phonics",
+    "ja_kanji": "P",
+    "ja_hiragana": "ぴー",
+    "en_katakana": "ピー",
+    "ruby": [
+      {
+        "base": "P",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "P",
+    "ruby_text": "P",
+    "sound_file": "dic_3_card_p_2083.mp3",
+    "card_image": "dic_3_card_p_2083_1_c.png",
+    "card_image_kana": "dic_3_card_p_2083_1_c.png",
+    "card_image_en": "dic_3_card_p_2083_1_e.png",
+    "card_image_bilingual": "dic_3_card_p_2083_1_ce.png",
+    "card_variants": [
+      "dic_3_card_p_2083_1.png"
+    ],
+    "token": "dic_3_card_p_2083&dic_3_card_p_2083&dic_3_card_p_2083",
+    "grades": [
+      "ES_G3",
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What letter is this? / A: It is the letter P."
+    ],
+    "tags": [
+      "alphabet",
+      "letter",
+      "uppercase"
+    ],
+    "lemma": "P",
+    "is_plural": false,
+    "letter_count": 1,
+    "syllable_count": 1,
+    "first_letter": "P",
+    "is_compound": false,
+    "phonics_initial": "p",
+    "difficulty_tier": 1,
+    "primary_image": "dic_3_card_p_2083_1_c.png",
+    "primary_audio": "dic_3_card_p_2083.mp3",
+    "three_hints": {
+      "category_hint": "It is a letter of the English alphabet.",
+      "feature_hint": "It is letter number 16 of the 26 English alphabet letters.",
+      "letter_hint": "It is the uppercase letter P."
+    },
+    "target_dialogues": [
+      {
+        "question": "What letter is this?",
+        "answer": "It is the letter P.",
+        "context": "Identifying English alphabet letters"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_p_2083_1_c.png",
+        "sound_file": "dic_3_card_p_2083.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_p_2083_1_ce.png",
+        "card_bw": "dic_3_card_p_2083_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_3_card_p_2083_1_c.png",
+        "sound_file": "dic_3_card_p_2083.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_3_card_p_2083_1_ce.png",
+        "card_bw": "dic_3_card_p_2083_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0230",
+    "english": "p",
+    "canonical_key": "letter_p_lower",
+    "disambiguation": "lowercase",
+    "display_label": "p (lowercase)",
+    "normalized_english": "p",
+    "part_of_speech": "alphabet",
+    "category": "16_alphabet",
+    "category_name": "Alphabet & Phonics",
+    "ja_kanji": "p",
+    "ja_hiragana": "ぴー",
+    "en_katakana": "ピー",
+    "ruby": [
+      {
+        "base": "p",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "p",
+    "ruby_text": "p",
+    "sound_file": "dic_3_card_p_2083.mp3",
+    "card_image": "dic_4_card_p_2566_1_c.png",
+    "card_image_kana": "dic_4_card_p_2566_1_c.png",
+    "card_image_en": "dic_4_card_p_2566_1_e.png",
+    "card_image_bilingual": "dic_4_card_p_2566_1_ce.png",
+    "card_variants": [
+      "dic_4_card_p_2566_1.png"
+    ],
+    "token": "dic_4_card_p_2566&dic_3_card_p_2083&dic_4_card_p_2566",
+    "grades": [
+      "ES_G3",
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What letter is this? / A: It is the letter p."
+    ],
+    "tags": [
+      "alphabet",
+      "letter",
+      "lowercase"
+    ],
+    "lemma": "p",
+    "is_plural": false,
+    "letter_count": 1,
+    "syllable_count": 1,
+    "first_letter": "P",
+    "is_compound": false,
+    "phonics_initial": "p",
+    "difficulty_tier": 1,
+    "primary_image": "dic_4_card_p_2566_1_c.png",
+    "primary_audio": "dic_3_card_p_2083.mp3",
+    "three_hints": {
+      "category_hint": "It is a letter of the English alphabet.",
+      "feature_hint": "It is letter number 16 of the 26 English alphabet letters.",
+      "letter_hint": "It is the lowercase letter p."
+    },
+    "target_dialogues": [
+      {
+        "question": "What letter is this?",
+        "answer": "It is the letter p.",
+        "context": "Identifying English alphabet letters"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_p_2083_1_c.png",
+        "sound_file": "dic_3_card_p_2083.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_p_2083_1_ce.png",
+        "card_bw": "dic_3_card_p_2083_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_3_card_p_2083_1_c.png",
+        "sound_file": "dic_3_card_p_2083.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_3_card_p_2083_1_ce.png",
+        "card_bw": "dic_3_card_p_2083_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0256",
+    "english": "Q",
+    "canonical_key": "letter_Q_upper",
+    "disambiguation": "uppercase",
+    "display_label": "Q (uppercase)",
+    "normalized_english": "q",
+    "part_of_speech": "alphabet",
+    "category": "16_alphabet",
+    "category_name": "Alphabet & Phonics",
+    "ja_kanji": "Q",
+    "ja_hiragana": "きゅー",
+    "en_katakana": "キュー",
+    "ruby": [
+      {
+        "base": "Q",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "Q",
+    "ruby_text": "Q",
+    "sound_file": "dic_3_card_q_2084.mp3",
+    "card_image": "dic_3_card_q_2084_1_c.png",
+    "card_image_kana": "dic_3_card_q_2084_1_c.png",
+    "card_image_en": "dic_3_card_q_2084_1_e.png",
+    "card_image_bilingual": "dic_3_card_q_2084_1_ce.png",
+    "card_variants": [
+      "dic_3_card_q_2084_1.png"
+    ],
+    "token": "dic_3_card_q_2084&dic_3_card_q_2084&dic_3_card_q_2084",
+    "grades": [
+      "ES_G3",
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What letter is this? / A: It is the letter Q."
+    ],
+    "tags": [
+      "alphabet",
+      "letter",
+      "uppercase"
+    ],
+    "lemma": "Q",
+    "is_plural": false,
+    "letter_count": 1,
+    "syllable_count": 1,
+    "first_letter": "Q",
+    "is_compound": false,
+    "phonics_initial": "q",
+    "difficulty_tier": 1,
+    "primary_image": "dic_3_card_q_2084_1_c.png",
+    "primary_audio": "dic_3_card_q_2084.mp3",
+    "three_hints": {
+      "category_hint": "It is a letter of the English alphabet.",
+      "feature_hint": "It is letter number 17 of the 26 English alphabet letters.",
+      "letter_hint": "It is the uppercase letter Q."
+    },
+    "target_dialogues": [
+      {
+        "question": "What letter is this?",
+        "answer": "It is the letter Q.",
+        "context": "Identifying English alphabet letters"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_q_2084_1_c.png",
+        "sound_file": "dic_3_card_q_2084.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_q_2084_1_ce.png",
+        "card_bw": "dic_3_card_q_2084_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_3_card_q_2084_1_c.png",
+        "sound_file": "dic_3_card_q_2084.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_3_card_q_2084_1_ce.png",
+        "card_bw": "dic_3_card_q_2084_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0257",
+    "english": "q",
+    "canonical_key": "letter_q_lower",
+    "disambiguation": "lowercase",
+    "display_label": "q (lowercase)",
+    "normalized_english": "q",
+    "part_of_speech": "alphabet",
+    "category": "16_alphabet",
+    "category_name": "Alphabet & Phonics",
+    "ja_kanji": "q",
+    "ja_hiragana": "きゅー",
+    "en_katakana": "キュー",
+    "ruby": [
+      {
+        "base": "q",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "q",
+    "ruby_text": "q",
+    "sound_file": "dic_3_card_q_2084.mp3",
+    "card_image": "dic_4_card_q_2567_1_c.png",
+    "card_image_kana": "dic_4_card_q_2567_1_c.png",
+    "card_image_en": "dic_4_card_q_2567_1_e.png",
+    "card_image_bilingual": "dic_4_card_q_2567_1_ce.png",
+    "card_variants": [
+      "dic_4_card_q_2567_1.png"
+    ],
+    "token": "dic_4_card_q_2567&dic_3_card_q_2084&dic_4_card_q_2567",
+    "grades": [
+      "ES_G3",
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What letter is this? / A: It is the letter q."
+    ],
+    "tags": [
+      "alphabet",
+      "letter",
+      "lowercase"
+    ],
+    "lemma": "q",
+    "is_plural": false,
+    "letter_count": 1,
+    "syllable_count": 1,
+    "first_letter": "Q",
+    "is_compound": false,
+    "phonics_initial": "q",
+    "difficulty_tier": 1,
+    "primary_image": "dic_4_card_q_2567_1_c.png",
+    "primary_audio": "dic_3_card_q_2084.mp3",
+    "three_hints": {
+      "category_hint": "It is a letter of the English alphabet.",
+      "feature_hint": "It is letter number 17 of the 26 English alphabet letters.",
+      "letter_hint": "It is the lowercase letter q."
+    },
+    "target_dialogues": [
+      {
+        "question": "What letter is this?",
+        "answer": "It is the letter q.",
+        "context": "Identifying English alphabet letters"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_q_2084_1_c.png",
+        "sound_file": "dic_3_card_q_2084.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_q_2084_1_ce.png",
+        "card_bw": "dic_3_card_q_2084_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_3_card_q_2084_1_c.png",
+        "sound_file": "dic_3_card_q_2084.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_3_card_q_2084_1_ce.png",
+        "card_bw": "dic_3_card_q_2084_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0258",
+    "english": "R",
+    "canonical_key": "letter_R_upper",
+    "disambiguation": "uppercase",
+    "display_label": "R (uppercase)",
+    "normalized_english": "r",
+    "part_of_speech": "alphabet",
+    "category": "16_alphabet",
+    "category_name": "Alphabet & Phonics",
+    "ja_kanji": "R",
+    "ja_hiragana": "あーる",
+    "en_katakana": "アール",
+    "ruby": [
+      {
+        "base": "R",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "R",
+    "ruby_text": "R",
+    "sound_file": "dic_3_card_r_2085.mp3",
+    "card_image": "dic_3_card_r_2085_1_c.png",
+    "card_image_kana": "dic_3_card_r_2085_1_c.png",
+    "card_image_en": "dic_3_card_r_2085_1_e.png",
+    "card_image_bilingual": "dic_3_card_r_2085_1_ce.png",
+    "card_variants": [
+      "dic_3_card_r_2085_1.png"
+    ],
+    "token": "dic_3_card_r_2085&dic_3_card_r_2085&dic_3_card_r_2085",
+    "grades": [
+      "ES_G3",
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What letter is this? / A: It is the letter R."
+    ],
+    "tags": [
+      "alphabet",
+      "letter",
+      "uppercase"
+    ],
+    "lemma": "R",
+    "is_plural": false,
+    "letter_count": 1,
+    "syllable_count": 1,
+    "first_letter": "R",
+    "is_compound": false,
+    "phonics_initial": "r",
+    "difficulty_tier": 1,
+    "primary_image": "dic_3_card_r_2085_1_c.png",
+    "primary_audio": "dic_3_card_r_2085.mp3",
+    "three_hints": {
+      "category_hint": "It is a letter of the English alphabet.",
+      "feature_hint": "It is letter number 18 of the 26 English alphabet letters.",
+      "letter_hint": "It is the uppercase letter R."
+    },
+    "target_dialogues": [
+      {
+        "question": "What letter is this?",
+        "answer": "It is the letter R.",
+        "context": "Identifying English alphabet letters"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_r_2085_1_c.png",
+        "sound_file": "dic_3_card_r_2085.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_r_2085_1_ce.png",
+        "card_bw": "dic_3_card_r_2085_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_3_card_r_2085_1_c.png",
+        "sound_file": "dic_3_card_r_2085.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_3_card_r_2085_1_ce.png",
+        "card_bw": "dic_3_card_r_2085_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0259",
+    "english": "r",
+    "canonical_key": "letter_r_lower",
+    "disambiguation": "lowercase",
+    "display_label": "r (lowercase)",
+    "normalized_english": "r",
+    "part_of_speech": "alphabet",
+    "category": "16_alphabet",
+    "category_name": "Alphabet & Phonics",
+    "ja_kanji": "r",
+    "ja_hiragana": "あーる",
+    "en_katakana": "アール",
+    "ruby": [
+      {
+        "base": "r",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "r",
+    "ruby_text": "r",
+    "sound_file": "dic_3_card_r_2085.mp3",
+    "card_image": "dic_4_card_r_2568_1_c.png",
+    "card_image_kana": "dic_4_card_r_2568_1_c.png",
+    "card_image_en": "dic_4_card_r_2568_1_e.png",
+    "card_image_bilingual": "dic_4_card_r_2568_1_ce.png",
+    "card_variants": [
+      "dic_4_card_r_2568_1.png"
+    ],
+    "token": "dic_4_card_r_2568&dic_3_card_r_2085&dic_4_card_r_2568",
+    "grades": [
+      "ES_G3",
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What letter is this? / A: It is the letter r."
+    ],
+    "tags": [
+      "alphabet",
+      "letter",
+      "lowercase"
+    ],
+    "lemma": "r",
+    "is_plural": false,
+    "letter_count": 1,
+    "syllable_count": 1,
+    "first_letter": "R",
+    "is_compound": false,
+    "phonics_initial": "r",
+    "difficulty_tier": 1,
+    "primary_image": "dic_4_card_r_2568_1_c.png",
+    "primary_audio": "dic_3_card_r_2085.mp3",
+    "three_hints": {
+      "category_hint": "It is a letter of the English alphabet.",
+      "feature_hint": "It is letter number 18 of the 26 English alphabet letters.",
+      "letter_hint": "It is the lowercase letter r."
+    },
+    "target_dialogues": [
+      {
+        "question": "What letter is this?",
+        "answer": "It is the letter r.",
+        "context": "Identifying English alphabet letters"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_r_2085_1_c.png",
+        "sound_file": "dic_3_card_r_2085.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_r_2085_1_ce.png",
+        "card_bw": "dic_3_card_r_2085_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_3_card_r_2085_1_c.png",
+        "sound_file": "dic_3_card_r_2085.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_3_card_r_2085_1_ce.png",
+        "card_bw": "dic_3_card_r_2085_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0272",
+    "english": "S",
+    "canonical_key": "letter_S_upper",
+    "disambiguation": "uppercase",
+    "display_label": "S (uppercase)",
+    "normalized_english": "s",
+    "part_of_speech": "alphabet",
+    "category": "16_alphabet",
+    "category_name": "Alphabet & Phonics",
+    "ja_kanji": "S",
+    "ja_hiragana": "えす",
+    "en_katakana": "エス",
+    "ruby": [
+      {
+        "base": "S",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "S",
+    "ruby_text": "S",
+    "sound_file": "dic_3_card_s_2086.mp3",
+    "card_image": "dic_3_card_s_2086_1_c.png",
+    "card_image_kana": "dic_3_card_s_2086_1_c.png",
+    "card_image_en": "dic_3_card_s_2086_1_e.png",
+    "card_image_bilingual": "dic_3_card_s_2086_1_ce.png",
+    "card_variants": [
+      "dic_3_card_s_2086_1.png"
+    ],
+    "token": "dic_3_card_s_2086&dic_3_card_s_2086&dic_3_card_s_2086",
+    "grades": [
+      "ES_G3",
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What letter is this? / A: It is the letter S."
+    ],
+    "tags": [
+      "alphabet",
+      "letter",
+      "uppercase"
+    ],
+    "lemma": "S",
+    "is_plural": false,
+    "letter_count": 1,
+    "syllable_count": 1,
+    "first_letter": "S",
+    "is_compound": false,
+    "phonics_initial": "s",
+    "difficulty_tier": 1,
+    "primary_image": "dic_3_card_s_2086_1_c.png",
+    "primary_audio": "dic_3_card_s_2086.mp3",
+    "three_hints": {
+      "category_hint": "It is a letter of the English alphabet.",
+      "feature_hint": "It is letter number 19 of the 26 English alphabet letters.",
+      "letter_hint": "It is the uppercase letter S."
+    },
+    "target_dialogues": [
+      {
+        "question": "What letter is this?",
+        "answer": "It is the letter S.",
+        "context": "Identifying English alphabet letters"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_s_2086_1_c.png",
+        "sound_file": "dic_3_card_s_2086.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_s_2086_1_ce.png",
+        "card_bw": "dic_3_card_s_2086_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_3_card_s_2086_1_c.png",
+        "sound_file": "dic_3_card_s_2086.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_3_card_s_2086_1_ce.png",
+        "card_bw": "dic_3_card_s_2086_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0273",
+    "english": "s",
+    "canonical_key": "letter_s_lower",
+    "disambiguation": "lowercase",
+    "display_label": "s (lowercase)",
+    "normalized_english": "s",
+    "part_of_speech": "alphabet",
+    "category": "16_alphabet",
+    "category_name": "Alphabet & Phonics",
+    "ja_kanji": "s",
+    "ja_hiragana": "えす",
+    "en_katakana": "エス",
+    "ruby": [
+      {
+        "base": "s",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "s",
+    "ruby_text": "s",
+    "sound_file": "dic_3_card_s_2086.mp3",
+    "card_image": "dic_4_card_s_2569_1_c.png",
+    "card_image_kana": "dic_4_card_s_2569_1_c.png",
+    "card_image_en": "dic_4_card_s_2569_1_e.png",
+    "card_image_bilingual": "dic_4_card_s_2569_1_ce.png",
+    "card_variants": [
+      "dic_4_card_s_2569_1.png"
+    ],
+    "token": "dic_4_card_s_2569&dic_3_card_s_2086&dic_4_card_s_2569",
+    "grades": [
+      "ES_G3",
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What letter is this? / A: It is the letter s."
+    ],
+    "tags": [
+      "alphabet",
+      "letter",
+      "lowercase"
+    ],
+    "lemma": "s",
+    "is_plural": false,
+    "letter_count": 1,
+    "syllable_count": 1,
+    "first_letter": "S",
+    "is_compound": false,
+    "phonics_initial": "s",
+    "difficulty_tier": 1,
+    "primary_image": "dic_4_card_s_2569_1_c.png",
+    "primary_audio": "dic_3_card_s_2086.mp3",
+    "three_hints": {
+      "category_hint": "It is a letter of the English alphabet.",
+      "feature_hint": "It is letter number 19 of the 26 English alphabet letters.",
+      "letter_hint": "It is the lowercase letter s."
+    },
+    "target_dialogues": [
+      {
+        "question": "What letter is this?",
+        "answer": "It is the letter s.",
+        "context": "Identifying English alphabet letters"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_s_2086_1_c.png",
+        "sound_file": "dic_3_card_s_2086.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_s_2086_1_ce.png",
+        "card_bw": "dic_3_card_s_2086_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_3_card_s_2086_1_c.png",
+        "sound_file": "dic_3_card_s_2086.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_3_card_s_2086_1_ce.png",
+        "card_bw": "dic_3_card_s_2086_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0337",
+    "english": "T",
+    "canonical_key": "letter_T_upper",
+    "disambiguation": "uppercase",
+    "display_label": "T (uppercase)",
+    "normalized_english": "t",
+    "part_of_speech": "alphabet",
+    "category": "16_alphabet",
+    "category_name": "Alphabet & Phonics",
+    "ja_kanji": "T",
+    "ja_hiragana": "てぃー",
+    "en_katakana": "ティー",
+    "ruby": [
+      {
+        "base": "T",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "T",
+    "ruby_text": "T",
+    "sound_file": "dic_3_card_t_2087.mp3",
+    "card_image": "dic_3_card_t_2087_1_c.png",
+    "card_image_kana": "dic_3_card_t_2087_1_c.png",
+    "card_image_en": "dic_3_card_t_2087_1_e.png",
+    "card_image_bilingual": "dic_3_card_t_2087_1_ce.png",
+    "card_variants": [
+      "dic_3_card_t_2087_1.png"
+    ],
+    "token": "dic_3_card_t_2087&dic_3_card_t_2087&dic_3_card_t_2087",
+    "grades": [
+      "ES_G3",
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What letter is this? / A: It is the letter T."
+    ],
+    "tags": [
+      "alphabet",
+      "letter",
+      "uppercase"
+    ],
+    "lemma": "T",
+    "is_plural": false,
+    "letter_count": 1,
+    "syllable_count": 1,
+    "first_letter": "T",
+    "is_compound": false,
+    "phonics_initial": "t",
+    "difficulty_tier": 1,
+    "primary_image": "dic_3_card_t_2087_1_c.png",
+    "primary_audio": "dic_3_card_t_2087.mp3",
+    "three_hints": {
+      "category_hint": "It is a letter of the English alphabet.",
+      "feature_hint": "It is letter number 20 of the 26 English alphabet letters.",
+      "letter_hint": "It is the uppercase letter T."
+    },
+    "target_dialogues": [
+      {
+        "question": "What letter is this?",
+        "answer": "It is the letter T.",
+        "context": "Identifying English alphabet letters"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_t_2087_1_c.png",
+        "sound_file": "dic_3_card_t_2087.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_t_2087_1_ce.png",
+        "card_bw": "dic_3_card_t_2087_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_3_card_t_2087_1_c.png",
+        "sound_file": "dic_3_card_t_2087.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_3_card_t_2087_1_ce.png",
+        "card_bw": "dic_3_card_t_2087_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0338",
+    "english": "t",
+    "canonical_key": "letter_t_lower",
+    "disambiguation": "lowercase",
+    "display_label": "t (lowercase)",
+    "normalized_english": "t",
+    "part_of_speech": "alphabet",
+    "category": "16_alphabet",
+    "category_name": "Alphabet & Phonics",
+    "ja_kanji": "t",
+    "ja_hiragana": "てぃー",
+    "en_katakana": "ティー",
+    "ruby": [
+      {
+        "base": "t",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "t",
+    "ruby_text": "t",
+    "sound_file": "dic_3_card_t_2087.mp3",
+    "card_image": "dic_4_card_t_2570_1_c.png",
+    "card_image_kana": "dic_4_card_t_2570_1_c.png",
+    "card_image_en": "dic_4_card_t_2570_1_e.png",
+    "card_image_bilingual": "dic_4_card_t_2570_1_ce.png",
+    "card_variants": [
+      "dic_4_card_t_2570_1.png"
+    ],
+    "token": "dic_4_card_t_2570&dic_3_card_t_2087&dic_4_card_t_2570",
+    "grades": [
+      "ES_G3",
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What letter is this? / A: It is the letter t."
+    ],
+    "tags": [
+      "alphabet",
+      "letter",
+      "lowercase"
+    ],
+    "lemma": "t",
+    "is_plural": false,
+    "letter_count": 1,
+    "syllable_count": 1,
+    "first_letter": "T",
+    "is_compound": false,
+    "phonics_initial": "t",
+    "difficulty_tier": 1,
+    "primary_image": "dic_4_card_t_2570_1_c.png",
+    "primary_audio": "dic_3_card_t_2087.mp3",
+    "three_hints": {
+      "category_hint": "It is a letter of the English alphabet.",
+      "feature_hint": "It is letter number 20 of the 26 English alphabet letters.",
+      "letter_hint": "It is the lowercase letter t."
+    },
+    "target_dialogues": [
+      {
+        "question": "What letter is this?",
+        "answer": "It is the letter t.",
+        "context": "Identifying English alphabet letters"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_t_2087_1_c.png",
+        "sound_file": "dic_3_card_t_2087.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_t_2087_1_ce.png",
+        "card_bw": "dic_3_card_t_2087_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_3_card_t_2087_1_c.png",
+        "sound_file": "dic_3_card_t_2087.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_3_card_t_2087_1_ce.png",
+        "card_bw": "dic_3_card_t_2087_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0374",
+    "english": "U",
+    "canonical_key": "letter_U_upper",
+    "disambiguation": "uppercase",
+    "display_label": "U (uppercase)",
+    "normalized_english": "u",
+    "part_of_speech": "alphabet",
+    "category": "16_alphabet",
+    "category_name": "Alphabet & Phonics",
+    "ja_kanji": "U",
+    "ja_hiragana": "ゆー",
+    "en_katakana": "ユー",
+    "ruby": [
+      {
+        "base": "U",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "U",
+    "ruby_text": "U",
+    "sound_file": "dic_3_card_u_2088.mp3",
+    "card_image": "dic_3_card_u_2088_1_c.png",
+    "card_image_kana": "dic_3_card_u_2088_1_c.png",
+    "card_image_en": "dic_3_card_u_2088_1_e.png",
+    "card_image_bilingual": "dic_3_card_u_2088_1_ce.png",
+    "card_variants": [
+      "dic_3_card_u_2088_1.png"
+    ],
+    "token": "dic_3_card_u_2088&dic_3_card_u_2088&dic_3_card_u_2088",
+    "grades": [
+      "ES_G3",
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What letter is this? / A: It is the letter U."
+    ],
+    "tags": [
+      "alphabet",
+      "letter",
+      "uppercase"
+    ],
+    "lemma": "U",
+    "is_plural": false,
+    "letter_count": 1,
+    "syllable_count": 1,
+    "first_letter": "U",
+    "is_compound": false,
+    "phonics_initial": "u",
+    "difficulty_tier": 1,
+    "primary_image": "dic_3_card_u_2088_1_c.png",
+    "primary_audio": "dic_3_card_u_2088.mp3",
+    "three_hints": {
+      "category_hint": "It is a letter of the English alphabet.",
+      "feature_hint": "It is letter number 21 of the 26 English alphabet letters.",
+      "letter_hint": "It is the uppercase letter U."
+    },
+    "target_dialogues": [
+      {
+        "question": "What letter is this?",
+        "answer": "It is the letter U.",
+        "context": "Identifying English alphabet letters"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_u_2088_1_c.png",
+        "sound_file": "dic_3_card_u_2088.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_u_2088_1_ce.png",
+        "card_bw": "dic_3_card_u_2088_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_3_card_u_2088_1_c.png",
+        "sound_file": "dic_3_card_u_2088.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_3_card_u_2088_1_ce.png",
+        "card_bw": "dic_3_card_u_2088_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0375",
+    "english": "u",
+    "canonical_key": "letter_u_lower",
+    "disambiguation": "lowercase",
+    "display_label": "u (lowercase)",
+    "normalized_english": "u",
+    "part_of_speech": "alphabet",
+    "category": "16_alphabet",
+    "category_name": "Alphabet & Phonics",
+    "ja_kanji": "u",
+    "ja_hiragana": "ゆー",
+    "en_katakana": "ユー",
+    "ruby": [
+      {
+        "base": "u",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "u",
+    "ruby_text": "u",
+    "sound_file": "dic_3_card_u_2088.mp3",
+    "card_image": "dic_4_card_u_2571_1_c.png",
+    "card_image_kana": "dic_4_card_u_2571_1_c.png",
+    "card_image_en": "dic_4_card_u_2571_1_e.png",
+    "card_image_bilingual": "dic_4_card_u_2571_1_ce.png",
+    "card_variants": [
+      "dic_4_card_u_2571_1.png"
+    ],
+    "token": "dic_4_card_u_2571&dic_3_card_u_2088&dic_4_card_u_2571",
+    "grades": [
+      "ES_G3",
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What letter is this? / A: It is the letter u."
+    ],
+    "tags": [
+      "alphabet",
+      "letter",
+      "lowercase"
+    ],
+    "lemma": "u",
+    "is_plural": false,
+    "letter_count": 1,
+    "syllable_count": 1,
+    "first_letter": "U",
+    "is_compound": false,
+    "phonics_initial": "u",
+    "difficulty_tier": 1,
+    "primary_image": "dic_4_card_u_2571_1_c.png",
+    "primary_audio": "dic_3_card_u_2088.mp3",
+    "three_hints": {
+      "category_hint": "It is a letter of the English alphabet.",
+      "feature_hint": "It is letter number 21 of the 26 English alphabet letters.",
+      "letter_hint": "It is the lowercase letter u."
+    },
+    "target_dialogues": [
+      {
+        "question": "What letter is this?",
+        "answer": "It is the letter u.",
+        "context": "Identifying English alphabet letters"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_u_2088_1_c.png",
+        "sound_file": "dic_3_card_u_2088.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_u_2088_1_ce.png",
+        "card_bw": "dic_3_card_u_2088_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_3_card_u_2088_1_c.png",
+        "sound_file": "dic_3_card_u_2088.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_3_card_u_2088_1_ce.png",
+        "card_bw": "dic_3_card_u_2088_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0377",
+    "english": "V",
+    "canonical_key": "letter_V_upper",
+    "disambiguation": "uppercase",
+    "display_label": "V (uppercase)",
+    "normalized_english": "v",
+    "part_of_speech": "alphabet",
+    "category": "16_alphabet",
+    "category_name": "Alphabet & Phonics",
+    "ja_kanji": "V",
+    "ja_hiragana": "ぶい",
+    "en_katakana": "ブイ",
+    "ruby": [
+      {
+        "base": "V",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "V",
+    "ruby_text": "V",
+    "sound_file": "dic_3_card_v_2089.mp3",
+    "card_image": "dic_3_card_v_2089_1_c.png",
+    "card_image_kana": "dic_3_card_v_2089_1_c.png",
+    "card_image_en": "dic_3_card_v_2089_1_e.png",
+    "card_image_bilingual": "dic_3_card_v_2089_1_ce.png",
+    "card_variants": [
+      "dic_3_card_v_2089_1.png"
+    ],
+    "token": "dic_3_card_v_2089&dic_3_card_v_2089&dic_3_card_v_2089",
+    "grades": [
+      "ES_G3",
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What letter is this? / A: It is the letter V."
+    ],
+    "tags": [
+      "alphabet",
+      "letter",
+      "uppercase"
+    ],
+    "lemma": "V",
+    "is_plural": false,
+    "letter_count": 1,
+    "syllable_count": 1,
+    "first_letter": "V",
+    "is_compound": false,
+    "phonics_initial": "v",
+    "difficulty_tier": 1,
+    "primary_image": "dic_3_card_v_2089_1_c.png",
+    "primary_audio": "dic_3_card_v_2089.mp3",
+    "three_hints": {
+      "category_hint": "It is a letter of the English alphabet.",
+      "feature_hint": "It is letter number 22 of the 26 English alphabet letters.",
+      "letter_hint": "It is the uppercase letter V."
+    },
+    "target_dialogues": [
+      {
+        "question": "What letter is this?",
+        "answer": "It is the letter V.",
+        "context": "Identifying English alphabet letters"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_v_2089_1_c.png",
+        "sound_file": "dic_3_card_v_2089.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_v_2089_1_ce.png",
+        "card_bw": "dic_3_card_v_2089_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_3_card_v_2089_1_c.png",
+        "sound_file": "dic_3_card_v_2089.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_3_card_v_2089_1_ce.png",
+        "card_bw": "dic_3_card_v_2089_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0378",
+    "english": "v",
+    "canonical_key": "letter_v_lower",
+    "disambiguation": "lowercase",
+    "display_label": "v (lowercase)",
+    "normalized_english": "v",
+    "part_of_speech": "alphabet",
+    "category": "16_alphabet",
+    "category_name": "Alphabet & Phonics",
+    "ja_kanji": "v",
+    "ja_hiragana": "ぶい",
+    "en_katakana": "ブイ",
+    "ruby": [
+      {
+        "base": "v",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "v",
+    "ruby_text": "v",
+    "sound_file": "dic_3_card_v_2089.mp3",
+    "card_image": "dic_4_card_v_2572_1_c.png",
+    "card_image_kana": "dic_4_card_v_2572_1_c.png",
+    "card_image_en": "dic_4_card_v_2572_1_e.png",
+    "card_image_bilingual": "dic_4_card_v_2572_1_ce.png",
+    "card_variants": [
+      "dic_4_card_v_2572_1.png"
+    ],
+    "token": "dic_4_card_v_2572&dic_3_card_v_2089&dic_4_card_v_2572",
+    "grades": [
+      "ES_G3",
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What letter is this? / A: It is the letter v."
+    ],
+    "tags": [
+      "alphabet",
+      "letter",
+      "lowercase"
+    ],
+    "lemma": "v",
+    "is_plural": false,
+    "letter_count": 1,
+    "syllable_count": 1,
+    "first_letter": "V",
+    "is_compound": false,
+    "phonics_initial": "v",
+    "difficulty_tier": 1,
+    "primary_image": "dic_4_card_v_2572_1_c.png",
+    "primary_audio": "dic_3_card_v_2089.mp3",
+    "three_hints": {
+      "category_hint": "It is a letter of the English alphabet.",
+      "feature_hint": "It is letter number 22 of the 26 English alphabet letters.",
+      "letter_hint": "It is the lowercase letter v."
+    },
+    "target_dialogues": [
+      {
+        "question": "What letter is this?",
+        "answer": "It is the letter v.",
+        "context": "Identifying English alphabet letters"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_v_2089_1_c.png",
+        "sound_file": "dic_3_card_v_2089.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_v_2089_1_ce.png",
+        "card_bw": "dic_3_card_v_2089_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_3_card_v_2089_1_c.png",
+        "sound_file": "dic_3_card_v_2089.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_3_card_v_2089_1_ce.png",
+        "card_bw": "dic_3_card_v_2089_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0384",
+    "english": "W",
+    "canonical_key": "letter_W_upper",
+    "disambiguation": "uppercase",
+    "display_label": "W (uppercase)",
+    "normalized_english": "w",
+    "part_of_speech": "alphabet",
+    "category": "16_alphabet",
+    "category_name": "Alphabet & Phonics",
+    "ja_kanji": "W",
+    "ja_hiragana": "だぶりゅー",
+    "en_katakana": "ダブリュー",
+    "ruby": [
+      {
+        "base": "W",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "W",
+    "ruby_text": "W",
+    "sound_file": "dic_3_card_w_2090.mp3",
+    "card_image": "dic_3_card_w_2090_1_c.png",
+    "card_image_kana": "dic_3_card_w_2090_1_c.png",
+    "card_image_en": "dic_3_card_w_2090_1_e.png",
+    "card_image_bilingual": "dic_3_card_w_2090_1_ce.png",
+    "card_variants": [
+      "dic_3_card_w_2090_1.png"
+    ],
+    "token": "dic_3_card_w_2090&dic_3_card_w_2090&dic_3_card_w_2090",
+    "grades": [
+      "ES_G3",
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What letter is this? / A: It is the letter W."
+    ],
+    "tags": [
+      "alphabet",
+      "letter",
+      "uppercase"
+    ],
+    "lemma": "W",
+    "is_plural": false,
+    "letter_count": 1,
+    "syllable_count": 1,
+    "first_letter": "W",
+    "is_compound": false,
+    "phonics_initial": "w",
+    "difficulty_tier": 1,
+    "primary_image": "dic_3_card_w_2090_1_c.png",
+    "primary_audio": "dic_3_card_w_2090.mp3",
+    "three_hints": {
+      "category_hint": "It is a letter of the English alphabet.",
+      "feature_hint": "It is letter number 23 of the 26 English alphabet letters.",
+      "letter_hint": "It is the uppercase letter W."
+    },
+    "target_dialogues": [
+      {
+        "question": "What letter is this?",
+        "answer": "It is the letter W.",
+        "context": "Identifying English alphabet letters"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_w_2090_1_c.png",
+        "sound_file": "dic_3_card_w_2090.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_w_2090_1_ce.png",
+        "card_bw": "dic_3_card_w_2090_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_3_card_w_2090_1_c.png",
+        "sound_file": "dic_3_card_w_2090.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_3_card_w_2090_1_ce.png",
+        "card_bw": "dic_3_card_w_2090_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0385",
+    "english": "w",
+    "canonical_key": "letter_w_lower",
+    "disambiguation": "lowercase",
+    "display_label": "w (lowercase)",
+    "normalized_english": "w",
+    "part_of_speech": "alphabet",
+    "category": "16_alphabet",
+    "category_name": "Alphabet & Phonics",
+    "ja_kanji": "w",
+    "ja_hiragana": "だぶりゅー",
+    "en_katakana": "ダブリュー",
+    "ruby": [
+      {
+        "base": "w",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "w",
+    "ruby_text": "w",
+    "sound_file": "dic_3_card_w_2090.mp3",
+    "card_image": "dic_4_card_w_2573_1_c.png",
+    "card_image_kana": "dic_4_card_w_2573_1_c.png",
+    "card_image_en": "dic_4_card_w_2573_1_e.png",
+    "card_image_bilingual": "dic_4_card_w_2573_1_ce.png",
+    "card_variants": [
+      "dic_4_card_w_2573_1.png"
+    ],
+    "token": "dic_4_card_w_2573&dic_3_card_w_2090&dic_4_card_w_2573",
+    "grades": [
+      "ES_G3",
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What letter is this? / A: It is the letter w."
+    ],
+    "tags": [
+      "alphabet",
+      "letter",
+      "lowercase"
+    ],
+    "lemma": "w",
+    "is_plural": false,
+    "letter_count": 1,
+    "syllable_count": 1,
+    "first_letter": "W",
+    "is_compound": false,
+    "phonics_initial": "w",
+    "difficulty_tier": 1,
+    "primary_image": "dic_4_card_w_2573_1_c.png",
+    "primary_audio": "dic_3_card_w_2090.mp3",
+    "three_hints": {
+      "category_hint": "It is a letter of the English alphabet.",
+      "feature_hint": "It is letter number 23 of the 26 English alphabet letters.",
+      "letter_hint": "It is the lowercase letter w."
+    },
+    "target_dialogues": [
+      {
+        "question": "What letter is this?",
+        "answer": "It is the letter w.",
+        "context": "Identifying English alphabet letters"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_w_2090_1_c.png",
+        "sound_file": "dic_3_card_w_2090.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_w_2090_1_ce.png",
+        "card_bw": "dic_3_card_w_2090_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_3_card_w_2090_1_c.png",
+        "sound_file": "dic_3_card_w_2090.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_3_card_w_2090_1_ce.png",
+        "card_bw": "dic_3_card_w_2090_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0400",
+    "english": "X",
+    "canonical_key": "letter_X_upper",
+    "disambiguation": "uppercase",
+    "display_label": "X (uppercase)",
+    "normalized_english": "x",
+    "part_of_speech": "alphabet",
+    "category": "16_alphabet",
+    "category_name": "Alphabet & Phonics",
+    "ja_kanji": "X",
+    "ja_hiragana": "えっくす",
+    "en_katakana": "エックス",
+    "ruby": [
+      {
+        "base": "X",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "X",
+    "ruby_text": "X",
+    "sound_file": "dic_3_card_x_2091.mp3",
+    "card_image": "dic_3_card_x_2091_1_c.png",
+    "card_image_kana": "dic_3_card_x_2091_1_c.png",
+    "card_image_en": "dic_3_card_x_2091_1_e.png",
+    "card_image_bilingual": "dic_3_card_x_2091_1_ce.png",
+    "card_variants": [
+      "dic_3_card_x_2091_1.png"
+    ],
+    "token": "dic_3_card_x_2091&dic_3_card_x_2091&dic_3_card_x_2091",
+    "grades": [
+      "ES_G3",
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What letter is this? / A: It is the letter X."
+    ],
+    "tags": [
+      "alphabet",
+      "letter",
+      "uppercase"
+    ],
+    "lemma": "X",
+    "is_plural": false,
+    "letter_count": 1,
+    "syllable_count": 1,
+    "first_letter": "X",
+    "is_compound": false,
+    "phonics_initial": "x",
+    "difficulty_tier": 1,
+    "primary_image": "dic_3_card_x_2091_1_c.png",
+    "primary_audio": "dic_3_card_x_2091.mp3",
+    "three_hints": {
+      "category_hint": "It is a letter of the English alphabet.",
+      "feature_hint": "It is letter number 24 of the 26 English alphabet letters.",
+      "letter_hint": "It is the uppercase letter X."
+    },
+    "target_dialogues": [
+      {
+        "question": "What letter is this?",
+        "answer": "It is the letter X.",
+        "context": "Identifying English alphabet letters"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_x_2091_1_c.png",
+        "sound_file": "dic_3_card_x_2091.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_x_2091_1_ce.png",
+        "card_bw": "dic_3_card_x_2091_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_3_card_x_2091_1_c.png",
+        "sound_file": "dic_3_card_x_2091.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_3_card_x_2091_1_ce.png",
+        "card_bw": "dic_3_card_x_2091_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0401",
+    "english": "x",
+    "canonical_key": "letter_x_lower",
+    "disambiguation": "lowercase",
+    "display_label": "x (lowercase)",
+    "normalized_english": "x",
+    "part_of_speech": "alphabet",
+    "category": "16_alphabet",
+    "category_name": "Alphabet & Phonics",
+    "ja_kanji": "x",
+    "ja_hiragana": "えっくす",
+    "en_katakana": "エックス",
+    "ruby": [
+      {
+        "base": "x",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "x",
+    "ruby_text": "x",
+    "sound_file": "dic_3_card_x_2091.mp3",
+    "card_image": "dic_4_card_x_2574_1_c.png",
+    "card_image_kana": "dic_4_card_x_2574_1_c.png",
+    "card_image_en": "dic_4_card_x_2574_1_e.png",
+    "card_image_bilingual": "dic_4_card_x_2574_1_ce.png",
+    "card_variants": [
+      "dic_4_card_x_2574_1.png"
+    ],
+    "token": "dic_4_card_x_2574&dic_3_card_x_2091&dic_4_card_x_2574",
+    "grades": [
+      "ES_G3",
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What letter is this? / A: It is the letter x."
+    ],
+    "tags": [
+      "alphabet",
+      "letter",
+      "lowercase"
+    ],
+    "lemma": "x",
+    "is_plural": false,
+    "letter_count": 1,
+    "syllable_count": 1,
+    "first_letter": "X",
+    "is_compound": false,
+    "phonics_initial": "x",
+    "difficulty_tier": 1,
+    "primary_image": "dic_4_card_x_2574_1_c.png",
+    "primary_audio": "dic_3_card_x_2091.mp3",
+    "three_hints": {
+      "category_hint": "It is a letter of the English alphabet.",
+      "feature_hint": "It is letter number 24 of the 26 English alphabet letters.",
+      "letter_hint": "It is the lowercase letter x."
+    },
+    "target_dialogues": [
+      {
+        "question": "What letter is this?",
+        "answer": "It is the letter x.",
+        "context": "Identifying English alphabet letters"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_x_2091_1_c.png",
+        "sound_file": "dic_3_card_x_2091.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_x_2091_1_ce.png",
+        "card_bw": "dic_3_card_x_2091_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_3_card_x_2091_1_c.png",
+        "sound_file": "dic_3_card_x_2091.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_3_card_x_2091_1_ce.png",
+        "card_bw": "dic_3_card_x_2091_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0402",
+    "english": "Y",
+    "canonical_key": "letter_Y_upper",
+    "disambiguation": "uppercase",
+    "display_label": "Y (uppercase)",
+    "normalized_english": "y",
+    "part_of_speech": "alphabet",
+    "category": "16_alphabet",
+    "category_name": "Alphabet & Phonics",
+    "ja_kanji": "Y",
+    "ja_hiragana": "わい",
+    "en_katakana": "ワイ",
+    "ruby": [
+      {
+        "base": "Y",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "Y",
+    "ruby_text": "Y",
+    "sound_file": "dic_3_card_y_2092.mp3",
+    "card_image": "dic_3_card_y_2092_1_c.png",
+    "card_image_kana": "dic_3_card_y_2092_1_c.png",
+    "card_image_en": "dic_3_card_y_2092_1_e.png",
+    "card_image_bilingual": "dic_3_card_y_2092_1_ce.png",
+    "card_variants": [
+      "dic_3_card_y_2092_1.png"
+    ],
+    "token": "dic_3_card_y_2092&dic_3_card_y_2092&dic_3_card_y_2092",
+    "grades": [
+      "ES_G3",
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What letter is this? / A: It is the letter Y."
+    ],
+    "tags": [
+      "alphabet",
+      "letter",
+      "uppercase"
+    ],
+    "lemma": "Y",
+    "is_plural": false,
+    "letter_count": 1,
+    "syllable_count": 1,
+    "first_letter": "Y",
+    "is_compound": false,
+    "phonics_initial": "y",
+    "difficulty_tier": 1,
+    "primary_image": "dic_3_card_y_2092_1_c.png",
+    "primary_audio": "dic_3_card_y_2092.mp3",
+    "three_hints": {
+      "category_hint": "It is a letter of the English alphabet.",
+      "feature_hint": "It is letter number 25 of the 26 English alphabet letters.",
+      "letter_hint": "It is the uppercase letter Y."
+    },
+    "target_dialogues": [
+      {
+        "question": "What letter is this?",
+        "answer": "It is the letter Y.",
+        "context": "Identifying English alphabet letters"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_y_2092_1_c.png",
+        "sound_file": "dic_3_card_y_2092.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_y_2092_1_ce.png",
+        "card_bw": "dic_3_card_y_2092_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_3_card_y_2092_1_c.png",
+        "sound_file": "dic_3_card_y_2092.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_3_card_y_2092_1_ce.png",
+        "card_bw": "dic_3_card_y_2092_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0403",
+    "english": "y",
+    "canonical_key": "letter_y_lower",
+    "disambiguation": "lowercase",
+    "display_label": "y (lowercase)",
+    "normalized_english": "y",
+    "part_of_speech": "alphabet",
+    "category": "16_alphabet",
+    "category_name": "Alphabet & Phonics",
+    "ja_kanji": "y",
+    "ja_hiragana": "わい",
+    "en_katakana": "ワイ",
+    "ruby": [
+      {
+        "base": "y",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "y",
+    "ruby_text": "y",
+    "sound_file": "dic_3_card_y_2092.mp3",
+    "card_image": "dic_4_card_y_2575_1_c.png",
+    "card_image_kana": "dic_4_card_y_2575_1_c.png",
+    "card_image_en": "dic_4_card_y_2575_1_e.png",
+    "card_image_bilingual": "dic_4_card_y_2575_1_ce.png",
+    "card_variants": [
+      "dic_4_card_y_2575_1.png"
+    ],
+    "token": "dic_4_card_y_2575&dic_3_card_y_2092&dic_4_card_y_2575",
+    "grades": [
+      "ES_G3",
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What letter is this? / A: It is the letter y."
+    ],
+    "tags": [
+      "alphabet",
+      "letter",
+      "lowercase"
+    ],
+    "lemma": "y",
+    "is_plural": false,
+    "letter_count": 1,
+    "syllable_count": 1,
+    "first_letter": "Y",
+    "is_compound": false,
+    "phonics_initial": "y",
+    "difficulty_tier": 1,
+    "primary_image": "dic_4_card_y_2575_1_c.png",
+    "primary_audio": "dic_3_card_y_2092.mp3",
+    "three_hints": {
+      "category_hint": "It is a letter of the English alphabet.",
+      "feature_hint": "It is letter number 25 of the 26 English alphabet letters.",
+      "letter_hint": "It is the lowercase letter y."
+    },
+    "target_dialogues": [
+      {
+        "question": "What letter is this?",
+        "answer": "It is the letter y.",
+        "context": "Identifying English alphabet letters"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_y_2092_1_c.png",
+        "sound_file": "dic_3_card_y_2092.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_y_2092_1_ce.png",
+        "card_bw": "dic_3_card_y_2092_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_3_card_y_2092_1_c.png",
+        "sound_file": "dic_3_card_y_2092.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_3_card_y_2092_1_ce.png",
+        "card_bw": "dic_3_card_y_2092_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0407",
+    "english": "Z",
+    "canonical_key": "letter_Z_upper",
+    "disambiguation": "uppercase",
+    "display_label": "Z (uppercase)",
+    "normalized_english": "z",
+    "part_of_speech": "alphabet",
+    "category": "16_alphabet",
+    "category_name": "Alphabet & Phonics",
+    "ja_kanji": "Z",
+    "ja_hiragana": "ぜっと",
+    "en_katakana": "ゼット",
+    "ruby": [
+      {
+        "base": "Z",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "Z",
+    "ruby_text": "Z",
+    "sound_file": "dic_3_card_z_2093.mp3",
+    "card_image": "dic_3_card_z_2093_1_c.png",
+    "card_image_kana": "dic_3_card_z_2093_1_c.png",
+    "card_image_en": "dic_3_card_z_2093_1_e.png",
+    "card_image_bilingual": "dic_3_card_z_2093_1_ce.png",
+    "card_variants": [
+      "dic_3_card_z_2093_1.png"
+    ],
+    "token": "dic_3_card_z_2093&dic_3_card_z_2093&dic_3_card_z_2093",
+    "grades": [
+      "ES_G3",
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What letter is this? / A: It is the letter Z."
+    ],
+    "tags": [
+      "alphabet",
+      "letter",
+      "uppercase"
+    ],
+    "lemma": "Z",
+    "is_plural": false,
+    "letter_count": 1,
+    "syllable_count": 1,
+    "first_letter": "Z",
+    "is_compound": false,
+    "phonics_initial": "z",
+    "difficulty_tier": 1,
+    "primary_image": "dic_3_card_z_2093_1_c.png",
+    "primary_audio": "dic_3_card_z_2093.mp3",
+    "three_hints": {
+      "category_hint": "It is a letter of the English alphabet.",
+      "feature_hint": "It is letter number 26 of the 26 English alphabet letters.",
+      "letter_hint": "It is the uppercase letter Z."
+    },
+    "target_dialogues": [
+      {
+        "question": "What letter is this?",
+        "answer": "It is the letter Z.",
+        "context": "Identifying English alphabet letters"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_z_2093_1_c.png",
+        "sound_file": "dic_3_card_z_2093.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_z_2093_1_ce.png",
+        "card_bw": "dic_3_card_z_2093_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_3_card_z_2093_1_c.png",
+        "sound_file": "dic_3_card_z_2093.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_3_card_z_2093_1_ce.png",
+        "card_bw": "dic_3_card_z_2093_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0408",
+    "english": "z",
+    "canonical_key": "letter_z_lower",
+    "disambiguation": "lowercase",
+    "display_label": "z (lowercase)",
+    "normalized_english": "z",
+    "part_of_speech": "alphabet",
+    "category": "16_alphabet",
+    "category_name": "Alphabet & Phonics",
+    "ja_kanji": "z",
+    "ja_hiragana": "ぜっと",
+    "en_katakana": "ゼット",
+    "ruby": [
+      {
+        "base": "z",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "z",
+    "ruby_text": "z",
+    "sound_file": "dic_3_card_z_2093.mp3",
+    "card_image": "dic_4_card_z_2576_1_c.png",
+    "card_image_kana": "dic_4_card_z_2576_1_c.png",
+    "card_image_en": "dic_4_card_z_2576_1_e.png",
+    "card_image_bilingual": "dic_4_card_z_2576_1_ce.png",
+    "card_variants": [
+      "dic_4_card_z_2576_1.png"
+    ],
+    "token": "dic_4_card_z_2576&dic_3_card_z_2093&dic_4_card_z_2576",
+    "grades": [
+      "ES_G3",
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What letter is this? / A: It is the letter z."
+    ],
+    "tags": [
+      "alphabet",
+      "letter",
+      "lowercase"
+    ],
+    "lemma": "z",
+    "is_plural": false,
+    "letter_count": 1,
+    "syllable_count": 1,
+    "first_letter": "Z",
+    "is_compound": false,
+    "phonics_initial": "z",
+    "difficulty_tier": 1,
+    "primary_image": "dic_4_card_z_2576_1_c.png",
+    "primary_audio": "dic_3_card_z_2093.mp3",
+    "three_hints": {
+      "category_hint": "It is a letter of the English alphabet.",
+      "feature_hint": "It is letter number 26 of the 26 English alphabet letters.",
+      "letter_hint": "It is the lowercase letter z."
+    },
+    "target_dialogues": [
+      {
+        "question": "What letter is this?",
+        "answer": "It is the letter z.",
+        "context": "Identifying English alphabet letters"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_z_2093_1_c.png",
+        "sound_file": "dic_3_card_z_2093.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_z_2093_1_ce.png",
+        "card_bw": "dic_3_card_z_2093_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_3_card_z_2093_1_c.png",
+        "sound_file": "dic_3_card_z_2093.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_3_card_z_2093_1_ce.png",
+        "card_bw": "dic_3_card_z_2093_1.png"
+      }
+    }
+  }
+]

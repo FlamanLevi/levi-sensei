@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ライブ4択バトル（Eigo Arena）先生向け操作マニュアル</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-light: #eff6ff;
+      --primary-border: #bfdbfe;
+      --indigo: #4f46e5;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --bg-subtle: #f8fafc;
+      --border: #e2e8f0;
+      --border-dark: #cbd5e1;
+      --amber: #d97706;
+      --amber-bg: #fffbeb;
+      --emerald: #059669;
+      --emerald-bg: #ecfdf5;
+      --rose: #e11d48;
+      --rose-bg: #fff1f2;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'UD Digi Kyokasho NP-R', 'UD Digi Kyokasho NK-R', 'BIZ UDPGothic', 'Zen Maru Gothic', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
+      color: var(--text);
+      background-color: #f1f5f9;
+      line-height: 1.55;
+      font-size: 13.5px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Print action bar at top (hidden during print) */
+    .action-bar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: #ffffff;
+      border-bottom: 2px solid #cbd5e1;
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.07);
+    }
+    .action-bar-title {
+      font-weight: 700;
+      font-size: 15px;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .action-buttons {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .btn {
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 13px;
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+    .btn-primary:hover {
+      background: #1d4ed8;
+      transform: translateY(-1px);
+    }
+    .btn-secondary {
+      background: #e2e8f0;
+      color: #334155;
+    }
+    .btn-secondary:hover {
+      background: #cbd5e1;
+    }
+
+    /* Printable A4 Container */
+    .document-wrapper {
+      max-width: 210mm;
+      margin: 20px auto;
+      background: #ffffff;
+      padding: 18mm 18mm;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      border-radius: 6px;
+    }
+
+    /* Header styling */
+    .doc-header {
+      border-bottom: 3px double #0f172a;
+      padding-bottom: 12px;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+    }
+    .header-main h1 {
+      font-size: 20px;
+      font-weight: 900;
+      color: #0f172a;
+      letter-spacing: -0.3px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .header-main p {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      margin-top: 3px;
+      font-weight: 500;
+    }
+    .header-badge {
+      font-size: 11px;
+      font-weight: 700;
+      background: #f1f5f9;
+      color: #334155;
+      padding: 4px 10px;
+      border-radius: 6px;
+      border: 1px solid #cbd5e1;
+      text-align: right;
+    }
+
+    /* Section Headings */
+    .section-title {
+      font-size: 15px;
+      font-weight: 900;
+      color: #0f172a;
+      background: #f8fafc;
+      border-left: 5px solid var(--primary);
+      border-top: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 6px 12px;
+      border-radius: 0 6px 6px 0;
+      margin-top: 16px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-title-icon {
+      font-size: 16px;
+    }
+
+    /* Structured Layout Cards */
+    .feature-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .card {
+      border: 1px solid var(--border-dark);
+      border-radius: 8px;
+      padding: 9px 11px;
+      background: #ffffff;
+      break-inside: avoid;
+    }
+    .card.full-width {
+      grid-column: 1 / -1;
+    }
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 4px;
+      border-bottom: 1px solid #f1f5f9;
+      padding-bottom: 3px;
+    }
+    .card-title {
+      font-weight: 700;
+      font-size: 12.5px;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .tag {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 4px;
+      background: var(--primary-light);
+      color: var(--primary);
+      border: 1px solid var(--primary-border);
+    }
+    .tag-amber {
+      background: var(--amber-bg);
+      color: var(--amber);
+      border-color: #fde68a;
+    }
+    .tag-emerald {
+      background: var(--emerald-bg);
+      color: var(--emerald);
+      border-color: #a7f3d0;
+    }
+    .card-body {
+      font-size: 11.5px;
+      color: #334155;
+    }
+    .card-body ul {
+      margin-left: 15px;
+      margin-top: 3px;
+    }
+    .card-body li {
+      margin-bottom: 2px;
+    }
+    .card-body p {
+      margin-bottom: 2px;
+    }
+
+    /* Step-by-Step Styling */
+    .step-list {
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+      margin-bottom: 12px;
+    }
+    .step-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      border: 1px solid var(--border-dark);
+      border-radius: 8px;
+      padding: 9px 12px;
+      background: #ffffff;
+      break-inside: avoid;
+    }
+    .step-badge {
+      background: var(--primary);
+      color: white;
+      font-weight: 900;
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      shrink: 0;
+      white-space: nowrap;
+      margin-top: 1px;
+    }
+    .step-content {
+      flex: 1;
+    }
+    .step-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 3px;
+    }
+    .step-desc {
+      font-size: 11.5px;
+      color: #334155;
+      line-height: 1.5;
+    }
+    .step-sublist {
+      margin-top: 4px;
+      margin-left: 16px;
+      font-size: 11px;
+      color: #475569;
+    }
+    .step-sublist li {
+      margin-bottom: 2px;
+    }
+
+    /* Key/Badge Highlight */
+    .key-badge {
+      display: inline-block;
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 10.5px;
+      background: #f1f5f9;
+      color: #0f172a;
+      border: 1px solid #94a3b8;
+      border-bottom: 2px solid #64748b;
+      padding: 0 5px;
+      border-radius: 4px;
+      margin: 0 2px;
+    }
+
+    /* Callout Note */
+    .callout {
+      border: 1px solid #cbd5e1;
+      border-left: 4px solid #64748b;
+      background: #f8fafc;
+      padding: 8px 12px;
+      border-radius: 0 6px 6px 0;
+      font-size: 11px;
+      color: #334155;
+      margin-top: 6px;
+      margin-bottom: 8px;
+    }
+    .callout-title {
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 2px;
+    }
+
+    /* Q&A / Troubleshooting Box */
+    .faq-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .faq-card {
+      border: 1px dashed var(--border-dark);
+      background: #fafafa;
+      padding: 8px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      break-inside: avoid;
+    }
+    .faq-q {
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 3px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .faq-a {
+      color: #475569;
+      line-height: 1.45;
+    }
+
+    /* Print Styles */
+    @media print {
+      body {
+        background: #ffffff !important;
+        color: #000000 !important;
+        font-size: 10pt;
+      }
+      .no-print {
+        display: none !important;
+      }
+      .document-wrapper {
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+      }
+      .page-break {
+        page-break-before: always;
+        break-before: page;
+        padding-top: 15mm;
+      }
+      .card, .step-item, .faq-card {
+        border-color: #94a3b8 !important;
+        break-inside: avoid !important;
+      }
+      .section-title {
+        background: #f1f5f9 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .step-badge {
+        background: #1e3a8a !important;
+        color: #ffffff !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .tag {
+        border-color: #94a3b8 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+    }
+
+    @page {
+      size: A4 portrait;
+      margin: 12mm 14mm 12mm 14mm;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Action Bar (Hidden when printing) -->
+  <div class="action-bar no-print">
+    <div class="action-bar-title">
+      <span>📄</span>
+      <span>ライブ4択バトル（Eigo Arena）先生向け操作マニュアル</span>
+    </div>
+    <div class="action-buttons">
+      <button class="btn btn-secondary" onclick="copyDocumentText()">
+        <span>📋</span> 全文をコピー
+      </button>
+      <button class="btn btn-primary" onclick="window.print()">
+        <span>🖨️</span> 印刷 / PDFとして保存 (Ctrl+P)
+      </button>
+    </div>
+  </div>
+
+  <div class="document-wrapper">
+    <!-- Header -->
+    <div class="doc-header">
+      <div class="header-main">
+        <h1><span>🏆</span> ライブ4択バトル（Eigo Arena）先生向け操作マニュアル</h1>
+        <p>小学校外国語科（英語）クラス全員参加型 リアルタイムクイズシステム</p>
+      </div>
+      <div class="header-badge">
+        <strong>小学校6年生用</strong><br>
+        教員・ALT活用資料
+      </div>
+    </div>
+
+    <!-- Section 1 -->
+    <div class="section-title">
+      <span class="section-title-icon">⚙️</span>
+      <span>1. ゲーム作成画面（設定項目）の全機能解説</span>
+    </div>
+
+    <div class="feature-grid">
+      <!-- Card: Attendance -->
+      <div class="card full-width">
+        <div class="card-header">
+          <span class="card-title"><span>🏫</span> クラス確認・出席番号セーブ機能</span>
+          <span class="tag tag-emerald">推奨: ON</span>
+        </div>
+        <div class="card-body">
+          <p>画面右上に現在の学校名・クラス（例: <strong>二子玉川小 6-4</strong>）が表示されます。</p>
+          <ul>
+            <li><strong>「出席番号・XPを記録」ON (推奨)</strong>: 児童の出席番号（1〜35番）と連携し、正解数・経験値・苦手単語が自動記録されます。</li>
+            <li><strong>OFF</strong>: お試し・練習プレイ用。児童の履歴は保存されません。</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Card: Vocabulary Scope -->
+      <div class="card full-width">
+        <div class="card-header">
+          <span class="card-title"><span>📚</span> 出題範囲・単語プール (Vocabulary Scope)</span>
+          <span class="tag">ワンタップ切替</span>
+        </div>
+        <div class="card-body">
+          <p>出題する英単語の範囲を4つのモードから選べます（※クイズ生成には最低4単語以上が必要です）。</p>
+          <ul>
+            <li><strong>本日の単元</strong>: 現在学習中の単元（例: Unit 4）から出題。「<strong>✏️ 単元を変更</strong>」を押すと複数単元のバンドル出題も可能。</li>
+            <li><strong>学年全単元</strong>: 6年生で学習する全単元から幅広くランダム出題（学期末の総まとめに最適）。</li>
+            <li><strong>小3〜小5 復習</strong>: 過去学年で習った基礎単語を振り返る総復習モード。</li>
+            <li><strong>小学校 全単語マスター</strong>: 小学校3〜6年の教科書に出てくる全英単語（約800語）から出題するメガチャレンジ。</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Card: Classroom Play Mode -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title"><span>1️⃣</span> プレイ形式 (Play Mode)</span>
+          <span class="tag">選択必須</span>
+        </div>
+        <div class="card-body">
+          <ul>
+            <li><strong>iPad対戦モード (Stream 🅱️)【定番】</strong>: 児童1人1台のiPadから瞬時に参加。リアルタイム表彰台と連動。</li>
+            <li><strong>テレビ画面ウォームアップ (Stream 🅰️)</strong>: 児童のiPad不要！テレビとPCキーボードだけで進める5分間の全員声出し活動。</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Card: Game Style -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title"><span>2️⃣</span> ゲーム形式 (Game Style)</span>
+          <span class="tag">※iPad対戦時</span>
+        </div>
+        <div class="card-body">
+          <ul>
+            <li><strong>一斉対戦 (Kahootスタイル)【定番】</strong>: 全員が同時に1問ずつ挑戦。1問ごとに解説と全員リピート練習が挟めます。</li>
+            <li><strong>F1スプリントレース【個別最適な学び】</strong>: 児童が自分のペースで連続解答。テレビにはリアルタイムF1コースが表示（連打防止のピットストップ機能付き）。</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Card: Battle Format -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title"><span>3️⃣</span> 対戦形式 (Battle Format)</span>
+          <span class="tag">個人 or チーム</span>
+        </div>
+        <div class="card-body">
+          <ul>
+            <li><strong>個人戦</strong>: 全員が個人のスコア・順位を競う定番形式。</li>
+            <li><strong>チーム対抗戦 (4色対抗)</strong>: 🔴赤・🔵青・🟡黄・🟢緑の4チーム対抗。
+              <div style="font-size:10.5px; color:#64748b; margin-top:2px;">
+                ・<strong>⚡ 自動ふりわけ【推奨】</strong>: 各色均等に自動配置（一番スムーズ）<br>
+                ・<strong>🎨 じぶんえらび</strong>: 児童が好きな色を選択（満員ロック付き）
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Card: Student Display -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title"><span>4️⃣</span> 児童の画面表示 (iPad Display)</span>
+          <span class="tag">※一斉対戦時</span>
+        </div>
+        <div class="card-body">
+          <ul>
+            <li><strong>前を向く！マークのみ (▲ ◆ ● ■)【推奨】</strong>: 問題文を見るために必ず顔を上げてテレビを見る姿勢を定着させます。</li>
+            <li><strong>手元表示 (Mirrored)</strong>: iPadにも英語やイラストを直接表示。後ろの席で見えにくい教室に便利です。</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Card: Questions & Time -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title"><span>5️⃣</span> 問題数と1問の制限時間</span>
+          <span class="tag">授業時間に応じて</span>
+        </div>
+        <div class="card-body">
+          <ul>
+            <li><strong>問題数</strong>: <code>5問</code> / <code>10問</code> / <code>15問</code> / <code>20問</code> / <code>全問</code><br>
+              <span style="font-size:10.5px; color:#64748b;">（帯活動なら5〜10問、メイン活動なら10〜15問が目安）</span></li>
+            <li><strong>制限時間</strong>: <code>10秒</code> / <code>15秒</code> / <code>20秒</code> / <code>30秒</code><br>
+              <span style="font-size:10.5px; color:#64748b;">（初見単元は20秒、慣れたら15秒がおすすめです）</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Card: Hints & Mechanics -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title"><span>6️⃣</span> 出題ギミック・ヒント設定</span>
+          <span class="tag tag-amber">思考アシスト</span>
+        </div>
+        <div class="card-body">
+          <ul>
+            <li><strong>思考タイム (Recall First)</strong>: 最初の3〜5秒間、選択肢を隠して問題だけ表示。まず頭の中で英単語を思い浮かべる時間を設けます。</li>
+            <li><strong>選択肢絞り込みヒント</strong>:
+              <span style="font-size:10.5px; color:#64748b;">
+                <strong>50/50</strong>（残り半分で誤答2つ消去） / <strong>段階的</strong>（33%/66%で1つずつ消去してアシスト）
+              </span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Card: Prompt Varieties -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title"><span>7️⃣</span> 出題バリエーション (複数選択可)</span>
+          <span class="tag">シャッフル出題</span>
+        </div>
+        <div class="card-body">
+          <ul>
+            <li><strong>日本語 ➔ 英語</strong>: 日本語の意味から英単語を選ぶ基本形。</li>
+            <li><strong>英語 ➔ 日本語</strong>: 英単語から日本語を選ぶ形式（※児童の手元iPadにはイラストが隠れ、文字の読解力を試します）。</li>
+            <li><strong>イラスト ➔ 英語</strong>: 教科書の公式イラストから選ぶ問題。</li>
+            <li><strong>音声 ➔ 英語</strong>: ネイティブ音声を聞いて選ぶリスニング問題。</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Card: Awards & BGM -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title"><span>8️⃣</span> 終了後の表彰 & BGM設定</span>
+          <span class="tag">全員活躍</span>
+        </div>
+        <div class="card-body">
+          <ul>
+            <li><strong>表彰カテゴリー</strong>: スピードスター⚡や連続正解🔥に加え、努力・成長賞（最後まで粘ったで賞💫、パーフェクト賞💎）、お楽しみ賞（ギリギリセーフ賞⏱️、中央値ヒーロー🍀）等で多様な児童を肯定評価。</li>
+            <li><strong>教室BGM</strong>: マリオパック🍄 / 湾岸ユーロビート🏎️ / 全曲ランダム🎲 / BGMなし🔇</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Page Break for Clean Printing -->
+    <div class="page-break"></div>
+
+    <!-- Section 2 -->
+    <div class="section-title">
+      <span class="section-title-icon">🚀</span>
+      <span>2. ゲーム開始手順（ステップ・バイ・ステップ）</span>
+    </div>
+
+    <div class="step-list">
+      <!-- Step 1 -->
+      <div class="step-item">
+        <div class="step-badge">ステップ 1</div>
+        <div class="step-content">
+          <div class="step-title">学年・単元を確認し、設定画面を開く</div>
+          <div class="step-desc">
+            メイン画面で対象学年（6年）と単元を確認し、「<strong>ライブ4択バトル (Eigo Arena)</strong>」をクリックします。<br>
+            設定画面で問題数（例: 10問）や出題形式を確認し、右下の青い「<strong>部屋を作成</strong>」ボタンを押します。
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="step-item">
+        <div class="step-badge">ステップ 2</div>
+        <div class="step-content">
+          <div class="step-title">児童のiPadを接続させる（ロビー画面）</div>
+          <div class="step-desc">
+            テレビに大きなQRコードと4桁のPIN番号が表示されます。以下のいずれかの方法で接続します。
+            <ul class="step-sublist">
+              <li><strong>方法 A（最も確実・推奨）: ロイロノートのカードをタップ</strong><br>
+                事前に配布されたクラスURL（例: <code>https://levi-sensei.web.app/?class=6-4</code>）を児童がタップするだけで、自分の出席番号を押すだけで即入室できます。</li>
+              <li><strong>方法 B: iPadカメラでテレビのQRコードを読み取る</strong><br>
+                iPadの標準カメラでテレビ画面のQRコードを写すと、自動でPINが入力されて参加画面が開きます。</li>
+              <li><strong>方法 C: 4桁のPINを手入力する</strong><br>
+                画面に表示されている数字（例: <code>5821</code>）を児童画面に入力します。</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="step-item">
+        <div class="step-badge">ステップ 3</div>
+        <div class="step-content">
+          <div class="step-title">参加者を確認し、ゲームを開始する</div>
+          <div class="step-desc">
+            児童が参加すると、テレビ画面に名前と出席番号がポンポンと表示され、人数がカウントされます。<br>
+            クラス全員が揃ったら、画面右上の「<strong>ゲーム開始</strong>」をクリックするか、先生のPCの <span class="key-badge">Space</span> キー（または <span class="key-badge">Enter</span> キー）を押して開始します。
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 4 -->
+      <div class="step-item">
+        <div class="step-badge">ステップ 4</div>
+        <div class="step-content">
+          <div class="step-title">クイズ進行と全員発音練習（コーラルリピート）</div>
+          <div class="step-desc">
+            1. テレビに問題が大きく表示されます（思考タイム設定時は最初の3〜5秒間選択肢が隠れます）。<br>
+            2. 児童がiPadで回答ボタンを押します。<br>
+            3. 制限時間が終わるか全員が回答すると、正解とクラスの回答グラフ（「○人回答」）が表示されます。<br>
+            4. 画面の <strong>スピーカーアイコン 🔊</strong> を押すとネイティブ音声が流れます。全員で声を出してリピート練習しましょう。<br>
+            5. <span class="key-badge">Space</span> キーを押すとランキングへ進み、もう一度押すと次の問題へ移行します。
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 5 -->
+      <div class="step-item">
+        <div class="step-badge">ステップ 5</div>
+        <div class="step-content">
+          <div class="step-title">表彰式と「苦手単語」の振り返り</div>
+          <div class="step-desc">
+            全問終了後、1位〜3位の児童が3D表彰台に登壇し、続けて特別賞が発表されます。<br>
+            最後に「<strong>苦手単語復習 (Trouble Words Review)</strong>」が表示されます。クラス全体で正解率の低かった単語の一覧がカードで並び、カードをタップするとその場で発音が流れるので、授業のまとめとして全員で発音して定着を図ります。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Troubleshooting Box -->
+    <div class="callout">
+      <div class="callout-title">💡 困ったときのQ&A・教員用TIPS</div>
+      <div class="faq-grid">
+        <div class="faq-card">
+          <div class="faq-q"><span>❓</span> 児童が誤って別のクラスを選んだ</div>
+          <div class="faq-a">画面上部の「<strong>別の学校・クラスをえらび直す</strong>」をタップすると、いつでもクラス選択画面に戻れます。</div>
+        </div>
+        <div class="faq-card">
+          <div class="faq-q"><span>❓</span> 先生自身の端末でテスト参加したい</div>
+          <div class="faq-a">「<strong>先生・テスターとして参加</strong>」を押し、暗証番号 <strong><code>051683</code></strong> を入力すると、児童の席を消費せず「0番」として参加できます。</div>
+        </div>
+        <div class="faq-card">
+          <div class="faq-q"><span>❓</span> 画面の明るさ（白/黒）を切り替えたい</div>
+          <div class="faq-a">画面右上の <strong>太陽 ☀️ / 月 🌙</strong> マークを押すと、瞬時にライト／ダークモードが切り替わります。</div>
+        </div>
+        <div class="faq-card">
+          <div class="faq-q"><span>❓</span> 途中参加・通信が途切れた児童</div>
+          <div class="faq-a">ゲームが始まっていても、途中で参加すれば次の問題から自動的に合流して問題なく参加できます。</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    function copyDocumentText() {
+      const wrapper = document.querySelector('.document-wrapper');
+      const selection = window.getSelection();
+      const range = document.createRange();
+      range.selectNodeContents(wrapper);
+      selection.removeAllRanges();
+      selection.addRange(range);
+      try {
+        document.execCommand('copy');
+        alert('マニュアル本文をクリップボードにコピーしました！GoogleドキュメントやWordに「貼り付け (Ctrl+V)」すると書式付きで綺麗に貼り付けできます。');
+      } catch (err) {
+        alert('コピーに失敗しました。画面上の印刷ボタンをご利用ください。');
+      }
+      selection.removeAllRanges();
+    }
+  </script>
+</body>
+</html>

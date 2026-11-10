@@ -1,0 +1,2019 @@
+[
+  {
+    "id": "word_0138",
+    "english": "gray",
+    "canonical_key": "gray",
+    "disambiguation": "",
+    "display_label": "gray",
+    "normalized_english": "gray",
+    "part_of_speech": "noun",
+    "category": "09_color_shape",
+    "category_name": "Colors & Shapes",
+    "ja_kanji": "灰色",
+    "ja_hiragana": "はいいろ",
+    "en_katakana": "グレー",
+    "ruby": [
+      {
+        "base": "灰色",
+        "ruby": "はいいろ"
+      }
+    ],
+    "ruby_html": "<ruby>灰色<rt>はいいろ</rt></ruby>",
+    "ruby_text": "[灰色|はいいろ]",
+    "sound_file": "",
+    "card_image": "cards/full/hwg5_u03_10_gray_full.png",
+    "card_image_kana": "cards/full/hwg5_u03_10_gray_full.png",
+    "card_image_en": "cards/full/hwg5_u03_10_gray_full.png",
+    "card_image_bilingual": "cards/full/hwg5_u03_10_gray_full.png",
+    "card_variants": [],
+    "token": "hwg_gray",
+    "grades": [
+      "ES_G5"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What color do you like? / A: I like gray."
+    ],
+    "tags": [
+      "color"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u03_10_gray_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u03_10_gray_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u03_10_gray_text.png",
+    "lemma": "gray",
+    "is_plural": false,
+    "letter_count": 4,
+    "syllable_count": 1,
+    "first_letter": "G",
+    "is_compound": false,
+    "phonics_initial": "gr",
+    "difficulty_tier": 2,
+    "primary_image": "cards/full/hwg5_u03_10_gray_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is a color.",
+      "feature_hint": "In Japanese, this color is called '灰色' (はいいろ).",
+      "letter_hint": "It starts with the letter G."
+    },
+    "target_dialogues": [
+      {
+        "question": "What color do you like?",
+        "answer": "I like gray.",
+        "context": "Expressing favorite colors"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u03_10_gray_illust.png",
+        "card_full": "cards/full/hwg5_u03_10_gray_full.png",
+        "card_text": "cards/text/hwg5_u03_10_gray_text.png",
+        "unit": "Unit 3: Unit 3: Colors and Shapes",
+        "source": "here_we_go_5",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0268",
+    "english": "round",
+    "canonical_key": "round",
+    "disambiguation": "",
+    "display_label": "round",
+    "normalized_english": "round",
+    "part_of_speech": "adjective",
+    "category": "09_color_shape",
+    "category_name": "Colors & Shapes",
+    "ja_kanji": "丸い",
+    "ja_hiragana": "まるい",
+    "en_katakana": "ラウンド",
+    "ruby": [
+      {
+        "base": "丸",
+        "ruby": "まる"
+      },
+      {
+        "base": "い",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "<ruby>丸<rt>まる</rt></ruby>い",
+    "ruby_text": "[丸|まる]い",
+    "sound_file": "dic_3_card_round_2154.mp3",
+    "card_image": "dic_3_card_round_2154_1_c.png",
+    "card_image_kana": "dic_3_card_round_2154_1_c.png",
+    "card_image_en": "dic_3_card_round_2154_1_e.png",
+    "card_image_bilingual": "dic_3_card_round_2154_1_ce.png",
+    "card_variants": [
+      "dic_3_card_round_2154_1.png"
+    ],
+    "token": "dic_3_card_round_2154&dic_3_card_round_2154&dic_3_card_round_2154",
+    "grades": [
+      "ES_G3"
+    ],
+    "themes": [
+      "Who are you? きみはだれ？"
+    ],
+    "target_sentences": [
+      "Q: What shape is this? / A: It is a round."
+    ],
+    "tags": [
+      "adjective",
+      "shape"
+    ],
+    "lemma": "round",
+    "is_plural": false,
+    "letter_count": 5,
+    "syllable_count": 1,
+    "first_letter": "R",
+    "is_compound": false,
+    "phonics_initial": "r",
+    "difficulty_tier": 1,
+    "primary_image": "dic_3_card_round_2154_1_c.png",
+    "primary_audio": "dic_3_card_round_2154.mp3",
+    "three_hints": {
+      "category_hint": "It is a geometric shape.",
+      "feature_hint": "In Japanese, this shape is called '丸い' (まるい).",
+      "letter_hint": "It starts with the letter R."
+    },
+    "target_dialogues": [
+      {
+        "question": "What shape is this?",
+        "answer": "It is a round.",
+        "context": "Identifying shapes"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_round_2154_1_c.png",
+        "sound_file": "dic_3_card_round_2154.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_round_2154_1_ce.png",
+        "card_bw": "dic_3_card_round_2154_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0293",
+    "english": "shapes",
+    "canonical_key": "shapes",
+    "disambiguation": "",
+    "display_label": "shapes",
+    "normalized_english": "shapes",
+    "part_of_speech": "noun",
+    "category": "09_color_shape",
+    "category_name": "Colors & Shapes",
+    "ja_kanji": "形",
+    "ja_hiragana": "かたち",
+    "en_katakana": "シェイプス",
+    "ruby": [
+      {
+        "base": "形",
+        "ruby": "かたち"
+      }
+    ],
+    "ruby_html": "<ruby>形<rt>かたち</rt></ruby>",
+    "ruby_text": "[形|かたち]",
+    "sound_file": "",
+    "card_image": "",
+    "card_image_kana": "",
+    "card_image_en": "",
+    "card_image_bilingual": "",
+    "card_variants": [],
+    "token": "borderlink_shapes",
+    "grades": [
+      "ES_G2",
+      "ES_G3"
+    ],
+    "themes": [
+      "Review",
+      "This is for you. カードをおくろう"
+    ],
+    "target_sentences": [
+      "Q: What shape is this? / A: It is a shapes."
+    ],
+    "tags": [
+      "plural",
+      "shape"
+    ],
+    "lemma": "shape",
+    "is_plural": true,
+    "letter_count": 6,
+    "syllable_count": 1,
+    "first_letter": "S",
+    "is_compound": false,
+    "phonics_initial": "sh",
+    "difficulty_tier": 2,
+    "primary_image": "",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is a geometric shape.",
+      "feature_hint": "In Japanese, this shape is called '形' (かたち).",
+      "letter_hint": "It starts with the letter S."
+    },
+    "target_dialogues": [
+      {
+        "question": "What shape is this?",
+        "answer": "It is a shapes.",
+        "context": "Identifying shapes"
+      }
+    ],
+    "media_by_grade": {}
+  },
+  {
+    "id": "word_0731",
+    "english": "black",
+    "canonical_key": "black",
+    "disambiguation": "",
+    "display_label": "black",
+    "normalized_english": "black",
+    "part_of_speech": "noun",
+    "category": "09_color_shape",
+    "category_name": "Colors & Shapes",
+    "ja_kanji": "黒",
+    "ja_hiragana": "くろ",
+    "en_katakana": "ブラック",
+    "ruby": [
+      {
+        "base": "黒",
+        "ruby": "くろ"
+      }
+    ],
+    "ruby_html": "<ruby>黒<rt>くろ</rt></ruby>",
+    "ruby_text": "[黒|くろ]",
+    "sound_file": "dic_wb_09color_black_1419.mp3",
+    "card_image": "dic_wb_09color_black_1419_1_c.png",
+    "card_image_kana": "dic_wb_09color_black_1419_1_c.png",
+    "card_image_en": "dic_wb_09color_black_1419_1_e.png",
+    "card_image_bilingual": "dic_wb_09color_black_1419_1_ce.png",
+    "card_variants": [
+      "dic_wb_09color_black_1419_1.png"
+    ],
+    "token": "dic_wb_09color_black_1419&dic_wb_09color_black_1419&dic_wb_09color_black_1419",
+    "grades": [
+      "ES_G3",
+      "ES_G4",
+      "ES_G5"
+    ],
+    "themes": [
+      "I like blue. すきなものをつたえよう"
+    ],
+    "target_sentences": [
+      "Q: What color do you like? / A: I like black."
+    ],
+    "tags": [
+      "basic",
+      "color"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u03_08_black_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u03_08_black_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u03_08_black_text.png",
+    "lemma": "black",
+    "is_plural": false,
+    "letter_count": 5,
+    "syllable_count": 1,
+    "first_letter": "B",
+    "is_compound": false,
+    "phonics_initial": "bl",
+    "difficulty_tier": 1,
+    "primary_image": "dic_wb_09color_black_1419_1_c.png",
+    "primary_audio": "dic_wb_09color_black_1419.mp3",
+    "three_hints": {
+      "category_hint": "It is a color.",
+      "feature_hint": "In Japanese, this color is called '黒' (くろ).",
+      "letter_hint": "It starts with the letter B."
+    },
+    "target_dialogues": [
+      {
+        "question": "What color do you like?",
+        "answer": "I like black.",
+        "context": "Expressing favorite colors"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_wb_09color_black_1419_1_c.png",
+        "sound_file": "dic_wb_09color_black_1419.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_wb_09color_black_1419_1_ce.png",
+        "card_bw": "dic_wb_09color_black_1419_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_wb_09color_black_1419_1_c.png",
+        "sound_file": "dic_wb_09color_black_1419.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_wb_09color_black_1419_1_ce.png",
+        "card_bw": "dic_wb_09color_black_1419_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u03_08_black_illust.png",
+        "card_full": "cards/full/hwg5_u03_08_black_full.png",
+        "card_text": "cards/text/hwg5_u03_08_black_text.png",
+        "unit": "Unit 3: Unit 3: Colors and Shapes",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_09color_black_1419.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0732",
+    "english": "blue",
+    "canonical_key": "blue",
+    "disambiguation": "",
+    "display_label": "blue",
+    "normalized_english": "blue",
+    "part_of_speech": "noun",
+    "category": "09_color_shape",
+    "category_name": "Colors & Shapes",
+    "ja_kanji": "青",
+    "ja_hiragana": "あお",
+    "en_katakana": "ブルー",
+    "ruby": [
+      {
+        "base": "青",
+        "ruby": "あお"
+      }
+    ],
+    "ruby_html": "<ruby>青<rt>あお</rt></ruby>",
+    "ruby_text": "[青|あお]",
+    "sound_file": "dic_wb_09color_blue_1420.mp3",
+    "card_image": "dic_wb_09color_blue_1420_1_c.png",
+    "card_image_kana": "dic_wb_09color_blue_1420_1_c.png",
+    "card_image_en": "dic_wb_09color_blue_1420_1_e.png",
+    "card_image_bilingual": "dic_wb_09color_blue_1420_1_ce.png",
+    "card_variants": [
+      "dic_wb_09color_blue_1420_1.png"
+    ],
+    "token": "dic_wb_09color_blue_1420&dic_wb_09color_blue_1420&dic_wb_09color_blue_1420",
+    "grades": [
+      "ES_G1",
+      "ES_G3",
+      "ES_G4",
+      "ES_G5"
+    ],
+    "themes": [
+      "Colors",
+      "I like blue. すきなものをつたえよう"
+    ],
+    "target_sentences": [
+      "Q: What color do you like? / A: I like blue."
+    ],
+    "tags": [
+      "basic",
+      "color"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u03_01_blue_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u03_01_blue_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u03_01_blue_text.png",
+    "lemma": "blue",
+    "is_plural": false,
+    "letter_count": 4,
+    "syllable_count": 1,
+    "first_letter": "B",
+    "is_compound": false,
+    "phonics_initial": "bl",
+    "difficulty_tier": 1,
+    "primary_image": "dic_wb_09color_blue_1420_1_c.png",
+    "primary_audio": "dic_wb_09color_blue_1420.mp3",
+    "three_hints": {
+      "category_hint": "It is a color.",
+      "feature_hint": "In Japanese, this color is called '青' (あお).",
+      "letter_hint": "It starts with the letter B."
+    },
+    "target_dialogues": [
+      {
+        "question": "What color do you like?",
+        "answer": "I like blue.",
+        "context": "Expressing favorite colors"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_wb_09color_blue_1420_1_c.png",
+        "sound_file": "dic_wb_09color_blue_1420.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_wb_09color_blue_1420_1_ce.png",
+        "card_bw": "dic_wb_09color_blue_1420_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_wb_09color_blue_1420_1_c.png",
+        "sound_file": "dic_wb_09color_blue_1420.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_wb_09color_blue_1420_1_ce.png",
+        "card_bw": "dic_wb_09color_blue_1420_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u03_01_blue_illust.png",
+        "card_full": "cards/full/hwg5_u03_01_blue_full.png",
+        "card_text": "cards/text/hwg5_u03_01_blue_text.png",
+        "unit": "Unit 3: Unit 3: Colors and Shapes",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_09color_blue_1420.mp3"
+      },
+      "ES_G1": {
+        "card_image": "dic_wb_09color_blue_1420_1_c.png",
+        "sound_file": "dic_wb_09color_blue_1420.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_wb_09color_blue_1420_1_ce.png",
+        "card_bw": "dic_wb_09color_blue_1420_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0733",
+    "english": "brown",
+    "canonical_key": "brown",
+    "disambiguation": "",
+    "display_label": "brown",
+    "normalized_english": "brown",
+    "part_of_speech": "noun",
+    "category": "09_color_shape",
+    "category_name": "Colors & Shapes",
+    "ja_kanji": "茶色",
+    "ja_hiragana": "ちゃいろ",
+    "en_katakana": "ブラウン",
+    "ruby": [
+      {
+        "base": "茶色",
+        "ruby": "ちゃいろ"
+      }
+    ],
+    "ruby_html": "<ruby>茶色<rt>ちゃいろ</rt></ruby>",
+    "ruby_text": "[茶色|ちゃいろ]",
+    "sound_file": "dic_wb_09color_brown_1421.mp3",
+    "card_image": "dic_wb_09color_brown_1421_1_c.png",
+    "card_image_kana": "dic_wb_09color_brown_1421_1_c.png",
+    "card_image_en": "dic_wb_09color_brown_1421_1_e.png",
+    "card_image_bilingual": "dic_wb_09color_brown_1421_1_ce.png",
+    "card_variants": [
+      "dic_wb_09color_brown_1421_1.png"
+    ],
+    "token": "dic_wb_09color_brown_1421&dic_wb_09color_brown_1421&dic_wb_09color_brown_1421",
+    "grades": [
+      "ES_G3",
+      "ES_G5"
+    ],
+    "themes": [
+      "I like blue. すきなものをつたえよう"
+    ],
+    "target_sentences": [
+      "Q: What color do you like? / A: I like brown."
+    ],
+    "tags": [
+      "color"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u03_09_brown_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u03_09_brown_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u03_09_brown_text.png",
+    "lemma": "brown",
+    "is_plural": false,
+    "letter_count": 5,
+    "syllable_count": 1,
+    "first_letter": "B",
+    "is_compound": false,
+    "phonics_initial": "br",
+    "difficulty_tier": 1,
+    "primary_image": "dic_wb_09color_brown_1421_1_c.png",
+    "primary_audio": "dic_wb_09color_brown_1421.mp3",
+    "three_hints": {
+      "category_hint": "It is a color.",
+      "feature_hint": "In Japanese, this color is called '茶色' (ちゃいろ).",
+      "letter_hint": "It starts with the letter B."
+    },
+    "target_dialogues": [
+      {
+        "question": "What color do you like?",
+        "answer": "I like brown.",
+        "context": "Expressing favorite colors"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_wb_09color_brown_1421_1_c.png",
+        "sound_file": "dic_wb_09color_brown_1421.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_wb_09color_brown_1421_1_ce.png",
+        "card_bw": "dic_wb_09color_brown_1421_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u03_09_brown_illust.png",
+        "card_full": "cards/full/hwg5_u03_09_brown_full.png",
+        "card_text": "cards/text/hwg5_u03_09_brown_text.png",
+        "unit": "Unit 3: Unit 3: Colors and Shapes",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_09color_brown_1421.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0734",
+    "english": "circle",
+    "canonical_key": "circle",
+    "disambiguation": "",
+    "display_label": "circle",
+    "normalized_english": "circle",
+    "part_of_speech": "noun",
+    "category": "09_color_shape",
+    "category_name": "Colors & Shapes",
+    "ja_kanji": "丸",
+    "ja_hiragana": "まる",
+    "en_katakana": "サークル",
+    "ruby": [
+      {
+        "base": "丸",
+        "ruby": "まる"
+      }
+    ],
+    "ruby_html": "<ruby>丸<rt>まる</rt></ruby>",
+    "ruby_text": "[丸|まる]",
+    "sound_file": "dic_wb_09color_circle_1429.mp3",
+    "card_image": "dic_wb_09color_circle_1429_1_c.png",
+    "card_image_kana": "dic_wb_09color_circle_1429_1_c.png",
+    "card_image_en": "dic_wb_09color_circle_1429_1_e.png",
+    "card_image_bilingual": "dic_wb_09color_circle_1429_1_ce.png",
+    "card_variants": [
+      "dic_wb_09color_circle_1429_1.png",
+      "dic_3_card_circle_2094_1.png",
+      "dic_3_card_circle_2101_1.png",
+      "dic_3_card_circle_2108_1.png",
+      "dic_3_card_circle_2115_1.png"
+    ],
+    "token": "dic_wb_09color_circle_1429&dic_wb_09color_circle_1429&dic_wb_09color_circle_1429",
+    "grades": [
+      "ES_G1",
+      "ES_G2",
+      "ES_G3",
+      "ES_G5"
+    ],
+    "themes": [
+      "Shape",
+      "Shapes"
+    ],
+    "target_sentences": [
+      "Q: What shape is this? / A: It is a circle."
+    ],
+    "tags": [
+      "basic",
+      "shape"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u03_11_circle_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u03_11_circle_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u03_11_circle_text.png",
+    "lemma": "circle",
+    "is_plural": false,
+    "letter_count": 6,
+    "syllable_count": 1,
+    "first_letter": "C",
+    "is_compound": false,
+    "phonics_initial": "c",
+    "difficulty_tier": 1,
+    "primary_image": "dic_wb_09color_circle_1429_1_c.png",
+    "primary_audio": "dic_wb_09color_circle_1429.mp3",
+    "three_hints": {
+      "category_hint": "It is a geometric shape.",
+      "feature_hint": "In Japanese, this shape is called '丸' (まる).",
+      "letter_hint": "It starts with the letter C."
+    },
+    "target_dialogues": [
+      {
+        "question": "What shape is this?",
+        "answer": "It is a circle.",
+        "context": "Identifying shapes"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_circle_2115_1_c.png",
+        "sound_file": "dic_wb_09color_circle_1429.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_circle_2115_1_ce.png",
+        "card_bw": "dic_3_card_circle_2115_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u03_11_circle_illust.png",
+        "card_full": "cards/full/hwg5_u03_11_circle_full.png",
+        "card_text": "cards/text/hwg5_u03_11_circle_text.png",
+        "unit": "Unit 3: Unit 3: Colors and Shapes",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_09color_circle_1429.mp3"
+      },
+      "ES_G1": {
+        "card_image": "dic_wb_09color_circle_1429_1_c.png",
+        "sound_file": "dic_wb_09color_circle_1429.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_wb_09color_circle_1429_1_ce.png",
+        "card_bw": "dic_wb_09color_circle_1429_1.png"
+      },
+      "ES_G2": {
+        "card_image": "dic_wb_09color_circle_1429_1_c.png",
+        "sound_file": "dic_wb_09color_circle_1429.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_wb_09color_circle_1429_1_ce.png",
+        "card_bw": "dic_wb_09color_circle_1429_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0735",
+    "english": "cross",
+    "canonical_key": "cross",
+    "disambiguation": "",
+    "display_label": "cross",
+    "normalized_english": "cross",
+    "part_of_speech": "noun",
+    "category": "09_color_shape",
+    "category_name": "Colors & Shapes",
+    "ja_kanji": "十字",
+    "ja_hiragana": "じゅうじ",
+    "en_katakana": "クロス",
+    "ruby": [
+      {
+        "base": "十字",
+        "ruby": "じゅうじ"
+      }
+    ],
+    "ruby_html": "<ruby>十字<rt>じゅうじ</rt></ruby>",
+    "ruby_text": "[十字|じゅうじ]",
+    "sound_file": "dic_wb_09color_cross_1430.mp3",
+    "card_image": "dic_wb_09color_cross_1430_1_c.png",
+    "card_image_kana": "dic_wb_09color_cross_1430_1_c.png",
+    "card_image_en": "dic_wb_09color_cross_1430_1_e.png",
+    "card_image_bilingual": "dic_wb_09color_cross_1430_1_ce.png",
+    "card_variants": [
+      "dic_wb_09color_cross_1430_1.png"
+    ],
+    "token": "dic_wb_09color_cross_1430&dic_wb_09color_cross_1430&dic_wb_09color_cross_1430",
+    "grades": [
+      "ES_G5"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What shape is this? / A: It is a cross."
+    ],
+    "tags": [
+      "shape"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u03_13_cross_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u03_13_cross_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u03_13_cross_text.png",
+    "lemma": "cross",
+    "is_plural": false,
+    "letter_count": 5,
+    "syllable_count": 1,
+    "first_letter": "C",
+    "is_compound": false,
+    "phonics_initial": "cr",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_09color_cross_1430_1_c.png",
+    "primary_audio": "dic_wb_09color_cross_1430.mp3",
+    "three_hints": {
+      "category_hint": "It is a geometric shape.",
+      "feature_hint": "In Japanese, this shape is called '十字' (じゅうじ).",
+      "letter_hint": "It starts with the letter C."
+    },
+    "target_dialogues": [
+      {
+        "question": "What shape is this?",
+        "answer": "It is a cross.",
+        "context": "Identifying shapes"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u03_13_cross_illust.png",
+        "card_full": "cards/full/hwg5_u03_13_cross_full.png",
+        "card_text": "cards/text/hwg5_u03_13_cross_text.png",
+        "unit": "Unit 3: Unit 3: Colors and Shapes",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_09color_cross_1430.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0736",
+    "english": "diamond",
+    "canonical_key": "diamond",
+    "disambiguation": "",
+    "display_label": "diamond",
+    "normalized_english": "diamond",
+    "part_of_speech": "noun",
+    "category": "09_color_shape",
+    "category_name": "Colors & Shapes",
+    "ja_kanji": "ひし形",
+    "ja_hiragana": "ひしがた",
+    "en_katakana": "ダイアモンド",
+    "ruby": [
+      {
+        "base": "ひし",
+        "ruby": ""
+      },
+      {
+        "base": "形",
+        "ruby": "がた"
+      }
+    ],
+    "ruby_html": "ひし<ruby>形<rt>がた</rt></ruby>",
+    "ruby_text": "ひし[形|がた]",
+    "sound_file": "dic_wb_09color_diamond_1431.mp3",
+    "card_image": "dic_wb_09color_diamond_1431_1_c.png",
+    "card_image_kana": "dic_wb_09color_diamond_1431_1_c.png",
+    "card_image_en": "dic_wb_09color_diamond_1431_1_e.png",
+    "card_image_bilingual": "dic_wb_09color_diamond_1431_1_ce.png",
+    "card_variants": [
+      "dic_wb_09color_diamond_1431_1.png",
+      "dic_3_card_diamond_2099_1.png",
+      "dic_3_card_diamond_2106_1.png",
+      "dic_3_card_diamond_2113_1.png",
+      "dic_3_card_diamond_2120_1.png"
+    ],
+    "token": "dic_wb_09color_diamond_1431&dic_wb_09color_diamond_1431&dic_wb_09color_diamond_1431",
+    "grades": [
+      "ES_G1",
+      "ES_G3",
+      "ES_G5"
+    ],
+    "themes": [
+      "Shape",
+      "This is for you. カードをおくろう"
+    ],
+    "target_sentences": [
+      "Q: What shape is this? / A: It is a diamond."
+    ],
+    "tags": [
+      "shape"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u03_18_diamond_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u03_18_diamond_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u03_18_diamond_text.png",
+    "lemma": "diamond",
+    "is_plural": false,
+    "letter_count": 7,
+    "syllable_count": 2,
+    "first_letter": "D",
+    "is_compound": false,
+    "phonics_initial": "d",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_09color_diamond_1431_1_c.png",
+    "primary_audio": "dic_wb_09color_diamond_1431.mp3",
+    "three_hints": {
+      "category_hint": "It is a geometric shape.",
+      "feature_hint": "In Japanese, this shape is called 'ひし形' (ひしがた).",
+      "letter_hint": "It starts with the letter D."
+    },
+    "target_dialogues": [
+      {
+        "question": "What shape is this?",
+        "answer": "It is a diamond.",
+        "context": "Identifying shapes"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_diamond_2120_1_c.png",
+        "sound_file": "dic_wb_09color_diamond_1431.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_diamond_2120_1_ce.png",
+        "card_bw": "dic_3_card_diamond_2120_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u03_18_diamond_illust.png",
+        "card_full": "cards/full/hwg5_u03_18_diamond_full.png",
+        "card_text": "cards/text/hwg5_u03_18_diamond_text.png",
+        "unit": "Unit 3: Unit 3: Colors and Shapes",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_09color_diamond_1431.mp3"
+      },
+      "ES_G1": {
+        "card_image": "dic_wb_09color_diamond_1431_1_c.png",
+        "sound_file": "dic_wb_09color_diamond_1431.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_wb_09color_diamond_1431_1_ce.png",
+        "card_bw": "dic_wb_09color_diamond_1431_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0737",
+    "english": "green",
+    "canonical_key": "green",
+    "disambiguation": "",
+    "display_label": "green",
+    "normalized_english": "green",
+    "part_of_speech": "noun",
+    "category": "09_color_shape",
+    "category_name": "Colors & Shapes",
+    "ja_kanji": "緑",
+    "ja_hiragana": "みどり",
+    "en_katakana": "グリーン",
+    "ruby": [
+      {
+        "base": "緑",
+        "ruby": "みどり"
+      }
+    ],
+    "ruby_html": "<ruby>緑<rt>みどり</rt></ruby>",
+    "ruby_text": "[緑|みどり]",
+    "sound_file": "dic_wb_09color_green_1422.mp3",
+    "card_image": "dic_wb_09color_green_1422_1_c.png",
+    "card_image_kana": "dic_wb_09color_green_1422_1_c.png",
+    "card_image_en": "dic_wb_09color_green_1422_1_e.png",
+    "card_image_bilingual": "dic_wb_09color_green_1422_1_ce.png",
+    "card_variants": [
+      "dic_wb_09color_green_1422_1.png"
+    ],
+    "token": "dic_wb_09color_green_1422&dic_wb_09color_green_1422&dic_wb_09color_green_1422",
+    "grades": [
+      "ES_G1",
+      "ES_G3",
+      "ES_G4",
+      "ES_G5"
+    ],
+    "themes": [
+      "Colors",
+      "I like blue. すきなものをつたえよう"
+    ],
+    "target_sentences": [
+      "Q: What color do you like? / A: I like green."
+    ],
+    "tags": [
+      "basic",
+      "color"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u03_02_green_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u03_02_green_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u03_02_green_text.png",
+    "lemma": "green",
+    "is_plural": false,
+    "letter_count": 5,
+    "syllable_count": 1,
+    "first_letter": "G",
+    "is_compound": false,
+    "phonics_initial": "gr",
+    "difficulty_tier": 1,
+    "primary_image": "dic_wb_09color_green_1422_1_c.png",
+    "primary_audio": "dic_wb_09color_green_1422.mp3",
+    "three_hints": {
+      "category_hint": "It is a color.",
+      "feature_hint": "In Japanese, this color is called '緑' (みどり).",
+      "letter_hint": "It starts with the letter G."
+    },
+    "target_dialogues": [
+      {
+        "question": "What color do you like?",
+        "answer": "I like green.",
+        "context": "Expressing favorite colors"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_wb_09color_green_1422_1_c.png",
+        "sound_file": "dic_wb_09color_green_1422.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_wb_09color_green_1422_1_ce.png",
+        "card_bw": "dic_wb_09color_green_1422_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_wb_09color_green_1422_1_c.png",
+        "sound_file": "dic_wb_09color_green_1422.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_wb_09color_green_1422_1_ce.png",
+        "card_bw": "dic_wb_09color_green_1422_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u03_02_green_illust.png",
+        "card_full": "cards/full/hwg5_u03_02_green_full.png",
+        "card_text": "cards/text/hwg5_u03_02_green_text.png",
+        "unit": "Unit 3: Unit 3: Colors and Shapes",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_09color_green_1422.mp3"
+      },
+      "ES_G1": {
+        "card_image": "dic_wb_09color_green_1422_1_c.png",
+        "sound_file": "dic_wb_09color_green_1422.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_wb_09color_green_1422_1_ce.png",
+        "card_bw": "dic_wb_09color_green_1422_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0738",
+    "english": "heart",
+    "canonical_key": "heart",
+    "disambiguation": "",
+    "display_label": "heart",
+    "normalized_english": "heart",
+    "part_of_speech": "noun",
+    "category": "09_color_shape",
+    "category_name": "Colors & Shapes",
+    "ja_kanji": "ハート",
+    "ja_hiragana": "はーと",
+    "en_katakana": "ハート",
+    "ruby": [
+      {
+        "base": "ハート",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "ハート",
+    "ruby_text": "ハート",
+    "sound_file": "dic_wb_09color_heart_1432.mp3",
+    "card_image": "dic_wb_09color_heart_1432_1_c.png",
+    "card_image_kana": "dic_wb_09color_heart_1432_1_c.png",
+    "card_image_en": "dic_wb_09color_heart_1432_1_e.png",
+    "card_image_bilingual": "dic_wb_09color_heart_1432_1_ce.png",
+    "card_variants": [
+      "dic_wb_09color_heart_1432_1.png",
+      "dic_3_card_heart_2098_1.png",
+      "dic_3_card_heart_2105_1.png",
+      "dic_3_card_heart_2112_1.png",
+      "dic_3_card_heart_2119_1.png"
+    ],
+    "token": "dic_wb_09color_heart_1432&dic_wb_09color_heart_1432&dic_wb_09color_heart_1432",
+    "grades": [
+      "ES_G1",
+      "ES_G2",
+      "ES_G3",
+      "ES_G5"
+    ],
+    "themes": [
+      "Shape",
+      "Shapes"
+    ],
+    "target_sentences": [
+      "Q: What shape is this? / A: It is a heart."
+    ],
+    "tags": [
+      "shape"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u03_14_heart_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u03_14_heart_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u03_14_heart_text.png",
+    "lemma": "heart",
+    "is_plural": false,
+    "letter_count": 5,
+    "syllable_count": 1,
+    "first_letter": "H",
+    "is_compound": false,
+    "phonics_initial": "h",
+    "difficulty_tier": 1,
+    "primary_image": "dic_wb_09color_heart_1432_1_c.png",
+    "primary_audio": "dic_wb_09color_heart_1432.mp3",
+    "three_hints": {
+      "category_hint": "It is a geometric shape.",
+      "feature_hint": "In Japanese, this shape is called 'ハート' (はーと).",
+      "letter_hint": "It starts with the letter H."
+    },
+    "target_dialogues": [
+      {
+        "question": "What shape is this?",
+        "answer": "It is a heart.",
+        "context": "Identifying shapes"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_heart_2119_1_c.png",
+        "sound_file": "dic_wb_09color_heart_1432.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_heart_2119_1_ce.png",
+        "card_bw": "dic_3_card_heart_2119_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u03_14_heart_illust.png",
+        "card_full": "cards/full/hwg5_u03_14_heart_full.png",
+        "card_text": "cards/text/hwg5_u03_14_heart_text.png",
+        "unit": "Unit 3: Unit 3: Colors and Shapes",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_09color_heart_1432.mp3"
+      },
+      "ES_G1": {
+        "card_image": "dic_wb_09color_heart_1432_1_c.png",
+        "sound_file": "dic_wb_09color_heart_1432.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_wb_09color_heart_1432_1_ce.png",
+        "card_bw": "dic_wb_09color_heart_1432_1.png"
+      },
+      "ES_G2": {
+        "card_image": "dic_wb_09color_heart_1432_1_c.png",
+        "sound_file": "dic_wb_09color_heart_1432.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_wb_09color_heart_1432_1_ce.png",
+        "card_bw": "dic_wb_09color_heart_1432_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0739",
+    "english": "orange",
+    "canonical_key": "orange_color",
+    "disambiguation": "color",
+    "display_label": "orange (color)",
+    "normalized_english": "orange",
+    "part_of_speech": "noun",
+    "category": "09_color_shape",
+    "category_name": "Colors & Shapes",
+    "ja_kanji": "オレンジ色",
+    "ja_hiragana": "おれんじいろ",
+    "en_katakana": "オレンジ",
+    "ruby": [
+      {
+        "base": "オレンジ",
+        "ruby": ""
+      },
+      {
+        "base": "色",
+        "ruby": "いろ"
+      }
+    ],
+    "ruby_html": "オレンジ<ruby>色<rt>いろ</rt></ruby>",
+    "ruby_text": "オレンジ[色|いろ]",
+    "sound_file": "dic_wb_03fooddrink_orange_1151.mp3",
+    "card_image": "dic_wb_09color_orange_1423_1_c.png",
+    "card_image_kana": "dic_wb_09color_orange_1423_1_c.png",
+    "card_image_en": "dic_wb_09color_orange_1423_1_e.png",
+    "card_image_bilingual": "dic_wb_09color_orange_1423_1_ce.png",
+    "card_variants": [
+      "dic_wb_09color_orange_1423_1.png"
+    ],
+    "token": "dic_wb_09color_orange_1423&dic_wb_03fooddrink_orange_1151&dic_wb_09color_orange_1423",
+    "grades": [
+      "ES_G3",
+      "ES_G4",
+      "ES_G5"
+    ],
+    "themes": [
+      "How many? 数えてあそぼう",
+      "I like blue. すきなものをつたえよう"
+    ],
+    "target_sentences": [
+      "Q: What color do you like? / A: I like orange."
+    ],
+    "tags": [
+      "color"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u03_06_orange_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u03_06_orange_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u03_06_orange_text.png",
+    "lemma": "orange",
+    "is_plural": false,
+    "letter_count": 6,
+    "syllable_count": 2,
+    "first_letter": "O",
+    "is_compound": false,
+    "phonics_initial": "o",
+    "difficulty_tier": 1,
+    "primary_image": "dic_wb_09color_orange_1423_1_c.png",
+    "primary_audio": "dic_wb_03fooddrink_orange_1151.mp3",
+    "three_hints": {
+      "category_hint": "It is a color.",
+      "feature_hint": "In Japanese, this color is called 'オレンジ色' (おれんじいろ).",
+      "letter_hint": "It starts with the letter O."
+    },
+    "target_dialogues": [
+      {
+        "question": "What color do you like?",
+        "answer": "I like orange.",
+        "context": "Expressing favorite colors"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_wb_03fooddrink_orange_1151_1_c.png",
+        "sound_file": "dic_wb_03fooddrink_orange_1151.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_wb_03fooddrink_orange_1151_1_ce.png",
+        "card_bw": "dic_wb_03fooddrink_orange_1151_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_wb_03fooddrink_orange_1151_1_c.png",
+        "sound_file": "dic_wb_03fooddrink_orange_1151.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_wb_03fooddrink_orange_1151_1_ce.png",
+        "card_bw": "dic_wb_03fooddrink_orange_1151_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u03_06_orange_illust.png",
+        "card_full": "cards/full/hwg5_u03_06_orange_full.png",
+        "card_text": "cards/text/hwg5_u03_06_orange_text.png",
+        "unit": "Unit 3: Unit 3: Colors and Shapes",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_03fooddrink_orange_1151.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0740",
+    "english": "pink",
+    "canonical_key": "pink",
+    "disambiguation": "",
+    "display_label": "pink",
+    "normalized_english": "pink",
+    "part_of_speech": "noun",
+    "category": "09_color_shape",
+    "category_name": "Colors & Shapes",
+    "ja_kanji": "ピンク",
+    "ja_hiragana": "ぴんく",
+    "en_katakana": "ピンク",
+    "ruby": [
+      {
+        "base": "ピンク",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "ピンク",
+    "ruby_text": "ピンク",
+    "sound_file": "dic_wb_09color_pink_1424.mp3",
+    "card_image": "dic_wb_09color_pink_1424_1_c.png",
+    "card_image_kana": "dic_wb_09color_pink_1424_1_c.png",
+    "card_image_en": "dic_wb_09color_pink_1424_1_e.png",
+    "card_image_bilingual": "dic_wb_09color_pink_1424_1_ce.png",
+    "card_variants": [
+      "dic_wb_09color_pink_1424_1.png"
+    ],
+    "token": "dic_wb_09color_pink_1424&dic_wb_09color_pink_1424&dic_wb_09color_pink_1424",
+    "grades": [
+      "ES_G1",
+      "ES_G3",
+      "ES_G4",
+      "ES_G5"
+    ],
+    "themes": [
+      "Colors",
+      "I like blue. すきなものをつたえよう"
+    ],
+    "target_sentences": [
+      "Q: What color do you like? / A: I like pink."
+    ],
+    "tags": [
+      "color"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u03_04_pink_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u03_04_pink_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u03_04_pink_text.png",
+    "lemma": "pink",
+    "is_plural": false,
+    "letter_count": 4,
+    "syllable_count": 1,
+    "first_letter": "P",
+    "is_compound": false,
+    "phonics_initial": "p",
+    "difficulty_tier": 1,
+    "primary_image": "dic_wb_09color_pink_1424_1_c.png",
+    "primary_audio": "dic_wb_09color_pink_1424.mp3",
+    "three_hints": {
+      "category_hint": "It is a color.",
+      "feature_hint": "In Japanese, this color is called 'ピンク' (ぴんく).",
+      "letter_hint": "It starts with the letter P."
+    },
+    "target_dialogues": [
+      {
+        "question": "What color do you like?",
+        "answer": "I like pink.",
+        "context": "Expressing favorite colors"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_wb_09color_pink_1424_1_c.png",
+        "sound_file": "dic_wb_09color_pink_1424.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_wb_09color_pink_1424_1_ce.png",
+        "card_bw": "dic_wb_09color_pink_1424_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_wb_09color_pink_1424_1_c.png",
+        "sound_file": "dic_wb_09color_pink_1424.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_wb_09color_pink_1424_1_ce.png",
+        "card_bw": "dic_wb_09color_pink_1424_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u03_04_pink_illust.png",
+        "card_full": "cards/full/hwg5_u03_04_pink_full.png",
+        "card_text": "cards/text/hwg5_u03_04_pink_text.png",
+        "unit": "Unit 3: Unit 3: Colors and Shapes",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_09color_pink_1424.mp3"
+      },
+      "ES_G1": {
+        "card_image": "dic_wb_09color_pink_1424_1_c.png",
+        "sound_file": "dic_wb_09color_pink_1424.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_wb_09color_pink_1424_1_ce.png",
+        "card_bw": "dic_wb_09color_pink_1424_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0741",
+    "english": "purple",
+    "canonical_key": "purple",
+    "disambiguation": "",
+    "display_label": "purple",
+    "normalized_english": "purple",
+    "part_of_speech": "noun",
+    "category": "09_color_shape",
+    "category_name": "Colors & Shapes",
+    "ja_kanji": "紫",
+    "ja_hiragana": "むらさき",
+    "en_katakana": "パープル",
+    "ruby": [
+      {
+        "base": "紫",
+        "ruby": "むらさき"
+      }
+    ],
+    "ruby_html": "<ruby>紫<rt>むらさき</rt></ruby>",
+    "ruby_text": "[紫|むらさき]",
+    "sound_file": "dic_wb_09color_purple_1425.mp3",
+    "card_image": "dic_wb_09color_purple_1425_1_c.png",
+    "card_image_kana": "dic_wb_09color_purple_1425_1_c.png",
+    "card_image_en": "dic_wb_09color_purple_1425_1_e.png",
+    "card_image_bilingual": "dic_wb_09color_purple_1425_1_ce.png",
+    "card_variants": [
+      "dic_wb_09color_purple_1425_1.png"
+    ],
+    "token": "dic_wb_09color_purple_1425&dic_wb_09color_purple_1425&dic_wb_09color_purple_1425",
+    "grades": [
+      "ES_G1",
+      "ES_G3",
+      "ES_G4",
+      "ES_G5"
+    ],
+    "themes": [
+      "Colors",
+      "I like blue. すきなものをつたえよう"
+    ],
+    "target_sentences": [
+      "Q: What color do you like? / A: I like purple."
+    ],
+    "tags": [
+      "color"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u03_07_purple_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u03_07_purple_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u03_07_purple_text.png",
+    "lemma": "purple",
+    "is_plural": false,
+    "letter_count": 6,
+    "syllable_count": 1,
+    "first_letter": "P",
+    "is_compound": false,
+    "phonics_initial": "p",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_09color_purple_1425_1_c.png",
+    "primary_audio": "dic_wb_09color_purple_1425.mp3",
+    "three_hints": {
+      "category_hint": "It is a color.",
+      "feature_hint": "In Japanese, this color is called '紫' (むらさき).",
+      "letter_hint": "It starts with the letter P."
+    },
+    "target_dialogues": [
+      {
+        "question": "What color do you like?",
+        "answer": "I like purple.",
+        "context": "Expressing favorite colors"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_wb_09color_purple_1425_1_c.png",
+        "sound_file": "dic_wb_09color_purple_1425.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_wb_09color_purple_1425_1_ce.png",
+        "card_bw": "dic_wb_09color_purple_1425_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_wb_09color_purple_1425_1_c.png",
+        "sound_file": "dic_wb_09color_purple_1425.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_wb_09color_purple_1425_1_ce.png",
+        "card_bw": "dic_wb_09color_purple_1425_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u03_07_purple_illust.png",
+        "card_full": "cards/full/hwg5_u03_07_purple_full.png",
+        "card_text": "cards/text/hwg5_u03_07_purple_text.png",
+        "unit": "Unit 3: Unit 3: Colors and Shapes",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_09color_purple_1425.mp3"
+      },
+      "ES_G1": {
+        "card_image": "dic_wb_09color_purple_1425_1_c.png",
+        "sound_file": "dic_wb_09color_purple_1425.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_wb_09color_purple_1425_1_ce.png",
+        "card_bw": "dic_wb_09color_purple_1425_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0742",
+    "english": "rectangle",
+    "canonical_key": "rectangle",
+    "disambiguation": "",
+    "display_label": "rectangle",
+    "normalized_english": "rectangle",
+    "part_of_speech": "noun",
+    "category": "09_color_shape",
+    "category_name": "Colors & Shapes",
+    "ja_kanji": "長方形",
+    "ja_hiragana": "ちょうほうけい",
+    "en_katakana": "レクタングル",
+    "ruby": [
+      {
+        "base": "長方形",
+        "ruby": "ちょうほうけい"
+      }
+    ],
+    "ruby_html": "<ruby>長方形<rt>ちょうほうけい</rt></ruby>",
+    "ruby_text": "[長方形|ちょうほうけい]",
+    "sound_file": "dic_wb_09color_rectangle_1433.mp3",
+    "card_image": "dic_wb_09color_rectangle_1433_1_c.png",
+    "card_image_kana": "dic_wb_09color_rectangle_1433_1_c.png",
+    "card_image_en": "dic_wb_09color_rectangle_1433_1_e.png",
+    "card_image_bilingual": "dic_wb_09color_rectangle_1433_1_ce.png",
+    "card_variants": [
+      "dic_wb_09color_rectangle_1433_1.png",
+      "dic_3_card_rectangle_2097_1.png",
+      "dic_3_card_rectangle_2104_1.png",
+      "dic_3_card_rectangle_2111_1.png",
+      "dic_3_card_rectangle_2118_1.png"
+    ],
+    "token": "dic_wb_09color_rectangle_1433&dic_wb_09color_rectangle_1433&dic_wb_09color_rectangle_1433",
+    "grades": [
+      "ES_G2",
+      "ES_G3",
+      "ES_G5"
+    ],
+    "themes": [
+      "Shapes",
+      "This is for you. カードをおくろう"
+    ],
+    "target_sentences": [
+      "Q: What shape is this? / A: It is a rectangle."
+    ],
+    "tags": [
+      "shape"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u03_16_rectangle_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u03_16_rectangle_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u03_16_rectangle_text.png",
+    "lemma": "rectangle",
+    "is_plural": false,
+    "letter_count": 9,
+    "syllable_count": 2,
+    "first_letter": "R",
+    "is_compound": false,
+    "phonics_initial": "r",
+    "difficulty_tier": 3,
+    "primary_image": "dic_wb_09color_rectangle_1433_1_c.png",
+    "primary_audio": "dic_wb_09color_rectangle_1433.mp3",
+    "three_hints": {
+      "category_hint": "It is a geometric shape.",
+      "feature_hint": "In Japanese, this shape is called '長方形' (ちょうほうけい).",
+      "letter_hint": "It starts with the letter R."
+    },
+    "target_dialogues": [
+      {
+        "question": "What shape is this?",
+        "answer": "It is a rectangle.",
+        "context": "Identifying shapes"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_rectangle_2118_1_c.png",
+        "sound_file": "dic_wb_09color_rectangle_1433.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_rectangle_2118_1_ce.png",
+        "card_bw": "dic_3_card_rectangle_2118_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u03_16_rectangle_illust.png",
+        "card_full": "cards/full/hwg5_u03_16_rectangle_full.png",
+        "card_text": "cards/text/hwg5_u03_16_rectangle_text.png",
+        "unit": "Unit 3: Unit 3: Colors and Shapes",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_09color_rectangle_1433.mp3"
+      },
+      "ES_G2": {
+        "card_image": "dic_wb_09color_rectangle_1433_1_c.png",
+        "sound_file": "dic_wb_09color_rectangle_1433.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_wb_09color_rectangle_1433_1_ce.png",
+        "card_bw": "dic_wb_09color_rectangle_1433_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0743",
+    "english": "red",
+    "canonical_key": "red",
+    "disambiguation": "",
+    "display_label": "red",
+    "normalized_english": "red",
+    "part_of_speech": "noun",
+    "category": "09_color_shape",
+    "category_name": "Colors & Shapes",
+    "ja_kanji": "赤",
+    "ja_hiragana": "あか",
+    "en_katakana": "レッド",
+    "ruby": [
+      {
+        "base": "赤",
+        "ruby": "あか"
+      }
+    ],
+    "ruby_html": "<ruby>赤<rt>あか</rt></ruby>",
+    "ruby_text": "[赤|あか]",
+    "sound_file": "dic_wb_09color_red_1426.mp3",
+    "card_image": "dic_wb_09color_red_1426_1_c.png",
+    "card_image_kana": "dic_wb_09color_red_1426_1_c.png",
+    "card_image_en": "dic_wb_09color_red_1426_1_e.png",
+    "card_image_bilingual": "dic_wb_09color_red_1426_1_ce.png",
+    "card_variants": [
+      "dic_wb_09color_red_1426_1.png"
+    ],
+    "token": "dic_wb_09color_red_1426&dic_wb_09color_red_1426&dic_wb_09color_red_1426",
+    "grades": [
+      "ES_G1",
+      "ES_G3",
+      "ES_G4",
+      "ES_G5"
+    ],
+    "themes": [
+      "Colors",
+      "I like blue. すきなものをつたえよう"
+    ],
+    "target_sentences": [
+      "Q: What color do you like? / A: I like red."
+    ],
+    "tags": [
+      "basic",
+      "color"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u03_00_red_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u03_00_red_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u03_00_red_text.png",
+    "lemma": "red",
+    "is_plural": false,
+    "letter_count": 3,
+    "syllable_count": 1,
+    "first_letter": "R",
+    "is_compound": false,
+    "phonics_initial": "r",
+    "difficulty_tier": 1,
+    "primary_image": "dic_wb_09color_red_1426_1_c.png",
+    "primary_audio": "dic_wb_09color_red_1426.mp3",
+    "three_hints": {
+      "category_hint": "It is a color.",
+      "feature_hint": "In Japanese, this color is called '赤' (あか).",
+      "letter_hint": "It starts with the letter R."
+    },
+    "target_dialogues": [
+      {
+        "question": "What color do you like?",
+        "answer": "I like red.",
+        "context": "Expressing favorite colors"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_wb_09color_red_1426_1_c.png",
+        "sound_file": "dic_wb_09color_red_1426.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_wb_09color_red_1426_1_ce.png",
+        "card_bw": "dic_wb_09color_red_1426_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_wb_09color_red_1426_1_c.png",
+        "sound_file": "dic_wb_09color_red_1426.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_wb_09color_red_1426_1_ce.png",
+        "card_bw": "dic_wb_09color_red_1426_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u03_00_red_illust.png",
+        "card_full": "cards/full/hwg5_u03_00_red_full.png",
+        "card_text": "cards/text/hwg5_u03_00_red_text.png",
+        "unit": "Unit 3: Unit 3: Colors and Shapes",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_09color_red_1426.mp3"
+      },
+      "ES_G1": {
+        "card_image": "dic_wb_09color_red_1426_1_c.png",
+        "sound_file": "dic_wb_09color_red_1426.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_wb_09color_red_1426_1_ce.png",
+        "card_bw": "dic_wb_09color_red_1426_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0744",
+    "english": "square",
+    "canonical_key": "square",
+    "disambiguation": "",
+    "display_label": "square",
+    "normalized_english": "square",
+    "part_of_speech": "noun",
+    "category": "09_color_shape",
+    "category_name": "Colors & Shapes",
+    "ja_kanji": "四角",
+    "ja_hiragana": "しかく",
+    "en_katakana": "スクエア",
+    "ruby": [
+      {
+        "base": "四角",
+        "ruby": "しかく"
+      }
+    ],
+    "ruby_html": "<ruby>四角<rt>しかく</rt></ruby>",
+    "ruby_text": "[四角|しかく]",
+    "sound_file": "dic_wb_09color_square_1434.mp3",
+    "card_image": "dic_wb_09color_square_1434_1_c.png",
+    "card_image_kana": "dic_wb_09color_square_1434_1_c.png",
+    "card_image_en": "dic_wb_09color_square_1434_1_e.png",
+    "card_image_bilingual": "dic_wb_09color_square_1434_1_ce.png",
+    "card_variants": [
+      "dic_wb_09color_square_1434_1.png",
+      "dic_3_card_square_2096_1.png",
+      "dic_3_card_square_2103_1.png",
+      "dic_3_card_square_2110_1.png",
+      "dic_3_card_square_2117_1.png"
+    ],
+    "token": "dic_wb_09color_square_1434&dic_wb_09color_square_1434&dic_wb_09color_square_1434",
+    "grades": [
+      "ES_G1",
+      "ES_G2",
+      "ES_G3",
+      "ES_G5"
+    ],
+    "themes": [
+      "Shape",
+      "Shapes"
+    ],
+    "target_sentences": [
+      "Q: What shape is this? / A: It is a square."
+    ],
+    "tags": [
+      "basic",
+      "shape"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u03_15_square_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u03_15_square_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u03_15_square_text.png",
+    "lemma": "square",
+    "is_plural": false,
+    "letter_count": 6,
+    "syllable_count": 1,
+    "first_letter": "S",
+    "is_compound": false,
+    "phonics_initial": "s",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_09color_square_1434_1_c.png",
+    "primary_audio": "dic_wb_09color_square_1434.mp3",
+    "three_hints": {
+      "category_hint": "It is a geometric shape.",
+      "feature_hint": "In Japanese, this shape is called '四角' (しかく).",
+      "letter_hint": "It starts with the letter S."
+    },
+    "target_dialogues": [
+      {
+        "question": "What shape is this?",
+        "answer": "It is a square.",
+        "context": "Identifying shapes"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_square_2117_1_c.png",
+        "sound_file": "dic_wb_09color_square_1434.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_square_2117_1_ce.png",
+        "card_bw": "dic_3_card_square_2117_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u03_15_square_illust.png",
+        "card_full": "cards/full/hwg5_u03_15_square_full.png",
+        "card_text": "cards/text/hwg5_u03_15_square_text.png",
+        "unit": "Unit 3: Unit 3: Colors and Shapes",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_09color_square_1434.mp3"
+      },
+      "ES_G1": {
+        "card_image": "dic_wb_09color_square_1434_1_c.png",
+        "sound_file": "dic_wb_09color_square_1434.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_wb_09color_square_1434_1_ce.png",
+        "card_bw": "dic_wb_09color_square_1434_1.png"
+      },
+      "ES_G2": {
+        "card_image": "dic_wb_09color_square_1434_1_c.png",
+        "sound_file": "dic_wb_09color_square_1434.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_wb_09color_square_1434_1_ce.png",
+        "card_bw": "dic_wb_09color_square_1434_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0745",
+    "english": "star",
+    "canonical_key": "star",
+    "disambiguation": "",
+    "display_label": "star",
+    "normalized_english": "star",
+    "part_of_speech": "noun",
+    "category": "09_color_shape",
+    "category_name": "Colors & Shapes",
+    "ja_kanji": "星",
+    "ja_hiragana": "ほし",
+    "en_katakana": "スター",
+    "ruby": [
+      {
+        "base": "星",
+        "ruby": "ほし"
+      }
+    ],
+    "ruby_html": "<ruby>星<rt>ほし</rt></ruby>",
+    "ruby_text": "[星|ほし]",
+    "sound_file": "dic_wb_09color_star_1435.mp3",
+    "card_image": "dic_wb_09color_star_1435_1_c.png",
+    "card_image_kana": "dic_wb_09color_star_1435_1_c.png",
+    "card_image_en": "dic_wb_09color_star_1435_1_e.png",
+    "card_image_bilingual": "dic_wb_09color_star_1435_1_ce.png",
+    "card_variants": [
+      "dic_wb_09color_star_1435_1.png",
+      "dic_3_card_star_2100_1.png",
+      "dic_3_card_star_2107_1.png",
+      "dic_3_card_star_2114_1.png",
+      "dic_3_card_star_2121_1.png"
+    ],
+    "token": "dic_wb_09color_star_1435&dic_wb_09color_star_1435&dic_wb_09color_star_1435",
+    "grades": [
+      "ES_G2",
+      "ES_G3",
+      "ES_G5"
+    ],
+    "themes": [
+      "Shapes",
+      "This is for you. カードをおくろう"
+    ],
+    "target_sentences": [
+      "Q: What shape is this? / A: It is a star."
+    ],
+    "tags": [
+      "shape"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u03_17_star_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u03_17_star_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u03_17_star_text.png",
+    "lemma": "star",
+    "is_plural": false,
+    "letter_count": 4,
+    "syllable_count": 1,
+    "first_letter": "S",
+    "is_compound": false,
+    "phonics_initial": "st",
+    "difficulty_tier": 1,
+    "primary_image": "dic_wb_09color_star_1435_1_c.png",
+    "primary_audio": "dic_wb_09color_star_1435.mp3",
+    "three_hints": {
+      "category_hint": "It is a geometric shape.",
+      "feature_hint": "In Japanese, this shape is called '星' (ほし).",
+      "letter_hint": "It starts with the letter S."
+    },
+    "target_dialogues": [
+      {
+        "question": "What shape is this?",
+        "answer": "It is a star.",
+        "context": "Identifying shapes"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_star_2121_1_c.png",
+        "sound_file": "dic_wb_09color_star_1435.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_star_2121_1_ce.png",
+        "card_bw": "dic_3_card_star_2121_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u03_17_star_illust.png",
+        "card_full": "cards/full/hwg5_u03_17_star_full.png",
+        "card_text": "cards/text/hwg5_u03_17_star_text.png",
+        "unit": "Unit 3: Unit 3: Colors and Shapes",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_09color_star_1435.mp3"
+      },
+      "ES_G2": {
+        "card_image": "dic_wb_09color_star_1435_1_c.png",
+        "sound_file": "dic_wb_09color_star_1435.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_wb_09color_star_1435_1_ce.png",
+        "card_bw": "dic_wb_09color_star_1435_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0746",
+    "english": "triangle",
+    "canonical_key": "triangle",
+    "disambiguation": "",
+    "display_label": "triangle",
+    "normalized_english": "triangle",
+    "part_of_speech": "noun",
+    "category": "09_color_shape",
+    "category_name": "Colors & Shapes",
+    "ja_kanji": "三角",
+    "ja_hiragana": "さんかく",
+    "en_katakana": "トライアングル",
+    "ruby": [
+      {
+        "base": "三角",
+        "ruby": "さんかく"
+      }
+    ],
+    "ruby_html": "<ruby>三角<rt>さんかく</rt></ruby>",
+    "ruby_text": "[三角|さんかく]",
+    "sound_file": "dic_wb_09color_triangle_1436.mp3",
+    "card_image": "dic_wb_09color_triangle_1436_1_c.png",
+    "card_image_kana": "dic_wb_09color_triangle_1436_1_c.png",
+    "card_image_en": "dic_wb_09color_triangle_1436_1_e.png",
+    "card_image_bilingual": "dic_wb_09color_triangle_1436_1_ce.png",
+    "card_variants": [
+      "dic_wb_09color_triangle_1436_1.png",
+      "dic_3_card_triangle_2095_1.png",
+      "dic_3_card_triangle_2102_1.png",
+      "dic_3_card_triangle_2109_1.png",
+      "dic_3_card_triangle_2116_1.png"
+    ],
+    "token": "dic_wb_09color_triangle_1436&dic_wb_09color_triangle_1436&dic_wb_09color_triangle_1436",
+    "grades": [
+      "ES_G1",
+      "ES_G2",
+      "ES_G3",
+      "ES_G5"
+    ],
+    "themes": [
+      "Shape",
+      "Shapes"
+    ],
+    "target_sentences": [
+      "Q: What shape is this? / A: It is a triangle."
+    ],
+    "tags": [
+      "basic",
+      "shape"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u03_12_triangle_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u03_12_triangle_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u03_12_triangle_text.png",
+    "lemma": "triangle",
+    "is_plural": false,
+    "letter_count": 8,
+    "syllable_count": 1,
+    "first_letter": "T",
+    "is_compound": false,
+    "phonics_initial": "tr",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_09color_triangle_1436_1_c.png",
+    "primary_audio": "dic_wb_09color_triangle_1436.mp3",
+    "three_hints": {
+      "category_hint": "It is a geometric shape.",
+      "feature_hint": "In Japanese, this shape is called '三角' (さんかく).",
+      "letter_hint": "It starts with the letter T."
+    },
+    "target_dialogues": [
+      {
+        "question": "What shape is this?",
+        "answer": "It is a triangle.",
+        "context": "Identifying shapes"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_triangle_2116_1_c.png",
+        "sound_file": "dic_wb_09color_triangle_1436.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_triangle_2116_1_ce.png",
+        "card_bw": "dic_3_card_triangle_2116_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u03_12_triangle_illust.png",
+        "card_full": "cards/full/hwg5_u03_12_triangle_full.png",
+        "card_text": "cards/text/hwg5_u03_12_triangle_text.png",
+        "unit": "Unit 3: Unit 3: Colors and Shapes",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_09color_triangle_1436.mp3"
+      },
+      "ES_G1": {
+        "card_image": "dic_wb_09color_triangle_1436_1_c.png",
+        "sound_file": "dic_wb_09color_triangle_1436.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_wb_09color_triangle_1436_1_ce.png",
+        "card_bw": "dic_wb_09color_triangle_1436_1.png"
+      },
+      "ES_G2": {
+        "card_image": "dic_wb_09color_triangle_1436_1_c.png",
+        "sound_file": "dic_wb_09color_triangle_1436.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_wb_09color_triangle_1436_1_ce.png",
+        "card_bw": "dic_wb_09color_triangle_1436_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0747",
+    "english": "white",
+    "canonical_key": "white",
+    "disambiguation": "",
+    "display_label": "white",
+    "normalized_english": "white",
+    "part_of_speech": "noun",
+    "category": "09_color_shape",
+    "category_name": "Colors & Shapes",
+    "ja_kanji": "白",
+    "ja_hiragana": "しろ",
+    "en_katakana": "ホワイト",
+    "ruby": [
+      {
+        "base": "白",
+        "ruby": "しろ"
+      }
+    ],
+    "ruby_html": "<ruby>白<rt>しろ</rt></ruby>",
+    "ruby_text": "[白|しろ]",
+    "sound_file": "dic_wb_09color_white_1427.mp3",
+    "card_image": "dic_wb_09color_white_1427_1_c.png",
+    "card_image_kana": "dic_wb_09color_white_1427_1_c.png",
+    "card_image_en": "dic_wb_09color_white_1427_1_e.png",
+    "card_image_bilingual": "dic_wb_09color_white_1427_1_ce.png",
+    "card_variants": [
+      "dic_wb_09color_white_1427_1.png"
+    ],
+    "token": "dic_wb_09color_white_1427&dic_wb_09color_white_1427&dic_wb_09color_white_1427",
+    "grades": [
+      "ES_G3",
+      "ES_G5"
+    ],
+    "themes": [
+      "I like blue. すきなものをつたえよう"
+    ],
+    "target_sentences": [
+      "Q: What color do you like? / A: I like white."
+    ],
+    "tags": [
+      "basic",
+      "color"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u03_05_white_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u03_05_white_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u03_05_white_text.png",
+    "lemma": "white",
+    "is_plural": false,
+    "letter_count": 5,
+    "syllable_count": 1,
+    "first_letter": "W",
+    "is_compound": false,
+    "phonics_initial": "wh",
+    "difficulty_tier": 1,
+    "primary_image": "dic_wb_09color_white_1427_1_c.png",
+    "primary_audio": "dic_wb_09color_white_1427.mp3",
+    "three_hints": {
+      "category_hint": "It is a color.",
+      "feature_hint": "In Japanese, this color is called '白' (しろ).",
+      "letter_hint": "It starts with the letter W."
+    },
+    "target_dialogues": [
+      {
+        "question": "What color do you like?",
+        "answer": "I like white.",
+        "context": "Expressing favorite colors"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_wb_09color_white_1427_1_c.png",
+        "sound_file": "dic_wb_09color_white_1427.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_wb_09color_white_1427_1_ce.png",
+        "card_bw": "dic_wb_09color_white_1427_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u03_05_white_illust.png",
+        "card_full": "cards/full/hwg5_u03_05_white_full.png",
+        "card_text": "cards/text/hwg5_u03_05_white_text.png",
+        "unit": "Unit 3: Unit 3: Colors and Shapes",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_09color_white_1427.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0748",
+    "english": "yellow",
+    "canonical_key": "yellow",
+    "disambiguation": "",
+    "display_label": "yellow",
+    "normalized_english": "yellow",
+    "part_of_speech": "noun",
+    "category": "09_color_shape",
+    "category_name": "Colors & Shapes",
+    "ja_kanji": "黄色",
+    "ja_hiragana": "きいろ",
+    "en_katakana": "イエロー",
+    "ruby": [
+      {
+        "base": "黄色",
+        "ruby": "きいろ"
+      }
+    ],
+    "ruby_html": "<ruby>黄色<rt>きいろ</rt></ruby>",
+    "ruby_text": "[黄色|きいろ]",
+    "sound_file": "dic_wb_09color_yellow_1428.mp3",
+    "card_image": "dic_wb_09color_yellow_1428_1_c.png",
+    "card_image_kana": "dic_wb_09color_yellow_1428_1_c.png",
+    "card_image_en": "dic_wb_09color_yellow_1428_1_e.png",
+    "card_image_bilingual": "dic_wb_09color_yellow_1428_1_ce.png",
+    "card_variants": [
+      "dic_wb_09color_yellow_1428_1.png"
+    ],
+    "token": "dic_wb_09color_yellow_1428&dic_wb_09color_yellow_1428&dic_wb_09color_yellow_1428",
+    "grades": [
+      "ES_G1",
+      "ES_G3",
+      "ES_G4",
+      "ES_G5"
+    ],
+    "themes": [
+      "Colors",
+      "I like blue. すきなものをつたえよう"
+    ],
+    "target_sentences": [
+      "Q: What color do you like? / A: I like yellow."
+    ],
+    "tags": [
+      "basic",
+      "color"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u03_03_yellow_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u03_03_yellow_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u03_03_yellow_text.png",
+    "lemma": "yellow",
+    "is_plural": false,
+    "letter_count": 6,
+    "syllable_count": 2,
+    "first_letter": "Y",
+    "is_compound": false,
+    "phonics_initial": "y",
+    "difficulty_tier": 1,
+    "primary_image": "dic_wb_09color_yellow_1428_1_c.png",
+    "primary_audio": "dic_wb_09color_yellow_1428.mp3",
+    "three_hints": {
+      "category_hint": "It is a color.",
+      "feature_hint": "In Japanese, this color is called '黄色' (きいろ).",
+      "letter_hint": "It starts with the letter Y."
+    },
+    "target_dialogues": [
+      {
+        "question": "What color do you like?",
+        "answer": "I like yellow.",
+        "context": "Expressing favorite colors"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_wb_09color_yellow_1428_1_c.png",
+        "sound_file": "dic_wb_09color_yellow_1428.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_wb_09color_yellow_1428_1_ce.png",
+        "card_bw": "dic_wb_09color_yellow_1428_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_wb_09color_yellow_1428_1_c.png",
+        "sound_file": "dic_wb_09color_yellow_1428.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_wb_09color_yellow_1428_1_ce.png",
+        "card_bw": "dic_wb_09color_yellow_1428_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u03_03_yellow_illust.png",
+        "card_full": "cards/full/hwg5_u03_03_yellow_full.png",
+        "card_text": "cards/text/hwg5_u03_03_yellow_text.png",
+        "unit": "Unit 3: Unit 3: Colors and Shapes",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_09color_yellow_1428.mp3"
+      },
+      "ES_G1": {
+        "card_image": "dic_wb_09color_yellow_1428_1_c.png",
+        "sound_file": "dic_wb_09color_yellow_1428.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_wb_09color_yellow_1428_1_ce.png",
+        "card_bw": "dic_wb_09color_yellow_1428_1.png"
+      }
+    }
+  }
+]

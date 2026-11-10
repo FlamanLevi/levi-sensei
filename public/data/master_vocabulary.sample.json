@@ -1,0 +1,449 @@
+[
+  {
+    "id": "word_0001",
+    "english": "A",
+    "disambiguation": "uppercase",
+    "display_label": "A (uppercase)",
+    "part_of_speech": "alphabet",
+    "category": "16_alphabet",
+    "ja_kanji": "A",
+    "ja_hiragana": "えー",
+    "en_katakana": "エイ",
+    "ruby": [
+      {
+        "base": "A",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "sound_suite/letstry/word_0001/letstry_word_0001_a_jenny.mp3",
+    "card_image": "dic_3_card_a_2068_1_c.svg",
+    "grades": [
+      "ES_G3",
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What letter is this? / A: It is the letter A."
+    ],
+    "tags": [
+      "alphabet",
+      "letter",
+      "uppercase"
+    ],
+    "lemma": "A",
+    "is_plural": false,
+    "syllable_count": 1,
+    "is_compound": false,
+    "difficulty_tier": 1,
+    "primary_image": "dic_3_card_a_2068_1_c.svg",
+    "primary_audio": "sound_suite/letstry/word_0001/letstry_word_0001_a_jenny.mp3",
+    "three_hints": {
+      "category_hint": "It is a letter of the English alphabet.",
+      "feature_hint": "It is letter number 1 of the 26 English alphabet letters.",
+      "letter_hint": "It is the uppercase letter A."
+    },
+    "target_dialogues": [
+      {
+        "question": "What letter is this?",
+        "answer": "It is the letter A.",
+        "context": "Identifying English alphabet letters"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_a_2068_1_c.svg",
+        "sound_file": "dic_3_card_a_2068.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_a_2068_1_ce.svg",
+        "card_bw": "dic_3_card_a_2068_1.png",
+        "unit": "Unit 6: ALPHABET (アルファベットとなかよし)"
+      },
+      "ES_G4": {
+        "card_image": "dic_3_card_a_2068_1_c.svg",
+        "sound_file": "dic_3_card_a_2068.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_3_card_a_2068_1_ce.svg",
+        "card_bw": "dic_3_card_a_2068_1.png",
+        "unit": "Unit 2: Let's play cards. (アルファベットで絵をかこう)"
+      }
+    },
+    "audio_suite": {
+      "jenny": "sound_suite/letstry/word_0001/letstry_word_0001_a_jenny.mp3",
+      "andrew": "sound_suite/letstry/word_0001/letstry_word_0001_a_andrew.mp3",
+      "ana": "sound_suite/letstry/word_0001/letstry_word_0001_a_ana.mp3",
+      "ja": "sound_suite/letstry/word_0001/letstry_word_0001_a_nanami.mp3"
+    }
+  },
+  {
+    "id": "word_0003",
+    "english": "actor",
+    "disambiguation": "",
+    "display_label": "actor",
+    "part_of_speech": "noun",
+    "category": "06_facility",
+    "ja_kanji": "俳優",
+    "ja_hiragana": "はいゆう",
+    "en_katakana": "アクター",
+    "ruby": [
+      {
+        "base": "俳優",
+        "ruby": "はいゆう"
+      }
+    ],
+    "sound_file": "sound_suite/hwg/word_0003/hwg_word_0003_actor_jenny.mp3",
+    "card_image": "cards/full/hwg5_u17_00_actor_full.png",
+    "grades": [
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What do you want to be in the future? / A: I want to be an actor."
+    ],
+    "tags": [
+      "job"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u17_00_actor_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u17_00_actor_illust.webp",
+    "hwg_card_text": "cards/text/hwg5_u17_00_actor_text.png",
+    "lemma": "actor",
+    "is_plural": false,
+    "syllable_count": 2,
+    "is_compound": false,
+    "difficulty_tier": 3,
+    "primary_image": "cards/full/hwg5_u17_00_actor_full.png",
+    "primary_audio": "sound_suite/hwg/word_0003/hwg_word_0003_actor_jenny.mp3",
+    "three_hints": {
+      "category_hint": "It is an occupation or dream job.",
+      "feature_hint": "A profession known as '俳優' (はいゆう) in Japanese.",
+      "letter_hint": "It starts with the letter A."
+    },
+    "target_dialogues": [
+      {
+        "question": "What do you want to be in the future?",
+        "answer": "I want to be an actor.",
+        "context": "Talking about future dreams and professions"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u17_00_actor_illust.webp",
+        "card_full": "cards/full/hwg5_u17_00_actor_full.png",
+        "card_text": "cards/text/hwg5_u17_00_actor_text.png",
+        "unit": "Unit 17: Jobs",
+        "source": "here_we_go_5",
+        "sound_file": ""
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u15_00_actor_illust.webp",
+        "card_full": "cards/full/hwg6_u15_00_actor_full.png",
+        "card_text": "cards/text/hwg6_u15_00_actor_text.png",
+        "unit": "Unit 15: Jobs",
+        "source": "here_we_go_6",
+        "sound_file": ""
+      }
+    },
+    "audio_suite": {
+      "jenny": "sound_suite/hwg/word_0003/hwg_word_0003_actor_jenny.mp3",
+      "andrew": "sound_suite/hwg/word_0003/hwg_word_0003_actor_andrew.mp3",
+      "ana": "sound_suite/hwg/word_0003/hwg_word_0003_actor_ana.mp3",
+      "ja": "sound_suite/hwg/word_0003/hwg_word_0003_actor_nanami.mp3"
+    }
+  },
+  {
+    "id": "word_0005",
+    "english": "angry",
+    "disambiguation": "",
+    "display_label": "angry",
+    "part_of_speech": "adjective",
+    "category": "02_state",
+    "ja_kanji": "怒った",
+    "ja_hiragana": "おこった",
+    "en_katakana": "アングリー",
+    "ruby": [
+      {
+        "base": "怒",
+        "ruby": "おこ"
+      },
+      {
+        "base": "った",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "sound_suite/hwg/word_0005/hwg_word_0005_angry_jenny.mp3",
+    "card_image": "cards/full/hwg5_u01_09_angry_full.png",
+    "grades": [
+      "ES_G5"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: How are you today? / A: I am angry."
+    ],
+    "tags": [
+      "feeling"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u01_09_angry_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u01_09_angry_illust.webp",
+    "hwg_card_text": "cards/text/hwg5_u01_09_angry_text.png",
+    "lemma": "angry",
+    "is_plural": false,
+    "syllable_count": 2,
+    "is_compound": false,
+    "difficulty_tier": 2,
+    "primary_image": "cards/full/hwg5_u01_09_angry_full.png",
+    "primary_audio": "sound_suite/hwg/word_0005/hwg_word_0005_angry_jenny.mp3",
+    "three_hints": {
+      "category_hint": "It is a feeling or emotion.",
+      "feature_hint": "A feeling meaning '怒った' (おこった) in Japanese.",
+      "letter_hint": "It starts with the letter A."
+    },
+    "target_dialogues": [
+      {
+        "question": "How are you today?",
+        "answer": "I am angry.",
+        "context": "Expressing feelings and emotions"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u01_09_angry_illust.webp",
+        "card_full": "cards/full/hwg5_u01_09_angry_full.png",
+        "card_text": "cards/text/hwg5_u01_09_angry_text.png",
+        "unit": "Unit 1: Feelings",
+        "source": "here_we_go_5",
+        "sound_file": ""
+      }
+    },
+    "audio_suite": {
+      "jenny": "sound_suite/hwg/word_0005/hwg_word_0005_angry_jenny.mp3",
+      "andrew": "sound_suite/hwg/word_0005/hwg_word_0005_angry_andrew.mp3",
+      "ana": "sound_suite/hwg/word_0005/hwg_word_0005_angry_ana.mp3",
+      "ja": "sound_suite/hwg/word_0005/hwg_word_0005_angry_nanami.mp3"
+    }
+  },
+  {
+    "id": "word_0012",
+    "english": "ate",
+    "disambiguation": "",
+    "display_label": "ate",
+    "part_of_speech": "verb",
+    "category": "01_action",
+    "ja_kanji": "食べた",
+    "ja_hiragana": "たべた",
+    "en_katakana": "エイト",
+    "ruby": [
+      {
+        "base": "食",
+        "ruby": "た"
+      },
+      {
+        "base": "べた",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "sound_suite/hwg/word_0012/hwg_word_0012_ate_jenny.mp3",
+    "card_image": "cards/full/hwg6_u06_03_ate_full.png",
+    "grades": [
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Can you ate? / A: Yes, I can ate."
+    ],
+    "tags": [
+      "past_verb"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u06_03_ate_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u06_03_ate_illust.webp",
+    "hwg_card_text": "cards/text/hwg6_u06_03_ate_text.png",
+    "lemma": "ate",
+    "is_plural": false,
+    "syllable_count": 1,
+    "is_compound": false,
+    "difficulty_tier": 3,
+    "primary_image": "cards/full/hwg6_u06_03_ate_full.png",
+    "primary_audio": "sound_suite/hwg/word_0012/hwg_word_0012_ate_jenny.mp3",
+    "three_hints": {
+      "category_hint": "It is an action or movement.",
+      "feature_hint": "A verb meaning '食べた' (たべた) in Japanese.",
+      "letter_hint": "It starts with the letter A."
+    },
+    "target_dialogues": [
+      {
+        "question": "Can you ate?",
+        "answer": "Yes, I can ate.",
+        "context": "Asking about abilities and actions"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u06_03_ate_illust.webp",
+        "card_full": "cards/full/hwg6_u06_03_ate_full.png",
+        "card_text": "cards/text/hwg6_u06_03_ate_text.png",
+        "unit": "Unit 6: Actions",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_01action_ate_1052.mp3"
+      }
+    },
+    "audio_suite": {
+      "jenny": "sound_suite/hwg/word_0012/hwg_word_0012_ate_jenny.mp3",
+      "andrew": "sound_suite/hwg/word_0012/hwg_word_0012_ate_andrew.mp3",
+      "ana": "sound_suite/hwg/word_0012/hwg_word_0012_ate_ana.mp3",
+      "ja": "sound_suite/hwg/word_0012/hwg_word_0012_ate_nanami.mp3"
+    }
+  },
+  {
+    "id": "word_0020",
+    "english": "balloon",
+    "disambiguation": "",
+    "display_label": "balloon",
+    "part_of_speech": "noun",
+    "category": "15_festalday",
+    "ja_kanji": "風船",
+    "ja_hiragana": "ふうせん",
+    "en_katakana": "バルーン",
+    "ruby": [
+      {
+        "base": "風船",
+        "ruby": "ふうせん"
+      }
+    ],
+    "sound_file": "sound_suite/hwg/word_0020/hwg_word_0020_balloon_jenny.mp3",
+    "card_image": "cards/full/hwg5_u12_29_balloon_full.png",
+    "grades": [
+      "ES_G3",
+      "ES_G5"
+    ],
+    "themes": [
+      "This is for you. カードをおくろう"
+    ],
+    "target_sentences": [
+      "Q: What do you do on balloon? / A: We have fun and celebrate balloon."
+    ],
+    "tags": [
+      "item",
+      "toy"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u12_29_balloon_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u12_29_balloon_illust.webp",
+    "hwg_card_text": "cards/text/hwg5_u12_29_balloon_text.png",
+    "lemma": "balloon",
+    "is_plural": false,
+    "syllable_count": 2,
+    "is_compound": false,
+    "difficulty_tier": 2,
+    "primary_image": "cards/full/hwg5_u12_29_balloon_full.png",
+    "primary_audio": "sound_suite/hwg/word_0020/hwg_word_0020_balloon_jenny.mp3",
+    "three_hints": {
+      "category_hint": "It is a holiday, festival, or celebration.",
+      "feature_hint": "A special event known as '風船' (ふうせん) in Japanese.",
+      "letter_hint": "It starts with the letter B."
+    },
+    "target_dialogues": [
+      {
+        "question": "What do you do on balloon?",
+        "answer": "We have fun and celebrate balloon.",
+        "context": "Talking about holidays and festivals"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_balloon_2199_1_c.webp",
+        "sound_file": "",
+        "source": "lets_try_dictionary",
+        "unit": "Unit 7: This is for you. (カードをおくろう)"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u12_29_balloon_illust.webp",
+        "card_full": "cards/full/hwg5_u12_29_balloon_full.png",
+        "card_text": "cards/text/hwg5_u12_29_balloon_text.png",
+        "unit": "Unit 12: Things Around You",
+        "source": "here_we_go_5",
+        "sound_file": ""
+      }
+    },
+    "audio_suite": {
+      "jenny": "sound_suite/hwg/word_0020/hwg_word_0020_balloon_jenny.mp3",
+      "andrew": "sound_suite/hwg/word_0020/hwg_word_0020_balloon_andrew.mp3",
+      "ana": "sound_suite/hwg/word_0020/hwg_word_0020_balloon_ana.mp3",
+      "ja": "sound_suite/hwg/word_0020/hwg_word_0020_balloon_nanami.mp3"
+    }
+  },
+  {
+    "id": "word_0023",
+    "english": "bath time",
+    "disambiguation": "",
+    "display_label": "bath time",
+    "part_of_speech": "phrase",
+    "category": "10_calendar_time",
+    "ja_kanji": "お風呂の時間",
+    "ja_hiragana": "おふろのじかん",
+    "en_katakana": "バスタイム",
+    "ruby": [
+      {
+        "base": "お",
+        "ruby": ""
+      },
+      {
+        "base": "風呂",
+        "ruby": "ふろ"
+      },
+      {
+        "base": "の",
+        "ruby": ""
+      },
+      {
+        "base": "時間",
+        "ruby": "じかん"
+      }
+    ],
+    "sound_file": "sound_suite/letstry/word_0023/letstry_word_0023_bath_time_jenny.mp3",
+    "card_image": "dic_4_card_bathtime_2530_1_c.webp",
+    "grades": [
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: What time is it now? / A: It's bath time."
+    ],
+    "tags": [
+      "daily_routine",
+      "time"
+    ],
+    "lemma": "bath time",
+    "is_plural": false,
+    "syllable_count": 2,
+    "is_compound": true,
+    "difficulty_tier": 3,
+    "primary_image": "dic_4_card_bathtime_2530_1_c.webp",
+    "primary_audio": "sound_suite/letstry/word_0023/letstry_word_0023_bath_time_jenny.mp3",
+    "three_hints": {
+      "category_hint": "It is related to time and calendar.",
+      "feature_hint": "A time expression known as 'お風呂の時間' (おふろのじかん) in Japanese.",
+      "letter_hint": "It starts with the letter B."
+    },
+    "target_dialogues": [
+      {
+        "question": "What time is it now?",
+        "answer": "It's bath time.",
+        "context": "Telling the time"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G4": {
+        "card_image": "dic_4_card_bathtime_2530_1_c.webp",
+        "sound_file": "dic_4_card_bathtime_2530.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_4_card_bathtime_2530_1_ce.webp",
+        "card_bw": "dic_4_card_bathtime_2530_1.png",
+        "unit": "Unit 4: What time is it? (今、何時？)"
+      }
+    },
+    "audio_suite": {
+      "jenny": "sound_suite/letstry/word_0023/letstry_word_0023_bath_time_jenny.mp3",
+      "andrew": "sound_suite/letstry/word_0023/letstry_word_0023_bath_time_andrew.mp3",
+      "ana": "sound_suite/letstry/word_0023/letstry_word_0023_bath_time_ana.mp3",
+      "ja": "sound_suite/letstry/word_0023/letstry_word_0023_bath_time_nanami.mp3"
+    }
+  }
+]

@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO & Link Preview Meta Tags -->
+    <title>Levi Flaman | Connect</title>
+    <meta name="description" content="Educator | Business Analyst | Founder | Operations Specialist">
+    <meta property="og:title" content="Levi Flaman">
+    <meta property="og:description" content="Educator | Business Analyst | Founder | Operations Specialist">
+    <meta property="og:image" content="suit.png">
+    <meta property="og:type" content="profile">
+    
+    <!-- Native Mobile App Feel (Address bar color & Home Screen) -->
+    <meta name="theme-color" content="#0f172a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <!-- Google Fonts for modern typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- QRCode.js for generating the QR code locally (no subscriptions needed) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --text-color: #f8fafc;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --accent-primary: #3b82f6;
+            --accent-secondary: #8b5cf6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        html, body {
+            overflow-x: hidden;
+            width: 100%;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100dvh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            padding: 16px;
+        }
+
+        /* Animated background blobs for premium dynamic feel */
+        .blob {
+            position: fixed;
+            filter: blur(80px);
+            z-index: -1;
+            opacity: 0.6;
+            animation: float 10s infinite ease-in-out alternate;
+        }
+        .blob-1 {
+            top: -10%; left: -10%;
+            width: 400px; height: 400px;
+            background: var(--accent-primary);
+            border-radius: 50%;
+        }
+        .blob-2 {
+            bottom: -10%; right: -10%;
+            width: 500px; height: 500px;
+            background: var(--accent-secondary);
+            border-radius: 50%;
+            animation-delay: -5s;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(30px, 50px) scale(1.1); }
+        }
+
+        /* 3D Flip Wrapper for Entire Card */
+        .perspective-wrapper {
+            perspective: 2000px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            z-index: 1;
+        }
+
+        .container {
+            position: relative;
+            width: 90%;
+            max-width: 400px;
+            transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: slideUp 0.8s ease-out;
+        }
+        
+        .container.show-qr {
+            transform: rotateY(180deg);
+        }
+
+        /* Glassmorphism Card Faces */
+        .main-front, .main-back {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 30px 20px;
+            text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            width: 100%;
+        }
+
+        .main-front {
+            position: relative;
+            z-index: 2;
+        }
+
+        .main-back {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            transform: rotateY(180deg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 1;
+        }
+
+        .qr-code {
+            width: 220px;
+            height: 220px;
+            background: white;
+            padding: 10px;
+            border-radius: 12px;
+            margin-top: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        /* Icon Buttons */
+        .icon-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--glass-border);
+            color: var(--text-color);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        .icon-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.1);
+        }
+        
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 3D Flip Card Profile */
+        .flip-card {
+            background-color: transparent;
+            width: 150px;
+            height: 200px;
+            margin: 0 auto 16px auto;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
+            border-radius: 20px;
+        }
+
+        /* Desktop hover */
+        @media (hover: hover) {
+            .flip-card:hover .flip-card-inner {
+                transform: rotateY(180deg);
+            }
+        }
+        
+        /* Mobile tap class (added via JS) */
+        .flip-card.flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 20px;
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            overflow: hidden;
+            background-color: var(--glass-bg);
+        }
+
+        .flip-card-front img, .flip-card-back img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .flip-card-back {
+            transform: rotateY(180deg);
+        }
+
+        .flip-hint {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 14px;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            animation: pulse-hint 2s infinite;
+        }
+        
+        @keyframes pulse-hint {
+            0% { opacity: 0.7; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.1); }
+            100% { opacity: 0.7; transform: scale(1); }
+        }
+
+        /* Language Toggle */
+        .lang-toggle {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--glass-border);
+            color: var(--text-color);
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .lang-toggle:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        h1 {
+            font-size: 26px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            letter-spacing: 0.5px;
+        }
+
+        p.bio {
+            font-size: 15px;
+            color: #94a3b8;
+            margin-bottom: 32px;
+            font-weight: 300;
+        }
+
+        .links {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .link-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-color);
+            text-decoration: none;
+            padding: 14px;
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+            font-size: 15px;
+            font-weight: 400;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .link-btn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .link-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .link-btn:hover::before {
+            left: 100%;
+        }
+
+        .link-btn i {
+            font-size: 22px;
+        }
+
+        /* Specific Brand Colors on Hover */
+        .link-btn.line:hover { border-color: #00B900; color: #00B900; }
+        .link-btn.linkedin:hover { border-color: #0A66C2; color: #0A66C2; }
+        .link-btn.instagram:hover { border-color: #E1306C; color: #E1306C; }
+        .link-btn.github:hover { border-color: #ffffff; color: #ffffff; }
+
+        /* Share Button at the bottom */
+        .share-btn {
+            margin-top: 24px;
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            transition: color 0.3s;
+        }
+        
+        .share-btn:hover {
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+
+    <div class="perspective-wrapper">
+        <div class="container" id="main-card">
+            
+            <!-- FRONT SIDE: Profile Links -->
+            <div class="main-front">
+                <!-- Header area with QR and language toggle -->
+                <div style="display: flex; justify-content: space-between; margin-bottom: 24px; margin-top: -16px;">
+                    <button class="icon-btn" id="show-qr-btn" aria-label="Show QR Code">
+                        <i class="fas fa-qrcode"></i>
+                    </button>
+                    <button class="lang-toggle" id="lang-btn">
+                        <i class="fas fa-globe"></i> <span id="lang-text">English</span>
+                    </button>
+                </div>
+
+                <!-- 3D Interactive Flip Card (Hover or Tap to flip) -->
+                <div class="flip-card">
+                    <div class="flip-card-inner">
+                        <!-- FRONT: Professional -->
+                        <div class="flip-card-front">
+                            <img src="suit.png" alt="Levi in a Suit" id="front-photo">
+                            <div class="flip-hint"><i class="fa-solid fa-arrows-rotate"></i></div>
+                        </div>
+                        <!-- BACK: Casual -->
+                        <div class="flip-card-back">
+                            <img src="shirt.png" alt="Levi in a Shirt" id="back-photo">
+                        </div>
+                    </div>
+                </div>
+                
+                <h1><span class="lang-switch" data-en="Levi Flaman" data-ja="フラマン リヴァイ">フラマン リヴァイ</span></h1>
+                <p class="bio" style="line-height: 1.6;">
+                    <span class="lang-switch" data-en="Educator | Business Analyst" data-ja="教育者 | ビジネスアナリスト">教育者 | ビジネスアナリスト</span><br>
+                    <span class="lang-switch" data-en="Founder | Operations Specialist" data-ja="起業家 | オペレーション・スペシャリスト">起業家 | オペレーション・スペシャリスト</span>
+                </p>
+                
+                <div class="links">
+                    <a href="https://line.me/ti/p/aJSNO_APdn" class="link-btn line" target="_blank" rel="noopener noreferrer">
+                        <i class="fab fa-line"></i>
+                        LINE
+                    </a>
+                    <a href="https://www.linkedin.com/in/leviflaman/" class="link-btn linkedin" target="_blank" rel="noopener noreferrer">
+                        <i class="fab fa-linkedin"></i>
+                        LinkedIn
+                    </a>
+                    <a href="https://www.instagram.com/leviflaman/" class="link-btn instagram" target="_blank" rel="noopener noreferrer">
+                        <i class="fab fa-instagram"></i>
+                        Instagram
+                    </a>
+                </div>
+                
+                <button class="share-btn" id="share-btn">
+                    <i class="fas fa-share-nodes"></i> <span class="lang-switch" data-en="Share Profile" data-ja="プロフィールを共有">プロフィールを共有</span>
+                </button>
+            </div>
+            
+            <!-- BACK SIDE: Giant QR Code -->
+            <div class="main-back">
+                <div style="display: flex; justify-content: flex-start; width: 100%; margin-bottom: 0px; margin-top: -16px;">
+                    <button class="icon-btn" id="hide-qr-btn" aria-label="Back to Profile">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                </div>
+                
+                <h2 style="margin-top: 10px; font-weight: 400;"><span class="lang-switch" data-en="Let's Connect!" data-ja="ぜひ繋がりましょう！">ぜひ繋がりましょう！</span></h2>
+                
+                <div id="qrcode" class="qr-code" style="display: flex; justify-content: center; align-items: center;"></div>
+            </div>
+            
+        </div>
+    </div>
+
+    <!-- Scripts for interactivity -->
+    <script>
+        // Flip card toggle for mobile
+        document.querySelector('.flip-card').addEventListener('click', function() {
+            this.classList.toggle('flipped');
+        });
+
+        // Language toggle logic
+        const langBtn = document.getElementById('lang-btn');
+        const langText = document.getElementById('lang-text');
+        const translatableElements = document.querySelectorAll('.lang-switch');
+        let currentLang = 'ja';
+
+        langBtn.addEventListener('click', () => {
+            currentLang = currentLang === 'ja' ? 'en' : 'ja';
+            
+            langText.textContent = currentLang === 'ja' ? 'English' : '日本語';
+            
+            translatableElements.forEach(el => {
+                el.textContent = el.getAttribute(`data-${currentLang}`);
+            });
+        });
+
+        // Main Card QR Flip logic
+        const mainCard = document.getElementById('main-card');
+        document.getElementById('show-qr-btn').addEventListener('click', () => {
+            mainCard.classList.add('show-qr');
+        });
+        document.getElementById('hide-qr-btn').addEventListener('click', () => {
+            mainCard.classList.remove('show-qr');
+        });
+
+        // Share button logic with fallback
+        const shareBtn = document.getElementById('share-btn');
+        shareBtn.addEventListener('click', async () => {
+            const currentUrl = window.location.href;
+            
+            if (currentUrl.startsWith('file://')) {
+                alert(currentLang === 'en' 
+                    ? "The share button is disabled while testing on your local computer. It will work perfectly once the site is live on the internet!" 
+                    : "ローカルテスト中は共有ボタンが無効になっています。ウェブ上に公開されると正常に動作します！");
+                return;
+            }
+
+            try {
+                if (navigator.share) {
+                    await navigator.share({
+                        title: "Levi Flaman",
+                        url: currentUrl
+                    });
+                } else if (navigator.clipboard) {
+                    await navigator.clipboard.writeText(currentUrl);
+                    
+                    const span = shareBtn.querySelector('.lang-switch');
+                    const originalText = span.textContent;
+                    span.textContent = currentLang === 'en' ? 'Link Copied!' : 'リンクをコピーしました!';
+                    setTimeout(() => {
+                        span.textContent = originalText;
+                    }, 2000);
+                }
+            } catch (err) {
+                console.log('Error sharing:', err);
+            }
+        });
+
+        // Automatically generate a 100% free, permanent QR code for the current URL
+        window.addEventListener('DOMContentLoaded', () => {
+            const qrContainer = document.getElementById('qrcode');
+            new QRCode(qrContainer, {
+                text: window.location.href.split('?')[0].split('#')[0], 
+                width: 200,
+                height: 200,
+                colorDark : "#0f172a",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.H
+            });
+        });
+    </script>
+</body>
+</html>

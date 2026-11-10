@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>リヴァイ先生の英語教室 - iPad出席番号・アカウント登録ガイド</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #10b981;
+      --primary-hover: #059669;
+      --accent: #f59e0b;
+      --blue: #3b82f6;
+      --purple: #8b5cf6;
+      --border: #334155;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body {
+      font-family: 'UD Digi Kyokasho NP-R', 'UD Digi Kyokasho NK-R', 'UD Digi Kyokasho N-R', 'BIZ UDPGothic', 'Zen Maru Gothic', 'Hiragino Maru Gothic ProN', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* Top Navigation Header */
+    header {
+      background: rgba(15, 23, 42, 0.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 2px border var(--border);
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #f59e0b, #ef4444);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      box-shadow: 0 4px 10px rgba(245, 158, 11, 0.4);
+    }
+
+    .brand-title {
+      font-size: 20px;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      color: #ffffff;
+    }
+
+    .brand-sub {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    /* Mode Toggle Switch (Raw vs Annotated) */
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .toggle-group {
+      display: flex;
+      background: var(--card-bg);
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      padding: 4px;
+      gap: 4px;
+    }
+
+    .toggle-btn {
+      padding: 8px 18px;
+      border-radius: 12px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 900;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .toggle-btn.active {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
+    }
+
+    .fs-btn {
+      padding: 8px 14px;
+      border-radius: 12px;
+      background: var(--card-bg);
+      border: 2px solid var(--border);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+
+    .fs-btn:hover {
+      background: #334155;
+    }
+
+    /* Main Stage */
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 16px 24px;
+      max-width: 1400px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* Slide Card */
+    .stage-container {
+      position: relative;
+      width: 100%;
+      max-width: 1160px;
+      background: #020617;
+      border-radius: 28px;
+      border: 4px solid var(--border);
+      overflow: hidden;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .image-viewport {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      background: #000000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .slide-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      transition: opacity 0.2s ease;
+    }
+
+    /* Floating Arrow Navigation Over Stage */
+    .nav-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(6px);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+      font-size: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 20;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+    }
+
+    .nav-arrow:hover {
+      background: var(--primary);
+      transform: translateY(-50%) scale(1.1);
+      border-color: #ffffff;
+    }
+
+    .nav-arrow:active {
+      transform: translateY(-50%) scale(0.95);
+    }
+
+    .nav-prev { left: 20px; }
+    .nav-next { right: 20px; }
+
+    /* Teacher Script & Details Card */
+    .teacher-bar {
+      width: 100%;
+      background: var(--card-bg);
+      border-top: 2px solid var(--border);
+      padding: 16px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .step-info {
+      flex: 1;
+    }
+
+    .step-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 14px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 900;
+      margin-bottom: 6px;
+    }
+
+    .step-badge-blue { background: #1d4ed8; color: #dbeafe; }
+    .step-badge-green { background: #047857; color: #d1fae5; }
+    .step-badge-amber { background: #b45309; color: #fef3c7; }
+    .step-badge-purple { background: #6d28d9; color: #ede9fe; }
+    .step-badge-pink { background: #be185d; color: #fce7f3; }
+
+    .step-title {
+      font-size: 22px;
+      font-weight: 900;
+      color: #ffffff;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .step-desc {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .teacher-say {
+      background: rgba(245, 158, 11, 0.1);
+      border: 2px solid rgba(245, 158, 11, 0.3);
+      padding: 10px 18px;
+      border-radius: 16px;
+      max-width: 440px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #fef3c7;
+      line-height: 1.4;
+      shrink: 0;
+    }
+
+    .teacher-say strong {
+      color: var(--accent);
+      display: block;
+      margin-bottom: 2px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Bottom Steps Thumbnails / Pills */
+    .steps-nav {
+      margin-top: 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      overflow-x: auto;
+      max-width: 100%;
+      padding-bottom: 8px;
+    }
+
+    .step-pill {
+      padding: 10px 18px;
+      border-radius: 16px;
+      background: var(--card-bg);
+      border: 2px solid var(--border);
+      color: var(--text-muted);
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 900;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+      transition: all 0.15s ease;
+    }
+
+    .step-pill:hover {
+      background: #334155;
+      color: #ffffff;
+    }
+
+    .step-pill.active {
+      background: #ffffff;
+      color: #0f172a;
+      border-color: #ffffff;
+      box-shadow: 0 4px 14px rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .step-pill-num {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+    }
+
+    .step-pill.active .step-pill-num {
+      background: var(--primary);
+      color: #ffffff;
+    }
+
+    /* Keyboard Shortcut Hint */
+    .kbd-bar {
+      margin-top: 10px;
+      font-size: 12px;
+      color: #64748b;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-weight: 600;
+    }
+
+    kbd {
+      background: #1e293b;
+      border: 1px solid #475569;
+      border-radius: 6px;
+      padding: 2px 6px;
+      font-family: monospace;
+      color: #cbd5e1;
+      font-size: 11px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Header Navigation -->
+  <header>
+    <div class="brand">
+      <div class="brand-icon">🎒</div>
+      <div>
+        <div class="brand-title">リヴァイ先生の英語教室・児童登録ガイド</div>
+        <div class="brand-sub">Elementary iPad Attendance Claiming Presentation (1080 × 810)</div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <!-- Raw vs Annotated View Switch -->
+      <div class="toggle-group">
+        <button id="btnAnnotated" class="toggle-btn active" onclick="setMode('annotated')">
+          <span>✍️ 解説ハイライトあり</span>
+        </button>
+        <button id="btnRaw" class="toggle-btn" onclick="setMode('raw')">
+          <span>📷 iPad画面そのまま</span>
+        </button>
+      </div>
+
+      <!-- Fullscreen Button -->
+      <button class="fs-btn" onclick="toggleFullscreen()">
+        <span>⛶ 全画面</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Slide Area -->
+  <main>
+    <div class="stage-container">
+      <!-- Navigation Arrows -->
+      <button class="nav-arrow nav-prev" onclick="prevSlide()" title="前へ (←)">‹</button>
+      <button class="nav-arrow nav-next" onclick="nextSlide()" title="次へ (→)">›</button>
+
+      <!-- 4:3 iPad Viewport -->
+      <div class="image-viewport">
+        <img id="slideImg" class="slide-img" src="./guide_images/step1_annotated.png" alt="Slide Image">
+      </div>
+
+      <!-- Teacher Script & Stage Bar -->
+      <div class="teacher-bar">
+        <div class="step-info">
+          <div id="stepBadge" class="step-badge step-badge-blue">ステップ 1 / 7</div>
+          <div id="stepTitle" class="step-title">学校の「あいことば」を入力しよう</div>
+          <div id="stepDesc" class="step-desc">先生から教えてもらった合言葉（ftk または ふたこ）をキーボードで入力します。</div>
+        </div>
+        <div id="teacherSay" class="teacher-say">
+          <strong>👨‍🏫 児童への声かけヒント</strong>
+          <span id="sayText">「まんなかの丸い点々のところをタップしてね！キーボードで『ftk』と打とう！」</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Step Jump Pills -->
+    <div class="steps-nav" id="stepsNav">
+      <!-- Generated via JS -->
+    </div>
+
+    <!-- Keyboard Shortcut Help -->
+    <div class="kbd-bar">
+      <span><kbd>←</kbd> <kbd>→</kbd> <kbd>Space</kbd> スライド切替</span>
+      <span><kbd>T</kbd> 解説／元画面切替</span>
+      <span><kbd>1</kbd>〜<kbd>7</kbd> ステップ直通</span>
+      <span><kbd>F11</kbd> 全画面表示</span>
+    </div>
+  </main>
+
+  <script>
+    const SLIDES = [
+      {
+        step: 1,
+        title: "学校の「あいことば」を入力しよう！",
+        desc: "iPadでアクセスすると最初に合言葉画面が開きます。他校の児童が誤アクセスしないための鍵画面です。",
+        say: "「まんなかの丸い点々のところ（••••••）をタップしてね！キーボードで『ftk』と打とう！」",
+        badgeClass: "step-badge-blue",
+        raw: "./guide_images/step1_raw.png",
+        annotated: "./guide_images/step1_annotated.png",
+        label: "1. あいことば"
+      },
+      {
+        step: 2,
+        title: "「クラスをえらぶ」を押してクラスへ進もう！",
+        desc: "正しい合言葉が入ると、下のグレーだったボタンが鮮やかな緑色に変わります。",
+        say: "「『FTK』と入ったら、みどり色になった『クラスをえらぶ』ボタンを1回押してね！」",
+        badgeClass: "step-badge-green",
+        raw: "./guide_images/step2_raw.png",
+        annotated: "./guide_images/step2_annotated.png",
+        label: "2. ボタンを押す"
+      },
+      {
+        step: 3,
+        title: "じぶんの「学年」と「クラス」をえらぼう！",
+        desc: "全クラスが教科書カラーで並んでいます。2年生は黄色の列、3・4年生は緑の列です。",
+        say: "「2年生は黄色い列の『2-1』または『2-2』をタップ！3・4年生は真ん中のみどりの列だよ！」",
+        badgeClass: "step-badge-amber",
+        raw: "./guide_images/step3_raw.png",
+        annotated: "./guide_images/step3_annotated.png",
+        label: "3. クラス選択"
+      },
+      {
+        step: 4,
+        title: "じぶんの「出席番号（空いている席）」をタップ！",
+        desc: "白い『空き』カードが選べる席です。すでに友だちの名前があるカードは押さないように指導します。",
+        say: "「白い『空き』カードからじぶんの番号を探して押してね！友だちの名前がある席は押しちゃダメだよ！」",
+        badgeClass: "step-badge-purple",
+        raw: "./guide_images/step4_raw.png",
+        annotated: "./guide_images/step4_annotated.png",
+        label: "4. 出席番号"
+      },
+      {
+        step: 5,
+        title: "登録画面が開いたよ！ 3つのステップを確認しよう",
+        desc: "席をタップすると設定モーダルが開きます。①名前入力、②アイコン選択、③秘密のマーク選択の3工程です。",
+        say: "「①名前をいれて、②すきなアイコンを選んで、③じぶんだけの秘密のマークを1つ決めてね！」",
+        badgeClass: "step-badge-pink",
+        raw: "./guide_images/step5_raw.png",
+        annotated: "./guide_images/step5_annotated.png",
+        label: "5. 登録項目"
+      },
+      {
+        step: 6,
+        title: "ぜんぶ選べたら「スタート！」ボタンをタップ！",
+        desc: "名前、好きなアイコン（例: 🚀）、秘密の合言葉マーク（例: 🎮）が決まったら緑の大きなボタンを押します。",
+        say: "「名前・アイコン・マークが決まったら、左下の大きなみどりのボタンを押そう！」",
+        badgeClass: "step-badge-green",
+        raw: "./guide_images/step6_raw.png",
+        annotated: "./guide_images/step6_annotated.png",
+        label: "6. スタート！"
+      },
+      {
+        step: 7,
+        title: "とうろく完了！ リヴァイ先生の英語ルームへようこそ！",
+        desc: "紙吹雪とともにマイページが開きます。出席番号の連携が完了し、テレビクイズ（Stream B）に参加できます。",
+        say: "「登録できたよ！前のテレビに4桁の番号が出たら、紫のボタンからクイズに参加しよう！」",
+        badgeClass: "step-badge-amber",
+        raw: "./guide_images/step7_raw.png",
+        annotated: "./guide_images/step7_annotated.png",
+        label: "7. 登録完了！"
+      }
+    ];
+
+    let currentIndex = 0;
+    let currentMode = "annotated"; // 'annotated' or 'raw'
+
+    function updateView() {
+      const data = SLIDES[currentIndex];
+      const imgEl = document.getElementById("slideImg");
+      const targetSrc = currentMode === "annotated" ? data.annotated : data.raw;
+
+      imgEl.src = targetSrc;
+      document.getElementById("stepBadge").className = `step-badge ${data.badgeClass}`;
+      document.getElementById("stepBadge").textContent = `ステップ ${data.step} / 7`;
+      document.getElementById("stepTitle").textContent = data.title;
+      document.getElementById("stepDesc").textContent = data.desc;
+      document.getElementById("sayText").textContent = data.say;
+
+      // Update pills
+      document.querySelectorAll(".step-pill").forEach((pill, i) => {
+        if (i === currentIndex) {
+          pill.classList.add("active");
+          pill.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+        } else {
+          pill.classList.remove("active");
+        }
+      });
+    }
+
+    function setMode(mode) {
+      currentMode = mode;
+      document.getElementById("btnAnnotated").classList.toggle("active", mode === "annotated");
+      document.getElementById("btnRaw").classList.toggle("active", mode === "raw");
+      updateView();
+    }
+
+    function toggleMode() {
+      setMode(currentMode === "annotated" ? "raw" : "annotated");
+    }
+
+    function nextSlide() {
+      if (currentIndex < SLIDES.length - 1) {
+        currentIndex++;
+        updateView();
+      }
+    }
+
+    function prevSlide() {
+      if (currentIndex > 0) {
+        currentIndex--;
+        updateView();
+      }
+    }
+
+    function goToSlide(index) {
+      currentIndex = index;
+      updateView();
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+
+    // Initialize Bottom Step Pills
+    function initNav() {
+      const nav = document.getElementById("stepsNav");
+      nav.innerHTML = "";
+      SLIDES.forEach((item, index) => {
+        const btn = document.createElement("button");
+        btn.className = `step-pill ${index === 0 ? "active" : ""}`;
+        btn.onclick = () => goToSlide(index);
+        btn.innerHTML = `<span class="step-pill-num">${item.step}</span><span>${item.label}</span>`;
+        nav.appendChild(btn);
+      });
+    }
+
+    // Keyboard Shortcuts
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowRight" || e.key === " " || e.key === "Enter" || e.key === "PageDown") {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === "ArrowLeft" || e.key === "PageUp") {
+        e.preventDefault();
+        prevSlide();
+      } else if (e.key === "t" || e.key === "T" || e.key === "a" || e.key === "A") {
+        e.preventDefault();
+        toggleMode();
+      } else if (e.key >= "1" && e.key <= "7") {
+        const num = parseInt(e.key, 10);
+        if (num >= 1 && num <= SLIDES.length) {
+          goToSlide(num - 1);
+        }
+      }
+    });
+
+    initNav();
+    updateView();
+  </script>
+</body>
+</html>

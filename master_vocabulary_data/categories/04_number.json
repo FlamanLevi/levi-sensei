@@ -1,0 +1,3685 @@
+[
+  {
+    "id": "word_0223",
+    "english": "one hundred",
+    "canonical_key": "one hundred",
+    "disambiguation": "",
+    "display_label": "one hundred",
+    "normalized_english": "one hundred",
+    "part_of_speech": "noun",
+    "category": "04_number",
+    "category_name": "Numbers & Counting",
+    "ja_kanji": "百",
+    "ja_hiragana": "ひゃく",
+    "en_katakana": "ワンハンドレッド",
+    "ruby": [
+      {
+        "base": "百",
+        "ruby": "ひゃく"
+      }
+    ],
+    "ruby_html": "<ruby>百<rt>ひゃく</rt></ruby>",
+    "ruby_text": "[百|ひゃく]",
+    "sound_file": "",
+    "card_image": "cards/full/hwg5_u25_37_one_hundred_full.png",
+    "card_image_kana": "cards/full/hwg5_u25_37_one_hundred_full.png",
+    "card_image_en": "cards/full/hwg5_u25_37_one_hundred_full.png",
+    "card_image_bilingual": "cards/full/hwg5_u25_37_one_hundred_full.png",
+    "card_variants": [],
+    "token": "hwg_one hundred",
+    "grades": [
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: How many do you want? / A: One hundred, please."
+    ],
+    "tags": [
+      "number"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u25_37_one_hundred_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u25_37_one_hundred_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u25_37_one_hundred_text.png",
+    "lemma": "one hundred",
+    "is_plural": false,
+    "letter_count": 10,
+    "syllable_count": 3,
+    "first_letter": "O",
+    "is_compound": true,
+    "phonics_initial": "o",
+    "difficulty_tier": 3,
+    "primary_image": "cards/full/hwg5_u25_37_one_hundred_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is a number or quantity.",
+      "feature_hint": "This number means '百' (ひゃく) in Japanese.",
+      "letter_hint": "In Japanese, this number is 'ひゃく'."
+    },
+    "target_dialogues": [
+      {
+        "question": "How many do you want?",
+        "answer": "One hundred, please.",
+        "context": "Counting and stating quantities"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u25_37_one_hundred_illust.png",
+        "card_full": "cards/full/hwg5_u25_37_one_hundred_full.png",
+        "card_text": "cards/text/hwg5_u25_37_one_hundred_text.png",
+        "unit": "Unit 25: Unit 25: Numbers",
+        "source": "here_we_go_5",
+        "sound_file": ""
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u19_37_one_hundred_illust.png",
+        "card_full": "cards/full/hwg6_u19_37_one_hundred_full.png",
+        "card_text": "cards/text/hwg6_u19_37_one_hundred_text.png",
+        "unit": "Unit 19: Unit 19: Numbers",
+        "source": "here_we_go_6",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0364",
+    "english": "twenty-eight",
+    "canonical_key": "twenty-eight",
+    "disambiguation": "",
+    "display_label": "twenty-eight",
+    "normalized_english": "twenty-eight",
+    "part_of_speech": "noun",
+    "category": "04_number",
+    "category_name": "Numbers & Counting",
+    "ja_kanji": "二十八",
+    "ja_hiragana": "にじゅうはち",
+    "en_katakana": "トゥエンティエイト",
+    "ruby": [
+      {
+        "base": "二十八",
+        "ruby": "にじゅうはち"
+      }
+    ],
+    "ruby_html": "<ruby>二十八<rt>にじゅうはち</rt></ruby>",
+    "ruby_text": "[二十八|にじゅうはち]",
+    "sound_file": "",
+    "card_image": "cards/full/hwg5_u25_28_twenty-eight_full.png",
+    "card_image_kana": "cards/full/hwg5_u25_28_twenty-eight_full.png",
+    "card_image_en": "cards/full/hwg5_u25_28_twenty-eight_full.png",
+    "card_image_bilingual": "cards/full/hwg5_u25_28_twenty-eight_full.png",
+    "card_variants": [],
+    "token": "hwg_twenty-eight",
+    "grades": [
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: How many do you want? / A: Twenty-eight, please."
+    ],
+    "tags": [
+      "number"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u25_28_twenty-eight_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u25_28_twenty-eight_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u25_28_twenty-eight_text.png",
+    "lemma": "twenty-eight",
+    "is_plural": false,
+    "letter_count": 11,
+    "syllable_count": 3,
+    "first_letter": "T",
+    "is_compound": true,
+    "phonics_initial": "t",
+    "difficulty_tier": 3,
+    "primary_image": "cards/full/hwg5_u25_28_twenty-eight_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is a number or quantity.",
+      "feature_hint": "This number means '二十八' (にじゅうはち) in Japanese.",
+      "letter_hint": "In Japanese, this number is 'にじゅうはち'."
+    },
+    "target_dialogues": [
+      {
+        "question": "How many do you want?",
+        "answer": "Twenty-eight, please.",
+        "context": "Counting and stating quantities"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u25_28_twenty-eight_illust.png",
+        "card_full": "cards/full/hwg5_u25_28_twenty-eight_full.png",
+        "card_text": "cards/text/hwg5_u25_28_twenty-eight_text.png",
+        "unit": "Unit 25: Unit 25: Numbers",
+        "source": "here_we_go_5",
+        "sound_file": ""
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u19_28_twenty-eight_illust.png",
+        "card_full": "cards/full/hwg6_u19_28_twenty-eight_full.png",
+        "card_text": "cards/text/hwg6_u19_28_twenty-eight_text.png",
+        "unit": "Unit 19: Unit 19: Numbers",
+        "source": "here_we_go_6",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0365",
+    "english": "twenty-five",
+    "canonical_key": "twenty-five",
+    "disambiguation": "",
+    "display_label": "twenty-five",
+    "normalized_english": "twenty-five",
+    "part_of_speech": "noun",
+    "category": "04_number",
+    "category_name": "Numbers & Counting",
+    "ja_kanji": "二十五",
+    "ja_hiragana": "にじゅうご",
+    "en_katakana": "トゥエンティファイブ",
+    "ruby": [
+      {
+        "base": "二十五",
+        "ruby": "にじゅうご"
+      }
+    ],
+    "ruby_html": "<ruby>二十五<rt>にじゅうご</rt></ruby>",
+    "ruby_text": "[二十五|にじゅうご]",
+    "sound_file": "",
+    "card_image": "cards/full/hwg5_u25_25_twenty-five_full.png",
+    "card_image_kana": "cards/full/hwg5_u25_25_twenty-five_full.png",
+    "card_image_en": "cards/full/hwg5_u25_25_twenty-five_full.png",
+    "card_image_bilingual": "cards/full/hwg5_u25_25_twenty-five_full.png",
+    "card_variants": [],
+    "token": "hwg_twenty-five",
+    "grades": [
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: How many do you want? / A: Twenty-five, please."
+    ],
+    "tags": [
+      "number"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u25_25_twenty-five_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u25_25_twenty-five_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u25_25_twenty-five_text.png",
+    "lemma": "twenty-five",
+    "is_plural": false,
+    "letter_count": 10,
+    "syllable_count": 3,
+    "first_letter": "T",
+    "is_compound": true,
+    "phonics_initial": "t",
+    "difficulty_tier": 3,
+    "primary_image": "cards/full/hwg5_u25_25_twenty-five_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is a number or quantity.",
+      "feature_hint": "This number means '二十五' (にじゅうご) in Japanese.",
+      "letter_hint": "In Japanese, this number is 'にじゅうご'."
+    },
+    "target_dialogues": [
+      {
+        "question": "How many do you want?",
+        "answer": "Twenty-five, please.",
+        "context": "Counting and stating quantities"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u25_25_twenty-five_illust.png",
+        "card_full": "cards/full/hwg5_u25_25_twenty-five_full.png",
+        "card_text": "cards/text/hwg5_u25_25_twenty-five_text.png",
+        "unit": "Unit 25: Unit 25: Numbers",
+        "source": "here_we_go_5",
+        "sound_file": ""
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u19_25_twenty-five_illust.png",
+        "card_full": "cards/full/hwg6_u19_25_twenty-five_full.png",
+        "card_text": "cards/text/hwg6_u19_25_twenty-five_text.png",
+        "unit": "Unit 19: Unit 19: Numbers",
+        "source": "here_we_go_6",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0366",
+    "english": "twenty-four",
+    "canonical_key": "twenty-four",
+    "disambiguation": "",
+    "display_label": "twenty-four",
+    "normalized_english": "twenty-four",
+    "part_of_speech": "noun",
+    "category": "04_number",
+    "category_name": "Numbers & Counting",
+    "ja_kanji": "二十四",
+    "ja_hiragana": "にじゅうよん",
+    "en_katakana": "トゥエンティフォー",
+    "ruby": [
+      {
+        "base": "二十四",
+        "ruby": "にじゅうよん"
+      }
+    ],
+    "ruby_html": "<ruby>二十四<rt>にじゅうよん</rt></ruby>",
+    "ruby_text": "[二十四|にじゅうよん]",
+    "sound_file": "",
+    "card_image": "cards/full/hwg5_u25_24_twenty-four_full.png",
+    "card_image_kana": "cards/full/hwg5_u25_24_twenty-four_full.png",
+    "card_image_en": "cards/full/hwg5_u25_24_twenty-four_full.png",
+    "card_image_bilingual": "cards/full/hwg5_u25_24_twenty-four_full.png",
+    "card_variants": [],
+    "token": "hwg_twenty-four",
+    "grades": [
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: How many do you want? / A: Twenty-four, please."
+    ],
+    "tags": [
+      "number"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u25_24_twenty-four_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u25_24_twenty-four_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u25_24_twenty-four_text.png",
+    "lemma": "twenty-four",
+    "is_plural": false,
+    "letter_count": 10,
+    "syllable_count": 3,
+    "first_letter": "T",
+    "is_compound": true,
+    "phonics_initial": "t",
+    "difficulty_tier": 3,
+    "primary_image": "cards/full/hwg5_u25_24_twenty-four_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is a number or quantity.",
+      "feature_hint": "This number means '二十四' (にじゅうよん) in Japanese.",
+      "letter_hint": "In Japanese, this number is 'にじゅうよん'."
+    },
+    "target_dialogues": [
+      {
+        "question": "How many do you want?",
+        "answer": "Twenty-four, please.",
+        "context": "Counting and stating quantities"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u25_24_twenty-four_illust.png",
+        "card_full": "cards/full/hwg5_u25_24_twenty-four_full.png",
+        "card_text": "cards/text/hwg5_u25_24_twenty-four_text.png",
+        "unit": "Unit 25: Unit 25: Numbers",
+        "source": "here_we_go_5",
+        "sound_file": ""
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u19_24_twenty-four_illust.png",
+        "card_full": "cards/full/hwg6_u19_24_twenty-four_full.png",
+        "card_text": "cards/text/hwg6_u19_24_twenty-four_text.png",
+        "unit": "Unit 19: Unit 19: Numbers",
+        "source": "here_we_go_6",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0367",
+    "english": "twenty-nine",
+    "canonical_key": "twenty-nine",
+    "disambiguation": "",
+    "display_label": "twenty-nine",
+    "normalized_english": "twenty-nine",
+    "part_of_speech": "noun",
+    "category": "04_number",
+    "category_name": "Numbers & Counting",
+    "ja_kanji": "二十九",
+    "ja_hiragana": "にじゅうきゅう",
+    "en_katakana": "トゥエンティナイン",
+    "ruby": [
+      {
+        "base": "二十九",
+        "ruby": "にじゅうきゅう"
+      }
+    ],
+    "ruby_html": "<ruby>二十九<rt>にじゅうきゅう</rt></ruby>",
+    "ruby_text": "[二十九|にじゅうきゅう]",
+    "sound_file": "",
+    "card_image": "cards/full/hwg5_u25_29_twenty-nine_full.png",
+    "card_image_kana": "cards/full/hwg5_u25_29_twenty-nine_full.png",
+    "card_image_en": "cards/full/hwg5_u25_29_twenty-nine_full.png",
+    "card_image_bilingual": "cards/full/hwg5_u25_29_twenty-nine_full.png",
+    "card_variants": [],
+    "token": "hwg_twenty-nine",
+    "grades": [
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: How many do you want? / A: Twenty-nine, please."
+    ],
+    "tags": [
+      "number"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u25_29_twenty-nine_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u25_29_twenty-nine_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u25_29_twenty-nine_text.png",
+    "lemma": "twenty-nine",
+    "is_plural": false,
+    "letter_count": 10,
+    "syllable_count": 3,
+    "first_letter": "T",
+    "is_compound": true,
+    "phonics_initial": "t",
+    "difficulty_tier": 3,
+    "primary_image": "cards/full/hwg5_u25_29_twenty-nine_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is a number or quantity.",
+      "feature_hint": "This number means '二十九' (にじゅうきゅう) in Japanese.",
+      "letter_hint": "In Japanese, this number is 'にじゅうきゅう'."
+    },
+    "target_dialogues": [
+      {
+        "question": "How many do you want?",
+        "answer": "Twenty-nine, please.",
+        "context": "Counting and stating quantities"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u25_29_twenty-nine_illust.png",
+        "card_full": "cards/full/hwg5_u25_29_twenty-nine_full.png",
+        "card_text": "cards/text/hwg5_u25_29_twenty-nine_text.png",
+        "unit": "Unit 25: Unit 25: Numbers",
+        "source": "here_we_go_5",
+        "sound_file": ""
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u19_29_twenty-nine_illust.png",
+        "card_full": "cards/full/hwg6_u19_29_twenty-nine_full.png",
+        "card_text": "cards/text/hwg6_u19_29_twenty-nine_text.png",
+        "unit": "Unit 19: Unit 19: Numbers",
+        "source": "here_we_go_6",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0368",
+    "english": "twenty-one",
+    "canonical_key": "twenty-one",
+    "disambiguation": "",
+    "display_label": "twenty-one",
+    "normalized_english": "twenty-one",
+    "part_of_speech": "noun",
+    "category": "04_number",
+    "category_name": "Numbers & Counting",
+    "ja_kanji": "二十一",
+    "ja_hiragana": "にじゅういち",
+    "en_katakana": "トゥエンティワン",
+    "ruby": [
+      {
+        "base": "二十一",
+        "ruby": "にじゅういち"
+      }
+    ],
+    "ruby_html": "<ruby>二十一<rt>にじゅういち</rt></ruby>",
+    "ruby_text": "[二十一|にじゅういち]",
+    "sound_file": "",
+    "card_image": "cards/full/hwg5_u25_21_twenty-one_full.png",
+    "card_image_kana": "cards/full/hwg5_u25_21_twenty-one_full.png",
+    "card_image_en": "cards/full/hwg5_u25_21_twenty-one_full.png",
+    "card_image_bilingual": "cards/full/hwg5_u25_21_twenty-one_full.png",
+    "card_variants": [],
+    "token": "hwg_twenty-one",
+    "grades": [
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: How many do you want? / A: Twenty-one, please."
+    ],
+    "tags": [
+      "number"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u25_21_twenty-one_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u25_21_twenty-one_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u25_21_twenty-one_text.png",
+    "lemma": "twenty-one",
+    "is_plural": false,
+    "letter_count": 9,
+    "syllable_count": 2,
+    "first_letter": "T",
+    "is_compound": true,
+    "phonics_initial": "t",
+    "difficulty_tier": 3,
+    "primary_image": "cards/full/hwg5_u25_21_twenty-one_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is a number or quantity.",
+      "feature_hint": "This number means '二十一' (にじゅういち) in Japanese.",
+      "letter_hint": "In Japanese, this number is 'にじゅういち'."
+    },
+    "target_dialogues": [
+      {
+        "question": "How many do you want?",
+        "answer": "Twenty-one, please.",
+        "context": "Counting and stating quantities"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u25_21_twenty-one_illust.png",
+        "card_full": "cards/full/hwg5_u25_21_twenty-one_full.png",
+        "card_text": "cards/text/hwg5_u25_21_twenty-one_text.png",
+        "unit": "Unit 25: Unit 25: Numbers",
+        "source": "here_we_go_5",
+        "sound_file": ""
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u19_21_twenty-one_illust.png",
+        "card_full": "cards/full/hwg6_u19_21_twenty-one_full.png",
+        "card_text": "cards/text/hwg6_u19_21_twenty-one_text.png",
+        "unit": "Unit 19: Unit 19: Numbers",
+        "source": "here_we_go_6",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0369",
+    "english": "twenty-seven",
+    "canonical_key": "twenty-seven",
+    "disambiguation": "",
+    "display_label": "twenty-seven",
+    "normalized_english": "twenty-seven",
+    "part_of_speech": "noun",
+    "category": "04_number",
+    "category_name": "Numbers & Counting",
+    "ja_kanji": "二十七",
+    "ja_hiragana": "にじゅうなな",
+    "en_katakana": "トゥエンティセブン",
+    "ruby": [
+      {
+        "base": "二十七",
+        "ruby": "にじゅうなな"
+      }
+    ],
+    "ruby_html": "<ruby>二十七<rt>にじゅうなな</rt></ruby>",
+    "ruby_text": "[二十七|にじゅうなな]",
+    "sound_file": "",
+    "card_image": "cards/full/hwg5_u25_27_twenty-seven_full.png",
+    "card_image_kana": "cards/full/hwg5_u25_27_twenty-seven_full.png",
+    "card_image_en": "cards/full/hwg5_u25_27_twenty-seven_full.png",
+    "card_image_bilingual": "cards/full/hwg5_u25_27_twenty-seven_full.png",
+    "card_variants": [],
+    "token": "hwg_twenty-seven",
+    "grades": [
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: How many do you want? / A: Twenty-seven, please."
+    ],
+    "tags": [
+      "number"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u25_27_twenty-seven_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u25_27_twenty-seven_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u25_27_twenty-seven_text.png",
+    "lemma": "twenty-seven",
+    "is_plural": false,
+    "letter_count": 11,
+    "syllable_count": 4,
+    "first_letter": "T",
+    "is_compound": true,
+    "phonics_initial": "t",
+    "difficulty_tier": 3,
+    "primary_image": "cards/full/hwg5_u25_27_twenty-seven_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is a number or quantity.",
+      "feature_hint": "This number means '二十七' (にじゅうなな) in Japanese.",
+      "letter_hint": "In Japanese, this number is 'にじゅうなな'."
+    },
+    "target_dialogues": [
+      {
+        "question": "How many do you want?",
+        "answer": "Twenty-seven, please.",
+        "context": "Counting and stating quantities"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u25_27_twenty-seven_illust.png",
+        "card_full": "cards/full/hwg5_u25_27_twenty-seven_full.png",
+        "card_text": "cards/text/hwg5_u25_27_twenty-seven_text.png",
+        "unit": "Unit 25: Unit 25: Numbers",
+        "source": "here_we_go_5",
+        "sound_file": ""
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u19_27_twenty-seven_illust.png",
+        "card_full": "cards/full/hwg6_u19_27_twenty-seven_full.png",
+        "card_text": "cards/text/hwg6_u19_27_twenty-seven_text.png",
+        "unit": "Unit 19: Unit 19: Numbers",
+        "source": "here_we_go_6",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0370",
+    "english": "twenty-six",
+    "canonical_key": "twenty-six",
+    "disambiguation": "",
+    "display_label": "twenty-six",
+    "normalized_english": "twenty-six",
+    "part_of_speech": "noun",
+    "category": "04_number",
+    "category_name": "Numbers & Counting",
+    "ja_kanji": "二十六",
+    "ja_hiragana": "にじゅうろく",
+    "en_katakana": "トゥエンティシックス",
+    "ruby": [
+      {
+        "base": "二十六",
+        "ruby": "にじゅうろく"
+      }
+    ],
+    "ruby_html": "<ruby>二十六<rt>にじゅうろく</rt></ruby>",
+    "ruby_text": "[二十六|にじゅうろく]",
+    "sound_file": "",
+    "card_image": "cards/full/hwg5_u25_26_twenty-six_full.png",
+    "card_image_kana": "cards/full/hwg5_u25_26_twenty-six_full.png",
+    "card_image_en": "cards/full/hwg5_u25_26_twenty-six_full.png",
+    "card_image_bilingual": "cards/full/hwg5_u25_26_twenty-six_full.png",
+    "card_variants": [],
+    "token": "hwg_twenty-six",
+    "grades": [
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: How many do you want? / A: Twenty-six, please."
+    ],
+    "tags": [
+      "number"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u25_26_twenty-six_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u25_26_twenty-six_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u25_26_twenty-six_text.png",
+    "lemma": "twenty-six",
+    "is_plural": false,
+    "letter_count": 9,
+    "syllable_count": 3,
+    "first_letter": "T",
+    "is_compound": true,
+    "phonics_initial": "t",
+    "difficulty_tier": 3,
+    "primary_image": "cards/full/hwg5_u25_26_twenty-six_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is a number or quantity.",
+      "feature_hint": "This number means '二十六' (にじゅうろく) in Japanese.",
+      "letter_hint": "In Japanese, this number is 'にじゅうろく'."
+    },
+    "target_dialogues": [
+      {
+        "question": "How many do you want?",
+        "answer": "Twenty-six, please.",
+        "context": "Counting and stating quantities"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u25_26_twenty-six_illust.png",
+        "card_full": "cards/full/hwg5_u25_26_twenty-six_full.png",
+        "card_text": "cards/text/hwg5_u25_26_twenty-six_text.png",
+        "unit": "Unit 25: Unit 25: Numbers",
+        "source": "here_we_go_5",
+        "sound_file": ""
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u19_26_twenty-six_illust.png",
+        "card_full": "cards/full/hwg6_u19_26_twenty-six_full.png",
+        "card_text": "cards/text/hwg6_u19_26_twenty-six_text.png",
+        "unit": "Unit 19: Unit 19: Numbers",
+        "source": "here_we_go_6",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0371",
+    "english": "twenty-three",
+    "canonical_key": "twenty-three",
+    "disambiguation": "",
+    "display_label": "twenty-three",
+    "normalized_english": "twenty-three",
+    "part_of_speech": "noun",
+    "category": "04_number",
+    "category_name": "Numbers & Counting",
+    "ja_kanji": "二十三",
+    "ja_hiragana": "にじゅうさん",
+    "en_katakana": "トゥエンティスリー",
+    "ruby": [
+      {
+        "base": "二十三",
+        "ruby": "にじゅうさん"
+      }
+    ],
+    "ruby_html": "<ruby>二十三<rt>にじゅうさん</rt></ruby>",
+    "ruby_text": "[二十三|にじゅうさん]",
+    "sound_file": "",
+    "card_image": "cards/full/hwg5_u25_23_twenty-three_full.png",
+    "card_image_kana": "cards/full/hwg5_u25_23_twenty-three_full.png",
+    "card_image_en": "cards/full/hwg5_u25_23_twenty-three_full.png",
+    "card_image_bilingual": "cards/full/hwg5_u25_23_twenty-three_full.png",
+    "card_variants": [],
+    "token": "hwg_twenty-three",
+    "grades": [
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: How many do you want? / A: Twenty-three, please."
+    ],
+    "tags": [
+      "number"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u25_23_twenty-three_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u25_23_twenty-three_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u25_23_twenty-three_text.png",
+    "lemma": "twenty-three",
+    "is_plural": false,
+    "letter_count": 11,
+    "syllable_count": 3,
+    "first_letter": "T",
+    "is_compound": true,
+    "phonics_initial": "t",
+    "difficulty_tier": 3,
+    "primary_image": "cards/full/hwg5_u25_23_twenty-three_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is a number or quantity.",
+      "feature_hint": "This number means '二十三' (にじゅうさん) in Japanese.",
+      "letter_hint": "In Japanese, this number is 'にじゅうさん'."
+    },
+    "target_dialogues": [
+      {
+        "question": "How many do you want?",
+        "answer": "Twenty-three, please.",
+        "context": "Counting and stating quantities"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u25_23_twenty-three_illust.png",
+        "card_full": "cards/full/hwg5_u25_23_twenty-three_full.png",
+        "card_text": "cards/text/hwg5_u25_23_twenty-three_text.png",
+        "unit": "Unit 25: Unit 25: Numbers",
+        "source": "here_we_go_5",
+        "sound_file": ""
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u19_23_twenty-three_illust.png",
+        "card_full": "cards/full/hwg6_u19_23_twenty-three_full.png",
+        "card_text": "cards/text/hwg6_u19_23_twenty-three_text.png",
+        "unit": "Unit 19: Unit 19: Numbers",
+        "source": "here_we_go_6",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0372",
+    "english": "twenty-two",
+    "canonical_key": "twenty-two",
+    "disambiguation": "",
+    "display_label": "twenty-two",
+    "normalized_english": "twenty-two",
+    "part_of_speech": "noun",
+    "category": "04_number",
+    "category_name": "Numbers & Counting",
+    "ja_kanji": "二十二",
+    "ja_hiragana": "にじゅうに",
+    "en_katakana": "トゥエンティツー",
+    "ruby": [
+      {
+        "base": "二十二",
+        "ruby": "にじゅうに"
+      }
+    ],
+    "ruby_html": "<ruby>二十二<rt>にじゅうに</rt></ruby>",
+    "ruby_text": "[二十二|にじゅうに]",
+    "sound_file": "",
+    "card_image": "cards/full/hwg5_u25_22_twenty-two_full.png",
+    "card_image_kana": "cards/full/hwg5_u25_22_twenty-two_full.png",
+    "card_image_en": "cards/full/hwg5_u25_22_twenty-two_full.png",
+    "card_image_bilingual": "cards/full/hwg5_u25_22_twenty-two_full.png",
+    "card_variants": [],
+    "token": "hwg_twenty-two",
+    "grades": [
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: How many do you want? / A: Twenty-two, please."
+    ],
+    "tags": [
+      "number"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u25_22_twenty-two_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u25_22_twenty-two_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u25_22_twenty-two_text.png",
+    "lemma": "twenty-two",
+    "is_plural": false,
+    "letter_count": 9,
+    "syllable_count": 3,
+    "first_letter": "T",
+    "is_compound": true,
+    "phonics_initial": "t",
+    "difficulty_tier": 3,
+    "primary_image": "cards/full/hwg5_u25_22_twenty-two_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is a number or quantity.",
+      "feature_hint": "This number means '二十二' (にじゅうに) in Japanese.",
+      "letter_hint": "In Japanese, this number is 'にじゅうに'."
+    },
+    "target_dialogues": [
+      {
+        "question": "How many do you want?",
+        "answer": "Twenty-two, please.",
+        "context": "Counting and stating quantities"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u25_22_twenty-two_illust.png",
+        "card_full": "cards/full/hwg5_u25_22_twenty-two_full.png",
+        "card_text": "cards/text/hwg5_u25_22_twenty-two_text.png",
+        "unit": "Unit 25: Unit 25: Numbers",
+        "source": "here_we_go_5",
+        "sound_file": ""
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u19_22_twenty-two_illust.png",
+        "card_full": "cards/full/hwg6_u19_22_twenty-two_full.png",
+        "card_text": "cards/text/hwg6_u19_22_twenty-two_text.png",
+        "unit": "Unit 19: Unit 19: Numbers",
+        "source": "here_we_go_6",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0373",
+    "english": "two hundred",
+    "canonical_key": "two hundred",
+    "disambiguation": "",
+    "display_label": "two hundred",
+    "normalized_english": "two hundred",
+    "part_of_speech": "noun",
+    "category": "04_number",
+    "category_name": "Numbers & Counting",
+    "ja_kanji": "二百",
+    "ja_hiragana": "にひゃく",
+    "en_katakana": "ツーハンドレッド",
+    "ruby": [
+      {
+        "base": "二百",
+        "ruby": "にひゃく"
+      }
+    ],
+    "ruby_html": "<ruby>二百<rt>にひゃく</rt></ruby>",
+    "ruby_text": "[二百|にひゃく]",
+    "sound_file": "",
+    "card_image": "cards/full/hwg5_u25_39_two_hundred_full.png",
+    "card_image_kana": "cards/full/hwg5_u25_39_two_hundred_full.png",
+    "card_image_en": "cards/full/hwg5_u25_39_two_hundred_full.png",
+    "card_image_bilingual": "cards/full/hwg5_u25_39_two_hundred_full.png",
+    "card_variants": [],
+    "token": "hwg_two hundred",
+    "grades": [
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: How many do you want? / A: Two hundred, please."
+    ],
+    "tags": [
+      "number"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u25_39_two_hundred_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u25_39_two_hundred_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u25_39_two_hundred_text.png",
+    "lemma": "two hundred",
+    "is_plural": false,
+    "letter_count": 10,
+    "syllable_count": 2,
+    "first_letter": "T",
+    "is_compound": true,
+    "phonics_initial": "t",
+    "difficulty_tier": 3,
+    "primary_image": "cards/full/hwg5_u25_39_two_hundred_full.png",
+    "primary_audio": "",
+    "three_hints": {
+      "category_hint": "It is a number or quantity.",
+      "feature_hint": "This number means '二百' (にひゃく) in Japanese.",
+      "letter_hint": "In Japanese, this number is 'にひゃく'."
+    },
+    "target_dialogues": [
+      {
+        "question": "How many do you want?",
+        "answer": "Two hundred, please.",
+        "context": "Counting and stating quantities"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u25_39_two_hundred_illust.png",
+        "card_full": "cards/full/hwg5_u25_39_two_hundred_full.png",
+        "card_text": "cards/text/hwg5_u25_39_two_hundred_text.png",
+        "unit": "Unit 25: Unit 25: Numbers",
+        "source": "here_we_go_5",
+        "sound_file": ""
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u19_39_two_hundred_illust.png",
+        "card_full": "cards/full/hwg6_u19_39_two_hundred_full.png",
+        "card_text": "cards/text/hwg6_u19_39_two_hundred_text.png",
+        "unit": "Unit 19: Unit 19: Numbers",
+        "source": "here_we_go_6",
+        "sound_file": ""
+      }
+    }
+  },
+  {
+    "id": "word_0543",
+    "english": "eight",
+    "canonical_key": "eight",
+    "disambiguation": "",
+    "display_label": "eight",
+    "normalized_english": "eight",
+    "part_of_speech": "noun",
+    "category": "04_number",
+    "category_name": "Numbers & Counting",
+    "ja_kanji": "八",
+    "ja_hiragana": "はち",
+    "en_katakana": "エイト",
+    "ruby": [
+      {
+        "base": "八",
+        "ruby": "はち"
+      }
+    ],
+    "ruby_html": "<ruby>八<rt>はち</rt></ruby>",
+    "ruby_text": "[八|はち]",
+    "sound_file": "dic_wb_04number_eight_1192.mp3",
+    "card_image": "dic_wb_04number_eight_1192_1_c.png",
+    "card_image_kana": "dic_wb_04number_eight_1192_1_c.png",
+    "card_image_en": "dic_wb_04number_eight_1192_1_e.png",
+    "card_image_bilingual": "dic_wb_04number_eight_1192_1_ce.png",
+    "card_variants": [
+      "dic_wb_04number_eight_1192_1.png",
+      "dic_3_card_eight_2008_1.png",
+      "dic_4_card_eight_2537_1.png"
+    ],
+    "token": "dic_wb_04number_eight_1192&dic_wb_04number_eight_1192&dic_wb_04number_eight_1192",
+    "grades": [
+      "ES_G3",
+      "ES_G4",
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: How many do you want? / A: Eight, please."
+    ],
+    "tags": [
+      "counting",
+      "number"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u25_08_eight_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u25_08_eight_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u25_08_eight_text.png",
+    "lemma": "eight",
+    "is_plural": false,
+    "letter_count": 5,
+    "syllable_count": 1,
+    "first_letter": "E",
+    "is_compound": false,
+    "phonics_initial": "e",
+    "difficulty_tier": 1,
+    "primary_image": "dic_wb_04number_eight_1192_1_c.png",
+    "primary_audio": "dic_wb_04number_eight_1192.mp3",
+    "three_hints": {
+      "category_hint": "It is a number or quantity.",
+      "feature_hint": "This number means '八' (はち) in Japanese.",
+      "letter_hint": "In Japanese, this number is 'はち'."
+    },
+    "target_dialogues": [
+      {
+        "question": "How many do you want?",
+        "answer": "Eight, please.",
+        "context": "Counting and stating quantities"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_eight_2008_1_c.png",
+        "sound_file": "dic_wb_04number_eight_1192.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_eight_2008_1_ce.png",
+        "card_bw": "dic_3_card_eight_2008_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_4_card_eight_2537_1_c.png",
+        "sound_file": "dic_wb_04number_eight_1192.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_4_card_eight_2537_1_ce.png",
+        "card_bw": "dic_4_card_eight_2537_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u25_08_eight_illust.png",
+        "card_full": "cards/full/hwg5_u25_08_eight_full.png",
+        "card_text": "cards/text/hwg5_u25_08_eight_text.png",
+        "unit": "Unit 25: Unit 25: Numbers",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_04number_eight_1192.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u19_08_eight_illust.png",
+        "card_full": "cards/full/hwg6_u19_08_eight_full.png",
+        "card_text": "cards/text/hwg6_u19_08_eight_text.png",
+        "unit": "Unit 19: Unit 19: Numbers",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_04number_eight_1192.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0544",
+    "english": "eighteen",
+    "canonical_key": "eighteen",
+    "disambiguation": "",
+    "display_label": "eighteen",
+    "normalized_english": "eighteen",
+    "part_of_speech": "noun",
+    "category": "04_number",
+    "category_name": "Numbers & Counting",
+    "ja_kanji": "十八",
+    "ja_hiragana": "じゅうはち",
+    "en_katakana": "エイティーン",
+    "ruby": [
+      {
+        "base": "十八",
+        "ruby": "じゅうはち"
+      }
+    ],
+    "ruby_html": "<ruby>十八<rt>じゅうはち</rt></ruby>",
+    "ruby_text": "[十八|じゅうはち]",
+    "sound_file": "dic_wb_04number_eighteen_1202.mp3",
+    "card_image": "dic_wb_04number_eighteen_1202_1_c.png",
+    "card_image_kana": "dic_wb_04number_eighteen_1202_1_c.png",
+    "card_image_en": "dic_wb_04number_eighteen_1202_1_e.png",
+    "card_image_bilingual": "dic_wb_04number_eighteen_1202_1_ce.png",
+    "card_variants": [
+      "dic_wb_04number_eighteen_1202_1.png",
+      "dic_3_card_eighteen_2018_1.png"
+    ],
+    "token": "dic_wb_04number_eighteen_1202&dic_wb_04number_eighteen_1202&dic_wb_04number_eighteen_1202",
+    "grades": [
+      "ES_G3",
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: How many do you want? / A: Eighteen, please."
+    ],
+    "tags": [
+      "counting",
+      "number"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u25_18_eighteen_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u25_18_eighteen_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u25_18_eighteen_text.png",
+    "lemma": "eighteen",
+    "is_plural": false,
+    "letter_count": 8,
+    "syllable_count": 2,
+    "first_letter": "E",
+    "is_compound": false,
+    "phonics_initial": "e",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_04number_eighteen_1202_1_c.png",
+    "primary_audio": "dic_wb_04number_eighteen_1202.mp3",
+    "three_hints": {
+      "category_hint": "It is a number or quantity.",
+      "feature_hint": "This number means '十八' (じゅうはち) in Japanese.",
+      "letter_hint": "In Japanese, this number is 'じゅうはち'."
+    },
+    "target_dialogues": [
+      {
+        "question": "How many do you want?",
+        "answer": "Eighteen, please.",
+        "context": "Counting and stating quantities"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_eighteen_2018_1_c.png",
+        "sound_file": "dic_wb_04number_eighteen_1202.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_eighteen_2018_1_ce.png",
+        "card_bw": "dic_3_card_eighteen_2018_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u25_18_eighteen_illust.png",
+        "card_full": "cards/full/hwg5_u25_18_eighteen_full.png",
+        "card_text": "cards/text/hwg5_u25_18_eighteen_text.png",
+        "unit": "Unit 25: Unit 25: Numbers",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_04number_eighteen_1202.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u19_18_eighteen_illust.png",
+        "card_full": "cards/full/hwg6_u19_18_eighteen_full.png",
+        "card_text": "cards/text/hwg6_u19_18_eighteen_text.png",
+        "unit": "Unit 19: Unit 19: Numbers",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_04number_eighteen_1202.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0545",
+    "english": "eighty",
+    "canonical_key": "eighty",
+    "disambiguation": "",
+    "display_label": "eighty",
+    "normalized_english": "eighty",
+    "part_of_speech": "noun",
+    "category": "04_number",
+    "category_name": "Numbers & Counting",
+    "ja_kanji": "八十",
+    "ja_hiragana": "はちじゅう",
+    "en_katakana": "エイティ",
+    "ruby": [
+      {
+        "base": "八十",
+        "ruby": "はちじゅう"
+      }
+    ],
+    "ruby_html": "<ruby>八十<rt>はちじゅう</rt></ruby>",
+    "ruby_text": "[八十|はちじゅう]",
+    "sound_file": "dic_wb_04number_eighty_1210.mp3",
+    "card_image": "dic_wb_04number_eighty_1210_1_c.png",
+    "card_image_kana": "dic_wb_04number_eighty_1210_1_c.png",
+    "card_image_en": "dic_wb_04number_eighty_1210_1_e.png",
+    "card_image_bilingual": "dic_wb_04number_eighty_1210_1_ce.png",
+    "card_variants": [
+      "dic_wb_04number_eighty_1210_1.png"
+    ],
+    "token": "dic_wb_04number_eighty_1210&dic_wb_04number_eighty_1210&dic_wb_04number_eighty_1210",
+    "grades": [
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: How many do you want? / A: Eighty, please."
+    ],
+    "tags": [
+      "counting",
+      "number"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u25_35_eighty_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u25_35_eighty_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u25_35_eighty_text.png",
+    "lemma": "eighty",
+    "is_plural": false,
+    "letter_count": 6,
+    "syllable_count": 2,
+    "first_letter": "E",
+    "is_compound": false,
+    "phonics_initial": "e",
+    "difficulty_tier": 3,
+    "primary_image": "dic_wb_04number_eighty_1210_1_c.png",
+    "primary_audio": "dic_wb_04number_eighty_1210.mp3",
+    "three_hints": {
+      "category_hint": "It is a number or quantity.",
+      "feature_hint": "This number means '八十' (はちじゅう) in Japanese.",
+      "letter_hint": "In Japanese, this number is 'はちじゅう'."
+    },
+    "target_dialogues": [
+      {
+        "question": "How many do you want?",
+        "answer": "Eighty, please.",
+        "context": "Counting and stating quantities"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u25_35_eighty_illust.png",
+        "card_full": "cards/full/hwg5_u25_35_eighty_full.png",
+        "card_text": "cards/text/hwg5_u25_35_eighty_text.png",
+        "unit": "Unit 25: Unit 25: Numbers",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_04number_eighty_1210.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u19_35_eighty_illust.png",
+        "card_full": "cards/full/hwg6_u19_35_eighty_full.png",
+        "card_text": "cards/text/hwg6_u19_35_eighty_text.png",
+        "unit": "Unit 19: Unit 19: Numbers",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_04number_eighty_1210.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0546",
+    "english": "eleven",
+    "canonical_key": "eleven",
+    "disambiguation": "",
+    "display_label": "eleven",
+    "normalized_english": "eleven",
+    "part_of_speech": "noun",
+    "category": "04_number",
+    "category_name": "Numbers & Counting",
+    "ja_kanji": "十一",
+    "ja_hiragana": "じゅういち",
+    "en_katakana": "イレブン",
+    "ruby": [
+      {
+        "base": "十一",
+        "ruby": "じゅういち"
+      }
+    ],
+    "ruby_html": "<ruby>十一<rt>じゅういち</rt></ruby>",
+    "ruby_text": "[十一|じゅういち]",
+    "sound_file": "dic_wb_04number_eleven_1195.mp3",
+    "card_image": "dic_wb_04number_eleven_1195_1_c.png",
+    "card_image_kana": "dic_wb_04number_eleven_1195_1_c.png",
+    "card_image_en": "dic_wb_04number_eleven_1195_1_e.png",
+    "card_image_bilingual": "dic_wb_04number_eleven_1195_1_ce.png",
+    "card_variants": [
+      "dic_wb_04number_eleven_1195_1.png",
+      "dic_3_card_eleven_2011_1.png"
+    ],
+    "token": "dic_wb_04number_eleven_1195&dic_wb_04number_eleven_1195&dic_wb_04number_eleven_1195",
+    "grades": [
+      "ES_G3",
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: How many do you want? / A: Eleven, please."
+    ],
+    "tags": [
+      "counting",
+      "number"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u25_11_eleven_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u25_11_eleven_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u25_11_eleven_text.png",
+    "lemma": "eleven",
+    "is_plural": false,
+    "letter_count": 6,
+    "syllable_count": 3,
+    "first_letter": "E",
+    "is_compound": false,
+    "phonics_initial": "e",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_04number_eleven_1195_1_c.png",
+    "primary_audio": "dic_wb_04number_eleven_1195.mp3",
+    "three_hints": {
+      "category_hint": "It is a number or quantity.",
+      "feature_hint": "This number means '十一' (じゅういち) in Japanese.",
+      "letter_hint": "In Japanese, this number is 'じゅういち'."
+    },
+    "target_dialogues": [
+      {
+        "question": "How many do you want?",
+        "answer": "Eleven, please.",
+        "context": "Counting and stating quantities"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_eleven_2011_1_c.png",
+        "sound_file": "dic_wb_04number_eleven_1195.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_eleven_2011_1_ce.png",
+        "card_bw": "dic_3_card_eleven_2011_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u25_11_eleven_illust.png",
+        "card_full": "cards/full/hwg5_u25_11_eleven_full.png",
+        "card_text": "cards/text/hwg5_u25_11_eleven_text.png",
+        "unit": "Unit 25: Unit 25: Numbers",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_04number_eleven_1195.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u19_11_eleven_illust.png",
+        "card_full": "cards/full/hwg6_u19_11_eleven_full.png",
+        "card_text": "cards/text/hwg6_u19_11_eleven_text.png",
+        "unit": "Unit 19: Unit 19: Numbers",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_04number_eleven_1195.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0547",
+    "english": "fifteen",
+    "canonical_key": "fifteen",
+    "disambiguation": "",
+    "display_label": "fifteen",
+    "normalized_english": "fifteen",
+    "part_of_speech": "noun",
+    "category": "04_number",
+    "category_name": "Numbers & Counting",
+    "ja_kanji": "十五",
+    "ja_hiragana": "じゅうご",
+    "en_katakana": "フィフティーン",
+    "ruby": [
+      {
+        "base": "十五",
+        "ruby": "じゅうご"
+      }
+    ],
+    "ruby_html": "<ruby>十五<rt>じゅうご</rt></ruby>",
+    "ruby_text": "[十五|じゅうご]",
+    "sound_file": "dic_wb_04number_fifteen_1199.mp3",
+    "card_image": "dic_wb_04number_fifteen_1199_1_c.png",
+    "card_image_kana": "dic_wb_04number_fifteen_1199_1_c.png",
+    "card_image_en": "dic_wb_04number_fifteen_1199_1_e.png",
+    "card_image_bilingual": "dic_wb_04number_fifteen_1199_1_ce.png",
+    "card_variants": [
+      "dic_wb_04number_fifteen_1199_1.png",
+      "dic_3_card_fifteen_2015_1.png"
+    ],
+    "token": "dic_wb_04number_fifteen_1199&dic_wb_04number_fifteen_1199&dic_wb_04number_fifteen_1199",
+    "grades": [
+      "ES_G3",
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: How many do you want? / A: Fifteen, please."
+    ],
+    "tags": [
+      "counting",
+      "number"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u25_15_fifteen_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u25_15_fifteen_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u25_15_fifteen_text.png",
+    "lemma": "fifteen",
+    "is_plural": false,
+    "letter_count": 7,
+    "syllable_count": 2,
+    "first_letter": "F",
+    "is_compound": false,
+    "phonics_initial": "f",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_04number_fifteen_1199_1_c.png",
+    "primary_audio": "dic_wb_04number_fifteen_1199.mp3",
+    "three_hints": {
+      "category_hint": "It is a number or quantity.",
+      "feature_hint": "This number means '十五' (じゅうご) in Japanese.",
+      "letter_hint": "In Japanese, this number is 'じゅうご'."
+    },
+    "target_dialogues": [
+      {
+        "question": "How many do you want?",
+        "answer": "Fifteen, please.",
+        "context": "Counting and stating quantities"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_fifteen_2015_1_c.png",
+        "sound_file": "dic_wb_04number_fifteen_1199.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_fifteen_2015_1_ce.png",
+        "card_bw": "dic_3_card_fifteen_2015_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u25_15_fifteen_illust.png",
+        "card_full": "cards/full/hwg5_u25_15_fifteen_full.png",
+        "card_text": "cards/text/hwg5_u25_15_fifteen_text.png",
+        "unit": "Unit 25: Unit 25: Numbers",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_04number_fifteen_1199.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u19_15_fifteen_illust.png",
+        "card_full": "cards/full/hwg6_u19_15_fifteen_full.png",
+        "card_text": "cards/text/hwg6_u19_15_fifteen_text.png",
+        "unit": "Unit 19: Unit 19: Numbers",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_04number_fifteen_1199.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0548",
+    "english": "fifty",
+    "canonical_key": "fifty",
+    "disambiguation": "",
+    "display_label": "fifty",
+    "normalized_english": "fifty",
+    "part_of_speech": "noun",
+    "category": "04_number",
+    "category_name": "Numbers & Counting",
+    "ja_kanji": "五十",
+    "ja_hiragana": "ごじゅう",
+    "en_katakana": "フィフティ",
+    "ruby": [
+      {
+        "base": "五十",
+        "ruby": "ごじゅう"
+      }
+    ],
+    "ruby_html": "<ruby>五十<rt>ごじゅう</rt></ruby>",
+    "ruby_text": "[五十|ごじゅう]",
+    "sound_file": "dic_wb_04number_fifty_1207.mp3",
+    "card_image": "dic_wb_04number_fifty_1207_1_c.png",
+    "card_image_kana": "dic_wb_04number_fifty_1207_1_c.png",
+    "card_image_en": "dic_wb_04number_fifty_1207_1_e.png",
+    "card_image_bilingual": "dic_wb_04number_fifty_1207_1_ce.png",
+    "card_variants": [
+      "dic_wb_04number_fifty_1207_1.png"
+    ],
+    "token": "dic_wb_04number_fifty_1207&dic_wb_04number_fifty_1207&dic_wb_04number_fifty_1207",
+    "grades": [
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: How many do you want? / A: Fifty, please."
+    ],
+    "tags": [
+      "counting",
+      "number"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u25_32_fifty_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u25_32_fifty_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u25_32_fifty_text.png",
+    "lemma": "fifty",
+    "is_plural": false,
+    "letter_count": 5,
+    "syllable_count": 2,
+    "first_letter": "F",
+    "is_compound": false,
+    "phonics_initial": "f",
+    "difficulty_tier": 3,
+    "primary_image": "dic_wb_04number_fifty_1207_1_c.png",
+    "primary_audio": "dic_wb_04number_fifty_1207.mp3",
+    "three_hints": {
+      "category_hint": "It is a number or quantity.",
+      "feature_hint": "This number means '五十' (ごじゅう) in Japanese.",
+      "letter_hint": "In Japanese, this number is 'ごじゅう'."
+    },
+    "target_dialogues": [
+      {
+        "question": "How many do you want?",
+        "answer": "Fifty, please.",
+        "context": "Counting and stating quantities"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u25_32_fifty_illust.png",
+        "card_full": "cards/full/hwg5_u25_32_fifty_full.png",
+        "card_text": "cards/text/hwg5_u25_32_fifty_text.png",
+        "unit": "Unit 25: Unit 25: Numbers",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_04number_fifty_1207.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u19_32_fifty_illust.png",
+        "card_full": "cards/full/hwg6_u19_32_fifty_full.png",
+        "card_text": "cards/text/hwg6_u19_32_fifty_text.png",
+        "unit": "Unit 19: Unit 19: Numbers",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_04number_fifty_1207.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0549",
+    "english": "five",
+    "canonical_key": "five",
+    "disambiguation": "",
+    "display_label": "five",
+    "normalized_english": "five",
+    "part_of_speech": "noun",
+    "category": "04_number",
+    "category_name": "Numbers & Counting",
+    "ja_kanji": "五",
+    "ja_hiragana": "ご",
+    "en_katakana": "ファイブ",
+    "ruby": [
+      {
+        "base": "五",
+        "ruby": "ご"
+      }
+    ],
+    "ruby_html": "<ruby>五<rt>ご</rt></ruby>",
+    "ruby_text": "[五|ご]",
+    "sound_file": "dic_wb_04number_five_1189.mp3",
+    "card_image": "dic_wb_04number_five_1189_1_c.png",
+    "card_image_kana": "dic_wb_04number_five_1189_1_c.png",
+    "card_image_en": "dic_wb_04number_five_1189_1_e.png",
+    "card_image_bilingual": "dic_wb_04number_five_1189_1_ce.png",
+    "card_variants": [
+      "dic_wb_04number_five_1189_1.png",
+      "dic_3_card_five_2005_1.png"
+    ],
+    "token": "dic_wb_04number_five_1189&dic_wb_04number_five_1189&dic_wb_04number_five_1189",
+    "grades": [
+      "ES_G3",
+      "ES_G4",
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: How many do you want? / A: Five, please."
+    ],
+    "tags": [
+      "counting",
+      "number"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u25_05_five_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u25_05_five_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u25_05_five_text.png",
+    "lemma": "five",
+    "is_plural": false,
+    "letter_count": 4,
+    "syllable_count": 1,
+    "first_letter": "F",
+    "is_compound": false,
+    "phonics_initial": "f",
+    "difficulty_tier": 1,
+    "primary_image": "dic_wb_04number_five_1189_1_c.png",
+    "primary_audio": "dic_wb_04number_five_1189.mp3",
+    "three_hints": {
+      "category_hint": "It is a number or quantity.",
+      "feature_hint": "This number means '五' (ご) in Japanese.",
+      "letter_hint": "In Japanese, this number is 'ご'."
+    },
+    "target_dialogues": [
+      {
+        "question": "How many do you want?",
+        "answer": "Five, please.",
+        "context": "Counting and stating quantities"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_five_2005_1_c.png",
+        "sound_file": "dic_wb_04number_five_1189.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_five_2005_1_ce.png",
+        "card_bw": "dic_3_card_five_2005_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_wb_04number_five_1189_1_c.png",
+        "sound_file": "dic_wb_04number_five_1189.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_wb_04number_five_1189_1_ce.png",
+        "card_bw": "dic_wb_04number_five_1189_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u25_05_five_illust.png",
+        "card_full": "cards/full/hwg5_u25_05_five_full.png",
+        "card_text": "cards/text/hwg5_u25_05_five_text.png",
+        "unit": "Unit 25: Unit 25: Numbers",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_04number_five_1189.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u19_05_five_illust.png",
+        "card_full": "cards/full/hwg6_u19_05_five_full.png",
+        "card_text": "cards/text/hwg6_u19_05_five_text.png",
+        "unit": "Unit 19: Unit 19: Numbers",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_04number_five_1189.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0550",
+    "english": "forty",
+    "canonical_key": "forty",
+    "disambiguation": "",
+    "display_label": "forty",
+    "normalized_english": "forty",
+    "part_of_speech": "noun",
+    "category": "04_number",
+    "category_name": "Numbers & Counting",
+    "ja_kanji": "四十",
+    "ja_hiragana": "よんじゅう",
+    "en_katakana": "フォーティ",
+    "ruby": [
+      {
+        "base": "四十",
+        "ruby": "よんじゅう"
+      }
+    ],
+    "ruby_html": "<ruby>四十<rt>よんじゅう</rt></ruby>",
+    "ruby_text": "[四十|よんじゅう]",
+    "sound_file": "dic_wb_04number_forty_1206.mp3",
+    "card_image": "dic_wb_04number_forty_1206_1_c.png",
+    "card_image_kana": "dic_wb_04number_forty_1206_1_c.png",
+    "card_image_en": "dic_wb_04number_forty_1206_1_e.png",
+    "card_image_bilingual": "dic_wb_04number_forty_1206_1_ce.png",
+    "card_variants": [
+      "dic_wb_04number_forty_1206_1.png"
+    ],
+    "token": "dic_wb_04number_forty_1206&dic_wb_04number_forty_1206&dic_wb_04number_forty_1206",
+    "grades": [
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: How many do you want? / A: Forty, please."
+    ],
+    "tags": [
+      "counting",
+      "number"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u25_31_forty_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u25_31_forty_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u25_31_forty_text.png",
+    "lemma": "forty",
+    "is_plural": false,
+    "letter_count": 5,
+    "syllable_count": 2,
+    "first_letter": "F",
+    "is_compound": false,
+    "phonics_initial": "f",
+    "difficulty_tier": 3,
+    "primary_image": "dic_wb_04number_forty_1206_1_c.png",
+    "primary_audio": "dic_wb_04number_forty_1206.mp3",
+    "three_hints": {
+      "category_hint": "It is a number or quantity.",
+      "feature_hint": "This number means '四十' (よんじゅう) in Japanese.",
+      "letter_hint": "In Japanese, this number is 'よんじゅう'."
+    },
+    "target_dialogues": [
+      {
+        "question": "How many do you want?",
+        "answer": "Forty, please.",
+        "context": "Counting and stating quantities"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u25_31_forty_illust.png",
+        "card_full": "cards/full/hwg5_u25_31_forty_full.png",
+        "card_text": "cards/text/hwg5_u25_31_forty_text.png",
+        "unit": "Unit 25: Unit 25: Numbers",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_04number_forty_1206.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u19_31_forty_illust.png",
+        "card_full": "cards/full/hwg6_u19_31_forty_full.png",
+        "card_text": "cards/text/hwg6_u19_31_forty_text.png",
+        "unit": "Unit 19: Unit 19: Numbers",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_04number_forty_1206.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0551",
+    "english": "four",
+    "canonical_key": "four",
+    "disambiguation": "",
+    "display_label": "four",
+    "normalized_english": "four",
+    "part_of_speech": "noun",
+    "category": "04_number",
+    "category_name": "Numbers & Counting",
+    "ja_kanji": "四",
+    "ja_hiragana": "よん",
+    "en_katakana": "フォー",
+    "ruby": [
+      {
+        "base": "四",
+        "ruby": "よん"
+      }
+    ],
+    "ruby_html": "<ruby>四<rt>よん</rt></ruby>",
+    "ruby_text": "[四|よん]",
+    "sound_file": "dic_wb_04number_four_1188.mp3",
+    "card_image": "dic_wb_04number_four_1188_1_c.png",
+    "card_image_kana": "dic_wb_04number_four_1188_1_c.png",
+    "card_image_en": "dic_wb_04number_four_1188_1_e.png",
+    "card_image_bilingual": "dic_wb_04number_four_1188_1_ce.png",
+    "card_variants": [
+      "dic_wb_04number_four_1188_1.png",
+      "dic_3_card_four_2004_1.png"
+    ],
+    "token": "dic_wb_04number_four_1188&dic_wb_04number_four_1188&dic_wb_04number_four_1188",
+    "grades": [
+      "ES_G3",
+      "ES_G4",
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: How many do you want? / A: Four, please."
+    ],
+    "tags": [
+      "counting",
+      "number"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u25_04_four_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u25_04_four_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u25_04_four_text.png",
+    "lemma": "four",
+    "is_plural": false,
+    "letter_count": 4,
+    "syllable_count": 1,
+    "first_letter": "F",
+    "is_compound": false,
+    "phonics_initial": "f",
+    "difficulty_tier": 1,
+    "primary_image": "dic_wb_04number_four_1188_1_c.png",
+    "primary_audio": "dic_wb_04number_four_1188.mp3",
+    "three_hints": {
+      "category_hint": "It is a number or quantity.",
+      "feature_hint": "This number means '四' (よん) in Japanese.",
+      "letter_hint": "In Japanese, this number is 'よん'."
+    },
+    "target_dialogues": [
+      {
+        "question": "How many do you want?",
+        "answer": "Four, please.",
+        "context": "Counting and stating quantities"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_four_2004_1_c.png",
+        "sound_file": "dic_wb_04number_four_1188.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_four_2004_1_ce.png",
+        "card_bw": "dic_3_card_four_2004_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_wb_04number_four_1188_1_c.png",
+        "sound_file": "dic_wb_04number_four_1188.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_wb_04number_four_1188_1_ce.png",
+        "card_bw": "dic_wb_04number_four_1188_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u25_04_four_illust.png",
+        "card_full": "cards/full/hwg5_u25_04_four_full.png",
+        "card_text": "cards/text/hwg5_u25_04_four_text.png",
+        "unit": "Unit 25: Unit 25: Numbers",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_04number_four_1188.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u19_04_four_illust.png",
+        "card_full": "cards/full/hwg6_u19_04_four_full.png",
+        "card_text": "cards/text/hwg6_u19_04_four_text.png",
+        "unit": "Unit 19: Unit 19: Numbers",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_04number_four_1188.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0552",
+    "english": "fourteen",
+    "canonical_key": "fourteen",
+    "disambiguation": "",
+    "display_label": "fourteen",
+    "normalized_english": "fourteen",
+    "part_of_speech": "noun",
+    "category": "04_number",
+    "category_name": "Numbers & Counting",
+    "ja_kanji": "十四",
+    "ja_hiragana": "じゅうよん",
+    "en_katakana": "フォーティーン",
+    "ruby": [
+      {
+        "base": "十四",
+        "ruby": "じゅうよん"
+      }
+    ],
+    "ruby_html": "<ruby>十四<rt>じゅうよん</rt></ruby>",
+    "ruby_text": "[十四|じゅうよん]",
+    "sound_file": "dic_wb_04number_fourteen_1198.mp3",
+    "card_image": "dic_wb_04number_fourteen_1198_1_c.png",
+    "card_image_kana": "dic_wb_04number_fourteen_1198_1_c.png",
+    "card_image_en": "dic_wb_04number_fourteen_1198_1_e.png",
+    "card_image_bilingual": "dic_wb_04number_fourteen_1198_1_ce.png",
+    "card_variants": [
+      "dic_wb_04number_fourteen_1198_1.png",
+      "dic_3_card_fourteen_2014_1.png"
+    ],
+    "token": "dic_wb_04number_fourteen_1198&dic_wb_04number_fourteen_1198&dic_wb_04number_fourteen_1198",
+    "grades": [
+      "ES_G3",
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: How many do you want? / A: Fourteen, please."
+    ],
+    "tags": [
+      "counting",
+      "number"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u25_14_fourteen_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u25_14_fourteen_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u25_14_fourteen_text.png",
+    "lemma": "fourteen",
+    "is_plural": false,
+    "letter_count": 8,
+    "syllable_count": 2,
+    "first_letter": "F",
+    "is_compound": false,
+    "phonics_initial": "f",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_04number_fourteen_1198_1_c.png",
+    "primary_audio": "dic_wb_04number_fourteen_1198.mp3",
+    "three_hints": {
+      "category_hint": "It is a number or quantity.",
+      "feature_hint": "This number means '十四' (じゅうよん) in Japanese.",
+      "letter_hint": "In Japanese, this number is 'じゅうよん'."
+    },
+    "target_dialogues": [
+      {
+        "question": "How many do you want?",
+        "answer": "Fourteen, please.",
+        "context": "Counting and stating quantities"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_fourteen_2014_1_c.png",
+        "sound_file": "dic_wb_04number_fourteen_1198.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_fourteen_2014_1_ce.png",
+        "card_bw": "dic_3_card_fourteen_2014_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u25_14_fourteen_illust.png",
+        "card_full": "cards/full/hwg5_u25_14_fourteen_full.png",
+        "card_text": "cards/text/hwg5_u25_14_fourteen_text.png",
+        "unit": "Unit 25: Unit 25: Numbers",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_04number_fourteen_1198.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u19_14_fourteen_illust.png",
+        "card_full": "cards/full/hwg6_u19_14_fourteen_full.png",
+        "card_text": "cards/text/hwg6_u19_14_fourteen_text.png",
+        "unit": "Unit 19: Unit 19: Numbers",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_04number_fourteen_1198.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0553",
+    "english": "hundred",
+    "canonical_key": "hundred",
+    "disambiguation": "",
+    "display_label": "hundred",
+    "normalized_english": "hundred",
+    "part_of_speech": "noun",
+    "category": "04_number",
+    "category_name": "Numbers & Counting",
+    "ja_kanji": "百",
+    "ja_hiragana": "ひゃく",
+    "en_katakana": "ハンドレッド",
+    "ruby": [
+      {
+        "base": "百",
+        "ruby": "ひゃく"
+      }
+    ],
+    "ruby_html": "<ruby>百<rt>ひゃく</rt></ruby>",
+    "ruby_text": "[百|ひゃく]",
+    "sound_file": "dic_wb_04number_hundred_1212.mp3",
+    "card_image": "dic_wb_04number_hundred_1212_1_c.png",
+    "card_image_kana": "dic_wb_04number_hundred_1212_1_c.png",
+    "card_image_en": "dic_wb_04number_hundred_1212_1_e.png",
+    "card_image_bilingual": "dic_wb_04number_hundred_1212_1_ce.png",
+    "card_variants": [
+      "dic_wb_04number_hundred_1212_1.png"
+    ],
+    "token": "dic_wb_04number_hundred_1212&dic_wb_04number_hundred_1212&dic_wb_04number_hundred_1212",
+    "grades": [
+      "ES_G1",
+      "ES_G2",
+      "ES_G3"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: How many do you want? / A: Hundred, please."
+    ],
+    "tags": [
+      "counting",
+      "number"
+    ],
+    "lemma": "hundred",
+    "is_plural": false,
+    "letter_count": 7,
+    "syllable_count": 1,
+    "first_letter": "H",
+    "is_compound": false,
+    "phonics_initial": "h",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_04number_hundred_1212_1_c.png",
+    "primary_audio": "dic_wb_04number_hundred_1212.mp3",
+    "three_hints": {
+      "category_hint": "It is a number or quantity.",
+      "feature_hint": "This number means '百' (ひゃく) in Japanese.",
+      "letter_hint": "In Japanese, this number is 'ひゃく'."
+    },
+    "target_dialogues": [
+      {
+        "question": "How many do you want?",
+        "answer": "Hundred, please.",
+        "context": "Counting and stating quantities"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_wb_04number_hundred_1212_1_c.png",
+        "sound_file": "dic_wb_04number_hundred_1212.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_wb_04number_hundred_1212_1_ce.png",
+        "card_bw": "dic_wb_04number_hundred_1212_1.png"
+      },
+      "ES_G1": {
+        "card_image": "dic_wb_04number_hundred_1212_1_c.png",
+        "sound_file": "dic_wb_04number_hundred_1212.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_wb_04number_hundred_1212_1_ce.png",
+        "card_bw": "dic_wb_04number_hundred_1212_1.png"
+      },
+      "ES_G2": {
+        "card_image": "dic_wb_04number_hundred_1212_1_c.png",
+        "sound_file": "dic_wb_04number_hundred_1212.mp3",
+        "source": "borderlink_elementary",
+        "card_full": "dic_wb_04number_hundred_1212_1_ce.png",
+        "card_bw": "dic_wb_04number_hundred_1212_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0554",
+    "english": "nine",
+    "canonical_key": "nine",
+    "disambiguation": "",
+    "display_label": "nine",
+    "normalized_english": "nine",
+    "part_of_speech": "noun",
+    "category": "04_number",
+    "category_name": "Numbers & Counting",
+    "ja_kanji": "九",
+    "ja_hiragana": "きゅう",
+    "en_katakana": "ナイン",
+    "ruby": [
+      {
+        "base": "九",
+        "ruby": "きゅう"
+      }
+    ],
+    "ruby_html": "<ruby>九<rt>きゅう</rt></ruby>",
+    "ruby_text": "[九|きゅう]",
+    "sound_file": "dic_wb_04number_nine_1193.mp3",
+    "card_image": "dic_wb_04number_nine_1193_1_c.png",
+    "card_image_kana": "dic_wb_04number_nine_1193_1_c.png",
+    "card_image_en": "dic_wb_04number_nine_1193_1_e.png",
+    "card_image_bilingual": "dic_wb_04number_nine_1193_1_ce.png",
+    "card_variants": [
+      "dic_wb_04number_nine_1193_1.png",
+      "dic_3_card_nine_2009_1.png"
+    ],
+    "token": "dic_wb_04number_nine_1193&dic_wb_04number_nine_1193&dic_wb_04number_nine_1193",
+    "grades": [
+      "ES_G3",
+      "ES_G4",
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: How many do you want? / A: Nine, please."
+    ],
+    "tags": [
+      "counting",
+      "number"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u25_09_nine_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u25_09_nine_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u25_09_nine_text.png",
+    "lemma": "nine",
+    "is_plural": false,
+    "letter_count": 4,
+    "syllable_count": 1,
+    "first_letter": "N",
+    "is_compound": false,
+    "phonics_initial": "n",
+    "difficulty_tier": 1,
+    "primary_image": "dic_wb_04number_nine_1193_1_c.png",
+    "primary_audio": "dic_wb_04number_nine_1193.mp3",
+    "three_hints": {
+      "category_hint": "It is a number or quantity.",
+      "feature_hint": "This number means '九' (きゅう) in Japanese.",
+      "letter_hint": "In Japanese, this number is 'きゅう'."
+    },
+    "target_dialogues": [
+      {
+        "question": "How many do you want?",
+        "answer": "Nine, please.",
+        "context": "Counting and stating quantities"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_nine_2009_1_c.png",
+        "sound_file": "dic_wb_04number_nine_1193.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_nine_2009_1_ce.png",
+        "card_bw": "dic_3_card_nine_2009_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_wb_04number_nine_1193_1_c.png",
+        "sound_file": "dic_wb_04number_nine_1193.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_wb_04number_nine_1193_1_ce.png",
+        "card_bw": "dic_wb_04number_nine_1193_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u25_09_nine_illust.png",
+        "card_full": "cards/full/hwg5_u25_09_nine_full.png",
+        "card_text": "cards/text/hwg5_u25_09_nine_text.png",
+        "unit": "Unit 25: Unit 25: Numbers",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_04number_nine_1193.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u19_09_nine_illust.png",
+        "card_full": "cards/full/hwg6_u19_09_nine_full.png",
+        "card_text": "cards/text/hwg6_u19_09_nine_text.png",
+        "unit": "Unit 19: Unit 19: Numbers",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_04number_nine_1193.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0555",
+    "english": "nineteen",
+    "canonical_key": "nineteen",
+    "disambiguation": "",
+    "display_label": "nineteen",
+    "normalized_english": "nineteen",
+    "part_of_speech": "noun",
+    "category": "04_number",
+    "category_name": "Numbers & Counting",
+    "ja_kanji": "十九",
+    "ja_hiragana": "じゅうきゅう",
+    "en_katakana": "ナインティーン",
+    "ruby": [
+      {
+        "base": "十九",
+        "ruby": "じゅうきゅう"
+      }
+    ],
+    "ruby_html": "<ruby>十九<rt>じゅうきゅう</rt></ruby>",
+    "ruby_text": "[十九|じゅうきゅう]",
+    "sound_file": "dic_wb_04number_nineteen_1203.mp3",
+    "card_image": "dic_wb_04number_nineteen_1203_1_c.png",
+    "card_image_kana": "dic_wb_04number_nineteen_1203_1_c.png",
+    "card_image_en": "dic_wb_04number_nineteen_1203_1_e.png",
+    "card_image_bilingual": "dic_wb_04number_nineteen_1203_1_ce.png",
+    "card_variants": [
+      "dic_wb_04number_nineteen_1203_1.png",
+      "dic_3_card_nineteen_2019_1.png"
+    ],
+    "token": "dic_wb_04number_nineteen_1203&dic_wb_04number_nineteen_1203&dic_wb_04number_nineteen_1203",
+    "grades": [
+      "ES_G3",
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: How many do you want? / A: Nineteen, please."
+    ],
+    "tags": [
+      "counting",
+      "number"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u25_19_nineteen_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u25_19_nineteen_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u25_19_nineteen_text.png",
+    "lemma": "nineteen",
+    "is_plural": false,
+    "letter_count": 8,
+    "syllable_count": 2,
+    "first_letter": "N",
+    "is_compound": false,
+    "phonics_initial": "n",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_04number_nineteen_1203_1_c.png",
+    "primary_audio": "dic_wb_04number_nineteen_1203.mp3",
+    "three_hints": {
+      "category_hint": "It is a number or quantity.",
+      "feature_hint": "This number means '十九' (じゅうきゅう) in Japanese.",
+      "letter_hint": "In Japanese, this number is 'じゅうきゅう'."
+    },
+    "target_dialogues": [
+      {
+        "question": "How many do you want?",
+        "answer": "Nineteen, please.",
+        "context": "Counting and stating quantities"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_nineteen_2019_1_c.png",
+        "sound_file": "dic_wb_04number_nineteen_1203.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_nineteen_2019_1_ce.png",
+        "card_bw": "dic_3_card_nineteen_2019_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u25_19_nineteen_illust.png",
+        "card_full": "cards/full/hwg5_u25_19_nineteen_full.png",
+        "card_text": "cards/text/hwg5_u25_19_nineteen_text.png",
+        "unit": "Unit 25: Unit 25: Numbers",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_04number_nineteen_1203.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u19_19_nineteen_illust.png",
+        "card_full": "cards/full/hwg6_u19_19_nineteen_full.png",
+        "card_text": "cards/text/hwg6_u19_19_nineteen_text.png",
+        "unit": "Unit 19: Unit 19: Numbers",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_04number_nineteen_1203.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0556",
+    "english": "ninety",
+    "canonical_key": "ninety",
+    "disambiguation": "",
+    "display_label": "ninety",
+    "normalized_english": "ninety",
+    "part_of_speech": "noun",
+    "category": "04_number",
+    "category_name": "Numbers & Counting",
+    "ja_kanji": "九十",
+    "ja_hiragana": "きゅうじゅう",
+    "en_katakana": "ナインティ",
+    "ruby": [
+      {
+        "base": "九十",
+        "ruby": "きゅうじゅう"
+      }
+    ],
+    "ruby_html": "<ruby>九十<rt>きゅうじゅう</rt></ruby>",
+    "ruby_text": "[九十|きゅうじゅう]",
+    "sound_file": "dic_wb_04number_ninety_1211.mp3",
+    "card_image": "dic_wb_04number_ninety_1211_1_c.png",
+    "card_image_kana": "dic_wb_04number_ninety_1211_1_c.png",
+    "card_image_en": "dic_wb_04number_ninety_1211_1_e.png",
+    "card_image_bilingual": "dic_wb_04number_ninety_1211_1_ce.png",
+    "card_variants": [
+      "dic_wb_04number_ninety_1211_1.png"
+    ],
+    "token": "dic_wb_04number_ninety_1211&dic_wb_04number_ninety_1211&dic_wb_04number_ninety_1211",
+    "grades": [
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: How many do you want? / A: Ninety, please."
+    ],
+    "tags": [
+      "counting",
+      "number"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u25_36_ninety_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u25_36_ninety_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u25_36_ninety_text.png",
+    "lemma": "ninety",
+    "is_plural": false,
+    "letter_count": 6,
+    "syllable_count": 3,
+    "first_letter": "N",
+    "is_compound": false,
+    "phonics_initial": "n",
+    "difficulty_tier": 3,
+    "primary_image": "dic_wb_04number_ninety_1211_1_c.png",
+    "primary_audio": "dic_wb_04number_ninety_1211.mp3",
+    "three_hints": {
+      "category_hint": "It is a number or quantity.",
+      "feature_hint": "This number means '九十' (きゅうじゅう) in Japanese.",
+      "letter_hint": "In Japanese, this number is 'きゅうじゅう'."
+    },
+    "target_dialogues": [
+      {
+        "question": "How many do you want?",
+        "answer": "Ninety, please.",
+        "context": "Counting and stating quantities"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u25_36_ninety_illust.png",
+        "card_full": "cards/full/hwg5_u25_36_ninety_full.png",
+        "card_text": "cards/text/hwg5_u25_36_ninety_text.png",
+        "unit": "Unit 25: Unit 25: Numbers",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_04number_ninety_1211.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u19_36_ninety_illust.png",
+        "card_full": "cards/full/hwg6_u19_36_ninety_full.png",
+        "card_text": "cards/text/hwg6_u19_36_ninety_text.png",
+        "unit": "Unit 19: Unit 19: Numbers",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_04number_ninety_1211.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0557",
+    "english": "one",
+    "canonical_key": "one",
+    "disambiguation": "",
+    "display_label": "one",
+    "normalized_english": "one",
+    "part_of_speech": "noun",
+    "category": "04_number",
+    "category_name": "Numbers & Counting",
+    "ja_kanji": "一",
+    "ja_hiragana": "いち",
+    "en_katakana": "ワン",
+    "ruby": [
+      {
+        "base": "一",
+        "ruby": "いち"
+      }
+    ],
+    "ruby_html": "<ruby>一<rt>いち</rt></ruby>",
+    "ruby_text": "[一|いち]",
+    "sound_file": "dic_wb_04number_one_1185.mp3",
+    "card_image": "dic_wb_04number_one_1185_1_c.png",
+    "card_image_kana": "dic_wb_04number_one_1185_1_c.png",
+    "card_image_en": "dic_wb_04number_one_1185_1_e.png",
+    "card_image_bilingual": "dic_wb_04number_one_1185_1_ce.png",
+    "card_variants": [
+      "dic_wb_04number_one_1185_1.png",
+      "dic_3_card_one_2001_1.png"
+    ],
+    "token": "dic_wb_04number_one_1185&dic_wb_04number_one_1185&dic_wb_04number_one_1185",
+    "grades": [
+      "ES_G3",
+      "ES_G4",
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: How many do you want? / A: One, please."
+    ],
+    "tags": [
+      "counting",
+      "number"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u25_01_one_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u25_01_one_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u25_01_one_text.png",
+    "lemma": "one",
+    "is_plural": false,
+    "letter_count": 3,
+    "syllable_count": 1,
+    "first_letter": "O",
+    "is_compound": false,
+    "phonics_initial": "o",
+    "difficulty_tier": 1,
+    "primary_image": "dic_wb_04number_one_1185_1_c.png",
+    "primary_audio": "dic_wb_04number_one_1185.mp3",
+    "three_hints": {
+      "category_hint": "It is a number or quantity.",
+      "feature_hint": "This number means '一' (いち) in Japanese.",
+      "letter_hint": "In Japanese, this number is 'いち'."
+    },
+    "target_dialogues": [
+      {
+        "question": "How many do you want?",
+        "answer": "One, please.",
+        "context": "Counting and stating quantities"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_one_2001_1_c.png",
+        "sound_file": "dic_wb_04number_one_1185.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_one_2001_1_ce.png",
+        "card_bw": "dic_3_card_one_2001_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_wb_04number_one_1185_1_c.png",
+        "sound_file": "dic_wb_04number_one_1185.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_wb_04number_one_1185_1_ce.png",
+        "card_bw": "dic_wb_04number_one_1185_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u25_01_one_illust.png",
+        "card_full": "cards/full/hwg5_u25_01_one_full.png",
+        "card_text": "cards/text/hwg5_u25_01_one_text.png",
+        "unit": "Unit 25: Unit 25: Numbers",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_04number_one_1185.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u19_01_one_illust.png",
+        "card_full": "cards/full/hwg6_u19_01_one_full.png",
+        "card_text": "cards/text/hwg6_u19_01_one_text.png",
+        "unit": "Unit 19: Unit 19: Numbers",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_04number_one_1185.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0558",
+    "english": "seven",
+    "canonical_key": "seven",
+    "disambiguation": "",
+    "display_label": "seven",
+    "normalized_english": "seven",
+    "part_of_speech": "noun",
+    "category": "04_number",
+    "category_name": "Numbers & Counting",
+    "ja_kanji": "七",
+    "ja_hiragana": "なな",
+    "en_katakana": "セブン",
+    "ruby": [
+      {
+        "base": "七",
+        "ruby": "なな"
+      }
+    ],
+    "ruby_html": "<ruby>七<rt>なな</rt></ruby>",
+    "ruby_text": "[七|なな]",
+    "sound_file": "dic_wb_04number_seven_1191.mp3",
+    "card_image": "dic_wb_04number_seven_1191_1_c.png",
+    "card_image_kana": "dic_wb_04number_seven_1191_1_c.png",
+    "card_image_en": "dic_wb_04number_seven_1191_1_e.png",
+    "card_image_bilingual": "dic_wb_04number_seven_1191_1_ce.png",
+    "card_variants": [
+      "dic_wb_04number_seven_1191_1.png",
+      "dic_3_card_seven_2007_1.png"
+    ],
+    "token": "dic_wb_04number_seven_1191&dic_wb_04number_seven_1191&dic_wb_04number_seven_1191",
+    "grades": [
+      "ES_G3",
+      "ES_G4",
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: How many do you want? / A: Seven, please."
+    ],
+    "tags": [
+      "counting",
+      "number"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u25_07_seven_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u25_07_seven_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u25_07_seven_text.png",
+    "lemma": "seven",
+    "is_plural": false,
+    "letter_count": 5,
+    "syllable_count": 2,
+    "first_letter": "S",
+    "is_compound": false,
+    "phonics_initial": "s",
+    "difficulty_tier": 1,
+    "primary_image": "dic_wb_04number_seven_1191_1_c.png",
+    "primary_audio": "dic_wb_04number_seven_1191.mp3",
+    "three_hints": {
+      "category_hint": "It is a number or quantity.",
+      "feature_hint": "This number means '七' (なな) in Japanese.",
+      "letter_hint": "In Japanese, this number is 'なな'."
+    },
+    "target_dialogues": [
+      {
+        "question": "How many do you want?",
+        "answer": "Seven, please.",
+        "context": "Counting and stating quantities"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_seven_2007_1_c.png",
+        "sound_file": "dic_wb_04number_seven_1191.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_seven_2007_1_ce.png",
+        "card_bw": "dic_3_card_seven_2007_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_wb_04number_seven_1191_1_c.png",
+        "sound_file": "dic_wb_04number_seven_1191.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_wb_04number_seven_1191_1_ce.png",
+        "card_bw": "dic_wb_04number_seven_1191_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u25_07_seven_illust.png",
+        "card_full": "cards/full/hwg5_u25_07_seven_full.png",
+        "card_text": "cards/text/hwg5_u25_07_seven_text.png",
+        "unit": "Unit 25: Unit 25: Numbers",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_04number_seven_1191.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u19_07_seven_illust.png",
+        "card_full": "cards/full/hwg6_u19_07_seven_full.png",
+        "card_text": "cards/text/hwg6_u19_07_seven_text.png",
+        "unit": "Unit 19: Unit 19: Numbers",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_04number_seven_1191.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0559",
+    "english": "seventeen",
+    "canonical_key": "seventeen",
+    "disambiguation": "",
+    "display_label": "seventeen",
+    "normalized_english": "seventeen",
+    "part_of_speech": "noun",
+    "category": "04_number",
+    "category_name": "Numbers & Counting",
+    "ja_kanji": "十七",
+    "ja_hiragana": "じゅうなな",
+    "en_katakana": "セブンティーン",
+    "ruby": [
+      {
+        "base": "十七",
+        "ruby": "じゅうなな"
+      }
+    ],
+    "ruby_html": "<ruby>十七<rt>じゅうなな</rt></ruby>",
+    "ruby_text": "[十七|じゅうなな]",
+    "sound_file": "dic_wb_04number_seventeen_1201.mp3",
+    "card_image": "dic_wb_04number_seventeen_1201_1_c.png",
+    "card_image_kana": "dic_wb_04number_seventeen_1201_1_c.png",
+    "card_image_en": "dic_wb_04number_seventeen_1201_1_e.png",
+    "card_image_bilingual": "dic_wb_04number_seventeen_1201_1_ce.png",
+    "card_variants": [
+      "dic_wb_04number_seventeen_1201_1.png",
+      "dic_3_card_seventeen_2017_1.png"
+    ],
+    "token": "dic_wb_04number_seventeen_1201&dic_wb_04number_seventeen_1201&dic_wb_04number_seventeen_1201",
+    "grades": [
+      "ES_G3",
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: How many do you want? / A: Seventeen, please."
+    ],
+    "tags": [
+      "counting",
+      "number"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u25_17_seventeen_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u25_17_seventeen_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u25_17_seventeen_text.png",
+    "lemma": "seventeen",
+    "is_plural": false,
+    "letter_count": 9,
+    "syllable_count": 3,
+    "first_letter": "S",
+    "is_compound": false,
+    "phonics_initial": "s",
+    "difficulty_tier": 3,
+    "primary_image": "dic_wb_04number_seventeen_1201_1_c.png",
+    "primary_audio": "dic_wb_04number_seventeen_1201.mp3",
+    "three_hints": {
+      "category_hint": "It is a number or quantity.",
+      "feature_hint": "This number means '十七' (じゅうなな) in Japanese.",
+      "letter_hint": "In Japanese, this number is 'じゅうなな'."
+    },
+    "target_dialogues": [
+      {
+        "question": "How many do you want?",
+        "answer": "Seventeen, please.",
+        "context": "Counting and stating quantities"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_seventeen_2017_1_c.png",
+        "sound_file": "dic_wb_04number_seventeen_1201.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_seventeen_2017_1_ce.png",
+        "card_bw": "dic_3_card_seventeen_2017_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u25_17_seventeen_illust.png",
+        "card_full": "cards/full/hwg5_u25_17_seventeen_full.png",
+        "card_text": "cards/text/hwg5_u25_17_seventeen_text.png",
+        "unit": "Unit 25: Unit 25: Numbers",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_04number_seventeen_1201.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u19_17_seventeen_illust.png",
+        "card_full": "cards/full/hwg6_u19_17_seventeen_full.png",
+        "card_text": "cards/text/hwg6_u19_17_seventeen_text.png",
+        "unit": "Unit 19: Unit 19: Numbers",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_04number_seventeen_1201.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0560",
+    "english": "seventy",
+    "canonical_key": "seventy",
+    "disambiguation": "",
+    "display_label": "seventy",
+    "normalized_english": "seventy",
+    "part_of_speech": "noun",
+    "category": "04_number",
+    "category_name": "Numbers & Counting",
+    "ja_kanji": "七十",
+    "ja_hiragana": "ななじゅう",
+    "en_katakana": "セブンティ",
+    "ruby": [
+      {
+        "base": "七十",
+        "ruby": "ななじゅう"
+      }
+    ],
+    "ruby_html": "<ruby>七十<rt>ななじゅう</rt></ruby>",
+    "ruby_text": "[七十|ななじゅう]",
+    "sound_file": "dic_wb_04number_seventy_1209.mp3",
+    "card_image": "dic_wb_04number_seventy_1209_1_c.png",
+    "card_image_kana": "dic_wb_04number_seventy_1209_1_c.png",
+    "card_image_en": "dic_wb_04number_seventy_1209_1_e.png",
+    "card_image_bilingual": "dic_wb_04number_seventy_1209_1_ce.png",
+    "card_variants": [
+      "dic_wb_04number_seventy_1209_1.png"
+    ],
+    "token": "dic_wb_04number_seventy_1209&dic_wb_04number_seventy_1209&dic_wb_04number_seventy_1209",
+    "grades": [
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: How many do you want? / A: Seventy, please."
+    ],
+    "tags": [
+      "counting",
+      "number"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u25_34_seventy_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u25_34_seventy_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u25_34_seventy_text.png",
+    "lemma": "seventy",
+    "is_plural": false,
+    "letter_count": 7,
+    "syllable_count": 3,
+    "first_letter": "S",
+    "is_compound": false,
+    "phonics_initial": "s",
+    "difficulty_tier": 3,
+    "primary_image": "dic_wb_04number_seventy_1209_1_c.png",
+    "primary_audio": "dic_wb_04number_seventy_1209.mp3",
+    "three_hints": {
+      "category_hint": "It is a number or quantity.",
+      "feature_hint": "This number means '七十' (ななじゅう) in Japanese.",
+      "letter_hint": "In Japanese, this number is 'ななじゅう'."
+    },
+    "target_dialogues": [
+      {
+        "question": "How many do you want?",
+        "answer": "Seventy, please.",
+        "context": "Counting and stating quantities"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u25_34_seventy_illust.png",
+        "card_full": "cards/full/hwg5_u25_34_seventy_full.png",
+        "card_text": "cards/text/hwg5_u25_34_seventy_text.png",
+        "unit": "Unit 25: Unit 25: Numbers",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_04number_seventy_1209.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u19_34_seventy_illust.png",
+        "card_full": "cards/full/hwg6_u19_34_seventy_full.png",
+        "card_text": "cards/text/hwg6_u19_34_seventy_text.png",
+        "unit": "Unit 19: Unit 19: Numbers",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_04number_seventy_1209.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0561",
+    "english": "six",
+    "canonical_key": "six",
+    "disambiguation": "",
+    "display_label": "six",
+    "normalized_english": "six",
+    "part_of_speech": "noun",
+    "category": "04_number",
+    "category_name": "Numbers & Counting",
+    "ja_kanji": "六",
+    "ja_hiragana": "ろく",
+    "en_katakana": "シックス",
+    "ruby": [
+      {
+        "base": "六",
+        "ruby": "ろく"
+      }
+    ],
+    "ruby_html": "<ruby>六<rt>ろく</rt></ruby>",
+    "ruby_text": "[六|ろく]",
+    "sound_file": "dic_wb_04number_six_1190.mp3",
+    "card_image": "dic_wb_04number_six_1190_1_c.png",
+    "card_image_kana": "dic_wb_04number_six_1190_1_c.png",
+    "card_image_en": "dic_wb_04number_six_1190_1_e.png",
+    "card_image_bilingual": "dic_wb_04number_six_1190_1_ce.png",
+    "card_variants": [
+      "dic_wb_04number_six_1190_1.png",
+      "dic_3_card_six_2006_1.png",
+      "dic_4_card_six_2534_1.png"
+    ],
+    "token": "dic_wb_04number_six_1190&dic_wb_04number_six_1190&dic_wb_04number_six_1190",
+    "grades": [
+      "ES_G3",
+      "ES_G4",
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: How many do you want? / A: Six, please."
+    ],
+    "tags": [
+      "counting",
+      "number"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u25_06_six_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u25_06_six_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u25_06_six_text.png",
+    "lemma": "six",
+    "is_plural": false,
+    "letter_count": 3,
+    "syllable_count": 1,
+    "first_letter": "S",
+    "is_compound": false,
+    "phonics_initial": "s",
+    "difficulty_tier": 1,
+    "primary_image": "dic_wb_04number_six_1190_1_c.png",
+    "primary_audio": "dic_wb_04number_six_1190.mp3",
+    "three_hints": {
+      "category_hint": "It is a number or quantity.",
+      "feature_hint": "This number means '六' (ろく) in Japanese.",
+      "letter_hint": "In Japanese, this number is 'ろく'."
+    },
+    "target_dialogues": [
+      {
+        "question": "How many do you want?",
+        "answer": "Six, please.",
+        "context": "Counting and stating quantities"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_six_2006_1_c.png",
+        "sound_file": "dic_wb_04number_six_1190.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_six_2006_1_ce.png",
+        "card_bw": "dic_3_card_six_2006_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_4_card_six_2534_1_c.png",
+        "sound_file": "dic_wb_04number_six_1190.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_4_card_six_2534_1_ce.png",
+        "card_bw": "dic_4_card_six_2534_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u25_06_six_illust.png",
+        "card_full": "cards/full/hwg5_u25_06_six_full.png",
+        "card_text": "cards/text/hwg5_u25_06_six_text.png",
+        "unit": "Unit 25: Unit 25: Numbers",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_04number_six_1190.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u19_06_six_illust.png",
+        "card_full": "cards/full/hwg6_u19_06_six_full.png",
+        "card_text": "cards/text/hwg6_u19_06_six_text.png",
+        "unit": "Unit 19: Unit 19: Numbers",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_04number_six_1190.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0562",
+    "english": "sixteen",
+    "canonical_key": "sixteen",
+    "disambiguation": "",
+    "display_label": "sixteen",
+    "normalized_english": "sixteen",
+    "part_of_speech": "noun",
+    "category": "04_number",
+    "category_name": "Numbers & Counting",
+    "ja_kanji": "十六",
+    "ja_hiragana": "じゅうろく",
+    "en_katakana": "シックステーン",
+    "ruby": [
+      {
+        "base": "十六",
+        "ruby": "じゅうろく"
+      }
+    ],
+    "ruby_html": "<ruby>十六<rt>じゅうろく</rt></ruby>",
+    "ruby_text": "[十六|じゅうろく]",
+    "sound_file": "dic_wb_04number_sixteen_1200.mp3",
+    "card_image": "dic_wb_04number_sixteen_1200_1_c.png",
+    "card_image_kana": "dic_wb_04number_sixteen_1200_1_c.png",
+    "card_image_en": "dic_wb_04number_sixteen_1200_1_e.png",
+    "card_image_bilingual": "dic_wb_04number_sixteen_1200_1_ce.png",
+    "card_variants": [
+      "dic_wb_04number_sixteen_1200_1.png",
+      "dic_3_card_sixteen_2016_1.png"
+    ],
+    "token": "dic_wb_04number_sixteen_1200&dic_wb_04number_sixteen_1200&dic_wb_04number_sixteen_1200",
+    "grades": [
+      "ES_G3",
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: How many do you want? / A: Sixteen, please."
+    ],
+    "tags": [
+      "counting",
+      "number"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u25_16_sixteen_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u25_16_sixteen_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u25_16_sixteen_text.png",
+    "lemma": "sixteen",
+    "is_plural": false,
+    "letter_count": 7,
+    "syllable_count": 2,
+    "first_letter": "S",
+    "is_compound": false,
+    "phonics_initial": "s",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_04number_sixteen_1200_1_c.png",
+    "primary_audio": "dic_wb_04number_sixteen_1200.mp3",
+    "three_hints": {
+      "category_hint": "It is a number or quantity.",
+      "feature_hint": "This number means '十六' (じゅうろく) in Japanese.",
+      "letter_hint": "In Japanese, this number is 'じゅうろく'."
+    },
+    "target_dialogues": [
+      {
+        "question": "How many do you want?",
+        "answer": "Sixteen, please.",
+        "context": "Counting and stating quantities"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_sixteen_2016_1_c.png",
+        "sound_file": "dic_wb_04number_sixteen_1200.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_sixteen_2016_1_ce.png",
+        "card_bw": "dic_3_card_sixteen_2016_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u25_16_sixteen_illust.png",
+        "card_full": "cards/full/hwg5_u25_16_sixteen_full.png",
+        "card_text": "cards/text/hwg5_u25_16_sixteen_text.png",
+        "unit": "Unit 25: Unit 25: Numbers",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_04number_sixteen_1200.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u19_16_sixteen_illust.png",
+        "card_full": "cards/full/hwg6_u19_16_sixteen_full.png",
+        "card_text": "cards/text/hwg6_u19_16_sixteen_text.png",
+        "unit": "Unit 19: Unit 19: Numbers",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_04number_sixteen_1200.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0563",
+    "english": "sixty",
+    "canonical_key": "sixty",
+    "disambiguation": "",
+    "display_label": "sixty",
+    "normalized_english": "sixty",
+    "part_of_speech": "noun",
+    "category": "04_number",
+    "category_name": "Numbers & Counting",
+    "ja_kanji": "六十",
+    "ja_hiragana": "ろくじゅう",
+    "en_katakana": "シックスティ",
+    "ruby": [
+      {
+        "base": "六十",
+        "ruby": "ろくじゅう"
+      }
+    ],
+    "ruby_html": "<ruby>六十<rt>ろくじゅう</rt></ruby>",
+    "ruby_text": "[六十|ろくじゅう]",
+    "sound_file": "dic_wb_04number_sixty_1208.mp3",
+    "card_image": "dic_wb_04number_sixty_1208_1_c.png",
+    "card_image_kana": "dic_wb_04number_sixty_1208_1_c.png",
+    "card_image_en": "dic_wb_04number_sixty_1208_1_e.png",
+    "card_image_bilingual": "dic_wb_04number_sixty_1208_1_ce.png",
+    "card_variants": [
+      "dic_wb_04number_sixty_1208_1.png"
+    ],
+    "token": "dic_wb_04number_sixty_1208&dic_wb_04number_sixty_1208&dic_wb_04number_sixty_1208",
+    "grades": [
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: How many do you want? / A: Sixty, please."
+    ],
+    "tags": [
+      "counting",
+      "number"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u25_33_sixty_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u25_33_sixty_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u25_33_sixty_text.png",
+    "lemma": "sixty",
+    "is_plural": false,
+    "letter_count": 5,
+    "syllable_count": 2,
+    "first_letter": "S",
+    "is_compound": false,
+    "phonics_initial": "s",
+    "difficulty_tier": 3,
+    "primary_image": "dic_wb_04number_sixty_1208_1_c.png",
+    "primary_audio": "dic_wb_04number_sixty_1208.mp3",
+    "three_hints": {
+      "category_hint": "It is a number or quantity.",
+      "feature_hint": "This number means '六十' (ろくじゅう) in Japanese.",
+      "letter_hint": "In Japanese, this number is 'ろくじゅう'."
+    },
+    "target_dialogues": [
+      {
+        "question": "How many do you want?",
+        "answer": "Sixty, please.",
+        "context": "Counting and stating quantities"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u25_33_sixty_illust.png",
+        "card_full": "cards/full/hwg5_u25_33_sixty_full.png",
+        "card_text": "cards/text/hwg5_u25_33_sixty_text.png",
+        "unit": "Unit 25: Unit 25: Numbers",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_04number_sixty_1208.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u19_33_sixty_illust.png",
+        "card_full": "cards/full/hwg6_u19_33_sixty_full.png",
+        "card_text": "cards/text/hwg6_u19_33_sixty_text.png",
+        "unit": "Unit 19: Unit 19: Numbers",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_04number_sixty_1208.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0564",
+    "english": "ten",
+    "canonical_key": "ten",
+    "disambiguation": "",
+    "display_label": "ten",
+    "normalized_english": "ten",
+    "part_of_speech": "noun",
+    "category": "04_number",
+    "category_name": "Numbers & Counting",
+    "ja_kanji": "十",
+    "ja_hiragana": "じゅう",
+    "en_katakana": "テン",
+    "ruby": [
+      {
+        "base": "十",
+        "ruby": "じゅう"
+      }
+    ],
+    "ruby_html": "<ruby>十<rt>じゅう</rt></ruby>",
+    "ruby_text": "[十|じゅう]",
+    "sound_file": "dic_wb_04number_ten_1194.mp3",
+    "card_image": "dic_wb_04number_ten_1194_1_c.png",
+    "card_image_kana": "dic_wb_04number_ten_1194_1_c.png",
+    "card_image_en": "dic_wb_04number_ten_1194_1_e.png",
+    "card_image_bilingual": "dic_wb_04number_ten_1194_1_ce.png",
+    "card_variants": [
+      "dic_wb_04number_ten_1194_1.png",
+      "dic_3_card_ten_2010_1.png",
+      "dic_4_card_ten_2538_1.png"
+    ],
+    "token": "dic_wb_04number_ten_1194&dic_wb_04number_ten_1194&dic_wb_04number_ten_1194",
+    "grades": [
+      "ES_G3",
+      "ES_G4",
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: How many do you want? / A: Ten, please."
+    ],
+    "tags": [
+      "counting",
+      "number"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u25_10_ten_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u25_10_ten_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u25_10_ten_text.png",
+    "lemma": "ten",
+    "is_plural": false,
+    "letter_count": 3,
+    "syllable_count": 1,
+    "first_letter": "T",
+    "is_compound": false,
+    "phonics_initial": "t",
+    "difficulty_tier": 1,
+    "primary_image": "dic_wb_04number_ten_1194_1_c.png",
+    "primary_audio": "dic_wb_04number_ten_1194.mp3",
+    "three_hints": {
+      "category_hint": "It is a number or quantity.",
+      "feature_hint": "This number means '十' (じゅう) in Japanese.",
+      "letter_hint": "In Japanese, this number is 'じゅう'."
+    },
+    "target_dialogues": [
+      {
+        "question": "How many do you want?",
+        "answer": "Ten, please.",
+        "context": "Counting and stating quantities"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_ten_2010_1_c.png",
+        "sound_file": "dic_wb_04number_ten_1194.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_ten_2010_1_ce.png",
+        "card_bw": "dic_3_card_ten_2010_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_4_card_ten_2538_1_c.png",
+        "sound_file": "dic_wb_04number_ten_1194.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_4_card_ten_2538_1_ce.png",
+        "card_bw": "dic_4_card_ten_2538_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u25_10_ten_illust.png",
+        "card_full": "cards/full/hwg5_u25_10_ten_full.png",
+        "card_text": "cards/text/hwg5_u25_10_ten_text.png",
+        "unit": "Unit 25: Unit 25: Numbers",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_04number_ten_1194.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u19_10_ten_illust.png",
+        "card_full": "cards/full/hwg6_u19_10_ten_full.png",
+        "card_text": "cards/text/hwg6_u19_10_ten_text.png",
+        "unit": "Unit 19: Unit 19: Numbers",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_04number_ten_1194.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0565",
+    "english": "thirteen",
+    "canonical_key": "thirteen",
+    "disambiguation": "",
+    "display_label": "thirteen",
+    "normalized_english": "thirteen",
+    "part_of_speech": "noun",
+    "category": "04_number",
+    "category_name": "Numbers & Counting",
+    "ja_kanji": "十三",
+    "ja_hiragana": "じゅうさん",
+    "en_katakana": "サーティーン",
+    "ruby": [
+      {
+        "base": "十三",
+        "ruby": "じゅうさん"
+      }
+    ],
+    "ruby_html": "<ruby>十三<rt>じゅうさん</rt></ruby>",
+    "ruby_text": "[十三|じゅうさん]",
+    "sound_file": "dic_wb_04number_thirteen_1197.mp3",
+    "card_image": "dic_wb_04number_thirteen_1197_1_c.png",
+    "card_image_kana": "dic_wb_04number_thirteen_1197_1_c.png",
+    "card_image_en": "dic_wb_04number_thirteen_1197_1_e.png",
+    "card_image_bilingual": "dic_wb_04number_thirteen_1197_1_ce.png",
+    "card_variants": [
+      "dic_wb_04number_thirteen_1197_1.png",
+      "dic_3_card_thirteen_2013_1.png"
+    ],
+    "token": "dic_wb_04number_thirteen_1197&dic_wb_04number_thirteen_1197&dic_wb_04number_thirteen_1197",
+    "grades": [
+      "ES_G3",
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: How many do you want? / A: Thirteen, please."
+    ],
+    "tags": [
+      "counting",
+      "number"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u25_13_thirteen_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u25_13_thirteen_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u25_13_thirteen_text.png",
+    "lemma": "thirteen",
+    "is_plural": false,
+    "letter_count": 8,
+    "syllable_count": 2,
+    "first_letter": "T",
+    "is_compound": false,
+    "phonics_initial": "th",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_04number_thirteen_1197_1_c.png",
+    "primary_audio": "dic_wb_04number_thirteen_1197.mp3",
+    "three_hints": {
+      "category_hint": "It is a number or quantity.",
+      "feature_hint": "This number means '十三' (じゅうさん) in Japanese.",
+      "letter_hint": "In Japanese, this number is 'じゅうさん'."
+    },
+    "target_dialogues": [
+      {
+        "question": "How many do you want?",
+        "answer": "Thirteen, please.",
+        "context": "Counting and stating quantities"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_thirteen_2013_1_c.png",
+        "sound_file": "dic_wb_04number_thirteen_1197.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_thirteen_2013_1_ce.png",
+        "card_bw": "dic_3_card_thirteen_2013_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u25_13_thirteen_illust.png",
+        "card_full": "cards/full/hwg5_u25_13_thirteen_full.png",
+        "card_text": "cards/text/hwg5_u25_13_thirteen_text.png",
+        "unit": "Unit 25: Unit 25: Numbers",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_04number_thirteen_1197.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u19_13_thirteen_illust.png",
+        "card_full": "cards/full/hwg6_u19_13_thirteen_full.png",
+        "card_text": "cards/text/hwg6_u19_13_thirteen_text.png",
+        "unit": "Unit 19: Unit 19: Numbers",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_04number_thirteen_1197.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0566",
+    "english": "thirty",
+    "canonical_key": "thirty",
+    "disambiguation": "",
+    "display_label": "thirty",
+    "normalized_english": "thirty",
+    "part_of_speech": "noun",
+    "category": "04_number",
+    "category_name": "Numbers & Counting",
+    "ja_kanji": "三十",
+    "ja_hiragana": "さんじゅう",
+    "en_katakana": "サーティ",
+    "ruby": [
+      {
+        "base": "三十",
+        "ruby": "さんじゅう"
+      }
+    ],
+    "ruby_html": "<ruby>三十<rt>さんじゅう</rt></ruby>",
+    "ruby_text": "[三十|さんじゅう]",
+    "sound_file": "dic_wb_04number_thirty_1205.mp3",
+    "card_image": "dic_wb_04number_thirty_1205_1_c.png",
+    "card_image_kana": "dic_wb_04number_thirty_1205_1_c.png",
+    "card_image_en": "dic_wb_04number_thirty_1205_1_e.png",
+    "card_image_bilingual": "dic_wb_04number_thirty_1205_1_ce.png",
+    "card_variants": [
+      "dic_wb_04number_thirty_1205_1.png"
+    ],
+    "token": "dic_wb_04number_thirty_1205&dic_wb_04number_thirty_1205&dic_wb_04number_thirty_1205",
+    "grades": [
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: How many do you want? / A: Thirty, please."
+    ],
+    "tags": [
+      "counting",
+      "number"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u25_30_thirty_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u25_30_thirty_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u25_30_thirty_text.png",
+    "lemma": "thirty",
+    "is_plural": false,
+    "letter_count": 6,
+    "syllable_count": 2,
+    "first_letter": "T",
+    "is_compound": false,
+    "phonics_initial": "th",
+    "difficulty_tier": 3,
+    "primary_image": "dic_wb_04number_thirty_1205_1_c.png",
+    "primary_audio": "dic_wb_04number_thirty_1205.mp3",
+    "three_hints": {
+      "category_hint": "It is a number or quantity.",
+      "feature_hint": "This number means '三十' (さんじゅう) in Japanese.",
+      "letter_hint": "In Japanese, this number is 'さんじゅう'."
+    },
+    "target_dialogues": [
+      {
+        "question": "How many do you want?",
+        "answer": "Thirty, please.",
+        "context": "Counting and stating quantities"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u25_30_thirty_illust.png",
+        "card_full": "cards/full/hwg5_u25_30_thirty_full.png",
+        "card_text": "cards/text/hwg5_u25_30_thirty_text.png",
+        "unit": "Unit 25: Unit 25: Numbers",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_04number_thirty_1205.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u19_30_thirty_illust.png",
+        "card_full": "cards/full/hwg6_u19_30_thirty_full.png",
+        "card_text": "cards/text/hwg6_u19_30_thirty_text.png",
+        "unit": "Unit 19: Unit 19: Numbers",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_04number_thirty_1205.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0567",
+    "english": "three",
+    "canonical_key": "three",
+    "disambiguation": "",
+    "display_label": "three",
+    "normalized_english": "three",
+    "part_of_speech": "noun",
+    "category": "04_number",
+    "category_name": "Numbers & Counting",
+    "ja_kanji": "三",
+    "ja_hiragana": "さん",
+    "en_katakana": "スリー",
+    "ruby": [
+      {
+        "base": "三",
+        "ruby": "さん"
+      }
+    ],
+    "ruby_html": "<ruby>三<rt>さん</rt></ruby>",
+    "ruby_text": "[三|さん]",
+    "sound_file": "dic_wb_04number_three_1187.mp3",
+    "card_image": "dic_wb_04number_three_1187_1_c.png",
+    "card_image_kana": "dic_wb_04number_three_1187_1_c.png",
+    "card_image_en": "dic_wb_04number_three_1187_1_e.png",
+    "card_image_bilingual": "dic_wb_04number_three_1187_1_ce.png",
+    "card_variants": [
+      "dic_wb_04number_three_1187_1.png",
+      "dic_3_card_three_2003_1.png",
+      "dic_4_card_three_2536_1.png"
+    ],
+    "token": "dic_wb_04number_three_1187&dic_wb_04number_three_1187&dic_wb_04number_three_1187",
+    "grades": [
+      "ES_G3",
+      "ES_G4",
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: How many do you want? / A: Three, please."
+    ],
+    "tags": [
+      "counting",
+      "number"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u25_03_three_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u25_03_three_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u25_03_three_text.png",
+    "lemma": "three",
+    "is_plural": false,
+    "letter_count": 5,
+    "syllable_count": 1,
+    "first_letter": "T",
+    "is_compound": false,
+    "phonics_initial": "th",
+    "difficulty_tier": 1,
+    "primary_image": "dic_wb_04number_three_1187_1_c.png",
+    "primary_audio": "dic_wb_04number_three_1187.mp3",
+    "three_hints": {
+      "category_hint": "It is a number or quantity.",
+      "feature_hint": "This number means '三' (さん) in Japanese.",
+      "letter_hint": "In Japanese, this number is 'さん'."
+    },
+    "target_dialogues": [
+      {
+        "question": "How many do you want?",
+        "answer": "Three, please.",
+        "context": "Counting and stating quantities"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_three_2003_1_c.png",
+        "sound_file": "dic_wb_04number_three_1187.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_three_2003_1_ce.png",
+        "card_bw": "dic_3_card_three_2003_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_4_card_three_2536_1_c.png",
+        "sound_file": "dic_wb_04number_three_1187.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_4_card_three_2536_1_ce.png",
+        "card_bw": "dic_4_card_three_2536_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u25_03_three_illust.png",
+        "card_full": "cards/full/hwg5_u25_03_three_full.png",
+        "card_text": "cards/text/hwg5_u25_03_three_text.png",
+        "unit": "Unit 25: Unit 25: Numbers",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_04number_three_1187.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u19_03_three_illust.png",
+        "card_full": "cards/full/hwg6_u19_03_three_full.png",
+        "card_text": "cards/text/hwg6_u19_03_three_text.png",
+        "unit": "Unit 19: Unit 19: Numbers",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_04number_three_1187.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0568",
+    "english": "twelve",
+    "canonical_key": "twelve",
+    "disambiguation": "",
+    "display_label": "twelve",
+    "normalized_english": "twelve",
+    "part_of_speech": "noun",
+    "category": "04_number",
+    "category_name": "Numbers & Counting",
+    "ja_kanji": "十二",
+    "ja_hiragana": "じゅうに",
+    "en_katakana": "トゥエルブ",
+    "ruby": [
+      {
+        "base": "十二",
+        "ruby": "じゅうに"
+      }
+    ],
+    "ruby_html": "<ruby>十二<rt>じゅうに</rt></ruby>",
+    "ruby_text": "[十二|じゅうに]",
+    "sound_file": "dic_wb_04number_twelve_1196.mp3",
+    "card_image": "dic_wb_04number_twelve_1196_1_c.png",
+    "card_image_kana": "dic_wb_04number_twelve_1196_1_c.png",
+    "card_image_en": "dic_wb_04number_twelve_1196_1_e.png",
+    "card_image_bilingual": "dic_wb_04number_twelve_1196_1_ce.png",
+    "card_variants": [
+      "dic_wb_04number_twelve_1196_1.png",
+      "dic_3_card_twelve_2012_1.png",
+      "dic_4_card_twelve_2535_1.png"
+    ],
+    "token": "dic_wb_04number_twelve_1196&dic_wb_04number_twelve_1196&dic_wb_04number_twelve_1196",
+    "grades": [
+      "ES_G3",
+      "ES_G4",
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: How many do you want? / A: Twelve, please."
+    ],
+    "tags": [
+      "counting",
+      "number"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u25_12_twelve_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u25_12_twelve_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u25_12_twelve_text.png",
+    "lemma": "twelve",
+    "is_plural": false,
+    "letter_count": 6,
+    "syllable_count": 1,
+    "first_letter": "T",
+    "is_compound": false,
+    "phonics_initial": "t",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_04number_twelve_1196_1_c.png",
+    "primary_audio": "dic_wb_04number_twelve_1196.mp3",
+    "three_hints": {
+      "category_hint": "It is a number or quantity.",
+      "feature_hint": "This number means '十二' (じゅうに) in Japanese.",
+      "letter_hint": "In Japanese, this number is 'じゅうに'."
+    },
+    "target_dialogues": [
+      {
+        "question": "How many do you want?",
+        "answer": "Twelve, please.",
+        "context": "Counting and stating quantities"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_twelve_2012_1_c.png",
+        "sound_file": "dic_wb_04number_twelve_1196.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_twelve_2012_1_ce.png",
+        "card_bw": "dic_3_card_twelve_2012_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_4_card_twelve_2535_1_c.png",
+        "sound_file": "dic_wb_04number_twelve_1196.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_4_card_twelve_2535_1_ce.png",
+        "card_bw": "dic_4_card_twelve_2535_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u25_12_twelve_illust.png",
+        "card_full": "cards/full/hwg5_u25_12_twelve_full.png",
+        "card_text": "cards/text/hwg5_u25_12_twelve_text.png",
+        "unit": "Unit 25: Unit 25: Numbers",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_04number_twelve_1196.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u19_12_twelve_illust.png",
+        "card_full": "cards/full/hwg6_u19_12_twelve_full.png",
+        "card_text": "cards/text/hwg6_u19_12_twelve_text.png",
+        "unit": "Unit 19: Unit 19: Numbers",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_04number_twelve_1196.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0569",
+    "english": "twenty",
+    "canonical_key": "twenty",
+    "disambiguation": "",
+    "display_label": "twenty",
+    "normalized_english": "twenty",
+    "part_of_speech": "noun",
+    "category": "04_number",
+    "category_name": "Numbers & Counting",
+    "ja_kanji": "二十",
+    "ja_hiragana": "にじゅう",
+    "en_katakana": "トゥエンティ",
+    "ruby": [
+      {
+        "base": "二十",
+        "ruby": "にじゅう"
+      }
+    ],
+    "ruby_html": "<ruby>二十<rt>にじゅう</rt></ruby>",
+    "ruby_text": "[二十|にじゅう]",
+    "sound_file": "dic_wb_04number_twenty_1204.mp3",
+    "card_image": "dic_wb_04number_twenty_1204_1_c.png",
+    "card_image_kana": "dic_wb_04number_twenty_1204_1_c.png",
+    "card_image_en": "dic_wb_04number_twenty_1204_1_e.png",
+    "card_image_bilingual": "dic_wb_04number_twenty_1204_1_ce.png",
+    "card_variants": [
+      "dic_wb_04number_twenty_1204_1.png",
+      "dic_3_card_twenty_2020_1.png"
+    ],
+    "token": "dic_wb_04number_twenty_1204&dic_wb_04number_twenty_1204&dic_wb_04number_twenty_1204",
+    "grades": [
+      "ES_G3",
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: How many do you want? / A: Twenty, please."
+    ],
+    "tags": [
+      "counting",
+      "number"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u25_20_twenty_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u25_20_twenty_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u25_20_twenty_text.png",
+    "lemma": "twenty",
+    "is_plural": false,
+    "letter_count": 6,
+    "syllable_count": 2,
+    "first_letter": "T",
+    "is_compound": false,
+    "phonics_initial": "t",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_04number_twenty_1204_1_c.png",
+    "primary_audio": "dic_wb_04number_twenty_1204.mp3",
+    "three_hints": {
+      "category_hint": "It is a number or quantity.",
+      "feature_hint": "This number means '二十' (にじゅう) in Japanese.",
+      "letter_hint": "In Japanese, this number is 'にじゅう'."
+    },
+    "target_dialogues": [
+      {
+        "question": "How many do you want?",
+        "answer": "Twenty, please.",
+        "context": "Counting and stating quantities"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_twenty_2020_1_c.png",
+        "sound_file": "dic_wb_04number_twenty_1204.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_twenty_2020_1_ce.png",
+        "card_bw": "dic_3_card_twenty_2020_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u25_20_twenty_illust.png",
+        "card_full": "cards/full/hwg5_u25_20_twenty_full.png",
+        "card_text": "cards/text/hwg5_u25_20_twenty_text.png",
+        "unit": "Unit 25: Unit 25: Numbers",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_04number_twenty_1204.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u19_20_twenty_illust.png",
+        "card_full": "cards/full/hwg6_u19_20_twenty_full.png",
+        "card_text": "cards/text/hwg6_u19_20_twenty_text.png",
+        "unit": "Unit 19: Unit 19: Numbers",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_04number_twenty_1204.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0570",
+    "english": "two",
+    "canonical_key": "two",
+    "disambiguation": "",
+    "display_label": "two",
+    "normalized_english": "two",
+    "part_of_speech": "noun",
+    "category": "04_number",
+    "category_name": "Numbers & Counting",
+    "ja_kanji": "二",
+    "ja_hiragana": "に",
+    "en_katakana": "トゥー",
+    "ruby": [
+      {
+        "base": "二",
+        "ruby": "に"
+      }
+    ],
+    "ruby_html": "<ruby>二<rt>に</rt></ruby>",
+    "ruby_text": "[二|に]",
+    "sound_file": "dic_wb_04number_two_1186.mp3",
+    "card_image": "dic_wb_04number_two_1186_1_c.png",
+    "card_image_kana": "dic_wb_04number_two_1186_1_c.png",
+    "card_image_en": "dic_wb_04number_two_1186_1_e.png",
+    "card_image_bilingual": "dic_wb_04number_two_1186_1_ce.png",
+    "card_variants": [
+      "dic_wb_04number_two_1186_1.png",
+      "dic_3_card_two_2002_1.png"
+    ],
+    "token": "dic_wb_04number_two_1186&dic_wb_04number_two_1186&dic_wb_04number_two_1186",
+    "grades": [
+      "ES_G3",
+      "ES_G4",
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: How many do you want? / A: Two, please."
+    ],
+    "tags": [
+      "counting",
+      "number"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u25_02_two_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u25_02_two_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u25_02_two_text.png",
+    "lemma": "two",
+    "is_plural": false,
+    "letter_count": 3,
+    "syllable_count": 1,
+    "first_letter": "T",
+    "is_compound": false,
+    "phonics_initial": "t",
+    "difficulty_tier": 1,
+    "primary_image": "dic_wb_04number_two_1186_1_c.png",
+    "primary_audio": "dic_wb_04number_two_1186.mp3",
+    "three_hints": {
+      "category_hint": "It is a number or quantity.",
+      "feature_hint": "This number means '二' (に) in Japanese.",
+      "letter_hint": "In Japanese, this number is 'に'."
+    },
+    "target_dialogues": [
+      {
+        "question": "How many do you want?",
+        "answer": "Two, please.",
+        "context": "Counting and stating quantities"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_3_card_two_2002_1_c.png",
+        "sound_file": "dic_wb_04number_two_1186.mp3",
+        "source": "lets_try_1",
+        "card_full": "dic_3_card_two_2002_1_ce.png",
+        "card_bw": "dic_3_card_two_2002_1.png"
+      },
+      "ES_G4": {
+        "card_image": "dic_wb_04number_two_1186_1_c.png",
+        "sound_file": "dic_wb_04number_two_1186.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_wb_04number_two_1186_1_ce.png",
+        "card_bw": "dic_wb_04number_two_1186_1.png"
+      },
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u25_02_two_illust.png",
+        "card_full": "cards/full/hwg5_u25_02_two_full.png",
+        "card_text": "cards/text/hwg5_u25_02_two_text.png",
+        "unit": "Unit 25: Unit 25: Numbers",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_04number_two_1186.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u19_02_two_illust.png",
+        "card_full": "cards/full/hwg6_u19_02_two_full.png",
+        "card_text": "cards/text/hwg6_u19_02_two_text.png",
+        "unit": "Unit 19: Unit 19: Numbers",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_04number_two_1186.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0571",
+    "english": "zero",
+    "canonical_key": "zero",
+    "disambiguation": "",
+    "display_label": "zero",
+    "normalized_english": "zero",
+    "part_of_speech": "noun",
+    "category": "04_number",
+    "category_name": "Numbers & Counting",
+    "ja_kanji": "零",
+    "ja_hiragana": "ぜろ",
+    "en_katakana": "ゼロ",
+    "ruby": [
+      {
+        "base": "零",
+        "ruby": "ぜろ"
+      }
+    ],
+    "ruby_html": "<ruby>零<rt>ぜろ</rt></ruby>",
+    "ruby_text": "[零|ぜろ]",
+    "sound_file": "dic_wb_04number_zero_1213.mp3",
+    "card_image": "dic_wb_04number_zero_1213_1_c.png",
+    "card_image_kana": "dic_wb_04number_zero_1213_1_c.png",
+    "card_image_en": "dic_wb_04number_zero_1213_1_e.png",
+    "card_image_bilingual": "dic_wb_04number_zero_1213_1_ce.png",
+    "card_variants": [
+      "dic_wb_04number_zero_1213_1.png"
+    ],
+    "token": "dic_wb_04number_zero_1213&dic_wb_04number_zero_1213&dic_wb_04number_zero_1213",
+    "grades": [
+      "ES_G5",
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: How many do you want? / A: Zero, please."
+    ],
+    "tags": [
+      "counting",
+      "number"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u25_00_zero_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u25_00_zero_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u25_00_zero_text.png",
+    "lemma": "zero",
+    "is_plural": false,
+    "letter_count": 4,
+    "syllable_count": 2,
+    "first_letter": "Z",
+    "is_compound": false,
+    "phonics_initial": "z",
+    "difficulty_tier": 1,
+    "primary_image": "dic_wb_04number_zero_1213_1_c.png",
+    "primary_audio": "dic_wb_04number_zero_1213.mp3",
+    "three_hints": {
+      "category_hint": "It is a number or quantity.",
+      "feature_hint": "This number means '零' (ぜろ) in Japanese.",
+      "letter_hint": "In Japanese, this number is 'ぜろ'."
+    },
+    "target_dialogues": [
+      {
+        "question": "How many do you want?",
+        "answer": "Zero, please.",
+        "context": "Counting and stating quantities"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u25_00_zero_illust.png",
+        "card_full": "cards/full/hwg5_u25_00_zero_full.png",
+        "card_text": "cards/text/hwg5_u25_00_zero_text.png",
+        "unit": "Unit 25: Unit 25: Numbers",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_04number_zero_1213.mp3"
+      },
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u19_00_zero_illust.png",
+        "card_full": "cards/full/hwg6_u19_00_zero_full.png",
+        "card_text": "cards/text/hwg6_u19_00_zero_text.png",
+        "unit": "Unit 19: Unit 19: Numbers",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_04number_zero_1213.mp3"
+      }
+    }
+  }
+]

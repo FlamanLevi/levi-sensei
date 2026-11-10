@@ -1,0 +1,1394 @@
+[
+  {
+    "id": "word_0004",
+    "english": "always",
+    "canonical_key": "always",
+    "disambiguation": "",
+    "display_label": "always",
+    "normalized_english": "always",
+    "part_of_speech": "adverb",
+    "category": "13_position",
+    "category_name": "Positions, Directions & Prepositions",
+    "ja_kanji": "いつも",
+    "ja_hiragana": "いつも",
+    "en_katakana": "オールウェイズ",
+    "ruby": [
+      {
+        "base": "いつも",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "いつも",
+    "ruby_text": "いつも",
+    "sound_file": "dic_wb_13position_always_1628.mp3",
+    "card_image": "cards/full/hwg6_u07_11_always_full.png",
+    "card_image_kana": "cards/full/hwg6_u07_11_always_full.png",
+    "card_image_en": "cards/full/hwg6_u07_11_always_full.png",
+    "card_image_bilingual": "cards/full/hwg6_u07_11_always_full.png",
+    "card_variants": [],
+    "token": "hwg_always",
+    "grades": [
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Where is the ball? / A: It is always the box."
+    ],
+    "tags": [
+      "frequency"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u07_11_always_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u07_11_always_illust.png",
+    "hwg_card_text": "cards/text/hwg6_u07_11_always_text.png",
+    "lemma": "always",
+    "is_plural": false,
+    "letter_count": 6,
+    "syllable_count": 2,
+    "first_letter": "A",
+    "is_compound": false,
+    "phonics_initial": "a",
+    "difficulty_tier": 3,
+    "primary_image": "cards/full/hwg6_u07_11_always_full.png",
+    "primary_audio": "dic_wb_13position_always_1628.mp3",
+    "three_hints": {
+      "category_hint": "It is a word describing position or direction.",
+      "feature_hint": "A preposition or direction meaning 'いつも' (いつも) in Japanese.",
+      "letter_hint": "It starts with the letter A."
+    },
+    "target_dialogues": [
+      {
+        "question": "Where is the ball?",
+        "answer": "It is always the box.",
+        "context": "Describing location and prepositions"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u07_11_always_illust.png",
+        "card_full": "cards/full/hwg6_u07_11_always_full.png",
+        "card_text": "cards/text/hwg6_u07_11_always_text.png",
+        "unit": "Unit 7: Unit 7: When and How Often",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_13position_always_1628.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0147",
+    "english": "hello",
+    "canonical_key": "hello",
+    "disambiguation": "",
+    "display_label": "hello",
+    "normalized_english": "hello",
+    "part_of_speech": "interjection",
+    "category": "13_position",
+    "category_name": "Positions, Directions & Prepositions",
+    "ja_kanji": "こんにちは",
+    "ja_hiragana": "こんにちは",
+    "en_katakana": "ハロー",
+    "ruby": [
+      {
+        "base": "こんにちは",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "こんにちは",
+    "ruby_text": "こんにちは",
+    "sound_file": "dic_wb_13position_hello_1651.mp3",
+    "card_image": "",
+    "card_image_kana": "",
+    "card_image_en": "",
+    "card_image_bilingual": "",
+    "card_variants": [],
+    "token": "borderlink_hello",
+    "grades": [
+      "ES_G3"
+    ],
+    "themes": [
+      "Hello! あいさつをして友だちになろう"
+    ],
+    "target_sentences": [
+      "Q: Where is the ball? / A: It is hello the box."
+    ],
+    "tags": [
+      "greeting"
+    ],
+    "lemma": "hello",
+    "is_plural": false,
+    "letter_count": 5,
+    "syllable_count": 2,
+    "first_letter": "H",
+    "is_compound": false,
+    "phonics_initial": "h",
+    "difficulty_tier": 1,
+    "primary_image": "",
+    "primary_audio": "dic_wb_13position_hello_1651.mp3",
+    "three_hints": {
+      "category_hint": "It is a word describing position or direction.",
+      "feature_hint": "A preposition or direction meaning 'こんにちは' (こんにちは) in Japanese.",
+      "letter_hint": "It starts with the letter H."
+    },
+    "target_dialogues": [
+      {
+        "question": "Where is the ball?",
+        "answer": "It is hello the box.",
+        "context": "Describing location and prepositions"
+      }
+    ],
+    "media_by_grade": {}
+  },
+  {
+    "id": "word_0210",
+    "english": "never",
+    "canonical_key": "never",
+    "disambiguation": "",
+    "display_label": "never",
+    "normalized_english": "never",
+    "part_of_speech": "adverb",
+    "category": "13_position",
+    "category_name": "Positions, Directions & Prepositions",
+    "ja_kanji": "決して〜ない",
+    "ja_hiragana": "けっしてない",
+    "en_katakana": "ネバー",
+    "ruby": [
+      {
+        "base": "決して〜ない",
+        "ruby": "けっしてない"
+      }
+    ],
+    "ruby_html": "<ruby>決して〜ない<rt>けっしてない</rt></ruby>",
+    "ruby_text": "[決して〜ない|けっしてない]",
+    "sound_file": "dic_wb_13position_never_1632.mp3",
+    "card_image": "cards/full/hwg6_u07_14_never_full.png",
+    "card_image_kana": "cards/full/hwg6_u07_14_never_full.png",
+    "card_image_en": "cards/full/hwg6_u07_14_never_full.png",
+    "card_image_bilingual": "cards/full/hwg6_u07_14_never_full.png",
+    "card_variants": [],
+    "token": "hwg_never",
+    "grades": [
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Where is the ball? / A: It is never the box."
+    ],
+    "tags": [
+      "frequency"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u07_14_never_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u07_14_never_illust.png",
+    "hwg_card_text": "cards/text/hwg6_u07_14_never_text.png",
+    "lemma": "never",
+    "is_plural": false,
+    "letter_count": 5,
+    "syllable_count": 2,
+    "first_letter": "N",
+    "is_compound": false,
+    "phonics_initial": "n",
+    "difficulty_tier": 3,
+    "primary_image": "cards/full/hwg6_u07_14_never_full.png",
+    "primary_audio": "dic_wb_13position_never_1632.mp3",
+    "three_hints": {
+      "category_hint": "It is a word describing position or direction.",
+      "feature_hint": "A preposition or direction meaning '決して〜ない' (けっしてない) in Japanese.",
+      "letter_hint": "It starts with the letter N."
+    },
+    "target_dialogues": [
+      {
+        "question": "Where is the ball?",
+        "answer": "It is never the box.",
+        "context": "Describing location and prepositions"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u07_14_never_illust.png",
+        "card_full": "cards/full/hwg6_u07_14_never_full.png",
+        "card_text": "cards/text/hwg6_u07_14_never_text.png",
+        "unit": "Unit 7: Unit 7: When and How Often",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_13position_never_1632.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0214",
+    "english": "no",
+    "canonical_key": "no",
+    "disambiguation": "",
+    "display_label": "no",
+    "normalized_english": "no",
+    "part_of_speech": "interjection",
+    "category": "13_position",
+    "category_name": "Positions, Directions & Prepositions",
+    "ja_kanji": "いいえ",
+    "ja_hiragana": "いいえ",
+    "en_katakana": "ノー",
+    "ruby": [
+      {
+        "base": "いいえ",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "いいえ",
+    "ruby_text": "いいえ",
+    "sound_file": "dic_wb_13position_no_1654.mp3",
+    "card_image": "",
+    "card_image_kana": "",
+    "card_image_en": "",
+    "card_image_bilingual": "",
+    "card_variants": [],
+    "token": "borderlink_no",
+    "grades": [
+      "ES_G2",
+      "ES_G3",
+      "ES_G4"
+    ],
+    "themes": [
+      "Do you have a pen?",
+      "I like blue. すきなものをつたえよう",
+      "Sports",
+      "What do you like? 何が好き？"
+    ],
+    "target_sentences": [
+      "Q: Where is the ball? / A: It is no the box."
+    ],
+    "tags": [
+      "basic",
+      "response"
+    ],
+    "lemma": "no",
+    "is_plural": false,
+    "letter_count": 2,
+    "syllable_count": 1,
+    "first_letter": "N",
+    "is_compound": false,
+    "phonics_initial": "n",
+    "difficulty_tier": 1,
+    "primary_image": "",
+    "primary_audio": "dic_wb_13position_no_1654.mp3",
+    "three_hints": {
+      "category_hint": "It is a word describing position or direction.",
+      "feature_hint": "A preposition or direction meaning 'いいえ' (いいえ) in Japanese.",
+      "letter_hint": "It starts with the letter N."
+    },
+    "target_dialogues": [
+      {
+        "question": "Where is the ball?",
+        "answer": "It is no the box.",
+        "context": "Describing location and prepositions"
+      }
+    ],
+    "media_by_grade": {}
+  },
+  {
+    "id": "word_0246",
+    "english": "please",
+    "canonical_key": "please",
+    "disambiguation": "",
+    "display_label": "please",
+    "normalized_english": "please",
+    "part_of_speech": "interjection",
+    "category": "13_position",
+    "category_name": "Positions, Directions & Prepositions",
+    "ja_kanji": "お願いします",
+    "ja_hiragana": "おねがいします",
+    "en_katakana": "プリーズ",
+    "ruby": [
+      {
+        "base": "お",
+        "ruby": ""
+      },
+      {
+        "base": "願",
+        "ruby": "ねが"
+      },
+      {
+        "base": "いします",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "お<ruby>願<rt>ねが</rt></ruby>いします",
+    "ruby_text": "お[願|ねが]いします",
+    "sound_file": "dic_wb_13position_please_1656.mp3",
+    "card_image": "",
+    "card_image_kana": "",
+    "card_image_en": "",
+    "card_image_bilingual": "",
+    "card_variants": [],
+    "token": "borderlink_please",
+    "grades": [
+      "ES_G3",
+      "ES_G4"
+    ],
+    "themes": [
+      "ALPHABET アルファベットとなかよし",
+      "How many? 数えてあそぼう",
+      "This is for you. カードをおくろう",
+      "What do you want?"
+    ],
+    "target_sentences": [
+      "Q: Where is the ball? / A: It is please the box."
+    ],
+    "tags": [
+      "basic",
+      "polite"
+    ],
+    "lemma": "please",
+    "is_plural": false,
+    "letter_count": 6,
+    "syllable_count": 1,
+    "first_letter": "P",
+    "is_compound": false,
+    "phonics_initial": "pl",
+    "difficulty_tier": 2,
+    "primary_image": "",
+    "primary_audio": "dic_wb_13position_please_1656.mp3",
+    "three_hints": {
+      "category_hint": "It is a word describing position or direction.",
+      "feature_hint": "A preposition or direction meaning 'お願いします' (おねがいします) in Japanese.",
+      "letter_hint": "It starts with the letter P."
+    },
+    "target_dialogues": [
+      {
+        "question": "Where is the ball?",
+        "answer": "It is please the box.",
+        "context": "Describing location and prepositions"
+      }
+    ],
+    "media_by_grade": {}
+  },
+  {
+    "id": "word_0315",
+    "english": "sometimes",
+    "canonical_key": "sometimes",
+    "disambiguation": "",
+    "display_label": "sometimes",
+    "normalized_english": "sometimes",
+    "part_of_speech": "adverb",
+    "category": "13_position",
+    "category_name": "Positions, Directions & Prepositions",
+    "ja_kanji": "ときどき",
+    "ja_hiragana": "ときどき",
+    "en_katakana": "サムタイムズ",
+    "ruby": [
+      {
+        "base": "ときどき",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "ときどき",
+    "ruby_text": "ときどき",
+    "sound_file": "dic_wb_13position_sometimes_1637.mp3",
+    "card_image": "cards/full/hwg6_u07_13_sometimes_full.png",
+    "card_image_kana": "cards/full/hwg6_u07_13_sometimes_full.png",
+    "card_image_en": "cards/full/hwg6_u07_13_sometimes_full.png",
+    "card_image_bilingual": "cards/full/hwg6_u07_13_sometimes_full.png",
+    "card_variants": [],
+    "token": "hwg_sometimes",
+    "grades": [
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Where is the ball? / A: It is sometimes the box."
+    ],
+    "tags": [
+      "frequency"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u07_13_sometimes_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u07_13_sometimes_illust.png",
+    "hwg_card_text": "cards/text/hwg6_u07_13_sometimes_text.png",
+    "lemma": "sometimes",
+    "is_plural": false,
+    "letter_count": 9,
+    "syllable_count": 3,
+    "first_letter": "S",
+    "is_compound": false,
+    "phonics_initial": "s",
+    "difficulty_tier": 3,
+    "primary_image": "cards/full/hwg6_u07_13_sometimes_full.png",
+    "primary_audio": "dic_wb_13position_sometimes_1637.mp3",
+    "three_hints": {
+      "category_hint": "It is a word describing position or direction.",
+      "feature_hint": "A preposition or direction meaning 'ときどき' (ときどき) in Japanese.",
+      "letter_hint": "It starts with the letter S."
+    },
+    "target_dialogues": [
+      {
+        "question": "Where is the ball?",
+        "answer": "It is sometimes the box.",
+        "context": "Describing location and prepositions"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u07_13_sometimes_illust.png",
+        "card_full": "cards/full/hwg6_u07_13_sometimes_full.png",
+        "card_text": "cards/text/hwg6_u07_13_sometimes_text.png",
+        "unit": "Unit 7: Unit 7: When and How Often",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_13position_sometimes_1637.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0350",
+    "english": "thank you",
+    "canonical_key": "thank you",
+    "disambiguation": "",
+    "display_label": "thank you",
+    "normalized_english": "thank you",
+    "part_of_speech": "phrase",
+    "category": "13_position",
+    "category_name": "Positions, Directions & Prepositions",
+    "ja_kanji": "ありがとう",
+    "ja_hiragana": "ありがとう",
+    "en_katakana": "サンキュー",
+    "ruby": [
+      {
+        "base": "ありがとう",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "ありがとう",
+    "ruby_text": "ありがとう",
+    "sound_file": "dic_wb_01action_thank_1041.mp3",
+    "card_image": "",
+    "card_image_kana": "",
+    "card_image_en": "",
+    "card_image_bilingual": "",
+    "card_variants": [],
+    "token": "borderlink_thank you",
+    "grades": [
+      "ES_G3"
+    ],
+    "themes": [
+      "This is for you. カードをおくろう"
+    ],
+    "target_sentences": [
+      "Q: Where is the ball? / A: It is thank you the box."
+    ],
+    "tags": [
+      "greeting",
+      "polite"
+    ],
+    "lemma": "thank you",
+    "is_plural": false,
+    "letter_count": 8,
+    "syllable_count": 3,
+    "first_letter": "T",
+    "is_compound": true,
+    "phonics_initial": "th",
+    "difficulty_tier": 3,
+    "primary_image": "",
+    "primary_audio": "dic_wb_01action_thank_1041.mp3",
+    "three_hints": {
+      "category_hint": "It is a word describing position or direction.",
+      "feature_hint": "A preposition or direction meaning 'ありがとう' (ありがとう) in Japanese.",
+      "letter_hint": "It starts with the letter T."
+    },
+    "target_dialogues": [
+      {
+        "question": "Where is the ball?",
+        "answer": "It is thank you the box.",
+        "context": "Describing location and prepositions"
+      }
+    ],
+    "media_by_grade": {}
+  },
+  {
+    "id": "word_0376",
+    "english": "usually",
+    "canonical_key": "usually",
+    "disambiguation": "",
+    "display_label": "usually",
+    "normalized_english": "usually",
+    "part_of_speech": "adverb",
+    "category": "13_position",
+    "category_name": "Positions, Directions & Prepositions",
+    "ja_kanji": "たいてい",
+    "ja_hiragana": "たいてい",
+    "en_katakana": "ユージュアリー",
+    "ruby": [
+      {
+        "base": "たいてい",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "たいてい",
+    "ruby_text": "たいてい",
+    "sound_file": "dic_wb_13position_usually_1639.mp3",
+    "card_image": "cards/full/hwg6_u07_12_usually_full.png",
+    "card_image_kana": "cards/full/hwg6_u07_12_usually_full.png",
+    "card_image_en": "cards/full/hwg6_u07_12_usually_full.png",
+    "card_image_bilingual": "cards/full/hwg6_u07_12_usually_full.png",
+    "card_variants": [],
+    "token": "hwg_usually",
+    "grades": [
+      "ES_G6"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Where is the ball? / A: It is usually the box."
+    ],
+    "tags": [
+      "frequency"
+    ],
+    "hwg_card_full": "cards/full/hwg6_u07_12_usually_full.png",
+    "hwg_card_illust": "cards/illustration/hwg6_u07_12_usually_illust.png",
+    "hwg_card_text": "cards/text/hwg6_u07_12_usually_text.png",
+    "lemma": "usually",
+    "is_plural": false,
+    "letter_count": 7,
+    "syllable_count": 3,
+    "first_letter": "U",
+    "is_compound": false,
+    "phonics_initial": "u",
+    "difficulty_tier": 3,
+    "primary_image": "cards/full/hwg6_u07_12_usually_full.png",
+    "primary_audio": "dic_wb_13position_usually_1639.mp3",
+    "three_hints": {
+      "category_hint": "It is a word describing position or direction.",
+      "feature_hint": "A preposition or direction meaning 'たいてい' (たいてい) in Japanese.",
+      "letter_hint": "It starts with the letter U."
+    },
+    "target_dialogues": [
+      {
+        "question": "Where is the ball?",
+        "answer": "It is usually the box.",
+        "context": "Describing location and prepositions"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G6": {
+        "card_image": "cards/illustration/hwg6_u07_12_usually_illust.png",
+        "card_full": "cards/full/hwg6_u07_12_usually_full.png",
+        "card_text": "cards/text/hwg6_u07_12_usually_text.png",
+        "unit": "Unit 7: Unit 7: When and How Often",
+        "source": "here_we_go_6",
+        "sound_file": "dic_wb_13position_usually_1639.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0404",
+    "english": "yes",
+    "canonical_key": "yes",
+    "disambiguation": "",
+    "display_label": "yes",
+    "normalized_english": "yes",
+    "part_of_speech": "interjection",
+    "category": "13_position",
+    "category_name": "Positions, Directions & Prepositions",
+    "ja_kanji": "はい",
+    "ja_hiragana": "はい",
+    "en_katakana": "イエス",
+    "ruby": [
+      {
+        "base": "はい",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "はい",
+    "ruby_text": "はい",
+    "sound_file": "dic_wb_13position_yes_1653.mp3",
+    "card_image": "",
+    "card_image_kana": "",
+    "card_image_en": "",
+    "card_image_bilingual": "",
+    "card_variants": [],
+    "token": "borderlink_yes",
+    "grades": [
+      "ES_G3"
+    ],
+    "themes": [
+      "Who are you? きみはだれ？"
+    ],
+    "target_sentences": [
+      "Q: Where is the ball? / A: It is yes the box."
+    ],
+    "tags": [
+      "basic",
+      "response"
+    ],
+    "lemma": "yes",
+    "is_plural": false,
+    "letter_count": 3,
+    "syllable_count": 1,
+    "first_letter": "Y",
+    "is_compound": false,
+    "phonics_initial": "y",
+    "difficulty_tier": 1,
+    "primary_image": "",
+    "primary_audio": "dic_wb_13position_yes_1653.mp3",
+    "three_hints": {
+      "category_hint": "It is a word describing position or direction.",
+      "feature_hint": "A preposition or direction meaning 'はい' (はい) in Japanese.",
+      "letter_hint": "It starts with the letter Y."
+    },
+    "target_dialogues": [
+      {
+        "question": "Where is the ball?",
+        "answer": "It is yes the box.",
+        "context": "Describing location and prepositions"
+      }
+    ],
+    "media_by_grade": {}
+  },
+  {
+    "id": "word_0406",
+    "english": "you're welcome",
+    "canonical_key": "you're welcome",
+    "disambiguation": "",
+    "display_label": "you're welcome",
+    "normalized_english": "you're welcome",
+    "part_of_speech": "phrase",
+    "category": "13_position",
+    "category_name": "Positions, Directions & Prepositions",
+    "ja_kanji": "どういたしまして",
+    "ja_hiragana": "どういたしまして",
+    "en_katakana": "ユアウェルカム",
+    "ruby": [
+      {
+        "base": "どういたしまして",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "どういたしまして",
+    "ruby_text": "どういたしまして",
+    "sound_file": "dic_wb_02state_welcome_1100.mp3",
+    "card_image": "",
+    "card_image_kana": "",
+    "card_image_en": "",
+    "card_image_bilingual": "",
+    "card_variants": [],
+    "token": "borderlink_you're welcome",
+    "grades": [
+      "ES_G3"
+    ],
+    "themes": [
+      "This is for you. カードをおくろう"
+    ],
+    "target_sentences": [
+      "Q: Where is the ball? / A: It is you're welcome the box."
+    ],
+    "tags": [
+      "greeting",
+      "polite"
+    ],
+    "lemma": "you're welcome",
+    "is_plural": false,
+    "letter_count": 12,
+    "syllable_count": 4,
+    "first_letter": "Y",
+    "is_compound": true,
+    "phonics_initial": "y",
+    "difficulty_tier": 3,
+    "primary_image": "",
+    "primary_audio": "dic_wb_02state_welcome_1100.mp3",
+    "three_hints": {
+      "category_hint": "It is a word describing position or direction.",
+      "feature_hint": "A preposition or direction meaning 'どういたしまして' (どういたしまして) in Japanese.",
+      "letter_hint": "It starts with the letter Y."
+    },
+    "target_dialogues": [
+      {
+        "question": "Where is the ball?",
+        "answer": "It is you're welcome the box.",
+        "context": "Describing location and prepositions"
+      }
+    ],
+    "media_by_grade": {}
+  },
+  {
+    "id": "word_0807",
+    "english": "by",
+    "canonical_key": "by",
+    "disambiguation": "",
+    "display_label": "by",
+    "normalized_english": "by",
+    "part_of_speech": "preposition",
+    "category": "13_position",
+    "category_name": "Positions, Directions & Prepositions",
+    "ja_kanji": "そばに",
+    "ja_hiragana": "そばに",
+    "en_katakana": "バイ",
+    "ruby": [
+      {
+        "base": "そばに",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "そばに",
+    "ruby_text": "そばに",
+    "sound_file": "dic_wb_13position_by_1618.mp3",
+    "card_image": "dic_5_card_by_0287_1_c.png",
+    "card_image_kana": "dic_5_card_by_0287_1_c.png",
+    "card_image_en": "dic_5_card_by_0287_1_e.png",
+    "card_image_bilingual": "dic_5_card_by_0287_1_ce.png",
+    "card_variants": [
+      "dic_5_card_by_0287_1.png"
+    ],
+    "token": "dic_wb_13position_by_1618&dic_wb_13position_by_1618&dic_5_card_by_0287",
+    "grades": [
+      "ES_G5"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Where is the ball? / A: It is by the box."
+    ],
+    "tags": [
+      "position"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u21_03_by_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u21_03_by_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u21_03_by_text.png",
+    "lemma": "by",
+    "is_plural": false,
+    "letter_count": 2,
+    "syllable_count": 1,
+    "first_letter": "B",
+    "is_compound": false,
+    "phonics_initial": "b",
+    "difficulty_tier": 2,
+    "primary_image": "dic_5_card_by_0287_1_c.png",
+    "primary_audio": "dic_wb_13position_by_1618.mp3",
+    "three_hints": {
+      "category_hint": "It is a word describing position or direction.",
+      "feature_hint": "A preposition or direction meaning 'そばに' (そばに) in Japanese.",
+      "letter_hint": "It starts with the letter B."
+    },
+    "target_dialogues": [
+      {
+        "question": "Where is the ball?",
+        "answer": "It is by the box.",
+        "context": "Describing location and prepositions"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u21_03_by_illust.png",
+        "card_full": "cards/full/hwg5_u21_03_by_full.png",
+        "card_text": "cards/text/hwg5_u21_03_by_text.png",
+        "unit": "Unit 21: Unit 21: Directions",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_13position_by_1618.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0808",
+    "english": "down",
+    "canonical_key": "down",
+    "disambiguation": "",
+    "display_label": "down",
+    "normalized_english": "down",
+    "part_of_speech": "preposition",
+    "category": "13_position",
+    "category_name": "Positions, Directions & Prepositions",
+    "ja_kanji": "下へ",
+    "ja_hiragana": "したへ",
+    "en_katakana": "ダウン",
+    "ruby": [
+      {
+        "base": "下",
+        "ruby": "した"
+      },
+      {
+        "base": "へ",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "<ruby>下<rt>した</rt></ruby>へ",
+    "ruby_text": "[下|した]へ",
+    "sound_file": "dic_wb_13position_down_1630.mp3",
+    "card_image": "dic_wb_13position_down_1630_1_c.png",
+    "card_image_kana": "dic_wb_13position_down_1630_1_c.png",
+    "card_image_en": "dic_wb_13position_down_1630_1_e.png",
+    "card_image_bilingual": "dic_wb_13position_down_1630_1_ce.png",
+    "card_variants": [
+      "dic_wb_13position_down_1630_1.png",
+      "dic_4_card_down_2605_1.png"
+    ],
+    "token": "dic_wb_13position_down_1630&dic_wb_13position_down_1630&dic_wb_13position_down_1630",
+    "grades": [
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Where is the ball? / A: It is down the box."
+    ],
+    "tags": [
+      "direction",
+      "position"
+    ],
+    "lemma": "down",
+    "is_plural": false,
+    "letter_count": 4,
+    "syllable_count": 1,
+    "first_letter": "D",
+    "is_compound": false,
+    "phonics_initial": "d",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_13position_down_1630_1_c.png",
+    "primary_audio": "dic_wb_13position_down_1630.mp3",
+    "three_hints": {
+      "category_hint": "It is a word describing position or direction.",
+      "feature_hint": "A preposition or direction meaning '下へ' (したへ) in Japanese.",
+      "letter_hint": "It starts with the letter D."
+    },
+    "target_dialogues": [
+      {
+        "question": "Where is the ball?",
+        "answer": "It is down the box.",
+        "context": "Describing location and prepositions"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G4": {
+        "card_image": "dic_4_card_down_2605_1_c.png",
+        "sound_file": "dic_wb_13position_down_1630.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_4_card_down_2605_1_ce.png",
+        "card_bw": "dic_4_card_down_2605_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0809",
+    "english": "in",
+    "canonical_key": "in",
+    "disambiguation": "",
+    "display_label": "in",
+    "normalized_english": "in",
+    "part_of_speech": "preposition",
+    "category": "13_position",
+    "category_name": "Positions, Directions & Prepositions",
+    "ja_kanji": "中に",
+    "ja_hiragana": "なかに",
+    "en_katakana": "イン",
+    "ruby": [
+      {
+        "base": "中",
+        "ruby": "なか"
+      },
+      {
+        "base": "に",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "<ruby>中<rt>なか</rt></ruby>に",
+    "ruby_text": "[中|なか]に",
+    "sound_file": "dic_wb_13position_in_1621.mp3",
+    "card_image": "dic_5_card_in_0288_1_c.png",
+    "card_image_kana": "dic_5_card_in_0288_1_c.png",
+    "card_image_en": "dic_5_card_in_0288_1_e.png",
+    "card_image_bilingual": "dic_5_card_in_0288_1_ce.png",
+    "card_variants": [
+      "dic_5_card_in_0288_1.png"
+    ],
+    "token": "dic_wb_13position_in_1621&dic_wb_13position_in_1621&dic_5_card_in_0288",
+    "grades": [
+      "ES_G5"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Where is the ball? / A: It is in the box."
+    ],
+    "tags": [
+      "position"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u21_01_in_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u21_01_in_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u21_01_in_text.png",
+    "lemma": "in",
+    "is_plural": false,
+    "letter_count": 2,
+    "syllable_count": 1,
+    "first_letter": "I",
+    "is_compound": false,
+    "phonics_initial": "i",
+    "difficulty_tier": 2,
+    "primary_image": "dic_5_card_in_0288_1_c.png",
+    "primary_audio": "dic_wb_13position_in_1621.mp3",
+    "three_hints": {
+      "category_hint": "It is a word describing position or direction.",
+      "feature_hint": "A preposition or direction meaning '中に' (なかに) in Japanese.",
+      "letter_hint": "It starts with the letter I."
+    },
+    "target_dialogues": [
+      {
+        "question": "Where is the ball?",
+        "answer": "It is in the box.",
+        "context": "Describing location and prepositions"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u21_01_in_illust.png",
+        "card_full": "cards/full/hwg5_u21_01_in_full.png",
+        "card_text": "cards/text/hwg5_u21_01_in_text.png",
+        "unit": "Unit 21: Unit 21: Directions",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_13position_in_1621.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0810",
+    "english": "left",
+    "canonical_key": "left",
+    "disambiguation": "",
+    "display_label": "left",
+    "normalized_english": "left",
+    "part_of_speech": "noun",
+    "category": "13_position",
+    "category_name": "Positions, Directions & Prepositions",
+    "ja_kanji": "左",
+    "ja_hiragana": "ひだり",
+    "en_katakana": "レフト",
+    "ruby": [
+      {
+        "base": "左",
+        "ruby": "ひだり"
+      }
+    ],
+    "ruby_html": "<ruby>左<rt>ひだり</rt></ruby>",
+    "ruby_text": "[左|ひだり]",
+    "sound_file": "dic_wb_13position_left_1597.mp3",
+    "card_image": "dic_wb_13position_left_1597_1_c.png",
+    "card_image_kana": "dic_wb_13position_left_1597_1_c.png",
+    "card_image_en": "dic_wb_13position_left_1597_1_e.png",
+    "card_image_bilingual": "dic_wb_13position_left_1597_1_ce.png",
+    "card_variants": [
+      "dic_wb_13position_left_1597_1.png"
+    ],
+    "token": "dic_wb_13position_left_1597&dic_wb_13position_left_1597&dic_wb_13position_left_1597",
+    "grades": [
+      "ES_G3"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Where is the ball? / A: It is left the box."
+    ],
+    "tags": [
+      "direction",
+      "position"
+    ],
+    "lemma": "left",
+    "is_plural": false,
+    "letter_count": 4,
+    "syllable_count": 1,
+    "first_letter": "L",
+    "is_compound": false,
+    "phonics_initial": "l",
+    "difficulty_tier": 1,
+    "primary_image": "dic_wb_13position_left_1597_1_c.png",
+    "primary_audio": "dic_wb_13position_left_1597.mp3",
+    "three_hints": {
+      "category_hint": "It is a word describing position or direction.",
+      "feature_hint": "A preposition or direction meaning '左' (ひだり) in Japanese.",
+      "letter_hint": "It starts with the letter L."
+    },
+    "target_dialogues": [
+      {
+        "question": "Where is the ball?",
+        "answer": "It is left the box.",
+        "context": "Describing location and prepositions"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_wb_13position_left_1597_1_c.png",
+        "sound_file": "dic_wb_13position_left_1597.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_wb_13position_left_1597_1_ce.png",
+        "card_bw": "dic_wb_13position_left_1597_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0811",
+    "english": "on",
+    "canonical_key": "on",
+    "disambiguation": "",
+    "display_label": "on",
+    "normalized_english": "on",
+    "part_of_speech": "preposition",
+    "category": "13_position",
+    "category_name": "Positions, Directions & Prepositions",
+    "ja_kanji": "上に",
+    "ja_hiragana": "うえに",
+    "en_katakana": "オン",
+    "ruby": [
+      {
+        "base": "上",
+        "ruby": "うえ"
+      },
+      {
+        "base": "に",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "<ruby>上<rt>うえ</rt></ruby>に",
+    "ruby_text": "[上|うえ]に",
+    "sound_file": "dic_wb_13position_on_1623.mp3",
+    "card_image": "dic_5_card_on_0289_1_c.png",
+    "card_image_kana": "dic_5_card_on_0289_1_c.png",
+    "card_image_en": "dic_5_card_on_0289_1_e.png",
+    "card_image_bilingual": "dic_5_card_on_0289_1_ce.png",
+    "card_variants": [
+      "dic_5_card_on_0289_1.png"
+    ],
+    "token": "dic_wb_13position_on_1623&dic_wb_13position_on_1623&dic_5_card_on_0289",
+    "grades": [
+      "ES_G5"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Where is the ball? / A: It is on the box."
+    ],
+    "tags": [
+      "position"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u21_00_on_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u21_00_on_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u21_00_on_text.png",
+    "lemma": "on",
+    "is_plural": false,
+    "letter_count": 2,
+    "syllable_count": 1,
+    "first_letter": "O",
+    "is_compound": false,
+    "phonics_initial": "o",
+    "difficulty_tier": 2,
+    "primary_image": "dic_5_card_on_0289_1_c.png",
+    "primary_audio": "dic_wb_13position_on_1623.mp3",
+    "three_hints": {
+      "category_hint": "It is a word describing position or direction.",
+      "feature_hint": "A preposition or direction meaning '上に' (うえに) in Japanese.",
+      "letter_hint": "It starts with the letter O."
+    },
+    "target_dialogues": [
+      {
+        "question": "Where is the ball?",
+        "answer": "It is on the box.",
+        "context": "Describing location and prepositions"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u21_00_on_illust.png",
+        "card_full": "cards/full/hwg5_u21_00_on_full.png",
+        "card_text": "cards/text/hwg5_u21_00_on_text.png",
+        "unit": "Unit 21: Unit 21: Directions",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_13position_on_1623.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0812",
+    "english": "right",
+    "canonical_key": "right",
+    "disambiguation": "",
+    "display_label": "right",
+    "normalized_english": "right",
+    "part_of_speech": "noun",
+    "category": "13_position",
+    "category_name": "Positions, Directions & Prepositions",
+    "ja_kanji": "右",
+    "ja_hiragana": "みぎ",
+    "en_katakana": "ライト",
+    "ruby": [
+      {
+        "base": "右",
+        "ruby": "みぎ"
+      }
+    ],
+    "ruby_html": "<ruby>右<rt>みぎ</rt></ruby>",
+    "ruby_text": "[右|みぎ]",
+    "sound_file": "dic_wb_13position_right_1598.mp3",
+    "card_image": "dic_wb_13position_right_1598_1_c.png",
+    "card_image_kana": "dic_wb_13position_right_1598_1_c.png",
+    "card_image_en": "dic_wb_13position_right_1598_1_e.png",
+    "card_image_bilingual": "dic_wb_13position_right_1598_1_ce.png",
+    "card_variants": [
+      "dic_wb_13position_right_1598_1.png"
+    ],
+    "token": "dic_wb_13position_right_1598&dic_wb_13position_right_1598&dic_wb_13position_right_1598",
+    "grades": [
+      "ES_G3"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Where is the ball? / A: It is right the box."
+    ],
+    "tags": [
+      "direction",
+      "position"
+    ],
+    "lemma": "right",
+    "is_plural": false,
+    "letter_count": 5,
+    "syllable_count": 1,
+    "first_letter": "R",
+    "is_compound": false,
+    "phonics_initial": "r",
+    "difficulty_tier": 1,
+    "primary_image": "dic_wb_13position_right_1598_1_c.png",
+    "primary_audio": "dic_wb_13position_right_1598.mp3",
+    "three_hints": {
+      "category_hint": "It is a word describing position or direction.",
+      "feature_hint": "A preposition or direction meaning '右' (みぎ) in Japanese.",
+      "letter_hint": "It starts with the letter R."
+    },
+    "target_dialogues": [
+      {
+        "question": "Where is the ball?",
+        "answer": "It is right the box.",
+        "context": "Describing location and prepositions"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_wb_13position_right_1598_1_c.png",
+        "sound_file": "dic_wb_13position_right_1598.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_wb_13position_right_1598_1_ce.png",
+        "card_bw": "dic_wb_13position_right_1598_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0813",
+    "english": "straight",
+    "canonical_key": "straight",
+    "disambiguation": "",
+    "display_label": "straight",
+    "normalized_english": "straight",
+    "part_of_speech": "adverb",
+    "category": "13_position",
+    "category_name": "Positions, Directions & Prepositions",
+    "ja_kanji": "まっすぐ",
+    "ja_hiragana": "まっすぐ",
+    "en_katakana": "ストレート",
+    "ruby": [
+      {
+        "base": "まっすぐ",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "まっすぐ",
+    "ruby_text": "まっすぐ",
+    "sound_file": "dic_wb_13position_straight_1599.mp3",
+    "card_image": "dic_wb_13position_straight_1599_1_c.png",
+    "card_image_kana": "dic_wb_13position_straight_1599_1_c.png",
+    "card_image_en": "dic_wb_13position_straight_1599_1_e.png",
+    "card_image_bilingual": "dic_wb_13position_straight_1599_1_ce.png",
+    "card_variants": [
+      "dic_wb_13position_straight_1599_1.png"
+    ],
+    "token": "dic_wb_13position_straight_1599&dic_wb_13position_straight_1599&dic_wb_13position_straight_1599",
+    "grades": [
+      "ES_G3"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Where is the ball? / A: It is straight the box."
+    ],
+    "tags": [
+      "direction"
+    ],
+    "lemma": "straight",
+    "is_plural": false,
+    "letter_count": 8,
+    "syllable_count": 1,
+    "first_letter": "S",
+    "is_compound": false,
+    "phonics_initial": "str",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_13position_straight_1599_1_c.png",
+    "primary_audio": "dic_wb_13position_straight_1599.mp3",
+    "three_hints": {
+      "category_hint": "It is a word describing position or direction.",
+      "feature_hint": "A preposition or direction meaning 'まっすぐ' (まっすぐ) in Japanese.",
+      "letter_hint": "It starts with the letter S."
+    },
+    "target_dialogues": [
+      {
+        "question": "Where is the ball?",
+        "answer": "It is straight the box.",
+        "context": "Describing location and prepositions"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G3": {
+        "card_image": "dic_wb_13position_straight_1599_1_c.png",
+        "sound_file": "dic_wb_13position_straight_1599.mp3",
+        "source": "lets_try_dictionary",
+        "card_full": "dic_wb_13position_straight_1599_1_ce.png",
+        "card_bw": "dic_wb_13position_straight_1599_1.png"
+      }
+    }
+  },
+  {
+    "id": "word_0814",
+    "english": "under",
+    "canonical_key": "under",
+    "disambiguation": "",
+    "display_label": "under",
+    "normalized_english": "under",
+    "part_of_speech": "preposition",
+    "category": "13_position",
+    "category_name": "Positions, Directions & Prepositions",
+    "ja_kanji": "下に",
+    "ja_hiragana": "したに",
+    "en_katakana": "アンダー",
+    "ruby": [
+      {
+        "base": "下",
+        "ruby": "した"
+      },
+      {
+        "base": "に",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "<ruby>下<rt>した</rt></ruby>に",
+    "ruby_text": "[下|した]に",
+    "sound_file": "dic_wb_13position_under_1626.mp3",
+    "card_image": "dic_5_card_under_0290_1_c.png",
+    "card_image_kana": "dic_5_card_under_0290_1_c.png",
+    "card_image_en": "dic_5_card_under_0290_1_e.png",
+    "card_image_bilingual": "dic_5_card_under_0290_1_ce.png",
+    "card_variants": [
+      "dic_5_card_under_0290_1.png"
+    ],
+    "token": "dic_wb_13position_under_1626&dic_wb_13position_under_1626&dic_5_card_under_0290",
+    "grades": [
+      "ES_G5"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Where is the ball? / A: It is under the box."
+    ],
+    "tags": [
+      "position"
+    ],
+    "hwg_card_full": "cards/full/hwg5_u21_02_under_full.png",
+    "hwg_card_illust": "cards/illustration/hwg5_u21_02_under_illust.png",
+    "hwg_card_text": "cards/text/hwg5_u21_02_under_text.png",
+    "lemma": "under",
+    "is_plural": false,
+    "letter_count": 5,
+    "syllable_count": 2,
+    "first_letter": "U",
+    "is_compound": false,
+    "phonics_initial": "u",
+    "difficulty_tier": 2,
+    "primary_image": "dic_5_card_under_0290_1_c.png",
+    "primary_audio": "dic_wb_13position_under_1626.mp3",
+    "three_hints": {
+      "category_hint": "It is a word describing position or direction.",
+      "feature_hint": "A preposition or direction meaning '下に' (したに) in Japanese.",
+      "letter_hint": "It starts with the letter U."
+    },
+    "target_dialogues": [
+      {
+        "question": "Where is the ball?",
+        "answer": "It is under the box.",
+        "context": "Describing location and prepositions"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "cards/illustration/hwg5_u21_02_under_illust.png",
+        "card_full": "cards/full/hwg5_u21_02_under_full.png",
+        "card_text": "cards/text/hwg5_u21_02_under_text.png",
+        "unit": "Unit 21: Unit 21: Directions",
+        "source": "here_we_go_5",
+        "sound_file": "dic_wb_13position_under_1626.mp3"
+      }
+    }
+  },
+  {
+    "id": "word_0815",
+    "english": "up",
+    "canonical_key": "up",
+    "disambiguation": "",
+    "display_label": "up",
+    "normalized_english": "up",
+    "part_of_speech": "preposition",
+    "category": "13_position",
+    "category_name": "Positions, Directions & Prepositions",
+    "ja_kanji": "上へ",
+    "ja_hiragana": "うえへ",
+    "en_katakana": "アップ",
+    "ruby": [
+      {
+        "base": "上",
+        "ruby": "うえ"
+      },
+      {
+        "base": "へ",
+        "ruby": ""
+      }
+    ],
+    "ruby_html": "<ruby>上<rt>うえ</rt></ruby>へ",
+    "ruby_text": "[上|うえ]へ",
+    "sound_file": "dic_wb_13position_up_1638.mp3",
+    "card_image": "dic_wb_13position_up_1638_1_c.png",
+    "card_image_kana": "dic_wb_13position_up_1638_1_c.png",
+    "card_image_en": "dic_wb_13position_up_1638_1_e.png",
+    "card_image_bilingual": "dic_wb_13position_up_1638_1_ce.png",
+    "card_variants": [
+      "dic_wb_13position_up_1638_1.png",
+      "dic_4_card_up_2604_1.png"
+    ],
+    "token": "dic_wb_13position_up_1638&dic_wb_13position_up_1638&dic_wb_13position_up_1638",
+    "grades": [
+      "ES_G4"
+    ],
+    "themes": [],
+    "target_sentences": [
+      "Q: Where is the ball? / A: It is up the box."
+    ],
+    "tags": [
+      "direction",
+      "position"
+    ],
+    "lemma": "up",
+    "is_plural": false,
+    "letter_count": 2,
+    "syllable_count": 1,
+    "first_letter": "U",
+    "is_compound": false,
+    "phonics_initial": "u",
+    "difficulty_tier": 2,
+    "primary_image": "dic_wb_13position_up_1638_1_c.png",
+    "primary_audio": "dic_wb_13position_up_1638.mp3",
+    "three_hints": {
+      "category_hint": "It is a word describing position or direction.",
+      "feature_hint": "A preposition or direction meaning '上へ' (うえへ) in Japanese.",
+      "letter_hint": "It starts with the letter U."
+    },
+    "target_dialogues": [
+      {
+        "question": "Where is the ball?",
+        "answer": "It is up the box.",
+        "context": "Describing location and prepositions"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G4": {
+        "card_image": "dic_4_card_up_2604_1_c.png",
+        "sound_file": "dic_wb_13position_up_1638.mp3",
+        "source": "lets_try_2",
+        "card_full": "dic_4_card_up_2604_1_ce.png",
+        "card_bw": "dic_4_card_up_2604_1.png"
+      }
+    }
+  }
+]

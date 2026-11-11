@@ -56,29 +56,99 @@ export const FlashcardStage: React.FC<FlashcardStageProps> = ({
     return 'text-8xl sm:text-9xl md:text-[10rem] lg:text-[12rem] leading-none';
   };
 
-  const showCardContent = isFlashing || isRevealed || mode !== 'LIGHTNING';
+  // In LIGHTNING mode, the shutter cover is closed UNLESS flashing or permanently revealed.
+  // In all other modes (ACCELERATING, RHYTHMIC, MANUAL), the cover is never active.
+  const isCoverActive = mode === 'LIGHTNING' && !isFlashing && !isRevealed;
 
   return (
     <div className="relative w-full h-full flex-1 min-h-0 bg-white dark:bg-slate-950 rounded-3xl border-4 border-rose-300 dark:border-slate-800 shadow-2xl flex items-center justify-center p-3 sm:p-5 md:p-6 overflow-hidden select-none">
       {/* Visual camera flash strobe overlay */}
       {isFlashing && (
-        <div className="absolute inset-0 bg-white/40 pointer-events-none z-30 animate-ping duration-75" />
+        <div className="absolute inset-0 bg-white/50 pointer-events-none z-30 animate-ping duration-75" />
       )}
 
       {/* ====================================================================
-          1. SHUTTER / CONCEALED STATE (Only for Lightning mode pre-flash)
+          1. BAKED UNDERLAY: The Card Content is ALWAYS Rendered in the DOM!
+             This guarantees 0ms latency because the browser decodes and paints
+             the image into GPU texture memory ahead of time.
          ==================================================================== */}
-      {!showCardContent ? (
-        <div className="flex flex-col items-center justify-center space-y-4 sm:space-y-6 text-center z-10 p-4">
-          <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-3xl bg-gradient-to-tr from-rose-500 to-pink-600 text-white flex items-center justify-center shadow-xl animate-pulse">
+      <div className="absolute inset-0 z-0 flex items-center justify-center p-2 sm:p-4 md:p-6">
+        {tier === 'word_only' ? (
+          // SIGHT WORD READING DRILL (Dynamic Large Typography based on string length)
+          <div className="w-full h-full flex flex-col items-center justify-center text-center p-4">
+            <span className={`${getSightWordSizeClass(card.english)} font-black text-slate-900 dark:text-white tracking-wider break-words max-w-full drop-shadow-md`}>
+              {card.english}
+            </span>
+          </div>
+        ) : tier === 'picture_word' ? (
+          // PICTURE + WORD DISPLAY: Full image with textbook English word cleanly badged beneath
+          <div className="w-full h-full flex flex-col items-center justify-between p-1 sm:p-2">
+            <div className="w-full flex-1 min-h-0 flex items-center justify-center overflow-hidden">
+              {imageUrl && !imgError ? (
+                <img
+                  src={imageUrl}
+                  alt={card.english}
+                  onError={() => setImgError(true)}
+                  className="w-full h-full max-h-full max-w-full object-contain drop-shadow-2xl transition-all"
+                  loading="eager"
+                  decoding="sync"
+                />
+              ) : (
+                <div className="text-center p-4">
+                  <span className="text-8xl block mb-2">📖</span>
+                </div>
+              )}
+            </div>
+            <div className="mt-2 sm:mt-3 shrink-0 px-6 sm:px-10 py-2 sm:py-3 rounded-2xl bg-slate-900/90 dark:bg-slate-800/95 border-2 border-rose-400/50 text-white shadow-2xl max-w-full text-center">
+              <span className="text-2xl sm:text-4xl md:text-5xl font-black tracking-wide drop-shadow-md">
+                {card.english}
+              </span>
+            </div>
+          </div>
+        ) : (
+          // PURE FULL-HEIGHT ILLUSTRATION (Scales to 100% of stage height and width, upscaling small assets)
+          <div className="w-full h-full flex items-center justify-center overflow-hidden p-2 sm:p-4">
+            {imageUrl && !imgError ? (
+              <img
+                src={imageUrl}
+                alt={card.english}
+                onError={() => setImgError(true)}
+                className="w-full h-full max-h-full max-w-full object-contain drop-shadow-2xl transition-all"
+                loading="eager"
+                decoding="sync"
+              />
+            ) : (
+              <div className="text-center p-4">
+                <span className="text-8xl block mb-2">📖</span>
+                <span className="text-4xl font-black text-slate-900 dark:text-white">{card.english}</span>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* ====================================================================
+          2. REMOVABLE SHUTTER COVER (LIGHTNING mode only)
+             Sits directly over the pre-baked card. Pressing Space snaps the
+             cover open for the flash duration, revealing the baked image.
+         ==================================================================== */}
+      {mode === 'LIGHTNING' && (
+        <div
+          className={`absolute inset-0 z-20 flex flex-col items-center justify-center space-y-4 sm:space-y-6 text-center p-4 bg-slate-900/95 dark:bg-slate-950/98 backdrop-blur-xs transition-all duration-75 select-none ${
+            isCoverActive
+              ? 'opacity-100 pointer-events-auto scale-100'
+              : 'opacity-0 pointer-events-none scale-105'
+          }`}
+        >
+          <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-3xl bg-gradient-to-tr from-rose-500 to-pink-600 text-white flex items-center justify-center shadow-2xl animate-pulse">
             <Zap size={56} className="text-white fill-white" />
           </div>
 
           <div className="space-y-1">
-            <h3 className="text-2xl sm:text-4xl font-black text-slate-800 dark:text-white tracking-wide">
+            <h3 className="text-2xl sm:text-4xl font-black text-white tracking-wide">
               {t("Blink and you miss it!", <>瞬き禁止！フラッシュ！</>)}
             </h3>
-            <p className="text-sm sm:text-base font-bold text-slate-500 dark:text-slate-400">
+            <p className="text-sm sm:text-base font-bold text-slate-400">
               {t("Look closely and shout it out in English!", <>よく見て英語で言ってみよう！</>)}
             </p>
           </div>
@@ -90,38 +160,6 @@ export const FlashcardStage: React.FC<FlashcardStageProps> = ({
             <Zap size={24} className="fill-white" />
             <span>{t("⚡ Flash! (Space)", <>⚡ フラッシュ！ (Space)</>)}</span>
           </button>
-        </div>
-      ) : (
-        /* ====================================================================
-            2. CARD CONTENT: Pure Full-Height Artwork or Sight Word
-           ==================================================================== */
-        <div className="w-full h-full relative z-10 animate-fadeIn min-h-0 flex items-center justify-center p-1 sm:p-2">
-          {tier === 'word_only' ? (
-            // SIGHT WORD READING DRILL (Dynamic Large Typography based on string length)
-            <div className="w-full h-full flex flex-col items-center justify-center text-center p-4">
-              <span className={`${getSightWordSizeClass(card.english)} font-black text-slate-900 dark:text-white tracking-wider break-words max-w-full drop-shadow-md`}>
-                {card.english}
-              </span>
-            </div>
-          ) : (
-            // PURE FULL-HEIGHT ILLUSTRATION (Scales to 100% of stage height and width, upscaling small assets)
-            <div className="w-full h-full flex items-center justify-center overflow-hidden p-2 sm:p-4">
-              {imageUrl && !imgError ? (
-                <img
-                  src={imageUrl}
-                  alt={card.english}
-                  onError={() => setImgError(true)}
-                  className="w-full h-full max-h-full max-w-full object-contain drop-shadow-2xl transition-all"
-                  loading="eager"
-                />
-              ) : (
-                <div className="text-center p-4">
-                  <span className="text-8xl block mb-2">📖</span>
-                  <span className="text-4xl font-black text-slate-900 dark:text-white">{card.english}</span>
-                </div>
-              )}
-            </div>
-          )}
         </div>
       )}
     </div>

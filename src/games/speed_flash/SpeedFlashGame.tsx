@@ -57,11 +57,21 @@ export const SpeedFlashGame: React.FC<SpeedFlashGameProps> = ({ onExit }) => {
   const [acceleratingSpeed, setAcceleratingSpeed] = useState<number>(1400);
   const [streakCount, setStreakCount] = useState<number>(0);
 
-  // Timers refs
+  // Timers & stable loop refs
   const flashTimerRef = useRef<NodeJS.Timeout | null>(null);
   const loopTimerRef = useRef<NodeJS.Timeout | null>(null);
   const currentIndexRef = useRef<number>(currentIndex);
   currentIndexRef.current = currentIndex;
+  const cardQueueRef = useRef<VocabularyItem[]>(cardQueue);
+  cardQueueRef.current = cardQueue;
+  const acceleratingSpeedRef = useRef<number>(acceleratingSpeed);
+  acceleratingSpeedRef.current = acceleratingSpeed;
+  const rhythmTempoRef = useRef<number>(rhythmTempo);
+  rhythmTempoRef.current = rhythmTempo;
+  const autoPlayAudioRef = useRef<boolean>(autoPlayAudio);
+  autoPlayAudioRef.current = autoPlayAudio;
+  const modeRef = useRef<FlashMode>(mode);
+  modeRef.current = mode;
 
   const playCardAudio = useCallback((card: VocabularyItem) => {
     playWordAudio(card.sound_file || card.primary_audio, card.english);
@@ -75,13 +85,16 @@ export const SpeedFlashGame: React.FC<SpeedFlashGameProps> = ({ onExit }) => {
     setLightningState('READY');
     setIsRunning(false);
     setCurrentIndex(0);
+    currentIndexRef.current = 0;
     setStreakCount(0);
     setAcceleratingSpeed(1400);
+    acceleratingSpeedRef.current = 1400;
 
     const primaryPool = scopedWords.length > 0 ? scopedWords : (filteredWords.length > 0 ? filteredWords : (gradeWords.length > 0 ? gradeWords : allWords));
     const fallbackPool = gradeWords.length > 0 ? gradeWords : allWords;
     const queue = prepareCardQueue(primaryPool, fallbackPool);
     setCardQueue(queue);
+    cardQueueRef.current = queue;
   }, [scopedWords, filteredWords, gradeWords, allWords]);
 
   useEffect(() => {
@@ -96,6 +109,23 @@ export const SpeedFlashGame: React.FC<SpeedFlashGameProps> = ({ onExit }) => {
   }, []);
 
   const currentCard = cardQueue[currentIndex] || null;
+
+  // Eagerly preload upcoming card images into browser cache for 0ms flash latency
+  useEffect(() => {
+    if (cardQueue.length === 0) return;
+    const preloadCount = Math.min(3, cardQueue.length);
+    for (let i = 1; i <= preloadCount; i++) {
+      const idx = (currentIndex + i) % cardQueue.length;
+      const card = cardQueue[idx];
+      if (card && tier !== 'word_only') {
+        const url = resolveCardImage(card, 'picture_only', activeGrade);
+        if (url) {
+          const img = new Image();
+          img.src = url;
+        }
+      }
+    }
+  }, [currentIndex, cardQueue, tier, activeGrade]);
 
   // 2. Trigger Lightning Flash (100ms - 1000ms)
   const triggerLightningFlash = useCallback((durationMs = lightningSpeed) => {
@@ -137,43 +167,70 @@ export const SpeedFlashGame: React.FC<SpeedFlashGameProps> = ({ onExit }) => {
     setStreakCount(s => s + 1);
   }, [cardQueue.length]);
 
-  // 6. Continuous Modes Loop (ACCELERATING / RHYTHMIC)
+  // 6. Continuous Modes Loop (ACCELERATING / RHYTHMIC) - Self-scheduling recursive ticker
   useEffect(() => {
     if (!isRunning || (mode !== 'ACCELERATING' && mode !== 'RHYTHMIC')) {
-      if (loopTimerRef.current) clearTimeout(loopTimerRef.current);
+      if (loopTimerRef.current) {
+        clearTimeout(loopTimerRef.current);
+        loopTimerRef.current = null;
+      }
       return;
     }
 
-    const interval = mode === 'ACCELERATING' ? acceleratingSpeed : rhythmTempo;
+    let isMounted = true;
 
-    loopTimerRef.current = setTimeout(() => {
-      soundEffects.playTick();
-      const next = (currentIndexRef.current + 1) % cardQueue.length;
+    const tick = () => {
+      if (!isMounted) return;
+
+      const queue = cardQueueRef.current;
+      if (queue.length === 0) return;
+
+      const next = (currentIndexRef.current + 1) % queue.length;
+      currentIndexRef.current = next;
       setCurrentIndex(next);
-
-      if (autoPlayAudio && cardQueue[next]) {
-        playCardAudio(cardQueue[next]);
-      }
       setStreakCount(s => s + 1);
 
-      // Accelerate speed if in ACCELERATING mode
-      if (mode === 'ACCELERATING') {
-        if (acceleratingSpeed > 450) {
+      const currentMode = modeRef.current;
+      const speed = currentMode === 'ACCELERATING' ? acceleratingSpeedRef.current : rhythmTempoRef.current;
+      soundEffects.playTick();
+
+      // Audio Handoff: At hyper-speeds (< 700ms), avoid audio overlap/cutting off mid-word
+      // so students can chant the words without clashing with lengthy recordings.
+      const shouldPlaySpeech = autoPlayAudioRef.current && (currentMode !== 'ACCELERATING' || speed >= 700);
+      if (shouldPlaySpeech && queue[next]) {
+        playWordAudio(queue[next].sound_file || queue[next].primary_audio, queue[next].english);
+      }
+
+      let nextDelay = speed;
+
+      if (currentMode === 'ACCELERATING') {
+        if (speed > 450) {
           soundEffects.playOvertake();
         }
-        setAcceleratingSpeed(prevSpeed => {
-          if (prevSpeed > 450) {
-            return Math.max(400, prevSpeed - 100);
-          }
-          return prevSpeed;
-        });
+        const nextSpeed = speed > 450 ? Math.max(400, speed - 100) : speed;
+        acceleratingSpeedRef.current = nextSpeed;
+        setAcceleratingSpeed(nextSpeed);
+        nextDelay = nextSpeed;
+      } else {
+        nextDelay = rhythmTempoRef.current;
       }
-    }, interval);
+
+      if (isMounted) {
+        loopTimerRef.current = setTimeout(tick, nextDelay);
+      }
+    };
+
+    const initialDelay = mode === 'ACCELERATING' ? acceleratingSpeedRef.current : rhythmTempoRef.current;
+    loopTimerRef.current = setTimeout(tick, initialDelay);
 
     return () => {
-      if (loopTimerRef.current) clearTimeout(loopTimerRef.current);
+      isMounted = false;
+      if (loopTimerRef.current) {
+        clearTimeout(loopTimerRef.current);
+        loopTimerRef.current = null;
+      }
     };
-  }, [isRunning, mode, acceleratingSpeed, rhythmTempo, cardQueue, autoPlayAudio, playCardAudio]);
+  }, [isRunning, mode, playWordAudio]);
 
   // 7. Master Spacebar / Clicker Action
   const handlePrimaryClickerAction = useCallback(() => {
@@ -214,6 +271,7 @@ export const SpeedFlashGame: React.FC<SpeedFlashGameProps> = ({ onExit }) => {
       const target = e.target as HTMLElement;
       if (target.tagName === 'INPUT' || target.tagName === 'SELECT' || target.tagName === 'TEXTAREA') return;
 
+      // Primary Forward / Clicker Action: Next / Reveal / Flash
       if (
         ['Space', 'Enter', 'PageDown', 'ArrowRight', 'ArrowDown'].includes(e.code) ||
         [' ', 'Enter', 'PageDown', 'ArrowRight', 'ArrowDown'].includes(e.key)
@@ -223,9 +281,24 @@ export const SpeedFlashGame: React.FC<SpeedFlashGameProps> = ({ onExit }) => {
         return;
       }
 
+      // Presentation Clicker Back / PageUp / ArrowLeft: In Lightning mode, re-flashes or peeks!
       if (
-        ['KeyR', 'PageUp', 'ArrowLeft', 'ArrowUp'].includes(e.code) ||
-        ['r', 'R', 'PageUp', 'ArrowLeft', 'ArrowUp'].includes(e.key)
+        ['PageUp', 'ArrowLeft'].includes(e.code) ||
+        ['PageUp', 'ArrowLeft'].includes(e.key)
+      ) {
+        e.preventDefault();
+        if (mode === 'LIGHTNING') {
+          triggerLightningFlash();
+        } else if (currentCard) {
+          playCardAudio(currentCard);
+        }
+        return;
+      }
+
+      // Audio Replay Shortcut: R or Up Arrow
+      if (
+        ['KeyR', 'ArrowUp'].includes(e.code) ||
+        ['r', 'R', 'ArrowUp'].includes(e.key)
       ) {
         e.preventDefault();
         if (currentCard) {
@@ -502,10 +575,10 @@ export const SpeedFlashGame: React.FC<SpeedFlashGameProps> = ({ onExit }) => {
               <button
                 onClick={() => triggerLightningFlash()}
                 className="py-1.5 px-2 bg-rose-600 hover:bg-rose-700 active:scale-95 text-white font-black text-xs rounded-xl shadow-xs transition cursor-pointer flex items-center justify-center gap-1"
-                title={t("Flash again (F)", "もう一度フラッシュ (F)")}
+                title={t("Flash again (F / PageUp)", "もう一度フラッシュ (F / PageUp)")}
               >
                 <span>⚡ {t("Flash Again", "もう一度")}</span>
-                <kbd className="px-1 py-0.2 rounded bg-black/30 text-[9px] font-mono text-rose-200">F</kbd>
+                <kbd className="px-1 py-0.2 rounded bg-black/30 text-[9px] font-mono text-rose-200">F / PageUp</kbd>
               </button>
 
               <button
@@ -570,7 +643,9 @@ export const SpeedFlashGame: React.FC<SpeedFlashGameProps> = ({ onExit }) => {
 
           {/* Shortcut Legend */}
           <div className="text-[10px] text-slate-400 dark:text-slate-500 text-center pt-0.5 font-mono">
-            Space: Next • R: Voice • F: Flash • S: Slow
+            {mode === 'LIGHTNING'
+              ? 'Space: Action • PageUp/F: Re-Flash • S: Slow • R: Voice'
+              : 'Space: Start/Pause • R: Voice • Clicker: PageDown/Up'}
           </div>
         </div>
       </div>

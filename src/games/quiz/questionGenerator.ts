@@ -11,7 +11,7 @@ function shuffle<T>(array: T[]): T[] {
   return result;
 }
 
-const GRADE_FALLBACK_ORDER: GradeLevel[] = ['G3', 'G4', 'G5', 'G6'];
+const GRADE_FALLBACK_ORDER: GradeLevel[] = ['ES_G3', 'ES_G4', 'ES_G5', 'ES_G6', 'ES_G1', 'ES_G2', 'JHS_G1', 'JHS_G2', 'JHS_G3'];
 
 export function resolveWordImage(word: VocabularyItem, grade?: GradeLevel): string {
   let imagePath = '';
@@ -19,26 +19,23 @@ export function resolveWordImage(word: VocabularyItem, grade?: GradeLevel): stri
   // 1. Prefer active student grade's pure illustration (without text label)
   if (grade && word.media_by_grade?.[grade]) {
     const gm = word.media_by_grade[grade]!;
-    imagePath = gm.hwg_card_illust || gm.primary_image || gm.card_image || '';
+    imagePath = gm.card_image || '';
   }
 
   // 2. Cross-grade fallback if active grade has no entry (GEMINI.md §1)
   if (!imagePath && word.media_by_grade) {
     for (const fallbackGrade of GRADE_FALLBACK_ORDER) {
       const gm = word.media_by_grade[fallbackGrade];
-      if (gm) {
-        const candidate = gm.hwg_card_illust || gm.primary_image || gm.card_image;
-        if (candidate) {
-          imagePath = candidate;
-          break;
-        }
+      if (gm?.card_image) {
+        imagePath = gm.card_image;
+        break;
       }
     }
   }
 
   // 3. Root fallback
   if (!imagePath) {
-    imagePath = word.primary_image || '';
+    imagePath = word.hwg_card_illust || word.primary_image || word.card_image || '';
   }
 
   if (!imagePath) return '';

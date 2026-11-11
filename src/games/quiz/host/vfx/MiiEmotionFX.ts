@@ -654,7 +654,7 @@ export class MiiEmotionFX {
       disposeObject(e.mesh);
     });
     this.faceRigs.forEach((rig) => {
-      disposeObject(rig.root);
+      disposeObject(rig.faceGroup);
     });
     this.faceRigs.clear();
     this.sweatDrops = [];

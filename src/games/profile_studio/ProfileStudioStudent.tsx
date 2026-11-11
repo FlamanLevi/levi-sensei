@@ -5,11 +5,12 @@ import { safeSubscribe, safeSet, safeGet } from '@/services/rtdbSafe';
 import { claimAttendanceNumber, getSavedStudentProfile, unlinkStudentDevice } from '@/services/studentProfile';
 import { soundEffects } from '@/services/soundEffects';
 import { SetupRoomState, BoundSeatInfo } from './types';
-import { Check, CheckCircle2, Sparkles, User, Smartphone, ArrowRight, ArrowLeft, RefreshCw, AlertCircle, X, Edit3 } from 'lucide-react';
+import { Check, CheckCircle2, Sparkles, User, Smartphone, ArrowRight, ArrowLeft, RefreshCw, AlertCircle, X, Edit3, KeyRound } from 'lucide-react';
+import { verifyTeacherPin } from '@/context/ClassroomContext';
 import confetti from 'canvas-confetti';
 
 const POPULAR_AVATARS = [
-  '🐼', '🦁', '🐯', '🐰', '🦊', '🐨', '🐵', '🐶', '🐱', '🐻',
+  '👨‍🏫', '🐼', '🦁', '🐯', '🐰', '🦊', '🐨', '🐵', '🐶', '🐱', '🐻',
   '🏎️', '🚀', '🛸', '⚽', '🏀', '⚡', '🔥', '🌟', '👑', '🌈'
 ];
 
@@ -42,6 +43,11 @@ export const ProfileStudioStudent: React.FC<ProfileStudioStudentProps> = ({
   // Read saved local profile to enable 1-tap quick re-connection
   const [existingSavedProfile] = useState<StudentProfile | null>(() => getSavedStudentProfile());
 
+  // Teacher PIN Override for Seat 00
+  const [isTeacherPinModalOpen, setIsTeacherPinModalOpen] = useState<boolean>(false);
+  const [teacherPinInput, setTeacherPinInput] = useState<string>('');
+  const [teacherPinError, setTeacherPinError] = useState<boolean>(false);
+
   // 1. Subscribe to setup room state
   useEffect(() => {
     let isDisposed = false;
@@ -72,6 +78,17 @@ export const ProfileStudioStudent: React.FC<ProfileStudioStudentProps> = ({
   // When a seat is tapped:
   const handleSelectSeat = (seatNum: number) => {
     if (saving || linkedProfile) return;
+
+    if (seatNum === 0) {
+      const isAlreadyUnlocked = sessionStorage.getItem('levi_sensei_teacher_unlocked') === 'true' || existingSavedProfile?.attendanceNumber === 0;
+      if (!isAlreadyUnlocked) {
+        setTeacherPinInput('');
+        setTeacherPinError(false);
+        setIsTeacherPinModalOpen(true);
+        return;
+      }
+    }
+
     const boundSeats = roomState?.boundSeats || {};
     const existingBound = boundSeats[seatNum];
 
@@ -86,8 +103,26 @@ export const ProfileStudioStudent: React.FC<ProfileStudioStudentProps> = ({
     // Unclaimed seat: open creation drawer
     soundEffects.playTick();
     setSelectedSeat(seatNum);
-    setSelectedAvatar(getRandomAvatarEmoji(seatNum));
-    setNicknameInput(language === 'ja' ? `${seatNum}番` : `#${seatNum}`);
+    setSelectedAvatar(seatNum === 0 ? '👨‍🏫' : getRandomAvatarEmoji(seatNum));
+    setNicknameInput(seatNum === 0 ? (language === 'ja' ? '先生' : 'Teacher') : (language === 'ja' ? `${seatNum}番` : `#${seatNum}`));
+  };
+
+  const handleTeacherPinSubmit = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (verifyTeacherPin(teacherPinInput)) {
+      soundEffects.playFanfare();
+      sessionStorage.setItem('levi_sensei_teacher_unlocked', 'true');
+      localStorage.setItem('levi_sensei_role', 'TEACHER');
+      setIsTeacherPinModalOpen(false);
+      setTeacherPinInput('');
+      setTeacherPinError(false);
+      setSelectedSeat(0);
+      setSelectedAvatar('👨‍🏫');
+      setNicknameInput(language === 'ja' ? '先生' : 'Teacher');
+    } else {
+      soundEffects.playIncorrect();
+      setTeacherPinError(true);
+    }
   };
 
   // Confirm existing registered student on this iPad
@@ -95,6 +130,13 @@ export const ProfileStudioStudent: React.FC<ProfileStudioStudentProps> = ({
     if (!roomState || saving) return;
     setSaving(true);
     try {
+      if (seatNum === 0) {
+        try {
+          sessionStorage.setItem('levi_sensei_teacher_unlocked', 'true');
+          localStorage.setItem('levi_sensei_role', 'TEACHER');
+        } catch {}
+      }
+
       const profile = await claimAttendanceNumber(
         roomState.schoolId,
         roomState.classId,
@@ -102,7 +144,12 @@ export const ProfileStudioStudent: React.FC<ProfileStudioStudentProps> = ({
         existingInfo.nickname,
         0,
         0,
-        existingInfo.avatar
+        existingInfo.avatar,
+        0,
+        0,
+        undefined,
+        seatNum === 0 ? '👑' : undefined,
+        seatNum === 0 ? 'TEACH' : undefined
       );
 
       // Refresh RTDB setup room seat
@@ -130,11 +177,19 @@ export const ProfileStudioStudent: React.FC<ProfileStudioStudentProps> = ({
 
   // Submit and save newly-created profile
   const handleConfirmNewProfile = async () => {
-    if (!selectedSeat || !roomState || saving) return;
+    if (selectedSeat === null || selectedSeat === undefined || !roomState || saving) return;
 
     setSaving(true);
     try {
-      const finalNickname = nicknameInput.trim() || (language === 'ja' ? `${selectedSeat}番` : `#${selectedSeat}`);
+      const defaultNick = selectedSeat === 0 ? (language === 'ja' ? '先生' : 'Teacher') : (language === 'ja' ? `${selectedSeat}番` : `#${selectedSeat}`);
+      const finalNickname = nicknameInput.trim() || defaultNick;
+
+      if (selectedSeat === 0) {
+        try {
+          sessionStorage.setItem('levi_sensei_teacher_unlocked', 'true');
+          localStorage.setItem('levi_sensei_role', 'TEACHER');
+        } catch {}
+      }
       
       // 1. Claim cloud student profile & write to iPad localStorage
       const profile = await claimAttendanceNumber(
@@ -144,7 +199,12 @@ export const ProfileStudioStudent: React.FC<ProfileStudioStudentProps> = ({
         finalNickname,
         0,
         0,
-        selectedAvatar
+        selectedAvatar,
+        0,
+        0,
+        undefined,
+        selectedSeat === 0 ? '👑' : undefined,
+        selectedSeat === 0 ? 'TEACH' : undefined
       );
 
       // 2. Notify setup room in RTDB that this seat is claimed
@@ -176,7 +236,7 @@ export const ProfileStudioStudent: React.FC<ProfileStudioStudentProps> = ({
   const schoolConfig = roomState?.schoolId ? SCHOOL_CONFIGS[roomState.schoolId] : null;
   const boundSeats = roomState?.boundSeats || {};
   const MAX_SEATS = 36;
-  const seatsArray = Array.from({ length: MAX_SEATS }, (_, i) => i + 1);
+  const seatsArray = [0, ...Array.from({ length: MAX_SEATS }, (_, i) => i + 1)];
 
   if (loading) {
     return (
@@ -350,6 +410,7 @@ export const ProfileStudioStudent: React.FC<ProfileStudioStudentProps> = ({
         <div className="p-3 sm:p-5 bg-white dark:bg-slate-900 rounded-3xl border-2 border-slate-200 dark:border-slate-800 shadow-xl mb-6">
           <div className="grid grid-cols-6 gap-2 sm:gap-2.5">
             {seatsArray.map((seatNum) => {
+              const isTeacherSeat = seatNum === 0;
               const seatData: BoundSeatInfo | undefined = boundSeats[seatNum];
               const isTaken = Boolean(seatData);
               const isSelected = selectedSeat === seatNum;
@@ -364,28 +425,41 @@ export const ProfileStudioStudent: React.FC<ProfileStudioStudentProps> = ({
                     isSelected
                       ? 'bg-gradient-to-tr from-purple-600 to-indigo-600 text-white shadow-xl ring-4 ring-purple-400 scale-105 z-10'
                       : isTaken
-                      ? 'bg-emerald-50/80 dark:bg-emerald-950/40 text-emerald-900 dark:text-emerald-200 border-2 border-emerald-400 dark:border-emerald-600 hover:border-emerald-500 shadow-2xs'
+                      ? isTeacherSeat
+                        ? 'bg-purple-100 dark:bg-purple-950/70 text-purple-900 dark:text-purple-200 border-2 border-purple-400 dark:border-purple-600 hover:border-purple-500 shadow-2xs'
+                        : 'bg-emerald-50/80 dark:bg-emerald-950/40 text-emerald-900 dark:text-emerald-200 border-2 border-emerald-400 dark:border-emerald-600 hover:border-emerald-500 shadow-2xs'
+                      : isTeacherSeat
+                      ? 'bg-purple-50 dark:bg-purple-950/40 text-purple-800 dark:text-purple-300 border-2 border-purple-300 dark:border-purple-700 hover:border-purple-400 shadow-xs'
                       : 'bg-slate-50 dark:bg-slate-800/80 text-slate-800 dark:text-slate-200 border-2 border-slate-200 dark:border-slate-700 hover:border-purple-400 shadow-xs'
                   }`}
                 >
                   <div className="w-full flex items-center justify-between px-1">
                     <span className={`text-xs font-mono font-black ${isSelected ? 'text-white' : ''}`}>
-                      #{seatNum}
+                      {isTeacherSeat ? '00' : `#${seatNum}`}
                     </span>
                     {isTaken && (
-                      <span className="text-[9px] px-1 rounded bg-emerald-600 text-white font-bold">
-                        登録済
+                      <span className={`text-[9px] px-1 rounded ${isTeacherSeat ? 'bg-purple-600' : 'bg-emerald-600'} text-white font-bold`}>
+                        {isTeacherSeat ? '先生' : '登録済'}
+                      </span>
+                    )}
+                    {isTeacherSeat && !isTaken && (
+                      <span className="text-[9px] px-1 rounded bg-purple-200 dark:bg-purple-800 text-purple-800 dark:text-purple-200 font-bold">
+                        先生席
                       </span>
                     )}
                   </div>
 
                   {isTaken && seatData ? (
                     <div className="flex items-center gap-1 max-w-full px-0.5">
-                      <span className="text-xs shrink-0">{seatData.avatar || '🐼'}</span>
+                      <span className="text-xs shrink-0">{seatData.avatar || (isTeacherSeat ? '👨‍🏫' : '🐼')}</span>
                       <span className="text-[10px] sm:text-[11px] font-black truncate max-w-[70px]">
                         {seatData.nickname}
                       </span>
                     </div>
+                  ) : isTeacherSeat ? (
+                    <span className="text-[10px] font-bold text-purple-600 dark:text-purple-400">
+                      👨‍🏫 {language === 'ja' ? '先生' : 'Teacher'}
+                    </span>
                   ) : (
                     <span className="text-[10px] font-bold text-slate-400 opacity-60">
                       {language === 'ja' ? '空席' : 'Empty'}
@@ -398,16 +472,16 @@ export const ProfileStudioStudent: React.FC<ProfileStudioStudentProps> = ({
         </div>
 
         {/* New Profile Confirmation Drawer (When an empty seat is tapped) */}
-        {selectedSeat && (
+        {selectedSeat !== null && (
           <div className="p-5 sm:p-6 bg-white dark:bg-slate-900 rounded-3xl border-3 border-purple-500 shadow-2xl animate-in slide-in-from-bottom-4 duration-200 mb-6">
             <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-100 dark:border-slate-800">
               <div className="flex items-center gap-3">
                 <span className="w-10 h-10 rounded-2xl bg-purple-600 text-white font-mono font-black text-lg flex items-center justify-center shadow-md">
-                  #{selectedSeat}
+                  {selectedSeat === 0 ? '00' : `#${selectedSeat}`}
                 </span>
                 <div>
                   <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-white leading-tight">
-                    {t(`Seat #${selectedSeat}`, `出席番号: ${selectedSeat}番`)}
+                    {selectedSeat === 0 ? t('Teacher Profile Setup', '00番 先生プロフィールの設定') : t(`Seat #${selectedSeat}`, `出席番号: ${selectedSeat}番`)}
                   </h3>
                   <span className="text-xs text-slate-400 font-bold">
                     {schoolConfig?.shortKanji || '学校'} {roomState.classId}
@@ -495,8 +569,8 @@ export const ProfileStudioStudent: React.FC<ProfileStudioStudentProps> = ({
                 {reclaimTarget.info.avatar || '🐼'}
               </div>
 
-              <span className="font-mono text-xs font-black px-2 py-0.5 rounded-lg bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 mb-1 inline-block">
-                #{reclaimTarget.num}
+              <span className={`font-mono text-xs font-black px-2 py-0.5 rounded-lg ${reclaimTarget.num === 0 ? 'bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300' : 'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300'} mb-1 inline-block`}>
+                {reclaimTarget.num === 0 ? '00 先生' : `#${reclaimTarget.num}`}
               </span>
 
               <h3 className="text-xl font-black text-slate-900 dark:text-white mb-1">
@@ -505,8 +579,8 @@ export const ProfileStudioStudent: React.FC<ProfileStudioStudentProps> = ({
 
               <p className="text-xs text-slate-500 dark:text-slate-400 mb-6 font-bold leading-relaxed">
                 {t(
-                  `Log in to this iPad as #${reclaimTarget.num} ${reclaimTarget.info.nickname}?`,
-                  `このiPadを「#${reclaimTarget.num} ${reclaimTarget.info.nickname}」としてログインしますか？`
+                  `Log in to this iPad as ${reclaimTarget.num === 0 ? '00 先生' : `#${reclaimTarget.num}`} ${reclaimTarget.info.nickname}?`,
+                  `このiPadを「${reclaimTarget.num === 0 ? '00 先生' : `#${reclaimTarget.num}`} ${reclaimTarget.info.nickname}」としてログインしますか？`
                 )}
               </p>
 
@@ -527,7 +601,7 @@ export const ProfileStudioStudent: React.FC<ProfileStudioStudentProps> = ({
                   onClick={() => {
                     soundEffects.playTick();
                     setSelectedSeat(reclaimTarget.num);
-                    setSelectedAvatar(reclaimTarget.info.avatar || '🐼');
+                    setSelectedAvatar(reclaimTarget.info.avatar || (reclaimTarget.num === 0 ? '👨‍🏫' : '🐼'));
                     setNicknameInput(reclaimTarget.info.nickname || '');
                     setReclaimTarget(null);
                   }}
@@ -545,6 +619,65 @@ export const ProfileStudioStudent: React.FC<ProfileStudioStudentProps> = ({
                   {t('Cancel / Choose Different Seat', '別の番号をえらぶ')}
                 </button>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* Teacher PIN Gate Modal for Seat 00 */}
+        {isTeacherPinModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-xs select-none animate-in fade-in duration-150">
+            <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 max-w-sm w-full shadow-2xl border-4 border-amber-500 text-center animate-in zoom-in-95 duration-150">
+              <div className="w-14 h-14 rounded-2xl bg-amber-100 dark:bg-amber-950/80 border-2 border-amber-500 flex items-center justify-center mx-auto mb-3 text-2xl shadow-md">
+                👨‍🏫
+              </div>
+              <h3 className="text-lg sm:text-xl font-black text-slate-900 dark:text-white mb-1">
+                {t('Teacher Seat Access', '00番（先生・管理者席）')}
+              </h3>
+              <p className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-4">
+                {t('Enter 6-digit teacher PIN to unlock:', '先生用PINコード（6桁）を入力してください:')}
+              </p>
+              <form onSubmit={handleTeacherPinSubmit} className="space-y-4">
+                <div>
+                  <input
+                    type="password"
+                    inputMode="numeric"
+                    maxLength={6}
+                    value={teacherPinInput}
+                    onChange={(e) => {
+                      setTeacherPinInput(e.target.value.replace(/\D/g, ''));
+                      setTeacherPinError(false);
+                    }}
+                    placeholder="••••••"
+                    autoFocus
+                    className="w-full text-center text-2xl font-black tracking-widest py-3 px-4 rounded-2xl border-3 border-slate-300 dark:border-slate-700 focus:border-amber-500 focus:outline-hidden bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white"
+                  />
+                  {teacherPinError && (
+                    <p className="mt-2 text-xs font-black text-rose-500 animate-shake">
+                      {t('❌ Incorrect PIN code', '❌ PINコードが正しくありません')}
+                    </p>
+                  )}
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsTeacherPinModalOpen(false);
+                      setTeacherPinInput('');
+                      setTeacherPinError(false);
+                    }}
+                    className="flex-1 py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 font-black text-xs transition-colors cursor-pointer"
+                  >
+                    {t('Cancel', 'キャンセル')}
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={teacherPinInput.length < 4}
+                    className="flex-1 py-2.5 px-3 rounded-xl bg-amber-500 hover:bg-amber-600 disabled:opacity-50 text-white font-black text-xs shadow-md transition-all cursor-pointer"
+                  >
+                    {t('Unlock', '解除する')}
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         )}

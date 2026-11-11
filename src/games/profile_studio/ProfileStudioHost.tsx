@@ -132,6 +132,22 @@ export const ProfileStudioHost: React.FC<ProfileStudioHostProps> = ({ onExit, on
         }
       });
 
+      // Pre-load local teacher if registered on this device
+      try {
+        const localTeacherRaw = localStorage.getItem('levi_sensei_student_profile');
+        if (localTeacherRaw) {
+          const localTeacher = JSON.parse(localTeacherRaw);
+          if (localTeacher && localTeacher.attendanceNumber === 0 && localTeacher.schoolId === schoolId && localTeacher.classId === classId) {
+            initialBoundSeats[0] = {
+              attendanceNumber: 0,
+              nickname: localTeacher.nickname || '先生',
+              avatar: localTeacher.avatar || '👨‍🏫',
+              boundAt: localTeacher.boundAt || Date.now(),
+            };
+          }
+        }
+      } catch {}
+
       // Preserve any seats already claimed in this session
       const existingRoom = await safeGet<SetupRoomState>(`setupRooms/${roomCode}`);
       const mergedBoundSeats = {
@@ -247,22 +263,23 @@ export const ProfileStudioHost: React.FC<ProfileStudioHostProps> = ({ onExit, on
 
   const configuredSize = getClassSize(schoolId, classId);
   const boundSeats = roomState?.boundSeats || {};
+  const studentClaimedCount = Object.keys(boundSeats).filter(k => parseInt(k, 10) > 0).length;
   const claimedCount = Object.keys(boundSeats).length;
-  // Report class size as the total number of saved/registered roster profiles
-  const targetRosterSize = Math.max(claimedCount, configuredSize > 0 ? configuredSize : 30);
-  const progressPct = targetRosterSize > 0 ? Math.min(100, Math.round((claimedCount / targetRosterSize) * 100)) : 100;
-  const isAllComplete = claimedCount >= targetRosterSize && claimedCount > 0;
+  // Report class size as the total number of saved/registered student roster profiles
+  const targetRosterSize = Math.max(studentClaimedCount, configuredSize > 0 ? configuredSize : 30);
+  const progressPct = targetRosterSize > 0 ? Math.min(100, Math.round((studentClaimedCount / targetRosterSize) * 100)) : 100;
+  const isAllComplete = studentClaimedCount >= targetRosterSize && studentClaimedCount > 0;
 
   // Open Admin Profile Inspector when clicking a seat
   const handleOpenAdminEdit = async (seatNum: number, seatData: BoundSeatInfo) => {
     playPop();
     const studentPath = `schools/${schoolId}/classes/${classId}/students/${seatNum}`;
-    const cloudStudent = await safeGet<any>(studentPath);
+    const cloudStudent = seatNum > 0 ? await safeGet<any>(studentPath) : null;
     setAdminEditingSeat({
       seatNum,
-      nickname: cloudStudent?.nickname || seatData.nickname || (`${seatNum}番`),
-      callsign: cloudStudent?.callsign || generateDefaultCallsign('', seatNum, classId),
-      avatar: cloudStudent?.avatar || seatData.avatar || '🐼',
+      nickname: cloudStudent?.nickname || seatData.nickname || (seatNum === 0 ? '先生' : `${seatNum}番`),
+      callsign: cloudStudent?.callsign || (seatNum === 0 ? 'TEACH' : generateDefaultCallsign('', seatNum, classId)),
+      avatar: cloudStudent?.avatar || seatData.avatar || (seatNum === 0 ? '👨‍🏫' : '🐼'),
       secretCharm: cloudStudent?.secretCharm || undefined,
     });
   };
@@ -273,6 +290,23 @@ export const ProfileStudioHost: React.FC<ProfileStudioHostProps> = ({ onExit, on
     setIsSavingAdminEdit(true);
     try {
       const { seatNum } = adminEditingSeat;
+      if (seatNum === 0) {
+        setAdminEditingSeat({
+          seatNum: 0,
+          nickname: '先生',
+          callsign: 'TEACH',
+          avatar: '👨‍🏫',
+          secretCharm: '👑',
+        });
+        await safeSet(`setupRooms/${roomCode}/boundSeats/0`, {
+          attendanceNumber: 0,
+          nickname: '先生',
+          avatar: '👨‍🏫',
+          boundAt: Date.now(),
+        });
+        soundEffects.playCorrect();
+        return;
+      }
       const updated = await resetStudentFieldToDefault(schoolId, classId, seatNum, field);
       if (updated) {
         setAdminEditingSeat({
@@ -304,7 +338,9 @@ export const ProfileStudioHost: React.FC<ProfileStudioHostProps> = ({ onExit, on
     if (isSavingAdminEdit) return;
     setIsSavingAdminEdit(true);
     try {
-      await releaseStudentNumber(schoolId, classId, seatNum);
+      if (seatNum > 0) {
+        await releaseStudentNumber(schoolId, classId, seatNum);
+      }
       await safeRemove(`setupRooms/${roomCode}/boundSeats/${seatNum}`);
       soundEffects.playTick();
       setAdminEditingSeat(null);
@@ -364,9 +400,9 @@ export const ProfileStudioHost: React.FC<ProfileStudioHostProps> = ({ onExit, on
     onLaunchGame();
   };
 
-  // Full 6x6 grid = exactly 36 seats for Japanese elementary classrooms
+  // Full 6x6 grid = exactly 36 seats for Japanese elementary classrooms + Seat 00 (Teacher)
   const MAX_SEATS = 36;
-  const seatsArray = Array.from({ length: MAX_SEATS }, (_, i) => i + 1);
+  const seatsArray = [0, ...Array.from({ length: MAX_SEATS }, (_, i) => i + 1)];
 
   return (
     <div className="fixed inset-0 w-screen h-dvh bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-white flex flex-col overflow-hidden select-none">
@@ -631,6 +667,7 @@ export const ProfileStudioHost: React.FC<ProfileStudioHostProps> = ({ onExit, on
               <div className="grid grid-cols-6 gap-2 sm:gap-2.5">
                 {seatsArray.map((seatNum) => {
                   const seatData: BoundSeatInfo | undefined = boundSeats[seatNum];
+                  const isTeacherSeat = seatNum === 0;
                   const isClaimed = Boolean(seatData);
 
                   return (
@@ -643,7 +680,11 @@ export const ProfileStudioHost: React.FC<ProfileStudioHostProps> = ({ onExit, on
                       }}
                       className={`relative p-2 sm:p-2.5 rounded-2xl border-2 transition-all flex flex-col justify-between select-none ${
                         isClaimed
-                          ? 'bg-gradient-to-tr from-emerald-500/15 via-teal-500/10 to-emerald-500/5 dark:from-emerald-950/70 dark:via-teal-950/50 dark:to-slate-900 border-emerald-500/80 shadow-xs cursor-pointer hover:border-purple-400 group'
+                          ? isTeacherSeat
+                            ? 'bg-gradient-to-tr from-purple-500/15 via-indigo-500/10 to-purple-500/5 dark:from-purple-950/70 dark:via-indigo-950/50 dark:to-slate-900 border-purple-500/80 shadow-xs cursor-pointer hover:border-purple-400 group'
+                            : 'bg-gradient-to-tr from-emerald-500/15 via-teal-500/10 to-emerald-500/5 dark:from-emerald-950/70 dark:via-teal-950/50 dark:to-slate-900 border-emerald-500/80 shadow-xs cursor-pointer hover:border-purple-400 group'
+                          : isTeacherSeat
+                          ? 'bg-purple-50/50 dark:bg-purple-950/20 border-dashed border-purple-300 dark:border-purple-700 text-purple-600 dark:text-purple-400'
                           : 'bg-slate-50 dark:bg-slate-800/40 border-dashed border-slate-300 dark:border-slate-700 text-slate-400'
                       }`}
                       style={{ minHeight: '84px' }}
@@ -651,22 +692,28 @@ export const ProfileStudioHost: React.FC<ProfileStudioHostProps> = ({ onExit, on
                       {/* Top Row: Seat Number & Status */}
                       <div className="flex items-center justify-between w-full mb-1">
                         <span className={`font-mono font-black text-xs px-1.5 py-0.5 rounded-md ${
-                          isClaimed
+                          isTeacherSeat
+                            ? 'bg-purple-600 text-white shadow-2xs'
+                            : isClaimed
                             ? 'bg-emerald-600 text-white shadow-2xs'
                             : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400'
                         }`}>
-                          #{seatNum}
+                          {isTeacherSeat ? '00 先生' : `#${seatNum}`}
                         </span>
 
                         {isClaimed ? (
                           <div className="flex items-center gap-1">
-                            <span className="flex items-center text-emerald-500 group-hover:hidden">
+                            <span className={`flex items-center ${isTeacherSeat ? 'text-purple-500' : 'text-emerald-500'} group-hover:hidden`}>
                               <CheckCircle2 size={15} />
                             </span>
                             <span className="hidden group-hover:flex items-center text-purple-600 dark:text-purple-400" title={t('Edit Profile', '編集')}>
                               <Edit3 size={13} />
                             </span>
                           </div>
+                        ) : isTeacherSeat ? (
+                          <span className="text-[10px] text-purple-600 dark:text-purple-400 font-bold">
+                            {t('Teacher Seat', '先生席')}
+                          </span>
                         ) : (
                           <span className="text-[10px] text-slate-400 font-bold">
                             {t('Waiting', '待機中')}
@@ -678,11 +725,15 @@ export const ProfileStudioHost: React.FC<ProfileStudioHostProps> = ({ onExit, on
                       {isClaimed && seatData ? (
                         <div className="flex items-center gap-1.5 mt-auto">
                           <span className="text-xl sm:text-2xl shrink-0 drop-shadow-xs">
-                            {seatData.avatar || '🐼'}
+                            {seatData.avatar || (isTeacherSeat ? '👨‍🏫' : '🐼')}
                           </span>
                           <span className="font-black text-xs text-slate-900 dark:text-white truncate">
                             {seatData.nickname}
                           </span>
+                        </div>
+                      ) : isTeacherSeat ? (
+                        <div className="mt-auto flex items-center justify-center py-1">
+                          <span className="text-xs text-purple-600 dark:text-purple-400 font-bold">👨‍🏫 ---</span>
                         </div>
                       ) : (
                         <div className="mt-auto flex items-center justify-center py-1">
@@ -724,11 +775,13 @@ export const ProfileStudioHost: React.FC<ProfileStudioHostProps> = ({ onExit, on
             <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-100 dark:border-slate-800">
               <div className="flex items-center gap-3">
                 <span className="w-10 h-10 rounded-2xl bg-purple-600 text-white font-mono font-black text-lg flex items-center justify-center shadow-md">
-                  #{adminEditingSeat.seatNum}
+                  {adminEditingSeat.seatNum === 0 ? '00' : `#${adminEditingSeat.seatNum}`}
                 </span>
                 <div>
                   <h3 className="text-base font-black leading-tight">
-                    {t(`Seat #${adminEditingSeat.seatNum} Profile`, `出席番号 ${adminEditingSeat.seatNum}番`)}
+                    {adminEditingSeat.seatNum === 0
+                      ? t('Teacher / Admin Profile', '先生・管理者プロフィール')
+                      : t(`Seat #${adminEditingSeat.seatNum} Profile`, `出席番号 ${adminEditingSeat.seatNum}番`)}
                   </h3>
                   <span className="text-xs text-slate-400 font-bold">
                     {schoolConfig?.shortKanji || '学校'} {classId}

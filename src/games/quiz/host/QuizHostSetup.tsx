@@ -2065,13 +2065,13 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({ onStart, onCancel,
               }`}
             >
               <div className="flex items-center justify-between w-full gap-1">
-                <span className="truncate font-black">{t('🔤 Phonics Mask (a_ple)', '🔤 虫食いスペル (a_ple)')}</span>
+                <span className="truncate font-black">{t('🔤 Phonics Blank (K[?]rea)', '🔤 虫食いフォニックス')}</span>
                 <span className="text-[9px] font-black px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-600 dark:text-emerald-300 shrink-0">
                   {t('⚡ Fast OK', '⚡ レース◎')}
                 </span>
               </div>
               <span className="text-[10px] opacity-75 truncate">
-                {t('Fill in the missing letters', '隠れた文字から正しい英単語を見抜く')}
+                {t('Pick the missing letters (ea / ee / er / o)', '単語の [ ? ] に入る文字・つづりを選ぶ')}
               </span>
             </button>
 

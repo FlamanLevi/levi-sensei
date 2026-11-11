@@ -51,40 +51,170 @@ function getCategoryHuntMeta(word: VocabularyItem): { icon: string; ja: string; 
   return CATEGORY_HUNT_LABELS[word.category] || null;
 }
 
+const PHONICS_CHUNK_FAMILIES: { chunks: string[]; distractors: Record<string, string[]> }[] = [
+  // 1. R-controlled vowels
+  {
+    chunks: ['ar', 'er', 'ir', 'or', 'ur'],
+    distractors: {
+      ar: ['er', 'or', 'ur', 'ir'],
+      er: ['ar', 'or', 'ur', 'ir'],
+      ir: ['er', 'ur', 'ar', 'or'],
+      or: ['ar', 'er', 'ur', 'ir'],
+      ur: ['er', 'ir', 'or', 'ar'],
+    }
+  },
+  // 2. Vowel teams & diphthongs
+  {
+    chunks: ['ea', 'ee', 'oo', 'ai', 'ay', 'oa', 'ou', 'ow', 'oi', 'oy', 'au', 'aw', 'ie'],
+    distractors: {
+      ea: ['ee', 'ai', 'oa', 'ie'],
+      ee: ['ea', 'oo', 'ai', 'ie'],
+      oo: ['ee', 'ou', 'oa', 'ea'],
+      ai: ['ay', 'ea', 'ei', 'oa'],
+      ay: ['ai', 'ey', 'ea', 'oy'],
+      oa: ['ou', 'ow', 'oo', 'ea'],
+      ou: ['ow', 'oo', 'oa', 'au'],
+      ow: ['ou', 'oa', 'aw', 'oo'],
+      oi: ['oy', 'ai', 'ou', 'oa'],
+      oy: ['oi', 'ay', 'ow', 'ey'],
+      au: ['aw', 'ou', 'oa', 'oo'],
+      aw: ['au', 'ow', 'or', 'oa'],
+      ie: ['ea', 'ee', 'ei', 'ai'],
+    }
+  },
+  // 3. Consonant digraphs
+  {
+    chunks: ['sh', 'ch', 'th', 'ph', 'wh', 'ck', 'ng', 'nk', 'qu'],
+    distractors: {
+      sh: ['ch', 'th', 'ph', 'wh'],
+      ch: ['sh', 'th', 'ck', 'ph'],
+      th: ['sh', 'ch', 'wh', 'ph'],
+      ph: ['sh', 'th', 'ch', 'gh'],
+      wh: ['th', 'sh', 'ch', 'ph'],
+      ck: ['ch', 'sh', 'nk', 'ng'],
+      ng: ['nk', 'nd', 'nt', 'ck'],
+      nk: ['ng', 'ck', 'nd', 'nt'],
+      qu: ['kw', 'ch', 'sh', 'wh'],
+    }
+  }
+];
+
+const VOWELS = ['a', 'e', 'i', 'o', 'u'];
+
+function applyCasePattern(sourceChunk: string, candidate: string): string {
+  if (!sourceChunk || !candidate) return candidate;
+  if (sourceChunk[0] === sourceChunk[0].toUpperCase() && sourceChunk[0] !== sourceChunk[0].toLowerCase()) {
+    return candidate.charAt(0).toUpperCase() + candidate.slice(1).toLowerCase();
+  }
+  return candidate.toLowerCase();
+}
+
 /**
- * Builds a phonics/spelling mask such as "a _ p l e" or "s c h _ _ l",
- * keeping the first letter and ~60% of letters visible so students decode phonics patterns.
+ * Builds a true Phonics Missing-Chunk / Missing-Letter puzzle:
+ * - Masks a single key phonics chunk (e.g. "ea" in "New Z[ ? ]land", "er" in "G[ ? ]many")
+ *   or interior vowel (e.g. "u" in "R[ ? ]ssia", "o" in "K[ ? ]rea", "i" in "Ind[ ? ]a")
+ * - Returns the masked word with `[ ? ]` plus the correct chunk and 3 phonetically plausible distractor chunks.
  */
-export function buildPhonicsMask(english: string): string {
-  const tokens = english.trim().split(/(\s+)/);
-  return tokens
-    .map((tok) => {
-      if (/^\s+$/.test(tok)) return '   ';
-      const chars = tok.split('');
-      const alphaIndices: number[] = [];
-      chars.forEach((c, idx) => {
-        if (/[a-zA-Z]/.test(c)) alphaIndices.push(idx);
-      });
-      if (alphaIndices.length <= 2) {
-        return chars.join(' ');
+export function buildPhonicsChunkQuestion(english: string): {
+  maskedWord: string;
+  correctChunk: string;
+  distractorChunks: [string, string, string];
+} {
+  const clean = english.trim();
+  const lower = clean.toLowerCase();
+
+  // 1. Search for 2-letter phonics digraphs / vowel teams / r-controlled vowels (prefer interior index > 0 first)
+  const matches: { index: number; len: number; rawChunk: string; distractors: string[] }[] = [];
+  for (const family of PHONICS_CHUNK_FAMILIES) {
+    for (const chunk of family.chunks) {
+      let pos = lower.indexOf(chunk);
+      while (pos !== -1) {
+        const rawChunk = clean.slice(pos, pos + chunk.length);
+        const distList = family.distractors[chunk] || ['ea', 'ee', 'oo', 'ai'];
+        matches.push({ index: pos, len: chunk.length, rawChunk, distractors: distList });
+        pos = lower.indexOf(chunk, pos + 1);
       }
-      // Candidate indices to mask: interior letters (exclude first letter of word)
-      const interior = alphaIndices.slice(1);
-      const maskTargetCount = Math.max(1, Math.min(3, Math.floor(alphaIndices.length * 0.42)));
-      // Prefer vowels first, then every second interior consonant deterministically
-      const vowels = interior.filter((idx) => /[aeiouAEIOU]/.test(chars[idx]));
-      const nonVowels = interior.filter((idx) => !/[aeiouAEIOU]/.test(chars[idx]));
-      const orderedCandidates = [...vowels, ...nonVowels];
-      const maskedSet = new Set<number>();
-      for (const idx of orderedCandidates) {
-        if (maskedSet.size >= maskTargetCount) break;
-        // Avoid masking 3 consecutive letters so the word silhouette stays clear
-        if (maskedSet.has(idx - 1) && maskedSet.has(idx - 2)) continue;
-        maskedSet.add(idx);
+    }
+  }
+
+  // Sort interior matches (index > 0) ahead of initial matches so capital letters stay intact when possible
+  matches.sort((a, b) => {
+    const aInterior = a.index > 0 ? 0 : 1;
+    const bInterior = b.index > 0 ? 0 : 1;
+    if (aInterior !== bInterior) return aInterior - bInterior;
+    return a.index - b.index;
+  });
+
+  if (matches.length > 0) {
+    const chosen = matches[0];
+    const maskedWord = clean.slice(0, chosen.index) + '[ ? ]' + clean.slice(chosen.index + chosen.len);
+    const correctChunk = chosen.rawChunk;
+    const casedDistractors = chosen.distractors
+      .map(d => applyCasePattern(correctChunk, d))
+      .filter(d => d.toLowerCase() !== correctChunk.toLowerCase())
+      .slice(0, 3) as [string, string, string];
+    return {
+      maskedWord,
+      correctChunk,
+      distractorChunks: casedDistractors
+    };
+  }
+
+  // 2. Single Vowel Mask (prefer interior vowels a, e, i, o, u at index > 0)
+  const interiorVowelIndices: number[] = [];
+  const allVowelIndices: number[] = [];
+  for (let idx = 0; idx < clean.length; idx++) {
+    const ch = lower[idx];
+    if (VOWELS.includes(ch)) {
+      allVowelIndices.push(idx);
+      if (idx > 0 && clean[idx - 1] !== ' ') {
+        interiorVowelIndices.push(idx);
       }
-      return chars.map((c, idx) => (maskedSet.has(idx) ? '_' : c)).join(' ');
-    })
-    .join('');
+    }
+  }
+
+  const targetVowelIdx = interiorVowelIndices.length > 0
+    ? interiorVowelIndices[0]
+    : (allVowelIndices.length > 0 ? allVowelIndices[0] : -1);
+
+  if (targetVowelIdx !== -1) {
+    const rawVowel = clean[targetVowelIdx];
+    const maskedWord = clean.slice(0, targetVowelIdx) + '[ ? ]' + clean.slice(targetVowelIdx + 1);
+    const otherVowels = shuffle(VOWELS.filter(v => v !== rawVowel.toLowerCase()))
+      .slice(0, 3)
+      .map(v => applyCasePattern(rawVowel, v)) as [string, string, string];
+    return {
+      maskedWord,
+      correctChunk: rawVowel,
+      distractorChunks: otherVowels
+    };
+  }
+
+  // 3. Fallback for y-vowel words (sky, gym, fly, dry, cry) or consonant-only tokens
+  const yIndex = lower.indexOf('y');
+  if (yIndex !== -1) {
+    const rawY = clean[yIndex];
+    const maskedWord = clean.slice(0, yIndex) + '[ ? ]' + clean.slice(yIndex + 1);
+    const dists = ['i', 'e', 'a'].map(v => applyCasePattern(rawY, v)) as [string, string, string];
+    return {
+      maskedWord,
+      correctChunk: rawY,
+      distractorChunks: dists
+    };
+  }
+
+  // Ultimate fallback: mask first letter
+  const firstChar = clean[0] || 'a';
+  const maskedWord = '[ ? ]' + clean.slice(1);
+  const fallbackDists = ['b', 'c', 's', 't']
+    .filter(c => c !== firstChar.toLowerCase())
+    .slice(0, 3)
+    .map(c => applyCasePattern(firstChar, c)) as [string, string, string];
+  return {
+    maskedWord,
+    correctChunk: firstChar,
+    distractorChunks: fallbackDists
+  };
 }
 
 function maskTargetInSentence(sentence: string, targetEnglish: string): string {
@@ -292,21 +422,12 @@ export function generateQuizQuestions(
         );
       }
 
-      if (chosenPromptType === 'PHONICS_MASK') {
-        // Prioritize distractors with the same initial letter or similar length so students read the phonics mask!
-        const allPool = [...otherWords, ...externalFallbacks];
-        const sameInitial = allPool.filter(w => w.english.trim().toLowerCase()[0] === targetLower[0]);
-        const similarLen = allPool.filter(w => !sameInitial.includes(w) && Math.abs(w.english.length - target.english.length) <= 2);
-        const rest = allPool.filter(w => !sameInitial.includes(w) && !similarLen.includes(w));
-        distractorCandidates = [...shuffle(sameInitial), ...shuffle(similarLen), ...shuffle(rest)];
-      } else {
-        distractorCandidates = [
-          ...shuffle(categoryMatches),
-          ...shuffle(posMatches),
-          ...shuffle(otherFallbacks),
-          ...shuffle(externalFallbacks)
-        ];
-      }
+      distractorCandidates = [
+        ...shuffle(categoryMatches),
+        ...shuffle(posMatches),
+        ...shuffle(otherFallbacks),
+        ...shuffle(externalFallbacks)
+      ];
     }
 
     const getNormalizedJa = (w: VocabularyItem): string =>
@@ -332,14 +453,10 @@ export function generateQuizQuestions(
       }
     }
 
-    if (distractors.length < 3) {
+    if (chosenPromptType !== 'PHONICS_MASK' && distractors.length < 3) {
       // Not enough distractors anywhere
       continue;
     }
-    const distractorOptionIds = distractors.slice(0, 2).map(d => d.id);
-
-    // 4 choices = target + 3 distractors
-    const choiceWords = shuffle([target, ...distractors]);
 
     // HARDCODED PEDAGOGICAL INVARIANT (Visual Cheat Prevention):
     // 1. Strictly NO for 'EN_TO_JA' and 'IMAGE_ONLY' (if prompt has image or is translation, choices must never have pictures).
@@ -352,23 +469,53 @@ export function generateQuizQuestions(
       && chosenPromptType !== 'SHORT_CLOZE'
       && chosenPromptType !== 'CATEGORY_HUNT';
 
-    const options: QuizOption[] = choiceWords.map((w, optIdx) => {
-      const style = OPTION_STYLES[optIdx % OPTION_STYLES.length];
-      const jaKanji = w.ja_kanji || (w as any).japanese || (w as any).meaning || '';
-      const jaHiragana = w.ja_hiragana || (w as any).kanaMeaning || (w as any).hiragana || '';
-      return {
-        id: w.id,
-        english: w.english,
-        ja_kanji: jaKanji,
-        ja_hiragana: jaHiragana,
-        en_katakana: w.en_katakana,
-        ruby: (w as any).ruby,
-        image: allowChoiceImages ? resolveWordImage(w, grade) : undefined,
-        sound: w.sound_file || w.primary_audio,
-        symbol: style.symbol,
-        color: style.color
-      };
-    });
+    let options: QuizOption[] = [];
+    let distractorOptionIds: string[] = [];
+    const phonicsPuzzle = chosenPromptType === 'PHONICS_MASK' ? buildPhonicsChunkQuestion(target.english) : null;
+
+    if (chosenPromptType === 'PHONICS_MASK' && phonicsPuzzle) {
+      const chunkEntries = shuffle([
+        { id: target.id, chunk: phonicsPuzzle.correctChunk, isTarget: true },
+        { id: `${target.id}__ph_0`, chunk: phonicsPuzzle.distractorChunks[0], isTarget: false },
+        { id: `${target.id}__ph_1`, chunk: phonicsPuzzle.distractorChunks[1], isTarget: false },
+        { id: `${target.id}__ph_2`, chunk: phonicsPuzzle.distractorChunks[2], isTarget: false },
+      ]);
+      distractorOptionIds = [`${target.id}__ph_0`, `${target.id}__ph_1`];
+      options = chunkEntries.map((entry, optIdx) => {
+        const style = OPTION_STYLES[optIdx % OPTION_STYLES.length];
+        return {
+          id: entry.id,
+          english: entry.chunk,
+          ja_kanji: '',
+          ja_hiragana: '',
+          en_katakana: undefined,
+          image: undefined,
+          sound: entry.isTarget ? (target.sound_file || target.primary_audio) : undefined,
+          symbol: style.symbol,
+          color: style.color
+        };
+      });
+    } else {
+      distractorOptionIds = distractors.slice(0, 2).map(d => d.id);
+      const choiceWords = shuffle([target, ...distractors]);
+      options = choiceWords.map((w, optIdx) => {
+        const style = OPTION_STYLES[optIdx % OPTION_STYLES.length];
+        const jaKanji = w.ja_kanji || (w as any).japanese || (w as any).meaning || '';
+        const jaHiragana = w.ja_hiragana || (w as any).kanaMeaning || (w as any).hiragana || '';
+        return {
+          id: w.id,
+          english: w.english,
+          ja_kanji: jaKanji,
+          ja_hiragana: jaHiragana,
+          en_katakana: w.en_katakana,
+          ruby: (w as any).ruby,
+          image: allowChoiceImages ? resolveWordImage(w, grade) : undefined,
+          sound: w.sound_file || w.primary_audio,
+          symbol: style.symbol,
+          color: style.color
+        };
+      });
+    }
 
     // Determine prompt texts based on chosen prompt type
     let promptText = '';
@@ -400,9 +547,9 @@ export function generateQuizQuestions(
         promptSubtext = '聞こえた単語をえらぼう！';
         break;
       case 'PHONICS_MASK': {
-        const masked = buildPhonicsMask(target.english);
+        const masked = phonicsPuzzle ? phonicsPuzzle.maskedWord : target.english;
         promptText = jaMeaning ? `${masked} （${jaMeaning}）` : masked;
-        promptSubtext = '空欄（＿）に入る正しいつづりの英語をえらぼう！';
+        promptSubtext = '[ ? ] に入る文字（つづり）をえらぼう！';
         promptImage = targetImage || undefined;
         break;
       }

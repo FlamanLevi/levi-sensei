@@ -174,3 +174,13 @@
 - **Modern Three.js Standards**:
   - Always use `performance.now()` delta timing (never deprecated `THREE.Clock`).
   - Always use `THREE.PCFShadowMap` (never deprecated `THREE.PCFSoftShadowMap`).
+
+## 15. Cross-Device Git Sync & Remote Cloud VM Deployment Invariants
+- **Single Source of Truth (`origin/main`)**:
+  - Development alternates between **Local Antigravity (Personal Laptop)** (which has local gitignored textbook media directories `manabi_assets/`, `letstry1/`, `letstry2/`, `sound_suite/`, `trimmed_assets/`, and `new_assets/`) and **Remote Antigravity Cloud VMs (Work Laptop)** (where local terminal commands are restricted by Group Policy).
+  - **Session Start Sync**: At the start of any coding session (both Local and Remote), always run `git fetch origin main && git status -sb` (and `git pull --rebase origin main` if behind) before modifying files so both machines stay 100% synchronized.
+  - **Session / Milestone Push**: Whenever a feature milestone or bugfix batch is completed, commit and `git push origin main` so work is never stranded on a single device.
+- **Media-Preserving Firebase Deployments from Remote Cloud VMs (`npm run deploy:remote`)**:
+  - Never run a standard `firebase deploy` from a bare git clone that lacks `manabi_assets/` and `letstry1/`/`2`, as that would overwrite `dist/` without the textbook `/cards/**` and `/media/**` files.
+  - In Remote Antigravity VMs (or CI/CD), always deploy using `npm run deploy:remote` (`node scripts/deploy_remote_preserving_media.mjs`), which queries the live Firebase Hosting release manifest, carries forward all ~10,000 `/cards/**` and `/media/**` SHA-256 hashes on Google's servers, and uploads only the newly compiled `dist/` files.
+  - If the user attaches a `*firebase-adminsdk*.json` service account key in a Remote Antigravity session, `scripts/deploy_remote_preserving_media.mjs` automatically persists it to `~/.gemini/firebase-service-account.json` (which persists across all future remote conversations) and deletes the temporary copy from `/home/antigravity/upload/`.

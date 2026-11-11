@@ -69,6 +69,16 @@ export const ClassroomRosterManagerModal: React.FC<ClassroomRosterManagerModalPr
     setLoading(true);
     try {
       const data = await fetchAllClassStudents(selectedSchool, selectedClass);
+      // Also check local teacher profile
+      try {
+        const localTeacherRaw = localStorage.getItem('levi_sensei_student_profile');
+        if (localTeacherRaw) {
+          const localTeacher = JSON.parse(localTeacherRaw);
+          if (localTeacher && localTeacher.attendanceNumber === 0 && localTeacher.schoolId === selectedSchool && localTeacher.classId === selectedClass) {
+            data[0] = localTeacher;
+          }
+        }
+      } catch {}
       setStudents(data);
     } catch (err) {
       console.error('Error loading roster in manager modal:', err);
@@ -89,12 +99,12 @@ export const ClassroomRosterManagerModal: React.FC<ClassroomRosterManagerModalPr
     playPop();
     setInspectingSeat({
       seatNum,
-      nickname: existing?.nickname || (`${seatNum}番`),
-      callsign: existing?.callsign || generateDefaultCallsign('', seatNum, selectedClass),
-      avatar: existing?.avatar || '🇯🇵',
-      secretCharm: existing?.secretCharm,
-      xp: existing?.xp || 0,
-      gold: existing?.gold || 0,
+      nickname: existing?.nickname || (seatNum === 0 ? '先生' : `${seatNum}番`),
+      callsign: existing?.callsign || (seatNum === 0 ? 'TEACH' : generateDefaultCallsign('', seatNum, selectedClass)),
+      avatar: existing?.avatar || (seatNum === 0 ? '👨‍🏫' : '🇯🇵'),
+      secretCharm: existing?.secretCharm || (seatNum === 0 ? '👑' : undefined),
+      xp: existing?.xp || (seatNum === 0 ? 9999 : 0),
+      gold: existing?.gold || (seatNum === 0 ? 999 : 0),
       isNew: !existing,
     });
   };
@@ -105,6 +115,33 @@ export const ClassroomRosterManagerModal: React.FC<ClassroomRosterManagerModalPr
     setSaving(true);
     try {
       const { seatNum } = inspectingSeat;
+      if (seatNum === 0) {
+        const resetTeacher: StudentProfile = {
+          schoolId: selectedSchool,
+          classId: selectedClass,
+          attendanceNumber: 0,
+          nickname: '先生',
+          callsign: 'TEACH',
+          avatar: '👨‍🏫',
+          secretCharm: '👑',
+          xp: 9999,
+          level: 10,
+          gold: 999,
+          boundAt: Date.now(),
+          lastPlayedAt: Date.now()
+        };
+        localStorage.setItem('levi_sensei_student_profile', JSON.stringify(resetTeacher));
+        soundEffects.playCorrect();
+        setInspectingSeat({
+          ...inspectingSeat,
+          nickname: resetTeacher.nickname,
+          callsign: resetTeacher.callsign!,
+          avatar: resetTeacher.avatar,
+          secretCharm: resetTeacher.secretCharm,
+        });
+        await loadRoster();
+        return;
+      }
       const updated = await resetStudentFieldToDefault(selectedSchool, selectedClass, seatNum, field);
       if (updated) {
         soundEffects.playCorrect();
@@ -129,6 +166,30 @@ export const ClassroomRosterManagerModal: React.FC<ClassroomRosterManagerModalPr
     if (saving) return;
     setSaving(true);
     try {
+      if (seatNum === 0) {
+        const teacherProfile: StudentProfile = {
+          schoolId: selectedSchool,
+          classId: selectedClass,
+          attendanceNumber: 0,
+          nickname: '先生',
+          callsign: 'TEACH',
+          avatar: '👨‍🏫',
+          secretCharm: '👑',
+          xp: 9999,
+          level: 10,
+          gold: 999,
+          boundAt: Date.now(),
+          lastPlayedAt: Date.now()
+        };
+        localStorage.setItem('levi_sensei_student_profile', JSON.stringify(teacherProfile));
+        localStorage.setItem('levi_sensei_role', 'TEACHER');
+        sessionStorage.setItem('levi_sensei_teacher_unlocked', 'true');
+        soundEffects.playCorrect();
+        setInspectingSeat(null);
+        await loadRoster();
+        return;
+      }
+
       await claimAttendanceNumber(
         selectedSchool,
         selectedClass,
@@ -153,6 +214,15 @@ export const ClassroomRosterManagerModal: React.FC<ClassroomRosterManagerModalPr
     if (saving) return;
     setSaving(true);
     try {
+      if (seatNum === 0) {
+        localStorage.removeItem('levi_sensei_student_profile');
+        soundEffects.playTick();
+        setSeatToRelease(null);
+        setInspectingSeat(null);
+        await loadRoster();
+        return;
+      }
+
       await releaseStudentNumber(selectedSchool, selectedClass, seatNum);
       soundEffects.playTick();
       setSeatToRelease(null);
@@ -166,9 +236,10 @@ export const ClassroomRosterManagerModal: React.FC<ClassroomRosterManagerModalPr
   };
 
   const MAX_SEATS = 36;
-  const seatsArray = Array.from({ length: MAX_SEATS }, (_, i) => i + 1);
+  const seatsArray = [0, ...Array.from({ length: MAX_SEATS }, (_, i) => i + 1)];
+  const studentClaimedCount = Object.keys(students).filter(k => parseInt(k, 10) > 0).length;
   const claimedCount = Object.keys(students).length;
-  const progressPct = classSize > 0 ? Math.min(100, Math.round((claimedCount / classSize) * 100)) : 100;
+  const progressPct = classSize > 0 ? Math.min(100, Math.round((studentClaimedCount / classSize) * 100)) : 100;
 
   return (
     <div 
@@ -247,6 +318,7 @@ export const ClassroomRosterManagerModal: React.FC<ClassroomRosterManagerModalPr
         <div className="flex-1 p-3 sm:p-5 overflow-y-auto content-start">
           <div className="grid grid-cols-6 gap-2 sm:gap-2.5">
             {seatsArray.map((seatNum) => {
+              const isTeacherSeat = seatNum === 0;
               const student = students[seatNum];
               const isClaimed = Boolean(student);
 
@@ -256,7 +328,11 @@ export const ClassroomRosterManagerModal: React.FC<ClassroomRosterManagerModalPr
                   onClick={() => handleOpenInspect(seatNum, student)}
                   className={`relative p-2 sm:p-2.5 rounded-2xl border-2 transition-all flex flex-col justify-between select-none cursor-pointer group ${
                     isClaimed
-                      ? 'bg-gradient-to-tr from-emerald-500/15 via-teal-500/10 to-emerald-500/5 dark:from-emerald-950/70 dark:via-teal-950/50 dark:to-slate-900 border-emerald-500/80 shadow-xs hover:border-purple-400 hover:scale-[1.01]'
+                      ? isTeacherSeat
+                        ? 'bg-gradient-to-tr from-purple-500/15 via-indigo-500/10 to-purple-500/5 dark:from-purple-950/70 dark:via-indigo-950/50 dark:to-slate-900 border-purple-500/80 shadow-xs hover:border-purple-400 hover:scale-[1.01]'
+                        : 'bg-gradient-to-tr from-emerald-500/15 via-teal-500/10 to-emerald-500/5 dark:from-emerald-950/70 dark:via-teal-950/50 dark:to-slate-900 border-emerald-500/80 shadow-xs hover:border-purple-400 hover:scale-[1.01]'
+                      : isTeacherSeat
+                      ? 'bg-purple-50/50 dark:bg-purple-950/20 border-dashed border-purple-300 dark:border-purple-700 text-purple-600 dark:text-purple-400 hover:border-purple-400'
                       : 'bg-slate-50 dark:bg-slate-800/40 border-dashed border-slate-300 dark:border-slate-700 text-slate-400 hover:border-purple-300'
                   }`}
                   style={{ minHeight: '90px' }}
@@ -264,16 +340,22 @@ export const ClassroomRosterManagerModal: React.FC<ClassroomRosterManagerModalPr
                   {/* Top Row: Seat Number & Action Indicator */}
                   <div className="flex items-center justify-between w-full mb-1">
                     <span className={`font-mono font-black text-xs px-1.5 py-0.5 rounded-md ${
-                      isClaimed
+                      isTeacherSeat
+                        ? 'bg-purple-600 text-white shadow-2xs'
+                        : isClaimed
                         ? 'bg-emerald-600 text-white shadow-2xs'
                         : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400'
                     }`}>
-                      #{seatNum}
+                      {isTeacherSeat ? '00 先生' : `#${seatNum}`}
                     </span>
 
                     {isClaimed ? (
-                      <span className="text-purple-600 dark:text-purple-400 opacity-80 group-hover:opacity-100" title={t('Inspect Profile', '詳細・初期化')}>
+                      <span className={`${isTeacherSeat ? 'text-purple-600 dark:text-purple-400' : 'text-purple-600 dark:text-purple-400'} opacity-80 group-hover:opacity-100`} title={t('Inspect Profile', '詳細・初期化')}>
                         <RotateCcw size={12} />
+                      </span>
+                    ) : isTeacherSeat ? (
+                      <span className="text-[10px] text-purple-600 dark:text-purple-400 font-bold">
+                        {t('Teacher Seat', '先生席')}
                       </span>
                     ) : (
                       <span className="text-slate-400 opacity-60 group-hover:opacity-100" title={t('Register Seat', '初期登録')}>
@@ -282,12 +364,12 @@ export const ClassroomRosterManagerModal: React.FC<ClassroomRosterManagerModalPr
                     )}
                   </div>
 
-                  {/* Center/Bottom: Student Avatar, Nickname & XP Badge */}
+                  {/* Center/Bottom: Student / Teacher Avatar, Nickname & XP Badge */}
                   {isClaimed && student ? (
                     <div className="flex flex-col gap-0.5 mt-auto">
                       <div className="flex items-center gap-1.5">
                         <span className="text-xl sm:text-2xl shrink-0 drop-shadow-xs">
-                          {student.avatar || '🇯🇵'}
+                          {student.avatar || (isTeacherSeat ? '👨‍🏫' : '🇯🇵')}
                         </span>
                         <span className="font-black text-xs text-slate-900 dark:text-white truncate">
                           {student.nickname}
@@ -298,7 +380,11 @@ export const ClassroomRosterManagerModal: React.FC<ClassroomRosterManagerModalPr
                           <Coins size={10} />
                           {student.gold || 0}
                         </span>
-                        {student.stats?.badges && Object.keys(student.stats.badges).length > 0 ? (
+                        {isTeacherSeat ? (
+                          <span className="text-purple-600 dark:text-purple-400 font-bold">
+                            TEACHER
+                          </span>
+                        ) : student.stats?.badges && Object.keys(student.stats.badges).length > 0 ? (
                           <span className="text-amber-600 dark:text-amber-400 font-bold" title={t('Badges Earned', '獲得バッジ数')}>
                             🎖️{Object.keys(student.stats.badges).length}
                           </span>
@@ -308,6 +394,13 @@ export const ClassroomRosterManagerModal: React.FC<ClassroomRosterManagerModalPr
                           </span>
                         )}
                       </div>
+                    </div>
+                  ) : isTeacherSeat ? (
+                    <div className="mt-auto flex flex-col items-center justify-center py-1">
+                      <span className="text-xs text-purple-600 dark:text-purple-400 font-bold">👨‍🏫 ---</span>
+                      <span className="text-[9px] text-purple-500 font-bold opacity-0 group-hover:opacity-100 transition-opacity">
+                        + {t('Teacher Setup', '先生登録')}
+                      </span>
                     </div>
                   ) : (
                     <div className="mt-auto flex flex-col items-center justify-center py-1">
@@ -349,12 +442,16 @@ export const ClassroomRosterManagerModal: React.FC<ClassroomRosterManagerModalPr
             {/* Header */}
             <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-100 dark:border-slate-800">
               <div className="flex items-center gap-3">
-                <span className="w-10 h-10 rounded-2xl bg-indigo-600 text-white font-mono font-black text-lg flex items-center justify-center shadow-md">
-                  #{inspectingSeat.seatNum}
+                <span className={`w-10 h-10 rounded-2xl ${inspectingSeat.seatNum === 0 ? 'bg-purple-600' : 'bg-indigo-600'} text-white font-mono font-black text-lg flex items-center justify-center shadow-md`}>
+                  {inspectingSeat.seatNum === 0 ? '00' : `#${inspectingSeat.seatNum}`}
                 </span>
                 <div>
                   <h3 className="text-base font-black leading-tight">
-                    {inspectingSeat.isNew 
+                    {inspectingSeat.seatNum === 0
+                      ? inspectingSeat.isNew 
+                        ? t('Empty Teacher Seat (00)', '先生・管理者席（00番・未設定）')
+                        : t('Teacher Seat (00) Profile', '先生・管理者席（00番）')
+                      : inspectingSeat.isNew 
                       ? t(`Empty Seat #${inspectingSeat.seatNum}`, `出席番号 ${inspectingSeat.seatNum}番（空席）`)
                       : t(`Seat #${inspectingSeat.seatNum} Profile`, `出席番号 ${inspectingSeat.seatNum}番`)}
                   </h3>
@@ -370,46 +467,61 @@ export const ClassroomRosterManagerModal: React.FC<ClassroomRosterManagerModalPr
               /* Empty Seat State: Offer 1-tap register with school defaults */
               <div className="space-y-4 mb-6">
                 <p className="text-xs font-medium text-slate-600 dark:text-slate-300 leading-relaxed">
-                  {t(
-                    'This seat is currently unassigned. You can register it with official school defaults so the student can use it immediately.',
-                    'この席は現在空席です。標準設定（デフォルト）で初期登録することができます。'
-                  )}
+                  {inspectingSeat.seatNum === 0
+                    ? t(
+                        'This is the teacher/admin seat. Registering will bind this device as Teacher (#00) without student roster restrictions.',
+                        '先生・管理者用の専用席です。登録するとこの端末が先生席（00番）として設定されます。'
+                      )
+                    : t(
+                        'This seat is currently unassigned. You can register it with official school defaults so the student can use it immediately.',
+                        'この席は現在空席です。標準設定（デフォルト）で初期登録することができます。'
+                      )}
                 </p>
 
                 <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 text-xs font-mono space-y-1">
-                  <div><strong>表示名:</strong> {inspectingSeat.seatNum}番</div>
-                  <div><strong>コールサイン:</strong> {selectedClass}-{inspectingSeat.seatNum}</div>
-                  <div><strong>アイコン:</strong> 🇯🇵 (日本国旗)</div>
+                  <div><strong>表示名:</strong> {inspectingSeat.seatNum === 0 ? '先生' : `${inspectingSeat.seatNum}番`}</div>
+                  <div><strong>コールサイン:</strong> {inspectingSeat.seatNum === 0 ? `${selectedClass}-T` : `${selectedClass}-${inspectingSeat.seatNum}`}</div>
+                  <div><strong>アイコン:</strong> {inspectingSeat.seatNum === 0 ? '👨‍🏫 (先生)' : '🇯🇵 (日本国旗)'}</div>
                 </div>
 
                 <button
                   type="button"
                   disabled={saving}
                   onClick={() => handleRegisterDefaultSeat(inspectingSeat.seatNum)}
-                  className="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-black text-xs sm:text-sm shadow-md hover:brightness-105 active:scale-98 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                  className={`w-full py-3 rounded-xl bg-gradient-to-r ${
+                    inspectingSeat.seatNum === 0 ? 'from-purple-600 to-indigo-600' : 'from-emerald-600 to-teal-600'
+                  } text-white font-black text-xs sm:text-sm shadow-md hover:brightness-105 active:scale-98 transition-all flex items-center justify-center gap-2 cursor-pointer`}
                 >
                   <Plus size={16} />
-                  <span>{saving ? t('Registering...', '登録中...') : t('Register with School Defaults', '標準設定で初期登録する')}</span>
+                  <span>
+                    {saving
+                      ? t('Registering...', '登録中...')
+                      : inspectingSeat.seatNum === 0
+                      ? t('Register Teacher Profile', '先生プロファイルとして登録する')
+                      : t('Register with School Defaults', '標準設定で初期登録する')}
+                  </span>
                 </button>
               </div>
             ) : (
               /* Claimed Seat: Field-by-Field Reset to Default */
               <div className="space-y-3 mb-6">
-                {/* View Student Passport Button */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    playPop();
-                    const currentStudent = students[inspectingSeat.seatNum];
-                    if (currentStudent) {
-                      setInspectingStatsProfile(currentStudent);
-                    }
-                  }}
-                  className="w-full py-2.5 px-3 rounded-xl bg-teal-50 dark:bg-teal-950/60 border border-teal-300 dark:border-teal-700 text-teal-700 dark:text-teal-300 font-black text-xs hover:bg-teal-100 dark:hover:bg-teal-900/60 transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-xs"
-                >
-                  <span>📊</span>
-                  <span>{t("View Student Passport & Trophy Case", "学習カルテ・トロフィーケースを見る")}</span>
-                </button>
+                {/* View Student Passport Button - only for students */}
+                {inspectingSeat.seatNum > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      playPop();
+                      const currentStudent = students[inspectingSeat.seatNum];
+                      if (currentStudent) {
+                        setInspectingStatsProfile(currentStudent);
+                      }
+                    }}
+                    className="w-full py-2.5 px-3 rounded-xl bg-teal-50 dark:bg-teal-950/60 border border-teal-300 dark:border-teal-700 text-teal-700 dark:text-teal-300 font-black text-xs hover:bg-teal-100 dark:hover:bg-teal-900/60 transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-xs"
+                  >
+                    <span>📊</span>
+                    <span>{t("View Student Passport & Trophy Case", "学習カルテ・トロフィーケースを見る")}</span>
+                  </button>
+                )}
                 {/* 1. Nickname Row */}
                 <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 flex items-center justify-between gap-3">
                   <div className="min-w-0 flex-1">
@@ -593,13 +705,20 @@ export const ClassroomRosterManagerModal: React.FC<ClassroomRosterManagerModalPr
               <Trash2 size={24} />
             </div>
             <h3 className="text-base font-black text-slate-900 dark:text-white mb-1">
-              {t(`Release Seat #${seatToRelease}?`, `席 #${seatToRelease} のひも付けを解除しますか？`)}
+              {seatToRelease === 0
+                ? t('Release Teacher Seat (00)?', '先生・管理者席（00番）のひも付けを解除しますか？')
+                : t(`Release Seat #${seatToRelease}?`, `席 #${seatToRelease} のひも付けを解除しますか？`)}
             </h3>
             <p className="text-xs text-slate-500 dark:text-slate-400 mb-6 font-medium">
-              {t(
-                'This will free up the desk so the student can select it again.',
-                '席を空席に戻し、児童が再度タップしてひも付け直せるようにします。'
-              )}
+              {seatToRelease === 0
+                ? t(
+                    'This will clear the teacher profile saved on this device.',
+                    'この端末に保存されている先生プロファイルを解除・初期化します。'
+                  )
+                : t(
+                    'This will free up the desk so the student can select it again.',
+                    '席を空席に戻し、児童が再度タップしてひも付け直せるようにします。'
+                  )}
             </p>
 
             <div className="flex gap-2">

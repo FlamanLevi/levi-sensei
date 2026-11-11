@@ -341,6 +341,21 @@ export const QuizHostQuestion: React.FC<QuizHostQuestionProps> = ({
     return 'text-sm sm:text-base md:text-xl font-black';
   };
 
+  const getHeroPromptSizeClass = (text: string, hasImg: boolean) => {
+    const len = text.trim().length;
+    if (hasImg) {
+      if (len > 28) return 'text-xl sm:text-2xl md:text-3xl lg:text-4xl';
+      if (len > 14) return 'text-2xl sm:text-3xl md:text-4xl lg:text-5xl';
+      return 'text-4xl sm:text-5xl md:text-6xl lg:text-7xl';
+    }
+    if (len > 28) return 'text-2xl sm:text-3xl md:text-4xl lg:text-5xl';
+    if (len > 14) return 'text-3xl sm:text-5xl md:text-6xl';
+    return 'text-5xl sm:text-7xl md:text-8xl';
+  };
+
+  const elapsedRatio = question.timeLimitMs > 0 ? elapsedMs / question.timeLimitMs : 1;
+  const unlockedHintStage = elapsedRatio >= 0.60 ? 3 : elapsedRatio >= 0.30 ? 2 : 1;
+
   // Helper to render Japanese prompt with ruby on top
   const renderJapanesePrompt = () => {
     if (question.isMath) {
@@ -497,7 +512,66 @@ export const QuizHostQuestion: React.FC<QuizHostQuestionProps> = ({
             <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-sky-400 to-transparent opacity-80" />
           )}
 
-          {hasPromptImage && question.promptImage ? (
+          {question.promptType === 'THREE_HINTS' && question.threeHints && question.threeHints.length > 0 ? (
+            /* PROGRESSIVE 3-HINT DETECTIVE STAGE */
+            <div className="w-full h-full flex flex-col justify-center gap-1.5 sm:gap-2 px-2 sm:px-4 py-1">
+              <div className="flex items-center justify-between">
+                <span className="text-xs sm:text-sm font-black uppercase tracking-wider px-3 py-0.5 rounded-full bg-amber-400 text-slate-950 shadow-xs">
+                  🕵️‍♂️ {t('3-Hint Detective — Faster Answer = More Points!', '3ヒント・クイズ — 早いヒントで当てるほど高得点！')}
+                </span>
+                <span className="text-xs font-black opacity-75">
+                  {t(`Hint ${unlockedHintStage} / 3 Active`, `ヒント ${unlockedHintStage} / 3 公開中`)}
+                </span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3 w-full">
+                {question.threeHints.slice(0, 3).map((hint, idx) => {
+                  const stageNum = idx + 1;
+                  const isUnlocked = unlockedHintStage >= stageNum;
+                  return (
+                    <div
+                      key={stageNum}
+                      className={`rounded-2xl p-2.5 sm:p-3.5 border-2 transition-all duration-300 flex flex-col justify-between ${
+                        isUnlocked
+                          ? stageNum === 3
+                            ? 'bg-amber-50 dark:bg-amber-950/60 border-amber-400 text-slate-900 dark:text-white shadow-md scale-[1.01]'
+                            : 'bg-white/95 dark:bg-slate-800/95 border-indigo-400/70 text-slate-900 dark:text-white shadow-sm'
+                          : 'bg-slate-900/40 dark:bg-slate-900/60 border-slate-700/50 text-slate-400 opacity-60'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-1">
+                        <span className={`text-[11px] sm:text-xs font-black px-2 py-0.5 rounded-md ${
+                          isUnlocked
+                            ? stageNum === 3 ? 'bg-amber-400 text-slate-950' : 'bg-indigo-600 text-white'
+                            : 'bg-slate-700 text-slate-300'
+                        }`}>
+                          {stageNum === 1 ? '🏷️ HINT 1' : stageNum === 2 ? '💡 HINT 2' : '🌟 BIG HINT 3'}
+                        </span>
+                        {!isUnlocked && (
+                          <span className="text-[10px] font-mono font-bold">
+                            🔒 {stageNum === 2 ? '30%' : '60%'}
+                          </span>
+                        )}
+                      </div>
+                      {isUnlocked ? (
+                        <div className="text-left">
+                          <p className="text-sm sm:text-base md:text-lg font-black leading-snug">
+                            {hint.en}
+                          </p>
+                          <p className="text-xs sm:text-sm font-bold text-indigo-600 dark:text-amber-300 mt-0.5 leading-snug">
+                            {hint.ja}
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="py-3 text-center text-xs sm:text-sm font-bold tracking-wider">
+                          {t('Unlocks soon...', 'まもなくオープン…')}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          ) : hasPromptImage && question.promptImage ? (
             /* HERO ARTWORK FRAMING: Balanced 40% text column + tight card-mounted artwork */
             <div className="w-full h-full flex flex-row items-center justify-between gap-4 sm:gap-6 px-2 sm:px-4">
               {/* Left Column: 38-40% Prompt Stack */}
@@ -533,7 +607,7 @@ export const QuizHostQuestion: React.FC<QuizHostQuestionProps> = ({
                   )
                 )}
 
-                <h2 className={`text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight leading-tight break-words ${
+                <h2 className={`${getHeroPromptSizeClass(question.promptText, true)} font-black tracking-tight leading-tight break-words ${
                   isFutako ? 'text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]' : 'text-slate-900 dark:text-white'
                 }`}>
                   {renderJapanesePrompt()}
@@ -575,7 +649,7 @@ export const QuizHostQuestion: React.FC<QuizHostQuestionProps> = ({
                 </button>
               )}
 
-              <h2 className={`text-5xl sm:text-7xl md:text-8xl font-black tracking-tight leading-snug ${
+              <h2 className={`${getHeroPromptSizeClass(question.promptText, false)} font-black tracking-tight leading-snug ${
                 isFutako ? 'text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]' : 'text-slate-900 dark:text-white'
               }`}>
                 {renderJapanesePrompt()}

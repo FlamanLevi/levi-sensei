@@ -221,25 +221,51 @@ export const QuizStudentQuestion: React.FC<QuizStudentQuestionProps> = ({
       {/* Mirrored Mode: Question Prompt Banner */}
       {ipadDisplayMode === 'MIRRORED' && !hasAnswered && (
         <div className="mb-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-center gap-3 text-center shrink-0 min-h-[50px] sm:min-h-[58px]">
-          {question.promptImage && (
-            <div className="w-11 h-11 sm:w-13 sm:h-13 rounded-xl bg-slate-50 dark:bg-slate-800 p-1 border border-slate-200 dark:border-slate-700 shadow-sm shrink-0 flex items-center justify-center">
-              <img
-                src={question.promptImage}
-                alt={question.promptText}
-                className="w-full h-full object-contain rounded-xl"
-              />
-            </div>
+          {question.promptType === 'THREE_HINTS' && question.threeHints && question.threeHints.length > 0 ? (
+            (() => {
+              const limit = question.timeLimitMs || 15000;
+              const ratio = limit > 0 ? elapsedMs / limit : 1;
+              const activeStage = ratio >= 0.60 ? 3 : ratio >= 0.30 ? 2 : 1;
+              const currentHint = question.threeHints[activeStage - 1] || question.threeHints[0];
+              return (
+                <div className="flex flex-col items-center w-full">
+                  <div className="flex items-center gap-1.5 mb-0.5">
+                    <span className="text-[10px] font-black px-2 py-0.5 rounded bg-amber-400 text-slate-950">
+                      🕵️‍♂️ HINT {activeStage} / 3
+                    </span>
+                    <span className="text-xs sm:text-sm font-black text-slate-900 dark:text-white truncate">
+                      {currentHint.en}
+                    </span>
+                  </div>
+                  <span className="text-[11px] font-bold text-indigo-600 dark:text-amber-300 truncate max-w-full">
+                    {currentHint.ja}
+                  </span>
+                </div>
+              );
+            })()
+          ) : (
+            <>
+              {question.promptImage && (
+                <div className="w-11 h-11 sm:w-13 sm:h-13 rounded-xl bg-slate-50 dark:bg-slate-800 p-1 border border-slate-200 dark:border-slate-700 shadow-sm shrink-0 flex items-center justify-center">
+                  <img
+                    src={question.promptImage}
+                    alt={question.promptText}
+                    className="w-full h-full object-contain rounded-xl"
+                  />
+                </div>
+              )}
+              <div className="flex flex-col items-center">
+                <h3 className="text-base sm:text-lg md:text-xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
+                  {question.promptText}
+                </h3>
+                {question.promptSubtext && (
+                  <span className="text-xs font-bold text-slate-500 dark:text-slate-400 mt-0.5">
+                    {question.promptSubtext}
+                  </span>
+                )}
+              </div>
+            </>
           )}
-          <div className="flex flex-col items-center">
-            <h3 className="text-base sm:text-lg md:text-xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
-              {question.promptText}
-            </h3>
-            {question.promptSubtext && (
-              <span className="text-xs font-bold text-slate-500 dark:text-slate-400 mt-0.5">
-                {question.promptSubtext}
-              </span>
-            )}
-          </div>
         </div>
       )}
 

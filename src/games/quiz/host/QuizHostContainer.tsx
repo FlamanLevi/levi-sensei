@@ -17,6 +17,7 @@ import {
 import { generateQuizQuestions } from '../questionGenerator';
 import { generateMathQuestions } from '../mathGenerator';
 import { MathGrade, MathDomain } from '../mathTypes';
+import { loadThreeHintsBank } from '@/games/three_hints/utils';
 import { calculateClassroomAwards } from '../awardsEngine';
 import { useQuizRoom, generateUniqueRoomPin } from '../useQuizRoom';
 import { getServerTime } from '@/services/rtdbSafe';
@@ -63,10 +64,15 @@ const computeTroubleWordIds = (
 
 export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, onRegisterExit, onStepChange, isStudentHost = false }) => {
   const { activeGrade, activeUnit } = useClassroom();
-  const { filteredWords, gradeWords } = useVocabulary();
+  const { filteredWords, gradeWords, ensureCluesLoaded } = useVocabulary();
 
   const [step, setStep] = useState<HostStep>('SETUP');
   const [isEditingLobby, setIsEditingLobby] = useState<boolean>(false);
+
+  useEffect(() => {
+    ensureCluesLoaded();
+    loadThreeHintsBank();
+  }, [ensureCluesLoaded]);
 
   useEffect(() => {
     onStepChange?.(step);

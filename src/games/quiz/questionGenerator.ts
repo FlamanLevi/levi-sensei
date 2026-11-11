@@ -1,5 +1,6 @@
 import { VocabularyItem, GradeLevel } from '@data/types';
 import { PromptType, QuizOption, QuizQuestion, QuizHostSettings, OPTION_STYLES } from './types';
+import { getCluePoolsForWord } from '@/games/three_hints/utils';
 
 // Helper to shuffle arrays
 function shuffle<T>(array: T[]): T[] {
@@ -13,6 +14,149 @@ function shuffle<T>(array: T[]): T[] {
 
 const LOWER_GRADE_FALLBACK_ORDER: GradeLevel[] = ['ES_G4', 'ES_G3', 'ES_G2', 'ES_G1', 'ES_G5', 'ES_G6', 'JHS_G1', 'JHS_G2', 'JHS_G3'];
 const UPPER_GRADE_FALLBACK_ORDER: GradeLevel[] = ['ES_G6', 'ES_G5', 'JHS_G1', 'JHS_G2', 'JHS_G3', 'ES_G4', 'ES_G3', 'ES_G2', 'ES_G1'];
+
+const CATEGORY_HUNT_LABELS: Record<string, { icon: string; ja: string; en: string }> = {
+  '01_action': { icon: '🏃', ja: '動き・アクション', en: 'Action / Verb' },
+  '02_state': { icon: '✨', ja: '様子・気持ち', en: 'Feeling / State' },
+  '03_food': { icon: '🍎', ja: '食べ物・飲み物', en: 'Food & Drink' },
+  '03_fooddrink': { icon: '🍎', ja: '食べ物・飲み物', en: 'Food & Drink' },
+  '04_number': { icon: '🔢', ja: '数・数字', en: 'Number' },
+  '05_school': { icon: '🏫', ja: '学校・文房具', en: 'School & Stationery' },
+  '05_schoollife': { icon: '🏫', ja: '学校・文房具', en: 'School Life' },
+  '06_facility': { icon: '🗺️', ja: '場所・建物', en: 'Place & Building' },
+  '07_dailylife': { icon: '🏠', ja: '身の回りのもの・生活', en: 'Daily Life' },
+  '08_sport': { icon: '⚽', ja: 'スポーツ・遊び', en: 'Sport & Game' },
+  '08_sports': { icon: '⚽', ja: 'スポーツ・遊び', en: 'Sport & Game' },
+  '09_colorshape': { icon: '🎨', ja: '色・形', en: 'Color & Shape' },
+  '09_color_shape': { icon: '🎨', ja: '色・形', en: 'Color & Shape' },
+  '10_calendar_time': { icon: '📅', ja: '曜日・月・季節・時間', en: 'Calendar & Time' },
+  '11_animal': { icon: '🐾', ja: '動物・生き物', en: 'Animal & Living Thing' },
+  '11_animals': { icon: '🐾', ja: '動物・生き物', en: 'Animal & Living Thing' },
+  '12_nature': { icon: '🌿', ja: '自然・天気', en: 'Nature & Weather' },
+  '13_position': { icon: '🧭', ja: '位置・方向', en: 'Position & Direction' },
+  '14_body': { icon: '🖐️', ja: '体・家族・人', en: 'Body & Family' },
+  '14_body_family': { icon: '🖐️', ja: '体・家族・人', en: 'Body & Family' },
+  '15_festalday': { icon: '🎉', ja: '行事・イベント', en: 'Event & Festival' },
+};
+
+function getEffectiveCategoryKey(word: VocabularyItem): string {
+  if (word.tags?.includes('job')) return 'job_special';
+  return word.category || '';
+}
+
+function getCategoryHuntMeta(word: VocabularyItem): { icon: string; ja: string; en: string } | null {
+  if (word.tags?.includes('job')) {
+    return { icon: '👩‍⚕️', ja: '職業・将来の夢', en: 'Job / Occupation' };
+  }
+  return CATEGORY_HUNT_LABELS[word.category] || null;
+}
+
+/**
+ * Builds a phonics/spelling mask such as "a _ p l e" or "s c h _ _ l",
+ * keeping the first letter and ~60% of letters visible so students decode phonics patterns.
+ */
+export function buildPhonicsMask(english: string): string {
+  const tokens = english.trim().split(/(\s+)/);
+  return tokens
+    .map((tok) => {
+      if (/^\s+$/.test(tok)) return '   ';
+      const chars = tok.split('');
+      const alphaIndices: number[] = [];
+      chars.forEach((c, idx) => {
+        if (/[a-zA-Z]/.test(c)) alphaIndices.push(idx);
+      });
+      if (alphaIndices.length <= 2) {
+        return chars.join(' ');
+      }
+      // Candidate indices to mask: interior letters (exclude first letter of word)
+      const interior = alphaIndices.slice(1);
+      const maskTargetCount = Math.max(1, Math.min(3, Math.floor(alphaIndices.length * 0.42)));
+      // Prefer vowels first, then every second interior consonant deterministically
+      const vowels = interior.filter((idx) => /[aeiouAEIOU]/.test(chars[idx]));
+      const nonVowels = interior.filter((idx) => !/[aeiouAEIOU]/.test(chars[idx]));
+      const orderedCandidates = [...vowels, ...nonVowels];
+      const maskedSet = new Set<number>();
+      for (const idx of orderedCandidates) {
+        if (maskedSet.size >= maskTargetCount) break;
+        // Avoid masking 3 consecutive letters so the word silhouette stays clear
+        if (maskedSet.has(idx - 1) && maskedSet.has(idx - 2)) continue;
+        maskedSet.add(idx);
+      }
+      return chars.map((c, idx) => (maskedSet.has(idx) ? '_' : c)).join(' ');
+    })
+    .join('');
+}
+
+function maskTargetInSentence(sentence: string, targetEnglish: string): string {
+  const cleanTarget = targetEnglish.trim();
+  if (!sentence || !cleanTarget) return sentence;
+  const escaped = cleanTarget.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  // Match target word (and optional plural s/es) case-insensitively
+  const regex = new RegExp(`\\b${escaped}(?:e?s)?\\b`, 'gi');
+  if (regex.test(sentence)) {
+    return sentence.replace(regex, '[ ? ]');
+  }
+  // Fallback substring replacement if word has punctuation or multi-word phrase
+  const fallbackRegex = new RegExp(escaped, 'gi');
+  if (fallbackRegex.test(sentence)) {
+    return sentence.replace(fallbackRegex, '[ ? ]');
+  }
+  return '';
+}
+
+export function buildShortClozePrompt(word: VocabularyItem): { promptText: string; promptSubtext: string } {
+  const jaMeaning = word.ja_kanji || word.ja_hiragana || '';
+  const d0 = word.target_dialogues?.[0];
+  let maskedSentence = '';
+
+  if (d0?.answer && !d0.answer.includes('can ate') && !d0.answer.includes('celebrate balloon')) {
+    const maskedAns = maskTargetInSentence(d0.answer, word.english);
+    if (maskedAns && maskedAns.includes('[ ? ]')) {
+      if (d0.question && (d0.question.length + maskedAns.length) <= 46 && !d0.question.toLowerCase().includes(word.english.toLowerCase())) {
+        maskedSentence = `A: "${d0.question}"  B: "${maskedAns}"`;
+      } else {
+        maskedSentence = `"${maskedAns}"`;
+      }
+    }
+  }
+
+  if (!maskedSentence && word.target_sentences?.length) {
+    for (const s of word.target_sentences) {
+      const m = maskTargetInSentence(s, word.english);
+      if (m && m.includes('[ ? ]')) {
+        maskedSentence = `"${m}"`;
+        break;
+      }
+    }
+  }
+
+  if (!maskedSentence) {
+    // Clean pedagogical fallback template based on part of speech
+    if (word.part_of_speech === 'verb') {
+      maskedSentence = `"Let's [ ? ] together!"`;
+    } else if (word.part_of_speech === 'adjective') {
+      maskedSentence = `"It looks very [ ? ]!"`;
+    } else {
+      maskedSentence = `"I can see a [ ? ]."`;
+    }
+  }
+
+  return {
+    promptText: jaMeaning ? `${maskedSentence} （${jaMeaning}）` : maskedSentence,
+    promptSubtext: '[ ? ] に入る正しい英語をえらぼう！'
+  };
+}
+
+function pickRotatingVoiceSound(word: VocabularyItem, index: number): string | undefined {
+  const suite = word.audio_suite;
+  if (suite) {
+    const voices = [suite.jenny, suite.andrew, suite.ana].filter((v): v is string => Boolean(v));
+    if (voices.length > 0) {
+      return voices[index % voices.length];
+    }
+  }
+  return word.sound_file || word.primary_audio || word.english;
+}
 
 export function resolveWordImage(word: VocabularyItem, grade?: GradeLevel): string {
   let imagePath = '';
@@ -85,16 +229,24 @@ export function generateQuizQuestions(
     // Pick prompt type from allowed types
     let availablePromptTypes = [...settings.promptTypes];
     const targetImage = resolveWordImage(target, grade);
+    const alphaLen = target.english.replace(/[^a-zA-Z]/g, '').length;
+    const categoryMeta = getCategoryHuntMeta(target);
 
-    // If target has no image, don't use IMAGE_ONLY prompt
+    // Filter out incompatible prompt types for this specific word
     if (!targetImage) {
       availablePromptTypes = availablePromptTypes.filter(p => p !== 'IMAGE_ONLY');
-      if (availablePromptTypes.length === 0) availablePromptTypes = ['JA_MEANING'];
+    }
+    if (alphaLen <= 2) {
+      availablePromptTypes = availablePromptTypes.filter(p => p !== 'PHONICS_MASK');
+    }
+    if (!categoryMeta) {
+      availablePromptTypes = availablePromptTypes.filter(p => p !== 'CATEGORY_HUNT');
+    }
+    if (availablePromptTypes.length === 0) {
+      availablePromptTypes = ['JA_MEANING'];
     }
 
-    const chosenPromptType: PromptType = availablePromptTypes.length > 0 
-      ? availablePromptTypes[Math.floor(Math.random() * availablePromptTypes.length)]
-      : 'JA_MEANING';
+    let chosenPromptType: PromptType = availablePromptTypes[Math.floor(Math.random() * availablePromptTypes.length)];
 
     // Build 3 smart distractors from the pool (or fallbackPool if pool is small)
     // Filter distractors by English lemma, not just ID, to prevent duplicate answer options (e.g. Sunday vs Sunday)
@@ -104,29 +256,58 @@ export function generateQuizQuestions(
       w.english.trim().toLowerCase() !== targetLower
     );
 
-    // 1. Same category distractors
-    let categoryMatches = otherWords.filter(w => w.category === target.category);
-    // 2. Same part of speech
-    let posMatches = otherWords.filter(w => w.part_of_speech === target.part_of_speech && !categoryMatches.includes(w));
-    // 3. Fallback to any remaining in pool
-    let otherFallbacks = otherWords.filter(w => !categoryMatches.includes(w) && !posMatches.includes(w));
+    let distractorCandidates: VocabularyItem[] = [];
 
-    // 4. If pool still has fewer than 3 distractors, draw from fallbackPool
-    let externalFallbacks: VocabularyItem[] = [];
-    if (categoryMatches.length + posMatches.length + otherFallbacks.length < 3 && fallbackPool.length > 0) {
-      externalFallbacks = fallbackPool.filter(w =>
+    if (chosenPromptType === 'CATEGORY_HUNT') {
+      // CRITICAL FOR CATEGORY_HUNT: Distractors MUST come from DIFFERENT categories so only 1 answer is valid!
+      const targetCatKey = getEffectiveCategoryKey(target);
+      const diffCatInPool = otherWords.filter(w => getEffectiveCategoryKey(w) !== targetCatKey);
+      const diffCatExternal = fallbackPool.filter(w =>
         w.id !== target.id &&
         w.english.trim().toLowerCase() !== targetLower &&
-        !pool.some(p => p.id === w.id || p.english.trim().toLowerCase() === w.english.trim().toLowerCase())
+        getEffectiveCategoryKey(w) !== targetCatKey
       );
+      distractorCandidates = [...shuffle(diffCatInPool), ...shuffle(diffCatExternal)];
+      if (distractorCandidates.length < 3) {
+        // Fallback to JA_MEANING if the entire loaded vocabulary lacks 3 outside-category words
+        chosenPromptType = 'JA_MEANING';
+      }
     }
 
-    let distractorCandidates = [
-      ...shuffle(categoryMatches),
-      ...shuffle(posMatches),
-      ...shuffle(otherFallbacks),
-      ...shuffle(externalFallbacks)
-    ];
+    if (chosenPromptType !== 'CATEGORY_HUNT') {
+      // 1. Same category distractors
+      const categoryMatches = otherWords.filter(w => w.category === target.category);
+      // 2. Same part of speech
+      const posMatches = otherWords.filter(w => w.part_of_speech === target.part_of_speech && !categoryMatches.includes(w));
+      // 3. Fallback to any remaining in pool
+      const otherFallbacks = otherWords.filter(w => !categoryMatches.includes(w) && !posMatches.includes(w));
+
+      // 4. If pool still has fewer than 3 distractors, draw from fallbackPool
+      let externalFallbacks: VocabularyItem[] = [];
+      if (categoryMatches.length + posMatches.length + otherFallbacks.length < 3 && fallbackPool.length > 0) {
+        externalFallbacks = fallbackPool.filter(w =>
+          w.id !== target.id &&
+          w.english.trim().toLowerCase() !== targetLower &&
+          !pool.some(p => p.id === w.id || p.english.trim().toLowerCase() === w.english.trim().toLowerCase())
+        );
+      }
+
+      if (chosenPromptType === 'PHONICS_MASK') {
+        // Prioritize distractors with the same initial letter or similar length so students read the phonics mask!
+        const allPool = [...otherWords, ...externalFallbacks];
+        const sameInitial = allPool.filter(w => w.english.trim().toLowerCase()[0] === targetLower[0]);
+        const similarLen = allPool.filter(w => !sameInitial.includes(w) && Math.abs(w.english.length - target.english.length) <= 2);
+        const rest = allPool.filter(w => !sameInitial.includes(w) && !similarLen.includes(w));
+        distractorCandidates = [...shuffle(sameInitial), ...shuffle(similarLen), ...shuffle(rest)];
+      } else {
+        distractorCandidates = [
+          ...shuffle(categoryMatches),
+          ...shuffle(posMatches),
+          ...shuffle(otherFallbacks),
+          ...shuffle(externalFallbacks)
+        ];
+      }
+    }
 
     const getNormalizedJa = (w: VocabularyItem): string =>
       (w.ja_kanji || w.ja_hiragana || (w as any).japanese || '').trim().toLowerCase();
@@ -163,10 +344,13 @@ export function generateQuizQuestions(
     // HARDCODED PEDAGOGICAL INVARIANT (Visual Cheat Prevention):
     // 1. Strictly NO for 'EN_TO_JA' and 'IMAGE_ONLY' (if prompt has image or is translation, choices must never have pictures).
     // 2. If settings.choiceImageMode === 'TEXT_ONLY', strictly no images on choices.
-    // 3. Only allowed for 'JA_MEANING' and 'AUDIO_ONLY' when choiceImageMode !== 'TEXT_ONLY'.
+    // 3. Only allowed for 'JA_MEANING', 'AUDIO_ONLY', and 'THREE_HINTS' when choiceImageMode !== 'TEXT_ONLY'.
     const allowChoiceImages = settings.choiceImageMode !== 'TEXT_ONLY'
       && chosenPromptType !== 'EN_TO_JA'
-      && chosenPromptType !== 'IMAGE_ONLY';
+      && chosenPromptType !== 'IMAGE_ONLY'
+      && chosenPromptType !== 'PHONICS_MASK'
+      && chosenPromptType !== 'SHORT_CLOZE'
+      && chosenPromptType !== 'CATEGORY_HUNT';
 
     const options: QuizOption[] = choiceWords.map((w, optIdx) => {
       const style = OPTION_STYLES[optIdx % OPTION_STYLES.length];
@@ -190,8 +374,10 @@ export function generateQuizQuestions(
     let promptText = '';
     let promptSubtext = '';
     let promptImage: string | undefined = undefined;
-    // Always assign native textbook or Azure synthesized MP3 sound file for reveal and audio playback
-    let promptSound: string | undefined = target.sound_file || target.primary_audio || target.english;
+    let threeHints: { en: string; ja: string }[] | undefined = undefined;
+    // Rotate across Jenny, Andrew, and Ana voices in audio_suite when available
+    const promptSound: string | undefined = pickRotatingVoiceSound(target, i);
+    const jaMeaning = target.ja_kanji || target.ja_hiragana || '';
 
     switch (chosenPromptType) {
       case 'JA_MEANING':
@@ -213,6 +399,44 @@ export function generateQuizQuestions(
         promptText = 'Listen carefully! (よく聞いてね)';
         promptSubtext = '聞こえた単語をえらぼう！';
         break;
+      case 'PHONICS_MASK': {
+        const masked = buildPhonicsMask(target.english);
+        promptText = jaMeaning ? `${masked} （${jaMeaning}）` : masked;
+        promptSubtext = '空欄（＿）に入る正しいつづりの英語をえらぼう！';
+        promptImage = targetImage || undefined;
+        break;
+      }
+      case 'SHORT_CLOZE': {
+        const cloze = buildShortClozePrompt(target);
+        promptText = cloze.promptText;
+        promptSubtext = cloze.promptSubtext;
+        promptImage = targetImage || undefined;
+        break;
+      }
+      case 'CATEGORY_HUNT': {
+        const meta = categoryMeta || { icon: '🎯', ja: '同じカテゴリー', en: 'Target Category' };
+        promptText = `${meta.icon} 「${meta.ja}」はどれ？`;
+        promptSubtext = `Which one belongs to "${meta.en}"?`;
+        break;
+      }
+      case 'THREE_HINTS': {
+        const { pool1, pool2 } = getCluePoolsForWord(target);
+        const h1 = pool1[0] || { en: 'What am I?', ja: 'わたしは だれでしょう？' };
+        const nonSpoiler2 = pool2.find(h => !h.en.startsWith('Big Hint:')) || pool2[0] || h1;
+        const rescueHint = pool2.find(h => h.en.startsWith('Big Hint:')) || {
+          en: `Big Hint: In Japanese, this is "${jaMeaning}"!`,
+          ja: `【大ヒント！】 日本語で 「${jaMeaning}」 という意味です！`
+        };
+        threeHints = [
+          { en: h1.en, ja: h1.ja },
+          { en: nonSpoiler2.en, ja: nonSpoiler2.ja },
+          { en: rescueHint.en, ja: rescueHint.ja }
+        ];
+        // Compact single-line fallback for rapid-fire HUDs (Suzuka Circuit, Tamaire, Tug-of-War)
+        promptText = `🔍 ${nonSpoiler2.en}`;
+        promptSubtext = jaMeaning ? `ヒント: ${h1.ja} （${jaMeaning}）` : h1.ja;
+        break;
+      }
     }
 
     const qIndex = questions.length;
@@ -230,6 +454,7 @@ export function generateQuizQuestions(
       promptSubtext,
       promptImage,
       promptSound,
+      threeHints,
       options,
       correctOptionId: target.id,
       distractorOptionIds,
@@ -244,3 +469,4 @@ export function generateQuizQuestions(
 
   return questions;
 }
+

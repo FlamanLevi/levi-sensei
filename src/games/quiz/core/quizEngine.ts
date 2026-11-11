@@ -29,7 +29,16 @@
  * ============================================================================
  */
 
-export type PromptType = 'JA_MEANING' | 'AUDIO_ONLY' | 'IMAGE_ONLY' | 'EN_WORD' | 'EN_TO_JA';
+export type PromptType =
+  | 'JA_MEANING'
+  | 'AUDIO_ONLY'
+  | 'IMAGE_ONLY'
+  | 'EN_WORD'
+  | 'EN_TO_JA'
+  | 'PHONICS_MASK'
+  | 'SHORT_CLOZE'
+  | 'CATEGORY_HUNT'
+  | 'THREE_HINTS';
 export type EnglishReadingAid = 'SPELLING_ONLY' | 'WITH_KATAKANA';
 export type DistractorEliminationMode = 'OFF' | 'HALFWAY' | 'GRADUAL';
 export type GamePlayType = 'KAHOOT' | 'SPRINT_RACE' | 'GRAND_PRIX_3D' | 'TUG_OF_WAR' | 'VOLLEYBALL';
@@ -82,6 +91,7 @@ export interface QuizQuestion {
   promptSubtext?: string;
   promptImage?: string;
   promptSound?: string;
+  threeHints?: { en: string; ja: string }[];
   options: QuizOption[];
   correctOptionId?: string;
   distractorOptionIds?: string[];

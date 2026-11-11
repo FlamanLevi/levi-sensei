@@ -89,7 +89,11 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({ onStart, onCancel,
     selectedUnits: globalSelectedUnits,
     openUnitModal
   } = useClassroom();
-  const { filteredWords, gradeWords, getWordsForScope, getWordsForUnits, availableUnits } = useVocabulary();
+  const { filteredWords, gradeWords, getWordsForScope, getWordsForUnits, availableUnits, ensureCluesLoaded } = useVocabulary();
+
+  React.useEffect(() => {
+    ensureCluesLoaded();
+  }, [ensureCluesLoaded]);
 
   const [selectedClassId, setSelectedClassId] = useState<string>(activeClassId);
   const [classGradeTab, setClassGradeTab] = useState<string>(() => {
@@ -1964,60 +1968,174 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({ onStart, onCancel,
         ) : (
         <>
         <div>
-          <label className="text-xs font-black text-slate-400 uppercase tracking-wider block mb-2">
-            {gamePlayType === 'KAHOOT' ? t('7. Question Varieties', '7. 出題バリエーション') : t('4. Question Varieties', '4. 出題バリエーション')}
-          </label>
+          <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+            <label className="text-xs font-black text-slate-400 uppercase tracking-wider block">
+              {gamePlayType === 'KAHOOT' ? t('7. Question Varieties', '7. 出題バリエーション') : t('4. Question Varieties', '4. 出題バリエーション')}
+            </label>
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={() => setPromptTypes(['JA_MEANING', 'EN_TO_JA', 'IMAGE_ONLY', 'AUDIO_ONLY'])}
+                className="px-2.5 py-1 rounded-lg text-[11px] font-black border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:border-blue-400 transition-colors cursor-pointer"
+              >
+                {t('📘 Basic 4', '📘 基本4種')}
+              </button>
+              <button
+                type="button"
+                onClick={() => setPromptTypes(
+                  gamePlayType === 'KAHOOT'
+                    ? ['JA_MEANING', 'IMAGE_ONLY', 'PHONICS_MASK', 'SHORT_CLOZE', 'CATEGORY_HUNT', 'THREE_HINTS']
+                    : ['JA_MEANING', 'EN_TO_JA', 'IMAGE_ONLY', 'PHONICS_MASK', 'CATEGORY_HUNT']
+                )}
+                className="px-2.5 py-1 rounded-lg text-[11px] font-black border border-indigo-300 dark:border-indigo-700 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100 transition-colors cursor-pointer"
+              >
+                {t('✨ Fun Mix', '✨ 応用ミックス')}
+              </button>
+              <button
+                type="button"
+                onClick={() => setPromptTypes(['JA_MEANING', 'EN_TO_JA', 'IMAGE_ONLY', 'AUDIO_ONLY', 'PHONICS_MASK', 'SHORT_CLOZE', 'CATEGORY_HUNT', 'THREE_HINTS'])}
+                className="px-2.5 py-1 rounded-lg text-[11px] font-black border border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 hover:bg-amber-100 transition-colors cursor-pointer"
+              >
+                {t('🎯 All 8', '🎯 全8種フル')}
+              </button>
+            </div>
+          </div>
+
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
             <button
               type="button"
               onClick={() => togglePromptType('JA_MEANING')}
-              className={`p-3 rounded-xl border-2 text-left text-xs font-bold transition-all flex items-center gap-2 ${
+              className={`p-3 rounded-xl border-2 text-left text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
                 promptTypes.includes('JA_MEANING')
                   ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/40 text-blue-900 dark:text-blue-200 shadow-xs'
                   : 'border-slate-200 dark:border-slate-800 text-slate-400'
               }`}
             >
-              <HelpCircle size={16} className={promptTypes.includes('JA_MEANING') ? 'text-blue-500' : 'text-slate-400'} />
-              <span>{t('Japanese ➔ English', '日本語 ➔ 英語')}</span>
+              <HelpCircle size={16} className={promptTypes.includes('JA_MEANING') ? 'text-blue-500 shrink-0' : 'text-slate-400 shrink-0'} />
+              <span className="truncate">{t('Japanese ➔ English', '日本語 ➔ 英語')}</span>
             </button>
 
             <button
               type="button"
               onClick={() => togglePromptType('EN_TO_JA')}
-              className={`p-3 rounded-xl border-2 text-left text-xs font-bold transition-all flex items-center gap-2 ${
+              className={`p-3 rounded-xl border-2 text-left text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
                 promptTypes.includes('EN_TO_JA')
                   ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/40 text-blue-900 dark:text-blue-200 shadow-xs'
                   : 'border-slate-200 dark:border-slate-800 text-slate-400'
               }`}
             >
-              <Languages size={16} className={promptTypes.includes('EN_TO_JA') ? 'text-blue-500' : 'text-slate-400'} />
-              <span>{t('English ➔ Japanese', '英語 ➔ 日本語')}</span>
+              <Languages size={16} className={promptTypes.includes('EN_TO_JA') ? 'text-blue-500 shrink-0' : 'text-slate-400 shrink-0'} />
+              <span className="truncate">{t('English ➔ Japanese', '英語 ➔ 日本語')}</span>
             </button>
 
             <button
               type="button"
               onClick={() => togglePromptType('IMAGE_ONLY')}
-              className={`p-3 rounded-xl border-2 text-left text-xs font-bold transition-all flex items-center gap-2 ${
+              className={`p-3 rounded-xl border-2 text-left text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
                 promptTypes.includes('IMAGE_ONLY')
                   ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/40 text-blue-900 dark:text-blue-200 shadow-xs'
                   : 'border-slate-200 dark:border-slate-800 text-slate-400'
               }`}
             >
-              <ImageIcon size={16} className={promptTypes.includes('IMAGE_ONLY') ? 'text-blue-500' : 'text-slate-400'} />
-              <span>{t('Illustration ➔ English', 'イラスト ➔ 英語')}</span>
+              <ImageIcon size={16} className={promptTypes.includes('IMAGE_ONLY') ? 'text-blue-500 shrink-0' : 'text-slate-400 shrink-0'} />
+              <span className="truncate">{t('Illustration ➔ English', 'イラスト ➔ 英語')}</span>
             </button>
 
             <button
               type="button"
               onClick={() => togglePromptType('AUDIO_ONLY')}
-              className={`p-3 rounded-xl border-2 text-left text-xs font-bold transition-all flex items-center gap-2 ${
+              className={`p-3 rounded-xl border-2 text-left text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
                 promptTypes.includes('AUDIO_ONLY')
                   ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/40 text-blue-900 dark:text-blue-200 shadow-xs'
                   : 'border-slate-200 dark:border-slate-800 text-slate-400'
               }`}
             >
-              <Volume2 size={16} className={promptTypes.includes('AUDIO_ONLY') ? 'text-blue-500' : 'text-slate-400'} />
-              <span>{t('Audio Listening ➔ English', '音声 ➔ 英語')}</span>
+              <Volume2 size={16} className={promptTypes.includes('AUDIO_ONLY') ? 'text-blue-500 shrink-0' : 'text-slate-400 shrink-0'} />
+              <span className="truncate">{t('Audio Listening ➔ English', '音声 ➔ 英語')}</span>
+            </button>
+
+            {/* NEW VARIETY 5: PHONICS_MASK (Spelling / Phonics Detective) */}
+            <button
+              type="button"
+              onClick={() => togglePromptType('PHONICS_MASK')}
+              className={`p-2.5 rounded-xl border-2 text-left text-xs font-bold transition-all flex flex-col justify-between gap-1 cursor-pointer ${
+                promptTypes.includes('PHONICS_MASK')
+                  ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-900 dark:text-indigo-200 shadow-xs'
+                  : 'border-slate-200 dark:border-slate-800 text-slate-400'
+              }`}
+            >
+              <div className="flex items-center justify-between w-full gap-1">
+                <span className="truncate font-black">{t('🔤 Phonics Mask (a_ple)', '🔤 虫食いスペル (a_ple)')}</span>
+                <span className="text-[9px] font-black px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-600 dark:text-emerald-300 shrink-0">
+                  {t('⚡ Fast OK', '⚡ レース◎')}
+                </span>
+              </div>
+              <span className="text-[10px] opacity-75 truncate">
+                {t('Fill in the missing letters', '隠れた文字から正しい英単語を見抜く')}
+              </span>
+            </button>
+
+            {/* NEW VARIETY 6: CATEGORY_HUNT (Category Hunter) */}
+            <button
+              type="button"
+              onClick={() => togglePromptType('CATEGORY_HUNT')}
+              className={`p-2.5 rounded-xl border-2 text-left text-xs font-bold transition-all flex flex-col justify-between gap-1 cursor-pointer ${
+                promptTypes.includes('CATEGORY_HUNT')
+                  ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-900 dark:text-indigo-200 shadow-xs'
+                  : 'border-slate-200 dark:border-slate-800 text-slate-400'
+              }`}
+            >
+              <div className="flex items-center justify-between w-full gap-1">
+                <span className="truncate font-black">{t('🐾 Category Hunter', '🐾 なかま探し (分類)')}</span>
+                <span className="text-[9px] font-black px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-600 dark:text-emerald-300 shrink-0">
+                  {t('⚡ Fast OK', '⚡ レース◎')}
+                </span>
+              </div>
+              <span className="text-[10px] opacity-75 truncate">
+                {t('Find the word in the target category', '「動物はどれ？」などカテゴリーで選ぶ')}
+              </span>
+            </button>
+
+            {/* NEW VARIETY 7: SHORT_CLOZE (Mini Conversation / Sentence Blank) */}
+            <button
+              type="button"
+              onClick={() => togglePromptType('SHORT_CLOZE')}
+              className={`p-2.5 rounded-xl border-2 text-left text-xs font-bold transition-all flex flex-col justify-between gap-1 cursor-pointer ${
+                promptTypes.includes('SHORT_CLOZE')
+                  ? 'border-amber-500 bg-amber-50 dark:bg-amber-950/40 text-amber-900 dark:text-amber-200 shadow-xs'
+                  : 'border-slate-200 dark:border-slate-800 text-slate-400'
+              }`}
+            >
+              <div className="flex items-center justify-between w-full gap-1">
+                <span className="truncate font-black">{t('💬 Sentence Blank [ ? ]', '💬 会話・文の空欄 [ ? ]')}</span>
+                <span className="text-[9px] font-black px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-700 dark:text-amber-300 shrink-0">
+                  {t('📺 Kahoot', '📺 Kahoot推奨')}
+                </span>
+              </div>
+              <span className="text-[10px] opacity-75 truncate">
+                {t('"I like [ ? ]." textbook sentence cloze', '教科書のやりとり・例文の [ ? ] を埋める')}
+              </span>
+            </button>
+
+            {/* NEW VARIETY 8: THREE_HINTS (Progressive 3-Hint Detective) */}
+            <button
+              type="button"
+              onClick={() => togglePromptType('THREE_HINTS')}
+              className={`p-2.5 rounded-xl border-2 text-left text-xs font-bold transition-all flex flex-col justify-between gap-1 cursor-pointer ${
+                promptTypes.includes('THREE_HINTS')
+                  ? 'border-amber-500 bg-amber-50 dark:bg-amber-950/40 text-amber-900 dark:text-amber-200 shadow-xs'
+                  : 'border-slate-200 dark:border-slate-800 text-slate-400'
+              }`}
+            >
+              <div className="flex items-center justify-between w-full gap-1">
+                <span className="truncate font-black">{t('🕵️‍♂️ 3-Hint Detective', '🕵️‍♂️ 3ヒント・クイズ')}</span>
+                <span className="text-[9px] font-black px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-700 dark:text-amber-300 shrink-0">
+                  {t('📺 Kahoot', '📺 Kahoot推奨')}
+                </span>
+              </div>
+              <span className="text-[10px] opacity-75 truncate">
+                {t('Unlocks Hint 1 ➔ Hint 2 ➔ Hint 3', '時間経過でヒント1 ➔ 2 ➔ 3がオープン！')}
+              </span>
             </button>
           </div>
         </div>

@@ -8,7 +8,16 @@ export type QuizSubject = 'ENGLISH' | 'MATH';
 
 export type QuizScope = VocabularyScope | 'CUSTOM_UNITS';
 
-export type PromptType = 'JA_MEANING' | 'AUDIO_ONLY' | 'IMAGE_ONLY' | 'EN_WORD' | 'EN_TO_JA';
+export type PromptType =
+  | 'JA_MEANING'
+  | 'AUDIO_ONLY'
+  | 'IMAGE_ONLY'
+  | 'EN_WORD'
+  | 'EN_TO_JA'
+  | 'PHONICS_MASK'
+  | 'SHORT_CLOZE'
+  | 'CATEGORY_HUNT'
+  | 'THREE_HINTS';
 
 export type ChoiceImageMode = 'AUTO_CLEVER' | 'TEXT_ONLY';
 export type EnglishReadingAid = 'SPELLING_ONLY' | 'WITH_KATAKANA';
@@ -140,6 +149,7 @@ export interface QuizQuestion {
   exampleSentenceJa?: string;
   categoryNameEn?: string;
   categoryNameJa?: string;
+  threeHints?: { en: string; ja: string }[];
   isDrsReview?: boolean;
   isMath?: boolean;
   mathGrade?: MathGrade;

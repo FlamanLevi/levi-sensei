@@ -1,0 +1,16 @@
+{
+  "version": "2a1e739d0296",
+  "coreHash": "d0f9845ab235",
+  "cluesHash": "bb7a5a8cf671",
+  "wordCount": 1093,
+  "multiGradeWordCount": 335,
+  "gradeCounts": {
+    "ES_G3": 240,
+    "ES_G4": 193,
+    "ES_G5": 384,
+    "ES_G6": 621,
+    "ES_G1": 63,
+    "ES_G2": 68
+  },
+  "generatedAt": "2026-11-11T02:31:20.460Z"
+}

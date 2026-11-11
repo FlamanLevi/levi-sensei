@@ -24,7 +24,7 @@ import { VocabularyItem } from '@data/types';
 import { speechService } from '../../services/speechService';
 
 export const PictureDictionaryBrowser: React.FC = () => {
-  const { filteredWords, searchQuery, setSearchQuery } = useVocabulary();
+  const { filteredWords, searchQuery, setSearchQuery, ensureCluesLoaded, areCluesLoaded } = useVocabulary();
   const { activeGrade, exitToHub } = useClassroom();
   const { playPop, playWordAudio } = useAudio();
   const { t } = useLanguage();
@@ -40,6 +40,17 @@ export const PictureDictionaryBrowser: React.FC = () => {
   const [speakingText, setSpeakingText] = useState<string | null>(null);
 
   const searchInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    ensureCluesLoaded();
+  }, [ensureCluesLoaded]);
+
+  useEffect(() => {
+    if (selectedWord && areCluesLoaded && (!selectedWord.three_hints || !selectedWord.target_dialogues?.length)) {
+      const updated = filteredWords.find(w => w.id === selectedWord.id);
+      if (updated) setSelectedWord(updated);
+    }
+  }, [areCluesLoaded, filteredWords, selectedWord]);
 
   // Upper elementary (G5 & G6 Here We Go) learns 4-line notebook handwriting
   const isUpperGrade = activeGrade === 'ES_G5' || activeGrade === 'ES_G6';

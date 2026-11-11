@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build && node scripts/copy_assets.cjs",
+    "vocab:build": "node scripts/build_vocabulary_pipeline.cjs",
+    "vocab:check": "node scripts/build_vocabulary_pipeline.cjs --check",
+    "build": "node scripts/build_vocabulary_pipeline.cjs && tsc && vite build && node scripts/copy_assets.cjs",
     "preview": "vite preview",
     "deploy": "npm run build && firebase deploy",
     "deploy:hosting": "npm run build && firebase deploy --only hosting",

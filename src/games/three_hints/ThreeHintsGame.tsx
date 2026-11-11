@@ -35,7 +35,7 @@ interface ThreeHintsGameProps {
 }
 
 export const ThreeHintsGame: React.FC<ThreeHintsGameProps> = ({ onExit }) => {
-  const { scopedWords, filteredWords, gradeWords, allWords } = useVocabulary();
+  const { scopedWords, filteredWords, gradeWords, allWords, ensureCluesLoaded } = useVocabulary();
   const { activeGrade, activeUnit } = useClassroom();
   const { playWordAudio, speakText } = useAudio();
 
@@ -61,16 +61,16 @@ export const ThreeHintsGame: React.FC<ThreeHintsGameProps> = ({ onExit }) => {
     autoReadRef.current = autoReadClue;
   }, [autoReadClue]);
 
-  // Lazy-load the external Three-Hints bank on mount
+  // Lazy-load the external Three-Hints bank and vocabulary clues on mount
   useEffect(() => {
     let mounted = true;
-    loadThreeHintsBank().finally(() => {
+    Promise.all([loadThreeHintsBank(), ensureCluesLoaded()]).finally(() => {
       if (mounted) setBankReady(true);
     });
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [ensureCluesLoaded]);
 
   // Read clue with speech synthesis via AudioContext (respects global volume & mute)
   const readClueAloud = useCallback((clueOrText: FormattedClue | string) => {

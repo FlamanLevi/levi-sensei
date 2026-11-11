@@ -34,6 +34,109 @@ export const CUMULATIVE_GRADES_MAP: Record<GradeLevel, GradeLevel[]> = {
   'JHS_G3': ['ES_G1', 'ES_G2', 'ES_G3', 'ES_G4', 'ES_G5', 'ES_G6', 'JHS_G1', 'JHS_G2', 'JHS_G3'],
 };
 
+export interface VocabularyClueEntry {
+  three_hints?: VocabularyItem['three_hints'];
+  target_dialogues?: VocabularyItem['target_dialogues'];
+  target_sentences?: VocabularyItem['target_sentences'];
+}
+
+interface VocabularyManifest {
+  version: string;
+  coreHash: string;
+  cluesHash: string;
+  wordCount: number;
+}
+
+const VOCAB_CACHE_NAME = 'levi-sensei-vocab-v1';
+const CORE_URL = '/data/master_vocabulary.json';
+const CLUES_URL = '/data/vocabulary_clues.json';
+const MANIFEST_URL = '/data/vocabulary_manifest.json';
+const LS_CORE_HASH_KEY = 'levi_vocab_core_hash';
+const LS_CLUES_HASH_KEY = 'levi_vocab_clues_hash';
+
+let cachedCluesData: Record<string, VocabularyClueEntry> | null = null;
+let cluesFetchPromise: Promise<Record<string, VocabularyClueEntry>> | null = null;
+
+function normalizeVocabularyItem(w: VocabularyItem, clue?: VocabularyClueEntry): VocabularyItem {
+  const enTrimmed = (w.english || '').trim();
+  const alphaOnly = enTrimmed.replace(/[^a-zA-Z]/g, '');
+  const suite = w.audio_suite || {};
+  return {
+    ...w,
+    primary_audio: w.primary_audio || w.sound_file || suite.en_jenny || suite.jenny || '',
+    primary_image: w.primary_image || w.card_image || w.hwg_card_illust || w.hwg_card_full || '',
+    letter_count: w.letter_count ?? (alphaOnly.length || enTrimmed.length),
+    first_letter: w.first_letter || (alphaOnly.charAt(0) || enTrimmed.charAt(0)).toUpperCase(),
+    normalized_english: w.normalized_english || enTrimmed.toLowerCase(),
+    canonical_key: w.canonical_key || enTrimmed.toLowerCase(),
+    three_hints: clue?.three_hints || w.three_hints,
+    target_dialogues: clue?.target_dialogues || w.target_dialogues || [],
+    target_sentences: clue?.target_sentences || w.target_sentences || []
+  };
+}
+
+async function fetchJsonWithCache<T>(
+  url: string,
+  expectedHash: string | null,
+  lsHashKey: string
+): Promise<T> {
+  const canUseCache = typeof window !== 'undefined' && 'caches' in window;
+  if (canUseCache && expectedHash) {
+    try {
+      const storedHash = localStorage.getItem(lsHashKey);
+      if (storedHash === expectedHash) {
+        const cache = await window.caches.open(VOCAB_CACHE_NAME);
+        const cachedRes = await cache.match(url);
+        if (cachedRes) {
+          return (await cachedRes.json()) as T;
+        }
+      }
+    } catch {
+      // Fallback to network fetch
+    }
+  }
+
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`HTTP status ${res.status} for ${url}`);
+
+  if (canUseCache) {
+    try {
+      const cache = await window.caches.open(VOCAB_CACHE_NAME);
+      await cache.put(url, res.clone());
+      if (expectedHash) {
+        localStorage.setItem(lsHashKey, expectedHash);
+      }
+    } catch {
+      // Ignore storage quota errors
+    }
+  }
+
+  return (await res.json()) as T;
+}
+
+export async function loadVocabularyCluesMap(): Promise<Record<string, VocabularyClueEntry>> {
+  if (cachedCluesData) return cachedCluesData;
+  if (!cluesFetchPromise) {
+    cluesFetchPromise = (async () => {
+      try {
+        const expectedHash = typeof window !== 'undefined' ? localStorage.getItem(LS_CLUES_HASH_KEY) : null;
+        const data = await fetchJsonWithCache<Record<string, VocabularyClueEntry>>(
+          CLUES_URL,
+          expectedHash,
+          LS_CLUES_HASH_KEY
+        );
+        cachedCluesData = data || {};
+        return cachedCluesData;
+      } catch (err) {
+        console.warn('Failed to load vocabulary clues:', err);
+        cachedCluesData = {};
+        return cachedCluesData;
+      }
+    })();
+  }
+  return cluesFetchPromise;
+}
+
 export interface VocabularyContextType {
   allWords: VocabularyItem[];
   filteredWords: VocabularyItem[];
@@ -49,6 +152,8 @@ export interface VocabularyContextType {
   availableUnits: string[];
   totalWordsCount: number;
   isLoading: boolean;
+  areCluesLoaded: boolean;
+  ensureCluesLoaded: () => Promise<void>;
   // Word Pool Curation (Lesson Basket)
   excludedWordIds: string[];
   toggleWordExcluded: (id: string) => void;
@@ -74,26 +179,115 @@ export const VocabularyProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const { activeGrade, activeCategory, activeUnit, selectedUnits } = useClassroom();
   const [allWords, setAllWords] = useState<VocabularyItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [areCluesLoaded, setAreCluesLoaded] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [vocabularyScope, setVocabularyScope] = useState<VocabularyScope>('CURRENT');
   const [excludedWordIds, setExcludedWordIds] = useState<string[]>([]);
   const [isWordFilterModalOpen, setIsWordFilterModalOpen] = useState<boolean>(false);
 
-  useEffect(() => {
-    fetch('/data/master_vocabulary.json')
-      .then(res => {
-        if (!res.ok) throw new Error(`HTTP status ${res.status}`);
-        return res.json();
-      })
-      .then((data: VocabularyItem[]) => {
-        setAllWords(data);
-        setIsLoading(false);
-      })
-      .catch(err => {
-        console.error('Failed to load master vocabulary:', err);
-        setIsLoading(false);
-      });
+  const ensureCluesLoaded = useCallback(async () => {
+    const cluesMap = await loadVocabularyCluesMap();
+    if (Object.keys(cluesMap).length > 0) {
+      setAllWords(prev =>
+        prev.map(w => {
+          const clue = cluesMap[w.id];
+          if (!clue) return w;
+          return {
+            ...w,
+            three_hints: clue.three_hints || w.three_hints,
+            target_dialogues: clue.target_dialogues || w.target_dialogues || [],
+            target_sentences: clue.target_sentences || w.target_sentences || []
+          };
+        })
+      );
+      setAreCluesLoaded(true);
+    }
   }, []);
+
+  useEffect(() => {
+    let mounted = true;
+    const canUseCache = typeof window !== 'undefined' && 'caches' in window;
+
+    async function initVocabulary() {
+      let servedFromCache = false;
+
+      // 1. Instant Stale-While-Revalidate read from Cache Storage if available
+      if (canUseCache) {
+        try {
+          const cache = await window.caches.open(VOCAB_CACHE_NAME);
+          const cachedRes = await cache.match(CORE_URL);
+          if (cachedRes) {
+            const cachedData = (await cachedRes.json()) as VocabularyItem[];
+            if (mounted && Array.isArray(cachedData) && cachedData.length > 0) {
+              setAllWords(cachedData.map(w => normalizeVocabularyItem(w, cachedCluesData?.[w.id])));
+              setIsLoading(false);
+              servedFromCache = true;
+            }
+          }
+        } catch {
+          // Ignore cache read error
+        }
+      }
+
+      // 2. Check lightweight manifest to verify hash or fetch fresh payload
+      try {
+        let manifest: VocabularyManifest | null = null;
+        try {
+          const mRes = await fetch(MANIFEST_URL, { cache: 'no-cache' });
+          if (mRes.ok) {
+            manifest = (await mRes.json()) as VocabularyManifest;
+          }
+        } catch {
+          // Offline or manifest missing
+        }
+
+        const storedCoreHash = typeof window !== 'undefined' ? localStorage.getItem(LS_CORE_HASH_KEY) : null;
+        const needsFreshCore = !servedFromCache || (manifest?.coreHash && manifest.coreHash !== storedCoreHash);
+
+        if (manifest?.cluesHash) {
+          const storedCluesHash = localStorage.getItem(LS_CLUES_HASH_KEY);
+          if (storedCluesHash && storedCluesHash !== manifest.cluesHash) {
+            cachedCluesData = null;
+            cluesFetchPromise = null;
+          }
+        }
+
+        if (needsFreshCore) {
+          const freshData = await fetchJsonWithCache<VocabularyItem[]>(
+            CORE_URL,
+            manifest?.coreHash || null,
+            LS_CORE_HASH_KEY
+          );
+          if (mounted) {
+            setAllWords(freshData.map(w => normalizeVocabularyItem(w, cachedCluesData?.[w.id])));
+            setIsLoading(false);
+          }
+        }
+      } catch (err) {
+        if (!servedFromCache) {
+          console.error('Failed to load master vocabulary:', err);
+          if (mounted) setIsLoading(false);
+        }
+      }
+
+      // 3. Low-priority idle pre-warming of pedagogical clues after initial UI paint
+      const scheduleIdle =
+        typeof window !== 'undefined' && 'requestIdleCallback' in window
+          ? (cb: () => void) => (window as any).requestIdleCallback(cb, { timeout: 3000 })
+          : (cb: () => void) => setTimeout(cb, 1500);
+
+      scheduleIdle(() => {
+        if (mounted) {
+          ensureCluesLoaded();
+        }
+      });
+    }
+
+    initVocabulary();
+    return () => {
+      mounted = false;
+    };
+  }, [ensureCluesLoaded]);
 
   // 1. Filter by Active Grade
   const gradeWords = useMemo(() => {
@@ -316,6 +510,8 @@ export const VocabularyProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       availableUnits,
       totalWordsCount: allWords.length,
       isLoading,
+      areCluesLoaded,
+      ensureCluesLoaded,
       excludedWordIds,
       toggleWordExcluded,
       includeAllWords,

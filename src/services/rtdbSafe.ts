@@ -6,6 +6,7 @@ import {
   get,
   remove,
   onValue,
+  onDisconnect,
   runTransaction,
   DatabaseReference,
   DataSnapshot
@@ -245,6 +246,21 @@ export async function safeGet<T>(pathOrRef: string | DatabaseReference): Promise
   } catch (err: any) {
     console.error(`[rtdbSafe] safeGet error on ${targetRef.toString()}:`, err);
     throw err;
+  }
+}
+
+/**
+ * Configures an onDisconnect().update() handler with deepClean sanitization.
+ */
+export async function safeConfigureOnDisconnectUpdate(
+  pathOrRef: string | DatabaseReference,
+  disconnectPatch: Record<string, any>
+): Promise<void> {
+  try {
+    const targetRef = resolveRef(pathOrRef);
+    await onDisconnect(targetRef).update(deepClean(disconnectPatch));
+  } catch (err) {
+    console.warn('[rtdbSafe] onDisconnect configuration warning:', err);
   }
 }
 

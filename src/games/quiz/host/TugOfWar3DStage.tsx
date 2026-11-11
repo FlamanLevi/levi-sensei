@@ -244,6 +244,7 @@ export const TugOfWar3DStage: React.FC<TugOfWar3DStageProps> = ({
     const container = mountRef.current;
     if (!container) return;
 
+    let isDisposed = false;
     let width = container.clientWidth || 1024;
     let height = container.clientHeight || 600;
 
@@ -505,6 +506,7 @@ export const TugOfWar3DStage: React.FC<TugOfWar3DStageProps> = ({
       gltfLoader.loadAsync('/assets/models/mii_crowd.glb'),
       gltfLoader.loadAsync('/assets/models/mii_player.glb')
     ]).then(([stadiumGltf, crowdGltf, miiGltf]) => {
+      if (isDisposed) return;
       // A. Prepare Stadium Court & Completely Hide the "Argon Tennis" Banner
       const stadium = stadiumGltf.scene;
       const maxAniso = renderer.capabilities.getMaxAnisotropy ? renderer.capabilities.getMaxAnisotropy() : 8;
@@ -751,15 +753,20 @@ export const TugOfWar3DStage: React.FC<TugOfWar3DStageProps> = ({
 
     // 8. Animation & Render Loop
     let animationFrameId: number;
-    let clock = new THREE.Clock();
+    let lastFrameTime = performance.now();
+    const startTimeMs = lastFrameTime;
+    let lastRopeUpdateMs = 0;
+    let lastRenderedRibbonX = -999;
     let cheerEnergy = 0.25;
     let prevLead: 'red' | 'white' | 'even' = 'even';
     let prevDisp = 0;
 
     const animate = () => {
       animationFrameId = requestAnimationFrame(animate);
-      const delta = Math.min(clock.getDelta(), 0.08);
-      const elapsedTime = clock.getElapsedTime();
+      const nowMs = performance.now();
+      const delta = Math.min((nowMs - lastFrameTime) / 1000, 0.08);
+      lastFrameTime = nowMs;
+      const elapsedTime = (nowMs - startTimeMs) / 1000;
 
       const { displacement: disp, matchEnded: ended, winner: win, redPullRate: rRate = 0, whitePullRate: wRate = 0 } = stateRef.current;
 
@@ -867,10 +874,14 @@ export const TugOfWar3DStage: React.FC<TugOfWar3DStageProps> = ({
       ropeCurvePoints[13].set(wAnchorX + 0.5, 0.45, 0);
       ropeCurvePoints[14].set(wAnchorX + 1.2, 0.05, -0.1);
 
-      // Rebuild rope tube geometry smoothly
-      const dynamicRopeCurve = new THREE.CatmullRomCurve3(ropeCurvePoints);
-      ropeMesh.geometry.dispose();
-      ropeMesh.geometry = new THREE.TubeGeometry(dynamicRopeCurve, ropeSegments, 0.052, 10, false);
+      // Rebuild rope tube geometry at 20 Hz or when displacement changes to avoid 60 FPS VBO thrashing on Intel UHD 620
+      if (Math.abs(ribbonX - lastRenderedRibbonX) > 0.002 || (!ended && nowMs - lastRopeUpdateMs >= 50)) {
+        lastRenderedRibbonX = ribbonX;
+        lastRopeUpdateMs = nowMs;
+        initialCurve.points = ropeCurvePoints;
+        ropeMesh.geometry.dispose();
+        ropeMesh.geometry = new THREE.TubeGeometry(initialCurve, ropeSegments, 0.052, 10, false);
+      }
 
       // Center Ribbon Marker flutter & position
       ribbonGroup.position.set(ribbonX, 0.85 + tensionShudder, 0);
@@ -1019,9 +1030,27 @@ export const TugOfWar3DStage: React.FC<TugOfWar3DStageProps> = ({
 
     // Cleanup on unmount
     return () => {
+      isDisposed = true;
       cancelAnimationFrame(animationFrameId);
       resizeObserver.disconnect();
       emotionFX.dispose();
+
+      scene.traverse((obj) => {
+        if ((obj as THREE.Mesh).isMesh) {
+          const mesh = obj as THREE.Mesh;
+          if (mesh.geometry) mesh.geometry.dispose();
+          const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+          mats.forEach((m) => {
+            if (!m) return;
+            const stdMat = m as THREE.MeshStandardMaterial;
+            if (stdMat.map && stdMat.map !== cachedShadowTexture) {
+              stdMat.map.dispose();
+            }
+            m.dispose();
+          });
+        }
+      });
+
       if (renderer.domElement && renderer.domElement.parentNode) {
         renderer.domElement.parentNode.removeChild(renderer.domElement);
       }

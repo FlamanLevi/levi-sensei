@@ -410,330 +410,391 @@ export const QuizStudentGameOver: React.FC<QuizStudentGameOverProps> = ({
   const rankBadge = getRankBadge();
 
   return (
-    <div className="w-full max-w-md mx-auto p-4 sm:p-6 select-none flex flex-col items-center text-center animate-in zoom-in-95 duration-200">
-      {/* Celebration Header Card */}
-      <div className="w-full bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-2xl border-4 border-slate-100 dark:border-slate-800 flex flex-col items-center mb-6">
-        {/* Student Avatar + Equipped Aura + Rank Badge Ornament */}
-        <div className="relative mb-3 flex flex-col items-center">
-          <AvatarDisplay
-            avatar={player.avatar || savedProfile?.avatar || '🇯🇵'}
-            frameId={player.frame || savedProfile?.equipped?.frame}
-            sizeClassName="w-20 h-20 text-4xl"
-          />
-          <div className="absolute -bottom-2 -right-2 text-3xl filter drop-shadow animate-bounce">
-            {rankBadge.icon}
-          </div>
-        </div>
+    <div className="w-full max-w-6xl h-full min-h-0 mx-auto select-none flex flex-col justify-center animate-in zoom-in-95 duration-200">
+      <div className="w-full h-full min-h-0 grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-4 items-stretch">
+        {/* LEFT COLUMN (lg:col-span-5): Pinned Player Summary, Stats, Rewards & Actions */}
+        <div className="lg:col-span-5 bg-white dark:bg-slate-900 rounded-3xl p-4 sm:p-5 shadow-2xl border-4 border-slate-100 dark:border-slate-800 flex flex-col justify-between min-h-0 lg:overflow-y-auto text-center">
+          <div className="flex flex-col items-center">
+            {/* Compact Header Row: Avatar + Rank + Title */}
+            <div className="flex items-center justify-center gap-3.5 mb-2.5">
+              <div className="relative shrink-0">
+                <AvatarDisplay
+                  avatar={player.avatar || savedProfile?.avatar || '🇯🇵'}
+                  frameId={player.frame || savedProfile?.equipped?.frame}
+                  sizeClassName="w-16 h-16 sm:w-18 sm:h-18 text-3xl sm:text-4xl"
+                />
+                <div className="absolute -bottom-1.5 -right-1.5 text-2xl filter drop-shadow animate-bounce">
+                  {rankBadge.icon}
+                </div>
+              </div>
 
-        {/* Equipped Title Badge */}
-        {(player.title || savedProfile?.equipped?.title) && (
-          <div className="mb-2">
-            <span className="inline-block text-xs font-black px-2.5 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950/70 text-amber-900 dark:text-amber-300 border border-amber-300/60 dark:border-amber-700/60 shadow-2xs">
-              {getShopItemById(player.title || savedProfile?.equipped?.title || '')?.jaName || player.title || savedProfile?.equipped?.title}
-            </span>
-          </div>
-        )}
-
-        <span className="text-xs font-black uppercase tracking-widest text-slate-400 mb-1">
-          {isSprint 
-            ? t('GRAND PRIX FINISHED!', 'グランプリ完走！') 
-            : isTugOfWar 
-            ? t('TUG OF WAR SHOWDOWN FINISHED!', '綱引き決着！ 🪢') 
-            : isVolleyball 
-            ? /* [ANTIGRAVITY REFACTOR]: Updated Student Game Over header for Undokai Bean Bag Toss (Tamaire) */ t('BEAN BAG TOSS FINISHED!', '玉入れ合戦 終了！ 🔴⚪') 
-            : t('GAME COMPLETED!', 'ゲーム終了！')}
-        </span>
-        <h2 className={`text-3xl font-black ${rankBadge.color} tracking-tight mb-1`}>
-          {rankBadge.title}
-        </h2>
-        <p className="text-sm font-bold text-slate-600 dark:text-slate-300 mb-4">
-          {t(`Great job, ${player.nickname}!`, `おつかれさまでした、${player.nickname}！`)}
-        </p>
-
-        {/* Total Score & Rank Banner */}
-        <div className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-2xl p-3.5 mb-3 flex items-center justify-around shadow-xs">
-          <div>
-            <span className="text-[10px] font-bold text-slate-400 block mb-0.5">
-              {t('Total Score', 'トータルスコア')}
-            </span>
-            <span className="text-2xl font-black text-slate-900 dark:text-white">
-              {player.score.toLocaleString()} <span className="text-xs font-bold text-amber-500">pts</span>
-            </span>
-          </div>
-
-          <div className="h-8 w-px bg-slate-200 dark:bg-slate-700" />
-
-          <div>
-            <span className="text-[10px] font-bold text-slate-400 block mb-0.5">
-              {t('Final Rank', '最終順位')}
-            </span>
-            <span className="text-2xl font-black text-amber-500">
-              #{effectiveRank} <span className="text-xs font-bold text-slate-400">/ {totalPlayers}</span>
-            </span>
-          </div>
-        </div>
-
-        {/* Feature 2: 4-Quadrant Personal Stats Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full mb-4">
-          <div className="p-3 rounded-2xl bg-emerald-50/60 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/80 text-center shadow-2xs">
-            <span className="text-xl block mb-0.5">🎯</span>
-            <span className="text-xl font-black text-emerald-600 dark:text-emerald-400 block">
-              {accuracyPct}%
-            </span>
-            <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400">
-              {t('Accuracy', '正解率')} ({player.correctCount}/{displayTotalQ})
-            </span>
-          </div>
-
-          <div className="p-3 rounded-2xl bg-amber-50/60 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/80 text-center shadow-2xs">
-            <span className="text-xl block mb-0.5">🔥</span>
-            <span className="text-xl font-black text-amber-600 dark:text-amber-400 block">
-              {maxStreakVal}
-            </span>
-            <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400">
-              {t('Max Streak', '最高連続')}
-            </span>
-          </div>
-
-          <div className="p-3 rounded-2xl bg-blue-50/60 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800/80 text-center shadow-2xs">
-            <span className="text-xl block mb-0.5">⚡</span>
-            <span className="text-xl font-black text-blue-600 dark:text-blue-400 block">
-              {fastestSpeedVal}
-            </span>
-            <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400">
-              {t('Fastest', '最速タイム')}
-            </span>
-          </div>
-
-          <div className="p-3 rounded-2xl bg-purple-50/60 dark:bg-purple-950/30 border border-purple-200 dark:border-purple-800/80 text-center shadow-2xs">
-            <span className="text-xl block mb-0.5">⏱️</span>
-            <span className="text-xl font-black text-purple-600 dark:text-purple-400 block">
-              {avgSpeedVal}
-            </span>
-            <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400">
-              {t('Average', '平均タイム')}
-            </span>
-          </div>
-        </div>
-
-        {/* Sprint Mode Race Lap / Time Detail (if Sprint Mode) */}
-        {isSprint && (
-          <div className="w-full p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 mb-4 flex items-center justify-between text-xs">
-            <span className="font-bold text-slate-500 dark:text-slate-400">
-              {isLapRace ? t('Sprint Result', 'スプリント結果') : t('Time Trial Result', 'タイムアタック結果')}:
-            </span>
-            <span className="font-black text-slate-900 dark:text-white">
-              {isLapRace
-                ? isDnf
-                  ? (() => {
-                      const targetLaps = sprintSettings?.targetLaps3D || 1;
-                      const lapNum = is3DRace
-                        ? Math.min(targetLaps, Math.max(1, Math.floor((player.distanceMeters || 0) / 2566.6) + 1))
-                        : (player.sprintProgress || 0);
-                      const maxLaps = is3DRace ? targetLaps : totalQuestions;
-                      return t(`DNF (Lap ${lapNum}/${maxLaps})`, `完走ならず (${lapNum}/${maxLaps}周)`);
-                    })()
-                  : player.finishTimeMs ? `${(player.finishTimeMs / 1000).toFixed(1)}s (${t('Finished', 'チェッカー完走')})` : '—'
-                : `${player.correctCount} ${t('correct', '問正解')}`}
-            </span>
-          </div>
-        )}
-
-        {/* Earned Rewards Loot Card */}
-        <div className="w-full p-3.5 rounded-2xl bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/40 dark:to-orange-950/40 border border-amber-200 dark:border-amber-800/80 mb-4">
-          <span className="text-[10px] font-black uppercase tracking-widest text-amber-600 dark:text-amber-400 block mb-1">
-            {t('EARNED REWARDS 🎁', '獲得報酬 🎁')}
-          </span>
-          <div className="flex items-center justify-around">
-            <div className="flex items-center gap-1.5 font-black text-amber-600 dark:text-amber-400 text-base">
-              <span>⭐️</span>
-              <span>+{earnedXp.toLocaleString()} XP</span>
-            </div>
-            <div className="flex items-center gap-1.5 font-black text-amber-500 text-base">
-              <span>🪙</span>
-              <span>+{earnedGold} Gold</span>
-            </div>
-          </div>
-        </div>
-
-        {/* SECTION A: Already Bound Profile Success State */}
-        {savedProfile && (
-          <div className="w-full p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border-2 border-emerald-300 dark:border-emerald-800 text-center mb-4 animate-in fade-in">
-            <div className="flex items-center justify-center gap-2 text-emerald-700 dark:text-emerald-300 font-black text-xs mb-1">
-              <ShieldCheck size={16} />
-              <span>{t('Score saved to this iPad!', 'このiPadにスコアをセーブしました！')}</span>
-            </div>
-            <p className="text-xs font-bold text-slate-700 dark:text-slate-200">
-              {savedProfile.classId} #{savedProfile.attendanceNumber} • <strong>{savedProfile.nickname}</strong>
-            </p>
-            <div className="mt-2 text-[11px] text-emerald-600 dark:text-emerald-400 font-black flex items-center justify-center gap-3">
-              <span>⭐️ Lv.{savedProfile.level} ({t('Total: ', '累計 ')}{savedProfile.xp.toLocaleString()} XP)</span>
-              <span>🪙 {t('Gold: ', '所持ゴールド: ')}{savedProfile.gold}</span>
-            </div>
-          </div>
-        )}
-
-        {/* SECTION B: NOT Bound Yet - Claim Your Number & iPad Binding */}
-        {!savedProfile && recordRoster && classId && (
-          <div className="w-full p-4 rounded-3xl bg-indigo-50/80 dark:bg-indigo-950/40 border-2 border-indigo-200 dark:border-indigo-900 mb-4 text-left">
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-xl">🏷️</span>
-              <div>
-                <h3 className="text-sm font-black text-indigo-950 dark:text-indigo-200">
-                  {t('Save score to this iPad!', 'スコアをこのiPadに保存しよう！')}
-                </h3>
-                <p className="text-[11px] text-indigo-600 dark:text-indigo-400 font-bold">
-                  {t('Check the sticker (attendance number) on your iPad case and tap', 'iPadケースのシール（出席番号）を確認してタップしてね')}
+              <div className="text-left min-w-0">
+                {(player.title || savedProfile?.equipped?.title) && (
+                  <div className="mb-1">
+                    <span className="inline-block text-[10px] font-black px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950/70 text-amber-900 dark:text-amber-300 border border-amber-300/60 dark:border-amber-700/60 shadow-2xs truncate max-w-full">
+                      {getShopItemById(player.title || savedProfile?.equipped?.title || '')?.jaName || player.title || savedProfile?.equipped?.title}
+                    </span>
+                  </div>
+                )}
+                <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 block leading-tight">
+                  {isSprint 
+                    ? t('GRAND PRIX FINISHED!', 'グランプリ完走！') 
+                    : isTugOfWar 
+                    ? t('TUG OF WAR SHOWDOWN FINISHED!', '綱引き決着！ 🪢') 
+                    : isVolleyball 
+                    ? t('BEAN BAG TOSS FINISHED!', '玉入れ合戦 終了！ 🔴⚪') 
+                    : t('GAME COMPLETED!', 'ゲーム終了！')}
+                </span>
+                <h2 className={`text-xl sm:text-2xl font-black ${rankBadge.color} tracking-tight leading-tight`}>
+                  {rankBadge.title}
+                </h2>
+                <p className="text-xs font-bold text-slate-600 dark:text-slate-300 truncate">
+                  {t(`Great job, ${player.nickname}!`, `おつかれさまでした、${player.nickname}！`)}
                 </p>
               </div>
             </div>
 
-            {claimError && (
-              <div className="p-2 mb-2 rounded-xl bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300 text-xs font-bold text-center">
-                {claimError}
+            {/* Total Score & Rank Banner */}
+            <div className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-2xl p-2.5 sm:p-3 mb-2.5 flex items-center justify-around shadow-xs">
+              <div>
+                <span className="text-[10px] font-bold text-slate-400 block">
+                  {t('Total Score', 'トータルスコア')}
+                </span>
+                <span className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">
+                  {player.score.toLocaleString()} <span className="text-xs font-bold text-amber-500">pts</span>
+                </span>
+              </div>
+
+              <div className="h-7 w-px bg-slate-200 dark:bg-slate-700" />
+
+              <div>
+                <span className="text-[10px] font-bold text-slate-400 block">
+                  {t('Final Rank', '最終順位')}
+                </span>
+                <span className="text-xl sm:text-2xl font-black text-amber-500">
+                  #{effectiveRank} <span className="text-xs font-bold text-slate-400">/ {totalPlayers}</span>
+                </span>
+              </div>
+            </div>
+
+            {/* Feature 2: 4-Quadrant Personal Stats Grid */}
+            <div className="grid grid-cols-4 gap-1.5 sm:gap-2 w-full mb-2.5">
+              <div className="p-2 rounded-2xl bg-emerald-50/60 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/80 text-center shadow-2xs">
+                <span className="text-base block leading-none mb-0.5">🎯</span>
+                <span className="text-base sm:text-lg font-black text-emerald-600 dark:text-emerald-400 block leading-tight">
+                  {accuracyPct}%
+                </span>
+                <span className="text-[9px] font-bold text-slate-500 dark:text-slate-400 block leading-tight">
+                  {t('Accuracy', '正解率')} ({player.correctCount}/{displayTotalQ})
+                </span>
+              </div>
+
+              <div className="p-2 rounded-2xl bg-amber-50/60 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/80 text-center shadow-2xs">
+                <span className="text-base block leading-none mb-0.5">🔥</span>
+                <span className="text-base sm:text-lg font-black text-amber-600 dark:text-amber-400 block leading-tight">
+                  {maxStreakVal}
+                </span>
+                <span className="text-[9px] font-bold text-slate-500 dark:text-slate-400 block leading-tight">
+                  {t('Max Streak', '最高連続')}
+                </span>
+              </div>
+
+              <div className="p-2 rounded-2xl bg-blue-50/60 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800/80 text-center shadow-2xs">
+                <span className="text-base block leading-none mb-0.5">⚡</span>
+                <span className="text-base sm:text-lg font-black text-blue-600 dark:text-blue-400 block leading-tight">
+                  {fastestSpeedVal}
+                </span>
+                <span className="text-[9px] font-bold text-slate-500 dark:text-slate-400 block leading-tight">
+                  {t('Fastest', '最速タイム')}
+                </span>
+              </div>
+
+              <div className="p-2 rounded-2xl bg-purple-50/60 dark:bg-purple-950/30 border border-purple-200 dark:border-purple-800/80 text-center shadow-2xs">
+                <span className="text-base block leading-none mb-0.5">⏱️</span>
+                <span className="text-base sm:text-lg font-black text-purple-600 dark:text-purple-400 block leading-tight">
+                  {avgSpeedVal}
+                </span>
+                <span className="text-[9px] font-bold text-slate-500 dark:text-slate-400 block leading-tight">
+                  {t('Average', '平均タイム')}
+                </span>
+              </div>
+            </div>
+
+            {/* Sprint Mode Race Lap / Time Detail (if Sprint Mode) */}
+            {isSprint && (
+              <div className="w-full px-3 py-2 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 mb-2.5 flex items-center justify-between text-xs">
+                <span className="font-bold text-slate-500 dark:text-slate-400">
+                  {isLapRace ? t('Sprint Result', 'スプリント結果') : t('Time Trial Result', 'タイムアタック結果')}:
+                </span>
+                <span className="font-black text-slate-900 dark:text-white">
+                  {isLapRace
+                    ? isDnf
+                      ? (() => {
+                          const targetLaps = sprintSettings?.targetLaps3D || 1;
+                          const lapNum = is3DRace
+                            ? Math.min(targetLaps, Math.max(1, Math.floor((player.distanceMeters || 0) / 2566.6) + 1))
+                            : (player.sprintProgress || 0);
+                          const maxLaps = is3DRace ? targetLaps : totalQuestions;
+                          return t(`DNF (Lap ${lapNum}/${maxLaps})`, `完走ならず (${lapNum}/${maxLaps}周)`);
+                        })()
+                      : player.finishTimeMs ? `${(player.finishTimeMs / 1000).toFixed(1)}s (${t('Finished', 'チェッカー完走')})` : '—'
+                    : `${player.correctCount} ${t('correct', '問正解')}`}
+                </span>
               </div>
             )}
 
-            {/* Attendance numbers grid */}
-            <div className="grid grid-cols-5 gap-2 p-2 bg-white/60 dark:bg-slate-900/60 rounded-2xl border border-indigo-100 dark:border-indigo-950">
-              {Array.from({ length: Math.max(35, getClassSize(schoolId, classId)) }, (_, i) => i + 1).map(num => {
-                const isTaken = boundStudents && boundStudents[num] && boundStudents[num].playerId !== player.id;
-                const isMySelection = selectedNumber === num;
-
-                return (
-                  <button
-                    key={num}
-                    type="button"
-                    disabled={!!isTaken}
-                    onClick={() => handleSelectNumber(num)}
-                    className={`h-11 sm:h-12 rounded-xl font-black text-xs transition-all flex flex-col items-center justify-center ${
-                      isTaken
-                        ? 'bg-slate-200/80 dark:bg-slate-800/80 text-slate-400 cursor-not-allowed opacity-50'
-                        : isMySelection
-                        ? 'bg-indigo-600 text-white shadow-md scale-105 ring-2 ring-indigo-400'
-                        : 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 hover:bg-indigo-100 dark:hover:bg-indigo-900 border border-slate-200 dark:border-slate-700 shadow-2xs'
-                    }`}
-                  >
-                    <span>{num}</span>
-                    {isTaken && <span className="text-[8px] leading-none">{t('Taken', '済')}</span>}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
-        {/* 🎖️ Untappd-Style Badge Level-Up Celebration Banner */}
-        {badgeLevelUps.length > 0 && (
-          <div className="w-full mb-4 bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 rounded-3xl p-4 sm:p-5 text-slate-950 shadow-2xl border-4 border-yellow-200 animate-in fade-in slide-in-from-top-2 text-left">
-            <div className="flex items-center gap-2 justify-center mb-3">
-              <span className="text-3xl animate-bounce">🎖️</span>
-              <h3 className="text-base sm:text-lg font-black tracking-tight uppercase">
-                {t('BADGE LEVEL UP!', 'バッジがレベルアップ！')}
-              </h3>
-            </div>
-            <div className="space-y-2">
-              {badgeLevelUps.map((lvl, idx) => (
-                <div
-                  key={idx}
-                  className="p-3 bg-white/95 dark:bg-slate-900/95 rounded-2xl flex items-center justify-between gap-3 text-slate-900 dark:text-white shadow-sm border border-amber-300 dark:border-amber-700"
-                >
-                  <div className="flex items-center gap-3">
-                    <span className="text-3xl p-1.5 rounded-xl bg-amber-50 dark:bg-slate-800">
-                      {lvl.badge.emoji}
-                    </span>
-                    <div>
-                      <strong className="text-sm font-black block leading-tight">
-                        {language === 'ja' ? lvl.badge.jaTitle : lvl.badge.title}
-                      </strong>
-                      <span className="text-xs font-bold text-amber-600 dark:text-amber-400">
-                        Lv.{lvl.oldLevel} ➔ <span className="text-sm font-black text-amber-600 dark:text-yellow-400">Lv.{lvl.newLevel}</span>
-                      </span>
-                    </div>
-                  </div>
-                  <span className="px-3 py-1 rounded-xl bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-200 font-black text-xs shrink-0">
-                    +{lvl.bonusGold} Gold 🪙
+            {/* Earned Rewards + Bound Profile Status Row */}
+            <div className="w-full p-2.5 sm:p-3 rounded-2xl bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/40 dark:to-orange-950/40 border border-amber-200 dark:border-amber-800/80 mb-2.5">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-[10px] font-black uppercase tracking-widest text-amber-600 dark:text-amber-400">
+                  {t('EARNED REWARDS 🎁', '獲得報酬 🎁')}
+                </span>
+                {savedProfile && (
+                  <span className="inline-flex items-center gap-1 text-[10px] font-black text-emerald-700 dark:text-emerald-300 bg-emerald-100/90 dark:bg-emerald-950/80 px-2 py-0.5 rounded-full">
+                    <ShieldCheck size={12} />
+                    <span>{savedProfile.classId} #{savedProfile.attendanceNumber}</span>
                   </span>
+                )}
+              </div>
+              <div className="flex items-center justify-around">
+                <div className="flex items-center gap-1 font-black text-amber-600 dark:text-amber-400 text-sm sm:text-base">
+                  <span>⭐️</span>
+                  <span>+{earnedXp.toLocaleString()} XP</span>
                 </div>
-              ))}
+                <div className="flex items-center gap-1 font-black text-amber-500 text-sm sm:text-base">
+                  <span>🪙</span>
+                  <span>+{earnedGold} Gold</span>
+                </div>
+              </div>
+              {savedProfile && (
+                <div className="mt-1.5 pt-1.5 border-t border-amber-200/60 dark:border-amber-800/60 text-[10px] text-emerald-700 dark:text-emerald-300 font-black flex items-center justify-center gap-3">
+                  <span>⭐️ Lv.{savedProfile.level} ({t('Total: ', '累計 ')}{savedProfile.xp.toLocaleString()} XP)</span>
+                  <span>🪙 {t('Gold: ', '所持ゴールド: ')}{savedProfile.gold}</span>
+                </div>
+              )}
             </div>
           </div>
-        )}
 
-        {/* Feature 2: Personal Awards Highlight Showcase */}
-        {personalAwards.length > 0 && (
-          <div className="w-full mb-4 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 border-2 border-amber-300 dark:border-amber-700/60 rounded-2xl p-4 text-left shadow-sm">
-            <h3 className="text-xs font-black uppercase tracking-widest text-amber-700 dark:text-amber-300 text-center mb-2.5 flex items-center justify-center gap-1.5">
-              <span>🎖️</span>
-              <span>{t('Special Awards Won!', 'あなたが獲得した特別賞！')}</span>
-            </h3>
-            <div className="space-y-2">
-              {personalAwards.map((award: any, idx: number) => (
-                <div
-                  key={idx}
-                  className="p-3 rounded-2xl bg-white dark:bg-slate-900 border border-amber-200 dark:border-amber-800/80 shadow-2xs flex items-center gap-3 text-left"
+          {/* Action Footer (Customize, Passport, Waiting Notice & Return Button) */}
+          <div className="w-full flex flex-col gap-2">
+            {savedProfile && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIsEditProfileOpen(true)}
+                  className="w-full py-2.5 px-3 rounded-2xl font-black text-xs text-amber-950 dark:text-amber-100 bg-amber-100/90 hover:bg-amber-200 dark:bg-amber-950/70 dark:hover:bg-amber-900 border-2 border-amber-300 dark:border-amber-700 active:scale-98 shadow-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer"
                 >
-                  <span className="text-3xl shrink-0">{award.emoji}</span>
-                  <div>
-                    <strong className="text-sm font-black text-slate-900 dark:text-white block">
-                      {award.title}
-                    </strong>
-                    <p className="text-[11px] font-bold text-slate-500 dark:text-slate-400">
-                      {award.desc}
-                    </p>
-                  </div>
-                </div>
-              ))}
+                  <span className="text-base">🎨</span>
+                  <span className="truncate">{t('Customize Profile', 'アイコン・名前変更')}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    soundEffects.playTick();
+                    setIsStatsModalOpen(true);
+                  }}
+                  className="w-full py-2.5 px-3 rounded-2xl font-black text-xs text-teal-950 dark:text-teal-100 bg-teal-100/90 hover:bg-teal-200 dark:bg-teal-950/70 dark:hover:bg-teal-900 border-2 border-teal-300 dark:border-teal-700 active:scale-98 shadow-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+                >
+                  <span className="text-base">📊</span>
+                  <span className="truncate">{t('English Passport', '学習カルテ・バッジ')}</span>
+                </button>
+              </div>
+            )}
+
+            {/* Waiting for Next Round Notice + Return Button */}
+            <div className="p-2.5 rounded-2xl bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800 text-center">
+              <span className="text-[11px] font-black text-indigo-700 dark:text-indigo-300 flex items-center justify-center gap-1.5">
+                <span className="animate-pulse">⏳</span>
+                <span>{t('Keep this screen open for Round 2!', 'このまま画面をとじずに待ってね！')}</span>
+              </span>
+              <p className="text-[10px] text-indigo-600/80 dark:text-indigo-400/80 font-medium">
+                {t('When the teacher starts the next game, it will begin automatically.', '先生が次のゲームを開始すると、自動的に始まります')}
+              </p>
             </div>
+
+            <button
+              onClick={onExit}
+              className="w-full py-2 rounded-xl font-bold text-xs text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+            >
+              <ArrowLeft size={14} />
+              <span>{t('Finish & Return to Portal', 'ゲームを終えてポータルにもどる')}</span>
+            </button>
           </div>
-        )}
-
-        {/* Profile Customization Shortcut */}
-        {savedProfile && (
-          <button
-            type="button"
-            onClick={() => setIsEditProfileOpen(true)}
-            className="w-full py-3.5 px-4 rounded-2xl font-black text-sm text-amber-950 dark:text-amber-100 bg-amber-100/90 hover:bg-amber-200 dark:bg-amber-950/70 dark:hover:bg-amber-900 border-2 border-amber-300 dark:border-amber-700 active:scale-98 shadow-sm flex items-center justify-center gap-2 transition-all mt-2 cursor-pointer"
-          >
-            <span className="text-lg">🎨</span>
-            <span>{t('Customize Avatar & Nickname', 'アイコンや名前をじぶん好みに変える')}</span>
-          </button>
-        )}
-
-        {/* View My English Passport / Stats Modal Shortcut */}
-        {savedProfile && (
-          <button
-            type="button"
-            onClick={() => {
-              soundEffects.playTick();
-              setIsStatsModalOpen(true);
-            }}
-            className="w-full py-3.5 px-4 rounded-2xl font-black text-sm text-teal-950 dark:text-teal-100 bg-teal-100/90 hover:bg-teal-200 dark:bg-teal-950/70 dark:hover:bg-teal-900 border-2 border-teal-300 dark:border-teal-700 active:scale-98 shadow-sm flex items-center justify-center gap-2 transition-all mt-2 cursor-pointer"
-          >
-            <span className="text-lg">📊</span>
-            <span>{t('View My English Passport / Trophy Case', '学習カルテ・トロフィーケースを見る')}</span>
-          </button>
-        )}
-
-        {/* Waiting for Next Round Notice */}
-        <div className="p-3.5 rounded-2xl bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800 text-center mt-3">
-          <span className="text-xs font-black text-indigo-700 dark:text-indigo-300 flex items-center justify-center gap-1.5">
-            <span className="animate-pulse">⏳</span>
-            <span>{t('Keep this screen open for Round 2!', 'このまま画面をとじずに待ってね！')}</span>
-          </span>
-          <p className="text-[10px] text-indigo-600/80 dark:text-indigo-400/80 mt-0.5 font-medium">
-            {t('When the teacher starts the next game, it will begin automatically.', '先生が次のゲームを開始すると、自動的に始まります')}
-          </p>
         </div>
 
-        {/* Return Button */}
-        <button
-          onClick={onExit}
-          className="w-full py-3 rounded-2xl font-bold text-xs text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors flex items-center justify-center gap-1.5 mt-2 cursor-pointer"
-        >
-          <ArrowLeft size={14} />
-          <span>{t('Finish & Return to Portal', 'ゲームを終えてポータルにもどる')}</span>
-        </button>
+        {/* RIGHT COLUMN (lg:col-span-7): Scrollable Special Awards, Badge Level-Ups, Seat Claim & Class Standings */}
+        <div className="lg:col-span-7 bg-white dark:bg-slate-900 rounded-3xl p-4 sm:p-5 shadow-2xl border-4 border-slate-100 dark:border-slate-800 flex flex-col gap-3.5 min-h-0 lg:h-full lg:overflow-y-auto">
+          {/* SECTION B: NOT Bound Yet - Claim Your Number & iPad Binding (6-column landscape grid per GEMINI.md Rule 13) */}
+          {!savedProfile && recordRoster && classId && (
+            <div className="w-full p-3.5 rounded-2xl bg-indigo-50/80 dark:bg-indigo-950/40 border-2 border-indigo-200 dark:border-indigo-900 text-left shrink-0">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-xl">🏷️</span>
+                <div>
+                  <h3 className="text-xs sm:text-sm font-black text-indigo-950 dark:text-indigo-200">
+                    {t('Save score to this iPad!', 'スコアをこのiPadに保存しよう！')}
+                  </h3>
+                  <p className="text-[10px] sm:text-[11px] text-indigo-600 dark:text-indigo-400 font-bold">
+                    {t('Check the sticker (attendance number) on your iPad case and tap', 'iPadケースのシール（出席番号）を確認してタップしてね')}
+                  </p>
+                </div>
+              </div>
+
+              {claimError && (
+                <div className="p-2 mb-2 rounded-xl bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300 text-xs font-bold text-center">
+                  {claimError}
+                </div>
+              )}
+
+              <div className="grid grid-cols-6 gap-1.5 sm:gap-2 p-2 bg-white/60 dark:bg-slate-900/60 rounded-2xl border border-indigo-100 dark:border-indigo-950">
+                {Array.from({ length: Math.max(35, getClassSize(schoolId, classId)) }, (_, i) => i + 1).map(num => {
+                  const isTaken = boundStudents && boundStudents[num] && boundStudents[num].playerId !== player.id;
+                  const isMySelection = selectedNumber === num;
+
+                  return (
+                    <button
+                      key={num}
+                      type="button"
+                      disabled={!!isTaken}
+                      onClick={() => handleSelectNumber(num)}
+                      className={`h-10 sm:h-11 rounded-xl font-black text-xs transition-all flex flex-col items-center justify-center ${
+                        isTaken
+                          ? 'bg-slate-200/80 dark:bg-slate-800/80 text-slate-400 cursor-not-allowed opacity-50'
+                          : isMySelection
+                          ? 'bg-indigo-600 text-white shadow-md scale-105 ring-2 ring-indigo-400'
+                          : 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 hover:bg-indigo-100 dark:hover:bg-indigo-900 border border-slate-200 dark:border-slate-700 shadow-2xs'
+                      }`}
+                    >
+                      <span>{num}</span>
+                      {isTaken && <span className="text-[8px] leading-none">{t('Taken', '済')}</span>}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* 🎖️ Untappd-Style Badge Level-Up Celebration Banner (2-Column Grid) */}
+          {badgeLevelUps.length > 0 && (
+            <div className="w-full bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 rounded-2xl p-3.5 sm:p-4 text-slate-950 shadow-lg border-2 border-yellow-200 animate-in fade-in slide-in-from-top-2 text-left shrink-0">
+              <div className="flex items-center gap-2 justify-center mb-2.5">
+                <span className="text-2xl animate-bounce">🎖️</span>
+                <h3 className="text-sm sm:text-base font-black tracking-tight uppercase">
+                  {t('BADGE LEVEL UP!', 'バッジがレベルアップ！')} ({badgeLevelUps.length})
+                </h3>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {badgeLevelUps.map((lvl, idx) => (
+                  <div
+                    key={idx}
+                    className="p-2.5 bg-white/95 dark:bg-slate-900/95 rounded-xl flex items-center justify-between gap-2 text-slate-900 dark:text-white shadow-xs border border-amber-300 dark:border-amber-700"
+                  >
+                    <div className="flex items-center gap-2 min-w-0">
+                      <span className="text-2xl p-1 rounded-lg bg-amber-50 dark:bg-slate-800 shrink-0">
+                        {lvl.badge.emoji}
+                      </span>
+                      <div className="min-w-0">
+                        <strong className="text-xs font-black block leading-tight truncate">
+                          {language === 'ja' ? lvl.badge.jaTitle : lvl.badge.title}
+                        </strong>
+                        <span className="text-[11px] font-bold text-amber-600 dark:text-amber-400">
+                          Lv.{lvl.oldLevel} ➔ <span className="font-black text-amber-600 dark:text-yellow-400">Lv.{lvl.newLevel}</span>
+                        </span>
+                      </div>
+                    </div>
+                    <span className="px-2 py-0.5 rounded-lg bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-200 font-black text-[11px] shrink-0">
+                      +{lvl.bonusGold} 🪙
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Feature 2: Personal Awards Highlight Showcase (2-Column Grid) */}
+          <div className="w-full bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 border-2 border-amber-300 dark:border-amber-700/60 rounded-2xl p-3.5 sm:p-4 text-left shadow-xs shrink-0">
+            <h3 className="text-xs font-black uppercase tracking-widest text-amber-700 dark:text-amber-300 mb-2.5 flex items-center justify-between">
+              <span className="flex items-center gap-1.5">
+                <span>🎖️</span>
+                <span>{t('Special Awards Won!', 'あなたが獲得した特別賞！')}</span>
+              </span>
+              <span className="px-2 py-0.5 rounded-full bg-amber-200/80 dark:bg-amber-900/80 text-amber-900 dark:text-amber-200 text-[10px] font-black">
+                {personalAwards.length}
+              </span>
+            </h3>
+            {personalAwards.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {personalAwards.map((award: any, idx: number) => (
+                  <div
+                    key={idx}
+                    className="p-2.5 sm:p-3 rounded-xl bg-white dark:bg-slate-900 border border-amber-200 dark:border-amber-800/80 shadow-2xs flex items-center gap-2.5 text-left"
+                  >
+                    <span className="text-2xl sm:text-3xl shrink-0">{award.emoji}</span>
+                    <div className="min-w-0">
+                      <strong className="text-xs sm:text-sm font-black text-slate-900 dark:text-white block leading-tight truncate">
+                        {award.title}
+                      </strong>
+                      <p className="text-[10px] sm:text-[11px] font-bold text-slate-500 dark:text-slate-400 leading-snug line-clamp-2">
+                        {award.desc}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="p-3 rounded-xl bg-white/80 dark:bg-slate-900/80 border border-amber-200/60 dark:border-amber-800/60 text-center text-xs font-bold text-slate-500 dark:text-slate-400">
+                {t('Great effort! Keep playing to unlock special classroom awards!', 'ナイスファイト！次のラウンドで特別賞をねらおう！')}
+              </div>
+            )}
+          </div>
+
+          {/* Top 5 Class Leaderboard / Podium Summary */}
+          {sortedPlayers.length > 0 && (
+            <div className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 rounded-2xl p-3.5 text-left shrink-0">
+              <h3 className="text-xs font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-2.5 flex items-center justify-between">
+                <span className="flex items-center gap-1.5">
+                  <Trophy size={14} className="text-amber-500" />
+                  <span>{t('Top Class Standings', 'クラス上位ランキング')}</span>
+                </span>
+                <span className="text-[10px] font-bold text-slate-400">
+                  {totalPlayers} {t('students', '人参加')}
+                </span>
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {sortedPlayers.slice(0, 6).map((p, idx) => {
+                  const rankNum = idx + 1;
+                  const isMe = p.id === player.id;
+                  const medal = rankNum === 1 ? '🥇' : rankNum === 2 ? '🥈' : rankNum === 3 ? '🥉' : `#${rankNum}`;
+                  return (
+                    <div
+                      key={p.id}
+                      className={`px-3 py-2 rounded-xl border flex items-center justify-between gap-2 ${
+                        isMe
+                          ? 'bg-amber-50/90 dark:bg-amber-950/40 border-amber-400 dark:border-amber-600 ring-1 ring-amber-400/50'
+                          : 'bg-white dark:bg-slate-900 border-slate-200/80 dark:border-slate-800'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span className="text-sm font-black w-6 text-center shrink-0">{medal}</span>
+                        <AvatarDisplay
+                          avatar={p.avatar || '🇯🇵'}
+                          frameId={p.frame}
+                          sizeClassName="w-7 h-7 text-sm shrink-0"
+                        />
+                        <span className={`text-xs font-black truncate ${isMe ? 'text-amber-900 dark:text-amber-200' : 'text-slate-800 dark:text-slate-200'}`}>
+                          {p.nickname}
+                        </span>
+                      </div>
+                      <span className="text-xs font-black text-amber-600 dark:text-amber-400 shrink-0">
+                        {p.score.toLocaleString()} <span className="text-[10px] font-bold text-slate-400">pts</span>
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Profile Edit Modal */}

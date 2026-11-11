@@ -284,8 +284,10 @@ export async function claimAttendanceNumber(
     const xpToAdd = alreadyRewarded ? 0 : earnedXp;
 
     // Badges calculation
+    let updatedBadges = existing.stats?.badges || {};
     if (!alreadyRewarded) {
-      const badgeRes = applyAwardsToBadges(existing.stats?.badges || {}, awardIdsToApply);
+      const badgeRes = applyAwardsToBadges(updatedBadges, awardIdsToApply);
+      updatedBadges = badgeRes.updatedBadges;
       levelUps = badgeRes.levelUps;
       bonusGoldTotal = badgeRes.bonusGoldTotal;
     }
@@ -358,7 +360,7 @@ export async function claimAttendanceNumber(
         totalCorrectTimeMs: (existing.stats?.totalCorrectTimeMs || 0) + (!alreadyRewarded ? (additionalStats?.totalCorrectTimeMs || 0) : 0),
         podiumFinishes: podiumFinishes > 0 ? podiumFinishes : undefined,
         championshipWins: championshipWins > 0 ? championshipWins : undefined,
-        badges: existing.stats?.badges || {},
+        badges: updatedBadges,
         troubleWords: Object.keys(updatedTroubleWords).length > 0 ? updatedTroubleWords : undefined
       }
     };

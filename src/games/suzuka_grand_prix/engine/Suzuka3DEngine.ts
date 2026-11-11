@@ -43,22 +43,46 @@ export interface SuzukaSampleResult {
 
 /**
  * Lightweight BufferGeometry merger for multi-tiered instanced trees & clouds (zero extra draw calls).
+ * Computes smooth vertex normals BEFORE converting to non-indexed and optionally bakes a
+ * bottom-to-top ambient-occlusion & top-sunlight vertex color gradient for rich 3D volume.
  */
-function mergeSimpleGeometries(geos: THREE.BufferGeometry[]): THREE.BufferGeometry {
+function mergeSimpleGeometries(
+  geos: THREE.BufferGeometry[],
+  verticalAoOptions?: { minY: number; maxY: number; bottomShade: number; topBoost: number }
+): THREE.BufferGeometry {
   const positions: number[] = [];
   const normals: number[] = [];
+  const colors: number[] = [];
 
   for (const g of geos) {
+    // Compute smooth normals on the indexed mesh BEFORE un-indexing so foliage & clouds have soft shading
+    g.computeVertexNormals();
     const nonIndexed = g.index ? g.toNonIndexed() : g;
-    nonIndexed.computeVertexNormals();
     const posAttr = nonIndexed.getAttribute('position');
     const normAttr = nonIndexed.getAttribute('normal');
     for (let i = 0; i < posAttr.count; i++) {
-      positions.push(posAttr.getX(i), posAttr.getY(i), posAttr.getZ(i));
+      const px = posAttr.getX(i);
+      const py = posAttr.getY(i);
+      const pz = posAttr.getZ(i);
+      positions.push(px, py, pz);
+
+      let ny = 1;
       if (normAttr) {
-        normals.push(normAttr.getX(i), normAttr.getY(i), normAttr.getZ(i));
+        ny = normAttr.getY(i);
+        normals.push(normAttr.getX(i), ny, normAttr.getZ(i));
       } else {
         normals.push(0, 1, 0);
+      }
+
+      if (verticalAoOptions) {
+        const span = Math.max(0.1, verticalAoOptions.maxY - verticalAoOptions.minY);
+        const hNorm = Math.max(0, Math.min(1, (py - verticalAoOptions.minY) / span));
+        const hemiShade = 0.84 + 0.16 * Math.max(-1, Math.min(1, ny));
+        const vShade =
+          (verticalAoOptions.bottomShade +
+            hNorm * (verticalAoOptions.topBoost - verticalAoOptions.bottomShade)) *
+          hemiShade;
+        colors.push(vShade, vShade, vShade);
       }
     }
   }
@@ -66,6 +90,9 @@ function mergeSimpleGeometries(geos: THREE.BufferGeometry[]): THREE.BufferGeomet
   const merged = new THREE.BufferGeometry();
   merged.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
   merged.setAttribute('normal', new THREE.Float32BufferAttribute(normals, 3));
+  if (verticalAoOptions) {
+    merged.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+  }
   return merged;
 }
 
@@ -325,37 +352,98 @@ function createRunoffVergeTexture(): THREE.CanvasTexture {
   return tex;
 }
 
+function fillFittedText(
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  x: number,
+  y: number,
+  maxWidth: number,
+  initialFontPx: number,
+  fontWeight = '900'
+): void {
+  const fontFamily = '"Plus Jakarta Sans", "Noto Sans JP", sans-serif';
+  let fontPx = initialFontPx;
+  ctx.font = `${fontWeight} ${fontPx}px ${fontFamily}`;
+  while (ctx.measureText(text).width > maxWidth && fontPx > 20) {
+    fontPx -= 2;
+    ctx.font = `${fontWeight} ${fontPx}px ${fontFamily}`;
+  }
+  ctx.fillText(text, x, y, maxWidth);
+}
+
 function createBillboardTexture(title: string, sub: string, bg: string, textCol: string): THREE.CanvasTexture {
-  const key = `${title}__${sub}__${bg}__${textCol}`;
+  const key = `v2__${title}__${sub}__${bg}__${textCol}`;
   const existing = cachedBillboardTexs.get(key);
   if (existing) return existing;
 
   const canvas = document.createElement('canvas');
-  canvas.width = 512;
-  canvas.height = 128;
+  canvas.width = 1024;
+  canvas.height = 256;
   const ctx = canvas.getContext('2d');
   if (ctx) {
     ctx.fillStyle = bg;
-    ctx.fillRect(0, 0, 512, 128);
+    ctx.fillRect(0, 0, 1024, 256);
 
+    // Outer white frame + subtle inner accent border
     ctx.strokeStyle = '#ffffff';
-    ctx.lineWidth = 6;
-    ctx.strokeRect(4, 4, 504, 120);
+    ctx.lineWidth = 10;
+    ctx.strokeRect(10, 10, 1004, 236);
+
+    ctx.strokeStyle = 'rgba(255,255,255,0.22)';
+    ctx.lineWidth = 3;
+    ctx.strokeRect(24, 24, 976, 208);
 
     ctx.fillStyle = textCol;
-    ctx.font = '900 42px "Plus Jakarta Sans", sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(title, 256, sub ? 46 : 64);
+    fillFittedText(ctx, title, 512, sub ? 94 : 128, 920, 74, '900');
 
     if (sub) {
       ctx.fillStyle = '#fde047';
-      ctx.font = '800 22px "Plus Jakarta Sans", sans-serif';
-      ctx.fillText(sub, 256, 94);
+      fillFittedText(ctx, sub, 512, 184, 920, 42, '800');
     }
   }
   const tex = new THREE.CanvasTexture(canvas);
   tex.colorSpace = THREE.SRGBColorSpace;
+  tex.anisotropy = 8;
+  cachedBillboardTexs.set(key, tex);
+  return tex;
+}
+
+/**
+ * Dedicated 4:3 aspect-ratio texture for trackside 150m / 100m / 50m brake marker boards
+ * so numbers stay razor-sharp and properly proportioned at high speed.
+ */
+function createBrakeMarkerTexture(distanceLabel: string): THREE.CanvasTexture {
+  const key = `brake_v2__${distanceLabel}`;
+  const existing = cachedBillboardTexs.get(key);
+  if (existing) return existing;
+
+  const canvas = document.createElement('canvas');
+  canvas.width = 256;
+  canvas.height = 192;
+  const ctx = canvas.getContext('2d');
+  if (ctx) {
+    ctx.fillStyle = '#0f172a';
+    ctx.fillRect(0, 0, 256, 192);
+
+    // Top crimson racing header strip
+    ctx.fillStyle = '#ef4444';
+    ctx.fillRect(8, 8, 240, 38);
+
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 8;
+    ctx.strokeRect(6, 6, 244, 180);
+
+    ctx.fillStyle = '#ffffff';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    fillFittedText(ctx, 'BRAKE', 128, 28, 210, 22, '900');
+    fillFittedText(ctx, distanceLabel, 128, 118, 220, 76, '900');
+  }
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.anisotropy = 8;
   cachedBillboardTexs.set(key, tex);
   return tex;
 }
@@ -368,22 +456,26 @@ function createGrandstandSeatsTexture(): THREE.CanvasTexture {
   canvas.height = 256;
   const ctx = canvas.getContext('2d');
   if (ctx) {
+    // Clean architectural concrete tier steps + stadium seat rails (no noisy pixel dots)
     ctx.fillStyle = '#334155';
     ctx.fillRect(0, 0, 256, 256);
-    const colors = ['#ef4444', '#3b82f6', '#f59e0b', '#ffffff', '#10b981', '#ec4899', '#38bdf8'];
-    let seed = 42;
-    for (let y = 6; y < 256; y += 12) {
-      ctx.fillStyle = '#1e293b';
-      ctx.fillRect(0, y, 256, 2);
-      for (let x = 4; x < 256; x += 8) {
-        seed = (seed * 1664525 + 1013904223) >>> 0;
-        ctx.fillStyle = colors[seed % colors.length];
-        ctx.fillRect(x, y + 3, 5, 7);
-        // Cheering spectator head dot
-        if (seed % 3 !== 0) {
-          ctx.fillStyle = '#fde68a';
-          ctx.fillRect(x + 1, y + 1, 3, 3);
-        }
+
+    const rowColors = ['#1e3a8a', '#1d4ed8', '#0f172a', '#b91c1c'];
+    for (let r = 0; r < 8; r++) {
+      const y = r * 32;
+      // Concrete step riser shadow
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(0, y, 256, 6);
+      // Concrete walkway highlight
+      ctx.fillStyle = '#64748b';
+      ctx.fillRect(0, y + 6, 256, 6);
+      // Stadium seat bench backrest rail
+      ctx.fillStyle = rowColors[r % rowColors.length];
+      ctx.fillRect(0, y + 12, 256, 16);
+      // Seat dividers
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.45)';
+      for (let x = 0; x < 256; x += 16) {
+        ctx.fillRect(x, y + 12, 3, 16);
       }
     }
   }
@@ -391,7 +483,8 @@ function createGrandstandSeatsTexture(): THREE.CanvasTexture {
   tex.colorSpace = THREE.SRGBColorSpace;
   tex.wrapS = THREE.RepeatWrapping;
   tex.wrapT = THREE.RepeatWrapping;
-  tex.repeat.set(5, 3);
+  tex.repeat.set(8, 1);
+  tex.anisotropy = 8;
   cachedGrandstandSeatsTex = tex;
   return tex;
 }
@@ -450,7 +543,7 @@ function createHazardStripeTexture(): THREE.CanvasTexture {
 }
 
 /**
- * Builds a 512x512 transparent RGBA Texture Atlas (4 columns x 2 rows = 8 cells, 128x256 each)
+ * Builds a 1024x1024 Retina transparent RGBA Texture Atlas (4 columns x 2 rows = 8 cells, 256x512 each)
  * containing 8 distinct cheering Japanese elementary school student / spectator clusters
  * waving checkered flags, Uchiwa cheering fans, pom-poms, and English cheering signs.
  */
@@ -458,11 +551,12 @@ function createCheeringCrowdAtlasTexture(): THREE.CanvasTexture {
   if (cachedCheeringCrowdAtlasTex) return cachedCheeringCrowdAtlasTex;
 
   const canvas = document.createElement('canvas');
-  canvas.width = 512;
-  canvas.height = 512;
+  canvas.width = 1024;
+  canvas.height = 1024;
   const ctx = canvas.getContext('2d');
 
   if (ctx) {
+    ctx.scale(2, 2);
     ctx.clearRect(0, 0, 512, 512);
 
     const cellConfigs = [
@@ -833,13 +927,16 @@ function buildSpectatorGrandstand(
   roofMesh.rotation.z = towardTrackX * -0.09;
   standGroup.add(roofMesh);
 
-  // Fascia Banner facing the track
+  // Fascia Banner mounted cleanly atop the front canopy edge (~4.5:1 aspect ratio so text never stretches or clips)
   const fasciaTex = createBillboardTexture(bannerTitle, bannerSub, bannerBg, '#ffffff');
+  const signWidth = Math.min(lengthZ * 0.48, 17.6);
+  const signHeight = signWidth * 0.22;
+  const frontRoofEdgeY = roofH - Math.abs(roofW * 0.44) * Math.sin(0.09);
   const fasciaMesh = new THREE.Mesh(
-    new THREE.BoxGeometry(0.28, 1.35, Math.min(lengthZ * 0.72, 34)),
+    new THREE.BoxGeometry(0.32, signHeight, signWidth),
     new THREE.MeshStandardMaterial({ map: fasciaTex, color: 0xffffff, roughness: 0.35 })
   );
-  fasciaMesh.position.set(towardTrackX * (roofW * 0.46), roofH + 0.3, 0);
+  fasciaMesh.position.set(towardTrackX * (roofW * 0.44), frontRoofEdgeY + signHeight * 0.5 + 0.28, 0);
   standGroup.add(fasciaMesh);
 
   // Rooftop Pennant Flags
@@ -1343,9 +1440,9 @@ export function buildSuzuka3DTrack(): SuzukaTrackWorld {
   });
 
   const steelMat = new THREE.MeshStandardMaterial({
-    color: 0x1e293b,
-    roughness: 0.35,
-    metalness: 0.8,
+    color: 0x475569,
+    roughness: 0.42,
+    metalness: 0.32,
   });
 
   const hazardTex = createHazardStripeTexture();
@@ -1767,9 +1864,9 @@ export function buildSuzuka3DTrack(): SuzukaTrackWorld {
   };
 
   if (crowdSpritePlacements.length > 0) {
-    const billboardGeo = new THREE.PlaneGeometry(2.6, 1.65);
+    const billboardGeo = new THREE.PlaneGeometry(1.85, 2.25);
     // Shift quad upward so y = 0 sits flush on the grandstand bench tier
-    billboardGeo.translate(0, 0.825, 0);
+    billboardGeo.translate(0, 1.125, 0);
 
     const crowdMetaArray = new Float32Array(crowdSpritePlacements.length * 3);
     crowdSpritePlacements.forEach((cp, idx) => {
@@ -1878,13 +1975,13 @@ export function buildSuzuka3DTrack(): SuzukaTrackWorld {
   overhangMesh.position.set(pitTowardTrackX * 0.4, 7.6, 0);
   pitRoot.add(overhangMesh);
 
-  // Rooftop Sponsor Billboard atop Pit Building
+  // Rooftop Sponsor Billboard atop Pit Building (~4.5:1 aspect ratio matching 1024x256 canvas)
   const pitRoofTex = createBillboardTexture('TEAM GARAGE & PIT LANE', 'KEEP UP YOUR ENGLISH STREAK!', '#1e293b', '#38bdf8');
   const pitRoofSign = new THREE.Mesh(
-    new THREE.BoxGeometry(0.4, 2.2, 34),
+    new THREE.BoxGeometry(0.4, 3.6, 16.5),
     new THREE.MeshStandardMaterial({ map: pitRoofTex, color: 0xffffff, roughness: 0.35 })
   );
-  pitRoofSign.position.set(pitTowardTrackX * 2.8, 8.9, 0);
+  pitRoofSign.position.set(pitTowardTrackX * 2.8, 9.6, 0);
   pitRoot.add(pitRoofSign);
 
   const garageDoorMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.7 });
@@ -2027,7 +2124,7 @@ export function buildSuzuka3DTrack(): SuzukaTrackWorld {
       const mPos = ms.position.clone().addScaledVector(ms.right, outfieldSign * 7.4);
       if (!isClearOfAllTrack(mPos.x, mPos.z, 6.2)) continue;
 
-      const mTex = createBillboardTexture(markerLabels[m], 'BRAKE ZONE', '#0f172a', '#ffffff');
+      const mTex = createBrakeMarkerTexture(markerLabels[m]);
       const mGroup = new THREE.Group();
       mGroup.position.set(mPos.x, 0, mPos.z);
       mGroup.quaternion.copy(ms.quaternion);
@@ -2165,9 +2262,29 @@ export function buildSuzuka3DTrack(): SuzukaTrackWorld {
   mountainHorizonGroup.add(fujiGroup);
 
   // 28 Overlapping Suzuka Foothills & Mountain Peaks encircling the entire horizon
-  const mtnPeakGeo = new THREE.ConeGeometry(1, 1, 9);
+  // Built with 4 vertical height rings and a 3-zone vertex-color gradient (misty base -> forest slope -> snow/rock crest)
+  const mtnPeakGeo = new THREE.ConeGeometry(1, 1, 16, 4);
   mtnPeakGeo.translate(0, 0.5, 0);
-  const mtnColors = [0x2e5b44, 0x34674e, 0x3c6e71, 0x436185, 0x2b533c];
+  const mtnPosAttr = mtnPeakGeo.getAttribute('position');
+  const mtnColArray = new Float32Array(mtnPosAttr.count * 3);
+  const cValleyMist = new THREE.Color(0x5b8a72);
+  const cForestMid = new THREE.Color(0x2d5a40);
+  const cAlpineCrest = new THREE.Color(0xe2e8f0);
+  const cTemp = new THREE.Color();
+  for (let i = 0; i < mtnPosAttr.count; i++) {
+    const vy = Math.max(0, Math.min(1, mtnPosAttr.getY(i)));
+    if (vy < 0.68) {
+      cTemp.copy(cValleyMist).lerp(cForestMid, vy / 0.68);
+    } else {
+      cTemp.copy(cForestMid).lerp(cAlpineCrest, (vy - 0.68) / 0.32);
+    }
+    mtnColArray[i * 3 + 0] = cTemp.r;
+    mtnColArray[i * 3 + 1] = cTemp.g;
+    mtnColArray[i * 3 + 2] = cTemp.b;
+  }
+  mtnPeakGeo.setAttribute('color', new THREE.BufferAttribute(mtnColArray, 3));
+
+  const mtnColors = [0xdbeafe, 0xe2e8f0, 0xcbd5e1, 0xd1fae5, 0xe0f2fe];
   for (let m = 0; m < 28; m++) {
     const angle = (m / 28) * Math.PI * 2;
     const dist = 740 + ((m * 137) % 240);
@@ -2180,6 +2297,7 @@ export function buildSuzuka3DTrack(): SuzukaTrackWorld {
       mtnPeakGeo,
       new THREE.MeshStandardMaterial({
         color: mtnColors[m % mtnColors.length],
+        vertexColors: true,
         roughness: 0.92,
         metalness: 0.02,
       })
@@ -2459,33 +2577,70 @@ export function buildSuzuka3DTrack(): SuzukaTrackWorld {
   treeTrunkGeo.translate(0, 1.7, 0);
   const trunkMat = new THREE.MeshStandardMaterial({ color: 0x4a2e18, roughness: 0.9 });
 
-  // Multi-tiered Japanese Pine (3 stacked conical tiers merged into 1 geometry)
-  const pineTier1 = new THREE.ConeGeometry(3.2, 3.8, 7);
+  // Multi-tiered Japanese Pine (3 stacked conical tiers merged into 1 geometry with vertical AO)
+  const pineTier1 = new THREE.ConeGeometry(3.2, 3.8, 9);
   pineTier1.translate(0, 3.8, 0);
-  const pineTier2 = new THREE.ConeGeometry(2.5, 3.4, 7);
+  const pineTier2 = new THREE.ConeGeometry(2.5, 3.4, 9);
   pineTier2.translate(0, 5.8, 0);
-  const pineTier3 = new THREE.ConeGeometry(1.7, 2.8, 7);
+  const pineTier3 = new THREE.ConeGeometry(1.7, 2.8, 9);
   pineTier3.translate(0, 7.6, 0);
-  const pineCanopyGeo = mergeSimpleGeometries([pineTier1, pineTier2, pineTier3]);
-  const pineMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.84 });
+  const pineCanopyGeo = mergeSimpleGeometries([pineTier1, pineTier2, pineTier3], {
+    minY: 1.9,
+    maxY: 9.0,
+    bottomShade: 0.62,
+    topBoost: 1.08,
+  });
+  const pineMat = new THREE.MeshStandardMaterial({
+    color: 0xffffff,
+    vertexColors: true,
+    roughness: 0.84,
+  });
 
-  // Lush Japanese Cedar (2 sculpted domes merged into 1 geometry)
-  const cedarTier1 = new THREE.DodecahedronGeometry(3.2, 1);
-  cedarTier1.translate(0, 4.4, 0);
-  const cedarTier2 = new THREE.DodecahedronGeometry(2.3, 1);
-  cedarTier2.translate(0, 6.7, 0);
-  const cedarCanopyGeo = mergeSimpleGeometries([cedarTier1, cedarTier2]);
-  const cedarMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.85 });
+  // Lush Japanese Cedar (3 sculpted organic domes merged into 1 geometry with vertical AO)
+  const cedarTier1 = new THREE.IcosahedronGeometry(3.1, 2);
+  cedarTier1.scale(1.05, 0.82, 1.05);
+  cedarTier1.translate(0, 4.3, 0);
+  const cedarTier2 = new THREE.IcosahedronGeometry(2.4, 2);
+  cedarTier2.scale(1.0, 0.85, 1.0);
+  cedarTier2.translate(0.5, 6.2, 0.3);
+  const cedarTier3 = new THREE.IcosahedronGeometry(1.9, 2);
+  cedarTier3.translate(-0.4, 7.5, -0.3);
+  const cedarCanopyGeo = mergeSimpleGeometries([cedarTier1, cedarTier2, cedarTier3], {
+    minY: 2.2,
+    maxY: 9.2,
+    bottomShade: 0.64,
+    topBoost: 1.06,
+  });
+  const cedarMat = new THREE.MeshStandardMaterial({
+    color: 0xffffff,
+    vertexColors: true,
+    roughness: 0.85,
+  });
 
-  // Multi-puff Sakura Cherry Blossom Tree (3 blossom clouds merged into 1 geometry)
-  const sakPuff1 = new THREE.DodecahedronGeometry(2.9, 1);
-  sakPuff1.translate(0, 4.4, 0);
-  const sakPuff2 = new THREE.DodecahedronGeometry(2.2, 1);
-  sakPuff2.translate(1.4, 5.1, 0.6);
-  const sakPuff3 = new THREE.DodecahedronGeometry(2.1, 1);
-  sakPuff3.translate(-1.3, 4.9, -0.7);
-  const sakuraCanopyGeo = mergeSimpleGeometries([sakPuff1, sakPuff2, sakPuff3]);
-  const sakuraMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.78 });
+  // Multi-puff Sakura Cherry Blossom Tree (4 organic blossom clouds with rich petal-pink AO gradient)
+  const sakPuff1 = new THREE.IcosahedronGeometry(2.8, 2);
+  sakPuff1.scale(1.12, 0.78, 1.12);
+  sakPuff1.translate(0, 4.3, 0);
+  const sakPuff2 = new THREE.IcosahedronGeometry(2.2, 2);
+  sakPuff2.scale(1.08, 0.8, 1.08);
+  sakPuff2.translate(1.45, 5.1, 0.65);
+  const sakPuff3 = new THREE.IcosahedronGeometry(2.1, 2);
+  sakPuff3.scale(1.08, 0.8, 1.08);
+  sakPuff3.translate(-1.35, 4.9, -0.7);
+  const sakPuff4 = new THREE.IcosahedronGeometry(1.85, 2);
+  sakPuff4.scale(1.1, 0.78, 1.1);
+  sakPuff4.translate(0.1, 6.1, -0.2);
+  const sakuraCanopyGeo = mergeSimpleGeometries([sakPuff1, sakPuff2, sakPuff3, sakPuff4], {
+    minY: 2.4,
+    maxY: 7.6,
+    bottomShade: 0.66,
+    topBoost: 1.04,
+  });
+  const sakuraMat = new THREE.MeshStandardMaterial({
+    color: 0xffffff,
+    vertexColors: true,
+    roughness: 0.82,
+  });
 
   function isClearOfAllSceneryAndTrack(x: number, z: number, minTrackDist: number): boolean {
     if (!isClearOfAllTrack(x, z, minTrackDist)) return false;
@@ -2549,11 +2704,11 @@ export function buildSuzuka3DTrack(): SuzukaTrackWorld {
       const rotY = nextRng() * Math.PI * 2;
       let tint: THREE.Color;
       if (tc.type === 'sakura') {
-        tint = new THREE.Color().setHSL(0.92 + nextRng() * 0.04, 0.84, 0.74 + nextRng() * 0.12);
+        tint = new THREE.Color().setHSL(0.93 + nextRng() * 0.03, 0.88, 0.64 + nextRng() * 0.08);
       } else if (tc.type === 'cedar') {
-        tint = new THREE.Color().setHSL(0.31 + nextRng() * 0.04, 0.52, 0.24 + nextRng() * 0.09);
+        tint = new THREE.Color().setHSL(0.32 + nextRng() * 0.04, 0.58, 0.28 + nextRng() * 0.08);
       } else {
-        tint = new THREE.Color().setHSL(0.33 + nextRng() * 0.03, 0.48, 0.19 + nextRng() * 0.08);
+        tint = new THREE.Color().setHSL(0.34 + nextRng() * 0.03, 0.54, 0.23 + nextRng() * 0.08);
       }
 
       placements.push({ x: tx, z: tz, scale, rotY, type: tc.type, tint });

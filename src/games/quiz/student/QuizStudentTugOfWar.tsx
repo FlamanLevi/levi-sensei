@@ -22,7 +22,8 @@ interface QuizStudentTugOfWarProps {
     nextIndex: number,
     isFinished?: boolean,
     finishTimeMs?: number,
-    cumulativeStats?: SprintCumulativeStats
+    cumulativeStats?: SprintCumulativeStats,
+    incorrectAttempts?: number
   ) => void;
   onLeave: () => void;
 }
@@ -60,7 +61,20 @@ export const QuizStudentTugOfWar: React.FC<QuizStudentTugOfWarProps> = ({
     if (player.fastestTimeMs !== undefined && player.fastestTimeMs < localFastestTimeMs) setLocalFastestTimeMs(player.fastestTimeMs);
   }, [player]);
 
-  const [currentIndex, setCurrentIndex] = useState<number>(0);
+  const [currentIndex, setCurrentIndex] = useState<number>(() => {
+    const answeredKeys = Object.keys(player.answers || {}).length;
+    return Math.max(player.sprintProgress || 0, answeredKeys);
+  });
+
+  // Sync if authoritative player state hydrates after mount on reconnect
+  useEffect(() => {
+    const answeredKeys = Object.keys(player.answers || {}).length;
+    const authoritativeNext = Math.max(player.sprintProgress || 0, answeredKeys);
+    if (authoritativeNext > currentIndex) {
+      setCurrentIndex(authoritativeNext);
+    }
+  }, [player.sprintProgress, player.answers, currentIndex]);
+
   const currentQuestion = questions[currentIndex % Math.max(1, questions.length)];
 
   const [feedback, setFeedback] = useState<{ optionId: string; isCorrect: boolean } | null>(null);
@@ -137,6 +151,7 @@ export const QuizStudentTugOfWar: React.FC<QuizStudentTugOfWarProps> = ({
     const isCorrect = isMatchingId || isMatchingWord;
 
     if (isCorrect) {
+      const mistakesOnThisQuestion = eliminatedOptionIds.size;
       soundEffects.playCorrect();
       soundEffects.playRopeTug();
       setFeedback({ optionId, isCorrect: true });
@@ -179,12 +194,14 @@ export const QuizStudentTugOfWar: React.FC<QuizStudentTugOfWarProps> = ({
           nextIndex,
           false,
           undefined,
-          cumulative
+          cumulative,
+          mistakesOnThisQuestion
         );
         setCurrentIndex(nextIndex);
       }, 260);
     } else {
       // Slipped in the mud! Lockout penalty
+      const newMistakes = eliminatedOptionIds.size + 1;
       soundEffects.playIncorrect();
       soundEffects.playMudSlip();
       setFeedback({ optionId, isCorrect: false });
@@ -218,7 +235,8 @@ export const QuizStudentTugOfWar: React.FC<QuizStudentTugOfWarProps> = ({
         currentIndex,
         false,
         undefined,
-        cumulative
+        cumulative,
+        newMistakes
       );
 
       // Reset feedback after 400ms so button remains eliminated while mud clears

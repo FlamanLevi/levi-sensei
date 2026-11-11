@@ -11,16 +11,44 @@ function shuffle<T>(array: T[]): T[] {
   return result;
 }
 
+const GRADE_FALLBACK_ORDER: GradeLevel[] = ['G3', 'G4', 'G5', 'G6'];
+
 export function resolveWordImage(word: VocabularyItem, grade?: GradeLevel): string {
-  let imagePath = word.primary_image || '';
-  if (grade && word.media_by_grade && word.media_by_grade[grade]) {
+  let imagePath = '';
+
+  // 1. Prefer active student grade's pure illustration (without text label)
+  if (grade && word.media_by_grade?.[grade]) {
     const gm = word.media_by_grade[grade]!;
-    if (gm.card_image) {
-      imagePath = gm.card_image;
+    imagePath = gm.hwg_card_illust || gm.primary_image || gm.card_image || '';
+  }
+
+  // 2. Cross-grade fallback if active grade has no entry (GEMINI.md §1)
+  if (!imagePath && word.media_by_grade) {
+    for (const fallbackGrade of GRADE_FALLBACK_ORDER) {
+      const gm = word.media_by_grade[fallbackGrade];
+      if (gm) {
+        const candidate = gm.hwg_card_illust || gm.primary_image || gm.card_image;
+        if (candidate) {
+          imagePath = candidate;
+          break;
+        }
+      }
     }
   }
 
+  // 3. Root fallback
+  if (!imagePath) {
+    imagePath = word.primary_image || '';
+  }
+
   if (!imagePath) return '';
+
+  // 4. Normalize labeled flashcards (`*_1_ce.png` / `*_full.png`) to pure illustrations (`*_1_c.png` / `*_illust.png`)
+  // so quiz prompts never leak the English target word on the card!
+  imagePath = imagePath
+    .replace(/_1_ce\.png$/i, '_1_c.png')
+    .replace(/cards\/full\/([^/]+)_full\.png$/i, 'cards/illustration/$1_illust.png');
+
   if (imagePath.startsWith('http') || imagePath.startsWith('/')) return imagePath;
   if (imagePath.startsWith('cards/')) return `/${imagePath}`;
   return `/media/images/${imagePath}`;
@@ -100,13 +128,24 @@ export function generateQuizQuestions(
       ...shuffle(externalFallbacks)
     ];
 
-    // Deduplicate distractor candidates by English lemma to ensure 3 completely unique choices
+    const getNormalizedJa = (w: VocabularyItem): string =>
+      (w.ja_kanji || w.ja_hiragana || (w as any).japanese || '').trim().toLowerCase();
+
+    // Deduplicate distractor candidates by BOTH English lemma and Japanese meaning to ensure 3 completely unique choices
     const seenDistractorLemmas = new Set<string>([targetLower]);
+    const targetJaNorm = getNormalizedJa(target);
+    const seenDistractorJa = new Set<string>(targetJaNorm ? [targetJaNorm] : []);
+
     const distractors: VocabularyItem[] = [];
     for (const cand of distractorCandidates) {
       const candLemma = cand.english.trim().toLowerCase();
-      if (!seenDistractorLemmas.has(candLemma)) {
+      const candJa = getNormalizedJa(cand);
+      if (
+        !seenDistractorLemmas.has(candLemma) &&
+        (!candJa || !seenDistractorJa.has(candJa))
+      ) {
         seenDistractorLemmas.add(candLemma);
+        if (candJa) seenDistractorJa.add(candJa);
         distractors.push(cand);
         if (distractors.length === 3) break;
       }

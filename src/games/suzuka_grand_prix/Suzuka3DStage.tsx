@@ -1460,6 +1460,25 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
       resizeObserver.disconnect();
       domElement.removeEventListener('webglcontextlost', onContextLost);
       domElement.removeEventListener('webglcontextrestored', onContextRestored);
+
+      // Dispose all track & kart geometries and non-shared materials
+      for (const group of [trackWorld.root, kartsRootGroup]) {
+        group.traverse((obj) => {
+          if ((obj as THREE.Mesh).isMesh || (obj as THREE.Sprite).isSprite) {
+            const mesh = obj as THREE.Mesh;
+            if (mesh.geometry) mesh.geometry.dispose();
+            const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+            mats.forEach((m) => {
+              if (!m) return;
+              if ((obj as THREE.Sprite).isSprite && (m as THREE.SpriteMaterial).map) {
+                (m as THREE.SpriteMaterial).map?.dispose();
+              }
+              m.dispose();
+            });
+          }
+        });
+      }
+
       skyDome.geometry.dispose();
       skyDome.material.dispose();
       envTexture.dispose();
@@ -1506,7 +1525,7 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
       )}
 
       {/* Broadcast Director Badge (Constrained width so it never overlaps bottom-left Standings) */}
-      {mode === 'BROADCAST' && (
+      {!hideSectorBadge && mode === 'BROADCAST' && (
         <div
           ref={directorBadgeContainerRef}
           style={{ display: 'none' }}

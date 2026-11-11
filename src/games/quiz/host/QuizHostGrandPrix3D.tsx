@@ -534,6 +534,7 @@ export const QuizHostGrandPrix3D: React.FC<QuizHostGrandPrix3DProps> = ({
           activeRacerId={sortedStandings[0]?.player.id}
           racers={racers3D}
           lightsCount={lightsCount}
+          hideSectorBadge={isLobby}
           performanceProfile={performanceProfile}
           onTelemetryUpdate={setLiveTelemetry}
           className="flex-1 w-full h-full min-h-0"

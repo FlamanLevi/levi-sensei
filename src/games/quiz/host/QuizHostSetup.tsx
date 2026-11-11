@@ -1516,11 +1516,11 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({ onStart, onCancel,
                 </div>
                 <div className="grid grid-cols-5 gap-1.5">
                   {[
-                    { val: 1.0, label: '1.0s', sub: t('Fast', '短め') },
-                    { val: 1.5, label: '1.5s', sub: t('Light', '軽め') },
-                    { val: 2.0, label: '2.0s', sub: '' },
-                    { val: 2.5, label: '2.5s', sub: '⭐' },
-                    { val: 3.5, label: '3.5s', sub: t('Strict', '長め') },
+                    { val: 2.5, label: '2.5s', sub: `⭐ ${t('Std', '標準')}` },
+                    { val: 3.0, label: '3.0s', sub: '' },
+                    { val: 3.5, label: '3.5s', sub: t('Firm', 'しっかり') },
+                    { val: 4.0, label: '4.0s', sub: '' },
+                    { val: 5.0, label: '5.0s', sub: t('Strict', '厳しめ') },
                   ].map((opt) => (
                     <button
                       key={opt.val}

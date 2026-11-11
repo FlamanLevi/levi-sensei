@@ -1,4 +1,4 @@
-import { safeGet, safeSet, safeSubscribe } from './rtdbSafe';
+import { safeGet, safeSet, safeSubscribe, safeTransaction } from './rtdbSafe';
 
 export interface ClassVaultTierConfig {
   tier: number;
@@ -66,6 +66,7 @@ export interface ClassVaultState {
   unlockedTiers: number[];
   lastDepositPoints?: number;
   lastDepositAt?: number;
+  lastRoomCode?: string;
 }
 
 export function getTierForEnergy(energy: number): ClassVaultTierConfig {
@@ -150,39 +151,56 @@ export function subscribeClassVault(
 export async function depositClassEnergy(
   schoolId: string,
   classId: string,
-  pointsScored: number
+  pointsScored: number,
+  roomCode?: string
 ): Promise<{ previousTier: number; newTier: number; totalEnergy: number; didTierUp: boolean }> {
   if (pointsScored <= 0) {
     return { previousTier: 1, newTier: 1, totalEnergy: 0, didTierUp: false };
   }
 
   const path = `schools/${schoolId}/classes/${classId}/classVault`;
-  const current = await fetchClassVault(schoolId, classId);
   const energyGained = Math.max(10, Math.floor(pointsScored * 0.10));
-  const newTotalEnergy = (current.totalEnergy || 0) + energyGained;
+  let previousTier = 1;
 
-  const currentTierConfig = getTierForEnergy(current.totalEnergy || 0);
-  const newTierConfig = getTierForEnergy(newTotalEnergy);
+  const txResult = await safeTransaction<ClassVaultState>(path, (current) => {
+    const base: ClassVaultState = current || {
+      schoolId,
+      classId,
+      totalEnergy: 0,
+      tier: 1,
+      unlockedTiers: [1],
+    };
 
-  const didTierUp = newTierConfig.tier > currentTierConfig.tier;
-  const unlockedTiers = Array.from(new Set([...(current.unlockedTiers || [1]), newTierConfig.tier]));
+    // Idempotency guard: prevent double-depositing the same room session
+    if (roomCode && base.lastRoomCode === roomCode) {
+      return undefined;
+    }
 
-  const updated: ClassVaultState = {
-    schoolId,
-    classId,
-    totalEnergy: newTotalEnergy,
-    tier: newTierConfig.tier,
-    unlockedTiers,
-    lastDepositPoints: energyGained,
-    lastDepositAt: Date.now()
-  };
+    previousTier = getTierForEnergy(base.totalEnergy || 0).tier;
+    const newTotalEnergy = (base.totalEnergy || 0) + energyGained;
+    const newTierConfig = getTierForEnergy(newTotalEnergy);
+    const unlockedTiers = Array.from(
+      new Set([...(base.unlockedTiers || [1]), newTierConfig.tier])
+    );
 
-  await safeSet(path, updated);
+    return {
+      schoolId,
+      classId,
+      totalEnergy: newTotalEnergy,
+      tier: newTierConfig.tier,
+      unlockedTiers,
+      lastDepositPoints: energyGained,
+      lastDepositAt: Date.now(),
+      ...(roomCode ? { lastRoomCode: roomCode } : {}),
+    };
+  });
 
+  const finalState = txResult.data || (await fetchClassVault(schoolId, classId));
+  const newTier = finalState.tier || 1;
   return {
-    previousTier: currentTierConfig.tier,
-    newTier: newTierConfig.tier,
-    totalEnergy: newTotalEnergy,
-    didTierUp
+    previousTier,
+    newTier,
+    totalEnergy: finalState.totalEnergy || 0,
+    didTierUp: txResult.committed && newTier > previousTier,
   };
 }

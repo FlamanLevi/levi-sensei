@@ -167,6 +167,17 @@ function generateFallbackDistractor(correctAnswer: string, seed: number, grade: 
     return formatDecimal(newVal);
   }
 
+  // 6b. Comma-formatted integers: "4,500", "200,000,000"
+  if (/^\d{1,3}(,\d{3})+$/.test(correctAnswer)) {
+    const rawNum = Number(correctAnswer.replace(/,/g, ''));
+    if (!isNaN(rawNum) && rawNum > 0) {
+      const magnitude = Math.pow(10, Math.max(2, Math.floor(Math.log10(rawNum)) - 1));
+      const sign = seed % 2 === 1 ? 1 : -1;
+      const candidate = Math.max(100, rawNum + sign * Math.ceil(seed / 2) * magnitude);
+      return candidate.toLocaleString();
+    }
+  }
+
   // 7. Pure integer without units: "8", "42"
   const numCorrect = Number(correctAnswer);
   if (!isNaN(numCorrect) && Number.isInteger(numCorrect)) {
@@ -866,11 +877,13 @@ export const Grade4Generators = {
       });
     } else if (mode === 'SUB_DIV') {
       const b = randInt(2, 6);
-      const c = randInt(2, 7);
-      const a = randInt(b + 5, 30);
+      const c = randInt(2, 6);
       const dividend = b * c;
+      // Ensure a > dividend so left-to-right trap (a - dividend) / c is a positive integer
+      const k = randInt(1, 4);
+      const a = dividend + k * c;
       const ans = a - b;
-      const leftToRightTrap = Math.floor((a - dividend) / c);
+      const leftToRightTrap = k; // (a - dividend) / c
       return buildMathQuestion({
         id: `g4_order_div_${seed}`,
         grade: 'G4',
@@ -878,7 +891,7 @@ export const Grade4Generators = {
         promptText: `${a} - ${dividend} ÷ ${c} = ?`,
         promptSubtext: '計算の順序に気をつけよう',
         correctAnswer: String(ans),
-        distractors: [String(leftToRightTrap), String(ans - 2), String(ans + 2), String(a + b)],
+        distractors: [String(leftToRightTrap), String(Math.max(1, ans - 2)), String(ans + 2), String(a + b)],
         explanationJa: `わり算を先に計算: ${dividend} ÷ ${c} = ${b}。次に ${a} - ${b} = ${ans}`
       });
     } else {

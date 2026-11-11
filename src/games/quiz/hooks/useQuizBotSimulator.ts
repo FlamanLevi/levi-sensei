@@ -296,7 +296,7 @@ export function useQuizBotSimulator({
     const isTug = room.status === 'TUG_OF_WAR';
     const isVolleyball = room.status === 'VOLLEYBALL';
     const is3DRace = room.status === 'GRAND_PRIX_3D' || room.gamePlayType === 'GRAND_PRIX_3D';
-    const raceStartTime = (isTug ? room.tugOfWarStartTime : isVolleyball ? room.volleyballStartTime : room.raceStartTime) || Date.now();
+    const raceStartTime = (isTug ? room.tugOfWarStartTime : isVolleyball ? room.volleyballStartTime : room.raceStartTime) || getServerTime();
     const greenFlagTime = raceStartTime + (isTug || isVolleyball ? 1500 : is3DRace ? 2400 : 3600);
     const sprintSettings = room.sprintSettings;
     const isTimeTrial = sprintSettings?.sprintMode === 'TIME_TRIAL' || isTug || isVolleyball;
@@ -311,7 +311,7 @@ export function useQuizBotSimulator({
     const bots = Object.values(players).filter(p => p.id.startsWith('bot_'));
     if (bots.length === 0) return;
 
-    const now = Date.now();
+    const now = getServerTime();
     const delayUntilGreen = Math.max(0, greenFlagTime - now);
 
     const sampleBotIntervalMs = (botDiff: BotDifficulty) => {
@@ -338,7 +338,7 @@ export function useQuizBotSimulator({
           isFinished: !!bot.isFinished,
           speedKmh: bot.speedKmh || 0,
           distanceMeters: bot.distanceMeters || 0,
-          lastTickMs: Date.now(),
+          lastTickMs: getServerTime(),
           // [ANTIGRAVITY REFACTOR]: Per-bot next answer timestamp inside the shared 5 Hz loop
           nextAnswerDueAtMs: greenFlagTime + sampleBotIntervalMs(botDiff)
         } as BotSprintState & { nextAnswerDueAtMs: number });
@@ -364,14 +364,14 @@ export function useQuizBotSimulator({
 
         if (isTug || isVolleyball) {
           const timeLimitSec = (isTug ? freshRoom.tugOfWarSettings?.timeLimitSeconds : freshRoom.volleyballSettings?.timeLimitSeconds) || 60;
-          const isTimeExpired = (Date.now() - greenFlagTime) >= (timeLimitSec * 1000);
+          const isTimeExpired = (getServerTime() - greenFlagTime) >= (timeLimitSec * 1000);
           if (freshRoom.tugOfWarFinished || freshRoom.volleyballFinished || isTimeExpired) {
             clearInterval(singleHostLoop);
             return;
           }
         }
 
-        const nowMs = Date.now();
+        const nowMs = getServerTime();
         const batchedSpokeUpdates: Record<string, Partial<QuizPlayer>> = {};
         let hasDirtyBots = false;
         let allBotsFinished = true;

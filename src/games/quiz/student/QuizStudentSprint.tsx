@@ -23,7 +23,8 @@ interface QuizStudentSprintProps {
     nextIndex: number,
     isFinished?: boolean,
     finishTimeMs?: number,
-    cumulativeStats?: SprintCumulativeStats
+    cumulativeStats?: SprintCumulativeStats,
+    incorrectAttempts?: number
   ) => void;
   onLeave: () => void;
 }
@@ -115,18 +116,18 @@ export const QuizStudentSprint: React.FC<QuizStudentSprintProps> = ({
   const hasSubmittedFinalRef = useRef<boolean>(false);
   const hasResetQuestionZeroRef = useRef<boolean>(false);
 
-  // High frequency render clock synchronized with server time for smooth stopwatch & progress
+  // Render clock synchronized with server time (10Hz during start lights, 4Hz during active race to prevent iPad touch jitter)
   const [nowTime, setNowTime] = useState<number>(() => getServerTime());
-  useEffect(() => {
-    const timer = setInterval(() => setNowTime(getServerTime()), 50);
-    return () => clearInterval(timer);
-  }, []);
-
-  // F1 start lights derived directly from elapsed server time
   const elapsedSinceStart = Math.max(0, nowTime - raceStartTime);
   const lightsCount = elapsedSinceStart >= 3600 ? 6 : Math.max(0, Math.floor(elapsedSinceStart / 600));
   const raceActive = elapsedSinceStart >= 3600;
   const showStartLights = elapsedSinceStart < 4800;
+
+  useEffect(() => {
+    const tickIntervalMs = showStartLights ? 100 : 250;
+    const timer = setInterval(() => setNowTime(getServerTime()), tickIntervalMs);
+    return () => clearInterval(timer);
+  }, [showStartLights]);
 
   // Crucial: When starting lights extinguish and race goes active (greenFlagTime),
   // reset questionStartTimeRef for Question 0 so the 3.6s starting countdown doesn't consume the speed bonus!
@@ -241,6 +242,7 @@ export const QuizStudentSprint: React.FC<QuizStudentSprintProps> = ({
     const isCorrect = isMatchingId || isMatchingWord;
 
     if (isCorrect) {
+      const mistakesOnThisQuestion = questionMistakesRef.current;
       soundEffects.playCorrect();
       setFeedback({ optionId, isCorrect: true });
 
@@ -300,7 +302,8 @@ export const QuizStudentSprint: React.FC<QuizStudentSprintProps> = ({
           nextIndex,
           isFinished,
           finishTimeMs,
-          cumulative
+          cumulative,
+          mistakesOnThisQuestion
         );
 
         if (!isFinished) {
@@ -351,7 +354,8 @@ export const QuizStudentSprint: React.FC<QuizStudentSprintProps> = ({
         currentIndex,
         false,
         undefined,
-        cumulative
+        cumulative,
+        newMistakes
       );
     }
   };

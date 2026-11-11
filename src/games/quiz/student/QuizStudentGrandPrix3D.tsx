@@ -120,7 +120,9 @@ export const QuizStudentGrandPrix3D: React.FC<QuizStudentGrandPrix3DProps> = ({
     return () => clearInterval(interval);
   }, [localIsFinished, victoryCamSelection, AUTO_CYCLE_MODES]);
 
-  const activeCameraMode: CameraViewMode = !localIsFinished
+  const activeCameraMode: CameraViewMode = isLobby
+    ? 'ORBIT'
+    : !localIsFinished
     ? 'COCKPIT'
     : victoryCamSelection === 'AUTO'
     ? AUTO_CYCLE_MODES[autoCamIndex]
@@ -306,10 +308,16 @@ export const QuizStudentGrandPrix3D: React.FC<QuizStudentGrandPrix3DProps> = ({
 
   // Compile all racers (this student + all classmates/bots in room) for the 3D Cockpit stage
   const allRacers3D: RacerState[] = useMemo(() => {
-    const list = Object.values(allPlayers);
+    const mergedMap: Record<string, QuizPlayer> = {
+      ...allPlayers,
+      [player.id]: { ...(allPlayers[player.id] || player), ...player },
+    };
+    const list = Object.values(mergedMap);
     return list.map((p, idx) => {
       const isMe = p.id === player.id;
-      const themeId = p.kartTheme || (isMe ? (player.kartTheme || getSavedKartTheme()) : undefined);
+      const themeId = isMe
+        ? (player.kartTheme || p.kartTheme || getSavedKartTheme())
+        : p.kartTheme;
       const theme = getKartTheme(themeId);
 
       const colorHex = p.teamId && TEAM_HEX_MAP[p.teamId]
@@ -345,7 +353,7 @@ export const QuizStudentGrandPrix3D: React.FC<QuizStudentGrandPrix3DProps> = ({
         authoritativeDistanceMeters: isMe ? undefined : p.distanceMeters,
       };
     });
-  }, [allPlayers, player.id, localStreak, studentSpeed, localIsFinished, studentInPitStop, studentBoosting]);
+  }, [allPlayers, player, localStreak, studentSpeed, localIsFinished, studentInPitStop, studentBoosting]);
 
   const handleTelemetryUpdate = (telemetry: RacerTelemetry[]) => {
     setLiveTelemetry(telemetry);
@@ -361,10 +369,14 @@ export const QuizStudentGrandPrix3D: React.FC<QuizStudentGrandPrix3DProps> = ({
 
       // Check Lap Race finish condition when crossing finish line after targetLaps
       const targetDist = targetLaps * SUZUKA_CIRCUIT_LENGTH_METERS;
-      const isLapFinished = myTelem.progress >= targetLaps || myTelem.distanceMeters >= (targetDist - 2.0);
+      const isLapFinished = myTelem.progress >= targetLaps || myTelem.distanceMeters >= targetDist;
       if (!isTimeTrial && isLapFinished && !hasSubmittedFinishRef.current) {
         hasSubmittedFinishRef.current = true;
-        const finMs = Math.max(1000, getServerTime() - greenFlagTime);
+        // Sub-frame photo-finish interpolation: subtract time spent traveling past targetDist
+        const overshootMeters = Math.max(0, myTelem.distanceMeters - targetDist);
+        const speedMs = Math.max(2.0, (myTelem.speedKmh || studentSpeed || 80) / 3.6);
+        const overshootMs = Math.min(600, Math.round((overshootMeters / speedMs) * 1000));
+        const finMs = Math.max(1000, getServerTime() - overshootMs - greenFlagTime);
         setLocalIsFinished(true);
         setLocalFinishTimeMs(finMs);
         soundEffects.playCheckeredFlag();

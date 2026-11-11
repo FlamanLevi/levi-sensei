@@ -570,42 +570,65 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
     }
 
     const troubleIds = new Set(troubleEntries.map(([id]) => id));
+    const isContinuousArcade =
+      settings.gamePlayType === 'GRAND_PRIX_3D' ||
+      settings.gamePlayType === 'SPRINT_RACE' ||
+      settings.gamePlayType === 'TUG_OF_WAR' ||
+      settings.gamePlayType === 'VOLLEYBALL';
 
-    // Handle Math Mode Rematch
+    // Handle Math Mode Rematch: generate fresh procedural numbers for the missed topics!
     if (settings.subject === 'MATH') {
       const troubleMathQuestions = questions.filter(q => troubleIds.has(q.targetWordId));
       if (troubleMathQuestions.length > 0) {
-        const rematchSettings: QuizHostSettings = {
-          ...settings,
-          questionCount: troubleMathQuestions.length
-        };
-        const timed = troubleMathQuestions.map((q, idx) => ({
-          ...q,
-          questionIndex: idx,
-          totalQuestions: troubleMathQuestions.length,
-          startTime: idx === 0 ? getServerTime() : 0
-        }));
-        setQuestions(timed);
-        setLocalQuestionIndex(0);
-        nextTrack();
-        if (settings.deliveryStream === 'STREAM_B_MULTIPLAYER' && roomCode) {
-          const success = await resetRoomForNewRound(timed, true, rematchSettings);
-          if (success) {
-            setStep('LOBBY');
-          } else {
-            alert('リマッチの初期化に失敗しました。');
+        const targetCount = isContinuousArcade
+          ? 40
+          : Math.max(5, troubleMathQuestions.length);
+        const rematchQuestions: QuizQuestion[] = [];
+        for (let i = 0; i < targetCount; i++) {
+          const sourceQ = troubleMathQuestions[i % troubleMathQuestions.length];
+          const freshBatch = generateMathQuestions({
+            grade: (sourceQ.mathGrade as MathGrade) || (settings.mathGrade as MathGrade) || 'G3',
+            domain: (sourceQ.mathDomain as MathDomain) || 'ALL',
+            topicId: sourceQ.mathTopicId,
+            questionCount: 1,
+            timeLimitMs: (settings.timeLimitSeconds || 15) * 1000,
+          });
+          if (freshBatch[0]) {
+            rematchQuestions.push({
+              ...freshBatch[0],
+              questionIndex: i,
+              totalQuestions: targetCount,
+              startTime: i === 0 ? getServerTime() : 0,
+            });
           }
-        } else {
-          isSoloRevealingRef.current = false;
-          soloSelectionRef.current = null;
-          setSoloPlayer(createInitialSoloPlayer());
-          setSoloSelectedOptionId(null);
-          setSoloSelectedTimeTakenMs(null);
-          setSoloResponses({});
-          setSoloTroubleWords({});
-          setStep('QUESTION');
         }
-        return;
+        if (rematchQuestions.length > 0) {
+          const rematchSettings: QuizHostSettings = {
+            ...settings,
+            questionCount: rematchQuestions.length
+          };
+          setQuestions(rematchQuestions);
+          setLocalQuestionIndex(0);
+          nextTrack();
+          if (settings.deliveryStream === 'STREAM_B_MULTIPLAYER' && roomCode) {
+            const success = await resetRoomForNewRound(rematchQuestions, true, rematchSettings);
+            if (success) {
+              setStep('LOBBY');
+            } else {
+              alert('リマッチの初期化に失敗しました。');
+            }
+          } else {
+            isSoloRevealingRef.current = false;
+            soloSelectionRef.current = null;
+            setSoloPlayer(createInitialSoloPlayer());
+            setSoloSelectedOptionId(null);
+            setSoloSelectedTimeTakenMs(null);
+            setSoloResponses({});
+            setSoloTroubleWords({});
+            setStep('QUESTION');
+          }
+          return;
+        }
       }
     }
 
@@ -620,9 +643,13 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
       troublePool = [...troublePool, ...missing];
     }
 
+    const rematchQuestionCount = isContinuousArcade
+      ? Math.max(30, troublePool.length * 5)
+      : Math.max(5, troublePool.length);
+
     const rematchSettings: QuizHostSettings = {
       ...settings,
-      questionCount: troublePool.length
+      questionCount: rematchQuestionCount
     };
 
     const generated = generateQuizQuestions(
@@ -710,7 +737,7 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
 
   return (
     <div className={`w-full flex-1 flex flex-col items-center relative ${
-      step === 'QUESTION' || step === 'REVEAL' || step === 'LEADERBOARD' || step === 'SPRINT_RACE' || step === 'GRAND_PRIX_3D'
+      step === 'LOBBY' || step === 'QUESTION' || step === 'REVEAL' || step === 'LEADERBOARD' || step === 'SPRINT_RACE' || step === 'GRAND_PRIX_3D'
         ? 'h-[calc(100dvh-3.75rem)] max-h-[calc(100dvh-3.75rem)] justify-between p-0 overflow-hidden'
         : 'justify-start py-2 sm:py-4'
     }`}>
@@ -747,7 +774,7 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
         )}
 
       {step === 'LOBBY' && roomCode && (
-        <div className="relative z-20 w-full flex-1 flex flex-col items-center">
+        <div className="relative z-20 w-full h-full min-h-0 flex-1 flex flex-col items-center overflow-hidden">
           <QuizHostLobby
             roomCode={roomCode}
             grade={activeGrade}
@@ -933,8 +960,8 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
         />
       )}
 
-      {/* Floating Attention Lock / "Eyes Up Front" Pill for Classroom Host (hidden in Sprint, 3D Grand Prix, Tug of War & Volleyball where it is in the header) */}
-      {roomCode && step !== 'SETUP' && step !== 'SPRINT_RACE' && step !== 'GRAND_PRIX_3D' && step !== 'TUG_OF_WAR' && step !== 'VOLLEYBALL' && (
+      {/* Floating Attention Lock / "Eyes Up Front" Pill for Classroom Host (hidden in Lobby, Sprint, 3D Grand Prix, Tug of War & Volleyball where it is in the header) */}
+      {roomCode && step !== 'SETUP' && step !== 'LOBBY' && step !== 'SPRINT_RACE' && step !== 'GRAND_PRIX_3D' && step !== 'TUG_OF_WAR' && step !== 'VOLLEYBALL' && (
         <button
           type="button"
           onClick={() => toggleEyesUp()}

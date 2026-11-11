@@ -97,6 +97,26 @@ export const QuizHostVolleyball: React.FC<QuizHostVolleyballProps> = ({
   const redPlayers = useMemo(() => playerList.filter((p) => p.teamId === 'team_red'), [playerList]);
   const whitePlayers = useMemo(() => playerList.filter((p) => p.teamId === 'team_white'), [playerList]);
 
+  const rosterSignature = useMemo(
+    () =>
+      playerList
+        .map((p) => `${p.id}:${p.nickname || 'Student'}:${p.teamId === 'team_white' ? 'white' : 'red'}`)
+        .sort()
+        .join('|'),
+    [playerList]
+  );
+
+  const memoizedStudentRoster = useMemo(
+    () =>
+      playerList.map((p) => ({
+        id: p.id,
+        nickname: p.nickname || 'Student',
+        team: (p.teamId === 'team_white' ? 'white' : 'red') as 'red' | 'white',
+      })),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [rosterSignature]
+  );
+
   // Bean Bag Toss Event Dispatcher (detects +1 normal throws and +2 golden streak throws)
   const [answerEvents, setAnswerEvents] = useState<VolleyballAnswerEvent[]>([]);
   const prevPlayerStatsRef = useRef<Record<string, number>>({});
@@ -105,10 +125,40 @@ export const QuizHostVolleyball: React.FC<QuizHostVolleyballProps> = ({
 
   const [liveRally, setLiveRally] = useState<number>(0);
   const [highestRally, setHighestRally] = useState<number>(0);
-  const [redScore, setRedScore] = useState<number>(0);
-  const [whiteScore, setWhiteScore] = useState<number>(0);
+  const [manualBonusRed, setManualBonusRed] = useState<number>(0);
+  const [manualBonusWhite, setManualBonusWhite] = useState<number>(0);
   const [matchEnded, setMatchEnded] = useState<boolean>(false);
   const [winner, setWinner] = useState<'team_red' | 'team_white' | 'draw' | null>(null);
+
+  // Authoritative team bean-bag counts derived from all connected students' correctCount + manual teacher bonuses
+  const redScore = useMemo(
+    () => redPlayers.reduce((sum, p) => sum + (p.correctCount || 0), 0) + manualBonusRed,
+    [redPlayers, manualBonusRed]
+  );
+  const whiteScore = useMemo(
+    () => whitePlayers.reduce((sum, p) => sum + (p.correctCount || 0), 0) + manualBonusWhite,
+    [whitePlayers, manualBonusWhite]
+  );
+
+  // Broadcast live team bag totals at <= 5 Hz so student iPads have synchronized scores for Tama-kazoe
+  useEffect(() => {
+    if (!roomCode) return;
+    const timer = setTimeout(() => {
+      safeUpdate(`rooms/${roomCode}/volleyballLiveState`, {
+        phase: matchEnded ? 'BALL_DROPPED' : 'SERVE',
+        activeTeam: 'all',
+        servingTeam: 'team_red',
+        currentRally: redScore + whiteScore,
+        highestRally: redScore + whiteScore,
+        redScore,
+        whiteScore,
+        phaseStartTime: matchStartTime,
+        phaseDurationMs: timeLimitSeconds * 1000,
+        updatedAt: getServerTime(),
+      }).catch(() => {});
+    }, matchEnded ? 0 : 200);
+    return () => clearTimeout(timer);
+  }, [roomCode, redScore, whiteScore, matchEnded, matchStartTime, timeLimitSeconds]);
 
   useEffect(() => {
     if (initialMountRef.current) {
@@ -149,6 +199,9 @@ export const QuizHostVolleyball: React.FC<QuizHostVolleyballProps> = ({
   }, [players]);
 
   const triggerManualToss = (team: 'red' | 'white' = 'red', isGoldenDouble = false) => {
+    const delta = isGoldenDouble ? 2 : 1;
+    if (team === 'red') setManualBonusRed((s) => s + delta);
+    else setManualBonusWhite((s) => s + delta);
     setAnswerEvents([
       {
         id: eventCounterRef.current++,
@@ -170,9 +223,9 @@ export const QuizHostVolleyball: React.FC<QuizHostVolleyballProps> = ({
 
   const handlePointScored = (scoringTeam: 'red' | 'white') => {
     if (scoringTeam === 'red') {
-      setRedScore((s) => s + 1);
+      setManualBonusRed((s) => s + 1);
     } else {
-      setWhiteScore((s) => s + 1);
+      setManualBonusWhite((s) => s + 1);
     }
   };
 
@@ -439,11 +492,7 @@ export const QuizHostVolleyball: React.FC<QuizHostVolleyballProps> = ({
           whiteScore={whiteScore}
           redPlayersCount={Math.max(1, redPlayers.length)}
           whitePlayersCount={Math.max(1, whitePlayers.length)}
-          studentRoster={playerList.map((p) => ({
-            id: p.id,
-            nickname: p.nickname || 'Student',
-            team: p.teamId === 'team_white' ? 'white' : 'red',
-          }))}
+          studentRoster={memoizedStudentRoster}
           matchEnded={matchEnded}
           gameStyle={gameStyle}
           winner={winner}

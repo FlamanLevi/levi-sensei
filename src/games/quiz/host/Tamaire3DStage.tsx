@@ -37,7 +37,7 @@
  * ============================================================================
  */
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { TeamId } from '../types';
@@ -47,6 +47,7 @@ import {
   TamaireSuspenseFrame,
 } from '../core/quizEngine';
 import { detectClassroomGpuProfile } from '@/utils/classroom3d';
+import { soundEffects } from '@/services/soundEffects';
 
 export interface VolleyballPhaseChangeEvent {
   phase: string;
@@ -1813,6 +1814,7 @@ function playTamaireCeremonySound(
   pitchSemitones = 0,
   isSlowdown = false
 ) {
+  if (soundEffects.isMuted()) return;
   const ctx = getCeremonyAudioContext();
   if (!ctx) return;
   try {
@@ -2101,12 +2103,17 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
     focusPlayer
   ]);
 
-  // Dynamically rebuild the 3D student avatars whenever the joined student roster, team counts, or focusPlayer change!
+  // Dynamically rebuild the 3D student avatars only when structural roster identity, team counts, or focusPlayer change!
+  const rosterKey = useMemo(
+    () => (studentRoster || []).map((s) => `${s.id}:${s.nickname}:${s.team}`).join('|'),
+    [studentRoster]
+  );
+
   useEffect(() => {
     if (rebuildRosterRef.current) {
       rebuildRosterRef.current();
     }
-  }, [studentRoster, redPlayersCount, whitePlayersCount, cameraMode, focusPlayer?.id, focusPlayer?.team]);
+  }, [rosterKey, redPlayersCount, whitePlayersCount, cameraMode, focusPlayer?.id, focusPlayer?.team]);
 
   // Post-Whistle Multi-Stage Suspenseful Counting Ceremony ("ひとーつ！ふたーつ！... 同点ドラムロール ... 決着！")
   // Snapshot scores at the moment matchEnded becomes true so the ceremony never resets mid-count!
@@ -2604,10 +2611,40 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
       'Ayaka 🌻', 'Shun 🎯', 'Nana 🍀', 'Takumi 🛡️', 'Chihiro 🐚'
     ];
 
+    const sharedMaterials = new Set<THREE.Material>([redBagMat, whiteBagMat, goldBagMat]);
+    const sharedTextures = new Set<THREE.Texture | null>([
+      shadowTex,
+      redBagTex,
+      whiteBagTex,
+      goldBagTex,
+    ]);
+
+    const disposeAvatarTree = (obj: THREE.Object3D) => {
+      const faceTexSet = new Set<THREE.Texture>(Object.values(cachedFaceTextures));
+      obj.traverse((child) => {
+        const mesh = child as THREE.Mesh;
+        if (mesh.geometry) {
+          mesh.geometry.dispose();
+        }
+        if (mesh.material) {
+          const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+          mats.forEach((m: any) => {
+            if (!m || sharedMaterials.has(m)) return;
+            if (m.map && !sharedTextures.has(m.map) && !faceTexSet.has(m.map)) {
+              m.map.dispose();
+            }
+            m.dispose();
+          });
+        }
+      });
+    };
+
     const rebuildThrowerAvatars = () => {
-      // Clear previous avatars cleanly
+      // Clear previous avatars and release their GPU textures/geometries cleanly
       while (throwersGroup.children.length > 0) {
-        throwersGroup.remove(throwersGroup.children[0]);
+        const child = throwersGroup.children[0];
+        throwersGroup.remove(child);
+        disposeAvatarTree(child);
       }
       throwers = [];
 

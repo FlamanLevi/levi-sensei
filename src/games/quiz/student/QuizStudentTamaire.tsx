@@ -53,6 +53,8 @@ import {
   TamaireStudentRosterItem,
 } from '../host/Tamaire3DStage';
 import { Flame, XCircle } from 'lucide-react';
+import { getServerTime } from '@/services/rtdbSafe';
+import { soundEffects } from '@/services/soundEffects';
 
 export interface TamaireSettings {
   timeLimitSeconds: number;
@@ -72,6 +74,18 @@ const OPTION_STYLES = [
 class StudentThrowAudioEngine {
   private ctx: AudioContext | null = null;
 
+  private getGainScale(): number {
+    if (soundEffects.isMuted()) return 0;
+    return soundEffects.isQuietClassroomMode() ? 0.22 : 1.0;
+  }
+
+  public dispose() {
+    if (this.ctx) {
+      this.ctx.close().catch(() => {});
+      this.ctx = null;
+    }
+  }
+
   private getContext(): AudioContext | null {
     if (typeof window === 'undefined') return null;
     if (!this.ctx) {
@@ -87,6 +101,8 @@ class StudentThrowAudioEngine {
   }
 
   public playScoop() {
+    const scale = this.getGainScale();
+    if (scale <= 0) return;
     const ctx = this.getContext();
     if (!ctx) return;
     const now = ctx.currentTime;
@@ -95,7 +111,7 @@ class StudentThrowAudioEngine {
     osc.type = 'triangle';
     osc.frequency.setValueAtTime(340, now);
     osc.frequency.exponentialRampToValueAtTime(520, now + 0.11);
-    gain.gain.setValueAtTime(0.11, now);
+    gain.gain.setValueAtTime(0.11 * scale, now);
     gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
     osc.connect(gain);
     gain.connect(ctx.destination);
@@ -104,6 +120,8 @@ class StudentThrowAudioEngine {
   }
 
   public playAimLock() {
+    const scale = this.getGainScale();
+    if (scale <= 0) return;
     const ctx = this.getContext();
     if (!ctx) return;
     const now = ctx.currentTime;
@@ -112,7 +130,7 @@ class StudentThrowAudioEngine {
       const gain = ctx.createGain();
       osc.type = 'sine';
       osc.frequency.setValueAtTime(freq, now + idx * 0.045);
-      gain.gain.setValueAtTime(0.11, now + idx * 0.045);
+      gain.gain.setValueAtTime(0.11 * scale, now + idx * 0.045);
       gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.045 + 0.11);
       osc.connect(gain);
       gain.connect(ctx.destination);
@@ -122,6 +140,8 @@ class StudentThrowAudioEngine {
   }
 
   public playSwish(isGolden: boolean) {
+    const scale = this.getGainScale();
+    if (scale <= 0) return;
     const ctx = this.getContext();
     if (!ctx) return;
     const now = ctx.currentTime;
@@ -141,7 +161,7 @@ class StudentThrowAudioEngine {
     filter.frequency.setValueAtTime(1400, now);
     filter.frequency.exponentialRampToValueAtTime(2800, now + 0.16);
     const gain = ctx.createGain();
-    gain.gain.setValueAtTime(0.18, now);
+    gain.gain.setValueAtTime(0.18 * scale, now);
     gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
     noise.connect(filter);
     filter.connect(gain);
@@ -154,7 +174,7 @@ class StudentThrowAudioEngine {
       const oscGain = ctx.createGain();
       osc.type = 'triangle';
       osc.frequency.setValueAtTime(freq, now + idx * 0.055);
-      oscGain.gain.setValueAtTime(0.12, now + idx * 0.055);
+      oscGain.gain.setValueAtTime(0.12 * scale, now + idx * 0.055);
       oscGain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.055 + 0.18);
       osc.connect(oscGain);
       oscGain.connect(ctx.destination);
@@ -164,6 +184,8 @@ class StudentThrowAudioEngine {
   }
 
   public playRimDoink() {
+    const scale = this.getGainScale();
+    if (scale <= 0) return;
     const ctx = this.getContext();
     if (!ctx) return;
     const now = ctx.currentTime;
@@ -174,7 +196,7 @@ class StudentThrowAudioEngine {
     clang.type = 'square';
     clang.frequency.setValueAtTime(420, now);
     clang.frequency.exponentialRampToValueAtTime(155, now + 0.24);
-    clangGain.gain.setValueAtTime(0.18, now);
+    clangGain.gain.setValueAtTime(0.18 * scale, now);
     clangGain.gain.exponentialRampToValueAtTime(0.001, now + 0.26);
     clang.connect(clangGain);
     clangGain.connect(ctx.destination);
@@ -225,6 +247,7 @@ export const QuizStudentTamaire: React.FC<QuizStudentTamaireProps> = ({
   raceStartTime,
   volleyballSettings,
   volleyballFinished = false,
+  volleyballLiveState,
   redScore = 0,
   whiteScore = 0,
   studentRoster,
@@ -233,7 +256,7 @@ export const QuizStudentTamaire: React.FC<QuizStudentTamaireProps> = ({
   onAnswer,
 }) => {
   const timeLimitSeconds = volleyballSettings?.timeLimitSeconds || 60;
-  const matchStartTime = raceStartTime;
+  const matchStartTime = raceStartTime + 1500;
 
   const [localScore, setLocalScore] = useState<number>(() => player.score || 0);
   const [localStreak, setLocalStreak] = useState<number>(() => player.currentStreak || 0);
@@ -247,7 +270,20 @@ export const QuizStudentTamaire: React.FC<QuizStudentTamaireProps> = ({
   // Student iPad Camera Perspective (3rd-Person Behind You vs. 1st-Person Eyes-Up POV — kept during Counting too!)
   const [viewPerspective, setViewPerspective] = useState<'THIRD_PERSON' | 'FIRST_PERSON'>('THIRD_PERSON');
 
-  const [currentIndex, setCurrentIndex] = useState<number>(0);
+  const [currentIndex, setCurrentIndex] = useState<number>(() => {
+    const answeredKeys = Object.keys(player.answers || {}).length;
+    return Math.max(player.sprintProgress || 0, answeredKeys);
+  });
+
+  // Sync if authoritative player state hydrates after mount on reconnect
+  useEffect(() => {
+    const answeredKeys = Object.keys(player.answers || {}).length;
+    const authoritativeNext = Math.max(player.sprintProgress || 0, answeredKeys);
+    if (authoritativeNext > currentIndex) {
+      setCurrentIndex(authoritativeNext);
+    }
+  }, [player.sprintProgress, player.answers, currentIndex]);
+
   const currentQuestion = questions[currentIndex % Math.max(1, questions.length)];
 
   const [shotCallout, setShotCallout] = useState<{
@@ -274,10 +310,17 @@ export const QuizStudentTamaire: React.FC<QuizStudentTamaireProps> = ({
   const isRed = player.teamId !== 'team_white';
   const focusTeam: 'red' | 'white' = isRed ? 'red' : 'white';
 
-  const [nowTime, setNowTime] = useState<number>(() => Date.now());
+  const [nowTime, setNowTime] = useState<number>(() => getServerTime());
   useEffect(() => {
-    const timer = setInterval(() => setNowTime(Date.now()), 200);
+    const timer = setInterval(() => setNowTime(getServerTime()), 200);
     return () => clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      audioRef.current?.dispose();
+      audioRef.current = null;
+    };
   }, []);
 
   const elapsedSinceStart = Math.max(0, nowTime - matchStartTime);
@@ -297,10 +340,13 @@ export const QuizStudentTamaire: React.FC<QuizStudentTamaireProps> = ({
     }
   }, [timeRemainingSeconds, onTimeExpired]);
 
-  const latestScoresRef = useRef({ red: redScore, white: whiteScore });
+  const effectiveRedScore = redScore || volleyballLiveState?.redScore || 0;
+  const effectiveWhiteScore = whiteScore || volleyballLiveState?.whiteScore || 0;
+
+  const latestScoresRef = useRef({ red: effectiveRedScore, white: effectiveWhiteScore });
   latestScoresRef.current = {
-    red: isRed ? Math.max(redScore, localBagsThrown) : redScore,
-    white: !isRed ? Math.max(whiteScore, localBagsThrown) : whiteScore,
+    red: isRed ? Math.max(effectiveRedScore, localBagsThrown) : effectiveRedScore,
+    white: !isRed ? Math.max(effectiveWhiteScore, localBagsThrown) : effectiveWhiteScore,
   };
 
   // Synchronized Student iPad "Look Up at the Big Screen!" Suspense Frame
@@ -663,8 +709,8 @@ export const QuizStudentTamaire: React.FC<QuizStudentTamaireProps> = ({
             nickname: player.nickname || 'YOU',
             team: focusTeam,
           }}
-          redScore={isRed ? Math.max(redScore, localBagsThrown) : redScore}
-          whiteScore={!isRed ? Math.max(whiteScore, localBagsThrown) : whiteScore}
+          redScore={isRed ? Math.max(effectiveRedScore, localBagsThrown) : effectiveRedScore}
+          whiteScore={!isRed ? Math.max(effectiveWhiteScore, localBagsThrown) : effectiveWhiteScore}
           matchEnded={isMatchFinished}
           winner={null}
           redPlayersCount={6}

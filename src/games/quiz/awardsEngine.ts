@@ -17,7 +17,22 @@ export function calculateClassroomAwards(
   if (players.length === 0) return [];
 
   const awards: ClassroomAward[] = [];
-  const totalQ = questions.length;
+
+  // In async race/match modes (Sprint, Tug-of-War, Tamaire), `questions` may be a 60-question buffer
+  // while students actually answer 10-20 questions in 60s. Derive effective totalQ from the
+  // highest question index actually reached by the class so second-half & final-3 awards work!
+  let highestAnsweredIndex = -1;
+  for (const p of players) {
+    for (const a of getValidAnswers(p)) {
+      if (a.questionIndex > highestAnsweredIndex) {
+        highestAnsweredIndex = a.questionIndex;
+      }
+    }
+  }
+  const totalQ =
+    highestAnsweredIndex >= 3
+      ? Math.min(questions.length, highestAnsweredIndex + 1)
+      : questions.length;
   const halfQ = Math.floor(totalQ / 2);
 
   // -------------------------------------------------------------

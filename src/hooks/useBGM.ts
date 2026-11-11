@@ -179,6 +179,8 @@ export function resolveBGMTrack(selection?: string, role?: string): { file: stri
   return null;
 }
 
+let activeGlobalBgmElement: HTMLAudioElement | null = null;
+
 export const useBGM = (
   trackSelection?: string,
   isPlaying = true,
@@ -271,11 +273,22 @@ export const useBGM = (
 
     if (!resolvedTrack) {
       if (audioRef.current) {
+        if (activeGlobalBgmElement === audioRef.current) {
+          activeGlobalBgmElement = null;
+        }
         audioRef.current.pause();
         audioRef.current.src = '';
         audioRef.current = null;
       }
       return;
+    }
+
+    if (activeGlobalBgmElement && activeGlobalBgmElement !== audioRef.current) {
+      try {
+        activeGlobalBgmElement.pause();
+        activeGlobalBgmElement.src = '';
+      } catch {}
+      activeGlobalBgmElement = null;
     }
 
     const trackUrl = `/media/bgm/${resolvedTrack.file}`;
@@ -292,6 +305,7 @@ export const useBGM = (
     // Audio always starts at 0:00 for iconic game intros
     audio.currentTime = 0;
     audioRef.current = audio;
+    activeGlobalBgmElement = audio;
 
     return () => {
       if (volumeIntervalRef.current) {
@@ -299,6 +313,9 @@ export const useBGM = (
         volumeIntervalRef.current = null;
       }
       if (audioRef.current) {
+        if (activeGlobalBgmElement === audioRef.current) {
+          activeGlobalBgmElement = null;
+        }
         audioRef.current.pause();
         audioRef.current.src = '';
         audioRef.current = null;

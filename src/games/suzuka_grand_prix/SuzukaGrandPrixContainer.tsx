@@ -106,7 +106,7 @@ export const SuzukaGrandPrixContainer: React.FC = () => {
 
   // Configurable Classroom & Mistake Penalty Settings
   const [wrongSpeedLossRatio, setWrongSpeedLossRatio] = useState<number>(0.33);
-  const [wrongLockoutSeconds, setWrongLockoutSeconds] = useState<number>(1.0);
+  const [wrongLockoutSeconds, setWrongLockoutSeconds] = useState<number>(2.5);
   const [scaffoldingLevel, setScaffoldingLevel] = useState<'FULL' | 'PHONICS' | 'CHALLENGE'>('FULL');
   const [networkProfile, setNetworkProfile] = useState<
     'OPTIMAL_LAN' | 'SCHOOL_WIFI_SAVER' | 'THROTTLED_LOW_BW'
@@ -887,7 +887,7 @@ export const SuzukaGrandPrixContainer: React.FC = () => {
                   {t('Pit-Stop Coaching Duration', '誤答時の解説・ロック時間')}
                 </label>
                 <div className="grid grid-cols-5 gap-1.5">
-                  {[0, 0.5, 1.0, 1.5, 2.0].map((sec) => (
+                  {[2.5, 3.0, 3.5, 4.0, 5.0].map((sec) => (
                     <button
                       key={sec}
                       type="button"

@@ -634,11 +634,27 @@ export class MiiEmotionFX {
   }
 
   public dispose() {
+    const disposeObject = (obj: THREE.Object3D) => {
+      obj.traverse((child) => {
+        if ((child as THREE.Mesh).isMesh) {
+          const mesh = child as THREE.Mesh;
+          if (mesh.geometry) mesh.geometry.dispose();
+          const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+          mats.forEach((m) => m && m.dispose());
+        }
+      });
+    };
+
     this.sweatDrops.forEach((d) => {
       this.scene.remove(d.mesh);
+      disposeObject(d.mesh);
     });
     this.emoteParticles.forEach((e) => {
       this.scene.remove(e.mesh);
+      disposeObject(e.mesh);
+    });
+    this.faceRigs.forEach((rig) => {
+      disposeObject(rig.root);
     });
     this.faceRigs.clear();
     this.sweatDrops = [];

@@ -44,7 +44,7 @@ export const SuzukaStudentDeck: React.FC<SuzukaStudentDeckProps> = ({
   speedKmh,
   cornerSpeedLimit = 180,
   isPassingLane = false,
-  wrongLockoutSeconds = 1.0,
+  wrongLockoutSeconds = 2.5,
   wrongSpeedLossRatio = 0.33,
   scaffoldingLevel: propScaffolding,
   onChangeScaffoldingLevel,

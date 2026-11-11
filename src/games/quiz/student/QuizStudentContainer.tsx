@@ -49,6 +49,7 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
   const [answeredQuestionIndex, setAnsweredQuestionIndex] = useState<number | null>(null);
   const [joinError, setJoinError] = useState<string | null>(null);
+  const [localKartThemeOverride, setLocalKartThemeOverride] = useState<string | undefined>(undefined);
   const questionReceivedAtRef = React.useRef<number>(Date.now());
   const lastSeenQuestionIndexRef = React.useRef<number | null>(null);
 
@@ -64,6 +65,11 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
     leaveRoom,
     claimRoomAttendanceNumber
   } = useQuizRoom(pin || undefined, { isStudent: true, playerId: playerId || undefined });
+
+  const handleSelectKartTheme = useCallback(async (themeId: string) => {
+    setLocalKartThemeOverride(themeId);
+    await updateKartTheme(themeId);
+  }, [updateKartTheme]);
 
   // Automatically engage Quiet Classroom Mode while in multiplayer student mode
   // (caps iPad tap sounds to 0.04 whisper and keeps teacher/TV audio dominant)
@@ -256,17 +262,20 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
   }
 
   // Active player in room
-  const currentPlayer = room.players?.[playerId] || {
-    id: playerId,
-    nickname: nickname || 'Player',
-    score: 0,
-    currentStreak: 0,
-    maxStreak: 0,
-    correctCount: 0,
-    totalAnswered: 0,
-    fastestTimeMs: 999999,
-    joinedAt: Date.now(),
-    answers: {}
+  const currentPlayer = {
+    ...(room.players?.[playerId] || {
+      id: playerId,
+      nickname: nickname || 'Player',
+      score: 0,
+      currentStreak: 0,
+      maxStreak: 0,
+      correctCount: 0,
+      totalAnswered: 0,
+      fastestTimeMs: 999999,
+      joinedAt: Date.now(),
+      answers: {}
+    }),
+    ...(localKartThemeOverride ? { kartTheme: localKartThemeOverride } : {})
   };
 
   // If room was closed by teacher
@@ -335,27 +344,34 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
     );
   };
 
+  const is3DGrandPrixMode =
+    room.gamePlayType === 'GRAND_PRIX_3D' || room.gamePlayType === 'SPRINT_RACE';
+
   return (
     <div className={`w-full bg-slate-100 dark:bg-slate-950 flex flex-col items-center justify-center ${
-      room.status === 'GRAND_PRIX_3D' || room.status === 'SPRINT_RACE'
+      room.status === 'GRAND_PRIX_3D' ||
+      room.status === 'SPRINT_RACE' ||
+      (room.status === 'LOBBY' && is3DGrandPrixMode)
         ? 'fixed inset-0 z-50 w-screen h-dvh max-h-dvh overflow-hidden p-0'
         : isGameplayScreen
         ? 'fixed inset-0 z-50 w-screen h-dvh max-h-dvh overflow-hidden p-1 sm:p-2'
+        : room.status === 'GAME_OVER'
+        ? 'fixed inset-0 z-50 w-screen h-dvh max-h-dvh overflow-y-auto lg:overflow-hidden p-2 sm:p-4'
         : 'min-h-screen p-2 sm:p-4'
-    }}`}>
-      {/* 3D Suzuka Grand Prix Mode (Direct 3D Stage on Race Start - Unified Grand Prix Experience) */}
-      {(room.gamePlayType === 'GRAND_PRIX_3D' || room.gamePlayType === 'SPRINT_RACE') &&
-        (room.status === 'GRAND_PRIX_3D' || room.status === 'SPRINT_RACE') &&
+    }`}>
+      {/* 3D Suzuka Grand Prix Persistent Stage (Hot Pre-Warm in Lobby -> 0ms Instant Race Start!) */}
+      {is3DGrandPrixMode &&
+        (room.status === 'LOBBY' || room.status === 'GRAND_PRIX_3D' || room.status === 'SPRINT_RACE') &&
         studentQuestions.length > 0 && (
         <QuizStudentGrandPrix3D
-          key={`gp3d-student-session-${room.code || 'GP3D'}-${room.raceStartTime || 'active'}`}
+          key={`gp3d-student-session-${room.code || 'GP3D'}`}
           player={currentPlayer}
           allPlayers={room.players || {}}
           questions={studentQuestions}
           sprintSettings={room.sprintSettings}
           raceStartTime={room.raceStartTime || Date.now()}
           raceFinishGraceStartTime={room.raceFinishGraceStartTime}
-          isLobby={false}
+          isLobby={room.status === 'LOBBY'}
           onAnswer={handleArcadeAnswer}
           onLeave={handleLeave}
         />
@@ -363,7 +379,7 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
 
       {/* 1. Lobby Waiting */}
       {room.status === 'LOBBY' && (
-        <div className="relative z-20 w-full flex-1 flex flex-col items-center justify-center p-2 sm:p-4">
+        <div className="relative z-20 w-full h-full flex-1 flex flex-col items-center justify-center p-2 sm:p-3 pointer-events-none">
           <QuizStudentLobby
             roomCode={room.code}
             player={currentPlayer}
@@ -372,7 +388,7 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
             totalQuestions={room.totalQuestions}
             totalStudents={Object.keys(room.players || {}).length}
             onLeave={handleLeave}
-            onUpdateKartTheme={updateKartTheme}
+            onUpdateKartTheme={handleSelectKartTheme}
             onUpdatePlayerProfile={updatePlayerProfile}
           />
         </div>
@@ -392,7 +408,7 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
         />
       )}
 
-      {/* 2c. Volleyball Mode (Strategy Adapter) */}
+      {/* 2c. Volleyball / Tamaire Mode (Strategy Adapter) */}
       {room.status === 'VOLLEYBALL' && studentQuestions.length > 0 && (
         <QuizStudentVolleyball
           key={`volleyball-${room.volleyballStartTime || 'active'}`}
@@ -402,6 +418,8 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
           volleyballSettings={room.volleyballSettings}
           volleyballFinished={room.volleyballFinished}
           volleyballLiveState={room.volleyballLiveState}
+          redScore={room.volleyballLiveState?.redScore}
+          whiteScore={room.volleyballLiveState?.whiteScore}
           onAnswer={handleArcadeAnswer}
           onLeave={handleLeave}
         />

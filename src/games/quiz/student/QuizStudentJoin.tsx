@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { FUN_NICKNAMES, TeamId, TEAM_PRESETS, RAINBOW_TEAM_ORDER, QuizRoomState } from '../types';
-import { getSavedStudentProfile } from '@/services/studentProfile';
+import { getSavedStudentProfile, setLocalStudentProfile } from '@/services/studentProfile';
 import { safeSubscribe } from '@/services/rtdbSafe';
 import { useLanguage } from '@/context/LanguageContext';
-import { getClassSize, getRandomAvatarEmoji } from '@/types/roster';
+import { verifyTeacherPin } from '@/context/ClassroomContext';
+import { getClassSize, getRandomAvatarEmoji, StudentProfile } from '@/types/roster';
 import { requestMobileFullscreen } from '@/utils/mobileFullscreen';
-import { Sparkles, Dices, ArrowLeft, ArrowRight, UserCheck, Hash, Check, Users } from 'lucide-react';
+import { soundEffects } from '@/services/soundEffects';
+import confetti from 'canvas-confetti';
+import { Sparkles, Dices, ArrowLeft, ArrowRight, UserCheck, Hash, Check, Users, Lock } from 'lucide-react';
 
 interface QuizStudentJoinProps {
   initialPin?: string;
@@ -37,6 +40,11 @@ export const QuizStudentJoin: React.FC<QuizStudentJoinProps> = ({
   const [roomInfo, setRoomInfo] = useState<QuizRoomState | null>(null);
   const [selectedTeam, setSelectedTeam] = useState<TeamId | 'RANDOM'>('RANDOM');
   const hasAutoJoinedRef = React.useRef<boolean>(false);
+
+  // Teacher Seat 00 Pin Gate State
+  const [isTeacherPinModalOpen, setIsTeacherPinModalOpen] = useState(false);
+  const [teacherPinInput, setTeacherPinInput] = useState('');
+  const [teacherPinError, setTeacherPinError] = useState(false);
 
   const studentGradeNum = savedProfile?.classId ? parseInt(savedProfile.classId[0], 10) : undefined;
   const roomGradeNum = roomInfo?.grade?.startsWith('ES_G') ? parseInt(roomInfo.grade.replace('ES_G', ''), 10) : undefined;
@@ -93,6 +101,71 @@ export const QuizStudentJoin: React.FC<QuizStudentJoinProps> = ({
       return t('You were removed by the host. Please join again.', '先生・リーダーによって退室させられました。もう一度参加してください。');
     }
     return err;
+  };
+
+  // Select seat number (with PIN prompt for Seat 00)
+  const handleSelectSeatNumber = (num: number) => {
+    soundEffects.playTick();
+    if (num === 0) {
+      const isAlreadyUnlocked = sessionStorage.getItem('levi_sensei_teacher_unlocked') === 'true' || savedProfile?.attendanceNumber === 0;
+      if (!isAlreadyUnlocked) {
+        setTeacherPinInput('');
+        setTeacherPinError(false);
+        setIsTeacherPinModalOpen(true);
+        return;
+      }
+      setSelectedAttendanceNumber(0);
+      const prefix = language === 'ja' ? '00 先生' : '#00 Teacher';
+      setNickname(customNameSuffix.trim() ? `00 ${customNameSuffix.trim()}` : prefix);
+      return;
+    }
+    setSelectedAttendanceNumber(num);
+    const prefix = language === 'ja' ? `${num}番` : `#${num}`;
+    setNickname(customNameSuffix.trim() ? `${prefix} ${customNameSuffix.trim()}` : prefix);
+  };
+
+  const handleTeacherPinSubmit = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (verifyTeacherPin(teacherPinInput)) {
+      soundEffects.playFanfare();
+      confetti({
+        particleCount: 60,
+        spread: 70,
+        origin: { y: 0.6 }
+      });
+      sessionStorage.setItem('levi_sensei_teacher_unlocked', 'true');
+      localStorage.setItem('levi_sensei_role', 'TEACHER');
+
+      // Create local teacher student profile with attendanceNumber: 0
+      const activeClass = roomInfo?.classId || '2-1';
+      const activeSchool = roomInfo?.schoolId || 'futakotamagawa';
+      const teacherStudentProfile: StudentProfile = {
+        schoolId: activeSchool,
+        classId: activeClass,
+        attendanceNumber: 0,
+        nickname: customNameSuffix.trim() ? customNameSuffix.trim() : (language === 'ja' ? '先生' : 'Teacher'),
+        callsign: 'TEACH',
+        avatar: '👨‍🏫',
+        secretCharm: '👑',
+        xp: 9999,
+        level: 10,
+        gold: 999,
+        boundAt: Date.now(),
+        lastPlayedAt: Date.now()
+      };
+      setLocalStudentProfile(teacherStudentProfile);
+
+      setSelectedAttendanceNumber(0);
+      const prefix = language === 'ja' ? '00 先生' : '#00 Teacher';
+      setNickname(customNameSuffix.trim() ? `00 ${customNameSuffix.trim()}` : prefix);
+
+      setIsTeacherPinModalOpen(false);
+      setTeacherPinInput('');
+      setTeacherPinError(false);
+    } else {
+      soundEffects.playIncorrect();
+      setTeacherPinError(true);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -272,24 +345,32 @@ export const QuizStudentJoin: React.FC<QuizStudentJoinProps> = ({
                     {t('Tap your attendance number (1-35):', '自分の出席番号をタップしてください (1〜35):')}
                   </div>
                   <div className="grid grid-cols-6 sm:grid-cols-7 gap-1.5 max-h-48 overflow-y-auto p-0.5">
-                    {Array.from({ length: Math.max(35, getClassSize(roomInfo?.schoolId || savedProfile?.schoolId, roomInfo?.classId || savedProfile?.classId)) }, (_, i) => i + 1).map((num) => {
+                    {[0, ...Array.from({ length: Math.max(35, getClassSize(roomInfo?.schoolId || savedProfile?.schoolId, roomInfo?.classId || savedProfile?.classId)) }, (_, i) => i + 1)].map((num) => {
                       const isSelected = selectedAttendanceNumber === num;
+                      const isTeacherSeat = num === 0;
                       return (
                         <button
                           key={num}
                           type="button"
-                          onClick={() => {
-                            setSelectedAttendanceNumber(num);
-                            const prefix = language === 'ja' ? `${num}番` : `#${num}`;
-                            setNickname(customNameSuffix.trim() ? `${prefix} ${customNameSuffix.trim()}` : prefix);
-                          }}
-                          className={`h-11 sm:h-12 rounded-xl text-sm font-black transition-all flex items-center justify-center cursor-pointer ${
+                          onClick={() => handleSelectSeatNumber(num)}
+                          title={isTeacherSeat ? (language === 'ja' ? '00番 (先生・テスター席)' : '#00 (Teacher Seat)') : undefined}
+                          className={`h-11 sm:h-12 rounded-xl text-sm font-black transition-all flex flex-col items-center justify-center cursor-pointer ${
                             isSelected
                               ? 'bg-gradient-to-tr from-purple-600 to-indigo-600 text-white shadow-lg ring-3 ring-purple-400 scale-105'
+                              : isTeacherSeat
+                              ? 'bg-purple-50 dark:bg-purple-950/40 text-purple-900 dark:text-purple-200 border-2 border-purple-300 dark:border-purple-700 hover:border-purple-500 hover:scale-102 active:scale-95 shadow-2xs'
                               : 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:border-purple-400 active:scale-95'
                           }`}
                         >
-                          {num}
+                          <div className="flex items-center gap-0.5 leading-none">
+                            <span>{isTeacherSeat ? '00' : num}</span>
+                            {isTeacherSeat && <span className="text-[10px]">👨‍🏫</span>}
+                          </div>
+                          {isTeacherSeat && (
+                            <span className="text-[8px] font-black text-purple-600 dark:text-purple-400 leading-none mt-0.5">
+                              {language === 'ja' ? '先生' : 'Teacher'}
+                            </span>
+                          )}
                         </button>
                       );
                     })}
@@ -490,6 +571,65 @@ export const QuizStudentJoin: React.FC<QuizStudentJoinProps> = ({
           </button>
         </form>
       </div>
+
+      {/* Teacher PIN Gate Modal for Seat 00 */}
+      {isTeacherPinModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-xs select-none animate-in fade-in duration-150">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 max-w-sm w-full shadow-2xl border-4 border-amber-500 text-center animate-in zoom-in-95 duration-150">
+            <div className="w-14 h-14 rounded-2xl bg-amber-100 dark:bg-amber-950/80 border-2 border-amber-500 flex items-center justify-center mx-auto mb-3 text-2xl shadow-md">
+              👨‍🏫
+            </div>
+            <h3 className="text-lg sm:text-xl font-black text-slate-900 dark:text-white mb-1">
+              {t('Teacher Seat Access', '00番（先生・テスター席）')}
+            </h3>
+            <p className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-4">
+              {t('Enter 6-digit teacher PIN to unlock:', '先生用PINコード（6桁）を入力してください:')}
+            </p>
+            <form onSubmit={handleTeacherPinSubmit} className="space-y-4">
+              <div>
+                <input
+                  type="password"
+                  inputMode="numeric"
+                  maxLength={6}
+                  value={teacherPinInput}
+                  onChange={(e) => {
+                    setTeacherPinInput(e.target.value.replace(/\D/g, ''));
+                    setTeacherPinError(false);
+                  }}
+                  placeholder="••••••"
+                  autoFocus
+                  className="w-full text-center text-2xl font-black tracking-widest py-3 px-4 rounded-2xl border-3 border-slate-300 dark:border-slate-700 focus:border-amber-500 focus:outline-hidden bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white"
+                />
+                {teacherPinError && (
+                  <p className="mt-2 text-xs font-black text-rose-500 animate-shake">
+                    {t('❌ Incorrect PIN code', '❌ PINコードが正しくありません')}
+                  </p>
+                )}
+              </div>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsTeacherPinModalOpen(false);
+                    setTeacherPinInput('');
+                    setTeacherPinError(false);
+                  }}
+                  className="flex-1 py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 font-black text-xs transition-colors cursor-pointer"
+                >
+                  {t('Cancel', 'キャンセル')}
+                </button>
+                <button
+                  type="submit"
+                  disabled={teacherPinInput.length < 4}
+                  className="flex-1 py-2.5 px-3 rounded-xl bg-amber-500 hover:bg-amber-600 disabled:opacity-50 text-white font-black text-xs shadow-md transition-all cursor-pointer"
+                >
+                  {t('Unlock', '解除する')}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

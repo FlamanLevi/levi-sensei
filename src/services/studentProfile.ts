@@ -415,25 +415,27 @@ export async function claimAttendanceNumber(
     };
   }
 
-  // Update cloud roster
-  await safeSet(studentPath, profile);
+  // Update cloud roster for real student seats (1-35); seat 0 (teacher/tester) stays local
+  if (attendanceNumber > 0) {
+    await safeSet(studentPath, profile);
 
-  // Mirror to SSO device binding (/users/$uid)
-  try {
-    const uid = await ensureAnonymousAuth();
-    if (uid) {
-      await safeSet(`users/${uid}`, {
-        schoolId,
-        classId,
-        attendanceNumber,
-        nickname: profile.nickname,
-        callsign: profile.callsign,
-        avatar: profile.avatar || fallbackAvatar,
-        boundAt: profile.boundAt || Date.now()
-      });
+    // Mirror to SSO device binding (/users/$uid)
+    try {
+      const uid = await ensureAnonymousAuth();
+      if (uid) {
+        await safeSet(`users/${uid}`, {
+          schoolId,
+          classId,
+          attendanceNumber,
+          nickname: profile.nickname,
+          callsign: profile.callsign,
+          avatar: profile.avatar || fallbackAvatar,
+          boundAt: profile.boundAt || Date.now()
+        });
+      }
+    } catch (ssoErr) {
+      console.warn('Could not mirror user SSO binding:', ssoErr);
     }
-  } catch (ssoErr) {
-    console.warn('Could not mirror user SSO binding:', ssoErr);
   }
 
   // Update local device binding
@@ -578,7 +580,9 @@ export async function addRewardsToProfile(
           troubleWords: Object.keys(updatedTroubleWords).length > 0 ? updatedTroubleWords : undefined
         }
       };
-      await safeSet(studentPath, profile);
+      if (attendanceNumber > 0) {
+        await safeSet(studentPath, profile);
+      }
     } else {
       // Create fresh profile if not existed yet
       const badgeRes = applyAwardsToBadges({}, awardIdsToApply);
@@ -630,7 +634,9 @@ export async function addRewardsToProfile(
           troubleWords: Object.keys(initialTroubleWords).length > 0 ? initialTroubleWords : undefined
         }
       };
-      await safeSet(studentPath, profile);
+      if (attendanceNumber > 0) {
+        await safeSet(studentPath, profile);
+      }
     }
 
     setLocalStudentProfile(profile);

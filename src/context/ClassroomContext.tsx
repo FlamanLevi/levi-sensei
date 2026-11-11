@@ -79,10 +79,18 @@ interface ClassroomContextType {
 const ClassroomContext = createContext<ClassroomContextType | undefined>(undefined);
 
 export const ClassroomProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // Check URL path, query parameters or session for teacher unlock
+  // Check URL path, query parameters, session, or verified teacher seat 0 profile for teacher unlock
   const getInitialTeacherUnlocked = (): boolean => {
     try {
-      return sessionStorage.getItem('levi_sensei_teacher_unlocked') === 'true';
+      if (sessionStorage.getItem('levi_sensei_teacher_unlocked') === 'true') return true;
+      const studentProfile = localStorage.getItem('levi_sensei_student_profile');
+      if (studentProfile) {
+        const parsed = JSON.parse(studentProfile);
+        if (parsed && typeof parsed.attendanceNumber === 'number' && parsed.attendanceNumber === 0) {
+          return true;
+        }
+      }
+      return false;
     } catch {
       return false;
     }

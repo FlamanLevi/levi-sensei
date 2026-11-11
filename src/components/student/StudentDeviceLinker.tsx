@@ -324,6 +324,15 @@ export const StudentDeviceLinker: React.FC<StudentDeviceLinkerProps> = ({ onLink
   }, [lockoutNotice, lockedSeats]);
 
   const handleSelectNumber = (num: number) => {
+    if (num === 0) {
+      soundEffects.playTick();
+      const isAlreadyUnlocked = sessionStorage.getItem('levi_sensei_teacher_unlocked') === 'true';
+      if (!isAlreadyUnlocked) {
+        handleOpenTeacherUnlock(0);
+        return;
+      }
+    }
+
     const remainingLock = getRemainingLockoutSeconds(num);
     if (remainingLock > 0) {
       soundEffects.playIncorrect();
@@ -401,6 +410,11 @@ export const StudentDeviceLinker: React.FC<StudentDeviceLinkerProps> = ({ onLink
         setActiveGrade('ES_G3');
       }
 
+      if (num === 0) {
+        sessionStorage.setItem('levi_sensei_teacher_unlocked', 'true');
+        localStorage.setItem('levi_sensei_role', 'TEACHER');
+      }
+
       onLinked(newProfile);
     } catch (err: any) {
       console.error('Error linking existing seat directly:', err);
@@ -469,7 +483,7 @@ export const StudentDeviceLinker: React.FC<StudentDeviceLinkerProps> = ({ onLink
 
   const handleTeacherPinSubmit = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
-    if (!targetUnlockNum || submitting) return;
+    if (targetUnlockNum === null || submitting) return;
 
     const isValid = verifyTeacherPin(teacherPinInput);
     if (isValid) {
@@ -482,12 +496,13 @@ export const StudentDeviceLinker: React.FC<StudentDeviceLinkerProps> = ({ onLink
 
       const num = targetUnlockNum;
       clearSeatLockout(num);
+      sessionStorage.setItem('levi_sensei_teacher_unlocked', 'true');
 
       const prevInfo = claimedNumbers[num];
-      const prevNick = prevInfo?.nickname || (language === 'ja' ? `${num}番` : `#${num}`);
-      const prevAvatar = prevInfo?.avatar || getRandomAvatarEmoji(num);
+      const prevNick = prevInfo?.nickname || (num === 0 ? (language === 'ja' ? '先生' : 'Teacher') : (language === 'ja' ? `${num}番` : `#${num}`));
+      const prevAvatar = prevInfo?.avatar || (num === 0 ? '👨‍🏫' : getRandomAvatarEmoji(num));
       const prevCharm = prevInfo?.secretCharm;
-      const prevCall = prevInfo?.callsign || generateDefaultCallsign(prevNick, num, activeClassId);
+      const prevCall = prevInfo?.callsign || (num === 0 ? 'TEACH' : generateDefaultCallsign(prevNick, num, activeClassId));
 
       // Close all challenge/lockout modals
       setIsTeacherUnlockModalOpen(false);
@@ -497,12 +512,16 @@ export const StudentDeviceLinker: React.FC<StudentDeviceLinkerProps> = ({ onLink
       setTeacherPinInput('');
       setTeacherPinError(false);
 
+      if (num === 0) {
+        localStorage.setItem('levi_sensei_role', 'TEACHER');
+      }
+
       if (prevCharm) {
         // Directly link and log into the student portal
         await linkExistingSeatDirectly(num, prevNick, prevAvatar, prevCharm, prevCall);
       } else {
         // No keyword icon set yet: open profile setup so student can choose their keyword icon!
-        let defaultCharm = getDefaultSecretCharm(num);
+        let defaultCharm = num === 0 ? '👑' : getDefaultSecretCharm(num);
         if (defaultCharm === prevAvatar) {
           defaultCharm = ALL_SECRET_CHARM_EMOJIS.find(c => c !== prevAvatar) || '🔑';
         }
@@ -558,7 +577,7 @@ export const StudentDeviceLinker: React.FC<StudentDeviceLinkerProps> = ({ onLink
   };
 
   const handleConfirmLink = async () => {
-    if (!setupModalNum || !activeClassId || submitting) return;
+    if (setupModalNum === null || !activeClassId || submitting) return;
 
     if (!activeSchoolId || !activeClassId) {
       setErrorMessage(language === 'ja' ? '学校とクラスを確認してください' : 'Please check school and class');
@@ -569,8 +588,8 @@ export const StudentDeviceLinker: React.FC<StudentDeviceLinkerProps> = ({ onLink
     setErrorMessage(null);
 
     try {
-      const finalNickname = setupNickname.trim() || (language === 'ja' ? `${setupModalNum}番` : `#${setupModalNum}`);
-      const finalCallsign = setupCallsign.trim() || generateDefaultCallsign(finalNickname, setupModalNum, activeClassId);
+      const finalNickname = setupNickname.trim() || (setupModalNum === 0 ? (language === 'ja' ? '先生' : 'Teacher') : (language === 'ja' ? `${setupModalNum}番` : `#${setupModalNum}`));
+      const finalCallsign = setupCallsign.trim() || (setupModalNum === 0 ? 'TEACH' : generateDefaultCallsign(finalNickname, setupModalNum, activeClassId));
 
       const newProfile = await claimAttendanceNumber(
         activeSchoolId,
@@ -586,6 +605,11 @@ export const StudentDeviceLinker: React.FC<StudentDeviceLinkerProps> = ({ onLink
         setupSecretCharm,
         finalCallsign
       );
+
+      if (setupModalNum === 0) {
+        sessionStorage.setItem('levi_sensei_teacher_unlocked', 'true');
+        localStorage.setItem('levi_sensei_role', 'TEACHER');
+      }
 
       // Auto-set grade in ClassroomContext
       if (activeClassId.startsWith('6')) {
@@ -835,7 +859,8 @@ export const StudentDeviceLinker: React.FC<StudentDeviceLinkerProps> = ({ onLink
 
               <div className="p-2 sm:p-2.5 md:p-3 bg-slate-50 dark:bg-slate-800/60 rounded-2xl sm:rounded-3xl border-2 border-slate-200 dark:border-slate-700">
                 <div className="grid grid-cols-6 gap-1.5 sm:gap-2 md:gap-2.5">
-                  {Array.from({ length: Math.max(classSize, ...Object.keys(claimedNumbers).map(k => parseInt(k, 10)).filter(n => !isNaN(n))) }, (_, i) => i + 1).map((num) => {
+                  {[0, ...Array.from({ length: Math.max(classSize, ...Object.keys(claimedNumbers).map(k => parseInt(k, 10)).filter(n => !isNaN(n) && n > 0)) }, (_, i) => i + 1)].map((num) => {
+                    const isTeacherSeat = num === 0;
                     const isClaimed = !!claimedNumbers[num];
                     const claimInfo = claimedNumbers[num];
                     const hasKeywordIcon = !!claimInfo?.secretCharm;
@@ -848,28 +873,32 @@ export const StudentDeviceLinker: React.FC<StudentDeviceLinkerProps> = ({ onLink
                         type="button"
                         onClick={() => handleSelectNumber(num)}
                         title={
-                          isSeatLocked
-                            ? (language === 'ja' ? `${num}番：ロック中（一時停止）` : `#${num}: Locked (cooldown)`)
-                            : hasKeywordIcon
-                              ? (language === 'ja'
-                                  ? `${num}番（${claimInfo?.nickname || '登録済'}）：タップして合言葉で引き継ぎ`
-                                  : `#${num} (${claimInfo?.nickname || 'Taken'}): Tap to unlock with secret charm`)
-                              : isClaimed
+                          isTeacherSeat
+                            ? (language === 'ja' ? '00番（先生・テスター席）' : '#00 (Teacher / Tester Seat)')
+                            : isSeatLocked
+                              ? (language === 'ja' ? `${num}番：ロック中（一時停止）` : `#${num}: Locked (cooldown)`)
+                              : hasKeywordIcon
                                 ? (language === 'ja'
-                                    ? `${num}番（${claimInfo?.nickname}）：タップして合言葉を設定`
-                                    : `#${num} (${claimInfo?.nickname}): Tap to set secret charm`)
-                                : (language === 'ja' ? `${num}番（空き）` : `#${num} (Available)`)
+                                    ? `${num}番（${claimInfo?.nickname || '登録済'}）：タップして合言葉で引き継ぎ`
+                                    : `#${num} (${claimInfo?.nickname || 'Taken'}): Tap to unlock with secret charm`)
+                                : isClaimed
+                                  ? (language === 'ja'
+                                      ? `${num}番（${claimInfo?.nickname}）：タップして合言葉を設定`
+                                      : `#${num} (${claimInfo?.nickname}): Tap to set secret charm`)
+                                  : (language === 'ja' ? `${num}番（空き）` : `#${num} (Available)`)
                         }
                         className={`${buttonHeightClass} ${buttonPaddingClass} rounded-xl sm:rounded-2xl font-black flex flex-col items-center justify-between transition-all relative cursor-pointer ${
                           isSelected
                             ? 'bg-emerald-500 text-white shadow-lg ring-4 ring-emerald-300 dark:ring-emerald-800 scale-102 z-10 border-2 sm:border-3 border-emerald-600'
-                            : isSeatLocked
-                              ? 'bg-rose-50 dark:bg-rose-950/40 text-rose-950 dark:text-rose-100 border-2 border-rose-300 dark:border-rose-700/60 hover:border-rose-400 hover:scale-102 active:scale-95 shadow-xs'
-                              : hasKeywordIcon
-                                ? 'bg-amber-50 dark:bg-amber-950/40 text-amber-950 dark:text-amber-100 border-2 border-amber-300 dark:border-amber-700/60 hover:border-amber-400 hover:scale-102 active:scale-95 shadow-xs'
-                                : isClaimed
-                                  ? 'bg-emerald-50/80 dark:bg-emerald-950/40 text-emerald-950 dark:text-emerald-100 border-2 border-emerald-300 dark:border-emerald-700/60 hover:border-emerald-400 hover:scale-102 active:scale-95 shadow-xs'
-                                  : 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 border-2 border-slate-200 dark:border-slate-700 hover:border-emerald-400 hover:bg-emerald-50/40 dark:hover:bg-emerald-950/30 hover:scale-102 active:scale-95 shadow-xs'
+                            : isTeacherSeat
+                              ? 'border-2 border-purple-300 dark:border-purple-700/80 bg-purple-50/70 dark:bg-purple-950/40 text-purple-950 dark:text-purple-100 hover:border-purple-400 hover:scale-102 active:scale-95 shadow-xs'
+                              : isSeatLocked
+                                ? 'bg-rose-50 dark:bg-rose-950/40 text-rose-950 dark:text-rose-100 border-2 border-rose-300 dark:border-rose-700/60 hover:border-rose-400 hover:scale-102 active:scale-95 shadow-xs'
+                                : hasKeywordIcon
+                                  ? 'bg-amber-50 dark:bg-amber-950/40 text-amber-950 dark:text-amber-100 border-2 border-amber-300 dark:border-amber-700/60 hover:border-amber-400 hover:scale-102 active:scale-95 shadow-xs'
+                                  : isClaimed
+                                    ? 'bg-emerald-50/80 dark:bg-emerald-950/40 text-emerald-950 dark:text-emerald-100 border-2 border-emerald-300 dark:border-emerald-700/60 hover:border-emerald-400 hover:scale-102 active:scale-95 shadow-xs'
+                                    : 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 border-2 border-slate-200 dark:border-slate-700 hover:border-emerald-400 hover:bg-emerald-50/40 dark:hover:bg-emerald-950/30 hover:scale-102 active:scale-95 shadow-xs'
                         }`}
                       >
                         {/* Top Row: Lock Symbol (Left), Number (Center), Avatar/Emoji (Right) */}
@@ -890,12 +919,16 @@ export const StudentDeviceLinker: React.FC<StudentDeviceLinkerProps> = ({ onLink
                                 }`}
                               />
                             </div>
+                          ) : isTeacherSeat ? (
+                            <div className={`${avatarSlotWidth} flex items-center justify-center shrink-0 text-xs text-purple-600 dark:text-purple-400 font-black`}>
+                              👨‍🏫
+                            </div>
                           ) : (
                             <span className={`${avatarSlotWidth} shrink-0`} aria-hidden="true" />
                           )}
 
                           <span className={`${numberTextClass} font-black leading-none tracking-tight`}>
-                            {num}
+                            {num === 0 ? '00' : num}
                           </span>
 
                           {isClaimed && claimInfo?.avatar ? (
@@ -904,6 +937,10 @@ export const StudentDeviceLinker: React.FC<StudentDeviceLinkerProps> = ({ onLink
                                 avatar={claimInfo.avatar}
                                 sizeClassName={avatarDisplaySize}
                               />
+                            </div>
+                          ) : isTeacherSeat ? (
+                            <div className={`${avatarSlotWidth} flex items-center justify-center shrink-0 text-xs text-purple-600 dark:text-purple-400 font-black`}>
+                              🔑
                             </div>
                           ) : (
                             <span className={`${avatarSlotWidth} shrink-0`} aria-hidden="true" />
@@ -928,6 +965,10 @@ export const StudentDeviceLinker: React.FC<StudentDeviceLinkerProps> = ({ onLink
                           ) : isClaimed ? (
                             <span className={`${nicknameTextClass} text-emerald-900 dark:text-emerald-200 truncate block font-bold`}>
                               {claimInfo?.nickname || (language === 'ja' ? '合言葉を設定' : 'Set charm')}
+                            </span>
+                          ) : isTeacherSeat ? (
+                            <span className="text-[10px] sm:text-[11px] text-purple-700 dark:text-purple-300 font-black">
+                              {language === 'ja' ? '先生席' : 'Teacher'}
                             </span>
                           ) : (
                             <span className="text-[10px] sm:text-[11px] text-slate-400 dark:text-slate-500 font-bold">
@@ -985,11 +1026,11 @@ export const StudentDeviceLinker: React.FC<StudentDeviceLinkerProps> = ({ onLink
                       {activeClassId}
                     </span>
                     <span className="px-3 py-0.5 rounded-xl bg-emerald-600 text-white font-black text-xs sm:text-sm shadow-xs">
-                      #{setupModalNum}番
+                      {setupModalNum === 0 ? (language === 'ja' ? '00番 先生' : '#00 Teacher') : `#${setupModalNum}番`}
                     </span>
                   </div>
                   <h3 className="text-xl sm:text-2xl md:text-3xl font-black text-slate-900 dark:text-white leading-tight truncate">
-                    {t(`Link Seat #${setupModalNum}`, `${setupModalNum}番のプロフィールの設定`)}
+                    {setupModalNum === 0 ? t('Teacher Profile Setup', '先生プロフィールの設定') : t(`Link Seat #${setupModalNum}`, `${setupModalNum}番のプロフィールの設定`)}
                   </h3>
                   <p className="text-xs sm:text-sm font-bold text-slate-400 truncate">
                     {t('Set your icon, name & secret charm to start!', 'アイコン・名前・合言葉を設定してスタートしよう！')}
@@ -1079,8 +1120,8 @@ export const StudentDeviceLinker: React.FC<StudentDeviceLinkerProps> = ({ onLink
                       {submitting
                         ? t('Linking...', '登録中...')
                         : language === 'ja'
-                          ? `⚡ ${setupAvatar} ${setupModalNum}番でスタート！`
-                          : `⚡ Start as ${setupAvatar} #${setupModalNum}!`}
+                          ? `⚡ ${setupAvatar} ${setupModalNum === 0 ? '00番（先生）' : `${setupModalNum}番`}でスタート！`
+                          : `⚡ Start as ${setupAvatar} #${setupModalNum === 0 ? '00 (Teacher)' : setupModalNum}!`}
                     </span>
                   </button>
 

@@ -155,9 +155,9 @@ export const QuizStudentLobby: React.FC<QuizStudentLobbyProps> = ({
               <span className="text-sm font-black text-slate-900 dark:text-white truncate">
                 {player.nickname}
               </span>
-              {typeof player.attendanceNumber === 'number' && player.attendanceNumber > 0 && (
+              {typeof player.attendanceNumber === 'number' && (
                 <span className="text-[10px] font-mono font-black px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200">
-                  #{player.attendanceNumber}
+                  #{player.attendanceNumber === 0 ? (language === 'ja' ? '00 先生' : '00 Teacher') : player.attendanceNumber}
                 </span>
               )}
               {player.title && (

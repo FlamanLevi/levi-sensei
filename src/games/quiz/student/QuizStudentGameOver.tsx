@@ -12,7 +12,8 @@ import { BadgeLevelUpEvent } from '@/services/badgeEngine';
 import { StudentStatsModal } from '@/components/student/StudentStatsModal';
 import { soundEffects } from '@/services/soundEffects';
 import { useLanguage } from '@/context/LanguageContext';
-import { Trophy, Award, Sparkles, ArrowLeft, Check, ShieldCheck, AlertCircle, Flag, Clock } from 'lucide-react';
+import { Trophy, Award, Sparkles, ArrowLeft, Check, ShieldCheck, AlertCircle, Flag, Clock, KeyRound, X } from 'lucide-react';
+import { verifyTeacherPin } from '@/context/ClassroomContext';
 import { EditProfileModal } from '@/components/student/EditProfileModal';
 import { AvatarDisplay } from '@/components/common/AvatarDisplay';
 import { getShopItemById } from '@/services/shopCatalog';
@@ -61,6 +62,11 @@ export const QuizStudentGameOver: React.FC<QuizStudentGameOverProps> = ({
   const [isEditProfileOpen, setIsEditProfileOpen] = useState<boolean>(false);
   const [isStatsModalOpen, setIsStatsModalOpen] = useState<boolean>(false);
   const [badgeLevelUps, setBadgeLevelUps] = useState<BadgeLevelUpEvent[]>([]);
+
+  // Teacher PIN Override State for Seat 00
+  const [isTeacherPinModalOpen, setIsTeacherPinModalOpen] = useState<boolean>(false);
+  const [teacherPinInput, setTeacherPinInput] = useState<string>('');
+  const [teacherPinError, setTeacherPinError] = useState<boolean>(false);
 
   // Rewards calculation: 1 XP per point, 1 Gold per 20 points, plus bonuses
   const earnedXp = Math.max(100, Math.floor(player.score));
@@ -322,19 +328,46 @@ export const QuizStudentGameOver: React.FC<QuizStudentGameOverProps> = ({
 
   const handleSelectNumber = (num: number) => {
     soundEffects.playTick();
+    if (num === 0) {
+      const isAlreadyUnlocked = sessionStorage.getItem('levi_sensei_teacher_unlocked') === 'true' || savedProfile?.attendanceNumber === 0;
+      if (!isAlreadyUnlocked) {
+        setTeacherPinInput('');
+        setTeacherPinError(false);
+        setIsTeacherPinModalOpen(true);
+        return;
+      }
+    }
     setSelectedNumber(num);
     setIsConfirming(true);
     setClaimError(null);
   };
 
+  const handleTeacherPinSubmit = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (verifyTeacherPin(teacherPinInput)) {
+      soundEffects.playFanfare();
+      sessionStorage.setItem('levi_sensei_teacher_unlocked', 'true');
+      localStorage.setItem('levi_sensei_role', 'TEACHER');
+      setIsTeacherPinModalOpen(false);
+      setTeacherPinInput('');
+      setTeacherPinError(false);
+      setSelectedNumber(0);
+      setIsConfirming(true);
+      setClaimError(null);
+    } else {
+      soundEffects.playIncorrect();
+      setTeacherPinError(true);
+    }
+  };
+
   const handleConfirmClaim = async () => {
-    if (!selectedNumber || !schoolId || !classId) return;
+    if (selectedNumber === null || selectedNumber === undefined || !schoolId || !classId) return;
     setIsClaiming(true);
     setClaimError(null);
 
     try {
-      // 1. Check room collision first
-      if (roomCode && onClaimRoomNumber) {
+      // 1. Check room collision first (students only, seat 0 is teacher tester)
+      if (selectedNumber > 0 && roomCode && onClaimRoomNumber) {
         const roomSuccess = await onClaimRoomNumber(
           roomCode, 
           selectedNumber, 
@@ -350,6 +383,14 @@ export const QuizStudentGameOver: React.FC<QuizStudentGameOverProps> = ({
         }
       }
 
+      // If teacher seat 00, ensure teacher unlock flag is saved
+      if (selectedNumber === 0) {
+        try {
+          sessionStorage.setItem('levi_sensei_teacher_unlocked', 'true');
+          localStorage.setItem('levi_sensei_role', 'TEACHER');
+        } catch {}
+      }
+
       const sessionKey = `${roomCode || 'noroom'}_${selectedNumber}_${player.score}_${player.correctCount}`;
       try {
         sessionStorage.setItem(`quiz_awarded_${sessionKey}`, 'true');
@@ -360,15 +401,15 @@ export const QuizStudentGameOver: React.FC<QuizStudentGameOverProps> = ({
         schoolId,
         classId,
         selectedNumber,
-        player.nickname,
+        selectedNumber === 0 ? (player.nickname || '先生') : player.nickname,
         earnedXp,
         earnedGold,
-        undefined,
+        selectedNumber === 0 ? '👨‍🏫' : undefined,
         player.correctCount,
         rewardTotalQuestions,
         sessionKey,
-        undefined,
-        undefined,
+        selectedNumber === 0 ? '👑' : undefined,
+        selectedNumber === 0 ? 'TEACH' : undefined,
         additionalStatsPayload
       );
 
@@ -647,8 +688,9 @@ export const QuizStudentGameOver: React.FC<QuizStudentGameOverProps> = ({
               )}
 
               <div className="grid grid-cols-6 gap-1.5 sm:gap-2 p-2 bg-white/60 dark:bg-slate-900/60 rounded-2xl border border-indigo-100 dark:border-indigo-950">
-                {Array.from({ length: Math.max(35, getClassSize(schoolId, classId)) }, (_, i) => i + 1).map(num => {
-                  const isTaken = boundStudents && boundStudents[num] && boundStudents[num].playerId !== player.id;
+                {[0, ...Array.from({ length: Math.max(35, getClassSize(schoolId, classId)) }, (_, i) => i + 1)].map(num => {
+                  const isTeacherSeat = num === 0;
+                  const isTaken = !isTeacherSeat && boundStudents && boundStudents[num] && boundStudents[num].playerId !== player.id;
                   const isMySelection = selectedNumber === num;
 
                   return (
@@ -661,12 +703,20 @@ export const QuizStudentGameOver: React.FC<QuizStudentGameOverProps> = ({
                         isTaken
                           ? 'bg-slate-200/80 dark:bg-slate-800/80 text-slate-400 cursor-not-allowed opacity-50'
                           : isMySelection
-                          ? 'bg-indigo-600 text-white shadow-md scale-105 ring-2 ring-indigo-400'
+                          ? isTeacherSeat
+                            ? 'bg-purple-600 text-white shadow-md scale-105 ring-2 ring-purple-400'
+                            : 'bg-indigo-600 text-white shadow-md scale-105 ring-2 ring-indigo-400'
+                          : isTeacherSeat
+                          ? 'bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 hover:bg-purple-100 dark:hover:bg-purple-900 border border-purple-200 dark:border-purple-800 shadow-2xs'
                           : 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 hover:bg-indigo-100 dark:hover:bg-indigo-900 border border-slate-200 dark:border-slate-700 shadow-2xs'
                       }`}
                     >
-                      <span>{num}</span>
+                      <span className="flex items-center gap-0.5">
+                        {isTeacherSeat ? '00' : num}
+                        {isTeacherSeat && <span className="text-[10px]">👨‍🏫</span>}
+                      </span>
                       {isTaken && <span className="text-[8px] leading-none">{t('Taken', '済')}</span>}
+                      {isTeacherSeat && !isTaken && <span className="text-[7px] leading-none text-purple-600 dark:text-purple-400 font-bold">{t('Teacher', '先生')}</span>}
                     </button>
                   );
                 })}
@@ -818,26 +868,28 @@ export const QuizStudentGameOver: React.FC<QuizStudentGameOverProps> = ({
       )}
 
       {/* 1-Second Confirmation Modal */}
-      {isConfirming && selectedNumber && (
+      {isConfirming && selectedNumber !== null && (
         <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-in fade-in duration-150">
           <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 max-w-sm w-full shadow-2xl border-4 border-indigo-300 dark:border-indigo-700 text-center animate-in zoom-in-95 duration-150">
-            <div className="w-16 h-16 rounded-3xl bg-indigo-100 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mx-auto mb-3 text-2xl font-black">
-              🏷️
+            <div className={`w-16 h-16 rounded-3xl ${selectedNumber === 0 ? 'bg-purple-100 dark:bg-purple-950 text-purple-600 dark:text-purple-400' : 'bg-indigo-100 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400'} flex items-center justify-center mx-auto mb-3 text-2xl font-black`}>
+              {selectedNumber === 0 ? '👨‍🏫' : '🏷️'}
             </div>
 
             <h3 className="text-lg font-black text-slate-900 dark:text-white mb-1">
-              {t('Confirm Attendance Number', '出席番号の確認')}
+              {selectedNumber === 0 ? t('Confirm Teacher iPad', '先生用iPadとして登録') : t('Confirm Attendance Number', '出席番号の確認')}
             </h3>
             <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mb-4">
-              {t('Does this match the number on your iPad sticker?', 'あなたのiPadの番号はこれで合っていますか？')}
+              {selectedNumber === 0
+                ? t('Save this device as Teacher / Admin iPad (Seat 00)?', 'この端末を先生・管理者用iPad（00番）として登録しますか？')
+                : t('Does this match the number on your iPad sticker?', 'あなたのiPadの番号はこれで合っていますか？')}
             </p>
 
-            <div className="p-4 rounded-2xl bg-indigo-50 dark:bg-indigo-950/50 border border-indigo-200 dark:border-indigo-800 mb-6">
+            <div className={`p-4 rounded-2xl ${selectedNumber === 0 ? 'bg-purple-50 dark:bg-purple-950/50 border border-purple-200 dark:border-purple-800' : 'bg-indigo-50 dark:bg-indigo-950/50 border border-indigo-200 dark:border-indigo-800'} mb-6`}>
               <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400 block mb-1">
                 {schoolId === 'toyogaoka' ? t('Toyogaoka Elementary', '豊ヶ丘小') : t('Futakotamagawa Elementary', '二子玉小')} {classId}
               </span>
               <strong className="text-3xl font-black text-indigo-900 dark:text-indigo-100">
-                #{selectedNumber} {t('Number', '番')}
+                {selectedNumber === 0 ? (language === 'ja' ? '00番 (先生)' : '#00 (Teacher)') : `#${selectedNumber} ${t('Number', '番')}`}
               </strong>
             </div>
 
@@ -859,6 +911,65 @@ export const QuizStudentGameOver: React.FC<QuizStudentGameOverProps> = ({
                 {isClaiming ? t('Saving...', '保存中...') : t('Confirm', '決定')}
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Teacher PIN Modal for Seat 00 Access */}
+      {isTeacherPinModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs animate-in fade-in duration-200">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-7 max-w-sm w-full border-4 border-amber-400 dark:border-amber-500 shadow-2xl text-center">
+            <div className="w-14 h-14 rounded-2xl bg-amber-100 dark:bg-amber-950/80 text-amber-600 dark:text-amber-400 flex items-center justify-center mx-auto mb-3 text-2xl">
+              <KeyRound size={28} />
+            </div>
+            <h3 className="text-lg font-black text-slate-900 dark:text-white mb-1">
+              {t('Teacher Seat Access', '00番（先生・管理者席）')}
+            </h3>
+            <p className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-4">
+              {t('Enter 6-digit teacher PIN to unlock:', '先生用PINコード（6桁）を入力してください:')}
+            </p>
+            <form onSubmit={handleTeacherPinSubmit} className="space-y-4">
+              <div>
+                <input
+                  type="password"
+                  inputMode="numeric"
+                  maxLength={6}
+                  value={teacherPinInput}
+                  onChange={(e) => {
+                    setTeacherPinInput(e.target.value.replace(/\D/g, ''));
+                    setTeacherPinError(false);
+                  }}
+                  placeholder="••••••"
+                  autoFocus
+                  className="w-full text-center text-2xl font-black tracking-widest py-3 px-4 rounded-2xl border-3 border-slate-300 dark:border-slate-700 focus:border-amber-500 focus:outline-hidden bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white"
+                />
+                {teacherPinError && (
+                  <p className="mt-2 text-xs font-black text-rose-500 animate-shake">
+                    {t('❌ Incorrect PIN code', '❌ PINコードが正しくありません')}
+                  </p>
+                )}
+              </div>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsTeacherPinModalOpen(false);
+                    setTeacherPinInput('');
+                    setTeacherPinError(false);
+                  }}
+                  className="flex-1 py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 font-black text-xs transition-colors cursor-pointer"
+                >
+                  {t('Cancel', 'キャンセル')}
+                </button>
+                <button
+                  type="submit"
+                  disabled={teacherPinInput.length < 4}
+                  className="flex-1 py-2.5 px-3 rounded-xl bg-amber-500 hover:bg-amber-600 disabled:opacity-50 text-white font-black text-xs shadow-md transition-all cursor-pointer"
+                >
+                  {t('Unlock', '解除する')}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

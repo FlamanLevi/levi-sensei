@@ -6,7 +6,7 @@ import { useLanguage } from '@/context/LanguageContext';
 import { soundEffects } from '@/services/soundEffects';
 import { VocabularyItem } from '@data/types';
 import { FlashMode, DisplayTier } from './types';
-import { prepareCardQueue } from './utils';
+import { prepareCardQueue, resolveCardImage } from './utils';
 import { FlashcardStage } from './FlashcardStage';
 import { SpeedFlashSettingsModal } from './SpeedFlashSettingsModal';
 import { RubyText } from '@/components/common/RubyText';

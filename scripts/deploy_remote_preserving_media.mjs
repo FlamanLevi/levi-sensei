@@ -13,9 +13,10 @@ const SITE_ID = process.env.FIREBASE_SITE_ID || 'levi-sensei';
 const PERSISTENT_KEY_PATH = path.join(os.homedir(), '.gemini', 'firebase-service-account.json');
 
 function loadServiceAccount() {
-  // 1. Inline JSON from GitHub Actions / environment variable
-  if (process.env.FIREBASE_SERVICE_ACCOUNT && process.env.FIREBASE_SERVICE_ACCOUNT.trim().startsWith('{')) {
-    return JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+  // 1. Inline JSON from GitHub Actions / environment variable (FIREBASE_ADMIN_SDK or FIREBASE_SERVICE_ACCOUNT)
+  const inlineEnv = process.env.FIREBASE_ADMIN_SDK || process.env.FIREBASE_SERVICE_ACCOUNT;
+  if (inlineEnv && inlineEnv.trim().startsWith('{')) {
+    return JSON.parse(inlineEnv);
   }
 
   // 2. Explicit file path from GOOGLE_APPLICATION_CREDENTIALS

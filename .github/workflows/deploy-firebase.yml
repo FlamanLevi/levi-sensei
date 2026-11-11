@@ -31,11 +31,11 @@ jobs:
 
       - name: Deploy to Firebase Hosting (preserving /cards/** and /media/**)
         env:
-          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_ADMIN_SDK || secrets.FIREBASE_SERVICE_ACCOUNT }}
           DEPLOY_MESSAGE: "GitHub Actions deploy: ${{ github.sha }}"
         run: |
           if [ -z "$FIREBASE_SERVICE_ACCOUNT" ]; then
-            echo "ℹ️ FIREBASE_SERVICE_ACCOUNT secret not configured yet; skipping automatic Firebase deploy (build verified)."
+            echo "ℹ️ FIREBASE_ADMIN_SDK / FIREBASE_SERVICE_ACCOUNT secret not configured yet; skipping automatic Firebase deploy (build verified)."
             exit 0
           fi
           node scripts/deploy_remote_preserving_media.mjs

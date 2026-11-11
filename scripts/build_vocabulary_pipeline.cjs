@@ -91,6 +91,7 @@ function buildCanonicalDataset() {
         canItem.primary_image ||
         pubItem.card_image ||
         pubItem.hwg_card_illust ||
+        (pubItem.media_by_grade && Object.values(pubItem.media_by_grade).find(m => m && m.card_image)?.card_image) ||
         '',
       primary_audio:
         pubItem.primary_audio ||

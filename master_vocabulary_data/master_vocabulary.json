@@ -3069,7 +3069,7 @@
     "syllable_count": 2,
     "is_compound": false,
     "difficulty_tier": 1,
-    "primary_image": "",
+    "primary_image": "dic_custom_candy_1_c.svg",
     "primary_audio": "sound_suite/letstry/word_0041/letstry_word_0041_candy_jenny.mp3",
     "three_hints": {
       "category_hint": "It is something delicious to eat.",
@@ -3206,7 +3206,7 @@
     "syllable_count": 1,
     "is_compound": false,
     "difficulty_tier": 1,
-    "primary_image": "",
+    "primary_image": "dic_custom_car_1_c.svg",
     "primary_audio": "sound_suite/letstry/word_0043/letstry_word_0043_car_jenny.mp3",
     "three_hints": {
       "category_hint": "It is an item used in daily life.",
@@ -5332,7 +5332,7 @@
     "syllable_count": 3,
     "is_compound": false,
     "difficulty_tier": 2,
-    "primary_image": "",
+    "primary_image": "dic_custom_decision_1_c.svg",
     "primary_audio": "sound_suite/letstry/word_0071/letstry_word_0071_decision_jenny.mp3",
     "three_hints": {
       "category_hint": "It describes the condition or quality of something.",
@@ -5638,7 +5638,7 @@
     "syllable_count": 3,
     "is_compound": false,
     "difficulty_tier": 2,
-    "primary_image": "",
+    "primary_image": "dic_custom_dinosaur_1_c.svg",
     "primary_audio": "sound_suite/letstry/word_0075/letstry_word_0075_dinosaur_jenny.mp3",
     "three_hints": {
       "category_hint": "It is an animal.",
@@ -9749,7 +9749,7 @@
     "syllable_count": 1,
     "is_compound": false,
     "difficulty_tier": 1,
-    "primary_image": "",
+    "primary_image": "dic_custom_glad_1_c.svg",
     "primary_audio": "sound_suite/letstry/word_0129/letstry_word_0129_glad_jenny.mp3",
     "three_hints": {
       "category_hint": "It is a feeling or emotion.",
@@ -11073,7 +11073,7 @@
     "syllable_count": 1,
     "is_compound": false,
     "difficulty_tier": 1,
-    "primary_image": "",
+    "primary_image": "dic_custom_hear_1_c.svg",
     "primary_audio": "sound_suite/letstry/word_0146/letstry_word_0146_hear_jenny.mp3",
     "three_hints": {
       "category_hint": "It is an action or movement.",
@@ -11142,7 +11142,7 @@
     "syllable_count": 2,
     "is_compound": false,
     "difficulty_tier": 1,
-    "primary_image": "",
+    "primary_image": "dic_custom_hello_1_c.svg",
     "primary_audio": "sound_suite/letstry/word_0147/letstry_word_0147_hello_jenny.mp3",
     "three_hints": {
       "category_hint": "It is a word describing position or direction.",
@@ -11974,7 +11974,7 @@
     "syllable_count": 3,
     "is_compound": false,
     "difficulty_tier": 2,
-    "primary_image": "",
+    "primary_image": "dic_custom_imagine_1_c.svg",
     "primary_audio": "sound_suite/letstry/word_0158/letstry_word_0158_imagine_jenny.mp3",
     "three_hints": {
       "category_hint": "It is an action or movement.",
@@ -12210,7 +12210,7 @@
     "syllable_count": 3,
     "is_compound": false,
     "difficulty_tier": 2,
-    "primary_image": "",
+    "primary_image": "dic_custom_inventor_1_c.svg",
     "primary_audio": "sound_suite/hwg/word_0161/hwg_word_0161_inventor_jenny.mp3",
     "three_hints": {
       "category_hint": "It is an occupation or dream job.",
@@ -15058,7 +15058,7 @@
     "syllable_count": 2,
     "is_compound": false,
     "difficulty_tier": 2,
-    "primary_image": "",
+    "primary_image": "dic_custom_mistake_1_c.svg",
     "primary_audio": "sound_suite/letstry/word_0198/letstry_word_0198_mistake_jenny.mp3",
     "three_hints": {
       "category_hint": "It describes the condition or quality of something.",
@@ -16221,7 +16221,7 @@
     "syllable_count": 1,
     "is_compound": false,
     "difficulty_tier": 1,
-    "primary_image": "",
+    "primary_image": "dic_custom_no_1_c.svg",
     "primary_audio": "sound_suite/letstry/word_0214/letstry_word_0214_no_jenny.mp3",
     "three_hints": {
       "category_hint": "It is a word describing position or direction.",
@@ -18697,7 +18697,7 @@
     "syllable_count": 1,
     "is_compound": false,
     "difficulty_tier": 2,
-    "primary_image": "",
+    "primary_image": "dic_custom_please_1_c.svg",
     "primary_audio": "sound_suite/letstry/word_0246/letstry_word_0246_please_jenny.mp3",
     "three_hints": {
       "category_hint": "It is a word describing position or direction.",
@@ -19237,7 +19237,7 @@
     "syllable_count": 2,
     "is_compound": false,
     "difficulty_tier": 2,
-    "primary_image": "",
+    "primary_image": "dic_custom_present_1_c.svg",
     "primary_audio": "sound_suite/letstry/word_0253/letstry_word_0253_present_jenny.mp3",
     "three_hints": {
       "category_hint": "It is a party item, gift, or decoration.",
@@ -22319,7 +22319,7 @@
     "syllable_count": 1,
     "is_compound": false,
     "difficulty_tier": 2,
-    "primary_image": "",
+    "primary_image": "dic_custom_shapes_1_c.svg",
     "primary_audio": "sound_suite/letstry/word_0293/letstry_word_0293_shapes_jenny.mp3",
     "three_hints": {
       "category_hint": "It is a geometric shape.",
@@ -22759,7 +22759,7 @@
     "syllable_count": 1,
     "is_compound": false,
     "difficulty_tier": 1,
-    "primary_image": "",
+    "primary_image": "dic_custom_shop_1_c.svg",
     "primary_audio": "sound_suite/letstry/word_0299/letstry_word_0299_shop_jenny.mp3",
     "three_hints": {
       "category_hint": "It is a place in a town or neighborhood.",
@@ -25378,7 +25378,7 @@
     "syllable_count": 1,
     "is_compound": false,
     "difficulty_tier": 1,
-    "primary_image": "",
+    "primary_image": "dic_custom_sure_1_c.svg",
     "primary_audio": "sound_suite/letstry/word_0333/letstry_word_0333_sure_jenny.mp3",
     "three_hints": {
       "category_hint": "It is a feeling or emotion.",
@@ -25451,7 +25451,7 @@
     "syllable_count": 2,
     "is_compound": false,
     "difficulty_tier": 3,
-    "primary_image": "",
+    "primary_image": "dic_custom_surprised_1_c.svg",
     "primary_audio": "sound_suite/letstry/word_0334/letstry_word_0334_surprised_jenny.mp3",
     "three_hints": {
       "category_hint": "It is a feeling or emotion.",
@@ -26323,7 +26323,7 @@
     "syllable_count": 1,
     "is_compound": false,
     "difficulty_tier": 1,
-    "primary_image": "",
+    "primary_image": "dic_custom_tall_1_c.svg",
     "primary_audio": "sound_suite/letstry/word_0345/letstry_word_0345_tall_jenny.mp3",
     "three_hints": {
       "category_hint": "It describes the condition or quality of something.",
@@ -26699,7 +26699,7 @@
     "syllable_count": 3,
     "is_compound": true,
     "difficulty_tier": 3,
-    "primary_image": "",
+    "primary_image": "dic_custom_thank_you_1_c.svg",
     "primary_audio": "sound_suite/letstry/word_0350/letstry_word_0350_thank_you_jenny.mp3",
     "three_hints": {
       "category_hint": "It is a word describing position or direction.",
@@ -30886,7 +30886,7 @@
     "syllable_count": 1,
     "is_compound": false,
     "difficulty_tier": 1,
-    "primary_image": "",
+    "primary_image": "dic_custom_yes_1_c.svg",
     "primary_audio": "sound_suite/letstry/word_0404/letstry_word_0404_yes_jenny.mp3",
     "three_hints": {
       "category_hint": "It is a word describing position or direction.",
@@ -31032,7 +31032,7 @@
     "syllable_count": 4,
     "is_compound": true,
     "difficulty_tier": 3,
-    "primary_image": "",
+    "primary_image": "dic_custom_you_re_welcome_1_c.svg",
     "primary_audio": "sound_suite/letstry/word_0406/letstry_word_0406_youre_welcome_jenny.mp3",
     "three_hints": {
       "category_hint": "It is a word describing position or direction.",

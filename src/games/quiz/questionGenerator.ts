@@ -11,7 +11,8 @@ function shuffle<T>(array: T[]): T[] {
   return result;
 }
 
-const GRADE_FALLBACK_ORDER: GradeLevel[] = ['ES_G3', 'ES_G4', 'ES_G5', 'ES_G6', 'ES_G1', 'ES_G2', 'JHS_G1', 'JHS_G2', 'JHS_G3'];
+const LOWER_GRADE_FALLBACK_ORDER: GradeLevel[] = ['ES_G4', 'ES_G3', 'ES_G2', 'ES_G1', 'ES_G5', 'ES_G6', 'JHS_G1', 'JHS_G2', 'JHS_G3'];
+const UPPER_GRADE_FALLBACK_ORDER: GradeLevel[] = ['ES_G6', 'ES_G5', 'JHS_G1', 'JHS_G2', 'JHS_G3', 'ES_G4', 'ES_G3', 'ES_G2', 'ES_G1'];
 
 export function resolveWordImage(word: VocabularyItem, grade?: GradeLevel): string {
   let imagePath = '';
@@ -22,9 +23,11 @@ export function resolveWordImage(word: VocabularyItem, grade?: GradeLevel): stri
     imagePath = gm.card_image || '';
   }
 
-  // 2. Cross-grade fallback if active grade has no entry (GEMINI.md §1)
+  // 2. Bracket-aware cross-grade fallback if active grade has no entry (GEMINI.md §1)
   if (!imagePath && word.media_by_grade) {
-    for (const fallbackGrade of GRADE_FALLBACK_ORDER) {
+    const isUpper = grade === 'ES_G5' || grade === 'ES_G6' || grade?.startsWith('JHS_');
+    const fallbackOrder = isUpper ? UPPER_GRADE_FALLBACK_ORDER : LOWER_GRADE_FALLBACK_ORDER;
+    for (const fallbackGrade of fallbackOrder) {
       const gm = word.media_by_grade[fallbackGrade];
       if (gm?.card_image) {
         imagePath = gm.card_image;
@@ -40,11 +43,11 @@ export function resolveWordImage(word: VocabularyItem, grade?: GradeLevel): stri
 
   if (!imagePath) return '';
 
-  // 4. Normalize labeled flashcards (`*_1_ce.png` / `*_full.png`) to pure illustrations (`*_1_c.png` / `*_illust.png`)
+  // 4. Normalize labeled flashcards (`*_1_ce.*` / `*_full.*`) to pure illustrations (`*_1_c.*` / `*_illust.*`)
   // so quiz prompts never leak the English target word on the card!
   imagePath = imagePath
-    .replace(/_1_ce\.png$/i, '_1_c.png')
-    .replace(/cards\/full\/([^/]+)_full\.png$/i, 'cards/illustration/$1_illust.png');
+    .replace(/_1_ce\.(png|webp|svg)$/i, '_1_c.$1')
+    .replace(/cards\/full\/([^/]+)_full\.(png|webp)$/i, 'cards/illustration/$1_illust.$2');
 
   if (imagePath.startsWith('http') || imagePath.startsWith('/')) return imagePath;
   if (imagePath.startsWith('cards/')) return `/${imagePath}`;

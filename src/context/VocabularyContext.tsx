@@ -61,10 +61,13 @@ function normalizeVocabularyItem(w: VocabularyItem, clue?: VocabularyClueEntry):
   const enTrimmed = (w.english || '').trim();
   const alphaOnly = enTrimmed.replace(/[^a-zA-Z]/g, '');
   const suite = w.audio_suite || {};
+  const mediaByGradeImage = w.media_by_grade
+    ? Object.values(w.media_by_grade).find(m => m?.card_image)?.card_image || ''
+    : '';
   return {
     ...w,
     primary_audio: w.primary_audio || w.sound_file || suite.en_jenny || suite.jenny || '',
-    primary_image: w.primary_image || w.card_image || w.hwg_card_illust || w.hwg_card_full || '',
+    primary_image: w.primary_image || w.card_image || w.hwg_card_illust || mediaByGradeImage || w.hwg_card_full || '',
     letter_count: w.letter_count ?? (alphaOnly.length || enTrimmed.length),
     first_letter: w.first_letter || (alphaOnly.charAt(0) || enTrimmed.charAt(0)).toUpperCase(),
     normalized_english: w.normalized_english || enTrimmed.toLowerCase(),

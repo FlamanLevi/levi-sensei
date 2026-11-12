@@ -89,7 +89,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-slate-950/75 backdrop-blur-xs select-none animate-in fade-in duration-200">
       <div 
-        className="bg-white dark:bg-slate-900 rounded-3xl sm:rounded-4xl w-[96vw] max-w-5xl h-[94vh] max-h-[820px] p-5 sm:p-7 md:p-8 shadow-2xl border-4 sm:border-6 border-emerald-400 dark:border-emerald-500 relative flex flex-col justify-between overflow-y-auto lg:overflow-hidden animate-in zoom-in-95 duration-150"
+        className="bg-white dark:bg-slate-900 rounded-3xl sm:rounded-4xl w-[96vw] max-w-5xl h-[94vh] max-h-[820px] p-5 sm:p-7 md:p-8 shadow-2xl border-4 sm:border-6 border-emerald-400 dark:border-emerald-500 relative flex flex-col justify-between overflow-y-auto overscroll-contain animate-in zoom-in-95 duration-150"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Modal Header */}
@@ -123,7 +123,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
           </button>
         </div>
 
-        <form onSubmit={handleSave} className="flex-1 flex flex-col justify-between min-h-0 pt-3 pb-2 overflow-y-auto lg:overflow-visible">
+        <form onSubmit={handleSave} className="flex-1 flex flex-col justify-between min-h-0 pt-3 pb-2 overflow-y-auto overscroll-contain">
           {/* 2-Column Responsive Stage Layout */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-7 flex-1 min-h-0">
             {/* Left Column: Names & Actions (lg:col-span-5) */}

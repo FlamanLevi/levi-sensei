@@ -1011,7 +1011,7 @@ export const StudentDeviceLinker: React.FC<StudentDeviceLinkerProps> = ({ onLink
           }}
         >
           <div
-            className="bg-white dark:bg-slate-900 rounded-3xl sm:rounded-4xl w-[96vw] max-w-5xl h-[94vh] max-h-[820px] p-5 sm:p-7 md:p-8 shadow-2xl border-4 sm:border-6 border-emerald-400 dark:border-emerald-500 relative flex flex-col justify-between overflow-y-auto lg:overflow-hidden animate-in zoom-in-95 duration-150"
+            className="bg-white dark:bg-slate-900 rounded-3xl sm:rounded-4xl w-[96vw] max-w-5xl h-[94vh] max-h-[820px] p-5 sm:p-7 md:p-8 shadow-2xl border-4 sm:border-6 border-emerald-400 dark:border-emerald-500 relative flex flex-col justify-between overflow-y-auto overscroll-contain animate-in zoom-in-95 duration-150"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
@@ -1060,7 +1060,7 @@ export const StudentDeviceLinker: React.FC<StudentDeviceLinkerProps> = ({ onLink
             )}
 
             {/* 2-Column Responsive Stage Layout */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-7 flex-1 min-h-0 pt-3 pb-2 overflow-y-auto lg:overflow-visible">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-7 flex-1 min-h-0 pt-3 pb-2 overflow-y-auto overscroll-contain">
               {/* Left Column: Names & Start Action (lg:col-span-5) */}
               <div className="lg:col-span-5 flex flex-col justify-between space-y-4">
                 <div className="space-y-4">

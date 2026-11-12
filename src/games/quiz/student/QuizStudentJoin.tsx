@@ -184,9 +184,9 @@ export const QuizStudentJoin: React.FC<QuizStudentJoinProps> = ({
   };
 
   return (
-    <div className="w-full max-w-md mx-auto p-4 sm:p-6 select-none animate-in fade-in duration-200">
+    <div className="w-full max-w-4xl mx-auto p-3 sm:p-5 md:p-6 select-none animate-in fade-in duration-200">
       {/* Top Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-4">
         <button
           onClick={onCancel}
           className="flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
@@ -200,17 +200,19 @@ export const QuizStudentJoin: React.FC<QuizStudentJoinProps> = ({
       </div>
 
       {/* Main Join Card */}
-      <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 shadow-2xl border-4 border-purple-200 dark:border-purple-950/80">
-        <div className="text-center mb-6">
-          <div className="w-16 h-16 rounded-3xl bg-gradient-to-tr from-purple-500 to-indigo-600 text-white flex items-center justify-center mx-auto mb-3 shadow-xl text-2xl font-black">
+      <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 md:p-7 shadow-2xl border-4 border-purple-200 dark:border-purple-950/80">
+        <div className="flex items-center gap-3.5 mb-4 pb-3 border-b border-slate-100 dark:border-slate-800">
+          <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-tr from-purple-500 to-indigo-600 text-white flex items-center justify-center shadow-lg text-2xl font-black shrink-0">
             🎮
           </div>
-          <h2 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">
-            {t('Join the Quiz!', 'クイズに参加しよう！')}
-          </h2>
-          <p className="text-xs font-bold text-slate-400 mt-1">
-            {t('Join the Classroom Quiz Game', '教室のクイズゲームに参加')}
-          </p>
+          <div className="text-left min-w-0 flex-1">
+            <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight leading-tight truncate">
+              {t('Join the Quiz!', 'クイズに参加しよう！')}
+            </h2>
+            <p className="text-xs font-bold text-slate-400 truncate">
+              {t('Enter room code and select your attendance number', 'へやの番号を入れて、出席番号をえらんでね')}
+            </p>
+          </div>
         </div>
 
         {error && (
@@ -220,7 +222,7 @@ export const QuizStudentJoin: React.FC<QuizStudentJoinProps> = ({
         )}
 
         {isHigherGradeRoom && roomInfo && (
-          <div className="mb-4 p-3.5 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border-2 border-amber-300 dark:border-amber-800 text-amber-900 dark:text-amber-200 text-xs text-left animate-in fade-in">
+          <div className="mb-4 p-3 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border-2 border-amber-300 dark:border-amber-800 text-amber-900 dark:text-amber-200 text-xs text-left animate-in fade-in">
             <div className="flex items-center gap-2 font-black mb-1">
               <span>💡</span>
               <span>{t(`Grade ${roomGradeNum} Vocabulary Room`, `小学${roomGradeNum}年生の単語ルーム`)}</span>
@@ -234,341 +236,348 @@ export const QuizStudentJoin: React.FC<QuizStudentJoinProps> = ({
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          {/* Step 1: PIN Input */}
-          <div>
-            <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
-              {t('1. Room PIN', '1. へやのばんごう')}
-            </label>
-            <input
-              type="text"
-              inputMode="numeric"
-              pattern="[0-9]*"
-              maxLength={4}
-              value={pin}
-              onChange={(e) => setPin(e.target.value.replace(/\D/g, ''))}
-              placeholder="1 2 3 4"
-              className="w-full py-3.5 text-center font-mono font-black text-3xl tracking-widest rounded-2xl border-2 border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:border-purple-500 focus:outline-none focus:ring-4 focus:ring-purple-100 dark:focus:ring-purple-950/40"
-              required
-            />
-          </div>
-
-          {/* Step 2: Hybrid Nickname Selector */}
-          <div>
-            <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
-              {t('2. Name / Nickname', '2. なまえ・ニックネーム')}
-            </label>
-
-            {savedProfile && !showManualOverride ? (
-              <div className="p-4 rounded-2xl bg-indigo-50 dark:bg-indigo-950/40 border-2 border-indigo-200 dark:border-indigo-800 flex flex-col gap-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <span className="text-3xl">{savedProfile.avatar || getRandomAvatarEmoji(savedProfile.attendanceNumber)}</span>
-                    <div className="text-left">
-                      <span className="text-[10px] font-black text-indigo-600 dark:text-indigo-400 block uppercase tracking-wider">
-                        {t('Bound Profile on this iPad', 'このiPadの登録生徒')}
-                      </span>
-                      <strong className="text-base font-black text-slate-900 dark:text-white">
-                        {savedProfile.nickname} ({savedProfile.classId} #{savedProfile.attendanceNumber})
-                      </strong>
-                    </div>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setShowManualOverride(true);
-                      setActiveTab('TYPE');
-                    }}
-                    className="text-xs font-bold text-slate-500 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-300 underline cursor-pointer"
-                  >
-                    {t('Change', '変更')}
-                  </button>
-                </div>
-                {loading && (
-                  <div className="flex items-center justify-center gap-2 py-1 text-indigo-600 dark:text-indigo-400 text-xs font-bold animate-pulse">
-                    <div className="w-3.5 h-3.5 rounded-full border-2 border-indigo-600 border-t-transparent animate-spin" />
-                    <span>{t('Entering room...', '部屋に入室しています...')}</span>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <>
-                {/* Selector Tabs: Attendance Number is 1st & Recommended! */}
-                <div className="grid grid-cols-3 gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-2xl mb-3">
-                  <button
-                    type="button"
-                    onClick={() => setActiveTab('ATTENDANCE')}
-                    className={`py-1.5 text-xs font-black rounded-xl transition-all flex items-center justify-center gap-1 cursor-pointer ${
-                      activeTab === 'ATTENDANCE'
-                        ? 'bg-white dark:bg-slate-900 text-purple-600 dark:text-purple-400 shadow-xs ring-1 ring-purple-300 dark:ring-purple-700'
-                        : 'text-slate-500 dark:text-slate-400'
-                    }`}
-                  >
-                    <Hash size={13} />
-                    <span>{t('Seat #', '出席番号')}</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setActiveTab('TYPE')}
-                    className={`py-1.5 text-xs font-black rounded-xl transition-all cursor-pointer ${
-                      activeTab === 'TYPE'
-                        ? 'bg-white dark:bg-slate-900 text-purple-600 dark:text-purple-400 shadow-xs ring-1 ring-purple-300 dark:ring-purple-700'
-                        : 'text-slate-500 dark:text-slate-400'
-                    }`}
-                  >
-                    {t('Type Name', '名前入力')}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setActiveTab('RANDOM');
-                      handlePickRandomName();
-                    }}
-                    className={`py-1.5 text-xs font-black rounded-xl transition-all flex items-center justify-center gap-1 cursor-pointer ${
-                      activeTab === 'RANDOM'
-                        ? 'bg-white dark:bg-slate-900 text-purple-600 dark:text-purple-400 shadow-xs ring-1 ring-purple-300 dark:ring-purple-700'
-                        : 'text-slate-500 dark:text-slate-400'
-                    }`}
-                  >
-                    <Dices size={13} />
-                    <span>{t('Random', 'おまかせ')}</span>
-                  </button>
-                </div>
-              </>
-            )}
-
-            {/* Tab 1: Attendance Numbers 1-35 Quick Grid (Primary & Instant) */}
-            {activeTab === 'ATTENDANCE' && (
-              <div className="flex flex-col gap-2.5">
-                <div className="p-2.5 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border-2 border-slate-200 dark:border-slate-700">
-                  <div className="text-[11px] font-black text-slate-500 dark:text-slate-400 mb-1.5 text-center">
-                    {t('Tap your attendance number (1-35):', '自分の出席番号をタップしてください (1〜35):')}
-                  </div>
-                  <div className="grid grid-cols-6 sm:grid-cols-7 gap-1.5 max-h-48 overflow-y-auto p-0.5">
-                    {[0, ...Array.from({ length: Math.max(35, getClassSize(roomInfo?.schoolId || savedProfile?.schoolId, roomInfo?.classId || savedProfile?.classId)) }, (_, i) => i + 1)].map((num) => {
-                      const isSelected = selectedAttendanceNumber === num;
-                      const isTeacherSeat = num === 0;
-                      return (
-                        <button
-                          key={num}
-                          type="button"
-                          onClick={() => handleSelectSeatNumber(num)}
-                          title={isTeacherSeat ? (language === 'ja' ? '00番 (先生・テスター席)' : '#00 (Teacher Seat)') : undefined}
-                          className={`h-11 sm:h-12 rounded-xl text-sm font-black transition-all flex flex-col items-center justify-center cursor-pointer ${
-                            isSelected
-                              ? 'bg-gradient-to-tr from-purple-600 to-indigo-600 text-white shadow-lg ring-3 ring-purple-400 scale-105'
-                              : isTeacherSeat
-                              ? 'bg-purple-50 dark:bg-purple-950/40 text-purple-900 dark:text-purple-200 border-2 border-purple-300 dark:border-purple-700 hover:border-purple-500 hover:scale-102 active:scale-95 shadow-2xs'
-                              : 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:border-purple-400 active:scale-95'
-                          }`}
-                        >
-                          <div className="flex items-center gap-0.5 leading-none">
-                            <span>{isTeacherSeat ? '00' : num}</span>
-                            {isTeacherSeat && <span className="text-[10px]">👨‍🏫</span>}
-                          </div>
-                          {isTeacherSeat && (
-                            <span className="text-[8px] font-black text-purple-600 dark:text-purple-400 leading-none mt-0.5">
-                              {language === 'ja' ? '先生' : 'Teacher'}
-                            </span>
-                          )}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* Optional Custom Nickname Suffix (e.g. 27番 たろう) */}
-                <div className="w-full">
-                  <input
-                    type="text"
-                    maxLength={10}
-                    value={customNameSuffix}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      setCustomNameSuffix(val);
-                      if (selectedAttendanceNumber) {
-                        const prefix = language === 'ja' ? `${selectedAttendanceNumber}番` : `#${selectedAttendanceNumber}`;
-                        setNickname(val.trim() ? `${prefix} ${val.trim()}` : prefix);
-                      } else if (val.trim()) {
-                        setNickname(val.trim());
-                      }
-                    }}
-                    placeholder={t('Add nickname (optional, e.g. Ken)', '名前を追加 (省略OK / 例: けんた)')}
-                    className="w-full py-2 px-3 text-center font-bold text-sm rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:border-purple-500 focus:outline-none"
-                  />
-                </div>
-              </div>
-            )}
-
-            {/* Tab 2: Custom Typing Input */}
-            {activeTab === 'TYPE' && (
-              <div className="flex flex-col gap-2">
+        <form onSubmit={handleSubmit}>
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-5 sm:gap-6 items-start">
+            {/* LEFT COLUMN (md:col-span-5): Room PIN, Team choice, Player Preview & Submit Button */}
+            <div className="md:col-span-5 flex flex-col gap-3.5">
+              {/* Step 1: PIN Input */}
+              <div>
+                <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
+                  {t('1. Room PIN', '1. へやのばんごう')}
+                </label>
                 <input
                   type="text"
-                  maxLength={14}
-                  value={nickname}
-                  onChange={(e) => {
-                    setNickname(e.target.value);
-                    const match = e.target.value.match(/^(\d+)番/) || e.target.value.match(/#(\d+)/);
-                    if (match) setSelectedAttendanceNumber(parseInt(match[1], 10));
-                  }}
-                  placeholder={t('Enter name (e.g. #27 Ken)', '名前を入力 (例: 27番 けんた)')}
-                  className="w-full py-3 px-4 text-center font-black text-lg rounded-2xl border-2 border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:border-purple-500 focus:outline-none focus:ring-4 focus:ring-purple-100 dark:focus:ring-purple-950/40"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  maxLength={4}
+                  value={pin}
+                  onChange={(e) => setPin(e.target.value.replace(/\D/g, ''))}
+                  placeholder="1 2 3 4"
+                  className="w-full py-3 text-center font-mono font-black text-2xl sm:text-3xl tracking-widest rounded-2xl border-2 border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:border-purple-500 focus:outline-none focus:ring-4 focus:ring-purple-100 dark:focus:ring-purple-950/40"
+                  required
                 />
               </div>
-            )}
 
-            {/* Tab 3: Random Kid-Friendly Nickname */}
-            {activeTab === 'RANDOM' && (
-              <div className="flex flex-col items-center gap-2.5">
-                <div className="w-full py-3.5 px-4 text-center font-black text-xl bg-purple-50 dark:bg-purple-950/50 text-purple-700 dark:text-purple-300 border-2 border-purple-200 dark:border-purple-800 rounded-2xl">
-                  {nickname || t('Pick a name below!', '下のボタンを押して名前を決定！')}
+              {/* Step 3: Team Selection for Team Battle */}
+              {roomInfo && roomInfo.mode === 'TEAM' && (
+                <div className="pt-1">
+                  {roomInfo.teamAssignment === 'STUDENT_CHOICE' ? (
+                    <div className="animate-in fade-in duration-200">
+                      <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
+                        {t('3. Choose Team', '3. チームをえらぼう')}
+                      </label>
+                      <div className="grid grid-cols-2 gap-2 mb-2">
+                        {(() => {
+                          const isTug = roomInfo.gamePlayType === 'TUG_OF_WAR';
+                          const isVolleyball = roomInfo.gamePlayType === 'VOLLEYBALL';
+                          const activeTeams: TeamId[] = (isTug || isVolleyball)
+                            ? ['team_red', 'team_white']
+                            : (roomInfo.activeTeams || (roomInfo.teamCount === 2 ? ['team_red', 'team_white'] : RAINBOW_TEAM_ORDER.slice(0, roomInfo.teamCount || 2)));
+                          const currentPlayers = Object.values(roomInfo.players || {});
+                          const teamCounts: Partial<Record<TeamId, number>> = {};
+                          activeTeams.forEach(id => {
+                            teamCounts[id] = currentPlayers.filter(p => p.teamId === id).length;
+                          });
+                          const countValues = Object.values(teamCounts) as number[];
+                          const minCount = countValues.length > 0 ? Math.min(...countValues) : 0;
+
+                          return activeTeams.map((tId) => {
+                            const preset = TEAM_PRESETS[tId];
+                            const tCount = teamCounts[tId] || 0;
+                            const isFull = tCount >= 10 || (tCount >= minCount + 2 && currentPlayers.length >= 8);
+                            const isSelected = selectedTeam === tId;
+
+                            return (
+                              <button
+                                key={tId}
+                                type="button"
+                                disabled={isFull}
+                                onClick={() => setSelectedTeam(tId)}
+                                className={`p-2.5 rounded-2xl border-2 text-left transition-all relative flex flex-col justify-between cursor-pointer ${
+                                  isFull
+                                    ? 'opacity-50 border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-800/40 cursor-not-allowed'
+                                    : isSelected
+                                      ? 'border-purple-600 bg-purple-50/70 dark:bg-purple-950/40 ring-2 ring-purple-400 shadow-sm'
+                                      : 'border-slate-200 dark:border-slate-700 hover:border-purple-300 bg-white dark:bg-slate-800'
+                                }`}
+                              >
+                                <div className="flex items-center justify-between">
+                                  <span className="text-lg">{preset.emoji}</span>
+                                  {isFull ? (
+                                    <span className="text-[9px] font-black px-1 rounded bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300">
+                                      {t('Full', '満員')}
+                                    </span>
+                                  ) : (
+                                    <span className="text-[10px] font-black text-slate-400">
+                                      {teamCounts[tId]}{t('p', '人')}
+                                    </span>
+                                  )}
+                                </div>
+                                <span className="text-xs font-black mt-1 text-slate-900 dark:text-white truncate">
+                                  {language === 'ja' ? preset.jaName : preset.name}
+                                </span>
+                                {isSelected && (
+                                  <div className="absolute top-2 right-2 w-4 h-4 rounded-full bg-purple-600 text-white flex items-center justify-center text-[10px] font-black">
+                                    ✓
+                                  </div>
+                                )}
+                              </button>
+                            );
+                          });
+                        })()}
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => setSelectedTeam('RANDOM')}
+                        className={`w-full py-1.5 px-3 rounded-xl border text-xs font-black transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                          selectedTeam === 'RANDOM'
+                            ? 'border-purple-500 bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 ring-1 ring-purple-400'
+                            : 'border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-50'
+                        }`}
+                      >
+                        <Dices size={13} />
+                        <span>{t('🎲 Auto-Assign', '🎲 おまかせチーム')}</span>
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="p-2.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs font-black flex items-center gap-2">
+                      <Users size={16} />
+                      <span>{t('Team Battle (Auto-balanced)', 'チーム戦（自動編成）')}</span>
+                    </div>
+                  )}
                 </div>
-                <button
-                  type="button"
-                  onClick={handlePickRandomName}
-                  className="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-bold hover:bg-purple-100 dark:hover:bg-purple-950/80 flex items-center gap-1.5 transition-colors cursor-pointer"
-                >
-                  <Dices size={14} className="text-purple-500" />
-                  <span>{t('Change Name!', 'べつの名前にチェンジ！')}</span>
-                </button>
-              </div>
-            )}
-          </div>
-
-          {/* Current selected preview */}
-          {nickname ? (
-            <div className="flex items-center justify-center gap-2 text-xs font-bold text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/40 py-2.5 px-3 rounded-xl border border-slate-200 dark:border-slate-700">
-              <UserCheck size={16} className="text-emerald-500" />
-              <span>{t('Playing as:', '参加する名前:')}</span>
-              {selectedAttendanceNumber && (
-                <span className="px-2 py-0.5 rounded-lg bg-purple-600 text-white font-mono font-black text-xs shadow-xs">
-                  #{selectedAttendanceNumber}
-                </span>
               )}
-              <strong className="text-purple-600 dark:text-purple-400 text-sm">{nickname}</strong>
-            </div>
-          ) : (
-            <div className="text-center py-2 text-xs font-bold text-amber-500 dark:text-amber-400">
-              {t('👆 Tap your attendance number above to proceed', '👆 上の番号をタップして出席番号を選んでください')}
-            </div>
-          )}
 
-          {/* Step 3: Team Selection for Team Battle */}
-          {roomInfo && roomInfo.mode === 'TEAM' && (
-            <div>
-              {roomInfo.teamAssignment === 'STUDENT_CHOICE' ? (
-                <div className="pt-2 animate-in fade-in duration-200">
-                  <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
-                    {t('3. Choose Team', '3. チームをえらぼう')}
-                  </label>
-                  <div className="grid grid-cols-2 gap-2 mb-2">
-                    {(() => {
-                      const isTug = roomInfo.gamePlayType === 'TUG_OF_WAR';
-                      const isVolleyball = roomInfo.gamePlayType === 'VOLLEYBALL';
-                      const activeTeams: TeamId[] = (isTug || isVolleyball)
-                        ? ['team_red', 'team_white']
-                        : (roomInfo.activeTeams || (roomInfo.teamCount === 2 ? ['team_red', 'team_white'] : RAINBOW_TEAM_ORDER.slice(0, roomInfo.teamCount || 2)));
-                      const currentPlayers = Object.values(roomInfo.players || {});
-                      const teamCounts: Partial<Record<TeamId, number>> = {};
-                      activeTeams.forEach(id => {
-                        teamCounts[id] = currentPlayers.filter(p => p.teamId === id).length;
-                      });
-                      const countValues = Object.values(teamCounts) as number[];
-                      const minCount = countValues.length > 0 ? Math.min(...countValues) : 0;
-
-                      return activeTeams.map((tId) => {
-                        const preset = TEAM_PRESETS[tId];
-                        const tCount = teamCounts[tId] || 0;
-                        const isFull = tCount >= 10 || (tCount >= minCount + 2 && currentPlayers.length >= 8);
-                        const isSelected = selectedTeam === tId;
-
-                      return (
-                        <button
-                          key={tId}
-                          type="button"
-                          disabled={isFull}
-                          onClick={() => setSelectedTeam(tId)}
-                          className={`p-3 rounded-2xl border-2 text-left transition-all relative flex flex-col justify-between ${
-                            isFull
-                              ? 'opacity-50 border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-800/40 cursor-not-allowed'
-                              : isSelected
-                                ? 'border-purple-600 bg-purple-50/70 dark:bg-purple-950/40 ring-2 ring-purple-400 shadow-sm'
-                                : 'border-slate-200 dark:border-slate-700 hover:border-purple-300 bg-white dark:bg-slate-800'
-                          }`}
-                        >
-                          <div className="flex items-center justify-between">
-                            <span className="text-xl">{preset.emoji}</span>
-                            {isFull ? (
-                              <span className="text-[10px] font-black px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300">
-                                {t('Full', '満員')}
-                              </span>
-                            ) : (
-                              <span className="text-[10px] font-black text-slate-400">
-                                {teamCounts[tId]}{t(' players', '人')}
-                              </span>
-                            )}
-                          </div>
-                          <span className="text-xs font-black mt-1 text-slate-900 dark:text-white">
-                            {language === 'ja' ? preset.jaName : preset.name}
-                          </span>
-                          {isSelected && (
-                            <div className="absolute top-2 right-2 w-4 h-4 rounded-full bg-purple-600 text-white flex items-center justify-center text-[10px] font-black">
-                              ✓
-                            </div>
-                          )}
-                        </button>
-                      );
-                    });
-                  })()}
-                </div>
-
-                  <button
-                    type="button"
-                    onClick={() => setSelectedTeam('RANDOM')}
-                    className={`w-full py-2 px-3 rounded-xl border text-xs font-black transition-all flex items-center justify-center gap-1.5 ${
-                      selectedTeam === 'RANDOM'
-                        ? 'border-purple-500 bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 ring-1 ring-purple-400'
-                        : 'border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-50'
-                    }`}
-                  >
-                    <Dices size={13} />
-                    <span>{t('🎲 Surprise Me (Auto-Assign)', '🎲 おまかせ（空いているチームへ）')}</span>
-                  </button>
+              {/* Current selected preview */}
+              {nickname ? (
+                <div className="flex items-center justify-center gap-2 text-xs font-bold text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/60 py-2.5 px-3 rounded-2xl border border-slate-200 dark:border-slate-700">
+                  <UserCheck size={16} className="text-emerald-500 shrink-0" />
+                  <span className="shrink-0">{t('Playing as:', '参加名:')}</span>
+                  {selectedAttendanceNumber !== undefined && (
+                    <span className="px-2 py-0.5 rounded-lg bg-purple-600 text-white font-mono font-black text-xs shadow-xs shrink-0">
+                      {selectedAttendanceNumber === 0 ? '00' : `#${selectedAttendanceNumber}`}
+                    </span>
+                  )}
+                  <strong className="text-purple-600 dark:text-purple-400 text-sm truncate">{nickname}</strong>
                 </div>
               ) : (
-                <div className="p-3 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs font-black flex items-center gap-2">
-                  <Users size={16} />
-                  <span>{t('Team Battle (Teams will be auto-balanced)', 'チーム対抗戦（チームは自動でバランスよく決まります）')}</span>
+                <div className="text-center py-2 text-xs font-bold text-amber-500 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30 rounded-xl border border-amber-200 dark:border-amber-800">
+                  {t('👉 Choose seat number on the right', '👉 右の番号から出席番号をえらんでね')}
                 </div>
               )}
-            </div>
-          )}
 
-          {/* Submit Button */}
-          <button
-            type="submit"
-            disabled={pin.length !== 4 || !nickname.trim() || loading}
-            className={`w-full py-4 rounded-2xl font-black text-base text-white shadow-xl flex items-center justify-center gap-2 transition-all ${
-              pin.length === 4 && nickname.trim() && !loading
-                ? 'bg-gradient-to-r from-purple-500 to-indigo-600 hover:brightness-105 active:scale-98 cursor-pointer shadow-purple-500/20'
-                : 'bg-slate-300 dark:bg-slate-800 cursor-not-allowed text-slate-500 dark:text-slate-500'
-            }`}
-          >
-            {loading ? (
-              <span>{t('Joining...', '参加しています...')}</span>
-            ) : (
-              <>
-                <span>🎮</span>
-                <span>
-                  {savedProfile && !showManualOverride
-                    ? t(`Join as ${savedProfile.nickname}!`, `${savedProfile.nickname} として参加！`)
-                    : t('JOIN GAME!', 'ゲームにはいる！')}
-                </span>
-                <ArrowRight size={18} />
-              </>
-            )}
-          </button>
+              {/* Primary Submit Button - Located directly here in the left column! */}
+              <button
+                type="submit"
+                disabled={pin.length !== 4 || !nickname.trim() || loading}
+                className={`w-full py-4 px-6 rounded-2xl font-black text-base sm:text-lg text-white shadow-xl flex items-center justify-center gap-2 transition-all ${
+                  pin.length === 4 && nickname.trim() && !loading
+                    ? 'bg-gradient-to-r from-purple-500 to-indigo-600 hover:brightness-105 active:scale-98 cursor-pointer shadow-purple-500/30 ring-2 ring-purple-300 dark:ring-purple-700'
+                    : 'bg-slate-300 dark:bg-slate-800 cursor-not-allowed text-slate-500 dark:text-slate-500'
+                }`}
+              >
+                {loading ? (
+                  <span>{t('Joining...', '参加しています...')}</span>
+                ) : (
+                  <>
+                    <span>🎮</span>
+                    <span className="truncate">
+                      {nickname
+                        ? language === 'ja'
+                          ? `${nickname} として参加！`
+                          : `Join as ${nickname}!`
+                        : t('JOIN GAME!', 'ゲームにはいる！')}
+                    </span>
+                    <ArrowRight size={18} />
+                  </>
+                )}
+              </button>
+            </div>
+
+            {/* RIGHT COLUMN (md:col-span-7): Identity Selector (Seat Number / Custom Name) */}
+            <div className="md:col-span-7 flex flex-col gap-3">
+              <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+                {t('2. Name / Attendance Number', '2. 出席番号・なまえ')}
+              </label>
+
+              {savedProfile && !showManualOverride ? (
+                <div className="p-4 sm:p-5 rounded-2xl bg-indigo-50 dark:bg-indigo-950/40 border-2 border-indigo-200 dark:border-indigo-800 flex flex-col gap-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3.5">
+                      <span className="text-4xl">{savedProfile.avatar || getRandomAvatarEmoji(savedProfile.attendanceNumber)}</span>
+                      <div className="text-left">
+                        <span className="text-[10px] font-black text-indigo-600 dark:text-indigo-400 block uppercase tracking-wider">
+                          {t('Bound Profile on this iPad', 'このiPadの登録生徒')}
+                        </span>
+                        <strong className="text-lg font-black text-slate-900 dark:text-white block">
+                          {savedProfile.nickname} ({savedProfile.classId} #{savedProfile.attendanceNumber})
+                        </strong>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowManualOverride(true);
+                        setActiveTab('ATTENDANCE');
+                      }}
+                      className="text-xs font-bold px-3 py-1.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-indigo-600 dark:text-indigo-300 hover:bg-indigo-50 transition-colors cursor-pointer"
+                    >
+                      {t('Change Seat', '席番号を変更')}
+                    </button>
+                  </div>
+                  {loading && (
+                    <div className="flex items-center justify-center gap-2 py-1 text-indigo-600 dark:text-indigo-400 text-xs font-bold animate-pulse">
+                      <div className="w-3.5 h-3.5 rounded-full border-2 border-indigo-600 border-t-transparent animate-spin" />
+                      <span>{t('Entering room...', '部屋に入室しています...')}</span>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <>
+                  {/* Selector Tabs: Attendance Number is 1st & Recommended! */}
+                  <div className="grid grid-cols-3 gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-2xl">
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab('ATTENDANCE')}
+                      className={`py-1.5 text-xs font-black rounded-xl transition-all flex items-center justify-center gap-1 cursor-pointer ${
+                        activeTab === 'ATTENDANCE'
+                          ? 'bg-white dark:bg-slate-900 text-purple-600 dark:text-purple-400 shadow-xs ring-1 ring-purple-300 dark:ring-purple-700'
+                          : 'text-slate-500 dark:text-slate-400'
+                      }`}
+                    >
+                      <Hash size={13} />
+                      <span>{t('Seat #', '出席番号')}</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab('TYPE')}
+                      className={`py-1.5 text-xs font-black rounded-xl transition-all cursor-pointer ${
+                        activeTab === 'TYPE'
+                          ? 'bg-white dark:bg-slate-900 text-purple-600 dark:text-purple-400 shadow-xs ring-1 ring-purple-300 dark:ring-purple-700'
+                          : 'text-slate-500 dark:text-slate-400'
+                      }`}
+                    >
+                      {t('Type Name', '名前入力')}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setActiveTab('RANDOM');
+                        handlePickRandomName();
+                      }}
+                      className={`py-1.5 text-xs font-black rounded-xl transition-all flex items-center justify-center gap-1 cursor-pointer ${
+                        activeTab === 'RANDOM'
+                          ? 'bg-white dark:bg-slate-900 text-purple-600 dark:text-purple-400 shadow-xs ring-1 ring-purple-300 dark:ring-purple-700'
+                          : 'text-slate-500 dark:text-slate-400'
+                      }`}
+                    >
+                      <Dices size={13} />
+                      <span>{t('Random', 'おまかせ')}</span>
+                    </button>
+                  </div>
+
+                  {/* Tab 1: Attendance Numbers 1-35 Quick Grid (Primary & Instant) */}
+                  {activeTab === 'ATTENDANCE' && (
+                    <div className="flex flex-col gap-2">
+                      <div className="p-2.5 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border-2 border-slate-200 dark:border-slate-700">
+                        <div className="text-[11px] font-black text-slate-500 dark:text-slate-400 mb-1.5 text-center">
+                          {t('Tap your attendance number (1-35):', '自分の出席番号をタップしてください (1〜35):')}
+                        </div>
+                        <div className="grid grid-cols-6 sm:grid-cols-7 gap-1.5 max-h-60 sm:max-h-72 overflow-y-auto overscroll-contain p-0.5">
+                          {[0, ...Array.from({ length: Math.max(35, getClassSize(roomInfo?.schoolId || savedProfile?.schoolId, roomInfo?.classId || savedProfile?.classId)) }, (_, i) => i + 1)].map((num) => {
+                            const isSelected = selectedAttendanceNumber === num;
+                            const isTeacherSeat = num === 0;
+                            return (
+                              <button
+                                key={num}
+                                type="button"
+                                onClick={() => handleSelectSeatNumber(num)}
+                                title={isTeacherSeat ? (language === 'ja' ? '00番 (先生・テスター席)' : '#00 (Teacher Seat)') : undefined}
+                                className={`h-11 sm:h-12 rounded-xl text-sm font-black transition-all flex flex-col items-center justify-center cursor-pointer ${
+                                  isSelected
+                                    ? 'bg-gradient-to-tr from-purple-600 to-indigo-600 text-white shadow-lg ring-3 ring-purple-400 scale-105'
+                                    : isTeacherSeat
+                                    ? 'bg-purple-50 dark:bg-purple-950/40 text-purple-900 dark:text-purple-200 border-2 border-purple-300 dark:border-purple-700 hover:border-purple-500 hover:scale-102 active:scale-95 shadow-2xs'
+                                    : 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:border-purple-400 active:scale-95'
+                                }`}
+                              >
+                                <div className="flex items-center gap-0.5 leading-none">
+                                  <span>{isTeacherSeat ? '00' : num}</span>
+                                  {isTeacherSeat && <span className="text-[10px]">👨‍🏫</span>}
+                                </div>
+                                {isTeacherSeat && (
+                                  <span className="text-[8px] font-black text-purple-600 dark:text-purple-400 leading-none mt-0.5">
+                                    {language === 'ja' ? '先生' : 'Teacher'}
+                                  </span>
+                                )}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+
+                      {/* Optional Custom Nickname Suffix (e.g. 27番 たろう) */}
+                      <div className="w-full">
+                        <input
+                          type="text"
+                          maxLength={10}
+                          value={customNameSuffix}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            setCustomNameSuffix(val);
+                            if (selectedAttendanceNumber) {
+                              const prefix = language === 'ja' ? `${selectedAttendanceNumber}番` : `#${selectedAttendanceNumber}`;
+                              setNickname(val.trim() ? `${prefix} ${val.trim()}` : prefix);
+                            } else if (val.trim()) {
+                              setNickname(val.trim());
+                            }
+                          }}
+                          placeholder={t('Add nickname (optional, e.g. Ken)', '名前を追加 (省略OK / 例: けんた)')}
+                          className="w-full py-2 px-3 text-center font-bold text-sm rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:border-purple-500 focus:outline-none"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Tab 2: Custom Typing Input */}
+                  {activeTab === 'TYPE' && (
+                    <div className="flex flex-col gap-2">
+                      <input
+                        type="text"
+                        maxLength={14}
+                        value={nickname}
+                        onChange={(e) => {
+                          setNickname(e.target.value);
+                          const match = e.target.value.match(/^(\d+)番/) || e.target.value.match(/#(\d+)/);
+                          if (match) setSelectedAttendanceNumber(parseInt(match[1], 10));
+                        }}
+                        placeholder={t('Enter name (e.g. #27 Ken)', '名前を入力 (例: 27番 けんた)')}
+                        className="w-full py-3 px-4 text-center font-black text-lg rounded-2xl border-2 border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:border-purple-500 focus:outline-none focus:ring-4 focus:ring-purple-100 dark:focus:ring-purple-950/40"
+                      />
+                    </div>
+                  )}
+
+                  {/* Tab 3: Random Kid-Friendly Nickname */}
+                  {activeTab === 'RANDOM' && (
+                    <div className="flex flex-col items-center gap-2.5">
+                      <div className="w-full py-3.5 px-4 text-center font-black text-xl bg-purple-50 dark:bg-purple-950/50 text-purple-700 dark:text-purple-300 border-2 border-purple-200 dark:border-purple-800 rounded-2xl">
+                        {nickname || t('Pick a name below!', '下のボタンを押して名前を決定！')}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handlePickRandomName}
+                        className="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-bold hover:bg-purple-100 dark:hover:bg-purple-950/80 flex items-center gap-1.5 transition-colors cursor-pointer"
+                      >
+                        <Dices size={14} className="text-purple-500" />
+                        <span>{t('Change Name!', 'べつの名前にチェンジ！')}</span>
+                      </button>
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+          </div>
         </form>
       </div>
 

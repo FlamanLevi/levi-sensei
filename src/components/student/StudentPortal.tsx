@@ -237,32 +237,93 @@ export const StudentPortal: React.FC = () => {
   }, [profile?.schoolId, profile?.classId, profile?.attendanceNumber]);
 
   // Subscribe to live activeRoom for this student's exact school & class (Zero-PIN / Zero-QR auto-detection!)
+  // Features Multi-Layer Resilience:
+  // 1. RTDB live WebSocket subscription on activeRoom & teacherRoom
+  // 2. Safari Wakeup Listener (document.visibilitychange & window.focus)
+  // 3. 3.5s heartbeat polling fallback while on portal screen
+  // 4. Defensive room validation to prevent transient status blips from locking out auto-join
   useEffect(() => {
     if (!profile?.schoolId || !profile?.classId || activeQuizPin !== null) {
       setDetectedRoom(null);
       return;
     }
 
+    let isMounted = true;
     const activeRoomPath = `schools/${profile.schoolId}/classes/${profile.classId}/analyticsSummary/activeRoom`;
-    const unsub = safeSubscribe<{ code: string; gamePlayType?: string; unit?: string; updatedAt?: number }>(
-      activeRoomPath,
-      async (data) => {
-        // Ignore stale rooms older than 90 minutes
-        if (!data || !data.code || (data.updatedAt && Date.now() - data.updatedAt > 90 * 60 * 1000)) {
-          setDetectedRoom(null);
-          return;
-        }
-        // Verify the room is still open in /rooms/$code/status
+    const teacherRoomPath = `schools/${profile.schoolId}/classes/${profile.classId}/analyticsSummary/teacherRoom`;
+
+    type RoomSummary = { code: string; gamePlayType?: string; unit?: string; updatedAt?: number; isTeacher?: boolean };
+
+    const verifyAndApplyRoom = async (data: RoomSummary | null) => {
+      if (!isMounted) return;
+      if (!data || !data.code) {
+        setDetectedRoom(null);
+        return;
+      }
+      // Ignore stale rooms older than 90 minutes
+      if (data.updatedAt && Date.now() - data.updatedAt > 90 * 60 * 1000) {
+        setDetectedRoom(null);
+        return;
+      }
+
+      try {
         const status = await safeGet<string>(`rooms/${data.code}/status`);
-        if (status && status !== 'CLOSED' && status !== 'GAME_OVER') {
+        if (!isMounted) return;
+        // If room was created very recently (<45s), allow it even if status node is still initializing
+        const isFresh = data.updatedAt ? (Date.now() - data.updatedAt < 45 * 1000) : false;
+        if (status === 'CLOSED' || status === 'GAME_OVER') {
+          setDetectedRoom(null);
+        } else if (status || isFresh) {
           setDetectedRoom(data);
         } else {
           setDetectedRoom(null);
         }
+      } catch (err) {
+        // On transient network error on iPad, if data.code is fresh, do not discard
+        if (isMounted && data.code) {
+          setDetectedRoom(data);
+        }
       }
-    );
+    };
 
-    return () => unsub();
+    const pollActiveRoom = async () => {
+      try {
+        let active = await safeGet<RoomSummary>(activeRoomPath);
+        if (!active || !active.code) {
+          active = await safeGet<RoomSummary>(teacherRoomPath);
+        }
+        await verifyAndApplyRoom(active);
+      } catch {}
+    };
+
+    // 1. Live RTDB Subscription
+    const unsub = safeSubscribe<RoomSummary>(activeRoomPath, (data) => {
+      verifyAndApplyRoom(data);
+    });
+
+    // 2. Safari Wakeup Event Handlers (unlocking iPad or switching back to Safari)
+    const handleWakeup = () => {
+      if (document.visibilityState === 'visible') {
+        pollActiveRoom();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleWakeup);
+    window.addEventListener('focus', handleWakeup);
+
+    // 3. Fast 3.5s Heartbeat Polling Fallback to catch rooms even if WebSockets stagnated
+    const intervalId = setInterval(pollActiveRoom, 3500);
+
+    // Initial check
+    pollActiveRoom();
+
+    return () => {
+      isMounted = false;
+      unsub();
+      document.removeEventListener('visibilitychange', handleWakeup);
+      window.removeEventListener('focus', handleWakeup);
+      clearInterval(intervalId);
+    };
   }, [profile?.schoolId, profile?.classId, activeQuizPin]);
 
   const handleClearProfile = async () => {
@@ -1464,6 +1525,43 @@ export const StudentPortal: React.FC = () => {
                 {t("Cancel", "キャンセル")}
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* 🚀 PERSISTENT DOCKED FLOATING JOIN BAR (Always visible even when scrolled down!) */}
+      {detectedRoom && profile && (
+        <div className="fixed bottom-4 inset-x-3 sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 z-40 max-w-xl w-auto pointer-events-auto animate-in slide-in-from-bottom-5 duration-300">
+          <div className="p-3 sm:p-4 rounded-2xl sm:rounded-3xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 text-white shadow-2xl border-3 sm:border-4 border-yellow-300 flex items-center justify-between gap-3 sm:gap-4 ring-4 ring-emerald-500/30 backdrop-blur-md">
+            <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+              <span className="text-2xl sm:text-3xl animate-bounce shrink-0">🏎️</span>
+              <div className="min-w-0 text-left">
+                <div className="flex items-center gap-1.5 leading-none mb-1">
+                  <span className="px-1.5 py-0.5 rounded-full bg-yellow-300 text-slate-950 font-black text-[10px]">
+                    {t("LIVE NOW", "いまゲーム中！")}
+                  </span>
+                  <span className="text-xs sm:text-sm font-black truncate">
+                    {profile.classId} {t("Game Ready!", "ゲームがはじまったよ！")}
+                  </span>
+                </div>
+                <p className="text-[11px] font-bold text-emerald-100 truncate">
+                  {t("Tap to jump in without a PIN!", "ワンタップですぐ参加！")}
+                </p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => {
+                requestMobileFullscreen();
+                playPop();
+                setActiveQuizPin(detectedRoom.code);
+              }}
+              className="px-5 py-2.5 sm:px-6 sm:py-3.5 rounded-xl sm:rounded-2xl bg-yellow-300 hover:bg-yellow-200 active:scale-95 text-slate-950 font-black text-sm sm:text-base shadow-xl transition-all cursor-pointer flex items-center gap-1.5 shrink-0"
+            >
+              <span>{t("Join Now!", "参加する！")}</span>
+              <ArrowRight size={18} />
+            </button>
           </div>
         </div>
       )}

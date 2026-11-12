@@ -249,7 +249,7 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
     }
 
     return (
-      <div className="min-h-screen bg-slate-100 dark:bg-slate-950 flex flex-col items-center justify-center p-4">
+      <div className="min-h-dvh w-full bg-slate-100 dark:bg-slate-950 flex flex-col items-center justify-start sm:justify-center p-3 sm:p-4 md:p-6 overflow-y-auto overscroll-contain">
         <QuizStudentJoin
           initialPin={initialPin || pin || ''}
           onJoin={handleJoin}
@@ -356,7 +356,7 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
         : isGameplayScreen
         ? 'fixed inset-0 z-50 w-screen h-dvh max-h-dvh overflow-hidden p-1 sm:p-2'
         : room.status === 'GAME_OVER'
-        ? 'fixed inset-0 z-50 w-screen h-dvh max-h-dvh overflow-y-auto lg:overflow-hidden p-2 sm:p-4'
+        ? 'fixed inset-0 z-50 w-screen h-dvh max-h-dvh overflow-y-auto p-2 sm:p-4'
         : 'min-h-screen p-2 sm:p-4'
     }`}>
       {/* 3D Suzuka Grand Prix Persistent Stage (Hot Pre-Warm in Lobby -> 0ms Instant Race Start!) */}

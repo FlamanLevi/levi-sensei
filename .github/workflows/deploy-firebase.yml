@@ -29,7 +29,7 @@ jobs:
       - name: Build production bundle
         run: npm run build
 
-      - name: Deploy to Firebase Hosting (preserving /cards/** and /media/**)
+      - name: Deploy Hosting & RTDB Rules (preserving /cards/** and /media/**)
         env:
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_ADMIN_SDK || secrets.FIREBASE_SERVICE_ACCOUNT }}
           DEPLOY_MESSAGE: "GitHub Actions deploy: ${{ github.sha }}"
@@ -39,3 +39,4 @@ jobs:
             exit 0
           fi
           node scripts/deploy_remote_preserving_media.mjs
+          node scripts/deploy_rules_remote.mjs

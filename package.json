@@ -13,6 +13,7 @@
     "deploy:hosting": "npm run build && firebase deploy --only hosting",
     "deploy:remote": "npm run build && node scripts/deploy_remote_preserving_media.mjs",
     "deploy:rules": "firebase deploy --only database",
+    "deploy:rules:remote": "node scripts/deploy_rules_remote.mjs",
     "purge-rooms": "node scripts/purge_rooms.cjs",
     "kill-rooms": "node scripts/purge_rooms.cjs",
     "purge-roster": "node scripts/purge_roster.cjs",

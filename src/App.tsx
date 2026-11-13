@@ -19,6 +19,7 @@ import { useLanguage } from './context/LanguageContext';
 import { Play, Sparkles, RefreshCw, Star } from 'lucide-react';
 import { QuizHostContainer } from './games/quiz/host/QuizHostContainer';
 import { QuizStudentContainer } from './games/quiz/student/QuizStudentContainer';
+import { AnticipationHostContainer, AnticipationSoloContainer } from './games/anticipation';
 import { WhatsMissingGame } from './games/missing';
 import { ConcentrationGame } from './games/concentration';
 import { ThreeHintsGame } from './games/three_hints';
@@ -102,7 +103,7 @@ export const App: React.FC = () => {
     return {
       ALL: GAME_REGISTRY.length,
       WARM_UP: GAME_REGISTRY.filter(g =>
-        ['speed_flash', 'whats_missing', 'pixel_reveal', 'katakana_breaker', 'clock_master'].includes(g.id) ||
+        ['speed_flash', 'whats_missing', 'pixel_reveal', 'katakana_breaker', 'clock_master', 'anticipation'].includes(g.id) ||
         g.skills.some(s => s.includes('Speed') || s.includes('Memory') || s.includes('Recall') || s.includes('Warm-Up') || s.includes('Choral') || s.includes('Phonics'))
       ).length,
       SPEAKING: GAME_REGISTRY.filter(g =>
@@ -110,11 +111,11 @@ export const App: React.FC = () => {
         g.skills.some(s => s.includes('Speaking') || s.includes('Fluency') || s.includes('Q&A') || s.includes('TPR'))
       ).length,
       TEAM_BATTLE: GAME_REGISTRY.filter(g =>
-        ['typhoon', 'concentration', 'timebomb', 'live_bingo', 'eigo_arena'].includes(g.id) ||
+        ['typhoon', 'concentration', 'timebomb', 'live_bingo', 'eigo_arena', 'anticipation'].includes(g.id) ||
         g.minPlayers.includes('Teams') || g.minPlayers.includes('Pairs') || g.skills.some(s => s.includes('Strategy') || s.includes('Cooperation'))
       ).length,
       IPAD: GAME_REGISTRY.filter(g =>
-        ['eigo_arena', 'live_bingo'].includes(g.id) ||
+        ['eigo_arena', 'live_bingo', 'anticipation'].includes(g.id) ||
         g.stream === 'STREAM_B' || g.minPlayers.includes('iPads')
       ).length
     };
@@ -145,7 +146,7 @@ export const App: React.FC = () => {
         switch (selectedTeachingMoment) {
           case 'WARM_UP':
             return (
-              ['speed_flash', 'whats_missing', 'pixel_reveal', 'katakana_breaker', 'clock_master'].includes(g.id) ||
+              ['speed_flash', 'whats_missing', 'pixel_reveal', 'katakana_breaker', 'clock_master', 'anticipation'].includes(g.id) ||
               g.skills.some(s => s.includes('Speed') || s.includes('Memory') || s.includes('Recall') || s.includes('Warm-Up') || s.includes('Choral') || s.includes('Phonics'))
             );
           case 'SPEAKING':
@@ -155,12 +156,12 @@ export const App: React.FC = () => {
             );
           case 'TEAM_BATTLE':
             return (
-              ['typhoon', 'concentration', 'timebomb', 'live_bingo', 'eigo_arena'].includes(g.id) ||
+              ['typhoon', 'concentration', 'timebomb', 'live_bingo', 'eigo_arena', 'anticipation'].includes(g.id) ||
               g.minPlayers.includes('Teams') || g.minPlayers.includes('Pairs') || g.skills.some(s => s.includes('Strategy') || s.includes('Cooperation'))
             );
           case 'IPAD':
             return (
-              ['eigo_arena', 'live_bingo'].includes(g.id) ||
+              ['eigo_arena', 'live_bingo', 'anticipation'].includes(g.id) ||
               g.stream === 'STREAM_B' || g.minPlayers.includes('iPads')
             );
           default:
@@ -230,7 +231,7 @@ export const App: React.FC = () => {
       }
       return 0;
     });
-  }, [searchQuery, selectedStatus, selectedStream, selectedPlayer, selectedSkill, selectedSort]);
+  }, [searchQuery, selectedTeachingMoment, selectedStatus, selectedStream, selectedPlayer, selectedSkill, selectedSort]);
 
   if (isLoading) {
     return (
@@ -277,6 +278,37 @@ export const App: React.FC = () => {
           >
             <QuizHostContainer 
               onExit={exitToHub} 
+              onRegisterExit={handleRegisterExit}
+              onStepChange={setHostQuizStep}
+            />
+          </GameContainer>
+        );
+      }
+
+      if (activeGameId === 'anticipation') {
+        const isTeacherContestant = isContestantMode || (typeof window !== 'undefined' && sessionStorage.getItem('isTeacherContestantMode') === 'true');
+        if (userRole === 'STUDENT' || !isTeacherUnlocked || isTeacherContestant) {
+          return (
+            <GameContainer
+              title="Anticipation Sketch"
+              jaTitle={<>お<ruby>絵<rt>え</rt></ruby>かき<ruby>推測<rt>すいそく</rt></ruby>ボード</>}
+              onExit={exitToHub}
+              isScrollable={false}
+            >
+              <AnticipationSoloContainer onExit={exitToHub} />
+            </GameContainer>
+          );
+        }
+        return (
+          <GameContainer
+            title="Anticipation Sketch"
+            jaTitle={<>お<ruby>絵<rt>え</rt></ruby>かき<ruby>推測<rt>すいそく</rt></ruby>ボード</>}
+            onExit={activeGameExitHandler || exitToHub}
+            hideScopeDropdown={hostQuizStep !== 'SETUP'}
+            isScrollable={hostQuizStep === 'SETUP' || hostQuizStep === 'LOBBY' || hostQuizStep === 'GAME_OVER'}
+          >
+            <AnticipationHostContainer
+              onExit={exitToHub}
               onRegisterExit={handleRegisterExit}
               onStepChange={setHostQuizStep}
             />

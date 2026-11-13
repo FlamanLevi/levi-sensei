@@ -223,6 +223,12 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
               </span>
             );
           })()}
+          {gamePlayType === 'ANTICIPATION' && (
+            <span className="text-xs font-black px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-950/70 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-800 shrink-0 whitespace-nowrap flex items-center gap-1">
+              <span>✏️</span>
+              <span>{t('Anticipation Sketch', 'お絵かき推測ボード')}</span>
+            </span>
+          )}
         </div>
 
         {/* Top-Right Action Cluster: START GAME + Settings + Cancel */}

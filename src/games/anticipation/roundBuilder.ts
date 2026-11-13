@@ -1,0 +1,277 @@
+import { GradeLevel, VocabularyItem } from '@data/types';
+import { OPTION_STYLES } from '@/games/quiz/types';
+import { resolveCardImage, shuffleArray } from '@/utils/cardUtils';
+import {
+  AnticipationChoiceOption,
+  AnticipationDrawStyle,
+  AnticipationEffectiveInputMode,
+  AnticipationHostRound,
+  AnticipationInputMode,
+  AnticipationSettings,
+  hashWordAnswer,
+  normalizeGuessAnswer,
+} from './types';
+
+const ANTICIPATION_CATEGORY_LABELS: Record<string, { en: string; ja: string }> = {
+  '01_action': { en: 'Action / Verb', ja: '動き・アクション' },
+  '02_state': { en: 'Feeling / State', ja: '様子・気持ち' },
+  '03_food': { en: 'Food & Drink', ja: '食べ物・飲み物' },
+  '03_fooddrink': { en: 'Food & Drink', ja: '食べ物・飲み物' },
+  '04_number': { en: 'Numbers', ja: '数・数字' },
+  '05_school': { en: 'School & Stationery', ja: '学校・文房具' },
+  '05_schoollife': { en: 'School Life', ja: '学校生活' },
+  '06_facility': { en: 'Place & Building', ja: '場所・建物' },
+  '07_dailylife': { en: 'Daily Life', ja: '暮らし・生活' },
+  '08_sport': { en: 'Sports & Hobbies', ja: 'スポーツ・遊び' },
+  '08_sports': { en: 'Sports & Hobbies', ja: 'スポーツ・遊び' },
+  '09_colorshape': { en: 'Color & Shape', ja: '色・形' },
+  '09_color_shape': { en: 'Color & Shape', ja: '色・形' },
+  '10_calendar_time': { en: 'Calendar & Time', ja: '曜日・月・時間' },
+  '11_animal': { en: 'Animals', ja: '動物・生き物' },
+  '11_animals': { en: 'Animals', ja: '動物・生き物' },
+  '12_nature': { en: 'Nature & Weather', ja: '自然・天気' },
+  '13_position': { en: 'Directions', ja: '位置・方向' },
+  '14_body': { en: 'Body & Family', ja: '体・家族' },
+  '14_body_family': { en: 'Body & Family', ja: '体・家族' },
+  '15_festalday': { en: 'Events & Holidays', ja: '行事・イベント' },
+  '16_alphabet': { en: 'Alphabet', ja: 'アルファベット' },
+};
+
+function isCleanSpellingWord(english: string): boolean {
+  const trimmed = (english || '').trim();
+  if (!trimmed) return false;
+  const alphaOnly = trimmed.replace(/[^a-zA-Z]/g, '');
+  if (alphaOnly.length < 2 || alphaOnly.length > 13) return false;
+  // Allow simple 1-word or short 2-word lowercase/capital phrases without punctuation heavy syntax
+  return /^[a-zA-Z\s\-]+$/.test(trimmed);
+}
+
+export function resolveEffectiveInputMode(
+  setting: AnticipationInputMode,
+  activeGrade: GradeLevel,
+  wordEnglish: string
+): { mode: AnticipationEffectiveInputMode; allowSwitch: boolean } {
+  const cleanSpell = isCleanSpellingWord(wordEnglish);
+  if (setting === 'CHOICE_4') {
+    return { mode: 'CHOICE_4', allowSwitch: cleanSpell };
+  }
+  if (setting === 'SPELLING_TILES') {
+    return { mode: cleanSpell ? 'SPELLING_TILES' : 'CHOICE_4', allowSwitch: true };
+  }
+  // AUTO_GRADE: Upper elementary (G5/G6/JHS) get interactive letter-tile spelling when clean; G1-G4 get ▲◆●■ 4-choice
+  const isUpper =
+    activeGrade === 'ES_G5' ||
+    activeGrade === 'ES_G6' ||
+    activeGrade.startsWith('JHS_');
+  if (isUpper && cleanSpell) {
+    return { mode: 'SPELLING_TILES', allowSwitch: true };
+  }
+  return { mode: 'CHOICE_4', allowSwitch: cleanSpell };
+}
+
+export function buildWordMask(english: string): { mask: string; firstLetterHint: string; cleanLetters: string } {
+  const trimmed = (english || '').trim();
+  const lettersOnly = trimmed.replace(/[^a-zA-Z]/g, '').toUpperCase();
+  const maskedChars = trimmed.split('').map((ch) => {
+    if (/[a-zA-Z]/.test(ch)) return '_';
+    if (ch === ' ') return '  ';
+    return ch;
+  });
+  return {
+    mask: maskedChars.join(' '),
+    firstLetterHint: lettersOnly.charAt(0) || trimmed.charAt(0).toUpperCase(),
+    cleanLetters: lettersOnly,
+  };
+}
+
+export function buildLetterBank(english: string, roundIndex: number): string[] {
+  const clean = english.replace(/[^a-zA-Z]/g, '').toUpperCase().split('');
+  const vowels = ['A', 'E', 'I', 'O', 'U'];
+  const commonConsonants = ['R', 'S', 'T', 'L', 'N', 'C', 'M', 'P', 'B', 'D', 'G', 'H', 'K'];
+  const targetBankSize = Math.min(14, Math.max(8, clean.length + 3));
+  const pool = [...clean];
+
+  let step = roundIndex + 3;
+  while (pool.length < targetBankSize) {
+    const src = pool.length % 2 === 0 ? commonConsonants : vowels;
+    const ch = src[step % src.length];
+    pool.push(ch);
+    step += 5;
+  }
+
+  return shuffleArray(pool);
+}
+
+export function resolveDrawStyleForRound(
+  setting: AnticipationDrawStyle,
+  roundIndex: number,
+  forceDots?: boolean
+): { drawStyle: 'INK_SKETCH' | 'CONNECT_DOTS'; isFeatureDots: boolean } {
+  if (forceDots) {
+    return { drawStyle: 'CONNECT_DOTS', isFeatureDots: true };
+  }
+  if (setting === 'CONNECT_DOTS') {
+    return { drawStyle: 'CONNECT_DOTS', isFeatureDots: roundIndex % 3 === 2 };
+  }
+  if (setting === 'INK_SKETCH') {
+    return { drawStyle: 'INK_SKETCH', isFeatureDots: false };
+  }
+  // MIXED: Alternate rhythmically, featuring every 3rd round as Connect-the-Dots
+  const useDots = roundIndex % 3 === 2;
+  return {
+    drawStyle: useDots ? 'CONNECT_DOTS' : 'INK_SKETCH',
+    isFeatureDots: useDots,
+  };
+}
+
+export function buildAnticipationRounds(
+  primaryPool: VocabularyItem[],
+  fallbackPool: VocabularyItem[],
+  settings: AnticipationSettings,
+  activeGrade: GradeLevel,
+  roundCountOverride?: number
+): AnticipationHostRound[] {
+  const combinedSource = primaryPool.length >= 6 ? primaryPool : [...primaryPool, ...fallbackPool];
+
+  // Deduplicate by lowercase normalized spelling so choices are crisp and unambiguous
+  const uniqueMap = new Map<string, VocabularyItem>();
+  for (const w of combinedSource) {
+    if (!w || !w.english) continue;
+    const norm = normalizeGuessAnswer(w.english);
+    if (!norm) continue;
+    if (!uniqueMap.has(norm)) {
+      uniqueMap.set(norm, w);
+    }
+  }
+
+  // Ensure distractor bank has at least 8 distinct entries even in tiny custom units
+  const distractorUniverse = Array.from(uniqueMap.values());
+  if (distractorUniverse.length < 8) {
+    for (const w of fallbackPool) {
+      if (!w || !w.english) continue;
+      const norm = normalizeGuessAnswer(w.english);
+      if (norm && !uniqueMap.has(norm)) {
+        uniqueMap.set(norm, w);
+        distractorUniverse.push(w);
+      }
+    }
+  }
+
+  const desiredRounds = roundCountOverride || settings.roundCount || 10;
+  const preferredTargets = primaryPool.filter((w) => w && w.english && normalizeGuessAnswer(w.english).length > 0);
+  const shuffledTargets = shuffleArray(preferredTargets.length > 0 ? preferredTargets : distractorUniverse);
+
+  const selectedTargets: VocabularyItem[] = [];
+  for (let i = 0; i < desiredRounds; i++) {
+    if (shuffledTargets.length === 0) break;
+    selectedTargets.push(shuffledTargets[i % shuffledTargets.length]);
+  }
+
+  const drawDurationMs = Math.max(8, settings.drawDurationSeconds || 18) * 1000;
+  const revealDurationMs = 5500;
+
+  return selectedTargets.map((targetWord, roundIndex) => {
+    const targetNorm = normalizeGuessAnswer(targetWord.english);
+
+    // Prefer same-category distractors with similar length first (shuffled within length proximity) so mask doesn't spoil choice
+    const targetLen = targetNorm.length;
+    const rankClose = (arr: VocabularyItem[]) =>
+      shuffleArray(arr).sort((a, b) => {
+        const diffA = Math.abs(normalizeGuessAnswer(a.english).length - targetLen);
+        const diffB = Math.abs(normalizeGuessAnswer(b.english).length - targetLen);
+        return Math.floor(diffA / 3) - Math.floor(diffB / 3);
+      });
+
+    const sameCatDistractors = rankClose(
+      distractorUniverse.filter(
+        (d) => normalizeGuessAnswer(d.english) !== targetNorm && d.category === targetWord.category
+      )
+    );
+    const otherDistractors = rankClose(
+      distractorUniverse.filter(
+        (d) => normalizeGuessAnswer(d.english) !== targetNorm && d.category !== targetWord.category
+      )
+    );
+
+    const distractors: VocabularyItem[] = [];
+    const seenOptNorm = new Set<string>([targetNorm]);
+    for (const cand of [...sameCatDistractors, ...otherDistractors]) {
+      if (distractors.length >= 3) break;
+      const norm = normalizeGuessAnswer(cand.english);
+      if (!seenOptNorm.has(norm)) {
+        seenOptNorm.add(norm);
+        distractors.push(cand);
+      }
+    }
+
+    const optionItems = shuffleArray([targetWord, ...distractors]);
+    let correctOptionId = 'opt_0';
+
+    const options: AnticipationChoiceOption[] = optionItems.map((item, idx) => {
+      const style = OPTION_STYLES[idx % OPTION_STYLES.length];
+      const optId = `r${roundIndex}_opt${idx}`;
+      if (normalizeGuessAnswer(item.english) === targetNorm) {
+        correctOptionId = optId;
+      }
+      return {
+        id: optId,
+        english: item.english,
+        ja_kanji: item.ja_kanji,
+        ja_hiragana: item.ja_hiragana,
+        en_katakana: item.en_katakana,
+        ruby: item.ruby,
+        symbol: style.symbol,
+        color: style.color,
+      };
+    });
+
+    const imageUrl =
+      resolveCardImage(targetWord, 'picture_only', activeGrade) ||
+      targetWord.primary_image ||
+      targetWord.card_image ||
+      '';
+
+    const catMeta = ANTICIPATION_CATEGORY_LABELS[targetWord.category] || {
+      en: targetWord.category_name || targetWord.category || 'Vocabulary',
+      ja: 'たんご',
+    };
+    const { drawStyle, isFeatureDots } = resolveDrawStyleForRound(settings.drawStyle, roundIndex);
+    const { mode: effectiveInputMode, allowSwitch } = resolveEffectiveInputMode(
+      settings.inputMode,
+      activeGrade,
+      targetWord.english
+    );
+    const { mask, firstLetterHint, cleanLetters } = buildWordMask(targetWord.english);
+
+    return {
+      roundIndex,
+      targetWord,
+      correctOptionId,
+      publicRound: {
+        roundIndex,
+        totalRounds: selectedTargets.length,
+        wordId: targetWord.id,
+        imageUrl,
+        gradeLevel: activeGrade,
+        categoryKey: targetWord.category,
+        categoryNameEn: catMeta.en,
+        categoryNameJa: catMeta.ja,
+        drawStyle,
+        effectiveInputMode,
+        allowModeSwitch: allowSwitch,
+        roundStartTime: 0,
+        drawDurationMs,
+        revealDurationMs,
+        phase: 'DRAWING',
+        isFeatureDots,
+        englishLength: cleanLetters.length || targetWord.english.trim().length,
+        wordMask: mask,
+        firstLetterHint,
+        letterBank: buildLetterBank(targetWord.english, roundIndex),
+        options,
+        answerHash: hashWordAnswer(roundIndex, targetWord.english),
+        solvedCount: 0,
+      },
+    };
+  });
+}

@@ -60,6 +60,20 @@ export const GAME_REGISTRY: GameDefinition[] = [
     status: 'ready'
   },
   {
+    id: 'anticipation',
+    title: 'Anticipation Sketch & Board',
+    jaTitle: 'アンティシペーション（お絵かき推測＆ボード）',
+    description: 'Progressive sketch & connect-the-dots guessing arena! Identify textbook vocabulary before the drawing completes to roll and race across a 4-level spiral board on front TV + student iPads.',
+    jaDescription: '線のスケッチや点つなぎが完成する前に英単語をスピード予想！大画面の4層スパイラルボードと手元のiPadが連動して白熱バトル！',
+    stream: 'STREAM_B',
+    targetGrades: ['ES_G1', 'ES_G2', 'ES_G3', 'ES_G4', 'ES_G5', 'ES_G6'],
+    skills: ['Deductive Reasoning', 'Speed Recall', 'Phonics & Spelling', 'Visual Recognition', 'Vocabulary', 'Team Strategy'],
+    icon: 'Palette',
+    color: 'from-amber-500 via-indigo-600 to-purple-600',
+    minPlayers: 'Whole Class / iPads',
+    status: 'ready'
+  },
+  {
     id: 'undokai_tamaire',
     title: '3D Undokai Bean Bag Toss (Tamaire)',
     jaTitle: '3D 運動会 玉入れバトル',

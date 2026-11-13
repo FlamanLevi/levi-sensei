@@ -62,6 +62,7 @@ export const QuizStudentLobby: React.FC<QuizStudentLobbyProps> = ({
   const isTug = gamePlayType === 'TUG_OF_WAR';
   const isVolleyball = gamePlayType === 'VOLLEYBALL';
   const isGrandPrix3D = gamePlayType === 'GRAND_PRIX_3D';
+  const isAnticipation = gamePlayType === 'ANTICIPATION';
   const isSprint = gamePlayType === 'SPRINT_RACE' || isGrandPrix3D;
   const isTimeTrial = isSprint && sprintSettings?.sprintMode === 'TIME_TRIAL';
   const targetLaps3D = sprintSettings?.targetLaps3D || 1;
@@ -526,21 +527,39 @@ export const QuizStudentLobby: React.FC<QuizStudentLobbyProps> = ({
             </div>
           )}
 
-          {/* How to Play for Kahoot / Tug of War / Tamaire */}
+          {/* How to Play for Kahoot / Tug of War / Tamaire / Anticipation */}
           <div className="rounded-2xl bg-slate-50 dark:bg-slate-800/60 border-2 border-slate-200 dark:border-slate-700/80 p-4 text-left space-y-2.5 text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100">
             <div className="font-black text-indigo-600 dark:text-indigo-400">
-              {isVolleyball
-                ? t('🧺 Undokai Bean Bag Toss (Tamaire)', '🧺 運動会 玉入れバトル')
-                : isTug
-                ? t('🚩 Undokai Tug of War', '🚩 運動会 綱引きバトル')
-                : t('📺 Live Arena Quiz', '📺 みんなで一斉クイズ！')}
+              {isAnticipation ? (
+                language === 'ja' ? (
+                  <>✏️ アンティシペーション（お<ruby>絵<rt>え</rt></ruby>かき<ruby>推測<rt>すいそく</rt></ruby>）</>
+                ) : (
+                  '✏️ Anticipation Sketch & Board'
+                )
+              ) : isVolleyball ? (
+                t('🧺 Undokai Bean Bag Toss (Tamaire)', '🧺 運動会 玉入れバトル')
+              ) : isTug ? (
+                t('🚩 Undokai Tug of War', '🚩 運動会 綱引きバトル')
+              ) : (
+                t('📺 Live Arena Quiz', '📺 みんなで一斉クイズ！')
+              )}
             </div>
             <p>
-              {isVolleyball
-                ? t('1. Answer on your iPad in 3 steps (Scoop → Aim → Throw) to toss bean bags into your team basket!', '1. 3ステップ（①玉を拾う → ②狙う → ③投げる）で正解してお手玉をカゴへ投げ入れよう！')
-                : isTug
-                ? t('1. Every correct answer pulls the rope toward your team on the big screen!', '1. 正解するとテレビのロープをグイッと引き寄せる！誤答は泥で2.5秒ストップ！')
-                : t('1. Look at the front TV for the question, then tap the matching shape/answer on your iPad!', '1. 前のテレビで問題を見て、手元のiPadで答えをタップしよう！')}
+              {isAnticipation ? (
+                language === 'ja' ? (
+                  <>
+                    1. 前のテレビやiPadで<ruby>線<rt>せん</rt></ruby>や点つなぎのスケッチが<ruby>完成<rt>かんせい</rt></ruby>するまえに、<ruby>正<rt>ただ</rt></ruby>しい英単語をスピード<ruby>回答<rt>かいとう</rt></ruby>！（おてつきは2.5<ruby>秒<rt>びょう</rt></ruby>ストップ）
+                  </>
+                ) : (
+                  '1. Guess the English word while the progressive sketch or connect-the-dots draws! Wrong guesses lock your pad for 2.5s.'
+                )
+              ) : isVolleyball ? (
+                t('1. Answer on your iPad in 3 steps (Scoop → Aim → Throw) to toss bean bags into your team basket!', '1. 3ステップ（①玉を拾う → ②狙う → ③投げる）で正解してお手玉をカゴへ投げ入れよう！')
+              ) : isTug ? (
+                t('1. Every correct answer pulls the rope toward your team on the big screen!', '1. 正解するとテレビのロープをグイッと引き寄せる！誤答は泥で2.5秒ストップ！')
+              ) : (
+                t('1. Look at the front TV for the question, then tap the matching shape/answer on your iPad!', '1. 前のテレビで問題を見て、手元のiPadで答えをタップしよう！')
+              )}
             </p>
           </div>
         </div>

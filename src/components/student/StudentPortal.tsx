@@ -8,6 +8,7 @@ import { GAME_REGISTRY } from '../../games/registry';
 import { Sparkles, BookOpen, Users, Play, ArrowRight, Check, Volume2, ShieldCheck, RefreshCw, Smartphone, X, Edit3, Crown, Gamepad2 } from 'lucide-react';
 import { QuizStudentContainer } from '../../games/quiz/student/QuizStudentContainer';
 import { QuizHostContainer } from '../../games/quiz/host/QuizHostContainer';
+import { AnticipationHostContainer } from '../../games/anticipation';
 import { ProfileStudioStudent } from '../../games/profile_studio/ProfileStudioStudent';
 import {
   getSavedStudentProfile,
@@ -58,6 +59,7 @@ export const StudentPortal: React.FC = () => {
   const [isSoloModalOpen, setIsSoloModalOpen] = useState(false);
   const [groupPinCode, setGroupPinCode] = useState('');
   const [isHostingQuiz, setIsHostingQuiz] = useState<boolean>(false);
+  const [isHostingAnticipation, setIsHostingAnticipation] = useState<boolean>(false);
   const [hostedGroupCode, setHostedGroupCode] = useState<string | null>(null);
   const [groupTab, setGroupTab] = useState<'JOIN' | 'HOST'>('JOIN');
   const [isAddToHomeModalOpen, setIsAddToHomeModalOpen] = useState(false);
@@ -509,6 +511,19 @@ export const StudentPortal: React.FC = () => {
           isStudentHost={true}
           onExit={() => {
             setIsHostingQuiz(false);
+          }}
+        />
+      </div>
+    );
+  }
+
+  if (isHostingAnticipation) {
+    return (
+      <div className="fixed inset-0 z-50 w-screen h-dvh overflow-y-auto bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white flex flex-col">
+        <AnticipationHostContainer
+          isStudentHost={true}
+          onExit={() => {
+            setIsHostingAnticipation(false);
           }}
         />
       </div>
@@ -1182,6 +1197,19 @@ export const StudentPortal: React.FC = () => {
                     <span>{t("Launch Room as Leader", "リーダーとして部屋をつくる！")}</span>
                     <ArrowRight size={18} />
                   </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      playPop();
+                      setIsGroupModalOpen(false);
+                      setIsHostingAnticipation(true);
+                    }}
+                    className="w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-amber-500 to-indigo-600 hover:brightness-105 active:scale-98 text-white font-black text-xs sm:text-sm shadow-md transition-all cursor-pointer flex items-center justify-center gap-2 whitespace-nowrap"
+                  >
+                    <span>✏️</span>
+                    <span>{t("Host Anticipation Sketch", "お絵かき推測リーダー対戦")}</span>
+                    <ArrowRight size={16} />
+                  </button>
                 </div>
               </div>
             )}
@@ -1196,7 +1224,7 @@ export const StudentPortal: React.FC = () => {
           onClick={() => setIsSoloModalOpen(false)}
         >
           <div
-            className="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 md:p-7 max-w-4xl w-full shadow-2xl border-4 border-white dark:border-slate-800 flex flex-col text-slate-900 dark:text-white relative max-h-[90dvh] overflow-y-auto"
+            className="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 md:p-7 max-w-5xl w-full shadow-2xl border-4 border-white dark:border-slate-800 flex flex-col text-slate-900 dark:text-white relative max-h-[90dvh] overflow-y-auto"
             onClick={e => e.stopPropagation()}
           >
             <div className="flex items-center justify-between gap-3 mb-5 pb-3 border-b border-slate-100 dark:border-slate-800 flex-nowrap">
@@ -1237,11 +1265,11 @@ export const StudentPortal: React.FC = () => {
                   🖼️
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between gap-1 mb-0.5">
-                    <h4 className="font-black text-sm text-slate-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
+                  <div className="flex items-center justify-between gap-1.5 mb-0.5">
+                    <h4 className="font-black text-[13px] sm:text-sm text-slate-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors whitespace-nowrap truncate">
                       {t("Pixel Reveal", "ピクセル・リビール")}
                     </h4>
-                    <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-amber-200 dark:bg-amber-900 text-amber-900 dark:text-amber-200">
+                    <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-amber-200 dark:bg-amber-900 text-amber-900 dark:text-amber-200 whitespace-nowrap shrink-0">
                       ★ おすすめ
                     </span>
                   </div>
@@ -1265,11 +1293,11 @@ export const StudentPortal: React.FC = () => {
                   ⚡
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between gap-1 mb-0.5">
-                    <h4 className="font-black text-sm text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                  <div className="flex items-center justify-between gap-1.5 mb-0.5">
+                    <h4 className="font-black text-[13px] sm:text-sm text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors whitespace-nowrap truncate">
                       {t("Speed Flashcards", "スピードフラッシュ")}
                     </h4>
-                    <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-blue-200 dark:bg-blue-900 text-blue-900 dark:text-blue-200">
+                    <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-blue-200 dark:bg-blue-900 text-blue-900 dark:text-blue-200 whitespace-nowrap shrink-0">
                       Drill
                     </span>
                   </div>
@@ -1293,11 +1321,11 @@ export const StudentPortal: React.FC = () => {
                   🃏
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between gap-1 mb-0.5">
-                    <h4 className="font-black text-sm text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                  <div className="flex items-center justify-between gap-1.5 mb-0.5">
+                    <h4 className="font-black text-[13px] sm:text-sm text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors whitespace-nowrap truncate">
                       {t("Memory Match", "神経衰弱（えあわせ）")}
                     </h4>
-                    <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-emerald-200 dark:bg-emerald-900 text-emerald-900 dark:text-emerald-200">
+                    <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-emerald-200 dark:bg-emerald-900 text-emerald-900 dark:text-emerald-200 whitespace-nowrap shrink-0">
                       Card
                     </span>
                   </div>
@@ -1321,11 +1349,11 @@ export const StudentPortal: React.FC = () => {
                   👾
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between gap-1 mb-0.5">
-                    <h4 className="font-black text-sm text-slate-900 dark:text-white group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
+                  <div className="flex items-center justify-between gap-1.5 mb-0.5">
+                    <h4 className="font-black text-[13px] sm:text-sm text-slate-900 dark:text-white group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors whitespace-nowrap truncate">
                       {t("Monster Lab", "モンスターメーカー")}
                     </h4>
-                    <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-purple-200 dark:bg-purple-900 text-purple-900 dark:text-purple-200">
+                    <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-purple-200 dark:bg-purple-900 text-purple-900 dark:text-purple-200 whitespace-nowrap shrink-0">
                       Create
                     </span>
                   </div>
@@ -1335,7 +1363,35 @@ export const StudentPortal: React.FC = () => {
                 </div>
               </button>
 
-              {/* Tool 5: Picture Dictionary */}
+              {/* Game 5: Anticipation Sketch & Board */}
+              <button
+                type="button"
+                onClick={() => {
+                  playPop();
+                  setIsSoloModalOpen(false);
+                  launchGame('anticipation');
+                }}
+                className="p-4 rounded-2xl border-2 border-indigo-300/80 dark:border-indigo-700/60 bg-gradient-to-br from-amber-50/70 to-indigo-50/70 dark:from-amber-950/20 dark:to-indigo-950/30 hover:border-indigo-400 dark:hover:border-indigo-500 hover:shadow-md transition-all text-left flex items-start gap-3.5 cursor-pointer group active:scale-98"
+              >
+                <div className="w-11 h-11 rounded-xl bg-gradient-to-tr from-amber-500 via-orange-500 to-indigo-600 text-white flex items-center justify-center text-2xl shadow-xs shrink-0 group-hover:scale-105 transition-transform">
+                  ✏️
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between gap-1.5 mb-0.5">
+                    <h4 className="font-black text-[13px] sm:text-sm text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors whitespace-nowrap truncate">
+                      {t("Anticipation Sketch", "お絵かき推測＆ボード")}
+                    </h4>
+                    <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-indigo-200 dark:bg-indigo-900 text-indigo-900 dark:text-indigo-200 whitespace-nowrap shrink-0">
+                      New
+                    </span>
+                  </div>
+                  <p className="text-[11px] font-medium text-slate-500 dark:text-slate-400 leading-snug">
+                    {t("Guess words as sketches & dots draw to race CPU rivals on the spiral board!", "線のスケッチや点つなぎで単語を予想してボードを進もう！")}
+                  </p>
+                </div>
+              </button>
+
+              {/* Tool 6: Picture Dictionary */}
               <button
                 type="button"
                 onClick={() => {
@@ -1343,17 +1399,17 @@ export const StudentPortal: React.FC = () => {
                   setIsSoloModalOpen(false);
                   openDictionary();
                 }}
-                className="p-4 rounded-2xl border-2 border-slate-300/80 dark:border-slate-700 bg-slate-50/80 dark:bg-slate-800/50 hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-md transition-all text-left flex items-start gap-3.5 cursor-pointer group active:scale-98 sm:col-span-2"
+                className="p-4 rounded-2xl border-2 border-slate-300/80 dark:border-slate-700 bg-slate-50/80 dark:bg-slate-800/50 hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-md transition-all text-left flex items-start gap-3.5 cursor-pointer group active:scale-98"
               >
                 <div className="w-11 h-11 rounded-xl bg-gradient-to-tr from-blue-500 to-cyan-500 text-white flex items-center justify-center text-2xl shadow-xs shrink-0 group-hover:scale-105 transition-transform">
                   📚
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between gap-1 mb-0.5">
-                    <h4 className="font-black text-sm text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                      {t("Interactive Picture Dictionary", "えいご絵じてん（ピクチャーディクショナリー）")}
+                  <div className="flex items-center justify-between gap-1.5 mb-0.5">
+                    <h4 className="font-black text-[13px] sm:text-sm text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors whitespace-nowrap truncate">
+                      {t("Picture Dictionary", "えいご絵じてん")}
                     </h4>
-                    <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300">
+                    <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 whitespace-nowrap shrink-0">
                       {gradeWords.length} words
                     </span>
                   </div>

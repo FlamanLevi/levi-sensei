@@ -4,6 +4,7 @@ import { VocabularyScope } from '@/context/VocabularyContext';
 import { SessionAnalytics } from '@/types/analytics';
 import { MathGrade, MathDomain } from './mathTypes';
 import type { SuzukaTrackThemeId, SuzukaTrackThemeSelection } from '@/games/suzuka_grand_prix/trackThemes';
+import type { AnticipationRoomState } from '@/games/anticipation/types';
 
 export type QuizSubject = 'ENGLISH' | 'MATH';
 
@@ -42,9 +43,9 @@ export type IpadDisplayMode = 'EYES_UP' | 'MIRRORED';
 
 export type DeliveryStream = 'STREAM_B_MULTIPLAYER' | 'STREAM_A_FRONT_SCREEN';
 
-export type QuizStatus = 'LOBBY' | 'QUESTION' | 'REVEAL' | 'LEADERBOARD' | 'GAME_OVER' | 'CLOSED' | 'SPRINT_RACE' | 'GRAND_PRIX_3D' | 'TUG_OF_WAR' | 'VOLLEYBALL';
+export type QuizStatus = 'LOBBY' | 'QUESTION' | 'REVEAL' | 'LEADERBOARD' | 'GAME_OVER' | 'CLOSED' | 'SPRINT_RACE' | 'GRAND_PRIX_3D' | 'TUG_OF_WAR' | 'VOLLEYBALL' | 'ANTICIPATION';
 
-export type GamePlayType = 'KAHOOT' | 'SPRINT_RACE' | 'GRAND_PRIX_3D' | 'TUG_OF_WAR' | 'VOLLEYBALL';
+export type GamePlayType = 'KAHOOT' | 'SPRINT_RACE' | 'GRAND_PRIX_3D' | 'TUG_OF_WAR' | 'VOLLEYBALL' | 'ANTICIPATION';
 
 export type RecallDelaySeconds = 0 | 3 | 5;
 
@@ -344,6 +345,7 @@ export interface QuizRoomState {
   choiceImageMode?: ChoiceImageMode;
   englishReadingAid?: EnglishReadingAid;
   analytics?: SessionAnalytics;
+  anticipationState?: AnticipationRoomState;
 }
 
 export interface QuizHostSettings {

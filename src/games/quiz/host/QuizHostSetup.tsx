@@ -70,14 +70,21 @@ import {
 import { getSoundPack } from '@/utils/soundPacks';
 import { BgmSelectorModal } from '@/components/common/BgmSelectorModal';
 import { SCHOOL_CONFIGS, getSuggestedClassForSchedule } from '@/types/roster';
+import { SuzukaTrackThemeSelection, TRACK_THEME_LIST } from '@/games/suzuka_grand_prix/trackThemes';
 
 interface QuizHostSetupProps {
   onStart: (settings: QuizHostSettings) => void;
   onCancel: () => void;
   isStudentHost?: boolean;
+  initialSettings?: QuizHostSettings | null;
 }
 
-export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({ onStart, onCancel, isStudentHost = false }) => {
+export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
+  onStart,
+  onCancel,
+  isStudentHost = false,
+  initialSettings = null
+}) => {
   const { t, language } = useLanguage();
   const { 
     activeGrade, 
@@ -95,18 +102,25 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({ onStart, onCancel,
     ensureCluesLoaded();
   }, [ensureCluesLoaded]);
 
-  const [selectedClassId, setSelectedClassId] = useState<string>(activeClassId);
+  const [selectedClassId, setSelectedClassId] = useState<string>(() =>
+    initialSettings?.classId || activeClassId
+  );
   const [classGradeTab, setClassGradeTab] = useState<string>(() => {
-    if (activeClassId && activeClassId.includes('-')) {
-      return activeClassId.split('-')[0];
+    const cid = initialSettings?.classId || activeClassId;
+    if (cid && cid.includes('-')) {
+      return cid.split('-')[0];
     }
     return activeGrade.replace('ES_G', '');
   });
 
+  const prevActiveClassIdRef = React.useRef(activeClassId);
   React.useEffect(() => {
-    setSelectedClassId(activeClassId);
-    if (activeClassId && activeClassId.includes('-')) {
-      setClassGradeTab(activeClassId.split('-')[0]);
+    if (prevActiveClassIdRef.current !== activeClassId) {
+      prevActiveClassIdRef.current = activeClassId;
+      setSelectedClassId(activeClassId);
+      if (activeClassId && activeClassId.includes('-')) {
+        setClassGradeTab(activeClassId.split('-')[0]);
+      }
     }
   }, [activeClassId]);
 
@@ -117,11 +131,21 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({ onStart, onCancel,
   const gradeDigit = activeGrade.replace('ES_G', '');
   const availableClassesForGrade = (SCHOOL_CONFIGS[activeSchool]?.classes || []).filter(c => c.startsWith(`${classGradeTab}-`));
 
-  const [deliveryStream, setDeliveryStream] = useState<DeliveryStream>('STREAM_B_MULTIPLAYER');
-  const [gamePlayType, setGamePlayType] = useState<GamePlayType>('KAHOOT');
-  const [gameMode, setGameMode] = useState<GameMode>('INDIVIDUAL');
-  const [teamAssignment, setTeamAssignment] = useState<TeamAssignmentMode>('AUTO_BALANCE');
-  const [selectedTeams, setSelectedTeams] = useState<TeamId[]>(['team_red', 'team_white']);
+  const [deliveryStream, setDeliveryStream] = useState<DeliveryStream>(
+    () => initialSettings?.deliveryStream || 'STREAM_B_MULTIPLAYER'
+  );
+  const [gamePlayType, setGamePlayType] = useState<GamePlayType>(
+    () => initialSettings?.gamePlayType || 'KAHOOT'
+  );
+  const [gameMode, setGameMode] = useState<GameMode>(
+    () => initialSettings?.gameMode || 'INDIVIDUAL'
+  );
+  const [teamAssignment, setTeamAssignment] = useState<TeamAssignmentMode>(
+    () => initialSettings?.teamAssignment || 'AUTO_BALANCE'
+  );
+  const [selectedTeams, setSelectedTeams] = useState<TeamId[]>(
+    () => (initialSettings?.activeTeams?.length ? initialSettings.activeTeams : ['team_red', 'team_white'])
+  );
   const activeTeams = selectedTeams;
   const teamCount = selectedTeams.length;
 
@@ -136,13 +160,16 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({ onStart, onCancel,
       setSelectedTeams(newTeams);
     }
   };
-  const [ipadDisplayMode, setIpadDisplayMode] = useState<IpadDisplayMode>('EYES_UP');
-  const [bgm, setBgm] = useState<string>('all_stars');
+  const [ipadDisplayMode, setIpadDisplayMode] = useState<IpadDisplayMode>(
+    () => initialSettings?.ipadDisplayMode || 'EYES_UP'
+  );
+  const [bgm, setBgm] = useState<string>(() => initialSettings?.bgm || 'all_stars');
   const [isBgmModalOpen, setIsBgmModalOpen] = useState<boolean>(false);
   
   // Subject toggle: ENGLISH vs MATH (Keisan Arena)
-  const [subject, setSubject] = useState<QuizSubject>('ENGLISH');
+  const [subject, setSubject] = useState<QuizSubject>(() => initialSettings?.subject || 'ENGLISH');
   const [mathGrade, setMathGrade] = useState<MathGrade>(() => {
+    if (initialSettings?.mathGrade) return initialSettings.mathGrade;
     if (activeGrade === 'ES_G1') return 'G1';
     if (activeGrade === 'ES_G2') return 'G2';
     if (activeGrade === 'ES_G3') return 'G3';
@@ -151,43 +178,88 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({ onStart, onCancel,
     if (activeGrade === 'ES_G6') return 'G6';
     return 'G3';
   });
-  const [mathDomain, setMathDomain] = useState<MathDomain>('ALL');
-  const [selectedMathTopic, setSelectedMathTopic] = useState<string>('');
+  const [mathDomain, setMathDomain] = useState<MathDomain>(() => initialSettings?.mathDomain || 'ALL');
+  const [selectedMathTopic, setSelectedMathTopic] = useState<string>(() => initialSettings?.mathTopicId || '');
 
-  const [selectedScope, setSelectedScope] = useState<VocabularyScope>('CURRENT');
-  const [isExtendedScopesOpen, setIsExtendedScopesOpen] = useState<boolean>(false);
+  const initialScope: VocabularyScope =
+    initialSettings?.vocabularyScope === 'GRADE_ALL' ||
+    initialSettings?.vocabularyScope === 'PRIOR_REVIEW' ||
+    initialSettings?.vocabularyScope === 'ALL_ELEMENTARY'
+      ? initialSettings.vocabularyScope
+      : 'CURRENT';
+  const [selectedScope, setSelectedScope] = useState<VocabularyScope>(initialScope);
+  const [isExtendedScopesOpen, setIsExtendedScopesOpen] = useState<boolean>(initialScope !== 'CURRENT');
   
   // Classic Kahoot pacing state
-  const [questionCount, setQuestionCount] = useState<number>(10);
-  const [timeLimitSeconds, setTimeLimitSeconds] = useState<number>(10);
+  const [questionCount, setQuestionCount] = useState<number>(() => initialSettings?.questionCount ?? 10);
+  const [timeLimitSeconds, setTimeLimitSeconds] = useState<number>(() => initialSettings?.timeLimitSeconds ?? 10);
 
   // 3D Suzuka Grand Prix state
-  const [sprintMode, setSprintMode] = useState<SprintModeType>('LAP_RACE');
-  const [sprintTimeLimitSeconds, setSprintTimeLimitSeconds] = useState<number>(60);
-  const [sprintGraceSeconds, setSprintGraceSeconds] = useState<number>(15);
-  const [targetLaps3D, setTargetLaps3D] = useState<number>(1);
-  const [wrongSpeedLossRatio, setWrongSpeedLossRatio] = useState<number>(0.33);
-  const [wrongLockoutSeconds, setWrongLockoutSeconds] = useState<number>(2.5);
+  const [sprintMode, setSprintMode] = useState<SprintModeType>(
+    () => initialSettings?.sprintSettings?.sprintMode || 'LAP_RACE'
+  );
+  const [sprintTimeLimitSeconds, setSprintTimeLimitSeconds] = useState<number>(
+    () => initialSettings?.sprintSettings?.timeLimitSeconds ?? 60
+  );
+  const [sprintGraceSeconds, setSprintGraceSeconds] = useState<number>(
+    () => initialSettings?.sprintSettings?.graceCountdownSeconds ?? 15
+  );
+  const [targetLaps3D, setTargetLaps3D] = useState<number>(
+    () => initialSettings?.sprintSettings?.targetLaps3D ?? 1
+  );
+  const [trackThemeSelection, setTrackThemeSelection] = useState<SuzukaTrackThemeSelection>(
+    () => initialSettings?.sprintSettings?.trackThemeSelection ?? 'RANDOM'
+  );
+  const [wrongSpeedLossRatio, setWrongSpeedLossRatio] = useState<number>(
+    () => initialSettings?.sprintSettings?.wrongSpeedLossRatio ?? 0.33
+  );
+  const [wrongLockoutSeconds, setWrongLockoutSeconds] = useState<number>(
+    () => initialSettings?.sprintSettings?.wrongLockoutSeconds ?? 2.5
+  );
 
   // Tug of War state
-  const [tugOfWarTimeLimit, setTugOfWarTimeLimit] = useState<number>(60);
-  const [tugOfWarMatchFormat, setTugOfWarMatchFormat] = useState<TugOfWarMatchFormat>('SINGLE');
-  const [tugOfWarSensitivity, setTugOfWarSensitivity] = useState<number>(20);
+  const [tugOfWarTimeLimit, setTugOfWarTimeLimit] = useState<number>(
+    () => initialSettings?.tugOfWarSettings?.timeLimitSeconds ?? 60
+  );
+  const [tugOfWarMatchFormat, setTugOfWarMatchFormat] = useState<TugOfWarMatchFormat>(
+    () => initialSettings?.tugOfWarSettings?.matchFormat || 'SINGLE'
+  );
+  const [tugOfWarSensitivity, setTugOfWarSensitivity] = useState<number>(
+    () => initialSettings?.tugOfWarSettings?.pullSensitivity ?? 20
+  );
 
   // Undokai Bean Bag Toss (Tamaire) state
-  const [volleyballTimeLimit, setVolleyballTimeLimit] = useState<number>(60);
-  const [tamaireMysteryCount, setTamaireMysteryCount] = useState<boolean>(true);
+  const [volleyballTimeLimit, setVolleyballTimeLimit] = useState<number>(
+    () => initialSettings?.volleyballSettings?.timeLimitSeconds ?? 60
+  );
+  const [tamaireMysteryCount, setTamaireMysteryCount] = useState<boolean>(
+    () => initialSettings?.volleyballSettings?.hideScoreUntilEnd ?? true
+  );
 
   // Question mechanics & hint toggles (Mutually exclusive: Gradual default ON, Recall delay default OFF)
-  const [recallDelaySeconds, setRecallDelaySeconds] = useState<RecallDelaySeconds>(0);
-  const [eliminateDistractors, setEliminateDistractors] = useState<boolean>(true);
-  const [distractorEliminationMode, setDistractorEliminationMode] = useState<DistractorEliminationMode>('GRADUAL');
+  const [recallDelaySeconds, setRecallDelaySeconds] = useState<RecallDelaySeconds>(
+    () => initialSettings?.recallDelaySeconds ?? 0
+  );
+  const [eliminateDistractors, setEliminateDistractors] = useState<boolean>(
+    () => initialSettings?.eliminateDistractors ?? true
+  );
+  const [distractorEliminationMode, setDistractorEliminationMode] = useState<DistractorEliminationMode>(
+    () => initialSettings?.distractorEliminationMode ?? (initialSettings?.eliminateDistractors === false ? 'OFF' : 'GRADUAL')
+  );
 
   // Turn Audio Listening OFF by default per user request
-  const [promptTypes, setPromptTypes] = useState<PromptType[]>(['JA_MEANING', 'EN_TO_JA', 'IMAGE_ONLY']);
-  const [choiceImageMode, setChoiceImageMode] = useState<ChoiceImageMode>('AUTO_CLEVER');
-  const [englishReadingAid, setEnglishReadingAid] = useState<EnglishReadingAid>('SPELLING_ONLY');
-  const [recordRoster, setRecordRoster] = useState<boolean>(true);
+  const [promptTypes, setPromptTypes] = useState<PromptType[]>(
+    () => (initialSettings?.promptTypes?.length ? initialSettings.promptTypes : ['JA_MEANING', 'EN_TO_JA', 'IMAGE_ONLY'])
+  );
+  const [choiceImageMode, setChoiceImageMode] = useState<ChoiceImageMode>(
+    () => initialSettings?.choiceImageMode || 'AUTO_CLEVER'
+  );
+  const [englishReadingAid, setEnglishReadingAid] = useState<EnglishReadingAid>(
+    () => initialSettings?.englishReadingAid || 'SPELLING_ONLY'
+  );
+  const [recordRoster, setRecordRoster] = useState<boolean>(
+    () => initialSettings?.recordRoster ?? true
+  );
 
   // Visual cheat prevention: choice images locked if prompts are only EN_TO_JA or IMAGE_ONLY
   const isChoiceImageLocked = promptTypes.length > 0 && promptTypes.every(p => p === 'IMAGE_ONLY' || p === 'EN_TO_JA');
@@ -199,11 +271,13 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({ onStart, onCancel,
     }
   }, [isChoiceImageLocked, choiceImageMode]);
 
-  const [awardToggles, setAwardToggles] = useState<AwardCategoryToggles>({
-    effortGrowth: true,
-    skillChallenge: true,
-    funSurprise: true
-  });
+  const [awardToggles, setAwardToggles] = useState<AwardCategoryToggles>(
+    () => initialSettings?.awardToggles || {
+      effortGrowth: true,
+      skillChallenge: true,
+      funSurprise: true
+    }
+  );
 
   const hasPriorReview = ['ES_G4', 'ES_G5', 'ES_G6', 'JHS_G1'].includes(activeGrade);
   const hasGrandSlam = ['ES_G3', 'ES_G4', 'ES_G5', 'ES_G6', 'JHS_G1'].includes(activeGrade);
@@ -271,6 +345,12 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({ onStart, onCancel,
       timeLimitSeconds: sprintTimeLimitSeconds,
       graceCountdownSeconds: sprintGraceSeconds,
       targetLaps3D: targetLaps3D || 1,
+      trackThemeSelection,
+      ...(trackThemeSelection === 'RANDOM' &&
+      initialSettings?.sprintSettings?.trackThemeSelection === 'RANDOM' &&
+      initialSettings?.sprintSettings?.trackTheme
+        ? { trackTheme: initialSettings.sprintSettings.trackTheme }
+        : {}),
       wrongSpeedLossRatio,
       wrongLockoutSeconds,
     } : undefined;
@@ -1541,6 +1621,67 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({ onStart, onCancel,
                     </button>
                   ))}
                 </div>
+              </div>
+            </div>
+
+            {/* Circuit Atmosphere / Biome Selector */}
+            <div className="pt-2 border-t border-emerald-200/70 dark:border-emerald-900/50">
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="text-[11px] font-black text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                  <span>🗺️</span>
+                  <span>{t('Circuit Stage / Season Atmosphere', 'サーキットの舞台・季節ステージ')}</span>
+                </span>
+                <span className="text-[10px] font-black text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-900/60 px-2 py-0.5 rounded-full">
+                  {trackThemeSelection === 'RANDOM'
+                    ? t('🎲 Auto-Rotate Every Race', '🎲 毎試合ランダム切替')
+                    : t('Pinned Stage', 'ステージ固定')}
+                </span>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-5 gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => setTrackThemeSelection('RANDOM')}
+                  className={`p-2 rounded-xl border-2 text-left transition-all cursor-pointer flex items-center gap-2 ${
+                    trackThemeSelection === 'RANDOM'
+                      ? 'border-emerald-500 ring-2 ring-emerald-400/40 bg-white dark:bg-slate-900 text-emerald-950 dark:text-emerald-100 shadow-xs'
+                      : 'border-slate-200 dark:border-slate-800 bg-white/60 dark:bg-slate-900/60 text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800'
+                  }`}
+                >
+                  <span className="text-lg shrink-0 leading-none">🎲</span>
+                  <div className="min-w-0">
+                    <span className="text-[11px] font-black block truncate">
+                      {t('Random', 'ランダム')}
+                    </span>
+                    <span className="text-[9px] opacity-75 block truncate">
+                      {t('No repeats', '被りなし抽選')}
+                    </span>
+                  </div>
+                </button>
+                {TRACK_THEME_LIST.map((theme) => {
+                  const isSelected = trackThemeSelection === theme.id;
+                  return (
+                    <button
+                      key={theme.id}
+                      type="button"
+                      onClick={() => setTrackThemeSelection(theme.id)}
+                      className={`p-2 rounded-xl border-2 text-left transition-all cursor-pointer flex items-center gap-2 ${
+                        isSelected
+                          ? `${theme.cardBorderSelected} ${theme.cardBgSelected} shadow-xs`
+                          : 'border-slate-200 dark:border-slate-800 bg-white/60 dark:bg-slate-900/60 text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800'
+                      }`}
+                    >
+                      <span className="text-lg shrink-0 leading-none">{theme.emoji}</span>
+                      <div className="min-w-0">
+                        <span className="text-[11px] font-black block truncate">
+                          {t(theme.shortEn, theme.shortJa)}
+                        </span>
+                        <span className="text-[9px] opacity-75 block truncate">
+                          {t(theme.nameEn, theme.nameJa)}
+                        </span>
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
             </div>
           </div>

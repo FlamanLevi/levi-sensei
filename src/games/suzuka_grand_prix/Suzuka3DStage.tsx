@@ -10,6 +10,11 @@ import {
 } from './engine/Suzuka3DEngine';
 import { buildMicroKart } from './engine/MicroKartBuilder.js';
 import { SuzukaSector } from './engine/SuzukaPathData';
+import {
+  SuzukaTrackThemeId,
+  SuzukaTrackThemeConfig,
+  getTrackTheme,
+} from './trackThemes';
 
 export const LANE_DRIVING = -2.1; // Left lane (cruising / standard driving line)
 export const LANE_PASSING = 2.1;  // Right lane (high-speed passing / overtaking line)
@@ -73,6 +78,7 @@ export interface Suzuka3DStageProps {
   activeRacerId?: string;
   racers: RacerState[];
   lightsCount?: number; // 0 to 6
+  trackTheme?: SuzukaTrackThemeId;
   performanceProfile?: 'MOBILE' | 'DESKTOP_HD';
   onTelemetryUpdate?: (telemetry: RacerTelemetry[]) => void;
   className?: string;
@@ -163,15 +169,19 @@ function getSharedSkyCloudNoiseTexture(): THREE.CanvasTexture {
   return tex;
 }
 
-function createDynamicSkyDome() {
+function createDynamicSkyDome(theme: SuzukaTrackThemeConfig) {
   const skyGeo = new THREE.SphereGeometry(2600, 32, 20);
   const skyUniforms = {
     uTime: { value: 0.0 },
     uCloudTex: { value: getSharedSkyCloudNoiseTexture() },
-    uSunDir: { value: new THREE.Vector3(300, 450, 200).normalize() },
-    uZenithColor: { value: new THREE.Color(0x1b5ec0) },
-    uMidSkyColor: { value: new THREE.Color(0x4ca6f5) },
-    uHorizonColor: { value: new THREE.Color(0xc2e6ff) },
+    uSunDir: { value: new THREE.Vector3(...theme.sunDir).normalize() },
+    uZenithColor: { value: new THREE.Color(theme.zenithHex) },
+    uMidSkyColor: { value: new THREE.Color(theme.midSkyHex) },
+    uHorizonColor: { value: new THREE.Color(theme.horizonHex) },
+    uSunColor: { value: new THREE.Color(theme.sunColorHex) },
+    uCloudShadowColor: { value: new THREE.Color(theme.cloudShadowHex) },
+    uCloudLitColor: { value: new THREE.Color(theme.cloudLitHex) },
+    uStarIntensity: { value: theme.starIntensity },
   };
 
   const skyMat = new THREE.ShaderMaterial({
@@ -193,6 +203,10 @@ function createDynamicSkyDome() {
       uniform vec3 uZenithColor;
       uniform vec3 uMidSkyColor;
       uniform vec3 uHorizonColor;
+      uniform vec3 uSunColor;
+      uniform vec3 uCloudShadowColor;
+      uniform vec3 uCloudLitColor;
+      uniform float uStarIntensity;
       varying vec3 vWorldDir;
 
       void main() {
@@ -203,13 +217,17 @@ function createDynamicSkyDome() {
         vec3 skyCol = mix(uHorizonColor, uMidSkyColor, smoothstep(0.0, 0.24, elev));
         skyCol = mix(skyCol, uZenithColor, smoothstep(0.20, 0.85, elev));
 
-        // 2. Subtle Solar Disc & Mie Warm Glow
+        // 2. Solar / Lunar Disc & Mie Atmospheric Glow
         float sunCos = max(dot(dir, uSunDir), 0.0);
         float sunHalo = pow(sunCos, 8.0) * 0.26 + pow(sunCos, 64.0) * 0.45;
         float sunDisc = smoothstep(0.9982, 0.9994, sunCos);
-        skyCol += vec3(1.0, 0.93, 0.76) * (sunHalo + sunDisc * 0.85);
+        skyCol += uSunColor * (sunHalo + sunDisc * 0.85);
 
-        // 3. Subtle Dual-Layer Animated Cloud Canopy (2 bilinear texture lookups)
+        // 3. Lightweight Procedural Starfield for Night Biomes (0 extra textures/draw calls)
+        float cloudOcclusion = 0.0;
+        vec3 cloudLayerColor = vec3(0.0);
+        float finalCloudAlpha = 0.0;
+
         if (elev > 0.005) {
           // Spherical-dome UV mapping that stays crisp from low horizon (elev=0.02) to zenith
           vec2 domeUv = dir.xz / (elev + 0.32) * 0.55;
@@ -221,19 +239,35 @@ function createDynamicSkyDome() {
           float c2 = texture2D(uCloudTex, uvLayer2).g;
           float cloudDensity = c1 * 0.64 + c2 * 0.36;
 
-          // Distinct billowy cumulus & cirrus bands with clear blue sky between clouds
+          // Distinct billowy cumulus & cirrus bands with clear sky between clouds
           float cloudMask = smoothstep(0.47, 0.66, cloudDensity);
           // Smooth fade at the horizon line so clouds sit naturally behind mountain peaks
           float horizonFade = smoothstep(0.008, 0.085, elev) * (1.0 - smoothstep(0.76, 0.96, elev) * 0.35);
-          float finalCloudAlpha = cloudMask * horizonFade * 0.88;
+          finalCloudAlpha = cloudMask * horizonFade * 0.88;
+          cloudOcclusion = finalCloudAlpha;
 
-          // Sunlit silver-gold cloud top highlights + soft atmospheric blue-grey cloud base
-          vec3 cloudShadow = vec3(0.75, 0.86, 0.97);
-          vec3 cloudLit = mix(vec3(0.99, 0.995, 1.0), vec3(1.0, 0.96, 0.88), pow(sunCos, 3.0) * 0.65);
+          // Sunlit highlight & atmospheric shadow cloud shading
+          vec3 cloudLit = mix(uCloudLitColor, uSunColor, pow(sunCos, 3.0) * 0.52);
           float highlightFactor = smoothstep(0.48, 0.72, c1);
-          vec3 cloudColor = mix(cloudShadow, cloudLit, highlightFactor);
+          cloudLayerColor = mix(uCloudShadowColor, cloudLit, highlightFactor);
+        }
 
-          skyCol = mix(skyCol, cloudColor, finalCloudAlpha);
+        if (uStarIntensity > 0.01 && elev > 0.015) {
+          vec2 starGrid = floor((dir.xz / (elev + 0.45)) * 165.0);
+          float starSeed = fract(sin(dot(starGrid, vec2(127.1, 311.7))) * 43758.5453);
+          if (starSeed > 0.986) {
+            vec2 starCellUv = fract((dir.xz / (elev + 0.45)) * 165.0) - 0.5;
+            float distToCenter = length(starCellUv);
+            float twinkle = 0.68 + 0.32 * sin(uTime * 2.4 + starSeed * 62.8);
+            float starDot = smoothstep(0.32, 0.04, distToCenter) * twinkle;
+            float elevFade = smoothstep(0.02, 0.16, elev);
+            vec3 starTint = mix(vec3(0.85, 0.93, 1.0), vec3(1.0, 0.95, 0.82), fract(starSeed * 19.3));
+            skyCol += starTint * starDot * uStarIntensity * elevFade * (1.0 - cloudOcclusion * 0.92);
+          }
+        }
+
+        if (finalCloudAlpha > 0.001) {
+          skyCol = mix(skyCol, cloudLayerColor, finalCloudAlpha);
         }
 
         gl_FragColor = vec4(skyCol, 1.0);
@@ -254,6 +288,7 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
   activeRacerId,
   racers,
   lightsCount = 6,
+  trackTheme,
   performanceProfile,
   onTelemetryUpdate,
   className = '',
@@ -288,12 +323,17 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
   const onTelemetryRef = useRef(onTelemetryUpdate);
   onTelemetryRef.current = onTelemetryUpdate;
 
+  const activeTheme = getTrackTheme(trackTheme);
+
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
     let isDisposed = false;
     let frameId = 0;
+
+    // Resolve biome/atmosphere theme configuration
+    const theme = getTrackTheme(trackTheme);
 
     // Hardware profile detection (zero redundant temp canvases)
     const gpu = detectClassroomGpuProfile(null, performanceProfile === 'MOBILE');
@@ -302,11 +342,11 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
 
     // 1. Scene, Camera & Renderer
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x9bd2fc);
-    scene.fog = new THREE.FogExp2(0x9bd2fc, 0.00068);
+    scene.background = new THREE.Color(theme.sceneBackgroundHex);
+    scene.fog = new THREE.FogExp2(theme.fogHex, theme.fogDensity);
 
-    // Dynamic Skybox with subtle dual-layer cloud animation (1 draw call, <0.08ms GPU cost)
-    const skyDome = createDynamicSkyDome();
+    // Dynamic Skybox with dual-layer cloud animation & optional night starfield (1 draw call, <0.08ms GPU cost)
+    const skyDome = createDynamicSkyDome(theme);
     scene.add(skyDome.mesh);
 
     const camera = new THREE.PerspectiveCamera(
@@ -326,7 +366,7 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
 
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.12;
+    renderer.toneMappingExposure = theme.exposure;
 
     let currentPixelRatio = gpu.targetPixelRatio;
     renderer.setPixelRatio(currentPixelRatio);
@@ -356,14 +396,16 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
     const pmremGenerator = new THREE.PMREMGenerator(renderer);
     const envTexture = pmremGenerator.fromScene(new RoomEnvironment(), 0.04).texture;
     scene.environment = envTexture;
+    scene.environmentIntensity =
+      theme.id === 'TOKYO_NIGHT_LIGHTS' ? 0.55 : theme.id === 'AUTUMN_MOMIJI_SUNSET' ? 0.82 : 1.0;
     pmremGenerator.dispose();
 
-    // Warm Sunlight & Cool Sky Ambient Contrast
-    const hemiLight = new THREE.HemisphereLight(0xe0f2fe, 0x2d5a27, 0.78);
+    // Biome-tuned Sunlight / Moonlight & Sky Ambient Contrast
+    const hemiLight = new THREE.HemisphereLight(theme.hemiSkyHex, theme.hemiGroundHex, theme.hemiIntensity);
     scene.add(hemiLight);
 
-    const dirLight = new THREE.DirectionalLight(0xfff5e0, 1.38);
-    dirLight.position.set(300, 450, 200);
+    const dirLight = new THREE.DirectionalLight(theme.dirColorHex, theme.dirIntensity);
+    dirLight.position.set(theme.sunDir[0], theme.sunDir[1], theme.sunDir[2]);
     dirLight.castShadow = gpu.enableDynamicShadows;
     if (gpu.enableDynamicShadows) {
       dirLight.shadow.mapSize.width = gpu.shadowMapRes;
@@ -381,7 +423,7 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
     scene.add(dirLight);
 
     // Build Suzuka 3D Track
-    const trackWorld: SuzukaTrackWorld = buildSuzuka3DTrack();
+    const trackWorld: SuzukaTrackWorld = buildSuzuka3DTrack(theme.id);
     scene.add(trackWorld.root);
     const totalCircuitLength = trackWorld.totalLengthMeters || SUZUKA_CIRCUIT_LENGTH_METERS;
 
@@ -1487,7 +1529,7 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
       }
       renderer.dispose();
     };
-  }, [performanceProfile, mode, contextRestartKey]);
+  }, [performanceProfile, mode, trackTheme, contextRestartKey]);
 
   return (
     <div className={`relative w-full h-full overflow-hidden select-none bg-slate-950 ${className}`}>
@@ -1501,7 +1543,7 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
         <div className="absolute inset-0 bg-slate-950 flex flex-col items-center justify-center gap-3 z-20">
           <div className="w-10 h-10 border-4 border-amber-400 border-t-transparent rounded-full animate-spin" />
           <span className="text-sm font-black text-amber-400 tracking-wider">
-            LOADING SUZUKA 3D CIRCUIT...
+            {activeTheme.emoji} {activeTheme.shortEn.toUpperCase()} · SUZUKA 3D...
           </span>
         </div>
       )}

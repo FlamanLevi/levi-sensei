@@ -3,6 +3,7 @@ import { SchoolId } from '@/types/roster';
 import { VocabularyScope } from '@/context/VocabularyContext';
 import { SessionAnalytics } from '@/types/analytics';
 import { MathGrade, MathDomain } from './mathTypes';
+import type { SuzukaTrackThemeId, SuzukaTrackThemeSelection } from '@/games/suzuka_grand_prix/trackThemes';
 
 export type QuizSubject = 'ENGLISH' | 'MATH';
 
@@ -57,6 +58,8 @@ export interface SprintSettings {
   timeLimitSeconds: number; // 30, 60, 90, 120, 180
   graceCountdownSeconds: number; // 15, 20, 25, 30
   targetLaps3D?: number; // 1, 2, 3, 5 (for GRAND_PRIX_3D circuit laps)
+  trackThemeSelection?: SuzukaTrackThemeSelection; // Teacher choice: 'RANDOM' or concrete theme ID
+  trackTheme?: SuzukaTrackThemeId; // Resolved concrete biome ID shared across TV & all student iPads
   wrongSpeedLossRatio?: number; // 0, 0.25, 0.33 (default 1/3), 0.5, 0.75, 1.0
   // ==========================================================================
   // [ANTIGRAVITY REFACTOR]: Enforced GEMINI.md §7 Mandatory >= 2.5s Lockout Floor

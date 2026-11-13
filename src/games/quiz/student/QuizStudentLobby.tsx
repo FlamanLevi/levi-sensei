@@ -19,6 +19,7 @@ import {
   getSavedKartTheme,
   saveSavedKartTheme,
 } from '@/games/suzuka_grand_prix/kartPresets';
+import { SuzukaTrackThemeId, getTrackTheme } from '@/games/suzuka_grand_prix/trackThemes';
 
 interface QuizStudentLobbyProps {
   roomCode: string;
@@ -77,10 +78,10 @@ export const QuizStudentLobby: React.FC<QuizStudentLobbyProps> = ({
 
   useEffect(() => {
     if (gamePlayType === 'GRAND_PRIX_3D' || gamePlayType === 'SPRINT_RACE') {
-      prewarmSuzukaAssets();
+      prewarmSuzukaAssets(sprintSettings?.trackTheme);
       prewarmMicroKartAssets();
     }
-  }, [gamePlayType]);
+  }, [gamePlayType, sprintSettings?.trackTheme]);
 
   const [selectedKartTheme, setSelectedKartTheme] = useState<KartThemeId>(() => {
     return (player.kartTheme as KartThemeId) || getSavedKartTheme();
@@ -400,6 +401,39 @@ export const QuizStudentLobby: React.FC<QuizStudentLobbyProps> = ({
                   {t('How to Play', 'あそびかた')}
                 </span>
               </div>
+
+              {isGrandPrix3D && (() => {
+                const trackStage = getTrackTheme(sprintSettings?.trackTheme);
+                const renderJaStageName = (id: SuzukaTrackThemeId) => {
+                  switch (id) {
+                    case 'SUZUKA_SPRING_DAY':
+                      return <><ruby>春<rt>はる</rt></ruby>のさくらGP</>;
+                    case 'TOKYO_NIGHT_LIGHTS':
+                      return <>ナイト<ruby>照明<rt>しょうめい</rt></ruby>GP</>;
+                    case 'AUTUMN_MOMIJI_SUNSET':
+                      return <><ruby>紅葉<rt>こうよう</rt></ruby>サンセットGP</>;
+                    case 'HOKKAIDO_WINTER_SNOW':
+                      return <><ruby>雪景色<rt>ゆきげしき</rt></ruby>ウィンターGP</>;
+                  }
+                };
+                return (
+                  <div className="flex items-center justify-between gap-2 px-2.5 py-1 rounded-xl bg-slate-900 text-amber-300 border border-slate-700 text-[11px] font-black">
+                    <span className="flex items-center gap-1.5 whitespace-nowrap">
+                      <span>{trackStage.emoji}</span>
+                      <span>
+                        {language === 'ja' ? (
+                          <><ruby>今回<rt>こんかい</rt></ruby>の<ruby>舞台<rt>ぶたい</rt></ruby>:</>
+                        ) : (
+                          'Circuit Stage:'
+                        )}
+                      </span>
+                    </span>
+                    <span className="text-white truncate">
+                      {language === 'ja' ? renderJaStageName(trackStage.id) : trackStage.nameEn}
+                    </span>
+                  </div>
+                );
+              })()}
 
               <div className="space-y-2 text-xs leading-snug text-slate-800 dark:text-slate-100 font-bold">
                 <div className="flex items-start gap-2">

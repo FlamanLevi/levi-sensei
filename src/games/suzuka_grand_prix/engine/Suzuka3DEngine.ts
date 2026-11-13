@@ -1,5 +1,11 @@
 import * as THREE from 'three';
 import { SUZUKA_PATH_D, SUZUKA_SECTORS, SuzukaSector } from './SuzukaPathData';
+import {
+  SuzukaTrackThemeId,
+  SuzukaTrackThemeConfig,
+  getTrackTheme,
+  DEFAULT_TRACK_THEME_ID,
+} from '../trackThemes';
 
 export interface SuzukaTrackSample {
   index: number;
@@ -123,21 +129,26 @@ export function getSuzukaCornerSpeedLimit(progress: number): number {
   return 180;
 }
 
-// Persistent texture caches (generated once per session)
-let cachedStandardAsphaltTex: THREE.CanvasTexture | null = null;
-let cachedRedSpeedZoneTex: THREE.CanvasTexture | null = null;
+// Persistent texture caches (shared invariants + per-biome theme Maps)
+const cachedStandardAsphaltTexs = new Map<SuzukaTrackThemeId, THREE.CanvasTexture>();
+const cachedRedSpeedZoneTexs = new Map<SuzukaTrackThemeId, THREE.CanvasTexture>();
+const cachedRunoffVergeTexs = new Map<SuzukaTrackThemeId, THREE.CanvasTexture>();
+const cachedControlTowerWindowsTexs = new Map<SuzukaTrackThemeId, THREE.CanvasTexture>();
+const cachedTurfTexs = new Map<SuzukaTrackThemeId, THREE.CanvasTexture>();
 let cachedFiaKerbTex: THREE.CanvasTexture | null = null;
-let cachedRunoffVergeTex: THREE.CanvasTexture | null = null;
 let cachedGrandstandSeatsTex: THREE.CanvasTexture | null = null;
 let cachedCheeringCrowdAtlasTex: THREE.CanvasTexture | null = null;
 let cachedHazardStripeTex: THREE.CanvasTexture | null = null;
 let cachedCheckeredLineTex: THREE.CanvasTexture | null = null;
-let cachedControlTowerWindowsTex: THREE.CanvasTexture | null = null;
 const cachedBillboardTexs = new Map<string, THREE.CanvasTexture>();
 
-function createHighContrastAsphaltTexture(isRedSpeedZone: boolean = false): THREE.CanvasTexture {
-  if (isRedSpeedZone && cachedRedSpeedZoneTex) return cachedRedSpeedZoneTex;
-  if (!isRedSpeedZone && cachedStandardAsphaltTex) return cachedStandardAsphaltTex;
+function createHighContrastAsphaltTexture(
+  isRedSpeedZone: boolean = false,
+  theme: SuzukaTrackThemeConfig = getTrackTheme(DEFAULT_TRACK_THEME_ID)
+): THREE.CanvasTexture {
+  const targetCache = isRedSpeedZone ? cachedRedSpeedZoneTexs : cachedStandardAsphaltTexs;
+  const existing = targetCache.get(theme.id);
+  if (existing) return existing;
 
   const canvas = document.createElement('canvas');
   canvas.width = 512;
@@ -145,20 +156,18 @@ function createHighContrastAsphaltTexture(isRedSpeedZone: boolean = false): THRE
   const ctx = canvas.getContext('2d');
   if (ctx) {
     if (isRedSpeedZone) {
-      ctx.fillStyle = '#881b20';
+      ctx.fillStyle = theme.asphaltRedBgHex;
       ctx.fillRect(0, 0, 512, 512);
 
       // Subtle darker rubberized racing grooves in left & right lanes
-      ctx.fillStyle = 'rgba(45, 8, 12, 0.32)';
+      ctx.fillStyle = theme.asphaltRedGrooveRgba;
       ctx.fillRect(96, 0, 92, 512);
       ctx.fillRect(324, 0, 92, 512);
 
       for (let i = 0; i < 3600; i++) {
         const gx = (i * 73) % 512;
         const gy = (i * 197) % 512;
-        const r = 118 + (i % 46);
-        const gb = 22 + (i % 18);
-        ctx.fillStyle = `rgb(${r}, ${gb}, ${gb + 4})`;
+        ctx.fillStyle = i % 2 === 0 ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.12)';
         ctx.fillRect(gx, gy, 2, 2);
       }
 
@@ -176,20 +185,20 @@ function createHighContrastAsphaltTexture(isRedSpeedZone: boolean = false): THRE
         ctx.fill();
       }
     } else {
-      ctx.fillStyle = '#1b2029';
+      ctx.fillStyle = theme.asphaltBgHex;
       ctx.fillRect(0, 0, 512, 512);
 
       // Polished racing line rubber tracks in Driving & Passing lanes
       const leftLaneGrad = ctx.createLinearGradient(70, 0, 210, 0);
       leftLaneGrad.addColorStop(0, 'rgba(12, 15, 20, 0)');
-      leftLaneGrad.addColorStop(0.5, 'rgba(10, 12, 17, 0.45)');
+      leftLaneGrad.addColorStop(0.5, theme.asphaltGrooveRgba);
       leftLaneGrad.addColorStop(1, 'rgba(12, 15, 20, 0)');
       ctx.fillStyle = leftLaneGrad;
       ctx.fillRect(70, 0, 140, 512);
 
       const rightLaneGrad = ctx.createLinearGradient(302, 0, 442, 0);
       rightLaneGrad.addColorStop(0, 'rgba(12, 15, 20, 0)');
-      rightLaneGrad.addColorStop(0.5, 'rgba(10, 12, 17, 0.45)');
+      rightLaneGrad.addColorStop(0.5, theme.asphaltGrooveRgba);
       rightLaneGrad.addColorStop(1, 'rgba(12, 15, 20, 0)');
       ctx.fillStyle = rightLaneGrad;
       ctx.fillRect(302, 0, 140, 512);
@@ -198,8 +207,7 @@ function createHighContrastAsphaltTexture(isRedSpeedZone: boolean = false): THRE
       for (let i = 0; i < 3800; i++) {
         const gx = (i * 79) % 512;
         const gy = (i * 193) % 512;
-        const val = 26 + (i % 24);
-        ctx.fillStyle = `rgb(${val}, ${val + 3}, ${val + 7})`;
+        ctx.fillStyle = i % 2 === 0 ? 'rgba(255, 255, 255, 0.045)' : 'rgba(0, 0, 0, 0.14)';
         ctx.fillRect(gx, gy, 2, 2);
       }
     }
@@ -232,12 +240,7 @@ function createHighContrastAsphaltTexture(isRedSpeedZone: boolean = false): THRE
   tex.repeat.set(1, 1);
   tex.anisotropy = 8;
 
-  if (isRedSpeedZone) {
-    cachedRedSpeedZoneTex = tex;
-  } else {
-    cachedStandardAsphaltTex = tex;
-  }
-
+  targetCache.set(theme.id, tex);
   return tex;
 }
 
@@ -321,25 +324,28 @@ function createFiaKerbTexture(): THREE.CanvasTexture {
   return tex;
 }
 
-function createRunoffVergeTexture(): THREE.CanvasTexture {
-  if (cachedRunoffVergeTex) return cachedRunoffVergeTex;
+function createRunoffVergeTexture(
+  theme: SuzukaTrackThemeConfig = getTrackTheme(DEFAULT_TRACK_THEME_ID)
+): THREE.CanvasTexture {
+  const existing = cachedRunoffVergeTexs.get(theme.id);
+  if (existing) return existing;
   const canvas = document.createElement('canvas');
   canvas.width = 256;
   canvas.height = 256;
   const ctx = canvas.getContext('2d');
   if (ctx) {
-    // FIA Green AstroTurf + Gravel Trap outer border
-    ctx.fillStyle = '#15803d';
+    // FIA AstroTurf / Frost Fringe + Gravel Trap outer border
+    ctx.fillStyle = theme.vergeTurfHex;
     ctx.fillRect(0, 0, 110, 256);
-    ctx.fillStyle = '#f8fafc';
+    ctx.fillStyle = theme.vergeLineHex;
     ctx.fillRect(110, 0, 10, 256);
-    ctx.fillStyle = '#d6c7b2';
+    ctx.fillStyle = theme.vergeGravelBaseHex;
     ctx.fillRect(120, 0, 136, 256);
 
     for (let i = 0; i < 1200; i++) {
       const gx = 120 + ((i * 53) % 134);
       const gy = (i * 149) % 256;
-      ctx.fillStyle = i % 2 === 0 ? '#b8a68e' : '#e7dac6';
+      ctx.fillStyle = i % 2 === 0 ? theme.vergeGravelSpeckleA : theme.vergeGravelSpeckleB;
       ctx.fillRect(gx, gy, 3, 3);
     }
   }
@@ -348,7 +354,7 @@ function createRunoffVergeTexture(): THREE.CanvasTexture {
   tex.wrapS = THREE.ClampToEdgeWrapping;
   tex.wrapT = THREE.RepeatWrapping;
   tex.anisotropy = 4;
-  cachedRunoffVergeTex = tex;
+  cachedRunoffVergeTexs.set(theme.id, tex);
   return tex;
 }
 
@@ -489,18 +495,21 @@ function createGrandstandSeatsTexture(): THREE.CanvasTexture {
   return tex;
 }
 
-function createControlTowerWindowsTexture(): THREE.CanvasTexture {
-  if (cachedControlTowerWindowsTex) return cachedControlTowerWindowsTex;
+function createControlTowerWindowsTexture(
+  theme: SuzukaTrackThemeConfig = getTrackTheme(DEFAULT_TRACK_THEME_ID)
+): THREE.CanvasTexture {
+  const existing = cachedControlTowerWindowsTexs.get(theme.id);
+  if (existing) return existing;
   const canvas = document.createElement('canvas');
   canvas.width = 256;
   canvas.height = 512;
   const ctx = canvas.getContext('2d');
   if (ctx) {
-    ctx.fillStyle = '#0f172a';
+    ctx.fillStyle = theme.towerWindowBg;
     ctx.fillRect(0, 0, 256, 512);
     for (let r = 0; r < 14; r++) {
       const y = 16 + r * 35;
-      ctx.fillStyle = r % 3 === 0 ? '#38bdf8' : '#0284c7';
+      ctx.fillStyle = r % 3 === 0 ? theme.towerWindowColorA : theme.towerWindowColorB;
       for (let c = 0; c < 6; c++) {
         ctx.fillRect(14 + c * 39, y, 30, 22);
       }
@@ -508,7 +517,7 @@ function createControlTowerWindowsTexture(): THREE.CanvasTexture {
   }
   const tex = new THREE.CanvasTexture(canvas);
   tex.colorSpace = THREE.SRGBColorSpace;
-  cachedControlTowerWindowsTex = tex;
+  cachedControlTowerWindowsTexs.set(theme.id, tex);
   return tex;
 }
 
@@ -540,6 +549,51 @@ function createHazardStripeTexture(): THREE.CanvasTexture {
   tex.repeat.set(3, 1);
   cachedHazardStripeTex = tex;
   return tex;
+}
+
+function createTurfTexture(
+  theme: SuzukaTrackThemeConfig = getTrackTheme(DEFAULT_TRACK_THEME_ID)
+): THREE.CanvasTexture {
+  const existing = cachedTurfTexs.get(theme.id);
+  if (existing) return existing;
+
+  const grassCanvas = document.createElement('canvas');
+  grassCanvas.width = 512;
+  grassCanvas.height = 512;
+  const gCtx = grassCanvas.getContext('2d');
+  if (gCtx) {
+    gCtx.fillStyle = theme.turfBgHex;
+    gCtx.fillRect(0, 0, 512, 512);
+
+    const stripeCount = 4;
+    const stripeW = 512 / stripeCount;
+    for (let i = 0; i < stripeCount; i++) {
+      gCtx.fillStyle = i % 2 === 0 ? theme.turfStripeA : theme.turfStripeB;
+      gCtx.fillRect(i * stripeW, 0, stripeW, 512);
+    }
+
+    for (let j = 0; j < stripeCount; j++) {
+      gCtx.fillStyle = j % 2 === 0 ? 'rgba(255, 255, 255, 0.038)' : 'rgba(0, 20, 5, 0.038)';
+      gCtx.fillRect(0, j * stripeW, 512, stripeW);
+    }
+
+    for (let i = 0; i < 4500; i++) {
+      const gx = (i * 97) % 512;
+      const gy = (i * 181) % 512;
+      const shade = i % 3;
+      gCtx.fillStyle = theme.turfSpeckles[shade];
+      gCtx.fillRect(gx, gy, 2, 4);
+    }
+  }
+
+  const grassTex = new THREE.CanvasTexture(grassCanvas);
+  grassTex.colorSpace = THREE.SRGBColorSpace;
+  grassTex.wrapS = THREE.RepeatWrapping;
+  grassTex.wrapT = THREE.RepeatWrapping;
+  grassTex.repeat.set(64, 64);
+  grassTex.anisotropy = 8;
+  cachedTurfTexs.set(theme.id, grassTex);
+  return grassTex;
 }
 
 /**
@@ -824,15 +878,17 @@ export interface CrowdSpritePlacement {
   scale: number;
 }
 
-export function prewarmSuzukaAssets(): void {
-  createHighContrastAsphaltTexture(false);
-  createHighContrastAsphaltTexture(true);
+export function prewarmSuzukaAssets(themeId?: SuzukaTrackThemeId): void {
+  const theme = getTrackTheme(themeId);
+  createHighContrastAsphaltTexture(false, theme);
+  createHighContrastAsphaltTexture(true, theme);
   createCheckeredStartLineTexture();
   createFiaKerbTexture();
-  createRunoffVergeTexture();
+  createRunoffVergeTexture(theme);
+  createTurfTexture(theme);
   createGrandstandSeatsTexture();
   createCheeringCrowdAtlasTexture();
-  createControlTowerWindowsTexture();
+  createControlTowerWindowsTexture(theme);
   createHazardStripeTexture();
   getSuzukaCornerSpeedLimit(0);
 }
@@ -855,7 +911,8 @@ function buildSpectatorGrandstand(
   concreteMat: THREE.Material,
   steelMat: THREE.Material,
   flagColors: number[],
-  crowdPlacementsOut?: CrowdSpritePlacement[]
+  crowdPlacementsOut?: CrowdSpritePlacement[],
+  signEmissiveIntensity: number = 0
 ): THREE.Group {
   const standGroup = new THREE.Group();
   standGroup.position.copy(anchorSample.position).addScaledVector(anchorSample.right, sideSign * offsetMeters);
@@ -934,7 +991,14 @@ function buildSpectatorGrandstand(
   const frontRoofEdgeY = roofH - Math.abs(roofW * 0.44) * Math.sin(0.09);
   const fasciaMesh = new THREE.Mesh(
     new THREE.BoxGeometry(0.32, signHeight, signWidth),
-    new THREE.MeshStandardMaterial({ map: fasciaTex, color: 0xffffff, roughness: 0.35 })
+    new THREE.MeshStandardMaterial({
+      map: fasciaTex,
+      color: 0xffffff,
+      roughness: 0.35,
+      ...(signEmissiveIntensity > 0
+        ? { emissive: 0xffffff, emissiveMap: fasciaTex, emissiveIntensity: signEmissiveIntensity }
+        : {}),
+    })
   );
   fasciaMesh.position.set(towardTrackX * (roofW * 0.44), frontRoofEdgeY + signHeight * 0.5 + 0.28, 0);
   standGroup.add(fasciaMesh);
@@ -963,7 +1027,18 @@ function buildSpectatorGrandstand(
  * Builds the 3D Suzuka Circuit with InstancedMesh multi-tiered forest, secondary grandstands,
  * Suzuka Control Tower, trackside tire barriers, 360° mountain panorama, and volumetric clouds.
  */
-export function buildSuzuka3DTrack(): SuzukaTrackWorld {
+export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWorld {
+  const theme = getTrackTheme(themeId);
+  const makeSignMaterial = (tex: THREE.CanvasTexture, roughness = 0.35) =>
+    new THREE.MeshStandardMaterial({
+      map: tex,
+      color: 0xffffff,
+      roughness,
+      ...(theme.signEmissiveIntensity > 0
+        ? { emissive: 0xffffff, emissiveMap: tex, emissiveIntensity: theme.signEmissiveIntensity }
+        : {}),
+    });
+
   const root = new THREE.Group();
   root.name = 'Suzuka3DTrackRoot';
 
@@ -1170,13 +1245,20 @@ export function buildSuzuka3DTrack(): SuzukaTrackWorld {
   roadGeo.setIndex(roadIndices);
   roadGeo.computeVertexNormals();
 
-  const roadTex = createHighContrastAsphaltTexture(false);
+  const roadTex = createHighContrastAsphaltTexture(false, theme);
   const roadMat = new THREE.MeshStandardMaterial({
     map: roadTex,
     color: 0xffffff,
     roughness: 0.62,
     metalness: 0.12,
     side: THREE.DoubleSide,
+    ...(theme.roadEmissiveIntensity > 0
+      ? {
+          emissive: theme.roadEmissiveHex,
+          emissiveMap: roadTex,
+          emissiveIntensity: theme.roadEmissiveIntensity,
+        }
+      : {}),
   });
   const roadMesh = new THREE.Mesh(roadGeo, roadMat);
   roadMesh.receiveShadow = true;
@@ -1188,13 +1270,20 @@ export function buildSuzuka3DTrack(): SuzukaTrackWorld {
   redRoadGeo.setIndex(redRoadIndices);
   redRoadGeo.computeVertexNormals();
 
-  const redRoadTex = createHighContrastAsphaltTexture(true);
+  const redRoadTex = createHighContrastAsphaltTexture(true, theme);
   const redRoadMat = new THREE.MeshStandardMaterial({
     map: redRoadTex,
     color: 0xffffff,
     roughness: 0.66,
     metalness: 0.08,
     side: THREE.DoubleSide,
+    ...(theme.redRoadEmissiveIntensity > 0
+      ? {
+          emissive: theme.redRoadEmissiveHex,
+          emissiveMap: redRoadTex,
+          emissiveIntensity: theme.redRoadEmissiveIntensity,
+        }
+      : {}),
   });
   const redRoadMesh = new THREE.Mesh(redRoadGeo, redRoadMat);
   redRoadMesh.receiveShadow = true;
@@ -1209,7 +1298,7 @@ export function buildSuzuka3DTrack(): SuzukaTrackWorld {
   const vergeMesh = new THREE.Mesh(
     vergeGeo,
     new THREE.MeshStandardMaterial({
-      map: createRunoffVergeTexture(),
+      map: createRunoffVergeTexture(theme),
       color: 0xffffff,
       roughness: 0.85,
       metalness: 0.02,
@@ -1326,17 +1415,21 @@ export function buildSuzuka3DTrack(): SuzukaTrackWorld {
 
     const p1_lip_low = new THREE.Vector3();
     const p1_top_low = new THREE.Vector3();
+    const cKerbPrimary = new THREE.Color(theme.kerbPrimaryHex);
+    const cKerbSecondary = new THREE.Color(theme.kerbSecondaryHex);
 
     for (let i = 0; i < N; i++) {
       const s0 = samples[i];
       const s1 = samples[(i + 1) % N];
 
-      // Alternate Red & White every block (with high-contrast crimson in corners)
-      const isRedBlock = i % 2 === 0;
+      // Alternate primary & secondary FIA kerb blocks every step (vivid emphasis in corners)
+      const isPrimaryBlock = i % 2 === 0;
       const isCornerZone = cornerSpeedCaps[i] < 180;
-      const rCol = isRedBlock ? (isCornerZone ? 0.92 : 0.86) : 0.99;
-      const gCol = isRedBlock ? (isCornerZone ? 0.11 : 0.15) : 0.99;
-      const bCol = isRedBlock ? (isCornerZone ? 0.16 : 0.18) : 1.0;
+      const kerbCol = isPrimaryBlock ? cKerbPrimary : cKerbSecondary;
+      const shadeMul = isPrimaryBlock && !isCornerZone ? 0.93 : 1.0;
+      const rCol = kerbCol.r * shadeMul;
+      const gCol = kerbCol.g * shadeMul;
+      const bCol = kerbCol.b * shadeMul;
 
       // Sawtooth 3D height profile: front edge of block is lower, rear edge ramps up +3.5cm
       const lipH0 = isCornerZone ? 0.13 : 0.10;
@@ -1433,14 +1526,14 @@ export function buildSuzuka3DTrack(): SuzukaTrackWorld {
   bridgeGroup.name = 'SuzukaOverpassBridge';
 
   const concreteMat = new THREE.MeshStandardMaterial({
-    color: 0x94a3b8,
+    color: theme.concreteHex,
     roughness: 0.82,
     metalness: 0.1,
     side: THREE.DoubleSide,
   });
 
   const steelMat = new THREE.MeshStandardMaterial({
-    color: 0x475569,
+    color: theme.steelHex,
     roughness: 0.42,
     metalness: 0.32,
   });
@@ -1647,10 +1740,10 @@ export function buildSuzuka3DTrack(): SuzukaTrackWorld {
   gantryBar.quaternion.copy(startSample.quaternion);
   gantryGroup.add(gantryBar);
 
-  const startBannerTex = createBillboardTexture('SUZUKA GRAND PRIX', 'START / FINISH · 鈴鹿サーキット', '#0f172a', '#f59e0b');
+  const startBannerTex = createBillboardTexture('SUZUKA GRAND PRIX', theme.gantrySubText, '#0f172a', '#f59e0b');
   const startBannerMesh = new THREE.Mesh(
     new THREE.BoxGeometry(11.5, 1.7, 0.35),
-    new THREE.MeshStandardMaterial({ map: startBannerTex, color: 0xffffff, roughness: 0.35 })
+    makeSignMaterial(startBannerTex)
   );
   startBannerMesh.position.set(0, 1.35, 0);
   gantryBar.add(startBannerMesh);
@@ -1765,7 +1858,8 @@ export function buildSuzuka3DTrack(): SuzukaTrackWorld {
     concreteMat,
     steelMat,
     flagPalette,
-    crowdSpritePlacements
+    crowdSpritePlacements,
+    theme.signEmissiveIntensity
   );
   sceneryGroup.add(mainGrandstand);
 
@@ -1843,7 +1937,8 @@ export function buildSuzuka3DTrack(): SuzukaTrackWorld {
         concreteMat,
         steelMat,
         flagPalette,
-        crowdSpritePlacements
+        crowdSpritePlacements,
+        theme.signEmissiveIntensity
       );
       sceneryGroup.add(stand);
 
@@ -1861,6 +1956,7 @@ export function buildSuzuka3DTrack(): SuzukaTrackWorld {
   const crowdUniforms = {
     uAtlasTex: { value: createCheeringCrowdAtlasTexture() },
     uTime: { value: 0.0 },
+    uCrowdBrightness: { value: theme.crowdBrightness },
   };
 
   if (crowdSpritePlacements.length > 0) {
@@ -1925,12 +2021,13 @@ export function buildSuzuka3DTrack(): SuzukaTrackWorld {
       `,
       fragmentShader: /* glsl */ `
         uniform sampler2D uAtlasTex;
+        uniform float uCrowdBrightness;
         varying vec2 vAtlasUv;
 
         void main() {
           vec4 texel = texture2D(uAtlasTex, vAtlasUv);
           if (texel.a < 0.35) discard;
-          gl_FragColor = texel;
+          gl_FragColor = vec4(texel.rgb * uCrowdBrightness, texel.a);
         }
       `,
     });
@@ -1963,7 +2060,7 @@ export function buildSuzuka3DTrack(): SuzukaTrackWorld {
   const pitTowardTrackX = -infieldSign;
   const pitLengthZ = 52;
 
-  const pitBldgMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.45, metalness: 0.2 });
+  const pitBldgMat = new THREE.MeshStandardMaterial({ color: theme.pitBuildingHex, roughness: 0.45, metalness: 0.2 });
   const pitBldg = new THREE.Mesh(new THREE.BoxGeometry(7.2, 7.6, pitLengthZ), pitBldgMat);
   pitBldg.position.set(0, 3.8, 0);
   pitBldg.castShadow = true;
@@ -1979,7 +2076,7 @@ export function buildSuzuka3DTrack(): SuzukaTrackWorld {
   const pitRoofTex = createBillboardTexture('TEAM GARAGE & PIT LANE', 'KEEP UP YOUR ENGLISH STREAK!', '#1e293b', '#38bdf8');
   const pitRoofSign = new THREE.Mesh(
     new THREE.BoxGeometry(0.4, 3.6, 16.5),
-    new THREE.MeshStandardMaterial({ map: pitRoofTex, color: 0xffffff, roughness: 0.35 })
+    makeSignMaterial(pitRoofTex)
   );
   pitRoofSign.position.set(pitTowardTrackX * 2.8, 9.6, 0);
   pitRoot.add(pitRoofSign);
@@ -2005,9 +2102,12 @@ export function buildSuzuka3DTrack(): SuzukaTrackWorld {
   }
 
   const glassMat = new THREE.MeshStandardMaterial({
-    color: 0x0284c7,
+    color: theme.glassHex,
     roughness: 0.1,
     metalness: 0.85,
+    ...(theme.glassEmissiveIntensity > 0
+      ? { emissive: theme.glassHex, emissiveIntensity: theme.glassEmissiveIntensity }
+      : {}),
   });
   const glassMesh = new THREE.Mesh(new THREE.BoxGeometry(0.18, 2.3, pitLengthZ - 3), glassMat);
   glassMesh.position.set(pitTowardTrackX * 3.64, 5.6, 0);
@@ -2032,11 +2132,15 @@ export function buildSuzuka3DTrack(): SuzukaTrackWorld {
   // Iconic Suzuka Pagoda Race Control Tower at forward Turn-1 end of Pit Complex (z = -31.5)
   const towerGroup = new THREE.Group();
   towerGroup.position.set(-pitTowardTrackX * 2.2, 0, -31.5);
+  const towerWinTex = createControlTowerWindowsTexture(theme);
   const towerWinMat = new THREE.MeshStandardMaterial({
-    map: createControlTowerWindowsTexture(),
+    map: towerWinTex,
     color: 0xffffff,
     roughness: 0.25,
     metalness: 0.5,
+    ...(theme.towerWindowEmissiveIntensity > 0
+      ? { emissive: 0xffffff, emissiveMap: towerWinTex, emissiveIntensity: theme.towerWindowEmissiveIntensity }
+      : {}),
   });
   const towerShaft = new THREE.Mesh(new THREE.BoxGeometry(7.6, 21.0, 7.6), towerWinMat);
   towerShaft.position.y = 10.5;
@@ -2102,7 +2206,7 @@ export function buildSuzuka3DTrack(): SuzukaTrackWorld {
     const bannerTex = createBillboardTexture(cp.title, cp.sub, cp.bg, '#ffffff');
     const beam = new THREE.Mesh(
       archBeamGeo,
-      new THREE.MeshStandardMaterial({ map: bannerTex, color: 0xffffff, roughness: 0.35 })
+      makeSignMaterial(bannerTex)
     );
     beam.position.set(0, 7.4, 0);
     archGroup.add(beam);
@@ -2131,7 +2235,7 @@ export function buildSuzuka3DTrack(): SuzukaTrackWorld {
 
       const board = new THREE.Mesh(
         markerBoardGeo,
-        new THREE.MeshStandardMaterial({ map: mTex, color: 0xffffff, roughness: 0.4 })
+        makeSignMaterial(mTex, 0.4)
       );
       board.position.y = 1.25;
       mGroup.add(board);
@@ -2176,7 +2280,15 @@ export function buildSuzuka3DTrack(): SuzukaTrackWorld {
     ferrisWheelRoot.add(tRoof);
   }
 
-  const legMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.3, metalness: 0.6 });
+  const legMat = new THREE.MeshStandardMaterial({ color: theme.ferrisRimHex, roughness: 0.3, metalness: 0.6 });
+  const ferrisRimMat = new THREE.MeshStandardMaterial({
+    color: theme.ferrisRimHex,
+    roughness: 0.28,
+    metalness: 0.5,
+    ...(theme.ferrisEmissiveIntensity > 0
+      ? { emissive: theme.ferrisRimEmissiveHex, emissiveIntensity: theme.ferrisEmissiveIntensity }
+      : {}),
+  });
   function createStrut(p0: THREE.Vector3, p1: THREE.Vector3, r0: number, r1: number, mat: THREE.Material): THREE.Mesh {
     const dir = new THREE.Vector3().subVectors(p1, p0);
     const len = dir.length();
@@ -2205,12 +2317,12 @@ export function buildSuzuka3DTrack(): SuzukaTrackWorld {
   ferrisWheelRotating.add(new THREE.Mesh(hubGeo, steelMat));
 
   const rimGeo = new THREE.TorusGeometry(wheelRadius, 0.38, 8, 28);
-  const rim1 = new THREE.Mesh(rimGeo, legMat);
+  const rim1 = new THREE.Mesh(rimGeo, ferrisRimMat);
   rim1.rotation.y = Math.PI / 2;
   rim1.position.x = -1.3;
   ferrisWheelRotating.add(rim1);
 
-  const rim2 = new THREE.Mesh(rimGeo, legMat);
+  const rim2 = new THREE.Mesh(rimGeo, ferrisRimMat);
   rim2.rotation.y = Math.PI / 2;
   rim2.position.x = 1.3;
   ferrisWheelRotating.add(rim2);
@@ -2226,10 +2338,14 @@ export function buildSuzuka3DTrack(): SuzukaTrackWorld {
     spoke.rotation.x = angle;
     ferrisWheelRotating.add(spoke);
 
+    const gondolaColor = gondolaColors[g % gondolaColors.length];
     const gMat = new THREE.MeshStandardMaterial({
-      color: gondolaColors[g % gondolaColors.length],
+      color: gondolaColor,
       roughness: 0.4,
       metalness: 0.2,
+      ...(theme.ferrisEmissiveIntensity > 0
+        ? { emissive: gondolaColor, emissiveIntensity: theme.ferrisEmissiveIntensity * 0.65 }
+        : {}),
     });
     const gondola = new THREE.Mesh(sharedGondolaGeo, gMat);
     gondola.position.set(0, Math.sin(angle) * wheelRadius, Math.cos(angle) * wheelRadius);
@@ -2248,14 +2364,14 @@ export function buildSuzuka3DTrack(): SuzukaTrackWorld {
   fujiGroup.position.set(-120, -2.0, -920);
   const fujiBaseCone = new THREE.Mesh(
     new THREE.ConeGeometry(420, 215, 32, 1, true),
-    new THREE.MeshStandardMaterial({ color: 0x3b5998, roughness: 0.9, metalness: 0.05 })
+    new THREE.MeshStandardMaterial({ color: theme.fujiBaseHex, roughness: 0.9, metalness: 0.05 })
   );
   fujiBaseCone.position.y = 107;
   fujiGroup.add(fujiBaseCone);
 
   const fujiSnowCap = new THREE.Mesh(
     new THREE.ConeGeometry(168, 86, 32),
-    new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.65, metalness: 0.05 })
+    new THREE.MeshStandardMaterial({ color: theme.fujiCapHex, roughness: 0.65, metalness: 0.05 })
   );
   fujiSnowCap.position.y = 171;
   fujiGroup.add(fujiSnowCap);
@@ -2267,9 +2383,9 @@ export function buildSuzuka3DTrack(): SuzukaTrackWorld {
   mtnPeakGeo.translate(0, 0.5, 0);
   const mtnPosAttr = mtnPeakGeo.getAttribute('position');
   const mtnColArray = new Float32Array(mtnPosAttr.count * 3);
-  const cValleyMist = new THREE.Color(0x5b8a72);
-  const cForestMid = new THREE.Color(0x2d5a40);
-  const cAlpineCrest = new THREE.Color(0xe2e8f0);
+  const cValleyMist = new THREE.Color(theme.mountainValleyHex);
+  const cForestMid = new THREE.Color(theme.mountainMidHex);
+  const cAlpineCrest = new THREE.Color(theme.mountainCrestHex);
   const cTemp = new THREE.Color();
   for (let i = 0; i < mtnPosAttr.count; i++) {
     const vy = Math.max(0, Math.min(1, mtnPosAttr.getY(i)));
@@ -2284,7 +2400,7 @@ export function buildSuzuka3DTrack(): SuzukaTrackWorld {
   }
   mtnPeakGeo.setAttribute('color', new THREE.BufferAttribute(mtnColArray, 3));
 
-  const mtnColors = [0xdbeafe, 0xe2e8f0, 0xcbd5e1, 0xd1fae5, 0xe0f2fe];
+  const mtnColors = theme.mountainColors;
   for (let m = 0; m < 28; m++) {
     const angle = (m / 28) * Math.PI * 2;
     const dist = 740 + ((m * 137) % 240);
@@ -2319,9 +2435,12 @@ export function buildSuzuka3DTrack(): SuzukaTrackWorld {
   cloudPuff4.translate(3.0, 5.2, -2.0);
   const mergedCloudGeo = mergeSimpleGeometries([cloudPuff1, cloudPuff2, cloudPuff3, cloudPuff4]);
   const cloudMat = new THREE.MeshStandardMaterial({
-    color: 0xffffff,
+    color: theme.cloudMeshHex,
     roughness: 0.9,
     metalness: 0.0,
+    ...(theme.cloudEmissiveIntensity > 0
+      ? { emissive: theme.cloudMeshHex, emissiveIntensity: theme.cloudEmissiveIntensity }
+      : {}),
   });
   const cloudCount = 34;
   const cloudInstanced = new THREE.InstancedMesh(mergedCloudGeo, cloudMat, cloudCount);
@@ -2362,8 +2481,22 @@ export function buildSuzuka3DTrack(): SuzukaTrackWorld {
     const bGroup = new THREE.Group();
     bGroup.position.set(bs.x, bs.y, bs.z);
 
-    const envMat = new THREE.MeshStandardMaterial({ color: bs.color1, roughness: 0.45, metalness: 0.1 });
-    const skirtMat = new THREE.MeshStandardMaterial({ color: bs.color2, roughness: 0.5, metalness: 0.1 });
+    const envMat = new THREE.MeshStandardMaterial({
+      color: bs.color1,
+      roughness: 0.45,
+      metalness: 0.1,
+      ...(theme.balloonEmissiveIntensity > 0
+        ? { emissive: bs.color1, emissiveIntensity: theme.balloonEmissiveIntensity }
+        : {}),
+    });
+    const skirtMat = new THREE.MeshStandardMaterial({
+      color: bs.color2,
+      roughness: 0.5,
+      metalness: 0.1,
+      ...(theme.balloonEmissiveIntensity > 0
+        ? { emissive: bs.color2, emissiveIntensity: theme.balloonEmissiveIntensity * 0.8 }
+        : {}),
+    });
 
     const envMesh = new THREE.Mesh(balloonEnvGeo, envMat);
     envMesh.position.y = 6.0;
@@ -2411,7 +2544,7 @@ export function buildSuzuka3DTrack(): SuzukaTrackWorld {
     if (!isClearOfAllTrack(end1.x, end1.z, 9.5) || !isClearOfAllTrack(end2.x, end2.z, 9.5)) continue;
 
     const bbTex = createBillboardTexture(b.title, b.sub, b.bg, b.text);
-    const bbMat = new THREE.MeshStandardMaterial({ map: bbTex, color: 0xffffff, roughness: 0.4 });
+    const bbMat = makeSignMaterial(bbTex, 0.4);
     const bbBoard = new THREE.Mesh(sharedBbGeo, bbMat);
     bbBoard.position.set(bPos.x, 2.8, bPos.z);
     bbBoard.quaternion.copy(s.quaternion);
@@ -2524,9 +2657,9 @@ export function buildSuzuka3DTrack(): SuzukaTrackWorld {
   const floodHeadGeo = new THREE.BoxGeometry(3.6, 1.4, 0.9);
   floodHeadGeo.translate(0, 18.2, 0.4);
   const floodGlowMat = new THREE.MeshStandardMaterial({
-    color: 0xfef08a,
-    emissive: 0xfef08a,
-    emissiveIntensity: 1.4,
+    color: theme.floodGlowHex,
+    emissive: theme.floodGlowHex,
+    emissiveIntensity: theme.floodEmissiveIntensity,
     roughness: 0.2,
   });
 
@@ -2702,14 +2835,17 @@ export function buildSuzuka3DTrack(): SuzukaTrackWorld {
 
       const scale = 0.85 + nextRng() * 0.48;
       const rotY = nextRng() * Math.PI * 2;
-      let tint: THREE.Color;
-      if (tc.type === 'sakura') {
-        tint = new THREE.Color().setHSL(0.93 + nextRng() * 0.03, 0.88, 0.64 + nextRng() * 0.08);
-      } else if (tc.type === 'cedar') {
-        tint = new THREE.Color().setHSL(0.32 + nextRng() * 0.04, 0.58, 0.28 + nextRng() * 0.08);
-      } else {
-        tint = new THREE.Color().setHSL(0.34 + nextRng() * 0.03, 0.54, 0.23 + nextRng() * 0.08);
-      }
+      const fRange =
+        tc.type === 'sakura'
+          ? theme.treeFoliage.sakura
+          : tc.type === 'cedar'
+          ? theme.treeFoliage.cedar
+          : theme.treeFoliage.pine;
+      const tint = new THREE.Color().setHSL(
+        (fRange.hMin + nextRng() * fRange.hRange) % 1.0,
+        fRange.sMin + nextRng() * fRange.sRange,
+        fRange.lMin + nextRng() * fRange.lRange
+      );
 
       placements.push({ x: tx, z: tz, scale, rotY, type: tc.type, tint });
       exclusionZones.push({ x: tx, z: tz, r: 4.2 });
@@ -2762,47 +2898,7 @@ export function buildSuzuka3DTrack(): SuzukaTrackWorld {
   // -------------------------------------------------------------------------
   // 6. Grounded Suzuka Manicured Landscape Turf (Y = -0.10m)
   // -------------------------------------------------------------------------
-  const grassCanvas = document.createElement('canvas');
-  grassCanvas.width = 512;
-  grassCanvas.height = 512;
-  const gCtx = grassCanvas.getContext('2d');
-  if (gCtx) {
-    gCtx.fillStyle = '#2d6e32';
-    gCtx.fillRect(0, 0, 512, 512);
-
-    const stripeCount = 4;
-    const stripeW = 512 / stripeCount;
-    for (let i = 0; i < stripeCount; i++) {
-      gCtx.fillStyle = i % 2 === 0 ? '#2b6a2f' : '#357e39';
-      gCtx.fillRect(i * stripeW, 0, stripeW, 512);
-    }
-
-    for (let j = 0; j < stripeCount; j++) {
-      gCtx.fillStyle = j % 2 === 0 ? 'rgba(255, 255, 255, 0.038)' : 'rgba(0, 20, 5, 0.038)';
-      gCtx.fillRect(0, j * stripeW, 512, stripeW);
-    }
-
-    for (let i = 0; i < 4500; i++) {
-      const gx = (i * 97) % 512;
-      const gy = (i * 181) % 512;
-      const shade = i % 3;
-      if (shade === 0) {
-        gCtx.fillStyle = 'rgba(74, 168, 78, 0.36)';
-      } else if (shade === 1) {
-        gCtx.fillStyle = 'rgba(28, 74, 32, 0.34)';
-      } else {
-        gCtx.fillStyle = 'rgba(54, 136, 58, 0.30)';
-      }
-      gCtx.fillRect(gx, gy, 2, 4);
-    }
-  }
-
-  const grassTex = new THREE.CanvasTexture(grassCanvas);
-  grassTex.colorSpace = THREE.SRGBColorSpace;
-  grassTex.wrapS = THREE.RepeatWrapping;
-  grassTex.wrapT = THREE.RepeatWrapping;
-  grassTex.repeat.set(64, 64);
-  grassTex.anisotropy = 8;
+  const grassTex = createTurfTexture(theme);
 
   const grassMat = new THREE.MeshStandardMaterial({
     map: grassTex,

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { QuizPlayer, GameMode, TeamAssignmentMode, TeamId, TEAM_PRESETS, RAINBOW_TEAM_ORDER, QuizScope, GamePlayType, QuizSubject } from '../types';
+import { QuizPlayer, GameMode, TeamAssignmentMode, TeamId, TEAM_PRESETS, RAINBOW_TEAM_ORDER, QuizScope, GamePlayType, QuizSubject, SprintSettings } from '../types';
 import { MathGrade, MathDomain, MATH_GRADES, MATH_DOMAINS } from '../mathTypes';
 import { SCHOOL_CONFIGS, SchoolId, getClassSize } from '@/types/roster';
 import { fetchClassBoundNumbers } from '@/services/studentProfile';
@@ -9,6 +9,7 @@ import QRCode from 'qrcode';
 import { prewarmSuzukaAssets } from '@/games/suzuka_grand_prix/engine/Suzuka3DEngine';
 import { prewarmMicroKartAssets } from '@/games/suzuka_grand_prix/engine/MicroKartBuilder.js';
 import { resolveRacerNumber } from '@/games/suzuka_grand_prix/kartPresets';
+import { getTrackTheme } from '@/games/suzuka_grand_prix/trackThemes';
 import { BotDifficulty } from '../hooks/useQuizBotSimulator';
 import { AvatarDisplay } from '@/components/common/AvatarDisplay';
 import { ClassVaultState, subscribeClassVault, getNextTierTarget } from '@/services/classVault';
@@ -24,6 +25,7 @@ interface QuizHostLobbyProps {
   classId?: string;
   gameMode?: GameMode;
   gamePlayType?: GamePlayType;
+  sprintSettings?: SprintSettings;
   teamAssignment?: TeamAssignmentMode;
   teamCount?: number;
   activeTeams?: TeamId[];
@@ -56,6 +58,7 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
   isStudentHost = false,
   gameMode = 'INDIVIDUAL',
   gamePlayType,
+  sprintSettings,
   teamAssignment = 'AUTO_BALANCE',
   teamCount = 2,
   activeTeams: propsActiveTeams,
@@ -131,10 +134,10 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
   // Preload & pre-warm 3D circuit assets during lobby waiting
   useEffect(() => {
     if (gamePlayType === 'GRAND_PRIX_3D') {
-      prewarmSuzukaAssets();
+      prewarmSuzukaAssets(sprintSettings?.trackTheme);
       prewarmMicroKartAssets();
     }
-  }, [gamePlayType]);
+  }, [gamePlayType, sprintSettings?.trackTheme]);
 
   // Keyboard shortcut: Press Space or Enter to start game
   useEffect(() => {
@@ -208,6 +211,18 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
                   : `👥 Team Battle (${teamAssignment === 'STUDENT_CHOICE' ? 'Choice' : 'Auto'})`) 
               : t('👤 Individual Mode', '👤 個人戦')}
           </span>
+          {gamePlayType === 'GRAND_PRIX_3D' && (() => {
+            const trackTheme = getTrackTheme(sprintSettings?.trackTheme);
+            return (
+              <span className="text-xs font-black px-3 py-1 rounded-full bg-slate-900 dark:bg-slate-800 text-amber-300 border border-amber-400/40 shrink-0 whitespace-nowrap flex items-center gap-1">
+                <span>{trackTheme.emoji}</span>
+                <span>{language === 'ja' ? trackTheme.shortJa : trackTheme.shortEn}</span>
+                {sprintSettings?.trackThemeSelection === 'RANDOM' && (
+                  <span className="text-[10px] opacity-80">🎲</span>
+                )}
+              </span>
+            );
+          })()}
         </div>
 
         {/* Top-Right Action Cluster: START GAME + Settings + Cancel */}

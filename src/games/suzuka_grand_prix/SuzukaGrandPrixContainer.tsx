@@ -24,6 +24,14 @@ import {
   getSavedKartTheme,
   saveSavedKartTheme,
 } from './kartPresets';
+import {
+  TRACK_THEME_LIST,
+  SuzukaTrackThemeId,
+  getTrackTheme,
+  isValidTrackThemeId,
+  getSavedTrackTheme,
+  saveSavedTrackTheme,
+} from './trackThemes';
 import { useLanguage } from '@/context/LanguageContext';
 import { useClassroom } from '@/context/ClassroomContext';
 import { soundEffects } from '@/services/soundEffects';
@@ -102,6 +110,20 @@ export const SuzukaGrandPrixContainer: React.FC = () => {
   const handleSelectKartTheme = (themeId: KartThemeId) => {
     setSelectedKartThemeId(themeId);
     saveSavedKartTheme(themeId);
+  };
+
+  const [selectedTrackThemeId, setSelectedTrackThemeId] = useState<SuzukaTrackThemeId>(() => {
+    try {
+      const param = new URLSearchParams(window.location.search).get('trackTheme');
+      if (isValidTrackThemeId(param)) return param;
+    } catch {}
+    return getSavedTrackTheme();
+  });
+  const activeTrackTheme = useMemo(() => getTrackTheme(selectedTrackThemeId), [selectedTrackThemeId]);
+
+  const handleSelectTrackTheme = (themeId: SuzukaTrackThemeId) => {
+    setSelectedTrackThemeId(themeId);
+    saveSavedTrackTheme(themeId);
   };
 
   // Configurable Classroom & Mistake Penalty Settings
@@ -568,14 +590,23 @@ export const SuzukaGrandPrixContainer: React.FC = () => {
   return (
     <div className="fixed inset-0 w-screen h-dvh flex flex-col bg-slate-950 text-white overflow-hidden select-none z-40">
       {/* 1. Compact Classroom Simulation Toolbar */}
-      <header className="h-13 bg-slate-900 border-b border-slate-800 px-3 sm:px-4 flex flex-nowrap items-center justify-between gap-2 shrink-0 z-30 relative">
-        {/* Left: Game Identity & Active Unit */}
-        <div className="flex items-center gap-2.5 min-w-0 flex-1">
-          <span className="text-xl font-display font-bold tracking-tight text-white whitespace-nowrap shrink-0">
+      <header className="h-13 bg-slate-900 border-b border-slate-800 px-2.5 sm:px-3 flex flex-nowrap items-center justify-between gap-1.5 shrink-0 z-30 relative">
+        {/* Left: Game Identity, Stage Biome & Active Unit */}
+        <div className="flex items-center gap-1.5 min-w-0 flex-1 overflow-hidden">
+          <span className="text-base font-display font-bold tracking-tight text-white whitespace-nowrap shrink-0">
             SUZUKA GP 3D
           </span>
-          <span className="text-slate-600 hidden sm:inline shrink-0">·</span>
-          <span className="text-xs font-bold text-amber-400 truncate hidden sm:inline">
+          <button
+            type="button"
+            onClick={() => setActivePopover((p) => (p === 'GARAGE' ? 'NONE' : 'GARAGE'))}
+            className={`px-2 py-0.5 rounded-full border text-[11px] font-black hidden sm:inline-flex items-center gap-1 shrink-0 whitespace-nowrap cursor-pointer transition-opacity hover:opacity-90 ${activeTrackTheme.badgeClass}`}
+            title={t('Switch Circuit Stage / Biome', 'コース背景・時間帯を変更')}
+          >
+            <span>{activeTrackTheme.emoji}</span>
+            <span>{t(activeTrackTheme.shortEn, activeTrackTheme.shortJa)}</span>
+          </button>
+          <span className="text-slate-600 hidden 2xl:inline shrink-0">·</span>
+          <span className="text-xs font-bold text-amber-400 truncate hidden 2xl:inline min-w-0">
             {activeUnit.gradeLabelJa} — {activeUnit.titleEn}
           </span>
         </div>
@@ -585,7 +616,7 @@ export const SuzukaGrandPrixContainer: React.FC = () => {
           <button
             type="button"
             onClick={() => setPrototypeView('COCKPIT')}
-            className={`px-2.5 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
+            className={`px-2 py-1 rounded-lg flex items-center gap-1 transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
               prototypeView === 'COCKPIT'
                 ? 'bg-amber-500 text-slate-950 font-black'
                 : 'text-slate-400 hover:text-white'
@@ -599,7 +630,7 @@ export const SuzukaGrandPrixContainer: React.FC = () => {
           <button
             type="button"
             onClick={() => setPrototypeView('BROADCAST')}
-            className={`px-2.5 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
+            className={`px-2 py-1 rounded-lg flex items-center gap-1 transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
               prototypeView === 'BROADCAST'
                 ? 'bg-amber-500 text-slate-950 font-black'
                 : 'text-slate-400 hover:text-white'
@@ -613,7 +644,7 @@ export const SuzukaGrandPrixContainer: React.FC = () => {
           <button
             type="button"
             onClick={() => setPrototypeView('SPLIT')}
-            className={`px-2.5 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
+            className={`px-2 py-1 rounded-lg flex items-center gap-1 transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
               prototypeView === 'SPLIT'
                 ? 'bg-amber-500 text-slate-950 font-black'
                 : 'text-slate-400 hover:text-white'
@@ -626,12 +657,12 @@ export const SuzukaGrandPrixContainer: React.FC = () => {
         </div>
 
         {/* Right: Pit Garage, Curriculum & Penalty Settings, Bots, Pause, Podium, Exit */}
-        <div className="flex items-center flex-nowrap gap-1.5 shrink-0 relative">
+        <div className="flex items-center flex-nowrap gap-1 shrink-0 relative">
           {/* Pit Garage & ESL Unit Drawer Toggle */}
           <button
             type="button"
             onClick={() => setActivePopover((p) => (p === 'GARAGE' ? 'NONE' : 'GARAGE'))}
-            className={`px-2.5 py-1.5 rounded-xl border font-bold text-xs flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
+            className={`px-2 py-1.5 rounded-xl border font-bold text-xs flex items-center gap-1 cursor-pointer whitespace-nowrap ${
               activePopover === 'GARAGE'
                 ? 'bg-amber-500 text-slate-950 border-amber-400 font-black'
                 : 'bg-slate-800 hover:bg-slate-700 border-slate-700 text-slate-200'
@@ -647,7 +678,7 @@ export const SuzukaGrandPrixContainer: React.FC = () => {
           <button
             type="button"
             onClick={() => setActivePopover((p) => (p === 'SETTINGS' ? 'NONE' : 'SETTINGS'))}
-            className={`px-2.5 py-1.5 rounded-xl border font-bold text-xs flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
+            className={`px-2 py-1.5 rounded-xl border font-bold text-xs flex items-center gap-1 cursor-pointer whitespace-nowrap ${
               activePopover === 'SETTINGS'
                 ? 'bg-amber-500 text-slate-950 border-amber-400 font-black'
                 : 'bg-slate-800 hover:bg-slate-700 border-slate-700 text-slate-200'
@@ -655,7 +686,7 @@ export const SuzukaGrandPrixContainer: React.FC = () => {
             title="School Wi-Fi Bandwidth Governor & Penalty Settings"
           >
             <SlidersHorizontal size={13} />
-            <span className="hidden xl:inline">
+            <span className="hidden 2xl:inline">
               {t(`Wi-Fi -${bwSavingPct}%`, `通信 -${bwSavingPct}%`)}
             </span>
           </button>
@@ -664,7 +695,7 @@ export const SuzukaGrandPrixContainer: React.FC = () => {
             <button
               type="button"
               onClick={() => handleAddBots(5)}
-              className="px-2.5 py-1.5 rounded-xl bg-indigo-950 hover:bg-indigo-900 border border-indigo-700 text-indigo-300 font-bold text-xs flex items-center gap-1 cursor-pointer whitespace-nowrap"
+              className="px-2 py-1.5 rounded-xl bg-indigo-950 hover:bg-indigo-900 border border-indigo-700 text-indigo-300 font-bold text-xs flex items-center gap-1 cursor-pointer whitespace-nowrap"
               title="Add 5 Bot Racers"
             >
               <Users size={13} />
@@ -675,7 +706,7 @@ export const SuzukaGrandPrixContainer: React.FC = () => {
           <button
             type="button"
             onClick={handleFinishRaceToPodium}
-            className="px-2.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs flex items-center gap-1 cursor-pointer whitespace-nowrap"
+            className="px-2 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs flex items-center gap-1 cursor-pointer whitespace-nowrap"
             title="Finish Race & View Podium"
           >
             <Trophy size={13} />
@@ -722,7 +753,7 @@ export const SuzukaGrandPrixContainer: React.FC = () => {
 
           {/* Popover 1: Pit Garage & MEXT ESL Curriculum Unit Picker */}
           {activePopover === 'GARAGE' && (
-            <div className="absolute right-0 top-12 w-96 max-w-[92vw] bg-slate-900 border-2 border-slate-700 rounded-2xl p-4 shadow-2xl z-50 space-y-4">
+            <div className="absolute right-0 top-12 w-[420px] max-w-[94vw] max-h-[82dvh] overflow-y-auto bg-slate-900 border-2 border-slate-700 rounded-2xl p-4 shadow-2xl z-50 space-y-4">
               <div className="flex items-center justify-between border-b border-slate-800 pb-2">
                 <span className="text-xs font-black text-amber-400 flex items-center gap-1.5">
                   <BookOpen size={14} />
@@ -735,6 +766,40 @@ export const SuzukaGrandPrixContainer: React.FC = () => {
                 >
                   ✕
                 </button>
+              </div>
+
+              {/* 4-Biome Circuit Stage Selector */}
+              <div>
+                <label className="text-[11px] font-bold text-slate-300 block mb-1.5">
+                  {t('Circuit Stage / Atmosphere (4 Biomes)', 'コースの季節・時間帯ステージ (4種類)')}
+                </label>
+                <div className="grid grid-cols-2 gap-1.5">
+                  {TRACK_THEME_LIST.map((theme) => {
+                    const isSelected = selectedTrackThemeId === theme.id;
+                    return (
+                      <button
+                        key={theme.id}
+                        type="button"
+                        onClick={() => handleSelectTrackTheme(theme.id)}
+                        className={`p-2 rounded-xl border text-left transition-all cursor-pointer flex items-center gap-2 ${
+                          isSelected
+                            ? 'bg-amber-500/20 border-amber-400 text-white font-black ring-1 ring-amber-400/50'
+                            : 'bg-slate-950 border-slate-800 text-slate-300 hover:border-slate-600'
+                        }`}
+                      >
+                        <span className="text-base shrink-0 leading-none">{theme.emoji}</span>
+                        <div className="min-w-0">
+                          <span className="text-[11px] font-black block truncate">
+                            {t(theme.shortEn, theme.shortJa)}
+                          </span>
+                          <span className="text-[9px] text-slate-400 block truncate">
+                            {t(theme.nameEn, theme.nameJa)}
+                          </span>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
 
               {/* Curriculum Unit Selector */}
@@ -776,7 +841,7 @@ export const SuzukaGrandPrixContainer: React.FC = () => {
                 <label className="text-[11px] font-bold text-slate-300 block mb-1.5">
                   {t('1-Tap Kart Livery Customization', 'マイカート塗装プリセット (15種)')}
                 </label>
-                <div className="grid grid-cols-3 gap-1.5 max-h-48 overflow-y-auto pr-1">
+                <div className="grid grid-cols-3 gap-1.5 max-h-40 overflow-y-auto pr-1">
                   {KART_THEME_LIST.map((theme) => (
                     <button
                       key={theme.id}
@@ -1043,6 +1108,7 @@ export const SuzukaGrandPrixContainer: React.FC = () => {
               activeRacerId={STUDENT_ID}
               racers={allRacers}
               lightsCount={lightsCount}
+              trackTheme={selectedTrackThemeId}
               performanceProfile="DESKTOP_HD"
               onTelemetryUpdate={handleTelemetryUpdate}
               className="flex-1 w-full h-full min-h-0"
@@ -1135,6 +1201,7 @@ export const SuzukaGrandPrixContainer: React.FC = () => {
                 activeRacerId={STUDENT_ID}
                 racers={allRacers}
                 lightsCount={lightsCount}
+                trackTheme={selectedTrackThemeId}
                 performanceProfile="MOBILE"
                 onTelemetryUpdate={handleTelemetryUpdate}
                 className="w-full h-full"

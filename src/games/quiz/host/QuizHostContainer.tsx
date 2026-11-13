@@ -33,6 +33,7 @@ import { QuizHostGrandPrix3D } from './QuizHostGrandPrix3D';
 import { QuizHostTugOfWar } from './QuizHostTugOfWar';
 import { QuizHostVolleyball } from './QuizHostVolleyball';
 import { useQuizBotSimulator } from '../hooks/useQuizBotSimulator';
+import { isValidTrackThemeId, resolveTrackThemeId } from '@/games/suzuka_grand_prix/trackThemes';
 
 interface QuizHostContainerProps {
   onExit: () => void;
@@ -178,6 +179,33 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
 
   const wordPool = filteredWords.length > 0 ? filteredWords : gradeWords;
 
+  const resolveSettingsForRound = useCallback(
+    (
+      baseSettings: QuizHostSettings,
+      prevConcreteTheme?: string | null,
+      preserveRandomIfSet = false
+    ): QuizHostSettings => {
+      if (!baseSettings.sprintSettings) return baseSettings;
+      const selection = baseSettings.sprintSettings.trackThemeSelection || 'RANDOM';
+      const existingConcrete = baseSettings.sprintSettings.trackTheme || prevConcreteTheme;
+      const resolvedTheme =
+        preserveRandomIfSet &&
+        selection === 'RANDOM' &&
+        isValidTrackThemeId(existingConcrete)
+          ? existingConcrete
+          : resolveTrackThemeId(selection, prevConcreteTheme);
+      return {
+        ...baseSettings,
+        sprintSettings: {
+          ...baseSettings.sprintSettings,
+          trackThemeSelection: selection,
+          trackTheme: resolvedTheme,
+        },
+      };
+    },
+    []
+  );
+
   // Sync step with Firebase room status if in Stream B (and not actively editing settings in lobby)
   useEffect(() => {
     if (settings?.deliveryStream === 'STREAM_B_MULTIPLAYER' && room && !isEditingLobby) {
@@ -193,7 +221,10 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
   }, [room?.status, settings?.deliveryStream, isEditingLobby]);
 
   // Start or Update game setup
-  const handleStartSetup = useCallback(async (newSettings: QuizHostSettings) => {
+  const handleStartSetup = useCallback(async (rawSettings: QuizHostSettings) => {
+    const prevConcreteTheme = room?.sprintSettings?.trackTheme || settings?.sprintSettings?.trackTheme || null;
+    const preserveRandom = isEditingLobby && settings?.sprintSettings?.trackThemeSelection === 'RANDOM';
+    const newSettings = resolveSettingsForRound(rawSettings, prevConcreteTheme, preserveRandom);
     setSettings(newSettings);
     let generated: QuizQuestion[] = [];
     if (newSettings.subject === 'MATH') {
@@ -272,7 +303,7 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
       setSoloTroubleWords({});
       setStep('QUESTION');
     }
-  }, [filteredWords, gradeWords, activeGrade, activeUnit, createRoom, createInitialSoloPlayer, isEditingLobby, roomCode, resetRoomForNewRound]);
+  }, [filteredWords, gradeWords, activeGrade, activeUnit, createRoom, createInitialSoloPlayer, isEditingLobby, roomCode, resetRoomForNewRound, room?.sprintSettings?.trackTheme, settings?.sprintSettings?.trackTheme, settings?.sprintSettings?.trackThemeSelection, resolveSettingsForRound, isStudentHost]);
 
   // Trigger in-lobby settings edit
   const handleEditSettingsFromLobby = useCallback(() => {
@@ -508,25 +539,29 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
   // Play Again Same
   const handlePlayAgainSame = useCallback(async () => {
     if (!settings) return;
+    const prevConcreteTheme = room?.sprintSettings?.trackTheme || settings.sprintSettings?.trackTheme || null;
+    const nextRoundSettings = resolveSettingsForRound(settings, prevConcreteTheme, false);
+    setSettings(nextRoundSettings);
+
     let generated: QuizQuestion[] = [];
-    if (settings.subject === 'MATH') {
-      const mathGrade = (settings.mathGrade as MathGrade) || 'G1';
-      const mathDomain = (settings.mathDomain as MathDomain) || 'ALL';
-      const count = (settings.gamePlayType === 'GRAND_PRIX_3D' || settings.gamePlayType === 'TUG_OF_WAR' || settings.gamePlayType === 'VOLLEYBALL')
+    if (nextRoundSettings.subject === 'MATH') {
+      const mathGrade = (nextRoundSettings.mathGrade as MathGrade) || 'G1';
+      const mathDomain = (nextRoundSettings.mathDomain as MathDomain) || 'ALL';
+      const count = (nextRoundSettings.gamePlayType === 'GRAND_PRIX_3D' || nextRoundSettings.gamePlayType === 'TUG_OF_WAR' || nextRoundSettings.gamePlayType === 'VOLLEYBALL')
         ? 60
-        : (settings.questionCount === -1 ? 40 : settings.questionCount);
+        : (nextRoundSettings.questionCount === -1 ? 40 : nextRoundSettings.questionCount);
       generated = generateMathQuestions({
         grade: mathGrade,
         domain: mathDomain,
-        topicId: settings.mathTopicId,
+        topicId: nextRoundSettings.mathTopicId,
         questionCount: count,
-        timeLimitMs: (settings.timeLimitSeconds || 15) * 1000
+        timeLimitMs: (nextRoundSettings.timeLimitSeconds || 15) * 1000
       });
     } else {
-      const poolToUse = settings.customWordPool && settings.customWordPool.length > 0
-        ? settings.customWordPool
+      const poolToUse = nextRoundSettings.customWordPool && nextRoundSettings.customWordPool.length > 0
+        ? nextRoundSettings.customWordPool
         : wordPool;
-      generated = generateQuizQuestions(poolToUse, settings, activeGrade, gradeWords);
+      generated = generateQuizQuestions(poolToUse, nextRoundSettings, activeGrade, gradeWords);
     }
 
     if (generated.length === 0) {
@@ -543,8 +578,8 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
 
     nextTrack();
 
-    if (settings.deliveryStream === 'STREAM_B_MULTIPLAYER' && roomCode) {
-      const success = await resetRoomForNewRound(timed, true);
+    if (nextRoundSettings.deliveryStream === 'STREAM_B_MULTIPLAYER' && roomCode) {
+      const success = await resetRoomForNewRound(timed, true, nextRoundSettings);
       if (success) {
         setStep('LOBBY');
       } else {
@@ -560,7 +595,7 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
       setSoloTroubleWords({});
       setStep('QUESTION');
     }
-  }, [settings, wordPool, activeGrade, gradeWords, roomCode, resetRoomForNewRound, createInitialSoloPlayer, nextTrack]);
+  }, [settings, room?.sprintSettings?.trackTheme, resolveSettingsForRound, wordPool, activeGrade, gradeWords, roomCode, resetRoomForNewRound, createInitialSoloPlayer, nextTrack]);
 
   // Trouble Words Rematch
   const handleTroubleWordsRematch = useCallback(async () => {
@@ -576,6 +611,7 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
     }
 
     const troubleIds = new Set(troubleEntries.map(([id]) => id));
+    const prevConcreteTheme = room?.sprintSettings?.trackTheme || settings.sprintSettings?.trackTheme || null;
     const isContinuousArcade =
       settings.gamePlayType === 'GRAND_PRIX_3D' ||
       settings.gamePlayType === 'SPRINT_RACE' ||
@@ -609,14 +645,19 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
           }
         }
         if (rematchQuestions.length > 0) {
-          const rematchSettings: QuizHostSettings = {
-            ...settings,
-            questionCount: rematchQuestions.length
-          };
+          const rematchSettings: QuizHostSettings = resolveSettingsForRound(
+            {
+              ...settings,
+              questionCount: rematchQuestions.length
+            },
+            prevConcreteTheme,
+            false
+          );
+          setSettings(rematchSettings);
           setQuestions(rematchQuestions);
           setLocalQuestionIndex(0);
           nextTrack();
-          if (settings.deliveryStream === 'STREAM_B_MULTIPLAYER' && roomCode) {
+          if (rematchSettings.deliveryStream === 'STREAM_B_MULTIPLAYER' && roomCode) {
             const success = await resetRoomForNewRound(rematchQuestions, true, rematchSettings);
             if (success) {
               setStep('LOBBY');
@@ -653,10 +694,14 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
       ? Math.max(30, troublePool.length * 5)
       : Math.max(5, troublePool.length);
 
-    const rematchSettings: QuizHostSettings = {
-      ...settings,
-      questionCount: rematchQuestionCount
-    };
+    const rematchSettings: QuizHostSettings = resolveSettingsForRound(
+      {
+        ...settings,
+        questionCount: rematchQuestionCount
+      },
+      prevConcreteTheme,
+      false
+    );
 
     const generated = generateQuizQuestions(
       troublePool,
@@ -674,13 +719,18 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
     if (timed[0]) {
       timed[0] = { ...timed[0], startTime: getServerTime() };
     }
+    const finalRematchSettings: QuizHostSettings = {
+      ...rematchSettings,
+      questionCount: timed.length
+    };
+    setSettings(finalRematchSettings);
     setQuestions(timed);
     setLocalQuestionIndex(0);
 
     nextTrack();
 
-    if (settings.deliveryStream === 'STREAM_B_MULTIPLAYER' && roomCode) {
-      const success = await resetRoomForNewRound(timed, true, { questionCount: timed.length });
+    if (finalRematchSettings.deliveryStream === 'STREAM_B_MULTIPLAYER' && roomCode) {
+      const success = await resetRoomForNewRound(timed, true, finalRematchSettings);
       if (success) {
         setStep('LOBBY');
       } else {
@@ -696,7 +746,7 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
       setSoloTroubleWords({});
       setStep('QUESTION');
     }
-  }, [settings, room?.troubleWords, soloTroubleWords, wordPool, gradeWords, activeGrade, roomCode, resetRoomForNewRound, createInitialSoloPlayer, nextTrack]);
+  }, [settings, room?.troubleWords, room?.sprintSettings?.trackTheme, resolveSettingsForRound, soloTroubleWords, questions, wordPool, gradeWords, activeGrade, roomCode, resetRoomForNewRound, createInitialSoloPlayer, nextTrack]);
 
   // Change settings flow from Game Over
   const handlePlayAgainChange = useCallback(() => {
@@ -749,6 +799,8 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
     }`}>
       {step === 'SETUP' && (
         <QuizHostSetup
+          key={isEditingLobby ? `edit-lobby-${roomCode}` : 'fresh-setup'}
+          initialSettings={isEditingLobby ? settings : null}
           onStart={handleStartSetup}
           onCancel={handleCancelSetup}
           isStudentHost={isStudentHost}
@@ -793,6 +845,7 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
             isStudentHost={isStudentHost || !!room?.isStudentHost}
             gameMode={room?.mode || settings?.gameMode}
             gamePlayType={room?.gamePlayType || settings?.gamePlayType}
+            sprintSettings={room?.sprintSettings || settings?.sprintSettings}
             teamAssignment={room?.teamAssignment || settings?.teamAssignment}
             teamCount={room?.teamCount || settings?.teamCount}
             activeTeams={room?.activeTeams || settings?.activeTeams}

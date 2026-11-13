@@ -3,6 +3,7 @@ import { QuizQuestion, QuizPlayer, TeamId, TEAM_PRESETS, PodiumFinisher, SprintS
 import { Suzuka3DStage, RacerState, RacerTelemetry, CameraViewMode, LANE_DRIVING, LANE_PASSING } from '@/games/suzuka_grand_prix/Suzuka3DStage';
 import { SUZUKA_CIRCUIT_LENGTH_METERS } from '@/games/suzuka_grand_prix/engine/Suzuka3DEngine';
 import { getKartTheme, KART_THEME_LIST, resolveRacerNumber } from '@/games/suzuka_grand_prix/kartPresets';
+import { getTrackTheme } from '@/games/suzuka_grand_prix/trackThemes';
 import { suzukaAudio } from '@/games/suzuka_grand_prix/services/suzukaAudio';
 import { soundEffects } from '@/services/soundEffects';
 import { getServerTime } from '@/services/rtdbSafe';
@@ -323,6 +324,15 @@ export const QuizHostGrandPrix3D: React.FC<QuizHostGrandPrix3DProps> = ({
                     : t(`${targetLaps}-Lap Race`, `${targetLaps}周レース`)}
                 </span>
               </span>
+              {(() => {
+                const trackTheme = getTrackTheme(sprintSettings?.trackTheme);
+                return (
+                  <span className={`px-2.5 py-0.5 rounded-full border font-black text-xs flex items-center gap-1 whitespace-nowrap shrink-0 ${trackTheme.badgeClass}`}>
+                    <span>{trackTheme.emoji}</span>
+                    <span>{t(trackTheme.shortEn, trackTheme.shortJa)}</span>
+                  </span>
+                );
+              })()}
             </div>
           </div>
 
@@ -534,6 +544,7 @@ export const QuizHostGrandPrix3D: React.FC<QuizHostGrandPrix3DProps> = ({
           activeRacerId={sortedStandings[0]?.player.id}
           racers={racers3D}
           lightsCount={lightsCount}
+          trackTheme={sprintSettings?.trackTheme}
           hideSectorBadge={isLobby}
           performanceProfile={performanceProfile}
           onTelemetryUpdate={setLiveTelemetry}

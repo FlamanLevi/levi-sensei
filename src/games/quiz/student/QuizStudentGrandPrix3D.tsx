@@ -659,6 +659,7 @@ export const QuizStudentGrandPrix3D: React.FC<QuizStudentGrandPrix3DProps> = ({
           activeRacerId={player.id}
           racers={allRacers3D}
           lightsCount={lightsCount}
+          trackTheme={sprintSettings?.trackTheme}
           performanceProfile="MOBILE"
           onTelemetryUpdate={handleTelemetryUpdate}
           className="w-full h-full"

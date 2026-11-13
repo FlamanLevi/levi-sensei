@@ -39,22 +39,22 @@ const SLIDES: SlideItem[] = [
         <span>❓</span>
       </>
     ),
-    badgeEn: 'Step 1 · Watch the Live Sketch',
+    badgeEn: 'Step 1 · Watch the Retro Sketch',
     badgeJa: <>ステップ 1 · スケッチを<ruby>見<rt>み</rt></ruby>よう</>,
-    titleEn: 'Watch the Mystery Picture Come to Life!',
+    titleEn: 'Watch the Pencil Draw Every Clue to 100%!',
     titleJa: (
       <>
-        テレビに<ruby>描<rt>えが</rt></ruby>かれるイラストを<ruby>見<rt>み</rt></ruby>て、すぐ<ruby>予想<rt>よそう</rt></ruby>しよう！
+        えんぴつが<ruby>描<rt>えが</rt></ruby>くシルエットを<ruby>見<rt>み</rt></ruby>て、<ruby>早<rt>はや</rt></ruby>く<ruby>予想<rt>よそう</rt></ruby>しよう！
       </>
     ),
     descEn:
-      'Ink lines and numbered Connect-the-Dots slowly draw a textbook word! Look closely at the category clue and letter length to guess before it finishes.',
+      'Clean bold lines and gleaming pearl Connect-the-Dots trace each word cleanly—never cutting off before finishing! Use the category title and progressive letter mask to guess as early as possible.',
     descJa: (
       <>
-        スケッチや<ruby>点<rt>てん</rt></ruby>つなぎが<ruby>少<rt>すこ</rt></ruby>しずつ<ruby>描<rt>えが</rt></ruby>かれます！カテゴリーと<ruby>文字数<rt>もじすう</rt></ruby>のヒントから、<ruby>完成前<rt>かんせいまえ</rt></ruby>に<ruby>英語<rt>えいご</rt></ruby>を<ruby>当<rt>あ</rt></ruby>てよう！
+        くっきりした<ruby>線<rt>せん</rt></ruby>や<ruby>光<rt>ひか</rt></ruby>る<ruby>点<rt>てん</rt></ruby>つなぎで<ruby>絵<rt>え</rt></ruby>が<ruby>最後<rt>さいご</rt></ruby>まで<ruby>完成<rt>かんせい</rt></ruby>します！カテゴリーと文字ヒントを見て、できるだけ<ruby>早<rt>はや</rt></ruby>く<ruby>英語<rt>えいご</rt></ruby>を<ruby>当<rt>あ</rt></ruby>てよう！
       </>
     ),
-    tipEn: '💡 Faster guesses earn up to 1,100 bonus points!',
+    tipEn: '💡 Faster guesses earn up to 1,100 bonus points & more board steps!',
     tipJa: (
       <>
         💡 <ruby>早<rt>はや</rt></ruby>く<ruby>正解<rt>せいかい</rt></ruby>するほど高スコア＆たくさん<ruby>進<rt>すす</rt></ruby>めるよ！

@@ -268,6 +268,9 @@ export function useAnticipationRoom(initialRoomCode?: string | null) {
           phase: 'ACTIVE',
           loopMode: settings.loopMode,
           drawStyle: settings.drawStyle,
+          canvasStyle: settings.canvasStyle || 'NES_RETRO',
+          timerMode: settings.timerMode || 'NO_CUTOFF',
+          drawCompletionSeconds: settings.drawCompletionSeconds || 11,
           inputMode: settings.inputMode,
           englishReadingAid: settings.englishReadingAid,
           roundIndex: 0,
@@ -362,10 +365,11 @@ export function useAnticipationRoom(initialRoomCode?: string | null) {
       if (bots.length === 0) return;
 
       bots.forEach((bot, idx) => {
-        const speedBase = bot.botDifficulty === 'fast' ? 0.25 : bot.botDifficulty === 'chill' ? 0.65 : 0.44;
+        const refMs = round.publicRound.drawCompletionMs || 11000;
+        const speedBase = bot.botDifficulty === 'fast' ? 0.35 : bot.botDifficulty === 'chill' ? 1.15 : 0.72;
         const delayMs = Math.max(
-          1600,
-          Math.min(round.publicRound.drawDurationMs - 1400, round.publicRound.drawDurationMs * (speedBase + (idx % 3) * 0.08))
+          1800,
+          Math.min(round.publicRound.drawDurationMs - 1200, refMs * (speedBase + (idx % 3) * 0.1))
         );
         const tId = setTimeout(() => {
           if (roomRef.current?.status !== 'ANTICIPATION') return;
@@ -409,6 +413,8 @@ export function useAnticipationRoom(initialRoomCode?: string | null) {
 
       const startedRound = {
         ...round.publicRound,
+        canvasStyle: settingsRef.current?.canvasStyle || round.publicRound.canvasStyle || 'NES_RETRO',
+        timerMode: settingsRef.current?.timerMode || round.publicRound.timerMode || 'NO_CUTOFF',
         drawStyle: drawStyleDecision.drawStyle,
         isFeatureDots: drawStyleDecision.isFeatureDots,
         roundStartTime: getServerTime(),
@@ -467,7 +473,8 @@ export function useAnticipationRoom(initialRoomCode?: string | null) {
 
       const updatedPlayers: Record<string, QuizPlayer> = {};
       const teamScores: Partial<Record<TeamId, TeamScoreData>> = { ...(currentRoom.teamScores || {}) };
-      const drawDurationMs = antState.currentRound.drawDurationMs || 18000;
+      const drawDurationMs = antState.currentRound.drawDurationMs || 28000;
+      const drawCompletionMs = antState.currentRound.drawCompletionMs || 11000;
 
       // Find fastest solver for first-solver bonus & spiral board dice roll
       let fastestCorrect: { player: QuizPlayer; timeMs: number } | null = null;
@@ -489,7 +496,7 @@ export function useAnticipationRoom(initialRoomCode?: string | null) {
         if (resp) {
           totalAttempts++;
           totalAnswered++;
-          const safeTime = Math.max(200, Math.min(drawDurationMs, resp.timeTakenMs || drawDurationMs));
+          const safeTime = Math.max(200, Math.min(drawDurationMs * 3, resp.timeTakenMs || drawCompletionMs));
           if (isCorrect) {
             if (!fastestCorrect || safeTime < fastestCorrect.timeMs) {
               fastestCorrect = { player: p, timeMs: safeTime };
@@ -518,7 +525,7 @@ export function useAnticipationRoom(initialRoomCode?: string | null) {
             questionIndex: roundIdx,
             optionId: '',
             isCorrect: false,
-            timeTakenMs: drawDurationMs,
+            timeTakenMs: drawCompletionMs,
             pointsEarned: 0,
           };
         }
@@ -540,7 +547,7 @@ export function useAnticipationRoom(initialRoomCode?: string | null) {
         const ans = p.answers?.[roundIdx];
         if (ans?.isCorrect) {
           const isFirst = fastestCorrect?.player.id === pId;
-          const pts = calculateRoundPoints(ans.timeTakenMs, drawDurationMs, p.currentStreak, isFirst);
+          const pts = calculateRoundPoints(ans.timeTakenMs, drawCompletionMs, p.currentStreak, isFirst);
           ans.pointsEarned = pts;
           p.score += pts;
           p.lastAnswer = {
@@ -589,7 +596,7 @@ export function useAnticipationRoom(initialRoomCode?: string | null) {
             : getPieceForTeamId(fc.player.teamId, fc.player.attendanceNumber || 0);
         const token = nextTokens[targetTokenKey] || Object.values(nextTokens)[0];
         if (token) {
-          const steps = computeDiceSteps(fc.timeMs, drawDurationMs);
+          const steps = computeDiceSteps(fc.timeMs, drawCompletionMs);
           const adv = advanceSpiralSpace(token.spaceIndex, steps);
           const updatedCollected = [...(token.collectedPieces || [])];
           if (adv.puzzlePiece && !updatedCollected.includes(adv.puzzlePiece)) {
@@ -738,6 +745,9 @@ export function useAnticipationRoom(initialRoomCode?: string | null) {
           phase: 'ACTIVE',
           loopMode: newSettings.loopMode,
           drawStyle: newSettings.drawStyle,
+          canvasStyle: newSettings.canvasStyle || 'NES_RETRO',
+          timerMode: newSettings.timerMode || 'NO_CUTOFF',
+          drawCompletionSeconds: newSettings.drawCompletionSeconds || 11,
           inputMode: newSettings.inputMode,
           englishReadingAid: newSettings.englishReadingAid,
           roundIndex: 0,

@@ -95,7 +95,9 @@ export const GuessingDeck: React.FC<GuessingDeckProps> = ({
 
   const isLockedOut = lockoutUntilMs > Date.now();
   const isDisabled = solved || isRevealed || isLockedOut;
-  const showFirstLetterHint = elapsedMs >= round.drawDurationMs * 0.52;
+  const completionRefMs = round.drawCompletionMs || Math.min(12000, round.drawDurationMs || 11000);
+  const showFirstLetterHint = elapsedMs >= completionRefMs * 0.55;
+  const showSecondLetterHint = elapsedMs >= completionRefMs && Boolean(round.secondLetterHint);
 
   const triggerLockout = useCallback(() => {
     const nextAttempts = incorrectAttempts + 1;
@@ -218,7 +220,10 @@ export const GuessingDeck: React.FC<GuessingDeckProps> = ({
             <span className="px-2 py-0.5 rounded-xl bg-amber-100 dark:bg-amber-950/60 border border-amber-300 dark:border-amber-700 text-amber-900 dark:text-amber-300 font-black text-[11px] sm:text-xs flex items-center gap-1 whitespace-nowrap">
               <Sparkles size={11} />
               <span>
-                {t('Starts:', '頭文字:')} {round.firstLetterHint}
+                {t('Hint:', 'ヒント:')}{' '}
+                {showSecondLetterHint
+                  ? `${round.firstLetterHint}${round.secondLetterHint}…`
+                  : `${round.firstLetterHint}…`}
               </span>
             </span>
           )}
@@ -315,19 +320,25 @@ export const GuessingDeck: React.FC<GuessingDeckProps> = ({
           <div className="flex flex-wrap items-center justify-center gap-1.5 py-2 px-2 rounded-2xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700">
             {Array.from({ length: round.englishLength }, (_, slotIdx) => {
               const char = assembledText[slotIdx];
-              const isHint = !char && slotIdx === 0 && showFirstLetterHint;
+              const isFirstHint = !char && slotIdx === 0 && showFirstLetterHint;
+              const isSecondHint = !char && slotIdx === 1 && showSecondLetterHint;
+              const hintChar = isFirstHint
+                ? round.firstLetterHint
+                : isSecondHint
+                ? round.secondLetterHint
+                : '';
               return (
                 <div
                   key={slotIdx}
                   className={`w-8 h-10 sm:w-10 sm:h-12 rounded-xl border-2 flex items-center justify-center font-mono font-black text-lg sm:text-xl transition-all ${
                     char
                       ? 'bg-indigo-600 border-indigo-700 text-white shadow-sm'
-                      : isHint
+                      : hintChar
                       ? 'bg-amber-50 dark:bg-amber-950/50 border-amber-400 text-amber-600 dark:text-amber-300'
                       : 'bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-600 text-slate-400'
                   }`}
                 >
-                  {char || (isHint ? round.firstLetterHint : '_')}
+                  {char || hintChar || '_'}
                 </div>
               );
             })}

@@ -79,9 +79,10 @@ export const AnticipationStudentContainer: React.FC<AnticipationStudentContainer
       .then((resp) => {
         if (resp && resp.roundIndex === currentRound.roundIndex && resp.isCorrect) {
           setSolved(true);
+          const refMs = currentRound.drawCompletionMs || currentRound.drawDurationMs || 11000;
           const est = calculateRoundPoints(
             resp.timeTakenMs || 5000,
-            currentRound.drawDurationMs || 18000,
+            refMs,
             Math.max(1, (player.currentStreak || 0) + 1),
             false
           );
@@ -116,12 +117,13 @@ export const AnticipationStudentContainer: React.FC<AnticipationStudentContainer
       if (!currentRound || submittingRef.current || solved) return;
       submittingRef.current = true;
 
-      const drawDurationMs = currentRound.drawDurationMs || 18000;
+      const completionRefMs =
+        currentRound.drawCompletionMs || currentRound.drawDurationMs || 11000;
       const start = currentRound.roundStartTime || getServerTime();
-      const timeTakenMs = Math.max(220, Math.min(drawDurationMs, getServerTime() - start));
+      const timeTakenMs = Math.max(220, Math.min(180000, getServerTime() - start));
       const estPoints = calculateRoundPoints(
         timeTakenMs,
-        drawDurationMs,
+        completionRefMs,
         (player.currentStreak || 0) + 1,
         false
       );
@@ -172,9 +174,15 @@ export const AnticipationStudentContainer: React.FC<AnticipationStudentContainer
     );
   }
 
+  const drawDurationMs = currentRound.drawDurationMs || 28000;
+  const drawCompletionMs = currentRound.drawCompletionMs || 11000;
+  const effectiveTimerMode = currentRound.timerMode || antState?.timerMode || 'NO_CUTOFF';
+  const effectiveCanvasStyle = currentRound.canvasStyle || antState?.canvasStyle || 'NES_RETRO';
+  const isTimedCutoff = effectiveTimerMode === 'GENEROUS_TIMER';
+  const isSketchDone = elapsedMs >= drawCompletionMs;
   const remainingSec = isRevealed
     ? 0
-    : Math.max(0, Math.ceil((currentRound.drawDurationMs - elapsedMs) / 1000));
+    : Math.max(0, Math.ceil((drawDurationMs - elapsedMs) / 1000));
 
   return (
     <div className="w-full h-full max-w-6xl mx-auto flex flex-col gap-2 p-1.5 sm:p-2 text-slate-900 dark:text-white select-none overflow-hidden">
@@ -213,16 +221,26 @@ export const AnticipationStudentContainer: React.FC<AnticipationStudentContainer
             {currentRound.roundIndex + 1}/{currentRound.totalRounds}
           </span>
           <span
-            className={`px-2.5 py-1 rounded-xl font-mono font-black text-xs flex items-center gap-1 ${
+            className={`px-2.5 py-1 rounded-xl font-mono font-black text-xs flex items-center gap-1 whitespace-nowrap ${
               isRevealed
                 ? 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300'
-                : remainingSec <= 5
+                : isTimedCutoff && remainingSec <= 5
                 ? 'bg-rose-500 text-white animate-pulse'
+                : !isTimedCutoff && isSketchDone
+                ? 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300'
                 : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200'
             }`}
           >
             <Clock size={12} />
-            <span>{isRevealed ? t('Reveal', '発表') : `${remainingSec}s`}</span>
+            <span>
+              {isRevealed
+                ? t('Reveal', '発表')
+                : isTimedCutoff
+                ? `${remainingSec}s`
+                : isSketchDone
+                ? `∞ ${t('Complete', 'かんせい')}`
+                : `∞ ${t('Drawing', '描画中')}`}
+            </span>
           </span>
           <button
             type="button"
@@ -250,20 +268,28 @@ export const AnticipationStudentContainer: React.FC<AnticipationStudentContainer
           <div className="flex-1 min-h-0">
             <SketchCanvas
               compact
+              roundIndex={currentRound.roundIndex}
               wordId={currentRound.wordId}
               wordHintEnglish={currentRound.revealedCard?.english || currentRound.categoryKey}
               categoryKey={currentRound.categoryKey}
               categoryNameEn={currentRound.categoryNameEn}
               categoryNameJa={currentRound.categoryNameJa}
               imageUrl={currentRound.imageUrl}
+              nesVector={currentRound.nesVector}
               drawStyle={currentRound.drawStyle}
+              canvasStyle={effectiveCanvasStyle}
+              timerMode={effectiveTimerMode}
               roundStartTime={currentRound.roundStartTime}
-              drawDurationMs={currentRound.drawDurationMs}
+              drawCompletionMs={drawCompletionMs}
+              drawDurationMs={drawDurationMs}
               isRevealed={isRevealed}
               revealedCard={currentRound.revealedCard}
               wordMask={currentRound.wordMask}
               englishLength={currentRound.englishLength}
+              firstLetterHint={currentRound.firstLetterHint}
+              secondLetterHint={currentRound.secondLetterHint}
               isFeatureDots={currentRound.isFeatureDots}
+              remainingSecDisplay={isTimedCutoff ? remainingSec : null}
               onPlayAudio={isRevealed ? playWordAudio : undefined}
             />
           </div>

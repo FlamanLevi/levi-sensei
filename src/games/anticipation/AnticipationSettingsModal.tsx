@@ -122,6 +122,34 @@ export const AnticipationSettingsModal: React.FC<AnticipationSettingsModalProps>
               </div>
             </div>
 
+            {/* Canvas Style */}
+            <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 space-y-2">
+              <label className="text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 block">
+                {t('Canvas Look', 'キャンバスの雰囲気')}
+              </label>
+              <div className="grid grid-cols-2 gap-2">
+                {(
+                  [
+                    { id: 'NES_RETRO', en: '🕹️ NES Retro', ja: '🕹️ レトロNES風' },
+                    { id: 'CLEAN_PAPER', en: '📝 Clean Paper', ja: '📝 クリーン白地' },
+                  ] as const
+                ).map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => onChange({ ...settings, canvasStyle: item.id })}
+                    className={`py-2 px-2 rounded-xl border-2 font-black text-xs cursor-pointer transition-all ${
+                      (settings.canvasStyle || 'NES_RETRO') === item.id
+                        ? 'border-amber-500 bg-amber-50 dark:bg-amber-950/60 text-amber-900 dark:text-amber-200'
+                        : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300'
+                    }`}
+                  >
+                    {language === 'ja' ? item.ja : item.en}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             {/* Answering Mode */}
             <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 space-y-2">
               <label className="text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 block">
@@ -152,22 +180,56 @@ export const AnticipationSettingsModal: React.FC<AnticipationSettingsModalProps>
             </div>
           </div>
 
-          {/* Right Column: Speed, Length, Reading Aid, BGM */}
+          {/* Right Column: Timer Mode, Pencil Speed, Length, Reading Aid, BGM */}
           <div className="space-y-4">
-            {/* Draw Speed + Rounds */}
+            {/* Timer Mode */}
+            <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 space-y-2">
+              <label className="text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 block">
+                {t('Round Timer', '制限時間ルール')}
+              </label>
+              <div className="grid grid-cols-2 gap-2">
+                {(
+                  [
+                    { id: 'NO_CUTOFF', en: '∞ No Cutoff', ja: '∞ 時間無制限' },
+                    { id: 'GENEROUS_TIMER', en: '⏱ Timed (+18s)', ja: '⏱ タイマー (余裕)' },
+                  ] as const
+                ).map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => onChange({ ...settings, timerMode: item.id })}
+                    className={`py-2 px-2 rounded-xl border-2 font-black text-xs cursor-pointer transition-all ${
+                      (settings.timerMode || 'NO_CUTOFF') === item.id
+                        ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-900 dark:text-emerald-200'
+                        : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300'
+                    }`}
+                  >
+                    {language === 'ja' ? item.ja : item.en}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Pencil Speed + Rounds */}
             <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 grid grid-cols-2 gap-3">
               <div>
                 <label className="text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-2">
-                  {t('Sketch Time', '描画時間')}
+                  {t('Pencil Speed', '完成スピード')}
                 </label>
                 <div className="grid grid-cols-3 gap-1.5">
-                  {[12, 18, 25].map((sec) => (
+                  {[7, 11, 15].map((sec) => (
                     <button
                       key={sec}
                       type="button"
-                      onClick={() => onChange({ ...settings, drawDurationSeconds: sec })}
+                      onClick={() =>
+                        onChange({
+                          ...settings,
+                          drawCompletionSeconds: sec,
+                          drawDurationSeconds: Math.max(sec + 16, 26),
+                        })
+                      }
                       className={`py-2 rounded-xl border-2 font-mono font-black text-xs cursor-pointer ${
-                        settings.drawDurationSeconds === sec
+                        (settings.drawCompletionSeconds || 11) === sec
                           ? 'border-amber-500 bg-amber-50 dark:bg-amber-950/50 text-amber-800 dark:text-amber-200'
                           : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800'
                       }`}

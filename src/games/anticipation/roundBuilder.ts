@@ -2,6 +2,13 @@ import { GradeLevel, VocabularyItem } from '@data/types';
 import { OPTION_STYLES } from '@/games/quiz/types';
 import { resolveCardImage, shuffleArray } from '@/utils/cardUtils';
 import {
+  hasCuratedNesMotif,
+  hasCuratedNesPicture,
+  hasDirectNesPicture,
+  resolveCuratedNesStrokes,
+} from './nesVectorBank';
+import { encodeCompactStrokes } from './sketchVectorizer';
+import {
   AnticipationChoiceOption,
   AnticipationDrawStyle,
   AnticipationEffectiveInputMode,
@@ -69,17 +76,23 @@ export function resolveEffectiveInputMode(
   return { mode: 'CHOICE_4', allowSwitch: cleanSpell };
 }
 
-export function buildWordMask(english: string): { mask: string; firstLetterHint: string; cleanLetters: string } {
+export function buildWordMask(english: string): {
+  mask: string;
+  firstLetterHint: string;
+  secondLetterHint: string;
+  cleanLetters: string;
+} {
   const trimmed = (english || '').trim();
   const lettersOnly = trimmed.replace(/[^a-zA-Z]/g, '').toUpperCase();
   const maskedChars = trimmed.split('').map((ch) => {
-    if (/[a-zA-Z]/.test(ch)) return '_';
-    if (ch === ' ') return '  ';
+    if (/[a-zA-Z]/.test(ch)) return '-';
+    if (ch === ' ') return ' ';
     return ch;
   });
   return {
-    mask: maskedChars.join(' '),
+    mask: maskedChars.join(''),
     firstLetterHint: lettersOnly.charAt(0) || trimmed.charAt(0).toUpperCase(),
+    secondLetterHint: lettersOnly.charAt(1) || '',
     cleanLetters: lettersOnly,
   };
 }
@@ -116,11 +129,11 @@ export function resolveDrawStyleForRound(
   if (setting === 'INK_SKETCH') {
     return { drawStyle: 'INK_SKETCH', isFeatureDots: false };
   }
-  // MIXED: Alternate rhythmically, featuring every 3rd round as Connect-the-Dots
-  const useDots = roundIndex % 3 === 2;
+  // MIXED: Classic Anticipation rhythm — alternating Ink Lines and Pearl Dot boards, with ★ BONUS every 3rd dot board
+  const useDots = roundIndex % 2 === 1;
   return {
     drawStyle: useDots ? 'CONNECT_DOTS' : 'INK_SKETCH',
-    isFeatureDots: useDots,
+    isFeatureDots: roundIndex % 4 === 3,
   };
 }
 
@@ -158,16 +171,45 @@ export function buildAnticipationRounds(
   }
 
   const desiredRounds = roundCountOverride || settings.roundCount || 10;
-  const preferredTargets = primaryPool.filter((w) => w && w.english && normalizeGuessAnswer(w.english).length > 0);
-  const shuffledTargets = shuffleArray(preferredTargets.length > 0 ? preferredTargets : distractorUniverse);
+  const rawPreferred = primaryPool.filter((w) => w && w.english && normalizeGuessAnswer(w.english).length > 0);
+  const baseCandidates = rawPreferred.length > 0 ? rawPreferred : distractorUniverse;
+
+  // Deduplicate candidates by normalized spelling so no round duplicates occur within a deck
+  const dedupedCandidates: VocabularyItem[] = [];
+  const seenCand = new Set<string>();
+  for (const w of baseCandidates) {
+    const norm = normalizeGuessAnswer(w.english);
+    if (norm && !seenCand.has(norm)) {
+      seenCand.add(norm);
+      dedupedCandidates.push(w);
+    }
+  }
+
+  // Prioritize iconic drawable concrete NES motifs first when sampling from large curriculum pools,
+  // while keeping narrow unit selections intact (e.g. alphabet/number/holiday units).
+  const directPool = shuffleArray(dedupedCandidates.filter((w) => hasDirectNesPicture(w.english)));
+  const picturePool = shuffleArray(
+    dedupedCandidates.filter((w) => !hasDirectNesPicture(w.english) && hasCuratedNesPicture(w.english))
+  );
+  const glyphPool = shuffleArray(
+    dedupedCandidates.filter((w) => !hasCuratedNesPicture(w.english) && hasCuratedNesMotif(w.english))
+  );
+  const otherPool = shuffleArray(dedupedCandidates.filter((w) => !hasCuratedNesMotif(w.english)));
+  const prioritizedTargets = [...directPool, ...picturePool, ...glyphPool, ...otherPool];
 
   const selectedTargets: VocabularyItem[] = [];
   for (let i = 0; i < desiredRounds; i++) {
-    if (shuffledTargets.length === 0) break;
-    selectedTargets.push(shuffledTargets[i % shuffledTargets.length]);
+    if (prioritizedTargets.length === 0) break;
+    selectedTargets.push(prioritizedTargets[i % prioritizedTargets.length]);
   }
 
-  const drawDurationMs = Math.max(8, settings.drawDurationSeconds || 18) * 1000;
+  const drawCompletionMs = Math.max(5000, (settings.drawCompletionSeconds || 11) * 1000);
+  const timerMode = settings.timerMode || 'NO_CUTOFF';
+  const canvasStyle = settings.canvasStyle || 'NES_RETRO';
+  const drawDurationMs =
+    timerMode === 'GENEROUS_TIMER'
+      ? Math.max(drawCompletionMs + 14000, (settings.drawDurationSeconds || 30) * 1000)
+      : drawCompletionMs + 18000;
   const revealDurationMs = 5500;
 
   return selectedTargets.map((targetWord, roundIndex) => {
@@ -231,6 +273,9 @@ export function buildAnticipationRounds(
       targetWord.card_image ||
       '';
 
+    const curatedStrokes = resolveCuratedNesStrokes(targetWord.english);
+    const nesVector = curatedStrokes ? encodeCompactStrokes(curatedStrokes) : undefined;
+
     const catMeta = ANTICIPATION_CATEGORY_LABELS[targetWord.category] || {
       en: targetWord.category_name || targetWord.category || 'Vocabulary',
       ja: 'たんご',
@@ -241,7 +286,7 @@ export function buildAnticipationRounds(
       activeGrade,
       targetWord.english
     );
-    const { mask, firstLetterHint, cleanLetters } = buildWordMask(targetWord.english);
+    const { mask, firstLetterHint, secondLetterHint, cleanLetters } = buildWordMask(targetWord.english);
 
     return {
       roundIndex,
@@ -252,14 +297,18 @@ export function buildAnticipationRounds(
         totalRounds: selectedTargets.length,
         wordId: targetWord.id,
         imageUrl,
+        ...(nesVector ? { nesVector } : {}),
         gradeLevel: activeGrade,
         categoryKey: targetWord.category,
         categoryNameEn: catMeta.en,
         categoryNameJa: catMeta.ja,
         drawStyle,
+        canvasStyle,
+        timerMode,
         effectiveInputMode,
         allowModeSwitch: allowSwitch,
         roundStartTime: 0,
+        drawCompletionMs,
         drawDurationMs,
         revealDurationMs,
         phase: 'DRAWING',
@@ -267,6 +316,7 @@ export function buildAnticipationRounds(
         englishLength: cleanLetters.length || targetWord.english.trim().length,
         wordMask: mask,
         firstLetterHint,
+        secondLetterHint,
         letterBank: buildLetterBank(targetWord.english, roundIndex),
         options,
         answerHash: hashWordAnswer(roundIndex, targetWord.english),

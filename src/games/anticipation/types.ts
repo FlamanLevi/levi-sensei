@@ -12,6 +12,8 @@ export type AnticipationDrawStyle = 'INK_SKETCH' | 'CONNECT_DOTS' | 'MIXED';
 export type AnticipationInputMode = 'AUTO_GRADE' | 'CHOICE_4' | 'SPELLING_TILES';
 export type AnticipationEffectiveInputMode = 'CHOICE_4' | 'SPELLING_TILES';
 export type AnticipationRoundPhase = 'DRAWING' | 'ROUND_REVEAL';
+export type AnticipationTimerMode = 'NO_CUTOFF' | 'GENEROUS_TIMER';
+export type AnticipationCanvasStyle = 'NES_RETRO' | 'CLEAN_PAPER';
 
 export type PiecePresetId = 'shoes' | 'trumpet' | 'teddy' | 'ice_cream';
 
@@ -265,8 +267,11 @@ export interface AnticipationSettings {
   loopMode: AnticipationLoopMode;
   drawStyle: AnticipationDrawStyle;
   inputMode: AnticipationInputMode;
-  drawDurationSeconds: number; // 12, 18, 25
-  roundCount: number; // 6, 8, 12, 16
+  timerMode: AnticipationTimerMode;
+  drawCompletionSeconds: number; // 7, 11, 15 (how long the pencil takes to finish drawing 100%)
+  drawDurationSeconds: number; // 28, 38 (optional cutoff window in GENEROUS_TIMER mode)
+  canvasStyle: AnticipationCanvasStyle;
+  roundCount: number; // 6, 8, 10, 14
   englishReadingAid: EnglishReadingAid;
   gameMode: GameMode;
   teamCount: number;
@@ -282,7 +287,10 @@ export const DEFAULT_ANTICIPATION_SETTINGS: AnticipationSettings = {
   loopMode: 'SPIRAL_BOARD',
   drawStyle: 'MIXED',
   inputMode: 'AUTO_GRADE',
-  drawDurationSeconds: 18,
+  timerMode: 'NO_CUTOFF',
+  drawCompletionSeconds: 11,
+  drawDurationSeconds: 30,
+  canvasStyle: 'NES_RETRO',
   roundCount: 10,
   englishReadingAid: 'WITH_KATAKANA',
   gameMode: 'TEAM',
@@ -318,14 +326,18 @@ export interface AnticipationRoundPublic {
   totalRounds: number;
   wordId: string;
   imageUrl: string;
+  nesVector?: string;
   gradeLevel: GradeLevel;
   categoryKey: string;
   categoryNameEn: string;
   categoryNameJa: string;
   drawStyle: 'INK_SKETCH' | 'CONNECT_DOTS';
+  canvasStyle: AnticipationCanvasStyle;
+  timerMode: AnticipationTimerMode;
   effectiveInputMode: AnticipationEffectiveInputMode;
   allowModeSwitch: boolean;
   roundStartTime: number;
+  drawCompletionMs: number;
   drawDurationMs: number;
   revealDurationMs: number;
   phase: AnticipationRoundPhase;
@@ -333,6 +345,7 @@ export interface AnticipationRoundPublic {
   englishLength: number;
   wordMask: string;
   firstLetterHint: string;
+  secondLetterHint?: string;
   letterBank: string[];
   options: AnticipationChoiceOption[];
   answerHash: string;
@@ -381,6 +394,9 @@ export interface AnticipationRoomState {
   phase: 'ACTIVE' | 'ROUND_REVEAL' | 'FINISHED';
   loopMode: AnticipationLoopMode;
   drawStyle: AnticipationDrawStyle;
+  canvasStyle?: AnticipationCanvasStyle;
+  timerMode?: AnticipationTimerMode;
+  drawCompletionSeconds?: number;
   inputMode: AnticipationInputMode;
   englishReadingAid: EnglishReadingAid;
   roundIndex: number;
@@ -429,8 +445,9 @@ export function hashWordAnswer(roundIndex: number, answerText: string): string {
   return (hash >>> 0).toString(16).padStart(8, '0');
 }
 
-export function calculateRoundPoints(timeTakenMs: number, drawDurationMs: number, streak: number, isFirstSolver: boolean): number {
-  const ratio = Math.max(0, Math.min(1, 1 - timeTakenMs / Math.max(4000, drawDurationMs)));
+export function calculateRoundPoints(timeTakenMs: number, drawCompletionMs: number, streak: number, isFirstSolver: boolean): number {
+  const windowMs = Math.max(8000, drawCompletionMs * 1.45);
+  const ratio = Math.max(0, Math.min(1, 1 - timeTakenMs / windowMs));
   const base = 500;
   const speedBonus = Math.round(ratio * 450);
   const streakBonus = Math.min(250, Math.max(0, streak - 1) * 50);
@@ -438,10 +455,11 @@ export function calculateRoundPoints(timeTakenMs: number, drawDurationMs: number
   return base + speedBonus + streakBonus + firstBonus;
 }
 
-export function computeDiceSteps(timeTakenMs: number, drawDurationMs: number): number {
-  const ratio = timeTakenMs / Math.max(4000, drawDurationMs);
-  if (ratio <= 0.36) return 3;
-  if (ratio <= 0.72) return 2;
+export function computeDiceSteps(timeTakenMs: number, drawCompletionMs: number): number {
+  const refMs = Math.max(6000, drawCompletionMs);
+  const ratio = timeTakenMs / refMs;
+  if (ratio <= 0.65) return 3; // Solved while sketch is still drawing!
+  if (ratio <= 1.25) return 2; // Solved right as/after sketch completes
   return 1;
 }
 

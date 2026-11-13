@@ -259,7 +259,11 @@ export const AnticipationHostContainer: React.FC<AnticipationHostContainerProps>
       setElapsedMs(el);
 
       const responsesCount = Object.keys(room?.responses || {}).length;
-      if (el >= currentRound.drawDurationMs || (playersCount > 0 && responsesCount >= playersCount)) {
+      const isTimedCutoff = currentRound.timerMode === 'GENEROUS_TIMER';
+      if (
+        (isTimedCutoff && el >= currentRound.drawDurationMs) ||
+        (playersCount > 0 && responsesCount >= playersCount)
+      ) {
         revealRound();
       }
     };
@@ -273,6 +277,7 @@ export const AnticipationHostContainer: React.FC<AnticipationHostContainerProps>
     currentRound?.phase,
     currentRound?.roundStartTime,
     currentRound?.drawDurationMs,
+    currentRound?.timerMode,
     room?.players,
     room?.responses,
     revealRound,
@@ -632,13 +637,13 @@ export const AnticipationHostContainer: React.FC<AnticipationHostContainerProps>
 
           {/* RIGHT WING (5 cols): Sketch Style, Input Mechanic, Timing & Deck Preview */}
           <div className="lg:col-span-5 flex flex-col gap-3">
-            <div className="p-3.5 rounded-3xl bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 shadow-xs space-y-3">
-              {/* Drawing Style */}
+            <div className="p-3.5 rounded-3xl bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 shadow-xs space-y-2.5">
+              {/* Drawing Style + Canvas Look */}
               <div>
                 <span className="text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-1.5">
-                  {t('3. Sketch Animation Style', '3. 描き方スタイル')}
+                  {t('3. Sketch Animation & Board Look', '3. 描き方＆画面スタイル')}
                 </span>
-                <div className="grid grid-cols-3 gap-1.5">
+                <div className="grid grid-cols-3 gap-1.5 mb-1.5">
                   {(
                     [
                       { id: 'MIXED', label: t('✨ Mixed', '✨ ミックス') },
@@ -650,7 +655,7 @@ export const AnticipationHostContainer: React.FC<AnticipationHostContainerProps>
                       key={item.id}
                       type="button"
                       onClick={() => setSettings((s) => ({ ...s, drawStyle: item.id }))}
-                      className={`py-2 px-2 rounded-xl border-2 text-xs font-black cursor-pointer ${
+                      className={`py-1.5 px-2 rounded-xl border-2 text-xs font-black cursor-pointer ${
                         settings.drawStyle === item.id
                           ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-800 dark:text-indigo-200'
                           : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800'
@@ -659,6 +664,30 @@ export const AnticipationHostContainer: React.FC<AnticipationHostContainerProps>
                       {item.label}
                     </button>
                   ))}
+                </div>
+                <div className="grid grid-cols-2 gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => setSettings((s) => ({ ...s, canvasStyle: 'NES_RETRO' }))}
+                    className={`py-1.5 px-2 rounded-xl border-2 text-[11px] font-black cursor-pointer ${
+                      settings.canvasStyle === 'NES_RETRO'
+                        ? 'border-amber-500 bg-amber-50 dark:bg-amber-950/50 text-amber-900 dark:text-amber-200'
+                        : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800'
+                    }`}
+                  >
+                    🕹️ {t('NES Retro', 'レトロNES風')}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSettings((s) => ({ ...s, canvasStyle: 'CLEAN_PAPER' }))}
+                    className={`py-1.5 px-2 rounded-xl border-2 text-[11px] font-black cursor-pointer ${
+                      settings.canvasStyle === 'CLEAN_PAPER'
+                        ? 'border-sky-500 bg-sky-50 dark:bg-sky-950/50 text-sky-900 dark:text-sky-200'
+                        : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800'
+                    }`}
+                  >
+                    📝 {t('Clean Paper', 'クリーン白地')}
+                  </button>
                 </div>
               </div>
 
@@ -679,7 +708,7 @@ export const AnticipationHostContainer: React.FC<AnticipationHostContainerProps>
                       key={item.id}
                       type="button"
                       onClick={() => setSettings((s) => ({ ...s, inputMode: item.id }))}
-                      className={`py-2 px-2 rounded-xl border-2 text-xs font-black cursor-pointer ${
+                      className={`py-1.5 px-2 rounded-xl border-2 text-xs font-black cursor-pointer ${
                         settings.inputMode === item.id
                           ? 'border-amber-500 bg-amber-50 dark:bg-amber-950/50 text-amber-900 dark:text-amber-200'
                           : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800'
@@ -691,54 +720,87 @@ export const AnticipationHostContainer: React.FC<AnticipationHostContainerProps>
                 </div>
                 <p className="text-[11px] font-bold text-slate-500 dark:text-slate-400 mt-1">
                   {t(
-                    'Auto Grade: G1–G4 use ▲◆●■ 4-Choice; G5–G6 default to Letter Tiles (+ 2.5s wrong lockout).',
-                    '学年自動: 小1〜4は▲◆●■4択、小5〜6は文字並べスペル（誤答時2.5秒おてつきロック付）'
+                    'G1–G4: ▲◆●■ 4-Choice; G5–G6: Letter Tiles (+ 2.5s lockout).',
+                    '小1〜4: ▲◆●■4択、小5〜6: 文字スペル（誤答時2.5秒ロック付）'
                   )}
                 </p>
               </div>
 
-              {/* Speed & Rounds */}
-              <div className="grid grid-cols-2 gap-2.5 pt-1 border-t border-slate-100 dark:border-slate-800">
-                <div>
-                  <span className="text-[11px] font-black text-slate-500 dark:text-slate-400 block mb-1">
-                    {t('Sketch Time', '描画秒数')}
-                  </span>
-                  <div className="grid grid-cols-3 gap-1">
-                    {[12, 18, 25].map((sec) => (
-                      <button
-                        key={sec}
-                        type="button"
-                        onClick={() => setSettings((s) => ({ ...s, drawDurationSeconds: sec }))}
-                        className={`py-1.5 rounded-xl border-2 font-mono text-xs font-black cursor-pointer ${
-                          settings.drawDurationSeconds === sec
-                            ? 'border-amber-500 bg-amber-50 dark:bg-amber-950/50 text-amber-900 dark:text-amber-200'
-                            : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800'
-                        }`}
-                      >
-                        {sec}s
-                      </button>
-                    ))}
-                  </div>
+              {/* Timer Rule, Pencil Speed & Rounds */}
+              <div className="space-y-2 pt-1.5 border-t border-slate-100 dark:border-slate-800">
+                <div className="grid grid-cols-2 gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => setSettings((s) => ({ ...s, timerMode: 'NO_CUTOFF' }))}
+                    className={`py-1.5 px-2 rounded-xl border-2 text-[11px] font-black cursor-pointer ${
+                      settings.timerMode === 'NO_CUTOFF'
+                        ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-900 dark:text-emerald-200'
+                        : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800'
+                    }`}
+                  >
+                    ∞ {t('No Cutoff', '時間無制限')}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSettings((s) => ({ ...s, timerMode: 'GENEROUS_TIMER' }))}
+                    className={`py-1.5 px-2 rounded-xl border-2 text-[11px] font-black cursor-pointer ${
+                      settings.timerMode === 'GENEROUS_TIMER'
+                        ? 'border-rose-500 bg-rose-50 dark:bg-rose-950/50 text-rose-900 dark:text-rose-200'
+                        : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800'
+                    }`}
+                  >
+                    ⏱ {t('Timed (+18s)', 'タイマーあり')}
+                  </button>
                 </div>
-                <div>
-                  <span className="text-[11px] font-black text-slate-500 dark:text-slate-400 block mb-1">
-                    {t('Rounds', '出題数')}
-                  </span>
-                  <div className="grid grid-cols-4 gap-1">
-                    {[6, 8, 10, 14].map((cnt) => (
-                      <button
-                        key={cnt}
-                        type="button"
-                        onClick={() => setSettings((s) => ({ ...s, roundCount: cnt }))}
-                        className={`py-1.5 rounded-xl border-2 font-mono text-xs font-black cursor-pointer ${
-                          settings.roundCount === cnt
-                            ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-800 dark:text-indigo-200'
-                            : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800'
-                        }`}
-                      >
-                        {cnt}
-                      </button>
-                    ))}
+
+                <div className="grid grid-cols-2 gap-2.5">
+                  <div>
+                    <span className="text-[11px] font-black text-slate-500 dark:text-slate-400 block mb-1">
+                      {t('Pencil Speed', '描画スピード')}
+                    </span>
+                    <div className="grid grid-cols-3 gap-1">
+                      {[7, 11, 15].map((sec) => (
+                        <button
+                          key={sec}
+                          type="button"
+                          onClick={() =>
+                            setSettings((s) => ({
+                              ...s,
+                              drawCompletionSeconds: sec,
+                              drawDurationSeconds: Math.max(sec + 16, 26),
+                            }))
+                          }
+                          className={`py-1.5 rounded-xl border-2 font-mono text-xs font-black cursor-pointer ${
+                            settings.drawCompletionSeconds === sec
+                              ? 'border-amber-500 bg-amber-50 dark:bg-amber-950/50 text-amber-900 dark:text-amber-200'
+                              : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800'
+                          }`}
+                        >
+                          {sec}s
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <span className="text-[11px] font-black text-slate-500 dark:text-slate-400 block mb-1">
+                      {t('Rounds', '出題数')}
+                    </span>
+                    <div className="grid grid-cols-4 gap-1">
+                      {[6, 8, 10, 14].map((cnt) => (
+                        <button
+                          key={cnt}
+                          type="button"
+                          onClick={() => setSettings((s) => ({ ...s, roundCount: cnt }))}
+                          className={`py-1.5 rounded-xl border-2 font-mono text-xs font-black cursor-pointer ${
+                            settings.roundCount === cnt
+                              ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-800 dark:text-indigo-200'
+                              : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800'
+                          }`}
+                        >
+                          {cnt}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -872,7 +934,12 @@ export const AnticipationHostContainer: React.FC<AnticipationHostContainerProps>
   const answeredCount = Object.keys(responsesMap).length;
   const roundIdx = currentRound?.roundIndex ?? 0;
   const totalRounds = currentRound?.totalRounds || hostRounds.length || settings.roundCount;
-  const drawDurationMs = currentRound?.drawDurationMs || settings.drawDurationSeconds * 1000;
+  const drawDurationMs = currentRound?.drawDurationMs || settings.drawDurationSeconds * 1000 || 28000;
+  const drawCompletionMs = currentRound?.drawCompletionMs || settings.drawCompletionSeconds * 1000 || 11000;
+  const effectiveTimerMode = currentRound?.timerMode || antState?.timerMode || settings.timerMode || 'NO_CUTOFF';
+  const effectiveCanvasStyle = currentRound?.canvasStyle || antState?.canvasStyle || settings.canvasStyle || 'NES_RETRO';
+  const isTimedCutoff = effectiveTimerMode === 'GENEROUS_TIMER';
+  const isSketchDone = elapsedMs >= drawCompletionMs;
   const isRevealed = currentRound?.phase === 'ROUND_REVEAL';
   const remainingSec = isRevealed
     ? 0
@@ -910,13 +977,23 @@ export const AnticipationHostContainer: React.FC<AnticipationHostContainerProps>
             className={`px-2.5 py-1 rounded-xl font-mono font-black text-xs flex items-center gap-1 shrink-0 whitespace-nowrap ${
               isRevealed
                 ? 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300'
-                : remainingSec <= 5
+                : isTimedCutoff && remainingSec <= 5
                 ? 'bg-rose-500 text-white animate-pulse'
+                : !isTimedCutoff && isSketchDone
+                ? 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300'
                 : 'bg-amber-100 dark:bg-amber-950/60 text-amber-900 dark:text-amber-300'
             }`}
           >
             <Clock size={13} />
-            <span>{isRevealed ? t('REVEAL', '答え合わせ') : `${remainingSec}s`}</span>
+            <span>
+              {isRevealed
+                ? t('REVEAL', '答え合わせ')
+                : isTimedCutoff
+                ? `${remainingSec}s`
+                : isSketchDone
+                ? `∞ ${t('Complete!', 'かんせい！')}`
+                : `∞ ${t('Drawing...', 'お絵かき中')}`}
+            </span>
           </span>
           <span className="px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 font-black text-xs text-slate-700 dark:text-slate-200 flex items-center gap-1 shrink-0 whitespace-nowrap">
             <CheckCircle2 size={13} className="text-emerald-500" />
@@ -1014,6 +1091,7 @@ export const AnticipationHostContainer: React.FC<AnticipationHostContainerProps>
           <div className="lg:col-span-7 xl:col-span-8 min-h-0 flex flex-col gap-2">
             <div className="flex-1 min-h-0">
               <SketchCanvas
+                roundIndex={currentRound.roundIndex}
                 wordId={currentRound.wordId}
                 wordHintEnglish={
                   currentRound.revealedCard?.english ||
@@ -1024,14 +1102,21 @@ export const AnticipationHostContainer: React.FC<AnticipationHostContainerProps>
                 categoryNameEn={currentRound.categoryNameEn}
                 categoryNameJa={currentRound.categoryNameJa}
                 imageUrl={currentRound.imageUrl}
+                nesVector={currentRound.nesVector}
                 drawStyle={currentRound.drawStyle}
+                canvasStyle={effectiveCanvasStyle}
+                timerMode={effectiveTimerMode}
                 roundStartTime={currentRound.roundStartTime}
-                drawDurationMs={currentRound.drawDurationMs}
+                drawCompletionMs={drawCompletionMs}
+                drawDurationMs={drawDurationMs}
                 isRevealed={isRevealed}
                 revealedCard={currentRound.revealedCard}
                 wordMask={currentRound.wordMask}
                 englishLength={currentRound.englishLength}
+                firstLetterHint={currentRound.firstLetterHint}
+                secondLetterHint={currentRound.secondLetterHint}
                 isFeatureDots={currentRound.isFeatureDots}
+                remainingSecDisplay={isTimedCutoff ? remainingSec : null}
                 onPlayAudio={playWordAudio}
               />
             </div>

@@ -11,6 +11,7 @@ import {
   SkipForward,
   Sparkles,
   ArrowLeft,
+  Eye,
 } from 'lucide-react';
 import { useClassroom } from '@/context/ClassroomContext';
 import { useVocabulary } from '@/context/VocabularyContext';
@@ -170,6 +171,8 @@ export const AnticipationSoloContainer: React.FC<AnticipationSoloContainerProps>
     return {
       ...activeHostRound.publicRound,
       drawStyle: styleDecision.drawStyle,
+      canvasStyle: settings.canvasStyle,
+      timerMode: settings.timerMode,
       isFeatureDots: styleDecision.isFeatureDots,
       roundStartTime,
       phase: phase === 'ROUND_REVEAL' ? ('ROUND_REVEAL' as const) : ('DRAWING' as const),
@@ -192,7 +195,16 @@ export const AnticipationSoloContainer: React.FC<AnticipationSoloContainerProps>
             }
           : undefined,
     };
-  }, [activeHostRound, settings.drawStyle, roundIdx, forceDotsNext, roundStartTime, phase]);
+  }, [
+    activeHostRound,
+    settings.drawStyle,
+    settings.canvasStyle,
+    settings.timerMode,
+    roundIdx,
+    forceDotsNext,
+    roundStartTime,
+    phase,
+  ]);
 
   const triggerReveal = useCallback(
     (solvedTimeMs?: number) => {
@@ -209,6 +221,8 @@ export const AnticipationSoloContainer: React.FC<AnticipationSoloContainerProps>
       if (!didSolve) {
         setStreak(0);
       }
+
+      const completionMs = activeHostRound.publicRound.drawCompletionMs || 11000;
 
       setResults((prev) => {
         if (prev.some((r) => r.wordId === activeHostRound.targetWord.id && prev.length > roundIdx)) {
@@ -227,21 +241,20 @@ export const AnticipationSoloContainer: React.FC<AnticipationSoloContainerProps>
             soundFile:
               activeHostRound.targetWord.sound_file || activeHostRound.targetWord.primary_audio,
             isCorrect: didSolve,
-            timeTakenMs: solvedTimeMs || activeHostRound.publicRound.drawDurationMs,
+            timeTakenMs: solvedTimeMs || completionMs,
           },
         ];
       });
 
       if (settings.loopMode === 'SPIRAL_BOARD') {
         const next = { ...tokensRef.current };
-        const drawDur = activeHostRound.publicRound.drawDurationMs;
         const moverId = didSolve
           ? 'shoes'
           : PIECE_ORDER[1 + (roundIdx % (PIECE_ORDER.length - 1))];
         const tk = next[moverId];
         if (tk) {
           const steps = didSolve
-            ? computeDiceSteps(solvedTimeMs!, drawDur)
+            ? computeDiceSteps(solvedTimeMs!, completionMs)
             : 1 + (roundIdx % 2);
           const adv = advanceSpiralSpace(tk.spaceIndex, steps);
           const collected = [...(tk.collectedPieces || [])];
@@ -277,28 +290,29 @@ export const AnticipationSoloContainer: React.FC<AnticipationSoloContainerProps>
     [activeHostRound, settings.loopMode, roundIdx, language, playWordAudio]
   );
 
-  // Round countdown loop
+  // Round progress & optional timer cutoff loop (NO_CUTOFF keeps finished picture on screen until solved or skipped!)
   useEffect(() => {
     if (phase !== 'DRAWING' || !activeHostRound) return;
     const drawDur = activeHostRound.publicRound.drawDurationMs;
+    const isTimedCutoff = settings.timerMode === 'GENEROUS_TIMER';
     const tick = () => {
       const el = Math.max(0, Date.now() - roundStartTime);
       setElapsedMs(el);
-      if (el >= drawDur) {
+      if (isTimedCutoff && el >= drawDur) {
         triggerReveal(undefined);
       }
     };
     tick();
     const timer = setInterval(tick, 100);
     return () => clearInterval(timer);
-  }, [phase, activeHostRound, roundStartTime, triggerReveal]);
+  }, [phase, activeHostRound, roundStartTime, settings.timerMode, triggerReveal]);
 
   const handleCorrectGuess = useCallback(() => {
     if (!activeHostRound || phase !== 'DRAWING' || solved) return;
-    const drawDur = activeHostRound.publicRound.drawDurationMs;
-    const taken = Math.max(220, Math.min(drawDur, Date.now() - roundStartTime));
+    const completionMs = activeHostRound.publicRound.drawCompletionMs || 11000;
+    const taken = Math.max(220, Math.min(180000, Date.now() - roundStartTime));
     const nextStreak = streak + 1;
-    const pts = calculateRoundPoints(taken, drawDur, nextStreak, true);
+    const pts = calculateRoundPoints(taken, completionMs, nextStreak, true);
 
     setSolved(true);
     setLastPoints(pts);
@@ -519,7 +533,10 @@ export const AnticipationSoloContainer: React.FC<AnticipationSoloContainerProps>
     );
   }
 
-  const drawDurationMs = activePublicRound?.drawDurationMs || 18000;
+  const drawDurationMs = activePublicRound?.drawDurationMs || 28000;
+  const drawCompletionMs = activePublicRound?.drawCompletionMs || settings.drawCompletionSeconds * 1000 || 11000;
+  const isTimedCutoff = settings.timerMode === 'GENEROUS_TIMER';
+  const isSketchDone = elapsedMs >= drawCompletionMs;
   const remainingSec =
     phase === 'ROUND_REVEAL'
       ? 0
@@ -562,13 +579,23 @@ export const AnticipationSoloContainer: React.FC<AnticipationSoloContainerProps>
             className={`px-2 py-1 rounded-xl font-mono font-black text-xs flex items-center gap-1 whitespace-nowrap ${
               phase === 'ROUND_REVEAL'
                 ? 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300'
-                : remainingSec <= 5
+                : isTimedCutoff && remainingSec <= 5
                 ? 'bg-rose-500 text-white animate-pulse'
+                : !isTimedCutoff && isSketchDone
+                ? 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300'
                 : 'bg-slate-100 dark:bg-slate-800'
             }`}
           >
             <Clock size={12} />
-            <span>{phase === 'ROUND_REVEAL' ? t('REVEAL', '発表') : `${remainingSec}s`}</span>
+            <span>
+              {phase === 'ROUND_REVEAL'
+                ? t('REVEAL', '発表')
+                : isTimedCutoff
+                ? `${remainingSec}s`
+                : isSketchDone
+                ? `∞ ${t('Complete!', 'かんせい！')}`
+                : `∞ ${t('Drawing...', 'お絵かき中')}`}
+            </span>
           </span>
 
           <span className="px-2 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 font-mono font-black text-xs flex items-center gap-1 whitespace-nowrap">
@@ -585,6 +612,16 @@ export const AnticipationSoloContainer: React.FC<AnticipationSoloContainerProps>
         </div>
 
         <div className="flex items-center gap-1.5 shrink-0 flex-nowrap">
+          {phase === 'DRAWING' && (
+            <button
+              type="button"
+              onClick={() => triggerReveal(undefined)}
+              className="px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs flex items-center gap-1 cursor-pointer shadow-sm whitespace-nowrap"
+            >
+              <Eye size={14} />
+              <span>{t('Show Answer', '答えを見る')}</span>
+            </button>
+          )}
           {phase === 'ROUND_REVEAL' && (
             <button
               type="button"
@@ -646,20 +683,28 @@ export const AnticipationSoloContainer: React.FC<AnticipationSoloContainerProps>
           >
             <SketchCanvas
               useLocalClock
+              roundIndex={roundIdx}
               wordId={activePublicRound.wordId}
               wordHintEnglish={activeHostRound.targetWord.english}
               categoryKey={activePublicRound.categoryKey}
               categoryNameEn={activePublicRound.categoryNameEn}
               categoryNameJa={activePublicRound.categoryNameJa}
               imageUrl={activePublicRound.imageUrl}
+              nesVector={activePublicRound.nesVector}
               drawStyle={activePublicRound.drawStyle}
+              canvasStyle={settings.canvasStyle}
+              timerMode={settings.timerMode}
               roundStartTime={roundStartTime}
-              drawDurationMs={activePublicRound.drawDurationMs}
+              drawCompletionMs={drawCompletionMs}
+              drawDurationMs={drawDurationMs}
               isRevealed={phase === 'ROUND_REVEAL'}
               revealedCard={activePublicRound.revealedCard}
               wordMask={activePublicRound.wordMask}
               englishLength={activePublicRound.englishLength}
+              firstLetterHint={activePublicRound.firstLetterHint}
+              secondLetterHint={activePublicRound.secondLetterHint}
               isFeatureDots={activePublicRound.isFeatureDots}
+              remainingSecDisplay={isTimedCutoff ? remainingSec : null}
               onPlayAudio={playWordAudio}
             />
           </div>

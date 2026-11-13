@@ -638,17 +638,17 @@ export const AnticipationHostContainer: React.FC<AnticipationHostContainerProps>
           {/* RIGHT WING (5 cols): Sketch Style, Input Mechanic, Timing & Deck Preview */}
           <div className="lg:col-span-5 flex flex-col gap-3">
             <div className="p-3.5 rounded-3xl bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 shadow-xs space-y-2.5">
-              {/* Drawing Style + Canvas Look */}
+              {/* Difficulty (Dots Guide) + Canvas Look */}
               <div>
                 <span className="text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-1.5">
-                  {t('3. Sketch Animation & Board Look', '3. 描き方＆画面スタイル')}
+                  {t('3. Difficulty (Dots) & Board Look', '3. 難易度（点ヒント）＆画面')}
                 </span>
                 <div className="grid grid-cols-3 gap-1.5 mb-1.5">
                   {(
                     [
-                      { id: 'MIXED', label: t('✨ Mixed', '✨ ミックス') },
-                      { id: 'INK_SKETCH', label: t('✒️ Ink Lines', '✒️ スケッチ') },
-                      { id: 'CONNECT_DOTS', label: t('🔢 Dots 1–N', '🔢 点つなぎ') },
+                      { id: 'CONNECT_DOTS', label: t('🔵 Dots (Easy)', '🔵 点あり (標準)') },
+                      { id: 'MIXED', label: t('✨ Step-Up', '✨ 点→なし') },
+                      { id: 'INK_SKETCH', label: t('🔥 No Dots', '🔥 点なし (上級)') },
                     ] as const
                   ).map((item) => (
                     <button

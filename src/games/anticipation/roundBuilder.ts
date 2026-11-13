@@ -118,22 +118,24 @@ export function buildLetterBank(english: string, roundIndex: number): string[] {
 export function resolveDrawStyleForRound(
   setting: AnticipationDrawStyle,
   roundIndex: number,
-  forceDots?: boolean
+  forceDots?: boolean,
+  totalRounds: number = 10
 ): { drawStyle: 'INK_SKETCH' | 'CONNECT_DOTS'; isFeatureDots: boolean } {
   if (forceDots) {
     return { drawStyle: 'CONNECT_DOTS', isFeatureDots: true };
   }
-  if (setting === 'CONNECT_DOTS') {
-    return { drawStyle: 'CONNECT_DOTS', isFeatureDots: roundIndex % 3 === 2 };
-  }
   if (setting === 'INK_SKETCH') {
     return { drawStyle: 'INK_SKETCH', isFeatureDots: false };
   }
-  // MIXED: Classic Anticipation rhythm — alternating Ink Lines and Pearl Dot boards, with ★ BONUS every 3rd dot board
-  const useDots = roundIndex % 2 === 1;
+  if (setting === 'CONNECT_DOTS') {
+    return { drawStyle: 'CONNECT_DOTS', isFeatureDots: false };
+  }
+  // MIXED (Step-Up): First half uses Pearl Dots (lower difficulty); second half drops dots (Challenge)
+  const easyCutoff = Math.max(1, Math.ceil(totalRounds / 2));
+  const useDots = roundIndex < easyCutoff;
   return {
     drawStyle: useDots ? 'CONNECT_DOTS' : 'INK_SKETCH',
-    isFeatureDots: roundIndex % 4 === 3,
+    isFeatureDots: false,
   };
 }
 
@@ -280,7 +282,12 @@ export function buildAnticipationRounds(
       en: targetWord.category_name || targetWord.category || 'Vocabulary',
       ja: 'たんご',
     };
-    const { drawStyle, isFeatureDots } = resolveDrawStyleForRound(settings.drawStyle, roundIndex);
+    const { drawStyle, isFeatureDots } = resolveDrawStyleForRound(
+      settings.drawStyle,
+      roundIndex,
+      false,
+      selectedTargets.length
+    );
     const { mode: effectiveInputMode, allowSwitch } = resolveEffectiveInputMode(
       settings.inputMode,
       activeGrade,

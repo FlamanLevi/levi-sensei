@@ -93,17 +93,17 @@ export const AnticipationSettingsModal: React.FC<AnticipationSettingsModalProps>
               </div>
             </div>
 
-            {/* Draw Style */}
+            {/* Difficulty / Dots Guide */}
             <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 space-y-2">
               <label className="text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 block">
-                {t('Drawing Style', '描き方スタイル')}
+                {t('Difficulty & Dots Guide', '難易度・点ヒント')}
               </label>
               <div className="grid grid-cols-3 gap-2">
                 {(
                   [
-                    { id: 'MIXED', en: '✨ Mixed', ja: '✨ ミックス' },
-                    { id: 'INK_SKETCH', en: '✒️ Ink Sketch', ja: '✒️ スケッチ' },
-                    { id: 'CONNECT_DOTS', en: '🔢 Dots 1–N', ja: '🔢 点つなぎ' },
+                    { id: 'CONNECT_DOTS', en: '🔵 Dots (Normal)', ja: '🔵 点あり (標準)' },
+                    { id: 'MIXED', en: '✨ Mixed (Step-Up)', ja: '✨ 前半点→点なし' },
+                    { id: 'INK_SKETCH', en: '🔥 No Dots (Challenge)', ja: '🔥 点なし (上級)' },
                   ] as { id: AnticipationDrawStyle; en: string; ja: string }[]
                 ).map((item) => (
                   <button

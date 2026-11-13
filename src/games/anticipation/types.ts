@@ -285,7 +285,7 @@ export interface AnticipationSettings {
 
 export const DEFAULT_ANTICIPATION_SETTINGS: AnticipationSettings = {
   loopMode: 'SPIRAL_BOARD',
-  drawStyle: 'MIXED',
+  drawStyle: 'CONNECT_DOTS',
   inputMode: 'AUTO_GRADE',
   timerMode: 'NO_CUTOFF',
   drawCompletionSeconds: 11,

@@ -48,10 +48,10 @@ const SLIDES: SlideItem[] = [
       </>
     ),
     descEn:
-      'Clean bold lines and gleaming pearl Connect-the-Dots trace each word cleanly—never cutting off before finishing! Use the category title and progressive letter mask to guess as early as possible.',
+      'Gleaming white pearl dots guide your eyes on lower difficulties, while Challenge mode draws pure NES lines with no dots! Every picture draws cleanly to 100%—use the category and letter mask to guess as early as possible.',
     descJa: (
       <>
-        くっきりした<ruby>線<rt>せん</rt></ruby>や<ruby>光<rt>ひか</rt></ruby>る<ruby>点<rt>てん</rt></ruby>つなぎで<ruby>絵<rt>え</rt></ruby>が<ruby>最後<rt>さいご</rt></ruby>まで<ruby>完成<rt>かんせい</rt></ruby>します！カテゴリーと文字ヒントを見て、できるだけ<ruby>早<rt>はや</rt></ruby>く<ruby>英語<rt>えいご</rt></ruby>を<ruby>当<rt>あ</rt></ruby>てよう！
+        やさしい<ruby>難易度<rt>なんいど</rt></ruby>では<ruby>光<rt>ひか</rt></ruby>る<ruby>白<rt>しろ</rt></ruby>い<ruby>点<rt>てん</rt></ruby>がヒントになり、チャレンジでは<ruby>点<rt>てん</rt></ruby>なしの<ruby>線<rt>せん</rt></ruby>だけで<ruby>描<rt>えが</rt></ruby>かれます！<ruby>最後<rt>さいご</rt></ruby>まで100%<ruby>完成<rt>かんせい</rt></ruby>するので、カテゴリーと文字ヒントで<ruby>早<rt>はや</rt></ruby>く<ruby>英語<rt>えいご</rt></ruby>を<ruby>当<rt>あ</rt></ruby>てよう！
       </>
     ),
     tipEn: '💡 Faster guesses earn up to 1,100 bonus points & more board steps!',
@@ -121,10 +121,10 @@ const SLIDES: SlideItem[] = [
       </>
     ),
     descEn:
-      'In Spiral Board mode, fast answers advance tokens 1 to 3 spaces inward! Hit Star ★ spaces for Connect-the-Dots bonuses, Warp 🚀 arrows to jump rings, and collect 4 puzzle pieces.',
+      'In Spiral Board mode, fast answers advance tokens 1 to 3 spaces inward! Hit Star ★ spaces for a Pearl Dots hint round, Warp 🚀 arrows to jump rings, and collect 4 puzzle pieces.',
     descJa: (
       <>
-        スパイラルモードでは<ruby>正解<rt>せいかい</rt></ruby>スピードで1〜3マス<ruby>前進<rt>ぜんしん</rt></ruby>！★マスで<ruby>点<rt>てん</rt></ruby>つなぎボーナス、🚀ワープで<ruby>内側<rt>うちがわ</rt></ruby>リングへジャンプ、4つのパズルも<ruby>集<rt>あつ</rt></ruby>めよう！
+        スパイラルモードでは<ruby>正解<rt>せいかい</rt></ruby>スピードで1〜3マス<ruby>前進<rt>ぜんしん</rt></ruby>！★マスで<ruby>次<rt>つぎ</rt></ruby>が「<ruby>点<rt>てん</rt></ruby>あり」ヒント問題に、🚀ワープで<ruby>内側<rt>うちがわ</rt></ruby>リングへジャンプ、4つのパズルも<ruby>集<rt>あつ</rt></ruby>めよう！
       </>
     ),
     tipEn: '💡 Prefer fast warm-ups? Switch to Quick Rounds mode anytime!',

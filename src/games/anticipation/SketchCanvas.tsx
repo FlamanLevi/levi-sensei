@@ -292,13 +292,13 @@ export const SketchCanvas: React.FC<SketchCanvasProps> = ({
           const toX = (nx: number) => offX + nx * drawSize;
           const toY = (ny: number) => offY + ny * drawSize;
 
-          // A. Pre-plotted gleaming 3D Pearl Guide Dots in CONNECT_DOTS mode (matches image.png & image_2.png!)
+          // A. Pre-plotted gleaming unnumbered 3D Pearl Guide Dots in CONNECT_DOTS mode (pure NES match: image.png & image_2.png)
           if (drawStyle === 'CONNECT_DOTS' && vec.dots.length > 0) {
             const dots: SketchPoint[] = vec.dots;
-            dots.forEach((pt, idx) => {
+            dots.forEach((pt) => {
               const dx = toX(pt.x);
               const dy = toY(pt.y);
-              const r = compact ? 3.2 : isFeatureDots ? 5.2 : 4.2;
+              const r = compact ? 3.2 : 4.2;
 
               if (isNesRetro) {
                 // Dark drop shadow under pearl dot
@@ -307,10 +307,10 @@ export const SketchCanvas: React.FC<SketchCanvasProps> = ({
                 ctx.fillStyle = 'rgba(0, 0, 0, 0.58)';
                 ctx.fill();
 
-                // Bright pearl bead
+                // Classic white pearl bead
                 ctx.beginPath();
                 ctx.arc(dx, dy, r, 0, Math.PI * 2);
-                ctx.fillStyle = isFeatureDots ? '#fde047' : '#e2e8f0';
+                ctx.fillStyle = '#e2e8f0';
                 ctx.fill();
 
                 // Sharp white highlight glint
@@ -321,23 +321,12 @@ export const SketchCanvas: React.FC<SketchCanvasProps> = ({
               } else {
                 ctx.beginPath();
                 ctx.arc(dx, dy, r + 1.5, 0, Math.PI * 2);
-                ctx.fillStyle = isFeatureDots ? '#f59e0b' : isDark ? '#38bdf8' : '#6366f1';
+                ctx.fillStyle = isDark ? '#38bdf8' : '#6366f1';
                 ctx.fill();
                 ctx.beginPath();
                 ctx.arc(dx, dy, r * 0.6, 0, Math.PI * 2);
                 ctx.fillStyle = '#ffffff';
                 ctx.fill();
-              }
-
-              // On ★ BONUS Connect-Dots, show crisp small dot numbers beside key dots
-              if (isFeatureDots && !compact && (idx < 14 || idx % 2 === 0)) {
-                ctx.font = '900 10px ui-monospace, SFMono-Regular, monospace';
-                ctx.textAlign = 'left';
-                ctx.textBaseline = 'bottom';
-                ctx.fillStyle = isNesRetro ? 'rgba(0,0,0,0.7)' : 'rgba(255,255,255,0.8)';
-                ctx.fillText(String(idx + 1), dx + r + 3, dy - 1);
-                ctx.fillStyle = isNesRetro ? '#fef08a' : isDark ? '#fbbf24' : '#312e81';
-                ctx.fillText(String(idx + 1), dx + r + 2, dy - 2);
               }
             });
           }
@@ -505,20 +494,15 @@ export const SketchCanvas: React.FC<SketchCanvasProps> = ({
             {drawStyle === 'CONNECT_DOTS' ? (
               <>
                 <Sparkles size={11} />
-                <span>{t('Dots', 'てんつなぎ')}</span>
+                <span>{isFeatureDots ? `★ ${t('Dots', '点あり')}` : t('Dots', '点あり')}</span>
               </>
             ) : (
               <>
                 <PenTool size={11} />
-                <span>{t('Lines', 'スケッチ')}</span>
+                <span>{t('No Dots', '点なし')}</span>
               </>
             )}
           </span>
-          {isFeatureDots && (
-            <span className="px-1.5 py-0.5 rounded-md text-[10px] font-black bg-rose-500 text-white whitespace-nowrap shrink-0">
-              ★ BONUS
-            </span>
-          )}
         </div>
 
         {/* Crisp Centered NES Category Header */}

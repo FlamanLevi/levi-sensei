@@ -167,7 +167,12 @@ export const AnticipationSoloContainer: React.FC<AnticipationSoloContainerProps>
   const activeHostRound = rounds[roundIdx] || null;
   const activePublicRound = useMemo(() => {
     if (!activeHostRound) return null;
-    const styleDecision = resolveDrawStyleForRound(settings.drawStyle, roundIdx, forceDotsNext);
+    const styleDecision = resolveDrawStyleForRound(
+      settings.drawStyle,
+      roundIdx,
+      forceDotsNext,
+      rounds.length || settings.roundCount
+    );
     return {
       ...activeHostRound.publicRound,
       drawStyle: styleDecision.drawStyle,

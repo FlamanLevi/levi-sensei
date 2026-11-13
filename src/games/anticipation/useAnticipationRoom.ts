@@ -406,9 +406,10 @@ export function useAnticipationRoom(initialRoomCode?: string | null) {
       const curState = ((roomRef.current as any)?.anticipationState as AnticipationRoomState | undefined);
       const shouldForceDots = Boolean(curState?.triggerNextFeatureDots);
       const drawStyleDecision = resolveDrawStyleForRound(
-        settingsRef.current?.drawStyle || 'MIXED',
+        settingsRef.current?.drawStyle || 'CONNECT_DOTS',
         roundIdx,
-        shouldForceDots
+        shouldForceDots,
+        roundsRef.current.length
       );
 
       const startedRound = {

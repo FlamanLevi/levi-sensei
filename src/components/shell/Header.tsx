@@ -1,13 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { Volume2, VolumeX, Maximize, Minimize, Sparkles, Sun, Moon, Lock, KeyRound, X, Radio } from 'lucide-react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { createPortal } from 'react-dom';
+import { Volume2, VolumeX, Maximize, Minimize, Sparkles, Sun, Moon, Lock, KeyRound, Radio, Printer, ChevronDown, FileSpreadsheet } from 'lucide-react';
 import { useAudio } from '../../context/AudioContext';
 import { useClassroom } from '../../context/ClassroomContext';
+import { useVocabulary } from '../../context/VocabularyContext';
 import { useLanguage, LanguageToggle } from '../../context/LanguageContext';
 import { SchoolClassSwitcher } from './SchoolClassSwitcher';
 import { TeacherProfileSwitcher } from './TeacherProfileSwitcher';
-import { TeacherOfficeMenu } from './TeacherOfficeMenu';
 import { ActiveRoomsModal } from './ActiveRoomsModal';
 import { ClassroomRosterManagerModal } from '../teacher/ClassroomRosterManagerModal';
+import { BingoPrintModal } from '../../games/bingo/BingoPrintModal';
+import { resolveCardImage } from '../../utils/cardUtils';
 import { safeSubscribe } from '@/services/rtdbSafe';
 
 export const Header: React.FC = () => {
@@ -22,6 +25,9 @@ export const Header: React.FC = () => {
     lockTeacher,
     isTeacherUnlocked,
     activeView,
+    activeGameId,
+    activeGrade,
+    activeUnit,
     exitToHub,
     openDictionary,
     openAlphabet,
@@ -31,13 +37,71 @@ export const Header: React.FC = () => {
     openRoutineModal,
     launchGame
   } = useClassroom();
+  const { filteredWords, gradeWords, allWords } = useVocabulary();
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isPinModalOpen, setIsPinModalOpen] = useState(false);
   const [isRoomsModalOpen, setIsRoomsModalOpen] = useState(false);
   const [isRosterModalOpen, setIsRosterModalOpen] = useState(false);
+  const [isPrintMenuOpen, setIsPrintMenuOpen] = useState(false);
+  const [isBingoPrintOpen, setIsBingoPrintOpen] = useState(false);
+  const [printMenuPos, setPrintMenuPos] = useState<{ top: number; right: number }>({ top: 96, right: 16 });
   const [activeRoomCount, setActiveRoomCount] = useState<number>(0);
   const [pinInput, setPinInput] = useState('');
   const [pinError, setPinError] = useState(false);
+  const printButtonRef = useRef<HTMLButtonElement>(null);
+  const printPopoverRef = useRef<HTMLDivElement>(null);
+
+  const { bingoWords, bingoUnitLabel } = useMemo(() => {
+    const hasImg = (w: typeof filteredWords[number]) =>
+      Boolean(resolveCardImage(w, 'picture_only', activeGrade));
+    if (filteredWords.filter(hasImg).length >= 4) {
+      return {
+        bingoWords: filteredWords,
+        bingoUnitLabel: activeUnit !== 'ALL' ? activeUnit : activeGrade
+      };
+    }
+    if (gradeWords.filter(hasImg).length >= 4) {
+      return { bingoWords: gradeWords, bingoUnitLabel: activeGrade };
+    }
+    return { bingoWords: allWords, bingoUnitLabel: activeGrade };
+  }, [filteredWords, gradeWords, allWords, activeGrade, activeUnit]);
+
+  const updatePrintMenuPos = () => {
+    if (!printButtonRef.current) return;
+    const rect = printButtonRef.current.getBoundingClientRect();
+    setPrintMenuPos({
+      top: rect.bottom + 8,
+      right: Math.max(8, window.innerWidth - rect.right)
+    });
+  };
+
+  useEffect(() => {
+    if (!isPrintMenuOpen) return;
+    updatePrintMenuPos();
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as Node;
+      if (
+        printButtonRef.current?.contains(target) ||
+        printPopoverRef.current?.contains(target)
+      ) {
+        return;
+      }
+      setIsPrintMenuOpen(false);
+    };
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsPrintMenuOpen(false);
+    };
+    const handleViewportChange = () => updatePrintMenuPos();
+
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('resize', handleViewportChange);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('resize', handleViewportChange);
+    };
+  }, [isPrintMenuOpen]);
 
   // Monitor active rooms count in RTDB only when unlocked in Teacher mode
   useEffect(() => {
@@ -366,14 +430,25 @@ export const Header: React.FC = () => {
               <span>{t("Alphabet", "ABCラボ")}</span>
             </button>
 
-            {/* 7. Monster Worksheet Generator */}
+            {/* 7. Print Worksheets & Cards Menu */}
             <button
-              onClick={() => { playPop(); launchGame('monster_maker'); }}
-              className="px-2.5 py-1 rounded-xl font-black text-xs transition-all flex items-center gap-1.5 shrink-0 whitespace-nowrap cursor-pointer bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-500/20 border border-emerald-300 dark:border-emerald-700/60 shadow-xs"
-              title={t("Monster Worksheet Generator", "モンスタープリント作成・A4印刷")}
+              ref={printButtonRef}
+              type="button"
+              onClick={() => {
+                playPop();
+                setIsPrintMenuOpen((v) => !v);
+              }}
+              aria-expanded={isPrintMenuOpen}
+              className={`px-2.5 py-1 rounded-xl font-black text-xs transition-all flex items-center gap-1.5 shrink-0 whitespace-nowrap cursor-pointer border ${
+                isPrintMenuOpen || (activeView === 'GAME' && (activeGameId === 'monster_maker' || activeGameId === 'janken_worksheet'))
+                  ? 'bg-emerald-600 text-white border-emerald-700 shadow-md'
+                  : 'bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-500/20 border-emerald-300 dark:border-emerald-700/60 shadow-xs'
+              }`}
+              title={t("Print Worksheets & Bingo Cards", "A4ワークシート・カード印刷メニュー")}
             >
-              <span>👾</span>
+              <Printer size={13} />
               <span>{t("Print WS", "プリント")}</span>
+              <ChevronDown size={12} className={`transition-transform duration-150 ${isPrintMenuOpen ? 'rotate-180' : ''}`} />
             </button>
           </div>
         </div>
@@ -461,6 +536,125 @@ export const Header: React.FC = () => {
         isOpen={isRosterModalOpen}
         onClose={() => setIsRosterModalOpen(false)}
       />
+
+      {/* Portal Print Menu Popover (Prevents clipping inside Row 2 overflow-x-auto) */}
+      {isPrintMenuOpen && typeof document !== 'undefined' && createPortal(
+        <div
+          ref={printPopoverRef}
+          style={{
+            position: 'fixed',
+            top: `${printMenuPos.top}px`,
+            right: `${printMenuPos.right}px`
+          }}
+          className="w-80 max-w-[calc(100vw-16px)] rounded-2xl bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 shadow-2xl p-2.5 z-50 text-slate-900 dark:text-white select-none animate-in fade-in zoom-in-95 duration-100"
+        >
+          <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2 mb-2 px-1">
+            <div className="flex items-center gap-1.5">
+              <Printer size={14} className="text-emerald-600 dark:text-emerald-400" />
+              <span className="text-xs font-black">
+                {t('A4 Print Studio & Worksheets', 'A4プリント・教材印刷')}
+              </span>
+            </div>
+            <span className="text-[10px] font-bold text-slate-400">
+              {t('Teacher Tools', '授業準備')}
+            </span>
+          </div>
+
+          <div className="flex flex-col gap-1">
+            {/* 1. Janken Record Worksheets */}
+            <button
+              type="button"
+              onClick={() => {
+                playPop();
+                setIsPrintMenuOpen(false);
+                launchGame('janken_worksheet');
+              }}
+              className={`w-full p-2 rounded-xl flex items-center gap-2.5 text-left transition-colors cursor-pointer ${
+                activeView === 'GAME' && activeGameId === 'janken_worksheet'
+                  ? 'bg-orange-50 dark:bg-orange-950/50 border border-orange-300 dark:border-orange-800'
+                  : 'hover:bg-slate-100 dark:hover:bg-slate-800'
+              }`}
+            >
+              <div className="w-9 h-9 rounded-xl bg-orange-100 dark:bg-orange-950/80 text-orange-700 dark:text-orange-300 flex items-center justify-center shrink-0 text-base font-black">
+                ✊
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="text-xs font-black text-slate-900 dark:text-slate-100 flex items-center justify-between gap-1">
+                  <span className="truncate">{t('Janken Record Worksheets', 'えい語でじゃんけんプリント')}</span>
+                  <span className="text-[10px] bg-orange-500 text-white px-1.5 py-0.2 rounded font-black shrink-0">
+                    NEW
+                  </span>
+                </div>
+                <div className="text-[11px] text-slate-500 dark:text-slate-400 truncate">
+                  {t("Let's Play ② • Full A4 (1-4R), 2-up & 4-up slips", '1〜10記録表・2分割/4分割シート作成')}
+                </div>
+              </div>
+            </button>
+
+            {/* 2. Monster Lab Worksheets */}
+            <button
+              type="button"
+              onClick={() => {
+                playPop();
+                setIsPrintMenuOpen(false);
+                launchGame('monster_maker');
+              }}
+              className={`w-full p-2 rounded-xl flex items-center gap-2.5 text-left transition-colors cursor-pointer ${
+                activeView === 'GAME' && activeGameId === 'monster_maker'
+                  ? 'bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-300 dark:border-emerald-800'
+                  : 'hover:bg-slate-100 dark:hover:bg-slate-800'
+              }`}
+            >
+              <div className="w-9 h-9 rounded-xl bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 flex items-center justify-center shrink-0">
+                <FileSpreadsheet size={17} />
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="text-xs font-black text-slate-900 dark:text-slate-100 truncate">
+                  {t('Monster Lab Worksheets', 'モンスタープリント作成')}
+                </div>
+                <div className="text-[11px] text-slate-500 dark:text-slate-400 truncate">
+                  {t('Body shapes, coloring & speech worksheets', 'A4ぬりえ・スピーチワークシート')}
+                </div>
+              </div>
+            </button>
+
+            {/* 3. Classroom Bingo Cards */}
+            <button
+              type="button"
+              onClick={() => {
+                playPop();
+                setIsPrintMenuOpen(false);
+                setIsBingoPrintOpen(true);
+              }}
+              className="w-full p-2 rounded-xl flex items-center gap-2.5 text-left hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+            >
+              <div className="w-9 h-9 rounded-xl bg-amber-100 dark:bg-amber-950/80 text-amber-700 dark:text-amber-300 flex items-center justify-center shrink-0 text-base font-black">
+                🎱
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="text-xs font-black text-slate-900 dark:text-slate-100 truncate">
+                  {t('Classroom Bingo Cards', 'ビンゴカードA4印刷')}
+                </div>
+                <div className="text-[11px] text-slate-500 dark:text-slate-400 truncate">
+                  {t(`Print 3×3 picture cards (${bingoUnitLabel})`, `${bingoUnitLabel} のイラスト3×3カード一括印刷`)}
+                </div>
+              </div>
+            </button>
+          </div>
+        </div>,
+        document.body
+      )}
+
+      {/* Portal Bingo Card Printer Modal */}
+      {isBingoPrintOpen && typeof document !== 'undefined' && createPortal(
+        <BingoPrintModal
+          words={bingoWords}
+          grade={activeGrade}
+          unitName={bingoUnitLabel}
+          onClose={() => setIsBingoPrintOpen(false)}
+        />,
+        document.body
+      )}
     </header>
   );
 };

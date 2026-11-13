@@ -38,6 +38,7 @@ import { SuzukaGrandPrixContainer } from './games/suzuka_grand_prix/SuzukaGrandP
 import { DreamTownContainer } from './games/dream_town/DreamTownContainer';
 import { MysteryPencilCaseGame } from './games/mystery_pencil_case';
 import { MonsterMakerGame } from './games/monster_maker';
+import { JankenWorksheetStudio } from './games/janken_worksheet';
 import { ProfileStudioHost } from './games/profile_studio/ProfileStudioHost';
 import { TeacherPinGate } from './components/shell/TeacherPinGate';
 import { ClassroomReportsHub } from './components/teacher/ClassroomReportsHub';
@@ -429,6 +430,19 @@ export const App: React.FC = () => {
             jaTitle={<><ruby>モンスター<rt>もんすたー</rt></ruby>・ラボ & ワークシート<ruby>印刷<rt>いんさつ</rt></ruby></>}
           >
             <MonsterMakerGame onExit={exitToHub} />
+          </GameContainer>
+        );
+      }
+
+      if (activeGameId === 'janken_worksheet') {
+        return (
+          <GameContainer
+            title="English Janken Worksheet Studio"
+            jaTitle={<>えい<ruby>語<rt>ご</rt></ruby>でじゃんけん プリント<ruby>作成<rt>さくせい</rt></ruby></>}
+            hideScopeDropdown
+            isScrollable
+          >
+            <JankenWorksheetStudio onExit={exitToHub} />
           </GameContainer>
         );
       }

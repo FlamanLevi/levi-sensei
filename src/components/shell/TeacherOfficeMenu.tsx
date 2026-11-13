@@ -156,6 +156,25 @@ export const TeacherOfficeMenu: React.FC<TeacherOfficeMenuProps> = ({
               </div>
             </button>
 
+            {/* 2b. Janken Record Worksheets Generator */}
+            <button
+              type="button"
+              onClick={() => handleAction(() => launchGame('janken_worksheet'))}
+              className="w-full p-2 rounded-xl flex items-center gap-2.5 text-left hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+            >
+              <div className="w-8 h-8 rounded-lg bg-orange-100 dark:bg-orange-950/80 text-orange-700 dark:text-orange-300 flex items-center justify-center shrink-0 font-black text-sm">
+                ✊
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="text-xs font-black text-slate-900 dark:text-slate-100">
+                  {t('Janken Record Worksheets', 'えい語でじゃんけんプリント')}
+                </div>
+                <div className="text-[11px] text-slate-500 dark:text-slate-400 truncate">
+                  {t("Let's Play ② A4 1-10 sheets & cut-apart slips", '1〜10記録表・2/4分割切り取りカード作成')}
+                </div>
+              </div>
+            </button>
+
             {/* 3. Alphabet Comparison Studio */}
             <button
               type="button"

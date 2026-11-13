@@ -456,4 +456,34 @@
     height: 275mm !important;
     max-height: 275mm !important;
   }
+
+  .janken-a4-page {
+    page-break-after: always !important;
+    break-after: page !important;
+    break-inside: avoid !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+    background: #ffffff !important;
+  }
+
+  .janken-a4-page:last-child {
+    page-break-after: auto !important;
+    break-after: auto !important;
+  }
+
+  .janken-a4-page.landscape {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 196mm !important;
+    max-height: 196mm !important;
+  }
+
+  .janken-a4-page.portrait {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 282mm !important;
+    max-height: 282mm !important;
+  }
 }

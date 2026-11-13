@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { QuizQuestion, QuizPlayer, VolleyballSettings } from '../types';
 import { soundEffects } from '@/services/soundEffects';
+import { ensureAnonymousAuth } from '@/services/firebase';
 import { safeUpdate, getServerTime } from '@/services/rtdbSafe';
 import { useLanguage } from '@/context/LanguageContext';
 import { useClassroom } from '@/context/ClassroomContext';
@@ -144,18 +145,22 @@ export const QuizHostVolleyball: React.FC<QuizHostVolleyballProps> = ({
   useEffect(() => {
     if (!roomCode) return;
     const timer = setTimeout(() => {
-      safeUpdate(`rooms/${roomCode}/volleyballLiveState`, {
-        phase: matchEnded ? 'BALL_DROPPED' : 'SERVE',
-        activeTeam: 'all',
-        servingTeam: 'team_red',
-        currentRally: redScore + whiteScore,
-        highestRally: redScore + whiteScore,
-        redScore,
-        whiteScore,
-        phaseStartTime: matchStartTime,
-        phaseDurationMs: timeLimitSeconds * 1000,
-        updatedAt: getServerTime(),
-      }).catch(() => {});
+      ensureAnonymousAuth()
+        .then(() =>
+          safeUpdate(`rooms/${roomCode}/volleyballLiveState`, {
+            phase: matchEnded ? 'BALL_DROPPED' : 'SERVE',
+            activeTeam: 'all',
+            servingTeam: 'team_red',
+            currentRally: redScore + whiteScore,
+            highestRally: redScore + whiteScore,
+            redScore,
+            whiteScore,
+            phaseStartTime: matchStartTime,
+            phaseDurationMs: timeLimitSeconds * 1000,
+            updatedAt: getServerTime(),
+          })
+        )
+        .catch(() => {});
     }, matchEnded ? 0 : 200);
     return () => clearTimeout(timer);
   }, [roomCode, redScore, whiteScore, matchEnded, matchStartTime, timeLimitSeconds]);
@@ -273,7 +278,9 @@ export const QuizHostVolleyball: React.FC<QuizHostVolleyballProps> = ({
         if (!payload) return;
         pendingPhasePayloadRef.current = null;
         lastPhaseBroadcastAtRef.current = Date.now();
-        safeUpdate(`rooms/${roomCode}/volleyballLiveState`, payload).catch(() => {});
+        ensureAnonymousAuth()
+          .then(() => safeUpdate(`rooms/${roomCode}/volleyballLiveState`, payload))
+          .catch(() => {});
       };
 
       const elapsed = Date.now() - lastPhaseBroadcastAtRef.current;
@@ -322,11 +329,11 @@ export const QuizHostVolleyball: React.FC<QuizHostVolleyballProps> = ({
   return (
     <div className="relative w-full h-full flex flex-col bg-slate-950 text-white select-none overflow-hidden font-sans">
       {/* 1. Sleek Broadcast Header */}
-      <div className="relative z-30 w-full px-4 sm:px-6 py-2.5 flex items-center justify-between bg-slate-950 border-b border-slate-800 shadow-2xl">
+      <div className="relative z-30 w-full px-4 sm:px-6 py-2.5 flex items-center justify-between gap-2 bg-slate-950 border-b border-slate-800 shadow-2xl flex-nowrap">
         {/* Left: Match Timer, Student Count, Bots & Manual Toss */}
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2 min-w-0 overflow-x-auto no-scrollbar flex-nowrap">
           <div
-            className={`flex items-center gap-2 px-3 py-1.5 rounded-2xl border font-black ${
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-2xl border font-black shrink-0 whitespace-nowrap ${
               timeRemainingSeconds <= 10
                 ? 'bg-rose-950 border-rose-500 text-rose-300'
                 : 'bg-slate-900 border-slate-800 text-amber-400'
@@ -339,7 +346,7 @@ export const QuizHostVolleyball: React.FC<QuizHostVolleyballProps> = ({
             </span>
           </div>
 
-          <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs font-bold text-slate-300">
+          <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs font-bold text-slate-300 shrink-0 whitespace-nowrap">
             <Users size={14} className="text-slate-400" />
             <span>
               🔴 {redPlayers.length} / ⚪ {whitePlayers.length} ({playerList.length}{' '}
@@ -351,18 +358,18 @@ export const QuizHostVolleyball: React.FC<QuizHostVolleyballProps> = ({
             <button
               type="button"
               onClick={() => onAddBots(4)}
-              className="px-2.5 py-1.5 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition active:scale-95 cursor-pointer"
+              className="px-2.5 py-1.5 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition active:scale-95 cursor-pointer shrink-0 whitespace-nowrap"
             >
               +4 {t('Bots', 'ボット')}
             </button>
           )}
 
           {!matchEnded && (
-            <div className="hidden lg:flex items-center gap-1.5">
+            <div className="hidden lg:flex items-center gap-1.5 shrink-0 flex-nowrap">
               <button
                 type="button"
                 onClick={() => triggerManualToss('red')}
-                className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-black bg-rose-600 hover:bg-rose-500 text-white transition active:scale-95 cursor-pointer"
+                className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-black bg-rose-600 hover:bg-rose-500 text-white transition active:scale-95 cursor-pointer whitespace-nowrap"
               >
                 <span>🔴</span>
                 <span>{t('+1 Red Bag', '赤玉+1')}</span>
@@ -370,7 +377,7 @@ export const QuizHostVolleyball: React.FC<QuizHostVolleyballProps> = ({
               <button
                 type="button"
                 onClick={() => triggerManualToss('white')}
-                className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-black bg-white hover:bg-slate-200 text-slate-900 transition active:scale-95 cursor-pointer"
+                className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-black bg-white hover:bg-slate-200 text-slate-900 transition active:scale-95 cursor-pointer whitespace-nowrap"
               >
                 <span>⚪</span>
                 <span>{t('+1 White Bag', '白玉+1')}</span>
@@ -382,7 +389,7 @@ export const QuizHostVolleyball: React.FC<QuizHostVolleyballProps> = ({
             <button
               type="button"
               onClick={onToggleEyesUp}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-black border transition-all active:scale-95 cursor-pointer ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-black border transition-all active:scale-95 cursor-pointer shrink-0 whitespace-nowrap ${
                 eyesUp
                   ? 'bg-amber-400 text-slate-950 border-amber-300 ring-2 ring-amber-400/50'
                   : 'bg-slate-800 hover:bg-slate-700 text-amber-300 border-amber-500/30'
@@ -397,12 +404,12 @@ export const QuizHostVolleyball: React.FC<QuizHostVolleyballProps> = ({
         </div>
 
         {/* Center: Undokai Tamaire (玉入れ) Scoreboard + Mystery Count Toggle */}
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-3 px-4 py-1.5 rounded-2xl bg-slate-900 border border-slate-800 shadow-lg">
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0 flex-nowrap">
+          <div className="flex items-center gap-3 px-4 py-1.5 rounded-2xl bg-slate-900 border border-slate-800 shadow-lg shrink-0 whitespace-nowrap">
             <div className="flex items-center gap-2">
               <span className="text-sm font-black text-rose-400">
                 <ruby>
-                  赤組<rt className="text-[8px]">あかぐみ</rt>
+                  赤組<rt>あかぐみ</rt>
                 </ruby>
               </span>
               <span className="text-2xl font-black font-mono text-white px-2.5 py-0.5 rounded-xl bg-rose-600 shadow-md">
@@ -418,7 +425,7 @@ export const QuizHostVolleyball: React.FC<QuizHostVolleyballProps> = ({
               </span>
               <span className="text-sm font-black text-slate-200">
                 <ruby>
-                  白組<rt className="text-[8px]">しろぐみ</rt>
+                  白組<rt>しろぐみ</rt>
                 </ruby>
               </span>
             </div>
@@ -427,7 +434,7 @@ export const QuizHostVolleyball: React.FC<QuizHostVolleyballProps> = ({
           <button
             type="button"
             onClick={() => setHideScoreUntilEnd((prev) => !prev)}
-            className="hidden md:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-bold bg-slate-900 hover:bg-slate-800 text-amber-300 border border-slate-700 cursor-pointer"
+            className="hidden md:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-bold bg-slate-900 hover:bg-slate-800 text-amber-300 border border-slate-700 cursor-pointer shrink-0 whitespace-nowrap"
             title={t('Toggle Mystery Count until Whistle', '結果発表まで個数を隠す (ドキドキ玉かぞえ)')}
           >
             {hideScoreUntilEnd ? <EyeOff size={14} /> : <Eye size={14} />}
@@ -436,9 +443,9 @@ export const QuizHostVolleyball: React.FC<QuizHostVolleyballProps> = ({
         </div>
 
         {/* Right: BGM Mute, Whistle (Start Counting Ceremony) & Exit */}
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0 flex-nowrap">
           {onToggleBgmMute && (
-            <div className="flex items-center gap-1.5 bg-slate-900 border border-slate-800 px-2.5 py-1.5 rounded-xl">
+            <div className="flex items-center gap-1.5 bg-slate-900 border border-slate-800 px-2.5 py-1.5 rounded-xl shrink-0">
               <Music size={14} className="text-indigo-400" />
               <button
                 type="button"
@@ -458,14 +465,14 @@ export const QuizHostVolleyball: React.FC<QuizHostVolleyballProps> = ({
                 handleFreezeAndEnd(win);
                 soundEffects.playWhistle(1.0);
               }}
-              className="px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-black bg-rose-600 hover:bg-rose-500 text-white shadow-lg transition active:scale-95 cursor-pointer"
+              className="px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-black bg-rose-600 hover:bg-rose-500 text-white shadow-lg transition active:scale-95 cursor-pointer whitespace-nowrap"
             >
               {t('Whistle & Count Bags!', '笛を吹く (玉かぞえ開始！)')}
             </button>
           ) : (
             <button
               onClick={() => onFinishVolleyball(winner || 'draw')}
-              className="px-4 py-2 sm:px-5 sm:py-2 rounded-xl text-xs sm:text-sm font-black bg-amber-400 hover:bg-amber-300 text-slate-950 shadow-xl transition cursor-pointer"
+              className="px-4 py-2 sm:px-5 sm:py-2 rounded-xl text-xs sm:text-sm font-black bg-amber-400 hover:bg-amber-300 text-slate-950 shadow-xl transition cursor-pointer whitespace-nowrap"
             >
               {t('Results & Awards →', '表彰・結果発表 →')}
             </button>
@@ -474,7 +481,7 @@ export const QuizHostVolleyball: React.FC<QuizHostVolleyballProps> = ({
           {onExit && (
             <button
               onClick={onExit}
-              className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition cursor-pointer"
+              className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition cursor-pointer shrink-0"
               title={t('Exit', '終了')}
             >
               ✕

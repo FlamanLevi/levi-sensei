@@ -61,14 +61,14 @@ const FUN_MISSIONS: FunMission[] = [
   {
     id: 'happy_face',
     en: 'Show your happiest face! 😄',
-    ja: <><ruby>最高<rt className="text-[7px]">さいこう</rt></ruby>の<ruby>笑顔<rt className="text-[7px]">えがお</rt></ruby>を<ruby>見<rt className="text-[7px]">み</rt></ruby>せて！</>,
+    ja: <><ruby>最高<rt>さいこう</rt></ruby>の<ruby>笑顔<rt>えがお</rt></ruby>を<ruby>見<rt>み</rt></ruby>せて！</>,
     icon: '😄',
     category: 'feelings'
   },
   {
     id: 'angry_face',
     en: 'Make a super angry face! 😡',
-    ja: <>ものすごく<ruby>怒<rt className="text-[7px]">おこ</rt></ruby>った<ruby>顔<rt className="text-[7px]">かお</rt></ruby>をしてみて！</>,
+    ja: <>ものすごく<ruby>怒<rt>おこ</rt></ruby>った<ruby>顔<rt>かお</rt></ruby>をしてみて！</>,
     icon: '😡',
     category: 'feelings'
   },
@@ -82,7 +82,7 @@ const FUN_MISSIONS: FunMission[] = [
   {
     id: 'surprised_face',
     en: 'Make a super surprised face! 😲',
-    ja: <>びっくりした<ruby>顔<rt className="text-[7px]">かお</rt></ruby>をしてみて！</>,
+    ja: <>びっくりした<ruby>顔<rt>かお</rt></ruby>をしてみて！</>,
     icon: '😲',
     category: 'feelings'
   },
@@ -96,7 +96,7 @@ const FUN_MISSIONS: FunMission[] = [
   {
     id: 'silly_face',
     en: 'Make a funny silly face! 🤪',
-    ja: <>へんてこなおもしろい<ruby>顔<rt className="text-[7px]">かお</rt></ruby>をして！</>,
+    ja: <>へんてこなおもしろい<ruby>顔<rt>かお</rt></ruby>をして！</>,
     icon: '🤪',
     category: 'feelings'
   },
@@ -105,49 +105,49 @@ const FUN_MISSIONS: FunMission[] = [
   {
     id: 'touch_ears',
     en: 'Touch your ears 3 times! 👂',
-    ja: <><ruby>耳<rt className="text-[7px]">みみ</rt></ruby>を3<ruby>回<rt className="text-[7px]">かい</rt></ruby>タッチしよう！</>,
+    ja: <><ruby>耳<rt>みみ</rt></ruby>を3<ruby>回<rt>かい</rt></ruby>タッチしよう！</>,
     icon: '👂',
     category: 'body'
   },
   {
     id: 'touch_nose',
     en: 'Touch your nose and jump! 👃',
-    ja: <><ruby>鼻<rt className="text-[7px]">はな</rt></ruby>をさわりながら1<ruby>回<rt className="text-[7px]">かい</rt></ruby>ジャンプ！</>,
+    ja: <><ruby>鼻<rt>はな</rt></ruby>をさわりながら1<ruby>回<rt>かい</rt></ruby>ジャンプ！</>,
     icon: '👃',
     category: 'body'
   },
   {
     id: 'touch_head',
     en: 'Hands on your head for 3 seconds! 🙆',
-    ja: <><ruby>頭<rt className="text-[7px]">あたま</rt></ruby>に<ruby>手<rt className="text-[7px]">て</rt></ruby>を<ruby>置<rt className="text-[7px]">お</rt></ruby>いて3<ruby>秒<rt className="text-[7px]">びょう</rt></ruby>キープ！</>,
+    ja: <><ruby>頭<rt>あたま</rt></ruby>に<ruby>手<rt>て</rt></ruby>を<ruby>置<rt>お</rt></ruby>いて3<ruby>秒<rt>びょう</rt></ruby>キープ！</>,
     icon: '🙆',
     category: 'body'
   },
   {
     id: 'touch_knees',
     en: 'Touch your knees 3 times! 🦵',
-    ja: <><ruby>膝<rt className="text-[7px]">ひざ</rt></ruby>を3<ruby>回<rt className="text-[7px]">かい</rt></ruby>タッチしよう！</>,
+    ja: <><ruby>膝<rt>ひざ</rt></ruby>を3<ruby>回<rt>かい</rt></ruby>タッチしよう！</>,
     icon: '🦵',
     category: 'body'
   },
   {
     id: 'star_jump',
     en: 'Do 2 big star jumps! ⭐',
-    ja: <><ruby>元気<rt className="text-[7px]">げんき</rt></ruby>にスタージャンプを2<ruby>回<rt className="text-[7px]">かい</rt></ruby>！</>,
+    ja: <><ruby>元気<rt>げんき</rt></ruby>にスタージャンプを2<ruby>回<rt>かい</rt></ruby>！</>,
     icon: '⭐',
     category: 'body'
   },
   {
     id: 'spin_around',
     en: 'Spin around once carefully! 🌀',
-    ja: <>その<ruby>場<rt className="text-[7px]">ば</rt></ruby>でくるっと1<ruby>回転<rt className="text-[7px]">かいてん</rt></ruby>！</>,
+    ja: <>その<ruby>場<rt>ば</rt></ruby>でくるっと1<ruby>回転<rt>かいてん</rt></ruby>！</>,
     icon: '🌀',
     category: 'body'
   },
   {
     id: 'one_foot_balance',
     en: 'Stand on one foot for 3 seconds! 🦩',
-    ja: <><ruby>片足<rt className="text-[7px]">かたあし</rt></ruby>で3<ruby>秒<rt className="text-[7px]">びょう</rt></ruby>バランス！</>,
+    ja: <><ruby>片足<rt>かたあし</rt></ruby>で3<ruby>秒<rt>びょう</rt></ruby>バランス！</>,
     icon: '🦩',
     category: 'body'
   },
@@ -168,14 +168,14 @@ const FUN_MISSIONS: FunMission[] = [
   {
     id: 'clap_five',
     en: 'Clap your hands 5 times! 👏',
-    ja: <><ruby>手<rt className="text-[7px]">て</rt></ruby>を5<ruby>回<rt className="text-[7px]">かい</rt></ruby>たたこう！</>,
+    ja: <><ruby>手<rt>て</rt></ruby>を5<ruby>回<rt>かい</rt></ruby>たたこう！</>,
     icon: '👏',
     category: 'body'
   },
   {
     id: 'wave_both',
     en: 'Wave both hands at everyone! 👋',
-    ja: <><ruby>両手<rt className="text-[7px]">りょうて</rt></ruby>をみんなにふろう！</>,
+    ja: <><ruby>両手<rt>りょうて</rt></ruby>をみんなにふろう！</>,
     icon: '👋',
     category: 'body'
   },
@@ -184,35 +184,35 @@ const FUN_MISSIONS: FunMission[] = [
   {
     id: 'high_five',
     en: 'Give your neighbor a high-five! ✋',
-    ja: <>となりの<ruby>友達<rt className="text-[7px]">ともだち</rt></ruby>とハイタッチ！</>,
+    ja: <>となりの<ruby>友達<rt>ともだち</rt></ruby>とハイタッチ！</>,
     icon: '✋',
     category: 'communication'
   },
   {
     id: 'fist_bump',
     en: 'Give your neighbor a gentle fist bump! 👊',
-    ja: <>となりの<ruby>友達<rt className="text-[7px]">ともだち</rt></ruby>とグータッチ！</>,
+    ja: <>となりの<ruby>友達<rt>ともだち</rt></ruby>とグータッチ！</>,
     icon: '👊',
     category: 'communication'
   },
   {
     id: 'peace_signs',
     en: 'Double peace signs with a big smile! ✌️',
-    ja: <><ruby>両手<rt className="text-[7px]">りょうて</rt></ruby>でダブルピース！</>,
+    ja: <><ruby>両手<rt>りょうて</rt></ruby>でダブルピース！</>,
     icon: '✌️',
     category: 'communication'
   },
   {
     id: 'janken',
     en: 'Play Janken with your neighbor! ✊✌️✋',
-    ja: <>となりの<ruby>友達<rt className="text-[7px]">ともだち</rt></ruby>とじゃんけん！</>,
+    ja: <>となりの<ruby>友達<rt>ともだち</rt></ruby>とじゃんけん！</>,
     icon: '✊',
     category: 'communication'
   },
   {
     id: 'two_thumbs_up',
     en: 'Give two big thumbs up! 👍👍',
-    ja: <><ruby>両手<rt className="text-[7px]">りょうて</rt></ruby>でグッドサイン！</>,
+    ja: <><ruby>両手<rt>りょうて</rt></ruby>でグッドサイン！</>,
     icon: '👍',
     category: 'communication'
   },
@@ -228,63 +228,63 @@ const FUN_MISSIONS: FunMission[] = [
   {
     id: 'loud_hello',
     en: 'Say "HELLO!" in your best English! 🗣️',
-    ja: <>「Hello!」と<ruby>元気<rt className="text-[7px]">げんき</rt></ruby>に<ruby>大<rt className="text-[7px]">おお</rt></ruby>きな<ruby>声<rt className="text-[7px]">こえ</rt></ruby>で！</>,
+    ja: <>「Hello!」と<ruby>元気<rt>げんき</rt></ruby>に<ruby>大<rt>おお</rt></ruby>きな<ruby>声<rt>こえ</rt></ruby>で！</>,
     icon: '🗣️',
     category: 'fun'
   },
   {
     id: 'whisper_hello',
     en: 'Whisper "Good morning" like a secret! 🤫',
-    ja: <>ひそひそ<ruby>声<rt className="text-[7px]">こえ</rt></ruby>で「Good morning」！</>,
+    ja: <>ひそひそ<ruby>声<rt>こえ</rt></ruby>で「Good morning」！</>,
     icon: '🤫',
     category: 'fun'
   },
   {
     id: 'count_five',
     en: 'Count: 1, 2, 3, 4, 5 in English! 🔢',
-    ja: <><ruby>英語<rt className="text-[7px]">えいご</rt></ruby>で1〜5まで<ruby>元気<rt className="text-[7px]">げんき</rt></ruby>に<ruby>言<rt className="text-[7px]">い</rt></ruby>おう！</>,
+    ja: <><ruby>英語<rt>えいご</rt></ruby>で1〜5まで<ruby>元気<rt>げんき</rt></ruby>に<ruby>言<rt>い</rt></ruby>おう！</>,
     icon: '🔢',
     category: 'numbers'
   },
   {
     id: 'count_down',
     en: 'Count backwards: 5, 4, 3, 2, 1, BLAST OFF! 🚀',
-    ja: <><ruby>英語<rt className="text-[7px]">えいご</rt></ruby>で5からカウントダウン！</>,
+    ja: <><ruby>英語<rt>えいご</rt></ruby>で5からカウントダウン！</>,
     icon: '🚀',
     category: 'numbers'
   },
   {
     id: 'say_color',
     en: 'Say your favorite color in English! 🎨',
-    ja: <>すきな<ruby>色<rt className="text-[7px]">いろ</rt></ruby>を<ruby>英語<rt className="text-[7px]">えいご</rt></ruby>で<ruby>言<rt className="text-[7px]">い</rt></ruby>おう！</>,
+    ja: <>すきな<ruby>色<rt>いろ</rt></ruby>を<ruby>英語<rt>えいご</rt></ruby>で<ruby>言<rt>い</rt></ruby>おう！</>,
     icon: '🎨',
     category: 'fun'
   },
   {
     id: 'say_animal',
     en: 'Say your favorite animal in English! 🐾',
-    ja: <>すきな<ruby>動物<rt className="text-[7px]">どうぶつ</rt></ruby>を<ruby>英語<rt className="text-[7px]">えいご</rt></ruby>で<ruby>言<rt className="text-[7px]">い</rt></ruby>おう！</>,
+    ja: <>すきな<ruby>動物<rt>どうぶつ</rt></ruby>を<ruby>英語<rt>えいご</rt></ruby>で<ruby>言<rt>い</rt></ruby>おう！</>,
     icon: '🐾',
     category: 'animals'
   },
   {
     id: 'say_food',
     en: 'Say your favorite food in English! 🍕',
-    ja: <>すきな<ruby>食<rt className="text-[7px]">た</rt></ruby>べものを<ruby>英語<rt className="text-[7px]">えいご</rt></ruby>で<ruby>言<rt className="text-[7px]">い</rt></ruby>おう！</>,
+    ja: <>すきな<ruby>食<rt>た</rt></ruby>べものを<ruby>英語<rt>えいご</rt></ruby>で<ruby>言<rt>い</rt></ruby>おう！</>,
     icon: '🍕',
     category: 'fun'
   },
   {
     id: 'say_thank_you',
     en: 'Say "Thank you very much!" 🤝',
-    ja: <>「Thank you very much!」と<ruby>言<rt className="text-[7px]">い</rt></ruby>おう！</>,
+    ja: <>「Thank you very much!」と<ruby>言<rt>い</rt></ruby>おう！</>,
     icon: '🤝',
     category: 'fun'
   },
   {
     id: 'shout_yeah',
     en: 'Raise your hands and shout "YEAH!" 🙌',
-    ja: <><ruby>両手<rt className="text-[7px]">りょうて</rt></ruby>をあげて「YEAH!」！</>,
+    ja: <><ruby>両手<rt>りょうて</rt></ruby>をあげて「YEAH!」！</>,
     icon: '🙌',
     category: 'fun'
   },
@@ -321,14 +321,14 @@ const FUN_MISSIONS: FunMission[] = [
   {
     id: 'animal_bird',
     en: 'Flap your wings like a bird! 🐦',
-    ja: <><ruby>鳥<rt className="text-[7px]">とり</rt></ruby>のようにパタパタ羽ばたこう！</>,
+    ja: <><ruby>鳥<rt>とり</rt></ruby>のようにパタパタ羽ばたこう！</>,
     icon: '🐦',
     category: 'animals'
   },
   {
     id: 'animal_penguin',
     en: 'Waddle like a cute penguin! 🐧',
-    ja: <>ペンギンみたいによちよち<ruby>歩<rt className="text-[7px]">ある</rt></ruby>き！</>,
+    ja: <>ペンギンみたいによちよち<ruby>歩<rt>ある</rt></ruby>き！</>,
     icon: '🐧',
     category: 'animals'
   }
@@ -939,7 +939,7 @@ export const TimebombGame: React.FC<TimebombGameProps> = ({ onExit }) => {
           {theme === 'POPCORN' && (
             <div className="relative flex flex-col items-center">
               <div className="text-[9px] text-amber-500 font-bold mb-0.5">
-                {t('🔥 HEATING 🔥', <>🔥 <ruby>加熱中<rt className="text-[7px]">かねつちゅう</rt></ruby> 🔥</>)}
+                {t('🔥 HEATING 🔥', <>🔥 <ruby>加熱中<rt>かねつちゅう</rt></ruby> 🔥</>)}
               </div>
               <div
                 className={`relative w-22 h-22 sm:w-24 sm:h-24 rounded-[50%_50%_45%_45%/60%_60%_40%_40%] bg-gradient-to-br from-yellow-300 via-amber-400 to-amber-600 shadow-xl flex flex-col items-center justify-center border-3 transition-all ${
@@ -1132,7 +1132,7 @@ export const TimebombGame: React.FC<TimebombGameProps> = ({ onExit }) => {
       <CinemaStageLayout
         sidebarWidth="compact"
         onExit={onExit}
-        title={t('Hot Potato', <><ruby>爆弾<rt className="text-[7px]">ばくだん</rt></ruby>ゲーム</>)}
+        title={t('Hot Potato', <><ruby>爆弾<rt>ばくだん</rt></ruby>ゲーム</>)}
         badge={
           <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-amber-500 text-slate-950">
             STREAM A
@@ -1168,7 +1168,7 @@ export const TimebombGame: React.FC<TimebombGameProps> = ({ onExit }) => {
               <div className="w-full max-w-xl bg-gradient-to-br from-amber-500/20 via-slate-900 to-purple-950 border-2 border-amber-400/60 rounded-3xl p-5 shadow-2xl mb-5 relative overflow-hidden">
                 <div className="absolute top-2 right-3 flex items-center gap-1 text-xs text-amber-400/80 font-black">
                   <Sparkles size={14} />
-                  <span>{t('FUN MISSION', <><ruby>楽<rt className="text-[7px]">たの</rt></ruby>しいミッション</>)}</span>
+                  <span>{t('FUN MISSION', <><ruby>楽<rt>たの</rt></ruby>しいミッション</>)}</span>
                 </div>
                 <div className="text-5xl mb-2">{activeMission.icon}</div>
                 <div className="text-2xl md:text-3xl font-black text-white mb-1.5 leading-snug">
@@ -1185,13 +1185,13 @@ export const TimebombGame: React.FC<TimebombGameProps> = ({ onExit }) => {
                   }}
                   className="mt-3 px-3 py-1 bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white rounded-full text-xs font-bold transition-all border border-slate-700"
                 >
-                  {t('Roll Another Mission 🎲', <><ruby>別<rt className="text-[7px]">べつ</rt></ruby>のミッション 🎲</>)}
+                  {t('Roll Another Mission 🎲', <><ruby>別<rt>べつ</rt></ruby>のミッション 🎲</>)}
                 </button>
               </div>
             )}
 
             {/* Action Buttons */}
-            <div className="flex flex-wrap items-center justify-center gap-4">
+            <div className="flex flex-nowrap overflow-x-auto no-scrollbar max-w-full items-center justify-center gap-4 px-2">
               <button
                 onClick={() => {
                   if (isExplosionLocked) return;
@@ -1199,7 +1199,7 @@ export const TimebombGame: React.FC<TimebombGameProps> = ({ onExit }) => {
                   startRound(true);
                 }}
                 disabled={isExplosionLocked}
-                className={`px-8 py-3.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white text-xl md:text-2xl font-black rounded-2xl shadow-xl hover:shadow-emerald-500/30 transition-all transform active:scale-95 flex items-center gap-3 border-2 border-emerald-300 ${
+                className={`px-8 py-3.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white text-xl md:text-2xl font-black rounded-2xl shadow-xl hover:shadow-emerald-500/30 transition-all transform active:scale-95 flex items-center gap-3 border-2 border-emerald-300 whitespace-nowrap shrink-0 ${
                   isExplosionLocked ? 'opacity-60 cursor-not-allowed' : ''
                 }`}
               >
@@ -1215,7 +1215,7 @@ export const TimebombGame: React.FC<TimebombGameProps> = ({ onExit }) => {
                     setCurrentWordIndex(nextIdx);
                   }
                 }}
-                className="px-6 py-3.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm md:text-base font-bold rounded-2xl border border-slate-700 transition-all"
+                className="px-6 py-3.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm md:text-base font-bold rounded-2xl border border-slate-700 transition-all whitespace-nowrap shrink-0"
               >
                 {t('Back to Ready', '待機画面に戻る')}
               </button>
@@ -1235,7 +1235,7 @@ export const TimebombGame: React.FC<TimebombGameProps> = ({ onExit }) => {
                     <img
                       src={cardImage}
                       alt={currentWord?.english || 'Card'}
-                      className="w-full h-full max-h-[min(56vh,540px)] object-contain filter drop-shadow-md transition-all"
+                      className="w-full h-full max-h-[min(56dvh,540px)] object-contain filter drop-shadow-md transition-all"
                     />
                   ) : (
                     <div className="text-slate-400 font-bold text-lg">

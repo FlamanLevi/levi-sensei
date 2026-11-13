@@ -68,7 +68,7 @@ export const MissingCardSlot: React.FC<MissingCardSlotProps> = ({
         {/* Subtle pulsing glow background */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-amber-400/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
 
-        {/* Slot index badge for young kids */}
+        {/* Slot index badge for young students */}
         <span className="absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded-full text-xs font-black bg-amber-400/90 text-amber-950 shadow-sm">
           #{cardIndex + 1}
         </span>
@@ -89,7 +89,7 @@ export const MissingCardSlot: React.FC<MissingCardSlotProps> = ({
         </div>
 
         <span className="mt-2 text-sm sm:text-lg md:text-xl font-black text-amber-300 tracking-wider drop-shadow group-hover:text-amber-200 transition-colors text-center">
-          {t('What is missing?', <>なにが<ruby>消<rt className="text-[8px] font-normal">き</rt></ruby>えた？</>)}
+          {t('What is missing?', <>なにが<ruby>消<rt>き</rt></ruby>えた？</>)}
         </span>
         <span className="text-[10px] sm:text-xs font-bold text-amber-200/80 tracking-wide mt-0.5 text-center">
           {t('Shout it out in English!', <>えいごで言ってみよう！</>)}
@@ -118,7 +118,7 @@ export const MissingCardSlot: React.FC<MissingCardSlotProps> = ({
         <div className="flex items-center justify-between z-10 shrink-0 mb-1">
           <span className="px-2.5 py-0.5 rounded-full text-[10px] sm:text-xs font-black bg-gradient-to-r from-amber-400 to-orange-500 text-white flex items-center gap-1 shadow-md">
             <Sparkles size={12} />
-            <span>{t('🎉 REVEALED!', <>🎉 <ruby>正解<rt className="text-[8px] font-normal">せいかい</rt></ruby>！</>)}</span>
+            <span>{t('🎉 REVEALED!', <>🎉 <ruby>正解<rt>せいかい</rt></ruby>！</>)}</span>
           </span>
           <button
             onClick={(e) => {
@@ -153,13 +153,12 @@ export const MissingCardSlot: React.FC<MissingCardSlotProps> = ({
           <h4 className="text-base sm:text-xl md:text-2xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
             {slot.card.english}
           </h4>
-          <div className="text-[11px] sm:text-xs font-bold text-slate-600 dark:text-slate-300">
+          <div className="text-[11px] sm:text-xs font-bold text-slate-700 dark:text-slate-200">
             <RubyText
               ruby={slot.card.ruby}
               kanji={slot.card.ja_kanji}
               hiragana={slot.card.ja_hiragana}
-              className="text-[11px] sm:text-xs font-bold text-slate-700 dark:text-slate-300"
-              rtClassName="text-[8px] font-bold text-sky-600 dark:text-sky-400"
+              className="text-[11px] sm:text-xs font-bold text-slate-700 dark:text-slate-200"
             />
           </div>
         </div>

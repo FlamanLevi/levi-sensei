@@ -98,12 +98,12 @@ export const CurtainAnimation: React.FC<CurtainAnimationProps> = ({ phase }) => 
 
             {/* Main Stage Instruction */}
             <h2 className="text-2xl sm:text-4xl font-black text-amber-300 tracking-wide drop-shadow-md mb-1">
-              {t('CLOSE YOUR EYES!', <><ruby>目<rt className="text-[10px] font-normal">め</rt></ruby>を つむってね！</>)}
+              {t('CLOSE YOUR EYES!', <><ruby>目<rt>め</rt></ruby>を つむってね！</>)}
             </h2>
 
             {/* Sub-Instruction */}
             <p className="text-xl sm:text-3xl font-black text-white tracking-wider drop-shadow-lg">
-              {t('NO PEEKING!', <>ぜったい <ruby>見<rt className="text-[10px] font-normal">み</rt></ruby>ちゃダメだよ！</>)}
+              {t('NO PEEKING!', <>ぜったい <ruby>見<rt>み</rt></ruby>ちゃダメだよ！</>)}
             </p>
 
             <div className="mt-3 flex items-center gap-2">

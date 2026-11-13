@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
+import { ensureAnonymousAuth } from '@/services/firebase';
 import { safeSet, safeUpdate, safeSubscribe, getServerTime } from '@/services/rtdbSafe';
 import {
   MatchMode,
@@ -157,6 +158,7 @@ export function useConcentrationTournament({
       setRoomMeta(meta);
       setDesksMap(initialDesks);
 
+      await ensureAnonymousAuth();
       await safeSet(`/concentration_rooms/${generatedCode}`, {
         meta,
         pairs: initialDesks,
@@ -216,6 +218,7 @@ export function useConcentrationTournament({
       }));
 
       if (roomCode) {
+        await ensureAnonymousAuth();
         await safeUpdate(
           `/concentration_rooms/${roomCode}/pairs/${deskId}`,
           nextDeskState

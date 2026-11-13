@@ -379,32 +379,32 @@ export const TimebombManualModal: React.FC<TimebombManualModalProps> = ({ onClos
 
   return (
     <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 overflow-y-auto">
-      <div className="w-full max-w-4xl bg-white dark:bg-slate-900 rounded-3xl border border-slate-300 dark:border-slate-800 shadow-2xl overflow-hidden flex flex-col max-h-[92vh] select-none">
+      <div className="w-full max-w-5xl bg-white dark:bg-slate-900 rounded-3xl border border-slate-300 dark:border-slate-800 shadow-2xl overflow-hidden flex flex-col max-h-[92dvh] select-none">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 shrink-0">
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-2xl bg-amber-500 text-slate-950 font-black">
+        <div className="flex items-center justify-between gap-3 px-6 py-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 shrink-0">
+          <div className="flex items-center gap-3 min-w-0 flex-1">
+            <div className="p-2.5 rounded-2xl bg-amber-500 text-slate-950 font-black shrink-0">
               <BookOpen size={22} />
             </div>
-            <div>
-              <h2 className="text-xl font-black text-slate-900 dark:text-white flex items-center gap-2">
-                <span>{t('Teacher Guide & Activity Rules', '指導案・あそび方説明書')}</span>
-                <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-blue-600 text-white">
+            <div className="min-w-0 flex-1">
+              <h2 className="text-xl font-black text-slate-900 dark:text-white flex items-center gap-2 min-w-0">
+                <span className="truncate">{t('Teacher Guide & Activity Rules', '指導案・あそび方説明書')}</span>
+                <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-blue-600 text-white shrink-0 whitespace-nowrap">
                   A4 Print Ready
                 </span>
               </h2>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
+              <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
                 {t('Hot Potato & Pop Relay • Handout for Homeroom Teacher (HRT)', 'ホットポテト＆ポップ・リレー • 担任の先生用配布資料')}
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 shrink-0 flex-nowrap">
             {/* Language view toggles for modal */}
-            <div className="flex bg-slate-200 dark:bg-slate-800 rounded-xl p-0.5 text-xs font-bold">
+            <div className="flex bg-slate-200 dark:bg-slate-800 rounded-xl p-0.5 text-xs font-bold shrink-0 flex-nowrap">
               <button
                 onClick={() => setManualLang('bilingual')}
-                className={`px-2.5 py-1 rounded-lg transition ${
+                className={`px-2.5 py-1 rounded-lg transition whitespace-nowrap cursor-pointer ${
                   manualLang === 'bilingual' ? 'bg-amber-500 text-slate-950 font-black shadow' : 'text-slate-500 dark:text-slate-400'
                 }`}
               >
@@ -412,7 +412,7 @@ export const TimebombManualModal: React.FC<TimebombManualModalProps> = ({ onClos
               </button>
               <button
                 onClick={() => setManualLang('ja')}
-                className={`px-2.5 py-1 rounded-lg transition ${
+                className={`px-2.5 py-1 rounded-lg transition whitespace-nowrap cursor-pointer ${
                   manualLang === 'ja' ? 'bg-amber-500 text-slate-950 font-black shadow' : 'text-slate-500 dark:text-slate-400'
                 }`}
               >
@@ -420,7 +420,7 @@ export const TimebombManualModal: React.FC<TimebombManualModalProps> = ({ onClos
               </button>
               <button
                 onClick={() => setManualLang('en')}
-                className={`px-2.5 py-1 rounded-lg transition ${
+                className={`px-2.5 py-1 rounded-lg transition whitespace-nowrap cursor-pointer ${
                   manualLang === 'en' ? 'bg-amber-500 text-slate-950 font-black shadow' : 'text-slate-500 dark:text-slate-400'
                 }`}
               >
@@ -430,177 +430,185 @@ export const TimebombManualModal: React.FC<TimebombManualModalProps> = ({ onClos
 
             <button
               onClick={toggleTheme}
-              className="p-2 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition"
+              className="p-2 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition cursor-pointer"
               title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
             >
               {theme === 'dark' ? <Sun size={20} className="text-amber-400" /> : <Moon size={20} className="text-indigo-400" />}
             </button>
             <button
               onClick={onClose}
-              className="p-2 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition"
+              className="p-2 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition cursor-pointer"
             >
               <X size={20} />
             </button>
           </div>
         </div>
 
-        {/* Scrollable Content Body */}
-        <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 bg-slate-100 dark:bg-slate-950/70 text-slate-900 dark:text-slate-100 text-sm">
-          {/* Card 1: Overview & Goal */}
-          <div className="p-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
-            <h3 className="text-base font-black text-amber-500 flex items-center gap-2 mb-2">
-              <Sparkles size={18} />
-              <span>{t('1. Overview & Learning Goals', '1. 活動の概要とねらい')}</span>
-            </h3>
-            {(manualLang === 'bilingual' || manualLang === 'ja') && (
-              <p className="text-slate-700 dark:text-slate-300 leading-relaxed mb-2 font-medium">
-                <strong>「間違えても大丈夫！みんなで楽しく声に出そう！」</strong><br/>
-                画面に表示された英語のイラストや数字を見ながら、柔らかいボールやぬいぐるみを隣の児童へ手渡していくリズムリレーゲームです。
-                単語を発話することで次の児童へパスできるため、自然な発話意欲と積極性を育みます。
-              </p>
-            )}
-            {(manualLang === 'bilingual' || manualLang === 'en') && (
-              <p className="text-slate-600 dark:text-slate-400 text-xs leading-relaxed italic">
-                A lively, low-anxiety speaking relay where students pass an object (soft ball, plush, beanbag) while repeating or producing the vocabulary on screen. Forward progress requires speaking, promoting oral confidence and active listening.
-              </p>
-            )}
-          </div>
-
-          {/* Card 2: Step-by-Step Flow */}
-          <div className="p-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
-            <h3 className="text-base font-black text-indigo-400 flex items-center gap-2 mb-3">
-              <CheckCircle2 size={18} />
-              <span>{t('2. How to Play (4 Steps)', '2. ゲームの進め方（4つのステップ）')}</span>
-            </h3>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60">
-                <div className="font-black text-indigo-600 dark:text-indigo-400 mb-1 flex items-center gap-1.5">
-                  <span className="w-5 h-5 rounded-full bg-indigo-600 text-white text-xs flex items-center justify-center font-bold">1</span>
-                  <span>{t('Start & Formation', 'スタート・隊形')}</span>
-                </div>
-                <p className="text-xs text-slate-600 dark:text-slate-300">
-                  {t(
-                    'Students form a circle or sit at desks in a snake/zigzag pattern. Teacher presses Start, and the first word card appears with native audio.',
-                    '自席の列順（ジグザグ）またはサークル隊形を作ります。Levi-senseiがスタートを押すと、画面に第1問のカードが表示されネイティブ音声が流れます。'
-                  )}
-                </p>
+        {/* Scrollable Content Body - 2-Column Landscape Layout */}
+        <div className="flex-1 overflow-y-auto p-4 sm:p-5 bg-slate-100 dark:bg-slate-950/70 text-slate-900 dark:text-slate-100 text-sm">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+            {/* Left Column: Overview + HRT Collaboration Tips */}
+            <div className="space-y-4">
+              {/* Card 1: Overview & Goal */}
+              <div className="p-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                <h3 className="text-base font-black text-amber-500 flex items-center gap-2 mb-2">
+                  <Sparkles size={18} />
+                  <span>{t('1. Overview & Learning Goals', '1. 活動の概要とねらい')}</span>
+                </h3>
+                {(manualLang === 'bilingual' || manualLang === 'ja') && (
+                  <p className="text-slate-700 dark:text-slate-300 leading-relaxed mb-2 font-medium text-xs sm:text-sm">
+                    <strong>「間違えても大丈夫！みんなで楽しく声に出そう！」</strong><br/>
+                    画面に表示された英語のイラストや数字を見ながら、柔らかいボールやぬいぐるみを隣の児童へ手渡していくリズムリレーゲームです。
+                    単語を発話することで次の児童へパスできるため、自然な発話意欲と積極性を育みます。
+                  </p>
+                )}
+                {(manualLang === 'bilingual' || manualLang === 'en') && (
+                  <p className="text-slate-600 dark:text-slate-400 text-xs leading-relaxed italic">
+                    A lively, low-anxiety speaking relay where students pass an object (soft ball, plush, beanbag) while repeating or producing the vocabulary on screen. Forward progress requires speaking, promoting oral confidence and active listening.
+                  </p>
+                )}
               </div>
 
-              <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60">
-                <div className="font-black text-indigo-600 dark:text-indigo-400 mb-1 flex items-center gap-1.5">
-                  <span className="w-5 h-5 rounded-full bg-indigo-600 text-white text-xs flex items-center justify-center font-bold">2</span>
-                  <span>{t('Say & Pass!', '単語を言ってパス！')}</span>
-                </div>
-                <p className="text-xs text-slate-600 dark:text-slate-300">
-                  {t(
-                    'The student with the ball says the word (e.g. "Red!"). Class choruses together. Student passes the ball to neighbor, and teacher presses Space/Pass for the next word.',
-                    'ボールを持った児童が単語（例:「Red!」）を言い、クラス全員で「Red!」とエコー。言えたら隣の友達へパス！先生がSpaceキーを押すと次の単語が出ます。'
-                  )}
-                </p>
-              </div>
-
-              <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60">
-                <div className="font-black text-amber-500 mb-1 flex items-center gap-1.5">
-                  <span className="w-5 h-5 rounded-full bg-amber-500 text-slate-950 text-xs flex items-center justify-center font-bold">3</span>
-                  <span>{t('Mystery Pop! (Freeze)', 'シークレットタイマーでポップ！')}</span>
-                </div>
-                <p className="text-xs text-slate-600 dark:text-slate-300">
-                  {t(
-                    'At a secret randomized time (12–38s), the music sizzles and the potato gets TOO HOT / balloon POPS! The student holding the ball is the "Star of the Round"!',
-                    'ランダムな秒数（12〜38秒）で突然タイマーが停止し、「アツアツ！🔥」や「パチン！🎈」と爆発！ボールを持っていた児童が「ラッキーな本日の主役」です。'
-                  )}
-                </p>
-              </div>
-
-              <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60">
-                <div className="font-black text-emerald-500 mb-1 flex items-center gap-1.5">
-                  <span className="w-5 h-5 rounded-full bg-emerald-500 text-white text-xs flex items-center justify-center font-bold">4</span>
-                  <span>{t('Fun Mini-Mission', '楽しいミニミッション')}</span>
-                </div>
-                <p className="text-xs text-slate-600 dark:text-slate-300">
-                  {t(
-                    'A safe, energetic mini-mission appears (e.g. "Touch your nose and jump!", "High-five neighbor!"). The whole class cheers and applauds!',
-                    '画面に安全で楽しいミニミッション（鼻をさわってジャンプ、動物の鳴きまね等）が出現。クリアしたらクラス全員で「Good job!」と大拍手！'
-                  )}
-                </p>
+              {/* Card 3: Homeroom Teacher (HRT) Collaboration Tips */}
+              <div className="p-4 bg-amber-500/10 dark:bg-amber-950/30 rounded-2xl border-2 border-amber-400/50 shadow-sm">
+                <h3 className="text-base font-black text-amber-600 dark:text-amber-400 flex items-center gap-2 mb-2">
+                  <Users size={18} />
+                  <span>{t('3. Homeroom Teacher Support Tips', '3. 担任の先生へのお願い・サポートのポイント')}</span>
+                </h3>
+                <ul className="space-y-2 text-xs text-slate-700 dark:text-slate-200">
+                  <li className="flex items-start gap-2">
+                    <span className="font-black text-amber-500 shrink-0">•</span>
+                    <div>
+                      <strong>{t('Passing Order Guidance (Grade 1):', 'パスの方向・順番の誘導（特に小1）:')}</strong>{' '}
+                      {t(
+                        '1st graders sometimes hesitate who to pass to next. Standing near the aisles and gesturing to the next child keeps the relay flowing smoothly.',
+                        '1年生は誰に渡せば良いか迷ってしまうことがあります。通路に立って「次は〇〇さんだよ」とジェスチャーで誘導していただけると、ボールがスムーズに回ります。'
+                      )}
+                    </div>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="font-black text-amber-500 shrink-0">•</span>
+                    <div>
+                      <strong>{t('Choral Repetition:', '周りの児童のリピート支援:')}</strong>{' '}
+                      {t(
+                        'Encourage waiting students to echo the word so everyone stays engaged and practicing simultaneously.',
+                        'ボールを持っていない児童も一緒に声を出せるよう、「せーの、〇〇！」と合図を出していただけると、教室全体の一体感と発話量がグンとアップします。'
+                      )}
+                    </div>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="font-black text-amber-500 shrink-0">•</span>
+                    <div>
+                      <strong>{t('Mission Cheerleading:', 'ミッションの一緒の盛り上げ:')}</strong>{' '}
+                      {t(
+                        'If a child is shy, joining in and doing the mini-mission together with Levi-sensei makes it super fun and 100% anxiety-free.',
+                        'ちょっぴり恥ずかしがり屋のお子さんの場合、担任の先生やLevi-senseiが一緒にミッションを行うことで、安心して笑顔でチャレンジできます。'
+                      )}
+                    </div>
+                  </li>
+                </ul>
               </div>
             </div>
-          </div>
 
-          {/* Card 3: Homeroom Teacher (HRT) Collaboration Tips */}
-          <div className="p-4 bg-amber-500/10 dark:bg-amber-950/30 rounded-2xl border-2 border-amber-400/50 shadow-sm">
-            <h3 className="text-base font-black text-amber-600 dark:text-amber-400 flex items-center gap-2 mb-2">
-              <Users size={18} />
-              <span>{t('3. Homeroom Teacher Support Tips', '3. 担任の先生へのお願い・サポートのポイント')}</span>
-            </h3>
-            <ul className="space-y-2 text-xs sm:text-sm text-slate-700 dark:text-slate-200">
-              <li className="flex items-start gap-2">
-                <span className="font-black text-amber-500 shrink-0">•</span>
-                <div>
-                  <strong>{t('Passing Order Guidance (Grade 1):', 'パスの方向・順番の誘導（特に小1）:')}</strong>{' '}
-                  {t(
-                    '1st graders sometimes hesitate who to pass to next. Standing near the aisles and gesturing to the next child keeps the relay flowing smoothly.',
-                    '1年生は誰に渡せば良いか迷ってしまうことがあります。通路に立って「次は〇〇さんだよ」とジェスチャーで誘導していただけると、ボールがスムーズに回ります。'
-                  )}
-                </div>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="font-black text-amber-500 shrink-0">•</span>
-                <div>
-                  <strong>{t('Choral Repetition:', '周りの児童のリピート支援:')}</strong>{' '}
-                  {t(
-                    'Encourage waiting students to echo the word so everyone stays engaged and practicing simultaneously.',
-                    'ボールを持っていない児童も一緒に声を出せるよう、「せーの、〇〇！」と合図を出していただけると、教室全体の一体感と発話量がグンとアップします。'
-                  )}
-                </div>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="font-black text-amber-500 shrink-0">•</span>
-                <div>
-                  <strong>{t('Mission Cheerleading:', 'ミッションの一緒の盛り上げ:')}</strong>{' '}
-                  {t(
-                    'If a child is shy, joining in and doing the mini-mission together with Levi-sensei makes it super fun and 100% anxiety-free.',
-                    'ちょっぴり恥ずかしがり屋のお子さんの場合、担任の先生やLevi-senseiが一緒にミッションを行うことで、安心して笑顔でチャレンジできます。'
-                  )}
-                </div>
-              </li>
-            </ul>
-          </div>
+            {/* Right Column: Step-by-Step Flow + Keyboard Shortcuts */}
+            <div className="space-y-4">
+              {/* Card 2: Step-by-Step Flow */}
+              <div className="p-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                <h3 className="text-base font-black text-indigo-400 flex items-center gap-2 mb-3">
+                  <CheckCircle2 size={18} />
+                  <span>{t('2. How to Play (4 Steps)', '2. ゲームの進め方（4つのステップ）')}</span>
+                </h3>
 
-          {/* Card 4: Keyboard Shortcuts & Controls */}
-          <div className="p-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
-            <h3 className="text-base font-black text-slate-800 dark:text-slate-200 flex items-center gap-2 mb-2">
-              <Keyboard size={18} />
-              <span>{t('4. Teacher Controls & Keyboard Shortcuts', '4. 画面操作・キーボード操作')}</span>
-            </h3>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
-              <div className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-                <span className="font-black font-mono text-indigo-500 block text-sm">Space / Enter</span>
-                <span className="text-slate-600 dark:text-slate-400 font-bold">{t('Pass / Next Round', 'パス！ / 次のラウンド')}</span>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60">
+                    <div className="font-black text-indigo-600 dark:text-indigo-400 mb-1 flex items-center gap-1.5 text-xs">
+                      <span className="w-5 h-5 rounded-full bg-indigo-600 text-white text-xs flex items-center justify-center font-bold shrink-0">1</span>
+                      <span>{t('Start & Formation', 'スタート・隊形')}</span>
+                    </div>
+                    <p className="text-xs text-slate-600 dark:text-slate-300">
+                      {t(
+                        'Students form a circle or sit at desks in a snake/zigzag pattern. Teacher presses Start, and the first word card appears with native audio.',
+                        '自席の列順（ジグザグ）またはサークル隊形を作ります。Levi-senseiがスタートを押すと、画面に第1問のカードが表示されネイティブ音声が流れます。'
+                      )}
+                    </p>
+                  </div>
+
+                  <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60">
+                    <div className="font-black text-indigo-600 dark:text-indigo-400 mb-1 flex items-center gap-1.5 text-xs">
+                      <span className="w-5 h-5 rounded-full bg-indigo-600 text-white text-xs flex items-center justify-center font-bold shrink-0">2</span>
+                      <span>{t('Say & Pass!', '単語を言ってパス！')}</span>
+                    </div>
+                    <p className="text-xs text-slate-600 dark:text-slate-300">
+                      {t(
+                        'The student with the ball says the word (e.g. "Red!"). Class choruses together. Student passes the ball to neighbor, and teacher presses Space/Pass for the next word.',
+                        'ボールを持った児童が単語（例:「Red!」）を言い、クラス全員で「Red!」とエコー。言えたら隣の友達へパス！先生がSpaceキーを押すと次の単語が出ます。'
+                      )}
+                    </p>
+                  </div>
+
+                  <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60">
+                    <div className="font-black text-amber-500 mb-1 flex items-center gap-1.5 text-xs">
+                      <span className="w-5 h-5 rounded-full bg-amber-500 text-slate-950 text-xs flex items-center justify-center font-bold shrink-0">3</span>
+                      <span>{t('Mystery Pop! (Freeze)', 'シークレットタイマーでポップ！')}</span>
+                    </div>
+                    <p className="text-xs text-slate-600 dark:text-slate-300">
+                      {t(
+                        'At a secret randomized time (12–38s), the music sizzles and the potato gets TOO HOT / balloon POPS! The student holding the ball is the "Star of the Round"!',
+                        'ランダムな秒数（12〜38秒）で突然タイマーが停止し、「アツアツ！🔥」や「パチン！🎈」と爆発！ボールを持っていた児童が「ラッキーな本日の主役」です。'
+                      )}
+                    </p>
+                  </div>
+
+                  <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60">
+                    <div className="font-black text-emerald-500 mb-1 flex items-center gap-1.5 text-xs">
+                      <span className="w-5 h-5 rounded-full bg-emerald-500 text-white text-xs flex items-center justify-center font-bold shrink-0">4</span>
+                      <span>{t('Fun Mini-Mission', '楽しいミニミッション')}</span>
+                    </div>
+                    <p className="text-xs text-slate-600 dark:text-slate-300">
+                      {t(
+                        'A safe, energetic mini-mission appears (e.g. "Touch your nose and jump!", "High-five neighbor!"). The whole class cheers and applauds!',
+                        '画面に安全で楽しいミニミッション（鼻をさわってジャンプ、動物の鳴きまね等）が出現。クリアしたらクラス全員で「Good job!」と大拍手！'
+                      )}
+                    </p>
+                  </div>
+                </div>
               </div>
-              <div className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-                <span className="font-black font-mono text-indigo-500 block text-sm">P Key</span>
-                <span className="text-slate-600 dark:text-slate-400 font-bold">{t('Pause / Resume', '一時停止 / 再開')}</span>
-              </div>
-              <div className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-                <span className="font-black font-mono text-indigo-500 block text-sm">R Key</span>
-                <span className="text-slate-600 dark:text-slate-400 font-bold">{t('Reset to Round 1', 'リセット')}</span>
-              </div>
-              <div className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-                <span className="font-black text-amber-500 block text-sm">🔊 Speaker</span>
-                <span className="text-slate-600 dark:text-slate-400 font-bold">{t('Replay Native Audio', '発音の再確認')}</span>
+
+              {/* Card 4: Keyboard Shortcuts & Controls */}
+              <div className="p-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                <h3 className="text-base font-black text-slate-800 dark:text-slate-200 flex items-center gap-2 mb-2">
+                  <Keyboard size={18} />
+                  <span>{t('4. Teacher Controls & Keyboard Shortcuts', '4. 画面操作・キーボード操作')}</span>
+                </h3>
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <div className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                    <span className="font-black font-mono text-indigo-500 block text-sm">Space / Enter</span>
+                    <span className="text-slate-600 dark:text-slate-400 font-bold">{t('Pass / Next Round', 'パス！ / 次のラウンド')}</span>
+                  </div>
+                  <div className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                    <span className="font-black font-mono text-indigo-500 block text-sm">P Key</span>
+                    <span className="text-slate-600 dark:text-slate-400 font-bold">{t('Pause / Resume', '一時停止 / 再開')}</span>
+                  </div>
+                  <div className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                    <span className="font-black font-mono text-indigo-500 block text-sm">R Key</span>
+                    <span className="text-slate-600 dark:text-slate-400 font-bold">{t('Reset to Round 1', 'リセット')}</span>
+                  </div>
+                  <div className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                    <span className="font-black text-amber-500 block text-sm">🔊 Speaker</span>
+                    <span className="text-slate-600 dark:text-slate-400 font-bold">{t('Replay Native Audio', '発音の再確認')}</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
         {/* Footer Actions */}
-        <div className="flex flex-wrap items-center justify-between gap-3 px-6 py-4 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shrink-0">
-          <div className="flex items-center gap-2">
+        <div className="flex flex-nowrap items-center justify-between gap-3 px-6 py-4 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-x-auto no-scrollbar shrink-0">
+          <div className="flex items-center gap-2 shrink-0">
             <button
               onClick={handleOpenInNewTab}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-bold transition"
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-bold transition whitespace-nowrap cursor-pointer"
               title={t('Open full printable sheet in new tab', '別ウィンドウで開く')}
             >
               <ExternalLink size={14} />
@@ -608,16 +616,16 @@ export const TimebombManualModal: React.FC<TimebombManualModalProps> = ({ onClos
             </button>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 shrink-0 flex-nowrap">
             <button
               onClick={onClose}
-              className="px-4 py-2 rounded-xl text-sm font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+              className="px-4 py-2 rounded-xl text-sm font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition whitespace-nowrap cursor-pointer"
             >
               {t('Close', '閉じる')}
             </button>
             <button
               onClick={handlePrint}
-              className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-sm shadow-lg hover:shadow-xl transition transform active:scale-95 border-2 border-amber-300"
+              className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-sm shadow-lg hover:shadow-xl transition transform active:scale-95 border-2 border-amber-300 whitespace-nowrap cursor-pointer"
             >
               <Printer size={18} />
               <span>{t('🖨️ Print 1-Page A4 Handout', '🖨️ A4指導案・説明書を印刷')}</span>

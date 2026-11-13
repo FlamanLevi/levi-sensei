@@ -61,7 +61,7 @@ export const ClassroomDeskGrid: React.FC<ClassroomDeskGridProps> = ({
     <div className="w-full flex flex-col items-center select-none">
       {/* Blackboard Front Podium Indicator */}
       <div className="w-full max-w-2xl h-5 sm:h-6 mb-3 rounded-xl bg-slate-800 dark:bg-slate-700/80 border border-slate-600 flex items-center justify-center text-[10px] sm:text-xs font-black text-slate-300 tracking-wider shadow-inner">
-        <span>👨‍🏫 <ruby>前<rt className="text-[7px]">まえ</rt></ruby>・<ruby>黒板側<rt className="text-[7px]">こくばんがわ</rt></ruby> (FRONT / TEACHER)</span>
+        <span>👨‍🏫 <ruby>前<rt>まえ</rt></ruby>・<ruby>黒板側<rt>こくばんがわ</rt></ruby> (FRONT / TEACHER)</span>
       </div>
 
       {/* Grid of Desks */}
@@ -109,13 +109,13 @@ export const ClassroomDeskGrid: React.FC<ClassroomDeskGridProps> = ({
                   : isEmpty
                   ? isEditMode
                     ? 'bg-rose-500/10 border-dashed border-rose-400 dark:border-rose-500 text-rose-400 hover:bg-rose-500/20 shadow-xs'
-                    : 'bg-slate-850/30 border-dashed border-slate-400/40 dark:border-slate-700/60 text-slate-500 dark:text-slate-600 opacity-35 shadow-none'
+                    : 'bg-slate-800/30 border-dashed border-slate-400/40 dark:border-slate-700/60 text-slate-500 dark:text-slate-600 opacity-35 shadow-none'
                   : isStanding
                   ? 'bg-emerald-500 hover:bg-emerald-400 border-emerald-600 text-white shadow-md'
                   : 'bg-slate-100 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700/80 text-slate-400 opacity-60 shadow-inner'
               }`}
             >
-              {/* Desk Icon: Standing Kid vs Seated Chair vs Empty Desk */}
+              {/* Desk Icon: Standing Student vs Seated Chair vs Empty Desk */}
               <span className="text-xl sm:text-2xl leading-none">
                 {isTargeted ? '🙋‍♂️' : isEmpty ? '🈳' : isStanding ? '🧍' : '🪑'}
               </span>
@@ -142,7 +142,7 @@ export const ClassroomDeskGrid: React.FC<ClassroomDeskGridProps> = ({
 
       {/* Back of Classroom Indicator */}
       <div className="text-[10px] font-bold text-slate-400 mt-2">
-        <ruby>後<rt className="text-[7px]">うし</rt></ruby>ろ・ロッカー<ruby>側<rt className="text-[7px]">がわ</rt></ruby> (BACK OF CLASSROOM)
+        <ruby>後<rt>うし</rt></ruby>ろ・ロッカー<ruby>側<rt>がわ</rt></ruby> (BACK OF CLASSROOM)
       </div>
     </div>
   );

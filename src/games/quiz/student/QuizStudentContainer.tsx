@@ -234,7 +234,7 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
   if (!playerId || !room) {
     if (loading && pin && playerId) {
       return (
-        <div className="min-h-screen bg-slate-100 dark:bg-slate-950 flex flex-col items-center justify-center p-4">
+        <div className="min-h-dvh bg-slate-100 dark:bg-slate-950 flex flex-col items-center justify-center p-4">
           <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl border-2 border-slate-200 dark:border-slate-800 animate-pulse">
             <div className="text-4xl mb-3">🔄</div>
             <h2 className="text-lg font-black text-slate-900 dark:text-white mb-1">
@@ -281,7 +281,7 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
   // If room was closed by teacher
   if (room.status === 'CLOSED') {
     return (
-      <div className="min-h-screen bg-slate-100 dark:bg-slate-950 flex flex-col items-center justify-center p-4">
+      <div className="min-h-dvh bg-slate-100 dark:bg-slate-950 flex flex-col items-center justify-center p-4">
         <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl border-4 border-slate-200 dark:border-slate-800">
           <div className="w-16 h-16 rounded-2xl bg-amber-100 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center mx-auto mb-4">
             <AlertCircle size={32} />
@@ -357,7 +357,7 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
         ? 'fixed inset-0 z-50 w-screen h-dvh max-h-dvh overflow-hidden p-1 sm:p-2'
         : room.status === 'GAME_OVER'
         ? 'fixed inset-0 z-50 w-screen h-dvh max-h-dvh overflow-y-auto p-2 sm:p-4'
-        : 'min-h-screen p-2 sm:p-4'
+        : 'min-h-dvh p-2 sm:p-4'
     }`}>
       {/* 3D Suzuka Grand Prix Persistent Stage (Hot Pre-Warm in Lobby -> 0ms Instant Race Start!) */}
       {is3DGrandPrixMode &&
@@ -553,13 +553,13 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
             👀
           </div>
           <h2 className="text-3xl sm:text-4xl font-black text-white mb-2 tracking-tight">
-            <ruby>前<rt className="text-[10px] font-normal text-amber-300">まえ</rt></ruby>を<ruby>見<rt className="text-[10px] font-normal text-amber-300">み</rt></ruby>てね！
+            <ruby>前<rt>まえ</rt></ruby>を<ruby>見<rt>み</rt></ruby>てね！
           </h2>
           <p className="text-xl sm:text-2xl font-black text-amber-400 mb-3">
             Eyes Up Front!
           </p>
           <p className="text-base sm:text-lg font-bold text-slate-200 max-w-sm mt-1">
-            <ruby>先生<rt className="text-[9px] font-normal text-slate-400">せんせい</rt></ruby>の<ruby>話<rt className="text-[9px] font-normal text-slate-400">はなし</rt></ruby>を<ruby>聞<rt className="text-[9px] font-normal text-slate-400">き</rt></ruby>こう 👨‍🏫
+            <ruby>先生<rt>せんせい</rt></ruby>の<ruby>話<rt>はなし</rt></ruby>を<ruby>聞<rt>き</rt></ruby>こう 👨‍🏫
           </p>
           <span className="text-xs text-slate-500 font-medium mt-1">
             (Listen to Levi Sensei)

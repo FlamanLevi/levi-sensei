@@ -110,7 +110,7 @@ export const MarbleGameModal: React.FC<MarbleGameModalProps> = ({
       onClick={onClose}
     >
       <div
-        className="bg-white dark:bg-slate-900 w-[98vw] max-w-[1500px] h-[95vh] max-h-[920px] rounded-3xl border-4 sm:border-6 border-amber-400 dark:border-amber-500 shadow-2xl overflow-hidden flex flex-col text-slate-900 dark:text-slate-100 my-auto"
+        className="bg-white dark:bg-slate-900 w-[98vw] max-w-[1500px] h-[95dvh] max-h-[920px] rounded-3xl border-4 sm:border-6 border-amber-400 dark:border-amber-500 shadow-2xl overflow-hidden flex flex-col text-slate-900 dark:text-slate-100 my-auto"
         onClick={e => e.stopPropagation()}
       >
         {/* Top Header */}

@@ -130,14 +130,14 @@ export const ClassroomReportsHub: React.FC = () => {
   if (isDossierViewOpen) {
     const currentGrade = gradeFilter === '5' ? '5' : '6';
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 py-6 px-4 print:p-0 print:bg-white print:min-h-0">
+      <div className="min-h-dvh bg-slate-50 dark:bg-slate-950 py-6 px-4 print:p-0 print:bg-white print:min-h-0">
         <div className="max-w-6xl mx-auto mb-4 print:hidden">
           <button
             onClick={() => setIsDossierViewOpen(false)}
             className="flex items-center gap-1.5 text-xs font-black text-indigo-600 dark:text-indigo-400 hover:underline cursor-pointer"
           >
             <ArrowLeft size={16} />
-            <span>{t("Back to Session History", <><ruby>履歴一覧<rt className="text-[7px]">りれきいちらん</rt></ruby>にもどる</>)}</span>
+            <span>{t("Back to Session History", <><ruby>履歴一覧<rt>りれきいちらん</rt></ruby>にもどる</>)}</span>
           </button>
         </div>
         <GradeDossierView
@@ -152,14 +152,14 @@ export const ClassroomReportsHub: React.FC = () => {
 
   if (activeSession) {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 py-6 px-4 print:p-0 print:bg-white print:min-h-0">
+      <div className="min-h-dvh bg-slate-50 dark:bg-slate-950 py-6 px-4 print:p-0 print:bg-white print:min-h-0">
         <div className="max-w-6xl mx-auto mb-4 print:hidden">
           <button
             onClick={() => setActiveSession(null)}
             className="flex items-center gap-1.5 text-xs font-black text-indigo-600 dark:text-indigo-400 hover:underline cursor-pointer"
           >
             <ArrowLeft size={16} />
-            <span>{t("Back to Session History", <><ruby>履歴一覧<rt className="text-[7px]">りれきいちらん</rt></ruby>にもどる</>)}</span>
+            <span>{t("Back to Session History", <><ruby>履歴一覧<rt>りれきいちらん</rt></ruby>にもどる</>)}</span>
           </button>
         </div>
         <ExecutiveDebriefView
@@ -172,18 +172,18 @@ export const ClassroomReportsHub: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 py-6 px-3 sm:px-6 text-slate-900 dark:text-white font-sans print:bg-white print:p-0 print:min-h-0">
+    <div className="min-h-dvh bg-slate-50 dark:bg-slate-950 py-6 px-3 sm:px-6 text-slate-900 dark:text-white font-sans print:bg-white print:p-0 print:min-h-0">
       <div className="max-w-6xl mx-auto">
         {/* Top Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 pb-4 border-b border-slate-200 dark:border-slate-800">
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-2xl">📊</span>
-              <h1 className="text-2xl sm:text-3xl font-black tracking-tight">
-                {t("Classroom Analytics & Debrief Studio", <><ruby>学級授業分析<rt className="text-[7px]">がっきゅうじゅぎょうぶんせき</rt></ruby> & デブリーフスタジオ</>)}
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6 pb-4 border-b border-slate-200 dark:border-slate-800">
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="text-2xl shrink-0">📊</span>
+              <h1 className="text-2xl sm:text-3xl font-black tracking-tight truncate">
+                {t("Classroom Analytics & Debrief Studio", <><ruby>学級授業分析<rt>がっきゅうじゅぎょうぶんせき</rt></ruby> & デブリーフスタジオ</>)}
               </h1>
             </div>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 truncate">
               {t(
                 "MEXT Formative Learning Evaluation · Psychometrics, Item Difficulty & Cognitive Fluency Reports",
                 "文部科学省 外国語科学習到達度 · 項目応答分析（p値・D値）と認知想起スピードレポート"
@@ -192,14 +192,14 @@ export const ClassroomReportsHub: React.FC = () => {
           </div>
 
           {/* School & Class Selectors */}
-          <div className="flex flex-wrap items-center gap-2 print:hidden">
+          <div className="flex items-center gap-2 flex-nowrap overflow-x-auto no-scrollbar shrink-0 print:hidden">
             {/* School Selector */}
-            <div className="flex items-center p-1 rounded-xl bg-slate-200 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-xs font-black">
+            <div className="flex items-center p-1 rounded-xl bg-slate-200 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-xs font-black shrink-0">
               {(Object.keys(SCHOOL_CONFIGS) as SchoolId[]).map(sId => (
                 <button
                   key={sId}
                   onClick={() => handleSchoolChange(sId)}
-                  className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+                  className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer whitespace-nowrap ${
                     selectedSchool === sId
                       ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-xs'
                       : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
@@ -211,12 +211,12 @@ export const ClassroomReportsHub: React.FC = () => {
             </div>
 
             {/* Grade Filter */}
-            <div className="flex items-center p-1 rounded-xl bg-slate-200 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-xs font-black">
+            <div className="flex items-center p-1 rounded-xl bg-slate-200 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-xs font-black shrink-0">
               {(['6', '5', 'ALL'] as const).map(g => (
                 <button
                   key={g}
                   onClick={() => handleGradeFilterChange(g)}
-                  className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+                  className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer whitespace-nowrap ${
                     gradeFilter === g
                       ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-xs'
                       : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
@@ -228,12 +228,12 @@ export const ClassroomReportsHub: React.FC = () => {
             </div>
 
             {/* Class Buttons Grid */}
-            <div className="flex items-center gap-1 overflow-x-auto max-w-[280px] sm:max-w-none p-1 rounded-xl bg-slate-200 dark:bg-slate-800 border border-slate-300 dark:border-slate-700">
+            <div className="flex items-center gap-1 overflow-x-auto no-scrollbar max-w-[260px] sm:max-w-[300px] p-1 rounded-xl bg-slate-200 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 shrink-0">
               {availableClasses.map(cId => (
                 <button
                   key={cId}
                   onClick={() => handleClassChange(cId)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-black transition-all cursor-pointer whitespace-nowrap ${
+                  className={`px-3 py-1.5 rounded-lg text-xs font-black transition-all cursor-pointer whitespace-nowrap shrink-0 ${
                     selectedClass === cId
                       ? 'bg-indigo-600 text-white shadow-xs'
                       : 'text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-700'
@@ -248,7 +248,7 @@ export const ClassroomReportsHub: React.FC = () => {
             <button
               onClick={handleOpenGradeDossier}
               disabled={loadingDossier}
-              className="px-3 py-2 rounded-xl text-xs font-black text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 shadow-md flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+              className="px-3 py-2 rounded-xl text-xs font-black text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 shadow-md flex items-center gap-1.5 cursor-pointer disabled:opacity-50 shrink-0 whitespace-nowrap"
               title={t("Open full grade multi-class debrief packet", "学年合同デブリーフ・全学級印刷パックを開く")}
             >
               <Layers size={14} className={loadingDossier ? "animate-spin" : ""} />
@@ -263,7 +263,7 @@ export const ClassroomReportsHub: React.FC = () => {
             {/* Print Hub Overview */}
             <button
               onClick={() => window.print()}
-              className="px-3 py-2 rounded-xl text-xs font-black text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 shadow-xs flex items-center gap-1.5 cursor-pointer"
+              className="px-3 py-2 rounded-xl text-xs font-black text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 shadow-xs flex items-center gap-1.5 cursor-pointer shrink-0 whitespace-nowrap"
               title={t("Print this history list", "この一覧を印刷")}
             >
               <Printer size={14} />
@@ -276,8 +276,8 @@ export const ClassroomReportsHub: React.FC = () => {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
           <div className="p-5 rounded-3xl bg-gradient-to-tr from-indigo-500 to-purple-600 text-white shadow-lg">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-black uppercase tracking-wider text-indigo-200">
-                {t("LIFETIME CLASS TOUCHES", <><ruby>累計言語判断数<rt className="text-[7px]">るいけいげんごはんだんすう</rt></ruby></>)}
+              <span className="text-xs font-black uppercase tracking-wider text-indigo-100">
+                {t("LIFETIME CLASS TOUCHES", <><ruby>累計言語判断数<rt>るいけいげんごはんだんすう</rt></ruby></>)}
               </span>
               <Flame size={20} className="text-amber-300 animate-pulse" />
             </div>
@@ -291,8 +291,8 @@ export const ClassroomReportsHub: React.FC = () => {
 
           <div className="p-5 rounded-3xl bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 shadow-sm">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-black uppercase tracking-wider text-slate-400">
-                {t("CUMULATIVE ACCURACY", <><ruby>通算平均正解率<rt className="text-[7px]">つうさんへいきんせいかいりつ</rt></ruby></>)}
+              <span className="text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                {t("CUMULATIVE ACCURACY", <><ruby>通算平均正解率<rt>つうさんへいきんせいかいりつ</rt></ruby></>)}
               </span>
               <CheckCircle2 size={20} className="text-emerald-500" />
             </div>
@@ -306,8 +306,8 @@ export const ClassroomReportsHub: React.FC = () => {
 
           <div className="p-5 rounded-3xl bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 shadow-sm">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-black uppercase tracking-wider text-slate-400">
-                {t("CLASS ROSTER SIZE", <><ruby>学級定員<rt className="text-[7px]">がっきゅうていいん</rt></ruby></>)}
+              <span className="text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                {t("CLASS ROSTER SIZE", <><ruby>学級定員<rt>がっきゅうていいん</rt></ruby></>)}
               </span>
               <Users size={20} className="text-blue-500" />
             </div>
@@ -324,7 +324,7 @@ export const ClassroomReportsHub: React.FC = () => {
         <div>
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-black tracking-tight flex items-center gap-2">
-              <span>{t("Recorded Sessions History", <><ruby>授業記録一覧<rt className="text-[7px]">じゅぎょうきろくいちらん</rt></ruby></>)}</span>
+              <span>{t("Recorded Sessions History", <><ruby>授業記録一覧<rt>じゅぎょうきろくいちらん</rt></ruby></>)}</span>
               <span className="px-2 py-0.5 rounded-full text-xs font-mono bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
                 {sessions.length}
               </span>
@@ -365,7 +365,7 @@ export const ClassroomReportsHub: React.FC = () => {
                     onClick={() => setActiveSession(sess)}
                     className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 hover:border-indigo-500 dark:hover:border-indigo-500 transition-all cursor-pointer shadow-xs hover:shadow-md flex flex-col sm:flex-row sm:items-center justify-between gap-4 group"
                   >
-                    <div className="flex items-center gap-3.5">
+                    <div className="flex items-center gap-3.5 min-w-0">
                       <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-xl shrink-0 ${
                         sess.gamePlayType === 'SPRINT_RACE'
                           ? 'bg-rose-100 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400'
@@ -373,23 +373,23 @@ export const ClassroomReportsHub: React.FC = () => {
                       }`}>
                         {sess.gamePlayType === 'SPRINT_RACE' ? '🏎️' : '🏆'}
                       </div>
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <h3 className="font-black text-base text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <h3 className="font-black text-base text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors truncate">
                             {sess.unit}
                           </h3>
-                          <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                          <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 shrink-0 whitespace-nowrap">
                             {sess.gamePlayType === 'SPRINT_RACE' ? 'F1 Race' : 'Eigo Arena'}
                           </span>
                         </div>
-                        <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500 dark:text-slate-400 mt-1">
-                          <span className="flex items-center gap-1 font-mono">
+                        <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 mt-1 flex-nowrap overflow-x-auto no-scrollbar whitespace-nowrap">
+                          <span className="flex items-center gap-1 font-mono shrink-0">
                             <Clock size={12} /> {dateStr}
                           </span>
-                          <span>·</span>
-                          <span>{sess.activeParticipants} {t("active students", "名参加")}</span>
-                          <span>·</span>
-                          <span className="font-mono font-bold text-slate-700 dark:text-slate-300">
+                          <span className="shrink-0">·</span>
+                          <span className="shrink-0">{sess.activeParticipants} {t("active students", "名参加")}</span>
+                          <span className="shrink-0">·</span>
+                          <span className="font-mono font-bold text-slate-700 dark:text-slate-300 shrink-0">
                             {sess.totalClassTouches} {t("touches", "回解答")}
                           </span>
                         </div>

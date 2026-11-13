@@ -69,11 +69,11 @@ export const MysteryPencilCaseInstructionsModal: React.FC<MysteryPencilCaseInstr
       ),
       badgeJa: 'ステップ 1: 質問 (Question)',
       badgeEn: 'STEP 1: QUESTION NODE',
-      titleJa: <>みんなで<ruby>質問<rt className="text-[7px] sm:text-[9px]">しつもん</rt></ruby>しよう！</>,
+      titleJa: <>みんなで<ruby>質問<rt>しつもん</rt></ruby>しよう！</>,
       titleEn: 'Start with the Question Node!',
       instructionJa: (
         <>
-          テレビの<ruby>一番上<rt className="text-[7px] sm:text-[9px]">いちばんうえ</rt></ruby>にあるカードを<ruby>見<rt className="text-[7px] sm:text-[9px]">み</rt></ruby>て、
+          テレビの<ruby>一番上<rt>いちばんうえ</rt></ruby>にあるカードを<ruby>見<rt>み</rt></ruby>て、
           <br className="hidden sm:inline" />
           <span className="font-black text-blue-600 dark:text-blue-400">「Do you have a (文房具)?」</span>と元気にたずねよう！
           <br />
@@ -139,7 +139,7 @@ export const MysteryPencilCaseInstructionsModal: React.FC<MysteryPencilCaseInstr
       titleEn: 'Tap Any Card to Flip to Japanese!',
       instructionJa: (
         <>
-          カードをクリックするか、<kbd className="px-2 py-0.5 rounded bg-slate-200 dark:bg-slate-700 font-mono text-xs">F</kbd>キーを<ruby>押<rt className="text-[7px] sm:text-[9px]">お</rt></ruby>すと、
+          カードをクリックするか、<kbd className="px-2 py-0.5 rounded bg-slate-200 dark:bg-slate-700 font-mono text-xs">F</kbd>キーを<ruby>押<rt>お</rt></ruby>すと、
           <br className="hidden sm:inline" />
           カードがクルッとひっくり返って<span className="font-bold text-amber-600 dark:text-amber-400">ふりがな付き日本語</span>になるよ！
           <br />
@@ -222,11 +222,11 @@ export const MysteryPencilCaseInstructionsModal: React.FC<MysteryPencilCaseInstr
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-slate-950/85 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="w-[98vw] max-w-[1800px] h-[95vh] max-h-[980px] bg-white dark:bg-slate-900 border-4 sm:border-6 border-amber-400 dark:border-amber-500 rounded-3xl shadow-2xl flex flex-col overflow-hidden text-slate-800 dark:text-slate-100">
+      <div className="w-[98vw] max-w-[1800px] h-[95dvh] max-h-[980px] bg-white dark:bg-slate-900 border-4 sm:border-6 border-amber-400 dark:border-amber-500 rounded-3xl shadow-2xl flex flex-col overflow-hidden text-slate-800 dark:text-slate-100">
         {/* Header Controls */}
-        <div className="flex items-center justify-between px-4 sm:px-6 py-2.5 sm:py-3 border-b-2 border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/60 shrink-0">
-          <div className="flex items-center gap-2 min-w-0">
-            <span className="px-2.5 py-0.5 rounded-full text-[11px] sm:text-xs font-black bg-blue-500 text-white uppercase tracking-wider">
+        <div className="flex items-center justify-between gap-2 px-4 sm:px-6 py-2.5 sm:py-3 border-b-2 border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/60 shrink-0">
+          <div className="flex items-center gap-2 min-w-0 flex-1">
+            <span className="px-2.5 py-0.5 rounded-full text-[11px] sm:text-xs font-black bg-blue-500 text-white uppercase tracking-wider shrink-0 whitespace-nowrap">
               FLOWCHART TUTORIAL
             </span>
             <span className="font-black text-sm sm:text-base text-slate-700 dark:text-slate-200 truncate">
@@ -234,10 +234,10 @@ export const MysteryPencilCaseInstructionsModal: React.FC<MysteryPencilCaseInstr
             </span>
           </div>
 
-          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 flex-nowrap">
             <button
               onClick={toggleLanguage}
-              className="px-2.5 py-1 rounded-xl bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-xs font-black transition cursor-pointer"
+              className="px-2.5 py-1 rounded-xl bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-xs font-black whitespace-nowrap transition cursor-pointer"
             >
               {isJa ? 'EN' : '日'}
             </button>
@@ -267,7 +267,7 @@ export const MysteryPencilCaseInstructionsModal: React.FC<MysteryPencilCaseInstr
             >
               {currentSlide.graphicIcons}
               <span
-                className={`px-3 py-0.5 rounded-full text-xs sm:text-sm font-black ${currentSlide.theme.pillBg} shadow-xs`}
+                className={`px-3 py-0.5 rounded-full text-xs sm:text-sm font-black ${currentSlide.theme.pillBg} shadow-xs whitespace-nowrap`}
               >
                 {isJa ? currentSlide.badgeJa : currentSlide.badgeEn}
               </span>
@@ -304,11 +304,11 @@ export const MysteryPencilCaseInstructionsModal: React.FC<MysteryPencilCaseInstr
         </div>
 
         {/* Footer Navigation */}
-        <div className="px-4 sm:px-6 py-3 border-t-2 border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/60 flex items-center justify-between shrink-0 gap-2">
+        <div className="px-4 sm:px-6 py-3 border-t-2 border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/60 flex flex-nowrap items-center justify-between shrink-0 gap-2 overflow-x-auto no-scrollbar">
           <button
             onClick={() => setCurrentStep(prev => Math.max(0, prev - 1))}
             disabled={currentStep === 0}
-            className={`px-4 sm:px-5 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 transition cursor-pointer ${
+            className={`px-4 sm:px-5 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 transition cursor-pointer shrink-0 whitespace-nowrap ${
               currentStep === 0
                 ? 'opacity-30 cursor-not-allowed bg-slate-200 dark:bg-slate-800 text-slate-400'
                 : 'bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 hover:bg-slate-100 text-slate-700 dark:text-slate-200'
@@ -318,12 +318,12 @@ export const MysteryPencilCaseInstructionsModal: React.FC<MysteryPencilCaseInstr
             <span>{isJa ? '前へ' : 'Back'}</span>
           </button>
 
-          <div className="flex items-center gap-1 sm:gap-2">
+          <div className="flex items-center gap-1 sm:gap-2 shrink-0 flex-nowrap">
             {slides.map((s, idx) => (
               <button
                 key={s.step}
                 onClick={() => setCurrentStep(idx)}
-                className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full text-xs font-black transition cursor-pointer flex items-center justify-center ${
+                className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full text-xs font-black transition cursor-pointer flex items-center justify-center shrink-0 ${
                   currentStep === idx
                     ? 'bg-blue-600 text-white scale-110 shadow-md ring-2 ring-blue-400'
                     : 'bg-slate-200 dark:bg-slate-800 text-slate-500 hover:bg-slate-300 dark:hover:bg-slate-700'
@@ -337,7 +337,7 @@ export const MysteryPencilCaseInstructionsModal: React.FC<MysteryPencilCaseInstr
           {currentStep < slides.length - 1 ? (
             <button
               onClick={() => setCurrentStep(prev => prev + 1)}
-              className="px-5 sm:px-6 py-2 rounded-xl text-xs sm:text-sm font-black bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-1.5 shadow-md transition cursor-pointer"
+              className="px-5 sm:px-6 py-2 rounded-xl text-xs sm:text-sm font-black bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-1.5 shadow-md transition cursor-pointer shrink-0 whitespace-nowrap"
             >
               <span>{isJa ? '次へ' : 'Next'}</span>
               <ChevronRight size={16} />
@@ -348,7 +348,7 @@ export const MysteryPencilCaseInstructionsModal: React.FC<MysteryPencilCaseInstr
                 onStartGame?.();
                 onClose();
               }}
-              className="px-5 sm:px-7 py-2 rounded-xl text-xs sm:text-sm font-black bg-emerald-500 hover:bg-emerald-600 text-white flex items-center gap-1.5 shadow-lg animate-pulse transition cursor-pointer"
+              className="px-5 sm:px-7 py-2 rounded-xl text-xs sm:text-sm font-black bg-emerald-500 hover:bg-emerald-600 text-white flex items-center gap-1.5 shadow-lg animate-pulse transition cursor-pointer shrink-0 whitespace-nowrap"
             >
               <Play size={16} fill="currentColor" />
               <span>{isJa ? 'スタート！' : 'Start Flowchart!'}</span>

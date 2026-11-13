@@ -233,7 +233,7 @@ export const App: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center p-6 text-white text-center">
+      <div className="min-h-dvh bg-slate-900 flex flex-col items-center justify-center p-6 text-white text-center">
         <div className="w-20 h-20 rounded-3xl bg-gradient-to-tr from-blue-500 to-indigo-600 flex items-center justify-center mb-6 shadow-xl animate-bounce">
           <Sparkles size={40} className="text-white" />
         </div>
@@ -270,7 +270,7 @@ export const App: React.FC = () => {
         return (
           <GameContainer 
             title="Eigo Arena (Kahoot Style)" 
-            jaTitle={<>ライブ4<ruby>択<rt className="text-[7px]">たく</rt></ruby>バトル</>}
+            jaTitle={<>ライブ4<ruby>択<rt>たく</rt></ruby>バトル</>}
             onExit={activeGameExitHandler || exitToHub}
             isScrollable={hostQuizStep === 'SETUP' || hostQuizStep === 'LOBBY' || hostQuizStep === 'GAME_OVER'}
           >
@@ -309,7 +309,7 @@ export const App: React.FC = () => {
 
       if (activeGameId === 'whats_missing') {
         return (
-          <GameContainer title="What's Missing?" jaTitle={<><ruby>何<rt className="text-[7px]">なに</rt></ruby>が<ruby>消<rt className="text-[7px]">き</rt></ruby>えた？</>}>
+          <GameContainer title="What's Missing?" jaTitle={<><ruby>何<rt>なに</rt></ruby>が<ruby>消<rt>き</rt></ruby>えた？</>}>
             <WhatsMissingGame onExit={exitToHub} />
           </GameContainer>
         );
@@ -317,7 +317,7 @@ export const App: React.FC = () => {
 
       if (activeGameId === 'concentration') {
         return (
-          <GameContainer title="Concentration (Memory Match)" jaTitle={<><ruby>神経衰弱<rt className="text-[7px]">しんけいすいじゃく</rt></ruby>・えあわせ</>}>
+          <GameContainer title="Concentration (Memory Match)" jaTitle={<><ruby>神経衰弱<rt>しんけいすいじゃく</rt></ruby>・えあわせ</>}>
             <ConcentrationGame onExit={exitToHub} />
           </GameContainer>
         );
@@ -357,7 +357,7 @@ export const App: React.FC = () => {
 
       if (activeGameId === 'live_bingo') {
         return (
-          <GameContainer title="Live Classroom Bingo" jaTitle={<><ruby>電子<rt className="text-[7px]">でんし</rt></ruby>クラスビンゴ</>}>
+          <GameContainer title="Live Classroom Bingo" jaTitle={<><ruby>電子<rt>でんし</rt></ruby>クラスビンゴ</>}>
             <LiveBingoGame onExit={exitToHub} />
           </GameContainer>
         );
@@ -373,7 +373,7 @@ export const App: React.FC = () => {
 
       if (activeGameId === 'clock_master') {
         return (
-          <GameContainer title="What Time Is It?" jaTitle={<><ruby>今<rt className="text-[7px]">いま</rt></ruby><ruby>何時<rt className="text-[7px]">なんじ</rt></ruby>？<ruby>時計<rt className="text-[7px]">とけい</rt></ruby>マスター</>}>
+          <GameContainer title="What Time Is It?" jaTitle={<><ruby>今<rt>いま</rt></ruby><ruby>何時<rt>なんじ</rt></ruby>？<ruby>時計<rt>とけい</rt></ruby>マスター</>}>
             <ClockMasterGame onExit={exitToHub} />
           </GameContainer>
         );
@@ -381,7 +381,7 @@ export const App: React.FC = () => {
 
       if (activeGameId === 'challenge_60s') {
         return (
-          <GameContainer title="60-Second Class Sprint" jaTitle={<>60<ruby>秒<rt className="text-[7px]">びょう</rt></ruby>クラスチャレンジ</>}>
+          <GameContainer title="60-Second Class Sprint" jaTitle={<>60<ruby>秒<rt>びょう</rt></ruby>クラスチャレンジ</>}>
             <Challenge60sGame onExit={exitToHub} />
           </GameContainer>
         );
@@ -389,7 +389,7 @@ export const App: React.FC = () => {
 
       if (activeGameId === 'criss_cross') {
         return (
-          <GameContainer title="Criss-Cross Q&A" jaTitle={<><ruby>全員起立<rt className="text-[7px]">ぜんいんきりつ</rt></ruby>！クリスクロス</>}>
+          <GameContainer title="Criss-Cross Q&A" jaTitle={<><ruby>全員起立<rt>ぜんいんきりつ</rt></ruby>！クリスクロス</>}>
             <CrissCrossGame onExit={exitToHub} />
           </GameContainer>
         );
@@ -415,7 +415,7 @@ export const App: React.FC = () => {
         return (
           <GameContainer 
             title="Mystery Pencil Case" 
-            jaTitle={<><ruby>不思議<rt className="text-[7px]">ふしぎ</rt></ruby>な<ruby>筆箱<rt className="text-[7px]">ふでばこ</rt></ruby></>}
+            jaTitle={<><ruby>不思議<rt>ふしぎ</rt></ruby>な<ruby>筆箱<rt>ふでばこ</rt></ruby></>}
           >
             <MysteryPencilCaseGame onExit={exitToHub} />
           </GameContainer>
@@ -426,7 +426,7 @@ export const App: React.FC = () => {
         return (
           <GameContainer 
             title="Monster Lab & Printable Worksheets" 
-            jaTitle={<><ruby>モンスター<rt className="text-[7px]">もんすたー</rt></ruby>・ラボ & ワークシート<ruby>印刷<rt className="text-[7px]">いんさつ</rt></ruby></>}
+            jaTitle={<><ruby>モンスター<rt>もんすたー</rt></ruby>・ラボ & ワークシート<ruby>印刷<rt>いんさつ</rt></ruby></>}
           >
             <MonsterMakerGame onExit={exitToHub} />
           </GameContainer>
@@ -436,27 +436,31 @@ export const App: React.FC = () => {
       const game = GAME_REGISTRY.find(g => g.id === activeGameId) || GAME_REGISTRY[0];
       return (
         <GameContainer title={game.title} jaTitle={game.jaTitle}>
-          <div className="bg-slate-800 rounded-3xl p-8 max-w-xl text-center border-2 border-slate-700 shadow-2xl">
-            <div className={`w-20 h-20 mx-auto rounded-3xl bg-gradient-to-tr ${game.color} flex items-center justify-center mb-4 shadow-lg`}>
-              <Sparkles size={40} className="text-white animate-spin-slow" />
+          <div className="bg-slate-800 rounded-3xl p-6 sm:p-8 max-w-md md:max-w-3xl w-full border-2 border-slate-700 shadow-2xl grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+            <div className="md:col-span-6 text-center md:text-left">
+              <div className={`w-16 h-16 mx-auto md:mx-0 rounded-2xl bg-gradient-to-tr ${game.color} flex items-center justify-center mb-3 shadow-lg`}>
+                <Sparkles size={32} className="text-white animate-spin-slow" />
+              </div>
+              <h2 className="text-2xl sm:text-3xl font-black mb-1">{game.title}</h2>
+              <p className="text-sm font-black text-amber-400 mb-3">{game.jaTitle}</p>
+              <p className="text-slate-300 text-sm leading-relaxed">
+                Ready to play with <strong>{gradeWords.length} words</strong> from <strong>{activeGrade}</strong>!
+              </p>
             </div>
-            <h2 className="text-3xl font-black mb-1">{game.title}</h2>
-            <p className="text-sm font-black text-amber-400 mb-4">{game.jaTitle}</p>
-            <p className="text-slate-300 text-sm mb-6 leading-relaxed">
-              Ready to play with <strong>{gradeWords.length} words</strong> from <strong>{activeGrade}</strong>!
-            </p>
-            <div className="bg-slate-900/60 p-4 rounded-2xl border border-slate-700 text-xs text-left mb-6 space-y-1">
-              <span className="font-bold text-slate-400 block mb-1">Game Engine Plug-and-Play Slot:</span>
-              <p className="text-emerald-400 font-mono">✓ Shell loaded successfully</p>
-              <p className="text-emerald-400 font-mono">✓ Vocabulary dataset ready ({gradeWords.length} words)</p>
-              <p className="text-emerald-400 font-mono">✓ Grade artwork attached</p>
+            <div className="md:col-span-6 flex flex-col justify-between gap-4">
+              <div className="bg-slate-900/60 p-4 rounded-2xl border border-slate-700 text-xs text-left space-y-1.5">
+                <span className="font-bold text-slate-400 block mb-1">Game Engine Plug-and-Play Slot:</span>
+                <p className="text-emerald-400 font-mono">✓ Shell loaded successfully</p>
+                <p className="text-emerald-400 font-mono">✓ Vocabulary dataset ready ({gradeWords.length} words)</p>
+                <p className="text-emerald-400 font-mono">✓ Grade artwork attached</p>
+              </div>
+              <button
+                onClick={() => alert('Activity engine is ready to load next!')}
+                className={`w-full py-3.5 rounded-2xl font-black text-base text-white bg-gradient-to-r ${game.color} shadow-lg hover:brightness-110 active:scale-95 transition-all cursor-pointer`}
+              >
+                START GAME
+              </button>
             </div>
-            <button
-              onClick={() => alert('Activity engine is ready to load next!')}
-              className={`w-full py-4 rounded-2xl font-black text-base text-white bg-gradient-to-r ${game.color} shadow-lg hover:brightness-110 active:scale-95 transition-all`}
-            >
-              START GAME
-            </button>
           </div>
         </GameContainer>
       );
@@ -470,7 +474,7 @@ export const App: React.FC = () => {
     // Active Dictionary View
     if (activeView === 'DICTIONARY') {
       return (
-        <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col">
+        <div className="min-h-dvh bg-slate-50 dark:bg-slate-950 flex flex-col">
           <Header />
           <GradeSelector />
           <UnitCategoryBar />
@@ -484,7 +488,7 @@ export const App: React.FC = () => {
     // Active Classroom Reports & Debrief Hub View
     if (activeView === 'REPORTS') {
       return (
-        <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col">
+        <div className="min-h-dvh bg-slate-50 dark:bg-slate-950 flex flex-col">
           <Header />
           <main className="flex-1">
             <ClassroomReportsHub />
@@ -512,7 +516,7 @@ export const App: React.FC = () => {
         );
       }
       return (
-        <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col">
+        <div className="min-h-dvh bg-slate-50 dark:bg-slate-950 flex flex-col">
           <Header />
           <main className="flex-1">
             <StudentPortal />
@@ -523,7 +527,7 @@ export const App: React.FC = () => {
 
     // Active Teacher Hub View (Streamlined & Filterable across all 88 activities)
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col">
+      <div className="min-h-dvh bg-slate-50 dark:bg-slate-950 flex flex-col">
         <Header />
         <UnitCategoryBar />
 
@@ -622,7 +626,7 @@ export const App: React.FC = () => {
                 className="px-5 py-2.5 rounded-2xl bg-blue-600 text-white font-bold text-xs hover:bg-blue-700 transition flex items-center gap-2 mx-auto shadow-md"
               >
                 <RefreshCw size={14} />
-                <span>{t("Reset all filters", <>すべてのフィルターを<ruby>解除<rt className="text-[7px]">かいじょ</rt></ruby></>)}</span>
+                <span>{t("Reset all filters", <>すべてのフィルターを<ruby>解除<rt>かいじょ</rt></ruby></>)}</span>
               </button>
             </div>
           )}

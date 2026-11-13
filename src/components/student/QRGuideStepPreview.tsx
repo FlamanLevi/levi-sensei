@@ -17,7 +17,7 @@ export const QRGuideStepPreview: React.FC<QRGuideStepPreviewProps> = ({ step }) 
   // Step 1: Front TV Quiz Host Lobby
   if (step === 1) {
     return (
-      <div className="w-full min-h-screen bg-slate-950 text-white flex flex-col justify-center items-center p-4">
+      <div className="w-full min-h-dvh bg-slate-950 text-white flex flex-col justify-center items-center p-4">
         <div className="w-full max-w-5xl">
           <div className="mb-2 px-4 py-1.5 rounded-full bg-indigo-600/30 border border-indigo-400 text-indigo-300 text-xs font-black inline-flex items-center gap-2">
             <span>📺</span>
@@ -42,7 +42,7 @@ export const QRGuideStepPreview: React.FC<QRGuideStepPreviewProps> = ({ step }) 
   // Step 2: iPad Camera Scanner Viewfinder
   if (step === 2) {
     return (
-      <div className="w-full min-h-screen bg-slate-900 text-white flex flex-col items-center justify-between p-6 relative overflow-hidden select-none">
+      <div className="w-full min-h-dvh bg-slate-900 text-white flex flex-col items-center justify-between p-6 relative overflow-hidden select-none">
         {/* iOS iPad Camera Top Banner */}
         <div className="w-full max-w-lg z-30 pt-2 animate-in slide-in-from-top duration-300">
           <div className="bg-amber-400 text-slate-950 font-black px-4 py-3 rounded-2xl shadow-2xl flex items-center justify-between border-2 border-amber-300 cursor-pointer hover:bg-amber-300 transition-all">
@@ -96,7 +96,7 @@ export const QRGuideStepPreview: React.FC<QRGuideStepPreviewProps> = ({ step }) 
   // Step 3: Quick Join Screen (PIN filled, Tab Highlighted)
   if (step === 3) {
     return (
-      <div className="w-full min-h-screen bg-slate-950 flex flex-col items-center justify-center p-4">
+      <div className="w-full min-h-dvh bg-slate-950 flex flex-col items-center justify-center p-4">
         <QuizStudentJoin
           initialPin="2048"
           onJoin={async () => {}}
@@ -111,7 +111,7 @@ export const QRGuideStepPreview: React.FC<QRGuideStepPreviewProps> = ({ step }) 
   // Step 4: Attendance Number Selected (14番)
   if (step === 4) {
     return (
-      <div className="w-full min-h-screen bg-slate-950 flex flex-col items-center justify-center p-4">
+      <div className="w-full min-h-dvh bg-slate-950 flex flex-col items-center justify-center p-4">
         <div className="w-full max-w-md mx-auto p-4 sm:p-6 select-none animate-in fade-in duration-200">
           <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 shadow-2xl border-4 border-purple-200 dark:border-purple-950/80">
             <div className="text-center mb-6">
@@ -220,7 +220,7 @@ export const QRGuideStepPreview: React.FC<QRGuideStepPreviewProps> = ({ step }) 
     };
 
     return (
-      <div className="w-full min-h-screen bg-slate-950 flex flex-col items-center justify-center p-3 select-none">
+      <div className="w-full min-h-dvh bg-slate-950 flex flex-col items-center justify-center p-3 select-none">
         <div className="w-full max-w-4xl h-[750px] flex flex-col justify-between">
           {/* Top Status */}
           <div className="flex items-center justify-between px-4 py-2 bg-slate-900 rounded-2xl border border-slate-800">
@@ -260,7 +260,7 @@ export const QRGuideStepPreview: React.FC<QRGuideStepPreviewProps> = ({ step }) 
     };
 
     return (
-      <div className="w-full min-h-screen bg-slate-950 flex flex-col items-center justify-center p-4">
+      <div className="w-full min-h-dvh bg-slate-950 flex flex-col items-center justify-center p-4">
         <QuizStudentGameOver
           player={mockPlayer}
           allPlayers={{ p14: mockPlayer }}
@@ -292,7 +292,7 @@ export const QRGuideStepPreview: React.FC<QRGuideStepPreviewProps> = ({ step }) 
     };
 
     return (
-      <div className="w-full min-h-screen bg-slate-950 flex flex-col items-center justify-center p-4">
+      <div className="w-full min-h-dvh bg-slate-950 flex flex-col items-center justify-center p-4">
         <EditProfileModal
           isOpen={true}
           profile={sampleProfile}
@@ -305,7 +305,7 @@ export const QRGuideStepPreview: React.FC<QRGuideStepPreviewProps> = ({ step }) 
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center p-8">
+    <div className="min-h-dvh bg-slate-950 text-white flex items-center justify-center p-8">
       <p>Invalid step: {step}</p>
     </div>
   );

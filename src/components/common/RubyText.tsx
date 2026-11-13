@@ -14,7 +14,7 @@ export const RubyText: React.FC<RubyTextProps> = ({
   kanji,
   hiragana,
   className = 'text-base font-bold text-slate-800 dark:text-slate-100',
-  rtClassName = 'text-[11px] font-medium text-sky-600 dark:text-sky-400 select-none'
+  rtClassName = 'select-none'
 }) => {
   if (ruby && ruby.length > 0) {
     return (

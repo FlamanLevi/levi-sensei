@@ -343,25 +343,25 @@ export const PixelRevealGame: React.FC<PixelRevealGameProps> = ({ onExit }) => {
       {/* ====================================================================
           1. TOP CONTROLS & SETTINGS TOOLBAR
          ==================================================================== */}
-      <div className="flex flex-wrap items-center justify-between bg-white dark:bg-slate-800 p-2.5 sm:p-3.5 rounded-3xl shadow border-2 border-amber-200 dark:border-slate-700 gap-2 sm:gap-3">
+      <div className="flex flex-nowrap overflow-x-auto no-scrollbar whitespace-nowrap items-center justify-between bg-white dark:bg-slate-800 p-2 sm:p-3 rounded-3xl shadow border-2 border-amber-200 dark:border-slate-700 gap-2 sm:gap-3 shrink-0">
         {/* Left: Back & Title */}
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0 min-w-0">
           {onExit && (
             <button
               onClick={onExit}
-              className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-amber-50 text-slate-600 dark:text-slate-300 font-bold text-xs sm:text-sm flex items-center gap-1 transition"
+              className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-amber-50 text-slate-600 dark:text-slate-300 font-bold text-xs sm:text-sm flex items-center gap-1 transition shrink-0 cursor-pointer"
             >
               <ChevronLeft size={16} />
               <span>もどる</span>
             </button>
           )}
-          <div>
-            <h2 className="text-lg sm:text-2xl font-black text-amber-900 dark:text-amber-300 tracking-wide flex items-center gap-2">
+          <div className="min-w-0">
+            <h2 className="text-base sm:text-xl font-black text-amber-900 dark:text-amber-300 tracking-wide flex items-center gap-2 whitespace-nowrap">
               <span>✨ ピクセル・リビール</span>
-              <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900/50 text-amber-800 dark:text-amber-300">
+              <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900/50 text-amber-800 dark:text-amber-300 shrink-0">
                 Pixel Reveal
               </span>
-              <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-indigo-100 text-indigo-900 dark:bg-indigo-950/60 dark:text-indigo-300">
+              <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-indigo-100 text-indigo-900 dark:bg-indigo-950/60 dark:text-indigo-300 shrink-0">
                 Round {roundNumber}
               </span>
             </h2>
@@ -369,12 +369,12 @@ export const PixelRevealGame: React.FC<PixelRevealGameProps> = ({ onExit }) => {
         </div>
 
         {/* Center: Mystery Modes & Settings */}
-        <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+        <div className="flex flex-nowrap items-center gap-1.5 sm:gap-2 shrink-0">
           {/* Visual Mode Selector */}
-          <div className="flex bg-amber-50 dark:bg-slate-900 p-1 rounded-2xl border border-amber-200 dark:border-slate-700 text-xs">
+          <div className="flex flex-nowrap shrink-0 bg-amber-50 dark:bg-slate-900 p-1 rounded-2xl border border-amber-200 dark:border-slate-700 text-xs">
             <button
               onClick={() => { setVisualMode('MOSAIC'); resetRound(); }}
-              className={`px-3 py-1 rounded-xl font-black transition ${
+              className={`px-3 py-1 rounded-xl font-black transition shrink-0 ${
                 visualMode === 'MOSAIC' ? 'bg-amber-500 text-white shadow' : 'text-amber-900 dark:text-amber-300'
               }`}
             >
@@ -382,7 +382,7 @@ export const PixelRevealGame: React.FC<PixelRevealGameProps> = ({ onExit }) => {
             </button>
             <button
               onClick={() => { setVisualMode('TILES'); resetRound(); }}
-              className={`px-3 py-1 rounded-xl font-black transition ${
+              className={`px-3 py-1 rounded-xl font-black transition shrink-0 ${
                 visualMode === 'TILES' ? 'bg-amber-500 text-white shadow' : 'text-amber-900 dark:text-amber-300'
               }`}
             >
@@ -390,7 +390,7 @@ export const PixelRevealGame: React.FC<PixelRevealGameProps> = ({ onExit }) => {
             </button>
             <button
               onClick={() => { setVisualMode('ZOOM'); resetRound(); }}
-              className={`px-3 py-1 rounded-xl font-black transition ${
+              className={`px-3 py-1 rounded-xl font-black transition shrink-0 ${
                 visualMode === 'ZOOM' ? 'bg-amber-500 text-white shadow' : 'text-amber-900 dark:text-amber-300'
               }`}
             >
@@ -398,7 +398,7 @@ export const PixelRevealGame: React.FC<PixelRevealGameProps> = ({ onExit }) => {
             </button>
             <button
               onClick={() => { setVisualMode('SILHOUETTE'); resetRound(); }}
-              className={`px-3 py-1 rounded-xl font-black transition ${
+              className={`px-3 py-1 rounded-xl font-black transition shrink-0 ${
                 visualMode === 'SILHOUETTE' ? 'bg-amber-500 text-white shadow' : 'text-amber-900 dark:text-amber-300'
               }`}
             >
@@ -410,30 +410,30 @@ export const PixelRevealGame: React.FC<PixelRevealGameProps> = ({ onExit }) => {
           {visualMode === 'TILES' && (
             <>
               {/* Grid Size */}
-              <div className="flex bg-slate-100 dark:bg-slate-900 p-1 rounded-2xl text-xs border border-slate-200 dark:border-slate-700">
+              <div className="flex flex-nowrap shrink-0 bg-slate-100 dark:bg-slate-900 p-1 rounded-2xl text-xs border border-slate-200 dark:border-slate-700">
                 <button
                   onClick={() => { setGridSize('2x2'); resetRound(); }}
-                  className={`px-2 py-1 rounded-xl font-black transition ${
-                    gridSize === '2x2' ? 'bg-white dark:bg-slate-700 shadow text-slate-800 dark:text-white' : 'text-slate-500'
+                  className={`px-2 py-1 rounded-xl font-black transition shrink-0 ${
+                    gridSize === '2x2' ? 'bg-white dark:bg-slate-700 shadow text-slate-800 dark:text-white' : 'text-slate-600 dark:text-slate-300'
                   }`}
                 >
-                  2×2 (4<ruby>枚<rt className="text-[7px]">まい</rt></ruby>)
+                  2×2 (4<ruby>枚<rt>まい</rt></ruby>)
                 </button>
                 <button
                   onClick={() => { setGridSize('3x3'); resetRound(); }}
-                  className={`px-2 py-1 rounded-xl font-black transition ${
-                    gridSize === '3x3' ? 'bg-white dark:bg-slate-700 shadow text-slate-800 dark:text-white' : 'text-slate-500'
+                  className={`px-2 py-1 rounded-xl font-black transition shrink-0 ${
+                    gridSize === '3x3' ? 'bg-white dark:bg-slate-700 shadow text-slate-800 dark:text-white' : 'text-slate-600 dark:text-slate-300'
                   }`}
                 >
-                  3×3 (9<ruby>枚<rt className="text-[7px]">まい</rt></ruby>)
+                  3×3 (9<ruby>枚<rt>まい</rt></ruby>)
                 </button>
                 <button
                   onClick={() => { setGridSize('4x4'); resetRound(); }}
-                  className={`px-2 py-1 rounded-xl font-black transition ${
-                    gridSize === '4x4' ? 'bg-white dark:bg-slate-700 shadow text-slate-800 dark:text-white' : 'text-slate-500'
+                  className={`px-2 py-1 rounded-xl font-black transition shrink-0 ${
+                    gridSize === '4x4' ? 'bg-white dark:bg-slate-700 shadow text-slate-800 dark:text-white' : 'text-slate-600 dark:text-slate-300'
                   }`}
                 >
-                  4×4 (16<ruby>枚<rt className="text-[7px]">まい</rt></ruby>)
+                  4×4 (16<ruby>枚<rt>まい</rt></ruby>)
                 </button>
               </div>
 
@@ -441,14 +441,14 @@ export const PixelRevealGame: React.FC<PixelRevealGameProps> = ({ onExit }) => {
               {gridSize !== '2x2' && (
                 <button
                   onClick={() => setIsLockCenter(l => !l)}
-                  className={`px-2.5 py-1 rounded-xl text-xs font-black transition shadow-xs ${
+                  className={`px-2.5 py-1 rounded-xl text-xs font-black transition shadow-xs shrink-0 ${
                     isLockCenter
                       ? 'bg-amber-600 text-white ring-2 ring-amber-400'
-                      : 'bg-slate-100 dark:bg-slate-700 text-slate-500'
+                      : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300'
                   }`}
                   title="Lock center tiles until outer tiles are peeled"
                 >
-                  <span>{isLockCenter ? <>🔒 <ruby>真<rt className="text-[7px]">ま</rt></ruby>ん<ruby>中<rt className="text-[7px]">なか</rt></ruby>ロック: ON</> : <>🔓 <ruby>真<rt className="text-[7px]">ま</rt></ruby>ん<ruby>中<rt className="text-[7px]">なか</rt></ruby>ロック: OFF</>}</span>
+                  <span>{isLockCenter ? <>🔒 <ruby>真<rt>ま</rt></ruby>ん<ruby>中<rt>なか</rt></ruby>ロック: ON</> : <>🔓 <ruby>真<rt>ま</rt></ruby>ん<ruby>中<rt>なか</rt></ruby>ロック: OFF</>}</span>
                 </button>
               )}
             </>
@@ -456,7 +456,7 @@ export const PixelRevealGame: React.FC<PixelRevealGameProps> = ({ onExit }) => {
 
           {/* Auto-Sharpen Timer Selector (in Mosaic mode) */}
           {visualMode === 'MOSAIC' && (
-            <div className="flex items-center gap-1 bg-amber-50 dark:bg-slate-900 p-1 rounded-2xl border border-amber-200 dark:border-slate-700 text-xs">
+            <div className="flex flex-nowrap shrink-0 items-center gap-1 bg-amber-50 dark:bg-slate-900 p-1 rounded-2xl border border-amber-200 dark:border-slate-700 text-xs">
               <span className="text-[10px] font-black text-amber-800 dark:text-amber-300 px-1">
                 ⏱️ タイマー:
               </span>
@@ -467,7 +467,7 @@ export const PixelRevealGame: React.FC<PixelRevealGameProps> = ({ onExit }) => {
                     setTimerOption(sec as TimerOption);
                     resetRound();
                   }}
-                  className={`px-2 py-1 rounded-xl font-black transition ${
+                  className={`px-2 py-1 rounded-xl font-black transition shrink-0 ${
                     timerOption === sec ? 'bg-amber-500 text-white shadow' : 'text-amber-900 dark:text-amber-300'
                   }`}
                 >
@@ -480,7 +480,7 @@ export const PixelRevealGame: React.FC<PixelRevealGameProps> = ({ onExit }) => {
           {/* Reset button */}
           <button
             onClick={resetRound}
-            className="p-2 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-200 transition"
+            className="p-2 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-200 transition shrink-0"
             title="Reset round"
           >
             <RotateCcw size={16} />
@@ -510,13 +510,13 @@ export const PixelRevealGame: React.FC<PixelRevealGameProps> = ({ onExit }) => {
       {/* ====================================================================
           3. BOTTOM ACTIONS & TEAM SCOREBOARD
          ==================================================================== */}
-      <div className="w-full bg-white/95 dark:bg-slate-800/95 backdrop-blur p-3 rounded-2xl border-2 border-amber-200 dark:border-slate-700 shadow flex flex-wrap items-center justify-between gap-3">
+      <div className="w-full bg-white/95 dark:bg-slate-800/95 backdrop-blur p-2.5 sm:p-3 rounded-2xl border-2 border-amber-200 dark:border-slate-700 shadow flex flex-nowrap overflow-x-auto no-scrollbar whitespace-nowrap items-center justify-between gap-2 sm:gap-3 shrink-0">
         {/* Left: Mode Action Buttons */}
-        <div className="flex items-center gap-2 flex-wrap">
+        <div className="flex items-center gap-2 flex-nowrap shrink-0">
           {visualMode === 'MOSAIC' && !isRevealed && (
             <button
               onClick={advancePhase}
-              className="px-5 py-2 bg-amber-500 hover:bg-amber-600 active:scale-95 text-white font-black text-xs sm:text-sm rounded-xl shadow transition"
+              className="px-4 sm:px-5 py-2 bg-amber-500 hover:bg-amber-600 active:scale-95 text-white font-black text-xs sm:text-sm rounded-xl shadow transition shrink-0"
             >
               🌫️ ピントを合わせる ({mosaicStage + 1}/3) [Space]
             </button>
@@ -525,7 +525,7 @@ export const PixelRevealGame: React.FC<PixelRevealGameProps> = ({ onExit }) => {
           {visualMode === 'ZOOM' && !isRevealed && (
             <button
               onClick={advancePhase}
-              className="px-5 py-2 bg-amber-500 hover:bg-amber-600 active:scale-95 text-white font-black text-xs sm:text-sm rounded-xl shadow transition"
+              className="px-4 sm:px-5 py-2 bg-amber-500 hover:bg-amber-600 active:scale-95 text-white font-black text-xs sm:text-sm rounded-xl shadow transition shrink-0"
             >
               🔍 ズームアウト ({zoomStage + 1}/3) [Space]
             </button>
@@ -534,15 +534,15 @@ export const PixelRevealGame: React.FC<PixelRevealGameProps> = ({ onExit }) => {
           {visualMode === 'SILHOUETTE' && !isRevealed && (
             <button
               onClick={advancePhase}
-              className="px-5 py-2 bg-amber-500 hover:bg-amber-600 active:scale-95 text-white font-black text-xs sm:text-sm rounded-xl shadow transition"
+              className="px-4 sm:px-5 py-2 bg-amber-500 hover:bg-amber-600 active:scale-95 text-white font-black text-xs sm:text-sm rounded-xl shadow transition shrink-0"
             >
               🎨 色のヒント ({silhouetteStage + 1}/2) [Space]
             </button>
           )}
 
           {visualMode === 'TILES' && !isRevealed && (
-            <span className="text-xs font-bold text-slate-500 dark:text-slate-400 px-2">
-              番号キー (1〜9) またはパネルをタップしてオープン！
+            <span className="text-xs font-bold text-slate-600 dark:text-slate-300 px-2 shrink-0">
+              番号キー (1〜9) またはパネルをタップ！
             </span>
           )}
 
@@ -550,14 +550,14 @@ export const PixelRevealGame: React.FC<PixelRevealGameProps> = ({ onExit }) => {
           {!isRevealed ? (
             <button
               onClick={triggerReveal}
-              className="px-6 py-2 bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-white font-black text-xs sm:text-sm rounded-xl shadow-lg transition"
+              className="px-5 py-2 bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-white font-black text-xs sm:text-sm rounded-xl shadow-lg transition shrink-0"
             >
               👁️ 正解をオープン！
             </button>
           ) : (
             <button
               onClick={advancePhase}
-              className="px-6 py-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:brightness-110 active:scale-95 text-white font-black text-xs sm:text-sm rounded-xl shadow-lg flex items-center gap-1.5 transition"
+              className="px-5 py-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:brightness-110 active:scale-95 text-white font-black text-xs sm:text-sm rounded-xl shadow-lg flex items-center gap-1.5 transition shrink-0"
             >
               <span>つぎの問題 → (Space)</span>
               <ChevronRight size={16} />
@@ -566,31 +566,31 @@ export const PixelRevealGame: React.FC<PixelRevealGameProps> = ({ onExit }) => {
         </div>
 
         {/* Right: Team Scores */}
-        <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+        <div className="flex items-center gap-1.5 sm:gap-2 flex-nowrap shrink-0">
           <button
             onClick={() => adjustTeamScore('red', 100)}
-            className="flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold bg-red-50 dark:bg-red-950/40 border border-red-300 dark:border-red-600 hover:scale-105 active:scale-95 transition"
+            className="flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold bg-red-50 dark:bg-red-950/40 border border-red-300 dark:border-red-600 hover:scale-105 active:scale-95 transition shrink-0"
           >
             <span>🔴 赤:</span>
             <span className="font-black text-red-700 dark:text-red-400 text-sm sm:text-base">{teamScores.red}</span>
           </button>
           <button
             onClick={() => adjustTeamScore('blue', 100)}
-            className="flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold bg-blue-50 dark:bg-blue-950/40 border border-blue-300 dark:border-blue-600 hover:scale-105 active:scale-95 transition"
+            className="flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold bg-blue-50 dark:bg-blue-950/40 border border-blue-300 dark:border-blue-600 hover:scale-105 active:scale-95 transition shrink-0"
           >
             <span>🔵 青:</span>
             <span className="font-black text-blue-700 dark:text-blue-400 text-sm sm:text-base">{teamScores.blue}</span>
           </button>
           <button
             onClick={() => adjustTeamScore('yellow', 100)}
-            className="flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-600 hover:scale-105 active:scale-95 transition"
+            className="flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-600 hover:scale-105 active:scale-95 transition shrink-0"
           >
             <span>🟡 黄:</span>
             <span className="font-black text-amber-700 dark:text-amber-400 text-sm sm:text-base">{teamScores.yellow}</span>
           </button>
           <button
             onClick={() => adjustTeamScore('green', 100)}
-            className="flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-600 hover:scale-105 active:scale-95 transition"
+            className="flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-600 hover:scale-105 active:scale-95 transition shrink-0"
           >
             <span>🟢 緑:</span>
             <span className="font-black text-emerald-700 dark:text-emerald-400 text-sm sm:text-base">{teamScores.green}</span>

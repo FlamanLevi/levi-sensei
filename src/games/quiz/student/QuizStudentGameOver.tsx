@@ -452,9 +452,9 @@ export const QuizStudentGameOver: React.FC<QuizStudentGameOverProps> = ({
 
   return (
     <div className="w-full max-w-6xl h-full min-h-0 mx-auto select-none flex flex-col justify-center animate-in zoom-in-95 duration-200">
-      <div className="w-full h-full min-h-0 grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-4 items-stretch">
-        {/* LEFT COLUMN (lg:col-span-5): Pinned Player Summary, Stats, Rewards & Actions */}
-        <div className="lg:col-span-5 bg-white dark:bg-slate-900 rounded-3xl p-4 sm:p-5 shadow-2xl border-4 border-slate-100 dark:border-slate-800 flex flex-col justify-between min-h-0 lg:overflow-y-auto text-center">
+      <div className="w-full h-full min-h-0 grid grid-cols-1 md:grid-cols-12 gap-3 sm:gap-4 items-stretch">
+        {/* LEFT COLUMN (md:col-span-5): Pinned Player Summary, Stats, Rewards & Actions */}
+        <div className="md:col-span-5 bg-white dark:bg-slate-900 rounded-3xl p-4 sm:p-5 shadow-2xl border-4 border-slate-100 dark:border-slate-800 flex flex-col justify-between min-h-0 md:overflow-y-auto text-center">
           <div className="flex flex-col items-center">
             {/* Compact Header Row: Avatar + Rank + Title */}
             <div className="flex items-center justify-center gap-3.5 mb-2.5">
@@ -664,8 +664,8 @@ export const QuizStudentGameOver: React.FC<QuizStudentGameOverProps> = ({
           </div>
         </div>
 
-        {/* RIGHT COLUMN (lg:col-span-7): Scrollable Special Awards, Badge Level-Ups, Seat Claim & Class Standings */}
-        <div className="lg:col-span-7 bg-white dark:bg-slate-900 rounded-3xl p-4 sm:p-5 shadow-2xl border-4 border-slate-100 dark:border-slate-800 flex flex-col gap-3.5 min-h-0 lg:h-full lg:overflow-y-auto">
+        {/* RIGHT COLUMN (md:col-span-7): Scrollable Special Awards, Badge Level-Ups, Seat Claim & Class Standings */}
+        <div className="md:col-span-7 bg-white dark:bg-slate-900 rounded-3xl p-4 sm:p-5 shadow-2xl border-4 border-slate-100 dark:border-slate-800 flex flex-col gap-3.5 min-h-0 md:h-full md:overflow-y-auto">
           {/* SECTION B: NOT Bound Yet - Claim Your Number & iPad Binding (6-column landscape grid per GEMINI.md Rule 13) */}
           {!savedProfile && recordRoster && classId && (
             <div className="w-full p-3.5 rounded-2xl bg-indigo-50/80 dark:bg-indigo-950/40 border-2 border-indigo-200 dark:border-indigo-900 text-left shrink-0">

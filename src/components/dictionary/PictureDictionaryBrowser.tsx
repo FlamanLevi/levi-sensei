@@ -260,8 +260,8 @@ export const PictureDictionaryBrowser: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 py-6">
       {/* Header bar */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-4">
-        <div className="flex items-center gap-3">
+      <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 mb-4">
+        <div className="flex items-center gap-3 min-w-0 flex-1">
           <button
             onClick={() => { playPop(); exitToHub(); }}
             className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 flex items-center justify-center transition-colors border border-slate-200/50 dark:border-slate-700 shrink-0"
@@ -269,46 +269,46 @@ export const PictureDictionaryBrowser: React.FC = () => {
           >
             <ArrowLeft size={20} />
           </button>
-          <div>
-            <h2 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
-              <span>{t("Interactive Picture Dictionary", "ピクチャーディクショナリー")}</span>
-              <span className="text-xs font-black px-2.5 py-0.5 rounded-full bg-blue-100 dark:bg-blue-950/70 text-blue-700 dark:text-blue-300">
+          <div className="min-w-0 flex-1">
+            <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-2 min-w-0">
+              <span className="truncate">{t("Interactive Picture Dictionary", "ピクチャーディクショナリー")}</span>
+              <span className="text-xs font-black px-2.5 py-0.5 rounded-full bg-blue-100 dark:bg-blue-950/70 text-blue-700 dark:text-blue-300 shrink-0 whitespace-nowrap">
                 {activeGrade}
               </span>
             </h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+            <p className="text-xs text-slate-500 dark:text-slate-400 font-medium truncate">
               {t("Tap any flashcard to enlarge, hear native pronunciation, and practice target sentences.", "カードをタップして拡大、ネイティブ音声と目標対話を練習しよう！")}
             </p>
           </div>
         </div>
 
         {/* Search Input, Random Button, & Conditional 4-Line Handwriting Toggle */}
-        <div className="flex items-center gap-2 w-full md:w-auto flex-wrap sm:flex-nowrap">
+        <div className="flex items-center gap-2 w-full md:w-auto shrink-0 flex-nowrap">
           {/* Upper Grade ONLY (G5 & G6): 4-Line Handwriting Guide Toggle */}
           {isUpperGrade && (
-            <div className="flex bg-slate-100 dark:bg-slate-800 p-0.5 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-black shrink-0">
+            <div className="flex bg-slate-100 dark:bg-slate-800 p-0.5 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-black shrink-0 flex-nowrap">
               <button
                 onClick={() => { playPop(); setCardVariant('illust'); }}
-                className={`px-2.5 py-1.5 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer ${
+                className={`px-2.5 py-1.5 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
                   cardVariant === 'illust'
                     ? 'bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-xs'
                     : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
                 }`}
                 title={t("Display standard illustration artwork", "イラスト表示")}
               >
-                <ImageIcon size={13} />
+                <ImageIcon size={13} className="shrink-0" />
                 <span>{t("Illustration", "イラスト")}</span>
               </button>
               <button
                 onClick={() => { playPop(); setCardVariant('full'); }}
-                className={`px-2.5 py-1.5 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer ${
+                className={`px-2.5 py-1.5 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
                   cardVariant === 'full'
                     ? 'bg-white dark:bg-slate-700 text-purple-600 dark:text-purple-300 shadow-xs'
                     : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
                 }`}
                 title={t("Display 4-line handwriting notebook guide", "4線ノート学習用表示")}
               >
-                <PenTool size={13} />
+                <PenTool size={13} className="shrink-0" />
                 <span>{t("✍️ 4-Line Guide", "✍️ 4線ガイド")}</span>
               </button>
             </div>
@@ -318,15 +318,15 @@ export const PictureDictionaryBrowser: React.FC = () => {
           <button
             onClick={handlePickRandomWord}
             disabled={filteredWords.length === 0}
-            className="px-3 py-2 rounded-xl bg-purple-100 dark:bg-purple-950/70 hover:bg-purple-200 dark:hover:bg-purple-900/80 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800 text-xs font-black flex items-center gap-1.5 transition-all cursor-pointer shadow-xs active:scale-95 shrink-0"
+            className="px-3 py-2 rounded-xl bg-purple-100 dark:bg-purple-950/70 hover:bg-purple-200 dark:hover:bg-purple-900/80 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800 text-xs font-black flex items-center gap-1.5 transition-all cursor-pointer shadow-xs active:scale-95 shrink-0 whitespace-nowrap"
             title={t("Pick a random word from this unit (R)", "ランダムに単語を選ぶ (R)")}
           >
-            <Shuffle size={14} />
+            <Shuffle size={14} className="shrink-0" />
             <span className="hidden sm:inline">{t("Random", "ランダム")}</span>
           </button>
 
           {/* Search box with '/' shortcut indicator */}
-          <div className="relative flex-1 md:w-60">
+          <div className="relative flex-1 min-w-[140px] md:w-52 lg:w-60">
             <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
             <input
               ref={searchInputRef}
@@ -349,11 +349,11 @@ export const PictureDictionaryBrowser: React.FC = () => {
       </div>
 
       {/* A-Z Quick Jump Alphabet Ribbon & Word Count Badge */}
-      <div className="flex items-center justify-between gap-2 mb-5 flex-wrap sm:flex-nowrap">
-        <div className="flex items-center gap-1 overflow-x-auto py-1 max-w-full no-scrollbar">
+      <div className="flex items-center justify-between gap-2 mb-5 flex-nowrap">
+        <div className="flex items-center gap-1 overflow-x-auto py-1 flex-1 min-w-0 no-scrollbar">
           <button
             onClick={() => { playPop(); setSelectedLetter('ALL'); }}
-            className={`px-3 py-1 rounded-xl text-xs font-black transition-all shrink-0 cursor-pointer ${
+            className={`px-3 py-1 rounded-xl text-xs font-black transition-all shrink-0 cursor-pointer whitespace-nowrap ${
               selectedLetter === 'ALL'
                 ? 'bg-blue-600 text-white shadow-xs'
                 : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700'
@@ -382,7 +382,7 @@ export const PictureDictionaryBrowser: React.FC = () => {
         </div>
 
         {/* Counter Badge */}
-        <span className="text-xs font-mono font-bold text-slate-400 dark:text-slate-500 shrink-0 ml-auto px-2 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60">
+        <span className="text-xs font-mono font-bold text-slate-500 dark:text-slate-400 shrink-0 px-2 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60 whitespace-nowrap">
           {displayedWords.length} / {filteredWords.length} {t("words", "語")}
         </span>
       </div>
@@ -433,7 +433,7 @@ export const PictureDictionaryBrowser: React.FC = () => {
                   kanji={word.ja_kanji}
                   hiragana={word.ja_hiragana}
                   className="text-xs font-bold text-slate-600 dark:text-slate-300"
-                  rtClassName="text-[10px] font-bold text-sky-600 dark:text-sky-400 select-none"
+                  rtClassName="font-bold text-sky-600 dark:text-sky-400 select-none"
                 />
               </div>
             </div>
@@ -448,7 +448,7 @@ export const PictureDictionaryBrowser: React.FC = () => {
           onClick={() => setSelectedWord(null)}
         >
           <div
-            className="bg-white dark:bg-slate-900 rounded-3xl w-[98vw] max-w-[1600px] h-[94vh] max-h-[960px] shadow-2xl border-2 sm:border-4 border-slate-200 dark:border-slate-800 flex flex-col overflow-hidden text-slate-900 dark:text-slate-100 relative animate-in zoom-in-95 duration-150"
+            className="bg-white dark:bg-slate-900 rounded-3xl w-[98vw] max-w-[1600px] h-[94dvh] max-h-[960px] shadow-2xl border-2 sm:border-4 border-slate-200 dark:border-slate-800 flex flex-col overflow-hidden text-slate-900 dark:text-slate-100 relative animate-in zoom-in-95 duration-150"
             onClick={e => e.stopPropagation()}
           >
             {/* Modal Top Bar */}
@@ -614,7 +614,7 @@ export const PictureDictionaryBrowser: React.FC = () => {
                         kanji={selectedWord.ja_kanji}
                         hiragana={selectedWord.ja_hiragana}
                         className="text-xl sm:text-2xl font-black text-slate-800 dark:text-slate-100"
-                        rtClassName="text-[11px] font-bold text-sky-600 dark:text-sky-400"
+                        rtClassName="font-bold text-sky-600 dark:text-sky-400"
                       />
                     </div>
                   </div>
@@ -763,7 +763,7 @@ export const PictureDictionaryBrowser: React.FC = () => {
                 </button>
 
                 {/* Giant Mounted Physical Flashcard Canvas */}
-                <div className="w-full h-full max-w-4xl max-h-[80vh] rounded-3xl bg-white dark:bg-slate-900 border-2 sm:border-4 border-slate-200 dark:border-slate-700/80 shadow-2xl p-4 sm:p-6 lg:p-8 flex items-center justify-center overflow-hidden transition-all">
+                <div className="w-full h-full max-w-4xl max-h-[80dvh] rounded-3xl bg-white dark:bg-slate-900 border-2 sm:border-4 border-slate-200 dark:border-slate-700/80 shadow-2xl p-4 sm:p-6 lg:p-8 flex items-center justify-center overflow-hidden transition-all">
                   <CardDisplay
                     word={selectedWord}
                     grade={activeGrade}

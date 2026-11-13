@@ -99,15 +99,15 @@ export const UnitPickerModal: React.FC = () => {
       onClick={() => setIsUnitModalOpen(false)}
     >
       <div
-        className="bg-white dark:bg-slate-900 rounded-3xl p-4 sm:p-6 max-w-3xl lg:max-w-4xl w-full shadow-2xl border-2 border-slate-200 dark:border-slate-800 flex flex-col max-h-[85vh] text-slate-900 dark:text-slate-100 my-auto"
+        className="bg-white dark:bg-slate-900 rounded-3xl p-4 sm:p-6 max-w-4xl w-full shadow-2xl border-2 border-slate-200 dark:border-slate-800 flex flex-col max-h-[88dvh] text-slate-900 dark:text-slate-100 my-auto"
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800 mb-3 gap-3 shrink-0">
-          <div>
-            <h3 className="text-xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
-              <span>{t("Textbook Units & Chapters", "教科書の単元・チャプター")}</span>
-              <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-blue-100 dark:bg-blue-950/70 text-blue-700 dark:text-blue-300">
+        <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800 mb-3 gap-3 shrink-0">
+          <div className="min-w-0 flex-1">
+            <h3 className="text-lg sm:text-xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-2 min-w-0">
+              <span className="truncate">{t("Textbook Units & Chapters", "教科書の単元・チャプター")}</span>
+              <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-blue-100 dark:bg-blue-950/70 text-blue-700 dark:text-blue-300 shrink-0 whitespace-nowrap">
                 {activeGrade === 'ES_G3'
                   ? `小3 • Let's Try 1`
                   : activeGrade === 'ES_G4'
@@ -119,20 +119,20 @@ export const UnitPickerModal: React.FC = () => {
                   : activeGrade}
               </span>
             </h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+            <p className="text-xs text-slate-500 dark:text-slate-400 font-medium truncate">
               {isMultiSelectMode
                 ? t("Check multiple units below to bundle them for review and games.", "チェックを入れて複数の単元をバンドル（まとめて選択）できます。")
                 : t("Select any textbook unit to instantly filter vocabulary cards and games.", "単元を選択して単語カードやゲームを絞り込みます。")}
             </p>
           </div>
-          <div className="flex items-center gap-2 self-end sm:self-auto">
+          <div className="flex items-center gap-2 shrink-0 flex-nowrap">
             <button
               type="button"
               onClick={() => {
                 playPop();
                 setIsMultiSelectMode(prev => !prev);
               }}
-              className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer border ${
+              className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer border whitespace-nowrap shrink-0 ${
                 isMultiSelectMode
                   ? 'bg-blue-600 text-white border-blue-500 shadow-xs'
                   : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'
@@ -144,7 +144,7 @@ export const UnitPickerModal: React.FC = () => {
             </button>
             <button
               onClick={() => setIsUnitModalOpen(false)}
-              className="w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center transition-colors cursor-pointer"
+              className="w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center transition-colors cursor-pointer shrink-0"
             >
               <X size={18} />
             </button>
@@ -167,10 +167,10 @@ export const UnitPickerModal: React.FC = () => {
                 }`}
               >
                 <div className="flex items-center gap-1 leading-none">
-                  <span className="text-sm sm:text-base font-black">
+                  <span className="text-sm sm:text-base font-black whitespace-nowrap">
                     {language === 'ja' ? tab.ja : tab.en}
                   </span>
-                  <span className={`text-[10px] hidden sm:inline-block font-bold ${
+                  <span className={`text-[10px] hidden sm:inline-block font-bold whitespace-nowrap ${
                     isSelected ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400 dark:text-slate-500'
                   }`}>
                     {language === 'ja' ? tab.badgeJa : tab.badgeEn}
@@ -208,13 +208,13 @@ export const UnitPickerModal: React.FC = () => {
                 : 'border-slate-200 dark:border-slate-800 hover:border-blue-300 dark:hover:border-blue-700 bg-white dark:bg-slate-800/60'
             }`}
           >
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center font-black text-xs">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center font-black text-xs shrink-0">
                 ALL
               </div>
-              <div>
-                <h4 className="text-sm font-black">{t(`All Units (${gradeWords.length} Words)`, `すべての単元 (${gradeWords.length}語)`)}</h4>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
+              <div className="min-w-0">
+                <h4 className="text-sm font-black truncate">{t(`All Units (${gradeWords.length} Words)`, `すべての単元 (${gradeWords.length}語)`)}</h4>
+                <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
                   {isMultiSelectMode
                     ? (tempSelectedUnits.length === availableUnits.length ? t("Click to clear all selections", "クリックで全選択を解除") : t("Click to select all units", "クリックで全単元を選択"))
                     : t(`Show complete curriculum word list for ${activeGrade}`, `${activeGrade}のすべての単語リストを表示`)}
@@ -222,7 +222,7 @@ export const UnitPickerModal: React.FC = () => {
               </div>
             </div>
             {isMultiSelectMode ? (
-              <div className={`w-5 h-5 rounded-md border flex items-center justify-center transition-all ${
+              <div className={`w-5 h-5 rounded-md border flex items-center justify-center transition-all shrink-0 ${
                 tempSelectedUnits.length === availableUnits.length
                   ? 'bg-blue-600 border-blue-600 text-white'
                   : 'border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800'
@@ -230,7 +230,7 @@ export const UnitPickerModal: React.FC = () => {
                 {tempSelectedUnits.length === availableUnits.length && <Check size={14} />}
               </div>
             ) : (
-              activeUnit === 'ALL' && selectedUnits.length === 0 && <Check size={18} className="text-blue-600 dark:text-blue-400" />
+              activeUnit === 'ALL' && selectedUnits.length === 0 && <Check size={18} className="text-blue-600 dark:text-blue-400 shrink-0" />
             )}
           </div>
 
@@ -292,8 +292,8 @@ export const UnitPickerModal: React.FC = () => {
 
         {/* Bottom Multi-Select Action Bar */}
         {isMultiSelectMode && (
-          <div className="pt-3.5 mt-3 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
-            <div className="flex items-center gap-2">
+          <div className="pt-3.5 mt-3 border-t border-slate-200 dark:border-slate-800 flex flex-nowrap items-center justify-between gap-3 overflow-x-auto no-scrollbar shrink-0">
+            <div className="flex items-center gap-2 shrink-0 whitespace-nowrap">
               <span className="text-xs font-black text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/60 px-3 py-1 rounded-xl border border-indigo-200 dark:border-indigo-800">
                 {tempSelectedUnits.length} {t("units selected", "単元選択中")} (
                 {gradeWords.filter(w => {
@@ -317,11 +317,11 @@ export const UnitPickerModal: React.FC = () => {
                 {t("Clear", "解除")}
               </button>
             </div>
-            <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+            <div className="flex items-center gap-2 shrink-0 flex-nowrap">
               <button
                 type="button"
                 onClick={() => setIsUnitModalOpen(false)}
-                className="flex-1 sm:flex-none px-4 py-2 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer transition-colors"
+                className="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer transition-colors whitespace-nowrap"
               >
                 {t("Cancel", "キャンセル")}
               </button>
@@ -329,7 +329,7 @@ export const UnitPickerModal: React.FC = () => {
                 type="button"
                 disabled={tempSelectedUnits.length === 0}
                 onClick={handleApplyMultiBundle}
-                className="flex-1 sm:flex-none px-5 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 active:scale-95 text-white text-xs font-black shadow-md transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1.5"
+                className="px-5 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 active:scale-95 text-white text-xs font-black shadow-md transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1.5 whitespace-nowrap"
               >
                 <span>{t("Apply Bundle", "この組み合わせで決定")}</span>
                 <span>

@@ -469,11 +469,11 @@ export const WhatsMissingGame: React.FC<WhatsMissingGameProps> = ({ onExit }) =>
       : 'grid-cols-2 sm:grid-cols-4 grid-rows-4 sm:grid-rows-2';
 
   return (
-    <div className="w-full h-full max-w-[96vw] max-h-[94vh] mx-auto flex-1 min-h-0 flex flex-col justify-between space-y-1.5 sm:space-y-2 select-none relative overflow-hidden font-['UD_Digi_Kyokasho_NP-R','UD_Digi_Kyokasho_NK-R','BIZ_UDPGothic','Zen_Maru_Gothic',sans-serif]">
+    <div className="w-full h-full max-w-[96vw] max-h-[94dvh] mx-auto flex-1 min-h-0 flex flex-col justify-between space-y-1.5 sm:space-y-2 select-none relative overflow-hidden font-['UD_Digi_Kyokasho_NP-R','UD_Digi_Kyokasho_NK-R','BIZ_UDPGothic','Zen_Maru_Gothic',sans-serif]">
       {/* --- SLIM HEADER BAR: Round, Single Clear Prompt, Live Student Ticker & Settings --- */}
-      <div className="bg-slate-800/90 dark:bg-slate-900/90 rounded-2xl px-3 py-1.5 sm:px-4 sm:py-2 border border-slate-700 shadow-md flex items-center justify-between gap-2 shrink-0 z-20">
+      <div className="bg-slate-800/90 dark:bg-slate-900/90 rounded-2xl px-3 py-1.5 sm:px-4 sm:py-2 border border-slate-700 shadow-md flex flex-nowrap items-center justify-between gap-2 shrink-0 z-20 overflow-x-auto no-scrollbar whitespace-nowrap">
         {/* Left: Round, Room PIN & Unit */}
-        <div className="flex items-center gap-2 shrink-0 min-w-0">
+        <div className="flex items-center gap-2 shrink-0">
           <span className="px-2.5 py-0.5 rounded-xl bg-gradient-to-r from-teal-500 to-emerald-600 text-white font-black text-xs sm:text-sm tracking-wide shadow-xs">
             {t(`Round ${roundNumber}`, <>ラウンド {roundNumber}</>)}
           </span>
@@ -491,9 +491,9 @@ export const WhatsMissingGame: React.FC<WhatsMissingGameProps> = ({ onExit }) =>
         </div>
 
         {/* Center: Consolidated Single-Line High-Impact Stage Prompt + Live Student Participation Pill */}
-        <div className="flex-1 min-w-0 text-center px-1 flex items-center justify-center gap-2">
+        <div className="flex-1 min-w-0 text-center px-1 flex items-center justify-center gap-2 overflow-x-auto no-scrollbar">
           {phase === 'STUDY' && (
-            <div className="flex items-center justify-center gap-1.5 sm:gap-2">
+            <div className="flex flex-nowrap items-center justify-center gap-1.5 sm:gap-2 min-w-0">
               <span className="text-base sm:text-xl animate-bounce shrink-0">👀</span>
               <h3 className="text-sm sm:text-base md:text-lg font-black text-white tracking-tight truncate">
                 {t(
@@ -513,15 +513,15 @@ export const WhatsMissingGame: React.FC<WhatsMissingGameProps> = ({ onExit }) =>
           {(phase === 'CURTAIN_CLOSING' ||
             phase === 'CURTAIN_CLOSED' ||
             phase === 'CURTAIN_OPENING') && (
-            <div className="flex items-center justify-center gap-2">
-              <span className="text-base sm:text-lg">🙈</span>
-              <h3 className="text-sm sm:text-base md:text-lg font-black text-amber-300 tracking-tight">
+            <div className="flex flex-nowrap items-center justify-center gap-2 min-w-0">
+              <span className="text-base sm:text-lg shrink-0">🙈</span>
+              <h3 className="text-sm sm:text-base md:text-lg font-black text-amber-300 tracking-tight truncate">
                 {t(
                   'Shh! Curtains closing...',
                   <>
                     カーテンが
                     <ruby>
-                      閉<rt className="text-[7px]">し</rt>
+                      閉<rt>し</rt>
                     </ruby>
                     まるよ！
                   </>
@@ -531,7 +531,7 @@ export const WhatsMissingGame: React.FC<WhatsMissingGameProps> = ({ onExit }) =>
           )}
 
           {phase === 'GUESSING' && (
-            <div className="flex items-center justify-center gap-2 animate-fadeIn flex-wrap">
+            <div className="flex flex-nowrap items-center justify-center gap-2 animate-fadeIn min-w-0">
               <span className="text-base sm:text-xl animate-bounce shrink-0">❓</span>
               <h3 className="text-sm sm:text-base md:text-lg font-black text-amber-300 tracking-tight truncate">
                 {missingCount === 2
@@ -545,7 +545,7 @@ export const WhatsMissingGame: React.FC<WhatsMissingGameProps> = ({ onExit }) =>
                     )}
               </h3>
               {/* Live Student Answer Participation Pill */}
-              <div className="px-2.5 py-0.5 rounded-full bg-indigo-600/90 border border-indigo-300 text-white text-xs font-black flex items-center gap-1.5 shadow-sm">
+              <div className="px-2.5 py-0.5 rounded-full bg-indigo-600/90 border border-indigo-300 text-white text-xs font-black flex items-center gap-1.5 shadow-sm shrink-0">
                 <Users size={12} />
                 <span>
                   ⚡ {aggregatedStats.totalSubmissions} / {targetClassSize}{' '}
@@ -556,14 +556,14 @@ export const WhatsMissingGame: React.FC<WhatsMissingGameProps> = ({ onExit }) =>
           )}
 
           {phase === 'REVEALED' && (
-            <div className="flex items-center justify-center gap-2 animate-fadeIn flex-wrap">
+            <div className="flex flex-nowrap items-center justify-center gap-2 animate-fadeIn min-w-0">
               <span className="text-base sm:text-xl shrink-0">🎉</span>
               <h3 className="text-sm sm:text-base md:text-lg font-black text-emerald-400 tracking-tight truncate">
                 {t(
                   'Correct! Repeat after Levi-sensei!',
                   <>
                     <ruby>
-                      正解<rt className="text-[8px] font-normal">せいかい</rt>
+                      正解<rt>せいかい</rt>
                     </ruby>
                     ！ みんなでリピートしよう！
                   </>
@@ -571,7 +571,7 @@ export const WhatsMissingGame: React.FC<WhatsMissingGameProps> = ({ onExit }) =>
               </h3>
               {aggregatedStats.fastestNickname &&
                 aggregatedStats.fastestTimeMs !== null && (
-                  <span className="px-2.5 py-0.5 rounded-full bg-amber-400 text-slate-950 font-black text-xs flex items-center gap-1 shadow">
+                  <span className="px-2.5 py-0.5 rounded-full bg-amber-400 text-slate-950 font-black text-xs flex items-center gap-1 shadow shrink-0">
                     <Zap size={12} />
                     <span>
                       {t(
@@ -590,20 +590,20 @@ export const WhatsMissingGame: React.FC<WhatsMissingGameProps> = ({ onExit }) =>
         </div>
 
         {/* Right: Quick Status Badges, Student Pad Preview, New Cards, and Settings */}
-        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 flex-nowrap">
           <button
             onClick={() => {
               playPop();
               setViewMode('STUDENT_PAD');
             }}
-            className="px-2 py-1 rounded-xl bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-200 border border-indigo-400/40 font-black text-xs flex items-center gap-1 cursor-pointer transition active:scale-95"
+            className="px-2 py-1 rounded-xl bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-200 border border-indigo-400/40 font-black text-xs flex items-center gap-1 cursor-pointer transition active:scale-95 shrink-0"
             title={t('Open Student iPad Voting Pad', '児童用iPad投票画面を開く')}
           >
             <Smartphone size={13} />
             <span className="hidden md:inline">{t('Student Pad', '児童画面')}</span>
           </button>
 
-          <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-slate-900/80 text-teal-300 border border-slate-700 text-[11px] font-black">
+          <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-slate-900/80 text-teal-300 border border-slate-700 text-[11px] font-black shrink-0">
             <Layers size={11} />
             <span>
               {cardCount}{' '}
@@ -611,7 +611,7 @@ export const WhatsMissingGame: React.FC<WhatsMissingGameProps> = ({ onExit }) =>
                 'Cards',
                 <>
                   <ruby>
-                    枚<rt className="text-[7px]">まい</rt>
+                    枚<rt>まい</rt>
                   </ruby>
                 </>
               )}
@@ -623,7 +623,7 @@ export const WhatsMissingGame: React.FC<WhatsMissingGameProps> = ({ onExit }) =>
               playPop();
               handleNextRound();
             }}
-            className="px-2.5 py-1 rounded-xl bg-slate-700/80 hover:bg-slate-600 text-white font-bold text-xs flex items-center gap-1 transition-all cursor-pointer active:scale-95 border border-slate-600"
+            className="px-2.5 py-1 rounded-xl bg-slate-700/80 hover:bg-slate-600 text-white font-bold text-xs flex items-center gap-1 transition-all cursor-pointer active:scale-95 border border-slate-600 shrink-0"
             title={t('Deal new cards (N)', '新しいカードを配り直す (N)')}
           >
             <RotateCcw size={13} />
@@ -632,7 +632,7 @@ export const WhatsMissingGame: React.FC<WhatsMissingGameProps> = ({ onExit }) =>
                 'New',
                 <>
                   <ruby>
-                    新<rt className="text-[7px]">あたら</rt>
+                    新<rt>あたら</rt>
                   </ruby>
                   しい
                 </>
@@ -645,7 +645,7 @@ export const WhatsMissingGame: React.FC<WhatsMissingGameProps> = ({ onExit }) =>
               playPop();
               setIsSettingsOpen(true);
             }}
-            className="px-2.5 py-1 rounded-xl bg-teal-500/20 hover:bg-teal-500/30 text-teal-300 border border-teal-500/50 font-black text-xs flex items-center gap-1.5 transition-all cursor-pointer active:scale-95 shadow-xs"
+            className="px-2.5 py-1 rounded-xl bg-teal-500/20 hover:bg-teal-500/30 text-teal-300 border border-teal-500/50 font-black text-xs flex items-center gap-1.5 transition-all cursor-pointer active:scale-95 shadow-xs shrink-0"
             title={t('Game Settings', 'ゲーム設定')}
           >
             <Settings size={14} className="text-teal-300" />
@@ -654,7 +654,7 @@ export const WhatsMissingGame: React.FC<WhatsMissingGameProps> = ({ onExit }) =>
                 'Settings',
                 <>
                   <ruby>
-                    設定<rt className="text-[7px]">せってい</rt>
+                    設定<rt>せってい</rt>
                   </ruby>
                 </>
               )}
@@ -716,12 +716,12 @@ export const WhatsMissingGame: React.FC<WhatsMissingGameProps> = ({ onExit }) =>
                       {t(
                         'Class Vote Breakdown',
                         <>
-                          クラス<ruby>回答分布<rt className="text-[7px]">かいとうぶんぷ</rt></ruby>
+                          クラス<ruby>回答分布<rt>かいとうぶんぷ</rt></ruby>
                         </>
                       )}
                     </span>
                   </span>
-                  <span className="text-[10px] font-bold text-slate-400">
+                  <span className="text-[10px] font-bold text-slate-300">
                     {aggregatedStats.totalSubmissions} {t('votes', '票')}
                   </span>
                 </div>
@@ -784,7 +784,7 @@ export const WhatsMissingGame: React.FC<WhatsMissingGameProps> = ({ onExit }) =>
                   <>
                     カーテンを
                     <ruby>
-                      閉<rt className="text-[7px]">し</rt>
+                      閉<rt>し</rt>
                     </ruby>
                     める！
                   </>
@@ -810,7 +810,7 @@ export const WhatsMissingGame: React.FC<WhatsMissingGameProps> = ({ onExit }) =>
                       <>
                         1まい
                         <ruby>
-                          目<rt className="text-[7px]">め</rt>
+                          目<rt>め</rt>
                         </ruby>
                         オープン
                       </>
@@ -821,7 +821,7 @@ export const WhatsMissingGame: React.FC<WhatsMissingGameProps> = ({ onExit }) =>
                       <>
                         2まい
                         <ruby>
-                          目<rt className="text-[7px]">め</rt>
+                          目<rt>め</rt>
                         </ruby>
                         オープン
                       </>

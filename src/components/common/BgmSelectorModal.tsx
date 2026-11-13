@@ -216,7 +216,7 @@ export const BgmSelectorModal: React.FC<BgmSelectorModalProps> = ({
       onClick={handleCancel}
     >
       <div 
-        className="w-[98vw] max-w-[1800px] h-[96vh] max-h-[1020px] bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border-2 sm:border-4 border-slate-200 dark:border-slate-800 flex flex-col overflow-hidden text-slate-800 dark:text-slate-100"
+        className="w-[98vw] max-w-[1800px] h-[96dvh] max-h-[1020px] bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border-2 sm:border-4 border-slate-200 dark:border-slate-800 flex flex-col overflow-hidden text-slate-800 dark:text-slate-100"
         onClick={(e) => e.stopPropagation()}
       >
         {/* =========================================================================
@@ -233,7 +233,7 @@ export const BgmSelectorModal: React.FC<BgmSelectorModalProps> = ({
                 {t(
                   'Classroom Sound Packs',
                   <>
-                    <ruby>教室<rt className="text-[8px] font-normal text-slate-400">きょうしつ</rt></ruby>のBGMサウンドパック
+                    <ruby>教室<rt>きょうしつ</rt></ruby>のBGMサウンドパック
                   </>
                 )}
               </h2>
@@ -241,7 +241,7 @@ export const BgmSelectorModal: React.FC<BgmSelectorModalProps> = ({
                 {t(
                   'Curated high-energy soundtracks for quizzes, sprint races & boss battles',
                   <>
-                    クイズやレース、ボス<ruby>戦<rt className="text-[7px] font-normal text-slate-400">せん</rt></ruby>を<ruby>盛<rt className="text-[7px] font-normal text-slate-400">も</rt></ruby>り<ruby>上<rt className="text-[7px] font-normal text-slate-400">あ</rt></ruby>げるBGMパック
+                    クイズやレース、ボス<ruby>戦<rt>せん</rt></ruby>を<ruby>盛<rt>も</rt></ruby>り<ruby>上<rt>あ</rt></ruby>げるBGMパック
                   </>
                 )}
               </p>
@@ -322,14 +322,14 @@ export const BgmSelectorModal: React.FC<BgmSelectorModalProps> = ({
                   {stagedPack.icon}
                 </span>
                 <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-1.5 flex-wrap mb-0.5">
-                    <span className="text-[10px] font-black uppercase tracking-wider text-slate-400">
+                  <div className="flex items-center gap-1.5 flex-nowrap overflow-x-auto no-scrollbar mb-0.5">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap shrink-0">
                       {t('Selected Pack', '選択中')}
                     </span>
-                    <span className={`text-[9px] font-black px-1.5 py-0.2 rounded-md ${stagedPack.badgeColor}`}>
+                    <span className={`text-[9px] font-black px-1.5 py-0.2 rounded-md whitespace-nowrap shrink-0 ${stagedPack.badgeColor}`}>
                       {stagedPack.franchise}
                     </span>
-                    <span className="text-[9px] font-black px-1.5 py-0.2 rounded-md bg-slate-200/80 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+                    <span className="text-[9px] font-black px-1.5 py-0.2 rounded-md bg-slate-200/80 dark:bg-slate-800 text-slate-700 dark:text-slate-300 whitespace-nowrap shrink-0">
                       {stagedPack.tracks.length} {t('Tracks', '曲')}
                     </span>
                   </div>
@@ -345,15 +345,15 @@ export const BgmSelectorModal: React.FC<BgmSelectorModalProps> = ({
 
             {/* Pack Selector Header */}
             <div className="shrink-0 flex items-center justify-between">
-              <h4 className="text-xs font-black uppercase tracking-wider text-slate-400">
+              <h4 className="text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">
                 {t(
                   'Available Sound Packs',
                   <>
-                    <ruby>選択可能<rt className="text-[7px] font-normal text-slate-400">せんたくかのう</rt></ruby>なパック
+                    <ruby>選択可能<rt>せんたくかのう</rt></ruby>なパック
                   </>
                 )}
               </h4>
-              <span className="text-[10px] text-slate-400 font-bold">
+              <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold">
                 {SOUND_PACK_LIST.length} {t('Packs', '種類')}
               </span>
             </div>
@@ -380,11 +380,11 @@ export const BgmSelectorModal: React.FC<BgmSelectorModalProps> = ({
                     <div className="flex items-center gap-2.5 min-w-0 flex-1">
                       <span className="text-2xl shrink-0">{pack.icon}</span>
                       <div className="min-w-0 flex-1">
-                        <div className="flex items-center gap-1.5 flex-wrap">
-                          <h5 className="text-xs font-black text-slate-900 dark:text-white leading-tight truncate">
+                        <div className="flex items-center gap-1.5 flex-nowrap min-w-0">
+                          <h5 className="text-xs font-black text-slate-900 dark:text-white leading-tight truncate min-w-0">
                             {textLang === 'ja' ? pack.nameJa : pack.name}
                           </h5>
-                          <span className="text-[9px] font-bold px-1 py-0.2 rounded bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400">
+                          <span className="text-[9px] font-bold px-1 py-0.2 rounded bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 shrink-0 whitespace-nowrap">
                             {pack.tracks.length} {t('tracks', '曲')}
                           </span>
                         </div>

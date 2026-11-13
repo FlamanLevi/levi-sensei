@@ -410,7 +410,7 @@ export const LiveBingoGame: React.FC<LiveBingoGameProps> = ({ onExit }) => {
       <CinemaStageLayout
         sidebarWidth="compact"
         onExit={onExit}
-        title={t('Classroom Bingo', <><ruby>英語<rt className="text-[7px]">えいご</rt></ruby>ビンゴ</>)}
+        title={t('Classroom Bingo', <><ruby>英語<rt>えいご</rt></ruby>ビンゴ</>)}
         badge={
           <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-indigo-500 text-white">
             STREAM A
@@ -445,7 +445,7 @@ export const LiveBingoGame: React.FC<LiveBingoGameProps> = ({ onExit }) => {
                   key={currentWord.id || currentWord.english}
                   src={cardImage}
                   alt={currentWord.english}
-                  className="w-full h-full max-h-[min(54vh,520px)] object-contain filter drop-shadow-md transition-all duration-300"
+                  className="w-full h-full max-h-[min(54dvh,520px)] object-contain filter drop-shadow-md transition-all duration-300"
                 />
               ) : (
                 <div className="text-slate-400 font-bold text-lg">

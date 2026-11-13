@@ -129,20 +129,20 @@ export const GameLauncherCard: React.FC<GameLauncherCardProps> = ({ game }) => {
     switch (game.stream) {
       case 'STREAM_A':
         return (
-          <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-950/80 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
-            Stream 🅰️ {t("TV / Projector", <>テレビ<ruby>画面<rt className="text-[7px]">がめん</rt></ruby></>)}
+          <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-950/80 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800 whitespace-nowrap">
+            Stream 🅰️ {t("TV / Projector", <>テレビ<ruby>画面<rt>がめん</rt></ruby></>)}
           </span>
         );
       case 'STREAM_B':
         return (
-          <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-purple-100 dark:bg-purple-950/80 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800">
-            Stream 🅱️ {t("Student iPads", <>iPad<ruby>同期<rt className="text-[7px]">どうき</rt></ruby></>)}
+          <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-purple-100 dark:bg-purple-950/80 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800 whitespace-nowrap">
+            Stream 🅱️ {t("Student iPads", <>iPad<ruby>同期<rt>どうき</rt></ruby></>)}
           </span>
         );
       case 'STREAM_C':
         return (
-          <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
-            Stream 🅲 {t("Solo Study", <><ruby>個人<rt className="text-[7px]">こじん</rt></ruby><ruby>学習<rt className="text-[7px]">がくしゅう</rt></ruby></>)}
+          <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 whitespace-nowrap">
+            Stream 🅲 {t("Solo Study", <><ruby>個人<rt>こじん</rt></ruby><ruby>学習<rt>がくしゅう</rt></ruby></>)}
           </span>
         );
     }
@@ -150,13 +150,13 @@ export const GameLauncherCard: React.FC<GameLauncherCardProps> = ({ game }) => {
 
   const renderFuriganaJaTitle = (id: string, jaTitle: string): React.ReactNode => {
     if (id === 'whats_missing') {
-      return <><ruby>何<rt className="text-[9px] font-normal text-slate-400">なに</rt></ruby>が<ruby>消<rt className="text-[9px] font-normal text-slate-400">き</rt></ruby>えた？</>;
+      return <><ruby>何<rt>なに</rt></ruby>が<ruby>消<rt>き</rt></ruby>えた？</>;
     }
     if (id === 'concentration') {
-      return <><ruby>神経衰弱<rt className="text-[9px] font-normal text-slate-400">しんけいすいじゃく</rt></ruby>・えあわせ</>;
+      return <><ruby>神経衰弱<rt>しんけいすいじゃく</rt></ruby>・えあわせ</>;
     }
     if (id === 'eigo_arena') {
-      return <>ライブ4<ruby>択<rt className="text-[9px] font-normal text-slate-400">たく</rt></ruby>バトル</>;
+      return <>ライブ4<ruby>択<rt>たく</rt></ruby>バトル</>;
     }
     return jaTitle;
   };
@@ -164,21 +164,21 @@ export const GameLauncherCard: React.FC<GameLauncherCardProps> = ({ game }) => {
   const statusBadge = () => {
     if (game.status === 'ready') {
       return (
-        <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-emerald-500 text-white shadow-xs">
-          {t("PLAYABLE NOW", <><ruby>今<rt className="text-[7px]">いま</rt></ruby>すぐプレイ<ruby>可能<rt className="text-[7px]">かのう</rt></ruby></>)}
+        <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-emerald-500 text-white shadow-xs whitespace-nowrap">
+          {t("PLAYABLE NOW", <><ruby>今<rt>いま</rt></ruby>すぐプレイ<ruby>可能<rt>かのう</rt></ruby></>)}
         </span>
       );
     }
     if (game.status === 'in_development') {
       return (
-        <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950/80 text-amber-700 dark:text-amber-300 border border-amber-300 dark:border-amber-800">
-          {t("IN PROGRESS", <><ruby>開発<rt className="text-[7px]">かいはつ</rt></ruby><ruby>進行中<rt className="text-[7px]">しんこうちゅう</rt></ruby></>)}
+        <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950/80 text-amber-700 dark:text-amber-300 border border-amber-300 dark:border-amber-800 whitespace-nowrap">
+          {t("IN PROGRESS", <><ruby>開発<rt>かいはつ</rt></ruby><ruby>進行中<rt>しんこうちゅう</rt></ruby></>)}
         </span>
       );
     }
     return (
-      <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400">
-        {t("ROADMAP", <><ruby>開発<rt className="text-[7px]">かいはつ</rt></ruby><ruby>計画<rt className="text-[7px]">けいかく</rt></ruby></>)}
+      <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 whitespace-nowrap">
+        {t("ROADMAP", <><ruby>開発<rt>かいはつ</rt></ruby><ruby>計画<rt>けいかく</rt></ruby></>)}
       </span>
     );
   };

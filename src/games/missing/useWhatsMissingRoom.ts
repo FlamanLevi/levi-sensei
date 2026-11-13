@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { VocabularyItem, GradeLevel } from '@data/types';
+import { ensureAnonymousAuth } from '@/services/firebase';
 import { safeSet, safeUpdate, safeSubscribe, getServerTime } from '@/services/rtdbSafe';
 import { resolveCardImage, shuffleArray } from './utils';
 import {
@@ -188,6 +189,7 @@ export function useWhatsMissingRoom({
       setRoomState(state);
       setAnswersMap({});
 
+      await ensureAnonymousAuth();
       await safeSet(`/missing_rooms/${generatedCode}`, {
         meta,
         state,
@@ -201,6 +203,7 @@ export function useWhatsMissingRoom({
 
   const closeCurtains = useCallback(async () => {
     if (!roomCode) return;
+    await ensureAnonymousAuth();
     const now = getServerTime();
     await safeUpdate(`/missing_rooms/${roomCode}/state`, {
       phase: 'CURTAIN_CLOSED',
@@ -218,6 +221,7 @@ export function useWhatsMissingRoom({
       displayTier: DisplayTier
     ) => {
       if (!roomCode) return;
+      await ensureAnonymousAuth();
       const now = getServerTime();
       const missingWordIds = missingCards.map((c) => c.id);
 
@@ -242,6 +246,7 @@ export function useWhatsMissingRoom({
   const revealCard = useCallback(
     async (revealedIds: string[], allRevealed: boolean) => {
       if (!roomCode) return;
+      await ensureAnonymousAuth();
       const now = getServerTime();
       await safeUpdate(`/missing_rooms/${roomCode}/state`, {
         phase: allRevealed ? 'REVEALED' : 'GUESSING',
@@ -261,6 +266,7 @@ export function useWhatsMissingRoom({
       displayTier: DisplayTier
     ) => {
       if (!roomCode) return;
+      await ensureAnonymousAuth();
       const now = getServerTime();
       setAnswersMap({});
       await safeUpdate(`/missing_rooms/${roomCode}`, {
@@ -315,6 +321,7 @@ export function useWhatsMissingRoom({
       };
 
       setAnswersMap((prev) => ({ ...prev, [String(seat)]: payload }));
+      await ensureAnonymousAuth();
       await safeSet(`/missing_rooms/${roomCode}/answers/${seat}`, payload);
       return payload;
     },

@@ -358,7 +358,7 @@ export const SKY_CONDITIONS: SkyOption[] = [
     id: 'sunny',
     en: 'sunny',
     ja: '快晴',
-    jaRuby: <><ruby>快晴<rt className="text-[7px]">かいせい</rt></ruby></>,
+    jaRuby: <><ruby>快晴<rt>かいせい</rt></ruby></>,
     emoji: '☀️',
     cloudPct: 5,
     cardImage: 'dic_wb_12nature_sunny_1523_1_c.png'
@@ -367,7 +367,7 @@ export const SKY_CONDITIONS: SkyOption[] = [
     id: 'mostly_sunny',
     en: 'mostly sunny',
     ja: '晴れ',
-    jaRuby: <><ruby>晴<rt className="text-[7px]">は</rt></ruby>れ</>,
+    jaRuby: <><ruby>晴<rt>は</rt></ruby>れ</>,
     emoji: '🌤️',
     cloudPct: 20,
     cardImage: 'dic_wb_12nature_sunny_1523_1_c.png'
@@ -376,7 +376,7 @@ export const SKY_CONDITIONS: SkyOption[] = [
     id: 'partly_cloudy',
     en: 'partly cloudy',
     ja: '晴れ・曇り',
-    jaRuby: <><ruby>晴<rt className="text-[7px]">は</rt></ruby>れ・<ruby>曇<rt className="text-[7px]">くも</rt></ruby>り</>,
+    jaRuby: <><ruby>晴<rt>は</rt></ruby>れ・<ruby>曇<rt>くも</rt></ruby>り</>,
     emoji: '⛅',
     cloudPct: 45,
     cardImage: 'dic_wb_12nature_cloudy_1520_1_c.png'
@@ -385,7 +385,7 @@ export const SKY_CONDITIONS: SkyOption[] = [
     id: 'mostly_cloudy',
     en: 'mostly cloudy',
     ja: '曇りがち',
-    jaRuby: <><ruby>曇<rt className="text-[7px]">くも</rt></ruby>りがち</>,
+    jaRuby: <><ruby>曇<rt>くも</rt></ruby>りがち</>,
     emoji: '🌥️',
     cloudPct: 75,
     cardImage: 'dic_wb_12nature_cloudy_1520_1_c.png'
@@ -394,7 +394,7 @@ export const SKY_CONDITIONS: SkyOption[] = [
     id: 'overcast',
     en: 'overcast',
     ja: '曇り',
-    jaRuby: <><ruby>曇<rt className="text-[7px]">くも</rt></ruby>り</>,
+    jaRuby: <><ruby>曇<rt>くも</rt></ruby>り</>,
     emoji: '☁️',
     cloudPct: 95,
     cardImage: 'dic_wb_12nature_cloudy_1520_1_c.png'
@@ -416,7 +416,7 @@ export const PRECIPITATION_CONDITIONS: PrecipitationOption[] = [
     en: 'rainy',
     labelEn: 'Rainy',
     ja: '雨',
-    jaRuby: <><ruby>雨<rt className="text-[7px]">あめ</rt></ruby></>,
+    jaRuby: <><ruby>雨<rt>あめ</rt></ruby></>,
     emoji: '🌧️',
     cardImage: 'dic_wb_12nature_rainy_1521_1_c.png'
   },
@@ -425,7 +425,7 @@ export const PRECIPITATION_CONDITIONS: PrecipitationOption[] = [
     en: 'snowy',
     labelEn: 'Snowy',
     ja: '雪',
-    jaRuby: <><ruby>雪<rt className="text-[7px]">ゆき</rt></ruby></>,
+    jaRuby: <><ruby>雪<rt>ゆき</rt></ruby></>,
     emoji: '❄️',
     cardImage: 'dic_wb_12nature_snowy_1522_1_c.png'
   }
@@ -978,7 +978,7 @@ export const DailyRoutineModal: React.FC = () => {
     if (isWindy) {
       list.push({
         en: 'windy',
-        jaRuby: <><ruby>風<rt className="text-[7px]">かぜ</rt></ruby>が<ruby>強<rt className="text-[7px]">つよ</rt></ruby>い</>,
+        jaRuby: <><ruby>風<rt>かぜ</rt></ruby>が<ruby>強<rt>つよ</rt></ruby>い</>,
         jaStr: '風が強い',
         color: 'text-indigo-200'
       });
@@ -1104,7 +1104,7 @@ export const DailyRoutineModal: React.FC = () => {
       aria-modal="true"
       className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-200 select-none"
     >
-      <div className="w-[98vw] max-w-[1500px] h-[95vh] max-h-[920px] bg-white dark:bg-slate-900 border-2 sm:border-4 border-amber-400 dark:border-amber-500/80 rounded-3xl shadow-2xl flex flex-col overflow-hidden">
+      <div className="w-[98vw] max-w-[1500px] h-[95dvh] max-h-[920px] bg-white dark:bg-slate-900 border-2 sm:border-4 border-amber-400 dark:border-amber-500/80 rounded-3xl shadow-2xl flex flex-col overflow-hidden">
         
         {/* ================================================================= */}
         {/* 1. Header Toolbar Cluster (Two-Row Classroom Layout)              */}
@@ -1298,15 +1298,15 @@ export const DailyRoutineModal: React.FC = () => {
             <div className="flex-1 flex flex-col justify-between gap-2.5 sm:gap-3">
               
               {/* Level Selector Toolbar */}
-              <div className="flex items-center justify-between flex-wrap gap-2 bg-white dark:bg-slate-900 px-3 py-1.5 sm:py-2 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">
+              <div className="flex items-center justify-between flex-nowrap gap-2 bg-white dark:bg-slate-900 px-3 py-1.5 sm:py-2 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-x-auto no-scrollbar shrink-0">
+                <div className="flex items-center gap-1.5 sm:gap-2 flex-nowrap shrink-0">
+                  <span className="text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 shrink-0 whitespace-nowrap">
                     {t('Challenge Level:', <>チャレンジレベル：</>)}
                   </span>
                   
                   <button
                     onClick={() => { playPop(); setFeelingsLevel('LEVEL_1'); }}
-                    className={`px-3 py-1.5 rounded-xl font-black text-xs transition-all cursor-pointer ${
+                    className={`px-3 py-1.5 rounded-xl font-black text-xs transition-all cursor-pointer shrink-0 whitespace-nowrap ${
                       feelingsLevel === 'LEVEL_1'
                         ? 'bg-blue-600 text-white shadow-md'
                         : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200'
@@ -1317,7 +1317,7 @@ export const DailyRoutineModal: React.FC = () => {
 
                   <button
                     onClick={() => { playPop(); setFeelingsLevel('LEVEL_2'); }}
-                    className={`px-3 py-1.5 rounded-xl font-black text-xs transition-all cursor-pointer ${
+                    className={`px-3 py-1.5 rounded-xl font-black text-xs transition-all cursor-pointer shrink-0 whitespace-nowrap ${
                       feelingsLevel === 'LEVEL_2'
                         ? 'bg-purple-600 text-white shadow-md'
                         : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200'
@@ -1328,7 +1328,7 @@ export const DailyRoutineModal: React.FC = () => {
 
                   <button
                     onClick={() => { playPop(); setFeelingsLevel('LEVEL_3'); }}
-                    className={`px-3 py-1.5 rounded-xl font-black text-xs transition-all cursor-pointer ${
+                    className={`px-3 py-1.5 rounded-xl font-black text-xs transition-all cursor-pointer shrink-0 whitespace-nowrap ${
                       feelingsLevel === 'LEVEL_3'
                         ? 'bg-gradient-to-r from-amber-500 to-rose-500 text-white shadow-md animate-pulse'
                         : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200'
@@ -1338,10 +1338,10 @@ export const DailyRoutineModal: React.FC = () => {
                   </button>
                 </div>
 
-                <div className="text-xs text-slate-500 dark:text-slate-400 font-bold">
+                <div className="text-xs text-slate-500 dark:text-slate-400 font-bold shrink-0 whitespace-nowrap">
                   {feelingsLevel === 'LEVEL_3' && (
                     <span className="text-amber-600 dark:text-amber-400 font-black">
-                      ⚡ {t('Pairs Negative sensation + Positive feeling!', <>ネガティブ＋ポジティブの組み合わせ！</>)}
+                      ⚡ {t('Pairs Negative + Positive!', <>ネガティブ＋ポジティブ！</>)}
                     </span>
                   )}
                 </div>
@@ -1795,8 +1795,8 @@ export const DailyRoutineModal: React.FC = () => {
                             <th className="pb-1 sm:pb-2 text-center px-1 sm:px-2">
                               <div className="inline-flex items-center justify-center gap-1 text-xs sm:text-sm font-black text-amber-600 dark:text-amber-400 uppercase tracking-wider">
                                 <span>Day</span>
-                                <span className="text-[11px] sm:text-xs font-bold text-slate-400 dark:text-slate-500 lowercase">
-                                  (<ruby>曜日<rt className="text-[8px] font-normal">ようび</rt></ruby>)
+                                <span className="text-[11px] sm:text-xs font-bold text-slate-600 dark:text-slate-300 lowercase">
+                                  (<ruby>曜日<rt>ようび</rt></ruby>)
                                 </span>
                               </div>
                             </th>
@@ -1805,8 +1805,8 @@ export const DailyRoutineModal: React.FC = () => {
                             <th className="pb-1 sm:pb-2 text-center px-1 sm:px-2">
                               <div className="inline-flex items-center justify-center gap-1 text-xs sm:text-sm font-black text-sky-600 dark:text-sky-400 uppercase tracking-wider">
                                 <span>Month</span>
-                                <span className="text-[11px] sm:text-xs font-bold text-slate-400 dark:text-slate-500 lowercase">
-                                  (<ruby>月<rt className="text-[8px] font-normal">がつ</rt></ruby>)
+                                <span className="text-[11px] sm:text-xs font-bold text-slate-600 dark:text-slate-300 lowercase">
+                                  (<ruby>月<rt>がつ</rt></ruby>)
                                 </span>
                               </div>
                             </th>
@@ -1815,8 +1815,8 @@ export const DailyRoutineModal: React.FC = () => {
                             <th className="pb-1 sm:pb-2 text-center px-1 sm:px-2">
                               <div className="inline-flex items-center justify-center gap-1 text-xs sm:text-sm font-black text-rose-600 dark:text-rose-400 uppercase tracking-wider">
                                 <span>Date</span>
-                                <span className="text-[11px] sm:text-xs font-bold text-slate-400 dark:text-slate-500 lowercase">
-                                  (<ruby>日<rt className="text-[8px] font-normal">にち</rt></ruby>)
+                                <span className="text-[11px] sm:text-xs font-bold text-slate-600 dark:text-slate-300 lowercase">
+                                  (<ruby>日<rt>にち</rt></ruby>)
                                 </span>
                               </div>
                             </th>
@@ -1825,8 +1825,8 @@ export const DailyRoutineModal: React.FC = () => {
                             <th className="pb-1 sm:pb-2 text-center px-1 sm:px-2">
                               <div className="inline-flex items-center justify-center gap-1 text-xs sm:text-sm font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">
                                 <span>Year</span>
-                                <span className="text-[11px] sm:text-xs font-bold text-slate-400 dark:text-slate-500 lowercase">
-                                  (<ruby>年<rt className="text-[8px] font-normal">ねん</rt></ruby>)
+                                <span className="text-[11px] sm:text-xs font-bold text-slate-600 dark:text-slate-300 lowercase">
+                                  (<ruby>年<rt>ねん</rt></ruby>)
                                 </span>
                               </div>
                             </th>
@@ -1838,8 +1838,8 @@ export const DailyRoutineModal: React.FC = () => {
                           <tr className="hover:bg-slate-50/60 dark:hover:bg-slate-800/30 transition-colors">
                             <td className="py-1.5 sm:py-2 pl-3 sm:pl-4 pr-3 sm:pr-5 whitespace-nowrap rounded-l-xl">
                                 <div className="flex items-baseline justify-between gap-3 sm:gap-6">
-                                  <span className="text-xs sm:text-sm md:text-base font-bold text-slate-400 dark:text-slate-500 shrink-0">
-                                    （<ruby>昨日<rt className="text-[8px] font-normal">きのう</rt></ruby>）
+                                  <span className="text-xs sm:text-sm md:text-base font-bold text-slate-600 dark:text-slate-300 shrink-0">
+                                    （<ruby>昨日<rt>きのう</rt></ruby>）
                                   </span>
                                   <span className="text-base sm:text-xl md:text-2xl font-black text-emerald-700 dark:text-emerald-400 shrink-0">
                                     Yesterday was
@@ -1923,8 +1923,8 @@ export const DailyRoutineModal: React.FC = () => {
                           <tr className="bg-blue-50/80 dark:bg-blue-950/50 shadow-xs">
                             <td className="py-2.5 sm:py-3 pl-3 sm:pl-4 pr-3 sm:pr-5 whitespace-nowrap rounded-l-2xl border-y border-l border-blue-200 dark:border-blue-800/60">
                               <div className="flex items-baseline justify-between gap-3 sm:gap-6">
-                                <span className="text-sm sm:text-base md:text-lg font-bold text-blue-500/80 dark:text-blue-400/80 shrink-0">
-                                  （<ruby>今日<rt className="text-[8px] font-normal">きょう</rt></ruby>）
+                                <span className="text-sm sm:text-base md:text-lg font-bold text-blue-700 dark:text-blue-300 shrink-0">
+                                  （<ruby>今日<rt>きょう</rt></ruby>）
                                 </span>
                                 <span className="text-lg sm:text-2xl md:text-3xl font-black text-blue-800 dark:text-blue-200 shrink-0">
                                   Today is
@@ -2008,8 +2008,8 @@ export const DailyRoutineModal: React.FC = () => {
                           <tr className="hover:bg-slate-50/60 dark:hover:bg-slate-800/30 transition-colors">
                               <td className="py-1.5 sm:py-2 pl-3 sm:pl-4 pr-3 sm:pr-5 whitespace-nowrap rounded-l-xl">
                                 <div className="flex items-baseline justify-between gap-3 sm:gap-6">
-                                  <span className="text-xs sm:text-sm md:text-base font-bold text-slate-400 dark:text-slate-500 shrink-0">
-                                    （<ruby>明日<rt className="text-[8px] font-normal">あした</rt></ruby>）
+                                  <span className="text-xs sm:text-sm md:text-base font-bold text-slate-600 dark:text-slate-300 shrink-0">
+                                    （<ruby>明日<rt>あした</rt></ruby>）
                                   </span>
                                   <span className="text-base sm:text-xl md:text-2xl font-black text-sky-700 dark:text-sky-400 shrink-0">
                                     Tomorrow will be
@@ -2094,8 +2094,8 @@ export const DailyRoutineModal: React.FC = () => {
                   ) : (
                     /* Lower Elementary G3-4 (Weekday Big Screen Display - Frameless & Scaled Up) */
                     <div className="w-full flex items-baseline justify-center gap-3 sm:gap-5 md:gap-7 flex-wrap my-auto py-6 sm:py-10">
-                      <span className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-slate-400 dark:text-slate-500 shrink-0 select-none">
-                        （<ruby>今日<rt className="text-[10px] sm:text-[12px] font-normal text-slate-400 dark:text-slate-500">きょう</rt></ruby>）
+                      <span className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-slate-600 dark:text-slate-300 shrink-0 select-none">
+                        （<ruby>今日<rt>きょう</rt></ruby>）
                       </span>
 
                       <span className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-amber-800 dark:text-amber-300 shrink-0">
@@ -2124,18 +2124,18 @@ export const DailyRoutineModal: React.FC = () => {
               </div>
 
               {/* Action Bar */}
-              <div className="flex items-center justify-between pt-1 sm:pt-2 shrink-0">
+              <div className="flex items-center justify-between pt-1 sm:pt-2 shrink-0 gap-2 flex-nowrap">
                 <button
                   onClick={() => { playPop(); setActiveTab('FEELINGS'); }}
-                  className="px-4 py-2 sm:py-2.5 rounded-2xl bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-300 font-black text-sm transition-all flex items-center gap-2 cursor-pointer"
+                  className="px-4 py-2 sm:py-2.5 rounded-2xl bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-300 font-black text-sm transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap shrink-0"
                 >
                   <span>{t('◀ Back to Feelings', <>◀ きもちに戻る</>)}</span>
                 </button>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 shrink-0 flex-nowrap">
                   <button
                     onClick={handleReadCalendar}
-                    className="px-4 py-2 sm:py-2.5 rounded-2xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-sm sm:text-base shadow-md hover:scale-105 active:scale-95 transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap"
+                    className="px-4 py-2 sm:py-2.5 rounded-2xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-sm sm:text-base shadow-md hover:scale-105 active:scale-95 transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap shrink-0"
                   >
                     <Volume2 size={18} />
                     <span>{t('Recite Calendar (Space)', <>日付を読み上げる (Space)</>)}</span>
@@ -2143,7 +2143,7 @@ export const DailyRoutineModal: React.FC = () => {
 
                   <button
                     onClick={() => { playPop(); setActiveTab('WEATHER'); }}
-                    className="px-5 py-2 sm:py-2.5 rounded-2xl bg-blue-600 text-white font-black text-sm sm:text-base shadow-md hover:bg-blue-500 transition-all flex items-center gap-2 cursor-pointer"
+                    className="px-5 py-2 sm:py-2.5 rounded-2xl bg-blue-600 text-white font-black text-sm sm:text-base shadow-md hover:bg-blue-500 transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap shrink-0"
                   >
                     <span>{t('Next: Weather & Sky ➔', <>次へ： 天気・くも ➔</>)}</span>
                   </button>
@@ -2158,11 +2158,11 @@ export const DailyRoutineModal: React.FC = () => {
             <div className="flex-1 min-h-0 flex flex-col justify-between gap-2 sm:gap-2.5">
               
               {/* Weather Source & Location Toolbar */}
-              <div className="flex items-center justify-between flex-wrap gap-1.5 sm:gap-2 bg-white dark:bg-slate-900 px-3 py-1.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs shrink-0">
+              <div className="flex items-center justify-between flex-nowrap overflow-x-auto no-scrollbar gap-2 bg-white dark:bg-slate-900 px-3 py-1.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs shrink-0">
                 
-                <div className="flex items-center gap-2">
-                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-blue-50 dark:bg-blue-950/80 border border-blue-200 dark:border-blue-800 text-xs font-black text-blue-700 dark:text-blue-300">
-                    <MapPin size={13} className="text-blue-500" />
+                <div className="flex items-center gap-2 shrink-0">
+                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-blue-50 dark:bg-blue-950/80 border border-blue-200 dark:border-blue-800 text-xs font-black text-blue-700 dark:text-blue-300 whitespace-nowrap">
+                    <MapPin size={13} className="text-blue-500 shrink-0" />
                     <span>
                       {activeSchool === 'toyogaoka' ? '豊ヶ丘小学校 (東京都多摩市)' : '二子玉川小学校 (東京都世田谷区)'}
                     </span>
@@ -2171,21 +2171,21 @@ export const DailyRoutineModal: React.FC = () => {
                   <button
                     onClick={fetchLocalWeather}
                     disabled={isFetchingWeather}
-                    className="px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-300 font-black text-xs flex items-center gap-1 transition-all cursor-pointer"
+                    className="px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-300 font-black text-xs flex items-center gap-1 transition-all cursor-pointer whitespace-nowrap shrink-0"
                   >
                     <RefreshCw size={12} className={isFetchingWeather ? 'animate-spin' : ''} />
                     <span>{t('Poll Real Weather', <>最新の天気を取得</>)}</span>
                   </button>
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 shrink-0 whitespace-nowrap">
                   {liveTemp !== null && (
-                    <div className="text-xs font-black text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-xl">
+                    <div className="text-xs font-black text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-xl whitespace-nowrap">
                       🌡️ {liveTemp}°C • ☁️ {cloudCoverPct}% Cover
                     </div>
                   )}
 
-                  <div className="text-xs font-bold text-slate-500 dark:text-slate-400">
+                  <div className="text-xs font-bold text-slate-500 dark:text-slate-400 whitespace-nowrap">
                     {weatherSource === 'live' ? (
                       <span className="text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1">
                         <Check size={14} /> {t('Live API Connected', <>ライブ気象データ接続中</>)}
@@ -2208,19 +2208,19 @@ export const DailyRoutineModal: React.FC = () => {
                     <span className="text-xl shrink-0">🌈</span>
                     <div className="min-w-0">
                       <h3 className="text-xs sm:text-sm font-black text-slate-800 dark:text-white truncate">
-                        {t('Dual Cloud Cover Meter: Japanese vs Western Standards', <>日米・英の<ruby>雲量<rt className="text-[7px]">うんりょう</rt></ruby>めやす（空のくらべっこ）</>)}
+                        {t('Dual Cloud Cover Meter: Japanese vs Western Standards', <>日米・英の<ruby>雲量<rt>うんりょう</rt></ruby>めやす（空のくらべっこ）</>)}
                       </h3>
                       <p className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 truncate">
                         {t(
                           'In Japan, even 80% cloud cover is called "晴れ"! Western English has more specific gradations.',
-                          <><ruby>日本<rt className="text-[7px]">にほん</rt></ruby>では<ruby>雲<rt className="text-[7px]">くも</rt></ruby>が8割あっても「<ruby>晴<rt className="text-[7px]">は</rt></ruby>れ」！<ruby>英語<rt className="text-[7px]">えいご</rt></ruby>では Mostly Sunny や Partly Cloudy と細かく<ruby>分<rt className="text-[7px]">わ</rt></ruby>かれます。</>
+                          <><ruby>日本<rt>にほん</rt></ruby>では<ruby>雲<rt>くも</rt></ruby>が8割あっても「<ruby>晴<rt>は</rt></ruby>れ」！<ruby>英語<rt>えいご</rt></ruby>では Mostly Sunny や Partly Cloudy と細かく<ruby>分<rt>わ</rt></ruby>かれます。</>
                         )}
                       </p>
                     </div>
                   </div>
 
                   <div className="text-right shrink-0">
-                    <span className="text-[11px] font-black text-slate-400">{t('Sky Cover:', <>雲量：</>)}</span>
+                    <span className="text-[11px] font-black text-slate-500 dark:text-slate-400">{t('Sky Cover:', <>雲量：</>)}</span>
                     <span className="ml-1 text-sm sm:text-base font-black text-blue-600 dark:text-blue-400">
                       {cloudCoverPct}%
                     </span>
@@ -2238,7 +2238,7 @@ export const DailyRoutineModal: React.FC = () => {
                       <span>{t('10-Scale Cloud Cover', <>雲量（10段階）</>)}</span>
                       <span className="text-slate-300 dark:text-slate-600">•</span>
                       <span className="text-amber-600 dark:text-amber-400 font-black">
-                        {t('10%–80% = Fair / Sunny', <>10%〜80% = <ruby>晴<rt className="text-[7px]">は</rt></ruby>れ</>)}
+                        {t('10%–80% = Fair / Sunny', <>10%〜80% = <ruby>晴<rt>は</rt></ruby>れ</>)}
                       </span>
                     </div>
                     <div className="flex items-center gap-1.5">
@@ -2318,7 +2318,7 @@ export const DailyRoutineModal: React.FC = () => {
                     {/* Group 1: Sky & Cloud Cover (5 buttons aligned with slider) */}
                     <div className="flex items-center justify-between text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">
                       <span>{t('1. Sky & Cloud Cover:', <>1. 空・雲量（5段階）：</>)}</span>
-                      <span className="text-[10px] text-slate-400 lowercase font-normal">{t('aligns with slider', <>スライダーと連動</>)}</span>
+                      <span className="text-[10px] text-slate-500 dark:text-slate-400 lowercase font-normal">{t('aligns with slider', <>スライダーと連動</>)}</span>
                     </div>
 
                     <div className="grid grid-cols-5 gap-1 sm:gap-1.5 mb-2">
@@ -2347,14 +2347,14 @@ export const DailyRoutineModal: React.FC = () => {
                     </div>
 
                     {/* Group 2: Precipitation & Wind Combined Row */}
-                    <div className="flex items-center justify-between gap-2 p-1.5 bg-slate-100/70 dark:bg-slate-800/60 rounded-xl border border-slate-200/80 dark:border-slate-700/80 mb-2 flex-wrap sm:flex-nowrap">
+                    <div className="flex items-center justify-between gap-2 p-1.5 bg-slate-100/70 dark:bg-slate-800/60 rounded-xl border border-slate-200/80 dark:border-slate-700/80 mb-2 flex-nowrap overflow-x-auto no-scrollbar">
                       
                       {/* Left: Precipitation (None / Rainy / Snowy) */}
-                      <div className="flex items-center gap-1.5 min-w-0">
-                        <span className="text-[10px] sm:text-[11px] font-black text-slate-500 dark:text-slate-400 shrink-0">
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <span className="text-[10px] sm:text-[11px] font-black text-slate-500 dark:text-slate-400 shrink-0 whitespace-nowrap">
                           {t('2. Rain / Snow:', <>2. 降水：</>)}
                         </span>
-                        <div className="flex items-center gap-1">
+                        <div className="flex items-center gap-1 shrink-0">
                           {PRECIPITATION_CONDITIONS.map((p) => {
                             const active = precipitation === p.id;
                             const isSnow = p.id === 'snowy';
@@ -2364,7 +2364,7 @@ export const DailyRoutineModal: React.FC = () => {
                                 key={p.id}
                                 onClick={() => handleSelectPrecipitation(p.id)}
                                 title={disabledWarning ? (textLang === 'ja' ? '雪を選ぶと自動で「寒い」に切り替わります' : 'Selecting snow auto-sets cold temperature') : undefined}
-                                className={`h-8 px-2.5 rounded-lg text-xs font-black transition-all flex items-center justify-center gap-1 cursor-pointer whitespace-nowrap leading-none ${
+                                className={`h-8 px-2.5 rounded-lg text-xs font-black transition-all flex items-center justify-center gap-1 cursor-pointer whitespace-nowrap leading-none shrink-0 ${
                                   active
                                     ? (p.id === 'snowy' ? 'bg-sky-500 text-white shadow-xs' : p.id === 'rainy' ? 'bg-blue-600 text-white shadow-xs' : 'bg-slate-700 text-white shadow-xs')
                                     : 'bg-white dark:bg-slate-700/80 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-600'
@@ -2384,16 +2384,16 @@ export const DailyRoutineModal: React.FC = () => {
                       </div>
 
                       {/* Divider */}
-                      <div className="hidden sm:block h-5 w-[1px] bg-slate-300 dark:bg-slate-600" />
+                      <div className="h-5 w-[1px] bg-slate-300 dark:bg-slate-600 shrink-0" />
 
                       {/* Right: Wind Toggle */}
                       <div className="flex items-center gap-1.5 shrink-0">
-                        <span className="text-[10px] sm:text-[11px] font-black text-slate-500 dark:text-slate-400 shrink-0">
+                        <span className="text-[10px] sm:text-[11px] font-black text-slate-500 dark:text-slate-400 shrink-0 whitespace-nowrap">
                           {t('3. Wind:', <>3. 風：</>)}
                         </span>
                         <button
                           onClick={handleToggleWind}
-                          className={`h-8 px-2.5 rounded-lg text-xs font-black transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-xs leading-none ${
+                          className={`h-8 px-2.5 rounded-lg text-xs font-black transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-xs leading-none whitespace-nowrap shrink-0 ${
                             isWindy
                               ? 'bg-cyan-500 hover:bg-cyan-400 text-white scale-[1.02]'
                               : 'bg-white dark:bg-slate-700/80 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600'
@@ -2412,37 +2412,39 @@ export const DailyRoutineModal: React.FC = () => {
                     </div>
 
                     {/* Group 3: Temperature Feeling Pills */}
-                    <div className="flex items-center gap-1.5 pt-1 border-t border-slate-100 dark:border-slate-800 flex-wrap">
-                      <span className="text-[11px] font-black text-slate-500 dark:text-slate-400 mr-0.5">
+                    <div className="flex items-center gap-2 pt-1 border-t border-slate-100 dark:border-slate-800 flex-nowrap overflow-x-auto no-scrollbar">
+                      <span className="text-[11px] font-black text-slate-500 dark:text-slate-400 shrink-0 whitespace-nowrap">
                         {t('4. Temperature:', <>4. 気温の感じ：</>)}
                       </span>
 
-                      {(['hot', 'warm', 'cool', 'cold'] as const).map((temp) => {
-                        const labels = {
-                          hot: { en: 'hot', ja: '暑い', icon: '🔥', color: 'bg-rose-500' },
-                          warm: { en: 'warm', ja: '暖かい', icon: '🌿', color: 'bg-amber-500' },
-                          cool: { en: 'cool', ja: '涼しい', icon: '🍃', color: 'bg-teal-500' },
-                          cold: { en: 'cold', ja: '寒い', icon: '❄️', color: 'bg-blue-600' },
-                        };
-                        const active = temperatureFeel === temp;
-                        const isHotOrWarmWithSnow = (temp === 'hot' || temp === 'warm') && precipitation === 'snowy';
-                        return (
-                          <button
-                            key={temp}
-                            onClick={() => handleSelectTemperature(temp)}
-                            title={isHotOrWarmWithSnow ? (textLang === 'ja' ? '選ぶと雪が自動で解除されます' : 'Selecting this will clear snow') : undefined}
-                            className={`h-8 px-2.5 rounded-xl font-black text-xs flex items-center justify-center gap-1 transition-all cursor-pointer leading-none ${
-                              active
-                                ? `${labels[temp].color} text-white shadow-sm`
-                                : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200'
-                            }`}
-                          >
-                            <span className="leading-none">{labels[temp].icon}</span>
-                            <span className="capitalize leading-none">{labels[temp].en}</span>
-                            <span className="text-[10px] opacity-80 leading-none">({labels[temp].ja})</span>
-                          </button>
-                        );
-                      })}
+                      <div className="flex-1 grid grid-cols-4 gap-1.5 min-w-[340px]">
+                        {(['hot', 'warm', 'cool', 'cold'] as const).map((temp) => {
+                          const labels = {
+                            hot: { en: 'hot', ja: '暑い', icon: '🔥', color: 'bg-rose-500' },
+                            warm: { en: 'warm', ja: '暖かい', icon: '🌿', color: 'bg-amber-500' },
+                            cool: { en: 'cool', ja: '涼しい', icon: '🍃', color: 'bg-teal-500' },
+                            cold: { en: 'cold', ja: '寒い', icon: '❄️', color: 'bg-blue-600' },
+                          };
+                          const active = temperatureFeel === temp;
+                          const isHotOrWarmWithSnow = (temp === 'hot' || temp === 'warm') && precipitation === 'snowy';
+                          return (
+                            <button
+                              key={temp}
+                              onClick={() => handleSelectTemperature(temp)}
+                              title={isHotOrWarmWithSnow ? (textLang === 'ja' ? '選ぶと雪が自動で解除されます' : 'Selecting this will clear snow') : undefined}
+                              className={`h-8 px-2 rounded-xl font-black text-xs flex items-center justify-center gap-1 transition-all cursor-pointer leading-none whitespace-nowrap ${
+                                active
+                                  ? `${labels[temp].color} text-white shadow-sm`
+                                  : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200'
+                              }`}
+                            >
+                              <span className="leading-none">{labels[temp].icon}</span>
+                              <span className="capitalize leading-none">{labels[temp].en}</span>
+                              <span className="text-[10px] opacity-85 leading-none">({labels[temp].ja})</span>
+                            </button>
+                          );
+                        })}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -2502,18 +2504,18 @@ export const DailyRoutineModal: React.FC = () => {
               </div>
 
               {/* Action Bar */}
-              <div className="flex items-center justify-between pt-1 sm:pt-1.5 shrink-0">
+              <div className="flex items-center justify-between pt-1 sm:pt-1.5 shrink-0 gap-2 flex-nowrap">
                 <button
                   onClick={() => { playPop(); setActiveTab('CALENDAR'); }}
-                  className="px-4 py-2 sm:py-2.5 rounded-2xl bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-300 font-black text-sm transition-all flex items-center gap-2 cursor-pointer"
+                  className="px-4 py-2 sm:py-2.5 rounded-2xl bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-300 font-black text-sm transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap shrink-0"
                 >
                   <span>{t('◀ Back to Calendar', <>◀ 日付に戻る</>)}</span>
                 </button>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 shrink-0 flex-nowrap">
                   <button
                     onClick={handleReadWeather}
-                    className="px-4 sm:px-5 py-2 sm:py-2.5 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-black text-sm sm:text-base shadow-md hover:shadow-lg hover:scale-105 active:scale-95 transition-all flex items-center gap-2 cursor-pointer"
+                    className="px-4 sm:px-5 py-2 sm:py-2.5 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-black text-sm sm:text-base shadow-md hover:shadow-lg hover:scale-105 active:scale-95 transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap shrink-0"
                   >
                     <Volume2 size={18} />
                     <span>{t('Recite Weather (Space)', <>天気を読み上げる (Space)</>)}</span>
@@ -2521,7 +2523,7 @@ export const DailyRoutineModal: React.FC = () => {
 
                   <button
                     onClick={() => { playPop(); closeRoutineModal(); }}
-                    className="px-5 py-2 sm:py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-sm sm:text-base shadow-md hover:scale-105 active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer"
+                    className="px-5 py-2 sm:py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-sm sm:text-base shadow-md hover:scale-105 active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap shrink-0"
                   >
                     <span>{t('Start Lesson! 🎉', <>レッスン開始！ 🎉</>)}</span>
                   </button>

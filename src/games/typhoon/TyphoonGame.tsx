@@ -204,15 +204,15 @@ export const TyphoonGame: React.FC<TyphoonGameProps> = () => {
   return (
     <div className="w-full flex-1 flex flex-col justify-between p-2 sm:p-4 select-none relative font-['UD_Digi_Kyokasho_NP-R','Zen_Maru_Gothic',sans-serif]">
       {/* 1. Header Toolbar */}
-      <div className="bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 rounded-2xl sm:rounded-3xl p-2.5 sm:p-3.5 shadow-md flex flex-wrap items-center justify-between gap-2.5 mb-2.5">
-        <div className="flex items-center gap-2">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-sky-500 to-indigo-600 text-white flex items-center justify-center text-xl shadow-md">
+      <div className="bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 rounded-2xl sm:rounded-3xl p-2.5 sm:p-3.5 shadow-md flex flex-nowrap overflow-x-auto no-scrollbar whitespace-nowrap items-center justify-between gap-2.5 mb-2.5 shrink-0">
+        <div className="flex items-center gap-2 shrink-0 min-w-0">
+          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-sky-500 to-indigo-600 text-white flex items-center justify-center text-xl shadow-md shrink-0">
             🌀
           </div>
-          <div>
-            <h2 className="text-base sm:text-xl font-black text-slate-900 dark:text-white flex items-center gap-2">
+          <div className="min-w-0">
+            <h2 className="text-base sm:text-xl font-black text-slate-900 dark:text-white flex items-center gap-2 whitespace-nowrap">
               <span>{t("Typhoon Team Battle", <>タイフーン・チームバトル</>)}</span>
-              <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300">
+              <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300 shrink-0">
                 Stream 🅰️ TV
               </span>
             </h2>
@@ -220,19 +220,19 @@ export const TyphoonGame: React.FC<TyphoonGameProps> = () => {
         </div>
 
         {/* Settings & Controls Cluster */}
-        <div className="flex flex-wrap items-center gap-2">
-          {/* Team Count Dropdown */}
-          <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-1 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700">
-            <span className="text-slate-400 px-1.5">{t("Teams:", "チーム:")}</span>
+        <div className="flex flex-nowrap items-center gap-2 shrink-0">
+          {/* Team Count */}
+          <div className="flex flex-nowrap shrink-0 items-center bg-slate-100 dark:bg-slate-800 p-1 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700">
+            <span className="text-slate-600 dark:text-slate-300 px-1.5 shrink-0">{t("Teams:", "チーム:")}</span>
             {[2, 3, 4, 5, 6].map(num => (
               <button
                 key={num}
                 type="button"
                 onClick={() => setTeamCount(num)}
-                className={`px-2 py-0.5 rounded-lg font-black transition-all cursor-pointer ${
+                className={`px-2 py-0.5 rounded-lg font-black transition-all cursor-pointer shrink-0 ${
                   teamCount === num
                     ? 'bg-blue-600 text-white shadow-xs'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
+                    : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
                 {num}
@@ -241,12 +241,12 @@ export const TyphoonGame: React.FC<TyphoonGameProps> = () => {
           </div>
 
           {/* Grid Size */}
-          <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-1 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700">
+          <div className="flex flex-nowrap shrink-0 items-center bg-slate-100 dark:bg-slate-800 p-1 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700">
             <button
               type="button"
               onClick={() => setGridSize('4x4')}
-              className={`px-2 py-0.5 rounded-lg font-black transition-all cursor-pointer ${
-                gridSize === '4x4' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-500'
+              className={`px-2 py-0.5 rounded-lg font-black transition-all cursor-pointer shrink-0 ${
+                gridSize === '4x4' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-600 dark:text-slate-300'
               }`}
             >
               4×4 (16)
@@ -254,8 +254,8 @@ export const TyphoonGame: React.FC<TyphoonGameProps> = () => {
             <button
               type="button"
               onClick={() => setGridSize('5x4')}
-              className={`px-2 py-0.5 rounded-lg font-black transition-all cursor-pointer ${
-                gridSize === '5x4' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-500'
+              className={`px-2 py-0.5 rounded-lg font-black transition-all cursor-pointer shrink-0 ${
+                gridSize === '5x4' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-600 dark:text-slate-300'
               }`}
             >
               5×4 (20)
@@ -263,8 +263,8 @@ export const TyphoonGame: React.FC<TyphoonGameProps> = () => {
             <button
               type="button"
               onClick={() => setGridSize('5x5')}
-              className={`px-2 py-0.5 rounded-lg font-black transition-all cursor-pointer ${
-                gridSize === '5x5' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-500'
+              className={`px-2 py-0.5 rounded-lg font-black transition-all cursor-pointer shrink-0 ${
+                gridSize === '5x5' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-600 dark:text-slate-300'
               }`}
             >
               5×5 (25)
@@ -272,28 +272,28 @@ export const TyphoonGame: React.FC<TyphoonGameProps> = () => {
           </div>
 
           {/* Coordinate Mode Toggle (123 Numbers vs ABC Letters) */}
-          <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-1 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700">
+          <div className="flex flex-nowrap shrink-0 items-center bg-slate-100 dark:bg-slate-800 p-1 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700">
             <button
               type="button"
               onClick={() => setCoordinateMode('NUMBERS')}
-              className={`px-2 py-0.5 rounded-lg font-black transition-all cursor-pointer ${
+              className={`px-2 py-0.5 rounded-lg font-black transition-all cursor-pointer shrink-0 ${
                 coordinateMode === 'NUMBERS'
                   ? 'bg-amber-500 text-white shadow-xs'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
+                  : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
-              {t('123 Numbers', <>123 <ruby>数字<rt className="text-[7px]">すうじ</rt></ruby></>)}
+              {t('123 Numbers', <>123 <ruby>数字<rt>すうじ</rt></ruby></>)}
             </button>
             <button
               type="button"
               onClick={() => setCoordinateMode('ALPHABET')}
-              className={`px-2 py-0.5 rounded-lg font-black transition-all cursor-pointer ${
+              className={`px-2 py-0.5 rounded-lg font-black transition-all cursor-pointer shrink-0 ${
                 coordinateMode === 'ALPHABET'
                   ? 'bg-indigo-600 text-white shadow-xs'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
+                  : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
-              {t('ABC Grid', <>ABC <ruby>英字<rt className="text-[7px]">えいじ</rt></ruby></>)}
+              {t('ABC Grid', <>ABC <ruby>英字<rt>えいじ</rt></ruby></>)}
             </button>
           </div>
 
@@ -301,7 +301,7 @@ export const TyphoonGame: React.FC<TyphoonGameProps> = () => {
           <button
             type="button"
             onClick={initGame}
-            className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-600 dark:text-slate-300 transition cursor-pointer"
+            className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-600 dark:text-slate-300 transition cursor-pointer shrink-0"
             title="Reset Board"
           >
             <RotateCcw size={16} />
@@ -319,7 +319,7 @@ export const TyphoonGame: React.FC<TyphoonGameProps> = () => {
               GAME OVER • FINAL RESULTS
             </span>
             <h3 className="text-3xl sm:text-5xl font-black text-white mb-4">
-              {winner.emoji} {winner.jaName} ({winner.name}) {t("VICTORY!", <><ruby>優勝<rt className="text-[9px]">ゆうしょう</rt></ruby>！</>)}
+              {winner.emoji} {winner.jaName} ({winner.name}) {t("VICTORY!", <><ruby>優勝<rt>ゆうしょう</rt></ruby>！</>)}
             </h3>
             <p className="text-xl sm:text-2xl font-black font-mono text-amber-300 mb-6">
               {winner.score.toLocaleString()} points
@@ -329,7 +329,7 @@ export const TyphoonGame: React.FC<TyphoonGameProps> = () => {
               onClick={initGame}
               className="px-8 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-black text-base shadow-xl hover:scale-105 active:scale-95 transition cursor-pointer"
             >
-              🔄 {t("Play Again", <>もう<ruby>一度<rt className="text-[7px]">いちど</rt></ruby>あそぶ！</>)}
+              🔄 {t("Play Again", <>もう<ruby>一度<rt>いちど</rt></ruby>あそぶ！</>)}
             </button>
           </div>
         ) : (

@@ -433,7 +433,7 @@ export const AlphabetComparisonStudio: React.FC<{ onExit?: () => void }> = ({ on
                   <img
                     src={currentPair.upperImageSrc}
                     alt={currentPair.char}
-                    className="max-w-full max-h-[75vh] object-contain filter drop-shadow-lg group-hover:scale-[1.02] transition-transform select-none"
+                    className="max-w-full max-h-[75dvh] object-contain filter drop-shadow-lg group-hover:scale-[1.02] transition-transform select-none"
                   />
                 ) : (
                   <span className="font-mext text-9xl font-black text-slate-900 dark:text-white">{currentPair.char}</span>
@@ -471,7 +471,7 @@ export const AlphabetComparisonStudio: React.FC<{ onExit?: () => void }> = ({ on
                   <img
                     src={currentPair.lowerImageSrc}
                     alt={currentPair.charLower}
-                    className="max-w-full max-h-[75vh] object-contain filter drop-shadow-lg group-hover:scale-[1.02] transition-transform select-none"
+                    className="max-w-full max-h-[75dvh] object-contain filter drop-shadow-lg group-hover:scale-[1.02] transition-transform select-none"
                   />
                 ) : (
                   <span className="font-mext text-9xl font-black text-slate-900 dark:text-white">{currentPair.charLower}</span>
@@ -541,7 +541,7 @@ export const AlphabetComparisonStudio: React.FC<{ onExit?: () => void }> = ({ on
                     <img
                       src={currentPair.upperImageSrc}
                       alt={currentPair.char}
-                      className="max-w-full max-h-[78vh] object-contain filter drop-shadow-xl group-hover:scale-[1.01] transition-transform select-none"
+                      className="max-w-full max-h-[78dvh] object-contain filter drop-shadow-xl group-hover:scale-[1.01] transition-transform select-none"
                     />
                   ) : (
                     <span className="font-mext text-9xl font-black text-slate-900 dark:text-white">{currentPair.char}</span>
@@ -551,7 +551,7 @@ export const AlphabetComparisonStudio: React.FC<{ onExit?: () => void }> = ({ on
                     <img
                       src={currentPair.lowerImageSrc}
                       alt={currentPair.charLower}
-                      className="max-w-full max-h-[78vh] object-contain filter drop-shadow-xl group-hover:scale-[1.01] transition-transform select-none"
+                      className="max-w-full max-h-[78dvh] object-contain filter drop-shadow-xl group-hover:scale-[1.01] transition-transform select-none"
                     />
                   ) : (
                     <span className="font-mext text-9xl font-black text-slate-900 dark:text-white">{currentPair.charLower}</span>

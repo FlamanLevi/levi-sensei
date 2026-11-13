@@ -2,6 +2,7 @@ import { useEffect, useRef, useCallback } from 'react';
 import { QuizRoomState, QuizQuestion, QuizPlayer, TeamId, RAINBOW_TEAM_ORDER } from '../types';
 import { KART_THEME_LIST } from '@/games/suzuka_grand_prix/kartPresets';
 import { SUZUKA_CIRCUIT_LENGTH_METERS } from '@/games/suzuka_grand_prix/engine/Suzuka3DEngine';
+import { ensureAnonymousAuth } from '@/services/firebase';
 import { safeSet, safeUpdate, safeTransaction, getServerTime } from '@/services/rtdbSafe';
 
 const BOT_NAMES = [
@@ -118,6 +119,7 @@ export function useQuizBotSimulator({
     }
 
     // Write all bots to Firebase in one batch
+    await ensureAnonymousAuth();
     await safeUpdate(`rooms/${roomCode}/players`, updates);
 
     // If Team mode, update team score member counts
@@ -153,6 +155,7 @@ export function useQuizBotSimulator({
       responseRemovals[bId] = null;
     });
 
+    await ensureAnonymousAuth();
     await safeUpdate(`rooms/${roomCode}/players`, playerRemovals);
     await safeUpdate(`roomPlayers/${roomCode}`, playerRemovals).catch(() => {});
     await safeUpdate(`roomResponses/${roomCode}`, responseRemovals).catch(() => {});
@@ -250,6 +253,7 @@ export function useQuizBotSimulator({
         };
 
         // Submit bot response strictly to isolated roomResponses spoke node
+        await ensureAnonymousAuth();
         await safeSet(`roomResponses/${roomCode}/${bot.id}`, responsePayload).catch(() => {});
       }, delay);
 
@@ -451,6 +455,7 @@ export function useQuizBotSimulator({
           // [ANTIGRAVITY REFACTOR]: Single batched spoke write at <= 5 Hz!
           // Removed `safeUpdate(\`rooms/\${roomCode}/players/\${bot.id}\`, ...)` to prevent
           // O(N^2) room-snapshot fan-out to all 40 student iPads during active races.
+          await ensureAnonymousAuth();
           await safeUpdate(`roomPlayers/${roomCode}`, batchedSpokeUpdates).catch(() => {});
         }
 

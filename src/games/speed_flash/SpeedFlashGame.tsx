@@ -389,37 +389,25 @@ export const SpeedFlashGame: React.FC<SpeedFlashGameProps> = ({ onExit }) => {
     return 'text-base sm:text-lg font-black';
   };
 
-  // Dynamic font & ruby sizing for Japanese translation
-  const getJapaneseClasses = (card: VocabularyItem) => {
+  // Dynamic font sizing for Japanese translation (inherits proportional 0.58em global <rt> furigana)
+  const getJapaneseClass = (card: VocabularyItem) => {
     const text = (card.ja_kanji || card.ja_hiragana || '').trim();
     const len = text.length;
 
     // 10+ chars (e.g. "テレビゲームをすること", "ランドセルを確かめる")
     if (len >= 10) {
-      return {
-        base: 'text-xl sm:text-2xl md:text-3xl font-black text-slate-800 dark:text-slate-100',
-        rt: 'text-[9px] sm:text-[10px] font-bold text-sky-600 dark:text-sky-300 select-none'
-      };
+      return 'text-xl sm:text-2xl md:text-3xl font-black text-slate-800 dark:text-slate-100';
     }
     // 7–9 chars (e.g. "犬の散歩をする", "スーパーマーケット")
     if (len >= 7) {
-      return {
-        base: 'text-2xl sm:text-3xl md:text-4xl font-black text-slate-800 dark:text-slate-100',
-        rt: 'text-[10px] sm:text-xs font-bold text-sky-600 dark:text-sky-300 select-none'
-      };
+      return 'text-2xl sm:text-3xl md:text-4xl font-black text-slate-800 dark:text-slate-100';
     }
     // 4–6 chars (e.g. "持っている", "ごみを出す", "家を出る")
     if (len >= 4) {
-      return {
-        base: 'text-3xl sm:text-4xl md:text-5xl font-black text-slate-800 dark:text-slate-100',
-        rt: 'text-xs sm:text-sm font-bold text-sky-600 dark:text-sky-300 select-none'
-      };
+      return 'text-3xl sm:text-4xl md:text-5xl font-black text-slate-800 dark:text-slate-100';
     }
     // 1–3 chars (e.g. "犬", "本", "赤", "車", "走る") - Ultra prominent
-    return {
-      base: 'text-4xl sm:text-5xl md:text-6xl font-black text-slate-800 dark:text-slate-100',
-      rt: 'text-xs sm:text-base font-bold text-sky-600 dark:text-sky-300 select-none'
-    };
+    return 'text-4xl sm:text-5xl md:text-6xl font-black text-slate-800 dark:text-slate-100';
   };
 
   return (
@@ -430,8 +418,8 @@ export const SpeedFlashGame: React.FC<SpeedFlashGameProps> = ({ onExit }) => {
          ========================================================================= */}
       <div className="w-full md:w-[360px] lg:w-[420px] xl:w-[460px] shrink-0 h-full flex flex-col justify-between gap-2.5 order-2 md:order-1">
         {/* --- 1. TOP HEADER STRIP: Title, Counter & Settings --- */}
-        <div className="bg-white dark:bg-slate-900/95 p-2.5 sm:p-3 rounded-2xl border border-rose-200 dark:border-slate-800 shadow-md flex items-center justify-between gap-2 shrink-0">
-          <div className="flex items-center gap-2 min-w-0">
+        <div className="bg-white dark:bg-slate-900/95 p-2.5 sm:p-3 rounded-2xl border border-rose-200 dark:border-slate-800 shadow-md flex flex-nowrap items-center justify-between gap-2 shrink-0 overflow-x-auto no-scrollbar whitespace-nowrap">
+          <div className="flex items-center gap-2 min-w-0 flex-1">
             {onExit && (
               <button
                 onClick={onExit}
@@ -451,21 +439,21 @@ export const SpeedFlashGame: React.FC<SpeedFlashGameProps> = ({ onExit }) => {
             </div>
           </div>
 
-          <div className="flex items-center gap-1 shrink-0">
+          <div className="flex items-center gap-1 shrink-0 flex-nowrap">
             <button
               onClick={() => { playPop(); setupQueue(); }}
-              className="p-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-200 transition cursor-pointer"
+              className="p-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-200 transition cursor-pointer shrink-0"
               title={t("Shuffle and restart queue", "シャッフルして最初から")}
             >
               <RotateCcw size={14} />
             </button>
             <button
               onClick={() => { playPop(); setIsSettingsOpen(true); }}
-              className="px-2 py-1 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 text-rose-700 dark:text-rose-300 border border-rose-400/40 font-black text-xs flex items-center gap-1 transition cursor-pointer active:scale-95 shadow-xs"
+              className="px-2 py-1 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 text-rose-700 dark:text-rose-300 border border-rose-400/40 font-black text-xs flex items-center gap-1 transition cursor-pointer active:scale-95 shadow-xs shrink-0"
               title={t("Game Settings", "設定")}
             >
               <Settings size={13} />
-              <span className="hidden xs:inline">{t("Settings", <><ruby>設定<rt className="text-[7px]">せってい</rt></ruby></>)}</span>
+              <span className="hidden xs:inline">{t("Settings", <><ruby>設定<rt>せってい</rt></ruby></>)}</span>
             </button>
           </div>
         </div>
@@ -529,21 +517,17 @@ export const SpeedFlashGame: React.FC<SpeedFlashGameProps> = ({ onExit }) => {
           {/* Bottom of Card: Japanese Meaning with High-Contrast Furigana */}
           <div className="pt-2.5 border-t border-slate-200 dark:border-slate-800 text-center shrink-0 min-h-[52px] sm:min-h-[60px] flex items-center justify-center">
             {isWordConcealed ? (
-              <span className="text-xs font-bold text-slate-400 dark:text-slate-500">
+              <span className="text-xs font-bold text-slate-500 dark:text-slate-400">
                 {t("Reveal to see translation", "答えをオープンして確認")}
               </span>
-            ) : (() => {
-              const jp = getJapaneseClasses(currentCard);
-              return (
-                <RubyText
-                  ruby={currentCard.ruby}
-                  kanji={currentCard.ja_kanji}
-                  hiragana={currentCard.ja_hiragana}
-                  className={jp.base}
-                  rtClassName={jp.rt}
-                />
-              );
-            })()}
+            ) : (
+              <RubyText
+                ruby={currentCard.ruby}
+                kanji={currentCard.ja_kanji}
+                hiragana={currentCard.ja_hiragana}
+                className={getJapaneseClass(currentCard)}
+              />
+            )}
           </div>
         </div>
 

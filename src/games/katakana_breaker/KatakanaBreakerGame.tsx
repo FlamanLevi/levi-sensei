@@ -258,15 +258,15 @@ export const KatakanaBreakerGame: React.FC<KatakanaBreakerGameProps> = () => {
   return (
     <div className="w-full flex-1 flex flex-col justify-between p-2 sm:p-4 select-none relative font-['UD_Digi_Kyokasho_NP-R','Zen_Maru_Gothic',sans-serif]">
       {/* 1. Header Toolbar */}
-      <div className="bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 rounded-2xl sm:rounded-3xl p-2.5 sm:p-3.5 shadow-md flex flex-wrap items-center justify-between gap-3 mb-2 shrink-0">
-        <div className="flex items-center gap-2">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-amber-400 to-orange-500 text-white flex items-center justify-center text-2xl shadow-md">
+      <div className="bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 rounded-2xl sm:rounded-3xl p-2.5 sm:p-3.5 shadow-md flex flex-nowrap items-center justify-between gap-3 mb-2 shrink-0 overflow-x-auto no-scrollbar whitespace-nowrap">
+        <div className="flex items-center gap-2 shrink-0">
+          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-amber-400 to-orange-500 text-white flex items-center justify-center text-2xl shadow-md shrink-0">
             🍌
           </div>
-          <div>
-            <h2 className="text-base sm:text-xl font-black text-slate-900 dark:text-white flex items-center gap-2">
+          <div className="min-w-0">
+            <h2 className="text-base sm:text-xl font-black text-slate-900 dark:text-white flex items-center gap-2 whitespace-nowrap">
               <span>{t('Katakana Breaker Chant', <>バナナじゃなくて <span className="text-amber-500">banana</span></>)}</span>
-              <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 dark:bg-amber-950 dark:text-amber-300">
+              <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 dark:bg-amber-950 dark:text-amber-300 shrink-0">
                 104 BPM Groove
               </span>
             </h2>
@@ -274,10 +274,10 @@ export const KatakanaBreakerGame: React.FC<KatakanaBreakerGameProps> = () => {
         </div>
 
         {/* Controls: Tempo & Reset */}
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-nowrap items-center gap-2 shrink-0">
           {/* Tempo Selector */}
           <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-1 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700">
-            <span className="text-slate-400 px-1.5">{t('Tempo:', 'テンポ:')}</span>
+            <span className="text-slate-600 dark:text-slate-300 px-1.5">{t('Tempo:', 'テンポ:')}</span>
             {[88, 104, 118].map((bpm) => (
               <button
                 key={bpm}
@@ -295,7 +295,7 @@ export const KatakanaBreakerGame: React.FC<KatakanaBreakerGameProps> = () => {
           <button
             type="button"
             onClick={resetPlaylist}
-            className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-600 dark:text-slate-300 transition cursor-pointer"
+            className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-600 dark:text-slate-300 transition cursor-pointer shrink-0"
             title="Reset Playlist"
           >
             <RotateCcw size={16} />
@@ -316,8 +316,8 @@ export const KatakanaBreakerGame: React.FC<KatakanaBreakerGameProps> = () => {
       )}
 
       {/* 3. Bottom Transport Bar */}
-      <div className="mt-2.5 bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 rounded-2xl p-3 shadow-lg flex items-center justify-between gap-3 shrink-0">
-        <div className="flex items-center gap-2">
+      <div className="mt-2.5 bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 rounded-2xl p-3 shadow-lg flex flex-nowrap items-center justify-between gap-3 shrink-0 overflow-x-auto no-scrollbar whitespace-nowrap">
+        <div className="flex items-center gap-2 shrink-0">
           <button
             type="button"
             onClick={() => {
@@ -339,7 +339,7 @@ export const KatakanaBreakerGame: React.FC<KatakanaBreakerGameProps> = () => {
             }`}
           >
             {isPlaying ? <Pause size={18} fill="white" /> : <Play size={18} fill="white" />}
-            <span>{isPlaying ? t('PAUSE (Space)', 'ストップ [Space]') : t('START CHANT! (Space)', <><ruby>チャンツ開始<rt className="text-[7px]">かいし</rt></ruby>！ [Space]</>)}</span>
+            <span>{isPlaying ? t('PAUSE (Space)', 'ストップ [Space]') : t('START CHANT! (Space)', <><ruby>チャンツ開始<rt>かいし</rt></ruby>！ [Space]</>)}</span>
           </button>
 
           <button
@@ -355,12 +355,12 @@ export const KatakanaBreakerGame: React.FC<KatakanaBreakerGameProps> = () => {
         </div>
 
         {/* Word Counter */}
-        <div className="text-right">
-          <span className="text-xs font-black text-slate-400 font-mono">
+        <div className="text-right shrink-0">
+          <span className="text-xs font-black text-slate-500 dark:text-slate-400 font-mono">
             {currentIndex + 1} / {queue.length}
           </span>
-          <span className="text-[10px] text-slate-400 block font-bold">
-            {t('Presenter: Spacebar to toggle rhythm', <>クリック<ruby>操作<rt className="text-[7px]">そうさ</rt></ruby>: スペースキーで<ruby>開始<rt className="text-[7px]">かいし</rt></ruby>/<ruby>停止<rt className="text-[7px]">ていし</rt></ruby></>)}
+          <span className="text-[10px] text-slate-600 dark:text-slate-300 block font-bold">
+            {t('Presenter: Spacebar to toggle rhythm', <>クリック<ruby>操作<rt>そうさ</rt></ruby>: スペースキーで<ruby>開始<rt>かいし</rt></ruby>/<ruby>停止<rt>ていし</rt></ruby></>)}
           </span>
         </div>
       </div>

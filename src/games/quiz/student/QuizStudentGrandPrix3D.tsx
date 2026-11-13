@@ -624,27 +624,27 @@ export const QuizStudentGrandPrix3D: React.FC<QuizStudentGrandPrix3DProps> = ({
 
         {/* Top Student Race Metrics HUD: Position, Lap, and Points clustered together under Landmark! */}
         {!isLobby && (
-          <div className="absolute top-11 sm:top-12 left-3 z-30 flex items-center gap-1.5 sm:gap-2 pointer-events-none">
-            <div className="px-3 py-1 rounded-full bg-slate-950/85 backdrop-blur-md border border-slate-700 text-white font-black text-xs flex items-center gap-1.5 shadow-lg pointer-events-auto">
+          <div className="absolute top-11 sm:top-12 left-3 z-30 flex flex-nowrap items-center gap-1.5 sm:gap-2 pointer-events-none whitespace-nowrap">
+            <div className="px-3 py-1 rounded-full bg-slate-950/85 backdrop-blur-md border border-slate-700 text-white font-black text-xs flex items-center gap-1.5 shadow-lg pointer-events-auto shrink-0">
               <span className="text-amber-400">POS:</span>
               <span className="font-mono text-sm text-emerald-400">P{studentRank}</span>
               <span className="text-slate-400 text-[10px]">/ {allRacers3D.length}</span>
             </div>
 
             {!isTimeTrial && (
-              <div className="px-3 py-1 rounded-full bg-slate-950/85 backdrop-blur-md border border-slate-700 text-cyan-400 font-mono font-black text-xs shadow-lg flex items-center gap-1 pointer-events-auto">
+              <div className="px-3 py-1 rounded-full bg-slate-950/85 backdrop-blur-md border border-slate-700 text-cyan-400 font-mono font-black text-xs shadow-lg flex items-center gap-1 pointer-events-auto shrink-0">
                 <Flag size={11} />
                 <span>LAP {currentLapDisplay} / {targetLaps}</span>
               </div>
             )}
 
             {/* Points counter unified right next to Position & Lap */}
-            <div className="px-3 py-1 rounded-full bg-slate-950/85 backdrop-blur-md border border-slate-700 text-emerald-400 font-mono font-black text-xs shadow-lg pointer-events-auto">
+            <div className="px-3 py-1 rounded-full bg-slate-950/85 backdrop-blur-md border border-slate-700 text-emerald-400 font-mono font-black text-xs shadow-lg pointer-events-auto shrink-0">
               {localScore.toLocaleString()} PTS
             </div>
 
             {raceFinishGraceStartTime && !isTimeTrial && (
-              <div className="px-3 py-1 rounded-full bg-rose-600 text-white font-black text-xs flex items-center gap-1 animate-pulse shadow-lg pointer-events-auto">
+              <div className="px-3 py-1 rounded-full bg-rose-600 text-white font-black text-xs flex items-center gap-1 animate-pulse shadow-lg pointer-events-auto shrink-0">
                 <Clock size={11} />
                 <span>{graceRemainingSeconds}s</span>
               </div>

@@ -108,7 +108,7 @@ export const GradeDossierView: React.FC<GradeDossierViewProps> = ({
             <div className="flex items-center gap-2">
               <span className="text-xl">📑</span>
               <h2 className="text-xl sm:text-2xl font-black tracking-tight">
-                {t(`Grade ${grade} Comprehensive Daily Dossier`, <><ruby>{grade}学年<rt className="text-[7px]">がくねん</rt></ruby> · <ruby>合同授業分析<rt className="text-[7px]">ごうどうじゅぎょうぶんせき</rt></ruby>デブリーフ</>)}
+                {t(`Grade ${grade} Comprehensive Daily Dossier`, <><ruby>{grade}学年<rt>がくねん</rt></ruby> · <ruby>合同授業分析<rt>ごうどうじゅぎょうぶんせき</rt></ruby>デブリーフ</>)}
               </h2>
               <span className="px-2.5 py-0.5 rounded-full text-xs font-black bg-indigo-100 dark:bg-indigo-950/70 text-indigo-700 dark:text-indigo-300">
                 {activeBundles.length} {t("Classes Recorded Today", "クラス記録")}
@@ -121,23 +121,23 @@ export const GradeDossierView: React.FC<GradeDossierViewProps> = ({
         </div>
 
         {/* Print Options */}
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex items-center gap-2 shrink-0 flex-nowrap">
           <button
             onClick={() => handlePrint('SUMMARY_ONLY')}
-            className="px-4 py-2.5 rounded-2xl font-black text-xs text-white bg-slate-900 dark:bg-slate-700 hover:bg-slate-800 dark:hover:bg-slate-600 shadow-md flex items-center gap-1.5 cursor-pointer active:scale-95 transition-all"
+            className="px-4 py-2.5 rounded-2xl font-black text-xs text-white bg-slate-900 dark:bg-slate-700 hover:bg-slate-800 dark:hover:bg-slate-600 shadow-md flex items-center gap-1.5 cursor-pointer active:scale-95 transition-all whitespace-nowrap"
             title={t("Print Executive 1-Page Grade Summary for Principal & Grade Head", "校長・学年主任提出用の学年合同サマリー（1枚）を印刷")}
           >
             <Printer size={15} />
-            <span>{t("Print Grade Summary (1-Page)", <><ruby>学年総括印刷<rt className="text-[7px]">がくねんそうかついんさつ</rt></ruby> (1枚)</>)}</span>
+            <span>{t("Print Grade Summary (1-Page)", <><ruby>学年総括印刷<rt>がくねんそうかついんさつ</rt></ruby> (1枚)</>)}</span>
           </button>
 
           <button
             onClick={() => handlePrint('ALL')}
-            className="px-4 py-2.5 rounded-2xl font-black text-xs text-indigo-700 dark:text-indigo-200 bg-indigo-50 dark:bg-indigo-950/60 hover:bg-indigo-100 dark:hover:bg-indigo-900 border border-indigo-200 dark:border-indigo-800 shadow-xs flex items-center gap-1.5 cursor-pointer active:scale-95 transition-all"
+            className="px-4 py-2.5 rounded-2xl font-black text-xs text-indigo-700 dark:text-indigo-200 bg-indigo-50 dark:bg-indigo-950/60 hover:bg-indigo-100 dark:hover:bg-indigo-900 border border-indigo-200 dark:border-indigo-800 shadow-xs flex items-center gap-1.5 cursor-pointer active:scale-95 transition-all whitespace-nowrap"
             title={t("Print Full Dossier: Grade Summary + 1 page per class for HRTs", "学年全体サマリー＋各担任用カルテをまとめて印刷")}
           >
             <Layers size={15} />
-            <span>{t(`Print Full Dossier (${activeBundles.length + 1}-Pages)`, <><ruby>学年一括印刷<rt className="text-[7px]">がくねんいっかついんさつ</rt></ruby> ({activeBundles.length + 1}枚)</>)}</span>
+            <span>{t(`Print Full Dossier (${activeBundles.length + 1}-Pages)`, <><ruby>学年一括印刷<rt>がくねんいっかついんさつ</rt></ruby> ({activeBundles.length + 1}枚)</>)}</span>
           </button>
         </div>
       </div>
@@ -186,7 +186,7 @@ export const GradeDossierView: React.FC<GradeDossierViewProps> = ({
           <div className="p-4 rounded-2xl bg-gradient-to-tr from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-indigo-950/40 border-2 border-blue-200 dark:border-indigo-800">
             <div className="flex items-center justify-between text-blue-600 dark:text-blue-400 mb-1">
               <span className="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                {t("GRADE TOUCHES", <><ruby>学年総解答数<rt className="text-[7px]">がくねんそうかいとうすう</rt></ruby></>)}
+                {t("GRADE TOUCHES", <><ruby>学年総解答数<rt>がくねんそうかいとうすう</rt></ruby></>)}
               </span>
               <Flame size={18} />
             </div>
@@ -201,7 +201,7 @@ export const GradeDossierView: React.FC<GradeDossierViewProps> = ({
           <div className="p-4 rounded-2xl bg-gradient-to-tr from-emerald-50 to-teal-50 dark:from-slate-800 dark:to-teal-950/40 border-2 border-emerald-200 dark:border-teal-800">
             <div className="flex items-center justify-between text-emerald-600 dark:text-emerald-400 mb-1">
               <span className="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                {t("GRADE ACCURACY", <><ruby>学年平均正解率<rt className="text-[7px]">がくねんへいきんせいかいりつ</rt></ruby></>)}
+                {t("GRADE ACCURACY", <><ruby>学年平均正解率<rt>がくねんへいきんせいかいりつ</rt></ruby></>)}
               </span>
               <CheckCircle2 size={18} />
             </div>
@@ -216,7 +216,7 @@ export const GradeDossierView: React.FC<GradeDossierViewProps> = ({
           <div className="p-4 rounded-2xl bg-gradient-to-tr from-purple-50 to-pink-50 dark:from-slate-800 dark:to-purple-950/40 border-2 border-purple-200 dark:border-purple-800">
             <div className="flex items-center justify-between text-purple-600 dark:text-purple-400 mb-1">
               <span className="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                {t("STUDENTS EVALUATED", <><ruby>参加児童総数<rt className="text-[7px]">さんかじどうそうすう</rt></ruby></>)}
+                {t("STUDENTS EVALUATED", <><ruby>参加児童総数<rt>さんかじどうそうすう</rt></ruby></>)}
               </span>
               <Users size={18} />
             </div>
@@ -231,7 +231,7 @@ export const GradeDossierView: React.FC<GradeDossierViewProps> = ({
           <div className="p-4 rounded-2xl bg-gradient-to-tr from-amber-50 to-orange-50 dark:from-slate-800 dark:to-amber-950/40 border-2 border-amber-200 dark:border-amber-800">
             <div className="flex items-center justify-between text-amber-600 dark:text-amber-400 mb-1">
               <span className="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                {t("RETRIEVAL SPEED", <><ruby>平均想起速度<rt className="text-[7px]">へいきんそうきそくど</rt></ruby></>)}
+                {t("RETRIEVAL SPEED", <><ruby>平均想起速度<rt>へいきんそうきそくど</rt></ruby></>)}
               </span>
               <Clock size={18} />
             </div>
@@ -249,9 +249,9 @@ export const GradeDossierView: React.FC<GradeDossierViewProps> = ({
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-sm font-black uppercase tracking-wider text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
               <span>📊</span>
-              <span>{t("Cross-Class Equity & Comparative Performance Matrix", <><ruby>学級間到達度比較<rt className="text-[7px]">がっきゅうかんとうたつどひかく</rt></ruby>マトリクス</>)}</span>
+              <span>{t("Cross-Class Equity & Comparative Performance Matrix", <><ruby>学級間到達度比較<rt>がっきゅうかんとうたつどひかく</rt></ruby>マトリクス</>)}</span>
             </h3>
-            <span className="text-[10px] font-bold text-slate-400">
+            <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400">
               {t("Formative evaluation across all Grade 6 classes", "第6学年全クラスの形成的評価比較")}
             </span>
           </div>
@@ -341,7 +341,7 @@ export const GradeDossierView: React.FC<GradeDossierViewProps> = ({
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-sm font-black uppercase tracking-wider text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
               <span>⚠️</span>
-              <span>{t("Grade-Wide Curriculum Blindspots (Shared Struggle Items)", <><ruby>学年共通つまずき単語<rt className="text-[7px]">がくねんきょうつうつまずきたんご</rt></ruby>リスト</>)}</span>
+              <span>{t("Grade-Wide Curriculum Blindspots (Shared Struggle Items)", <><ruby>学年共通つまずき単語<rt>がくねんきょうつうつまずきたんご</rt></ruby>リスト</>)}</span>
             </h3>
             <span className="text-[10px] font-bold text-rose-500">
               {t("Items missed across multiple classes indicate curriculum pacing cues", "複数クラスで共通して誤答が目立った単語")}

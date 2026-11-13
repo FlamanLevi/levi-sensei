@@ -273,25 +273,25 @@ export const ThreeHintsGame: React.FC<ThreeHintsGameProps> = ({ onExit }) => {
       {/* ====================================================================
           1. TOP CONTROLS & SETTINGS TOOLBAR
          ==================================================================== */}
-      <div className="flex flex-wrap items-center justify-between bg-white dark:bg-slate-800 p-2.5 sm:p-3.5 rounded-3xl shadow border-2 border-indigo-200 dark:border-slate-700 gap-2 sm:gap-3">
+      <div className="flex flex-nowrap overflow-x-auto no-scrollbar whitespace-nowrap items-center justify-between bg-white dark:bg-slate-800 p-2 sm:p-3 rounded-3xl shadow border-2 border-indigo-200 dark:border-slate-700 gap-2 sm:gap-3 shrink-0">
         {/* Left: Back & Title */}
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0 min-w-0">
           {onExit && (
             <button
               onClick={onExit}
-              className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-indigo-50 text-slate-600 dark:text-slate-300 font-bold text-xs sm:text-sm flex items-center gap-1 transition"
+              className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-indigo-50 text-slate-600 dark:text-slate-300 font-bold text-xs sm:text-sm flex items-center gap-1 transition shrink-0"
             >
               <ChevronLeft size={16} />
               <span>もどる</span>
             </button>
           )}
-          <div>
-            <h2 className="text-lg sm:text-2xl font-black text-indigo-900 dark:text-indigo-300 tracking-wide flex items-center gap-2">
+          <div className="min-w-0">
+            <h2 className="text-base sm:text-xl font-black text-indigo-900 dark:text-indigo-300 tracking-wide flex items-center gap-2 whitespace-nowrap">
               <span>🔍 3ヒントクイズ</span>
-              <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300">
+              <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 shrink-0">
                 Three-Hint Master
               </span>
-              <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 dark:bg-amber-950/60 dark:text-amber-300">
+              <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 dark:bg-amber-950/60 dark:text-amber-300 shrink-0">
                 Round {roundNumber}
               </span>
             </h2>
@@ -299,12 +299,12 @@ export const ThreeHintsGame: React.FC<ThreeHintsGameProps> = ({ onExit }) => {
         </div>
 
         {/* Center: Guessing Mode & Visual Options */}
-        <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+        <div className="flex flex-nowrap items-center gap-1.5 sm:gap-2 shrink-0">
           {/* Guessing Mode Toggle */}
-          <div className="flex bg-indigo-50 dark:bg-slate-900 p-1 rounded-2xl border border-indigo-200 dark:border-slate-700 text-xs">
+          <div className="flex flex-nowrap shrink-0 bg-indigo-50 dark:bg-slate-900 p-1 rounded-2xl border border-indigo-200 dark:border-slate-700 text-xs">
             <button
               onClick={() => setGuessingMode('OPEN_GUESS')}
-              className={`px-3 py-1 rounded-xl font-black transition ${
+              className={`px-3 py-1 rounded-xl font-black transition shrink-0 ${
                 guessingMode === 'OPEN_GUESS' ? 'bg-indigo-600 text-white shadow' : 'text-indigo-800 dark:text-indigo-300'
               }`}
             >
@@ -312,7 +312,7 @@ export const ThreeHintsGame: React.FC<ThreeHintsGameProps> = ({ onExit }) => {
             </button>
             <button
               onClick={() => setGuessingMode('FOUR_CHOICES')}
-              className={`px-3 py-1 rounded-xl font-black transition ${
+              className={`px-3 py-1 rounded-xl font-black transition shrink-0 ${
                 guessingMode === 'FOUR_CHOICES' ? 'bg-indigo-600 text-white shadow' : 'text-indigo-800 dark:text-indigo-300'
               }`}
             >
@@ -321,10 +321,10 @@ export const ThreeHintsGame: React.FC<ThreeHintsGameProps> = ({ onExit }) => {
           </div>
 
           {/* Visual Mode Toggle */}
-          <div className="flex bg-indigo-50 dark:bg-slate-900 p-1 rounded-2xl border border-indigo-200 dark:border-slate-700 text-xs">
+          <div className="flex flex-nowrap shrink-0 bg-indigo-50 dark:bg-slate-900 p-1 rounded-2xl border border-indigo-200 dark:border-slate-700 text-xs">
             <button
               onClick={() => setVisualMode('SILHOUETTE')}
-              className={`px-2.5 py-1 rounded-xl font-black transition ${
+              className={`px-2.5 py-1 rounded-xl font-black transition shrink-0 ${
                 visualMode === 'SILHOUETTE' ? 'bg-indigo-600 text-white shadow' : 'text-indigo-800 dark:text-indigo-300'
               }`}
             >
@@ -332,7 +332,7 @@ export const ThreeHintsGame: React.FC<ThreeHintsGameProps> = ({ onExit }) => {
             </button>
             <button
               onClick={() => setVisualMode('MYSTERY_BOX')}
-              className={`px-2.5 py-1 rounded-xl font-black transition ${
+              className={`px-2.5 py-1 rounded-xl font-black transition shrink-0 ${
                 visualMode === 'MYSTERY_BOX' ? 'bg-indigo-600 text-white shadow' : 'text-indigo-800 dark:text-indigo-300'
               }`}
             >
@@ -343,7 +343,7 @@ export const ThreeHintsGame: React.FC<ThreeHintsGameProps> = ({ onExit }) => {
           {/* Auto Read Aloud Toggle */}
           <button
             onClick={() => setAutoReadClue(prev => !prev)}
-            className={`px-3 py-1 rounded-2xl text-xs font-black transition flex items-center gap-1 shadow-xs ${
+            className={`px-3 py-1 rounded-2xl text-xs font-black transition flex items-center gap-1 shadow-xs shrink-0 ${
               autoReadClue
                 ? 'bg-emerald-600 text-white ring-2 ring-emerald-400'
                 : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300'
@@ -357,10 +357,10 @@ export const ThreeHintsGame: React.FC<ThreeHintsGameProps> = ({ onExit }) => {
           {/* Subtitles Toggle */}
           <button
             onClick={() => setShowSubtitles(prev => !prev)}
-            className={`px-3 py-1 rounded-2xl text-xs font-black transition shadow-xs ${
+            className={`px-3 py-1 rounded-2xl text-xs font-black transition shadow-xs shrink-0 ${
               showSubtitles
                 ? 'bg-indigo-100 text-indigo-900 dark:bg-slate-700 dark:text-white'
-                : 'bg-slate-100 dark:bg-slate-800 text-slate-400'
+                : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
             }`}
             title="Toggle Japanese translations below clues"
           >
@@ -370,7 +370,7 @@ export const ThreeHintsGame: React.FC<ThreeHintsGameProps> = ({ onExit }) => {
           {/* Reset / Next button */}
           <button
             onClick={() => advancePhase()}
-            className="px-3.5 py-1.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:brightness-110 active:scale-95 text-white font-black text-xs sm:text-sm rounded-2xl shadow flex items-center gap-1 transition"
+            className="px-3.5 py-1.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:brightness-110 active:scale-95 text-white font-black text-xs sm:text-sm rounded-2xl shadow flex items-center gap-1 transition shrink-0"
           >
             <span>{stage === 'REVEALED' ? 'つぎの問題 →' : '進む (Space)'}</span>
             <ChevronRight size={16} />
@@ -411,7 +411,7 @@ export const ThreeHintsGame: React.FC<ThreeHintsGameProps> = ({ onExit }) => {
          ==================================================================== */}
       {guessingMode === 'FOUR_CHOICES' ? (
         <div className="w-full space-y-2">
-          <div className="flex items-center justify-between text-xs font-black text-slate-500 dark:text-slate-400 px-2">
+          <div className="flex items-center justify-between text-xs font-black text-slate-600 dark:text-slate-300 px-2">
             <span>👇 4つのカードから えらぼう！ (Click or press A, B, C, D)</span>
             <span>現在: {stage === 1 ? '300点' : stage === 2 ? '200点' : stage === 3 ? '100点' : '正解済み'}</span>
           </div>
@@ -426,19 +426,19 @@ export const ThreeHintsGame: React.FC<ThreeHintsGameProps> = ({ onExit }) => {
       ) : null}
 
       {/* Team Scoreboard Bar */}
-      <div className="w-full bg-white/95 dark:bg-slate-800/95 backdrop-blur p-2.5 sm:p-3 rounded-2xl border-2 border-indigo-200 dark:border-slate-700 shadow flex flex-wrap items-center justify-between gap-2">
-        <div className="flex items-center gap-2">
-          <Award size={18} className="text-amber-500" />
-          <span className="text-xs font-black uppercase text-slate-500 dark:text-slate-400">
-            チーム得点 (キー 1〜4 で＋100 / Shift＋キーで−100 / Hキーで別のヒント):
+      <div className="w-full bg-white/95 dark:bg-slate-800/95 backdrop-blur p-2.5 sm:p-3 rounded-2xl border-2 border-indigo-200 dark:border-slate-700 shadow flex flex-nowrap overflow-x-auto no-scrollbar whitespace-nowrap items-center justify-between gap-2 shrink-0">
+        <div className="flex items-center gap-2 shrink-0">
+          <Award size={18} className="text-amber-500 shrink-0" />
+          <span className="text-xs font-black uppercase text-slate-600 dark:text-slate-300">
+            チーム得点 (1〜4で＋100 / Shift＋で−100 / Hで別ヒント):
           </span>
         </div>
 
-        <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+        <div className="flex items-center gap-1.5 sm:gap-2 flex-nowrap shrink-0">
           {/* Red */}
           <button
             onClick={() => adjustTeamScore('red', 100)}
-            className="flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold bg-red-50 dark:bg-red-950/40 border border-red-300 dark:border-red-600 hover:scale-105 active:scale-95 transition"
+            className="flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold bg-red-50 dark:bg-red-950/40 border border-red-300 dark:border-red-600 hover:scale-105 active:scale-95 transition shrink-0"
           >
             <span>🔴 赤:</span>
             <span className="font-black text-red-700 dark:text-red-400 text-sm sm:text-base">{teamScores.red}</span>
@@ -446,7 +446,7 @@ export const ThreeHintsGame: React.FC<ThreeHintsGameProps> = ({ onExit }) => {
           {/* Blue */}
           <button
             onClick={() => adjustTeamScore('blue', 100)}
-            className="flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold bg-blue-50 dark:bg-blue-950/40 border border-blue-300 dark:border-blue-600 hover:scale-105 active:scale-95 transition"
+            className="flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold bg-blue-50 dark:bg-blue-950/40 border border-blue-300 dark:border-blue-600 hover:scale-105 active:scale-95 transition shrink-0"
           >
             <span>🔵 青:</span>
             <span className="font-black text-blue-700 dark:text-blue-400 text-sm sm:text-base">{teamScores.blue}</span>
@@ -454,7 +454,7 @@ export const ThreeHintsGame: React.FC<ThreeHintsGameProps> = ({ onExit }) => {
           {/* Yellow */}
           <button
             onClick={() => adjustTeamScore('yellow', 100)}
-            className="flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-600 hover:scale-105 active:scale-95 transition"
+            className="flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-600 hover:scale-105 active:scale-95 transition shrink-0"
           >
             <span>🟡 黄:</span>
             <span className="font-black text-amber-700 dark:text-amber-400 text-sm sm:text-base">{teamScores.yellow}</span>
@@ -462,7 +462,7 @@ export const ThreeHintsGame: React.FC<ThreeHintsGameProps> = ({ onExit }) => {
           {/* Green */}
           <button
             onClick={() => adjustTeamScore('green', 100)}
-            className="flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-600 hover:scale-105 active:scale-95 transition"
+            className="flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-600 hover:scale-105 active:scale-95 transition shrink-0"
           >
             <span>🟢 緑:</span>
             <span className="font-black text-emerald-700 dark:text-emerald-400 text-sm sm:text-base">{teamScores.green}</span>

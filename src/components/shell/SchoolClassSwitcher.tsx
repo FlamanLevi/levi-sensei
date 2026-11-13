@@ -224,15 +224,15 @@ export const SchoolClassSwitcher: React.FC = () => {
                 <School size={16} className="text-indigo-600 dark:text-indigo-400" />
                 <span>
                   {language === 'ja' ? (
-                    <><ruby>学校<rt className="text-[7px]">がっこう</rt></ruby>・クラスの<ruby>選択<rt className="text-[7px]">せんたく</rt></ruby></>
+                    <><ruby>学校<rt>がっこう</rt></ruby>・クラスの<ruby>選択<rt>せんたく</rt></ruby></>
                   ) : (
                     'Select School & Class'
                   )}
                 </span>
               </div>
-              <span className="text-[10px] font-bold text-slate-400">
+              <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400">
                 {language === 'ja' ? (
-                  <><ruby>1タップ切替<rt className="text-[7px]">ワンタップきりかえ</rt></ruby></>
+                  <><ruby>1タップ切替<rt>ワンタップきりかえ</rt></ruby></>
                 ) : (
                   '1-Tap Switch'
                 )}
@@ -269,10 +269,10 @@ export const SchoolClassSwitcher: React.FC = () => {
 
             {/* Class Rotated Grid: Grades Left-to-Right (Columns), Classes Top-to-Bottom (Rows) */}
             <div className="mb-2">
-              <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1.5 px-0.5">
+              <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5 px-0.5">
                 <span>
                   {language === 'ja' ? (
-                    <><ruby>全クラス一覧<rt className="text-[7px]">ぜんくらすいちらん</rt></ruby>（{activeSchool === 'toyogaoka' ? '全5クラス' : '全20クラス'}）</>
+                    <><ruby>全クラス一覧<rt>ぜんくらすいちらん</rt></ruby>（{activeSchool === 'toyogaoka' ? '全5クラス' : '全20クラス'}）</>
                   ) : (
                     `All Classes (${activeSchool === 'toyogaoka' ? '5 classes' : '20 classes'})`
                   )}
@@ -292,7 +292,7 @@ export const SchoolClassSwitcher: React.FC = () => {
               <span className="font-bold text-slate-500 dark:text-slate-400 truncate">
                 {language === 'ja' ? (
                   <>
-                    <ruby>現在<rt className="text-[7px]">げんざい</rt></ruby>: <strong className="text-indigo-600 dark:text-indigo-400">{currentSchoolConfig.kanjiName} {activeClassId}</strong>
+                    <ruby>現在<rt>げんざい</rt></ruby>: <strong className="text-indigo-600 dark:text-indigo-400">{currentSchoolConfig.kanjiName} {activeClassId}</strong>
                   </>
                 ) : (
                   <>
@@ -303,7 +303,7 @@ export const SchoolClassSwitcher: React.FC = () => {
               <span className="px-2 py-0.5 rounded-md bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-300 font-bold text-[10px] shrink-0">
                 {language === 'ja' ? (
                   <>
-                    <ruby>{activeClassId.split('-')[0]}年<rt className="text-[7px]">ねん</rt></ruby> <ruby>連動<rt className="text-[7px]">れんどう</rt></ruby>
+                    <ruby>{activeClassId.split('-')[0]}年<rt>ねん</rt></ruby> <ruby>連動<rt>れんどう</rt></ruby>
                   </>
                 ) : (
                   `Grade ${activeClassId.split('-')[0]} Linked`

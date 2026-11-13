@@ -57,7 +57,7 @@ export const SprintStage: React.FC<SprintStageProps> = ({
             key={card.id}
             src={imageUrl}
             alt={card.english}
-            className="w-full h-full max-h-[min(50vh,460px)] object-contain drop-shadow-md rounded-2xl animate-in zoom-in-95 duration-100"
+            className="w-full h-full max-h-[min(50dvh,460px)] object-contain drop-shadow-md rounded-2xl animate-in zoom-in-95 duration-100"
           />
         ) : (
           <span className="text-7xl">📖</span>

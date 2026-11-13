@@ -1,4 +1,28 @@
+import { ensureAnonymousAuth } from './firebase';
 import { safeGet, safeRemove, getServerTime } from './rtdbSafe';
+
+export async function clearClassRoomPointers(
+  schoolId?: string,
+  classId?: string,
+  targetRoomCode?: string | null
+): Promise<void> {
+  if (!schoolId || !classId || !targetRoomCode) return;
+  const basePath = `schools/${schoolId}/classes/${classId}/analyticsSummary`;
+  const [curActive, curTeacher] = await Promise.all([
+    safeGet<{ code?: string }>(`${basePath}/activeRoom`).catch(() => null),
+    safeGet<{ code?: string }>(`${basePath}/teacherRoom`).catch(() => null)
+  ]);
+  const removals: Promise<void>[] = [];
+  if (curActive?.code === targetRoomCode) {
+    removals.push(safeRemove(`${basePath}/activeRoom`).catch(() => {}));
+  }
+  if (curTeacher?.code === targetRoomCode) {
+    removals.push(safeRemove(`${basePath}/teacherRoom`).catch(() => {}));
+  }
+  if (removals.length > 0) {
+    await Promise.all(removals);
+  }
+}
 
 /**
  * Automatically sweeps and purges stale, abandoned, or closed rooms from Firebase RTDB.
@@ -10,6 +34,9 @@ import { safeGet, safeRemove, getServerTime } from './rtdbSafe';
  */
 export async function sweepStaleRooms(): Promise<number> {
   try {
+    const uid = await ensureAnonymousAuth();
+    if (!uid) return 0;
+
     const snap = await safeGet<Record<string, any>>('rooms');
     if (!snap || typeof snap !== 'object') return 0;
 
@@ -38,12 +65,16 @@ export async function sweepStaleRooms(): Promise<number> {
       const isAncient = lastActivity > 0 ? (now - lastActivity > TWO_HOURS_MS) : (isDeadLobby || isExplicitlyClosed);
 
       if (isExplicitlyClosed || isOldGameOver || isDeadLobby || isAncient) {
+        const sId = r.schoolId || r.metadata?.schoolId;
+        const cId = r.classId || r.metadata?.classId;
+        const isStudent = !!(r.isStudentHost || r.metadata?.isStudentHost);
         promises.push(
           Promise.all([
             safeRemove(`rooms/${pin}`),
             safeRemove(`roomPlayers/${pin}`),
             safeRemove(`roomResponses/${pin}`),
-            safeRemove(`hostSessions/${pin}`)
+            safeRemove(`hostSessions/${pin}`),
+            sId && cId && !isStudent ? clearClassRoomPointers(sId, cId, pin) : Promise.resolve()
           ]).then(() => {}).catch(() => {})
         );
         purgedCount++;

@@ -396,45 +396,48 @@ export const QuizStudentSprint: React.FC<QuizStudentSprintProps> = ({
       : 0;
 
     return (
-      <div className="w-full max-w-lg mx-auto p-4 text-center select-none animate-in zoom-in-95 duration-200">
-        <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 shadow-2xl border-4 border-indigo-400 dark:border-indigo-500">
-          <div className="w-20 h-20 rounded-3xl bg-gradient-to-tr from-indigo-500 to-purple-500 text-white flex items-center justify-center mx-auto mb-4 shadow-xl text-4xl">
-            ⏱️
-          </div>
-          <span className="text-xs font-black uppercase tracking-widest text-indigo-600 dark:text-indigo-400 block mb-1">
-            {t('TIME TRIAL COMPLETED', 'タイムアップ！')}
-          </span>
-          <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white mb-4">
-            {t('Time Trial Finished! Great Run!', 'タイムアタック終了！ナイスラン！')}
-          </h2>
-
-          <div className="grid grid-cols-2 gap-3 mb-6">
-            <div className="p-3.5 rounded-2xl bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-900/60">
-              <span className="text-xs font-bold text-indigo-800 dark:text-indigo-300 block">{t('Correct Answers', '正解数')}</span>
-              <strong className="text-2xl font-mono font-black text-indigo-600 dark:text-indigo-400">
-                {finalCorrect} {t('correct', '問正解')}
-              </strong>
+      <div className="w-full max-w-3xl mx-auto p-3 sm:p-4 select-none animate-in zoom-in-95 duration-200">
+        <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-7 shadow-2xl border-4 border-indigo-400 dark:border-indigo-500 grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 items-center">
+          <div className="text-center md:text-left">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-3xl bg-gradient-to-tr from-indigo-500 to-purple-500 text-white flex items-center justify-center mx-auto md:mx-0 mb-3 shadow-xl text-4xl">
+              ⏱️
             </div>
-
-            <div className="p-3.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900/60">
-              <span className="text-xs font-bold text-emerald-800 dark:text-emerald-300 block">{t('Score', 'スコア')}</span>
-              <strong className="text-2xl font-mono font-black text-emerald-600 dark:text-emerald-400">
-                {finalScore.toLocaleString()} pts
-              </strong>
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-black text-slate-600 dark:text-slate-300 mb-6">
-            <span>{t('Accuracy: ', '正解率: ')}{accuracyPct}% ({finalCorrect} / {finalTotal})</span>
-            <span className="flex items-center gap-1 text-amber-500">
-              <Flame size={14} />
-              <span>{t('Max Streak: ', '最大連勝: ')}{finalMaxStreak}</span>
+            <span className="text-xs font-black uppercase tracking-widest text-indigo-600 dark:text-indigo-400 block mb-1">
+              {t('TIME TRIAL COMPLETED', 'タイムアップ！')}
             </span>
+            <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white mb-2 leading-tight">
+              {t('Time Trial Finished! Great Run!', 'タイムアタック終了！ナイスラン！')}
+            </h2>
+            <p className="text-xs font-bold text-slate-400 animate-pulse">
+              {t('Waiting for teacher’s screen to reveal podium & awards...', '先生の画面で表彰式・結果発表を待っています...')}
+            </p>
           </div>
 
-          <p className="text-xs font-bold text-slate-400 animate-pulse">
-            {t('Waiting for teacher’s screen to reveal podium & awards...', '先生の画面で表彰式・結果発表を待っています...')}
-          </p>
+          <div className="space-y-3">
+            <div className="grid grid-cols-2 gap-3 text-center">
+              <div className="p-3.5 rounded-2xl bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-900/60">
+                <span className="text-xs font-bold text-indigo-800 dark:text-indigo-300 block">{t('Correct Answers', '正解数')}</span>
+                <strong className="text-2xl font-mono font-black text-indigo-600 dark:text-indigo-400">
+                  {finalCorrect} {t('correct', '問正解')}
+                </strong>
+              </div>
+
+              <div className="p-3.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900/60">
+                <span className="text-xs font-bold text-emerald-800 dark:text-emerald-300 block">{t('Score', 'スコア')}</span>
+                <strong className="text-2xl font-mono font-black text-emerald-600 dark:text-emerald-400">
+                  {finalScore.toLocaleString()} pts
+                </strong>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between gap-2 p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-black text-slate-600 dark:text-slate-300">
+              <span>{t('Accuracy: ', '正解率: ')}{accuracyPct}% ({finalCorrect} / {finalTotal})</span>
+              <span className="flex items-center gap-1 text-amber-500 shrink-0">
+                <Flame size={14} />
+                <span>{t('Max Streak: ', '最大連勝: ')}{finalMaxStreak}</span>
+              </span>
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -453,45 +456,48 @@ export const QuizStudentSprint: React.FC<QuizStudentSprintProps> = ({
       : 100;
 
     return (
-      <div className="w-full max-w-lg mx-auto p-4 text-center select-none animate-in zoom-in-95 duration-200">
-        <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 shadow-2xl border-4 border-emerald-400 dark:border-emerald-500">
-          <div className="w-20 h-20 rounded-3xl bg-gradient-to-tr from-emerald-400 to-teal-500 text-white flex items-center justify-center mx-auto mb-4 shadow-xl text-4xl">
-            🏁
-          </div>
-          <span className="text-xs font-black uppercase tracking-widest text-emerald-600 dark:text-emerald-400 block mb-1">
-            {t('CHEQUERED FLAG', 'チェッカーフラッグ！')}
-          </span>
-          <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white mb-4">
-            {t('Race Finished! Congratulations!', 'レース完走！おめでとう！')}
-          </h2>
-
-          <div className="grid grid-cols-2 gap-3 mb-6">
-            <div className="p-3.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900/60">
-              <span className="text-xs font-bold text-emerald-800 dark:text-emerald-300 block">{t('Official Time', '公式タイム')}</span>
-              <strong className="text-2xl font-mono font-black text-emerald-600 dark:text-emerald-400">
-                {finishSec}s
-              </strong>
+      <div className="w-full max-w-3xl mx-auto p-3 sm:p-4 select-none animate-in zoom-in-95 duration-200">
+        <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-7 shadow-2xl border-4 border-emerald-400 dark:border-emerald-500 grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 items-center">
+          <div className="text-center md:text-left">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-3xl bg-gradient-to-tr from-emerald-400 to-teal-500 text-white flex items-center justify-center mx-auto md:mx-0 mb-3 shadow-xl text-4xl">
+              🏁
             </div>
-
-            <div className="p-3.5 rounded-2xl bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-900/60">
-              <span className="text-xs font-bold text-indigo-800 dark:text-indigo-300 block">{t('Score', 'スコア')}</span>
-              <strong className="text-2xl font-mono font-black text-indigo-600 dark:text-indigo-400">
-                {finalScore.toLocaleString()}
-              </strong>
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-black text-slate-600 dark:text-slate-300 mb-6">
-            <span>{t('Accuracy: ', '正解率: ')}{accuracyPct}% ({finalCorrect} / {finalTotal})</span>
-            <span className="flex items-center gap-1 text-amber-500">
-              <Flame size={14} />
-              <span>{t('Max Streak: ', '最大連勝: ')}{finalMaxStreak}</span>
+            <span className="text-xs font-black uppercase tracking-widest text-emerald-600 dark:text-emerald-400 block mb-1">
+              {t('CHEQUERED FLAG', 'チェッカーフラッグ！')}
             </span>
+            <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white mb-2 leading-tight">
+              {t('Race Finished! Congratulations!', 'レース完走！おめでとう！')}
+            </h2>
+            <p className="text-xs font-bold text-slate-400 animate-pulse">
+              {t('Waiting for all racers to finish or award ceremony...', '全員のゴールまたは表彰式の発表を待っています...')}
+            </p>
           </div>
 
-          <p className="text-xs font-bold text-slate-400 animate-pulse">
-            {t('Waiting for all racers to finish or award ceremony...', '全員のゴールまたは表彰式の発表を待っています...')}
-          </p>
+          <div className="space-y-3">
+            <div className="grid grid-cols-2 gap-3 text-center">
+              <div className="p-3.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900/60">
+                <span className="text-xs font-bold text-emerald-800 dark:text-emerald-300 block">{t('Official Time', '公式タイム')}</span>
+                <strong className="text-2xl font-mono font-black text-emerald-600 dark:text-emerald-400">
+                  {finishSec}s
+                </strong>
+              </div>
+
+              <div className="p-3.5 rounded-2xl bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-900/60">
+                <span className="text-xs font-bold text-indigo-800 dark:text-indigo-300 block">{t('Score', 'スコア')}</span>
+                <strong className="text-2xl font-mono font-black text-indigo-600 dark:text-indigo-400">
+                  {finalScore.toLocaleString()}
+                </strong>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between gap-2 p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-black text-slate-600 dark:text-slate-300">
+              <span>{t('Accuracy: ', '正解率: ')}{accuracyPct}% ({finalCorrect} / {finalTotal})</span>
+              <span className="flex items-center gap-1 text-amber-500 shrink-0">
+                <Flame size={14} />
+                <span>{t('Max Streak: ', '最大連勝: ')}{finalMaxStreak}</span>
+              </span>
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -501,29 +507,34 @@ export const QuizStudentSprint: React.FC<QuizStudentSprintProps> = ({
   if (player.isDnf && !isTimeTrial) {
     const finalScore = Math.max(player.score || 0, localScore);
     return (
-      <div className="w-full max-w-lg mx-auto p-4 text-center select-none animate-in zoom-in-95 duration-200">
-        <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 shadow-2xl border-4 border-rose-400 dark:border-rose-500">
-          <div className="w-20 h-20 rounded-3xl bg-gradient-to-tr from-rose-500 to-amber-500 text-white flex items-center justify-center mx-auto mb-4 shadow-xl text-3xl font-black">
-            ⏱️
+      <div className="w-full max-w-3xl mx-auto p-3 sm:p-4 select-none animate-in zoom-in-95 duration-200">
+        <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-7 shadow-2xl border-4 border-rose-400 dark:border-rose-500 grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 items-center">
+          <div className="text-center md:text-left">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-3xl bg-gradient-to-tr from-rose-500 to-amber-500 text-white flex items-center justify-center mx-auto md:mx-0 mb-3 shadow-xl text-3xl font-black">
+              ⏱️
+            </div>
+            <span className="text-xs font-black uppercase tracking-widest text-rose-600 dark:text-rose-400 block mb-1">
+              {t('RACE TIME EXPIRED', 'タイムアップ')}
+            </span>
+            <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-2 leading-tight">
+              DNF (Did Not Finish)
+            </h2>
+            <p className="text-xs font-bold text-slate-400">
+              {t('Unfortunately did not make it before the time expired, but great fight!', '惜しくも制限時間に間に合いませんでしたが、ナイスファイト！')}
+            </p>
           </div>
-          <span className="text-xs font-black uppercase tracking-widest text-rose-600 dark:text-rose-400 block mb-1">
-            {t('RACE TIME EXPIRED', 'タイムアップ')}
-          </span>
-          <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-2">
-            DNF (Did Not Finish)
-          </h2>
-          <p className="text-xs font-bold text-slate-400 mb-6">
-            {t('Unfortunately did not make it before the time expired, but great fight!', '惜しくも制限時間に間に合いませんでしたが、ナイスファイト！')}
-          </p>
-          <div className="p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/60 mb-6 text-center">
-            <span className="text-xs font-bold text-rose-700 dark:text-rose-300 block">{t('Score Earned', '獲得スコア')}</span>
-            <strong className="text-3xl font-black text-rose-600 dark:text-rose-400 font-mono">
-              {finalScore.toLocaleString()} pts
-            </strong>
+
+          <div className="space-y-3 text-center">
+            <div className="p-5 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/60">
+              <span className="text-xs font-bold text-rose-700 dark:text-rose-300 block">{t('Score Earned', '獲得スコア')}</span>
+              <strong className="text-3xl font-black text-rose-600 dark:text-rose-400 font-mono">
+                {finalScore.toLocaleString()} pts
+              </strong>
+            </div>
+            <p className="text-xs font-bold text-slate-400 animate-pulse">
+              {t('Waiting for results on the teacher’s screen...', '先生の画面で結果発表を待っています...')}
+            </p>
           </div>
-          <p className="text-xs font-bold text-slate-400 animate-pulse">
-            {t('Waiting for results on the teacher’s screen...', '先生の画面で結果発表を待っています...')}
-          </p>
         </div>
       </div>
     );
@@ -534,10 +545,10 @@ export const QuizStudentSprint: React.FC<QuizStudentSprintProps> = ({
   return (
     <div className="w-full h-full max-w-4xl mx-auto flex flex-col p-3 sm:p-5 select-none animate-in fade-in duration-150">
       {/* Top Sprint Bar */}
-      <div className="flex items-center justify-between pb-2 shrink-0">
-        <div className="flex items-center gap-2">
+      <div className="flex flex-nowrap items-center justify-between gap-2 pb-2 shrink-0 overflow-x-auto no-scrollbar">
+        <div className="flex items-center gap-2 flex-nowrap shrink-0">
           {/* Lap Counter */}
-          <span className="text-xs font-black px-3 py-1 rounded-full bg-rose-600 text-white shadow-sm flex items-center gap-1">
+          <span className="text-xs font-black px-3 py-1 rounded-full bg-rose-600 text-white shadow-sm flex items-center gap-1 whitespace-nowrap shrink-0">
             <Flag size={12} />
             <span>
               {isTimeTrial ? `${t('Question', '問題')} ${currentIndex + 1}` : `LAP ${currentIndex + 1} / ${totalQuestions}`}
@@ -546,7 +557,7 @@ export const QuizStudentSprint: React.FC<QuizStudentSprintProps> = ({
 
           {/* Team Indicator */}
           {player.teamId && TEAM_PRESETS[player.teamId] && (
-            <span className="text-xs font-black px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 flex items-center gap-1">
+            <span className="text-xs font-black px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 flex items-center gap-1 whitespace-nowrap shrink-0">
               <span>{TEAM_PRESETS[player.teamId].emoji}</span>
               <span>{language === 'ja' ? TEAM_PRESETS[player.teamId].jaName : TEAM_PRESETS[player.teamId].name}</span>
             </span>
@@ -554,7 +565,7 @@ export const QuizStudentSprint: React.FC<QuizStudentSprintProps> = ({
 
           {/* Streak Indicator */}
           {localStreak > 0 && (
-            <span className="flex items-center gap-0.5 text-xs font-black text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/60 px-2.5 py-1 rounded-full border border-amber-300 animate-pulse">
+            <span className="flex items-center gap-0.5 text-xs font-black text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/60 px-2.5 py-1 rounded-full border border-amber-300 animate-pulse whitespace-nowrap shrink-0">
               <Flame size={13} className="text-amber-500" />
               <span>x{localStreak} Streak!</span>
             </span>
@@ -562,14 +573,14 @@ export const QuizStudentSprint: React.FC<QuizStudentSprintProps> = ({
         </div>
 
         {/* Live Score */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-nowrap shrink-0">
           {isTimeTrial && (
-            <span className="font-mono text-xs font-black px-2.5 py-1 rounded-lg bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-300 flex items-center gap-1">
+            <span className="font-mono text-xs font-black px-2.5 py-1 rounded-lg bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-300 flex items-center gap-1 whitespace-nowrap shrink-0">
               <Clock size={12} />
               <span>{timeTrialRemainingSec}s</span>
             </span>
           )}
-          <span className="font-mono text-sm font-black px-3 py-1 rounded-xl bg-slate-900 text-emerald-400 shadow-inner">
+          <span className="font-mono text-sm font-black px-3 py-1 rounded-xl bg-slate-900 text-emerald-400 shadow-inner whitespace-nowrap shrink-0">
             {localScore.toLocaleString()} pts
           </span>
         </div>
@@ -577,20 +588,20 @@ export const QuizStudentSprint: React.FC<QuizStudentSprintProps> = ({
 
       {/* Grace Timer Alert Banner */}
       {isGraceActive && !isTimeTrial && (
-        <div className="mb-2 py-1.5 px-3 rounded-2xl bg-amber-500 text-slate-950 font-black text-xs flex items-center justify-between shadow-md animate-bounce">
-          <div className="flex items-center gap-1.5">
-            <AlertTriangle size={15} />
-            <span>
+        <div className="mb-2 py-1.5 px-3 rounded-2xl bg-amber-500 text-slate-950 font-black text-xs flex flex-nowrap items-center justify-between gap-2 shadow-md animate-bounce">
+          <div className="flex items-center gap-1.5 min-w-0">
+            <AlertTriangle size={15} className="shrink-0" />
+            <span className="truncate">
               {language === 'ja' ? (
                 <>
-                  <ruby>表彰台<rt className="text-[7px] font-normal text-slate-900">ひょうしょうだい</rt></ruby>が<ruby>確定<rt className="text-[7px] font-normal text-slate-900">かくてい</rt></ruby>しました！ラストスパート！
+                  <ruby>表彰台<rt>ひょうしょうだい</rt></ruby>が<ruby>確定<rt>かくてい</rt></ruby>しました！ラストスパート！
                 </>
               ) : (
                 'Podium Locked! Final push!'
               )}
             </span>
           </div>
-          <span className="font-mono text-sm px-2 py-0.5 rounded bg-black/20 text-white font-black">
+          <span className="font-mono text-sm px-2 py-0.5 rounded bg-black/20 text-white font-black whitespace-nowrap shrink-0">
             {t('Remaining: ', '残り ')}{graceLeft} {t('s', '秒')}
           </span>
         </div>
@@ -691,17 +702,17 @@ export const QuizStudentSprint: React.FC<QuizStudentSprintProps> = ({
             </span>
             <h4 className="text-2xl sm:text-3xl font-black text-white tracking-tight mt-1 mb-1">
               {activePenaltyTotalSec <= 2.5
-                ? t(`Tire Slip! (+${activePenaltyTotalSec.toFixed(1)}s)`, <>スリップ！ (+{activePenaltyTotalSec.toFixed(1)}<ruby>秒<rt className="text-[7px]">びょう</rt></ruby>)</>)
+                ? t(`Tire Slip! (+${activePenaltyTotalSec.toFixed(1)}s)`, <>スリップ！ (+{activePenaltyTotalSec.toFixed(1)}<ruby>秒<rt>びょう</rt></ruby>)</>)
                 : activePenaltyTotalSec <= 3.5
-                ? t(`Pit Stop! (+${activePenaltyTotalSec.toFixed(1)}s)`, <>ピットストップ！ (+{activePenaltyTotalSec.toFixed(1)}<ruby>秒<rt className="text-[7px]">びょう</rt></ruby>)</>)
-                : t(`Engine Service! (+${activePenaltyTotalSec.toFixed(1)}s)`, <>マシン<ruby>点検<rt className="text-[7px]">てんけん</rt></ruby>！ (+{activePenaltyTotalSec.toFixed(1)}<ruby>秒<rt className="text-[7px]">びょう</rt></ruby>)</>)}
+                ? t(`Pit Stop! (+${activePenaltyTotalSec.toFixed(1)}s)`, <>ピットストップ！ (+{activePenaltyTotalSec.toFixed(1)}<ruby>秒<rt>びょう</rt></ruby>)</>)
+                : t(`Engine Service! (+${activePenaltyTotalSec.toFixed(1)}s)`, <>マシン<ruby>点検<rt>てんけん</rt></ruby>！ (+{activePenaltyTotalSec.toFixed(1)}<ruby>秒<rt>びょう</rt></ruby>)</>)}
             </h4>
             <p className="text-xs font-bold text-slate-300 text-center mb-3">
               {activePenaltyTotalSec <= 2.5
-                ? t('Quick correction! Back in the race shortly!', <><ruby>体勢<rt className="text-[7px]">たいせい</rt></ruby>を<ruby>立<rt className="text-[7px]">た</rt></ruby>て<ruby>直<rt className="text-[7px]">なお</rt></ruby>してすぐ<ruby>再開<rt className="text-[7px]">さいかい</rt></ruby>！</>)
+                ? t('Quick correction! Back in the race shortly!', <><ruby>体勢<rt>たいせい</rt></ruby>を<ruby>立<rt>た</rt></ruby>て<ruby>直<rt>なお</rt></ruby>してすぐ<ruby>再開<rt>さいかい</rt></ruby>！</>)
                 : activePenaltyTotalSec <= 3.5
-                ? t('Rapid pit stop! Fresh tires fitted!', <>ピットクルーがタイヤ<ruby>交換<rt className="text-[7px]">こうかん</rt></ruby><ruby>中<rt className="text-[7px]">ちゅう</rt></ruby>！まもなく<ruby>発進<rt className="text-[7px]">はっしん</rt></ruby>！</>)
-                : t('Check carefully! Only one choice remaining!', <><ruby>落<rt className="text-[7px]">お</rt></ruby>ち<ruby>着<rt className="text-[7px]">つ</rt></ruby>いて！<ruby>残<rt className="text-[7px]">のこ</rt></ruby>りはあと1つ！</>)}
+                ? t('Rapid pit stop! Fresh tires fitted!', <>ピットクルーがタイヤ<ruby>交換<rt>こうかん</rt></ruby><ruby>中<rt>ちゅう</rt></ruby>！まもなく<ruby>発進<rt>はっしん</rt></ruby>！</>)
+                : t('Check carefully! Only one choice remaining!', <><ruby>落<rt>お</rt></ruby>ち<ruby>着<rt>つ</rt></ruby>いて！<ruby>残<rt>のこ</rt></ruby>りはあと1つ！</>)}
             </p>
 
             {/* Countdown Bar */}
@@ -712,7 +723,7 @@ export const QuizStudentSprint: React.FC<QuizStudentSprintProps> = ({
               />
             </div>
             <span className="font-mono text-sm font-black text-amber-300 mt-2">
-              {t('Remaining: ', <><ruby>残<rt className="text-[7px]">のこ</rt></ruby>り </>) }{penaltySecondsLeft.toFixed(1)} {t('s', <><ruby>秒<rt className="text-[7px]">びょう</rt></ruby></>)}
+              {t('Remaining: ', <><ruby>残<rt>のこ</rt></ruby>り </>) }{penaltySecondsLeft.toFixed(1)} {t('s', <><ruby>秒<rt>びょう</rt></ruby></>)}
             </span>
           </div>
         )}
@@ -789,7 +800,6 @@ export const QuizStudentSprint: React.FC<QuizStudentSprintProps> = ({
                       kanji={option.ja_kanji}
                       hiragana={option.ja_hiragana}
                       className="text-base sm:text-xl md:text-2xl font-black text-white drop-shadow-md leading-tight text-center"
-                      rtClassName="text-[10px] sm:text-xs font-normal text-white/90 select-none"
                     />
                   ) : (
                     <>

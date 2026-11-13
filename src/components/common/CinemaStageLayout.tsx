@@ -162,12 +162,12 @@ export const CinemaStageLayout: React.FC<CinemaStageLayoutProps> = ({
               {onOpenSettings && (
                 <button
                   onClick={onOpenSettings}
-                  className="p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 font-black text-xs flex items-center gap-1 transition-all active:scale-95 cursor-pointer shadow-xs shrink-0"
+                  className="p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 font-black text-xs flex items-center gap-1 transition-all active:scale-95 cursor-pointer shadow-xs shrink-0 whitespace-nowrap"
                   title={typeof settingsTitle === 'string' ? settingsTitle : t('Game Settings', '設定')}
                 >
                   <Settings size={14} className="text-amber-400" />
                   <span className="text-[11px] font-bold">
-                    {settingsTitle || t('Settings', <><ruby>設定<rt className="text-[7px]">せってい</rt></ruby></>)}
+                    {settingsTitle || t('Settings', <><ruby>設定<rt>せってい</rt></ruby></>)}
                   </span>
                 </button>
               )}

@@ -646,34 +646,34 @@ export const QuizStudentTamaire: React.FC<QuizStudentTamaireProps> = ({
   return (
     <div className="relative w-full h-full flex flex-col bg-slate-900 text-white rounded-3xl border-2 border-slate-700 overflow-hidden select-none p-2.5">
       {/* 1. Top Sports Day Hachimaki Headband & Bean Bag Counter */}
-      <div className="flex items-center justify-between pb-1.5 shrink-0">
-        <div className="flex items-center gap-1.5 flex-wrap">
+      <div className="flex flex-nowrap items-center justify-between gap-2 pb-1.5 shrink-0 overflow-x-auto no-scrollbar">
+        <div className="flex items-center gap-1.5 flex-nowrap shrink-0">
           {isRed ? (
-            <div className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-rose-600 text-white font-black text-[11px] shadow border border-white/70">
+            <div className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-rose-600 text-white font-black text-[11px] shadow border border-white/70 whitespace-nowrap shrink-0">
               <span>🔴</span>
               <span>
-                <ruby>赤組<rt className="text-[7px]">あかぐみ</rt></ruby> (RED)
+                <ruby>赤組<rt>あかぐみ</rt></ruby> (RED)
               </span>
             </div>
           ) : (
-            <div className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-white text-slate-900 font-black text-[11px] shadow border border-slate-300">
+            <div className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-white text-slate-900 font-black text-[11px] shadow border border-slate-300 whitespace-nowrap shrink-0">
               <span>⚪</span>
               <span>
-                <ruby>白組<rt className="text-[7px]">しろぐみ</rt></ruby> (WHITE)
+                <ruby>白組<rt>しろぐみ</rt></ruby> (WHITE)
               </span>
             </div>
           )}
 
           <div
             data-testid="student-bags-thrown"
-            className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 font-black text-[11px]"
+            className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 font-black text-[11px] whitespace-nowrap shrink-0"
           >
             <span>🫘</span>
             <span>{localBagsThrown} 個イン！ (SWISHES)</span>
           </div>
 
           {localStreak >= 2 && !isMatchFinished && (
-            <div className="flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-rose-500/30 text-rose-300 font-black text-[11px]">
+            <div className="flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-rose-500/30 text-rose-300 font-black text-[11px] whitespace-nowrap shrink-0">
               <Flame size={11} />
               <span>x{localStreak}</span>
             </div>
@@ -681,7 +681,7 @@ export const QuizStudentTamaire: React.FC<QuizStudentTamaireProps> = ({
         </div>
 
         <div
-          className={`font-mono text-[11px] font-black px-2 py-0.5 rounded-lg border ${
+          className={`font-mono text-[11px] font-black px-2 py-0.5 rounded-lg border whitespace-nowrap shrink-0 ${
             isMatchFinished
               ? 'bg-amber-400 text-slate-950 border-white'
               : timeRemainingSeconds <= 10
@@ -919,7 +919,7 @@ export const QuizStudentTamaire: React.FC<QuizStudentTamaireProps> = ({
                             seg.ruby ? (
                               <ruby key={rIdx}>
                                 {seg.base}
-                                <rt className="text-[8px] font-bold">{seg.ruby}</rt>
+                                <rt className="font-bold">{seg.ruby}</rt>
                               </ruby>
                             ) : (
                               <span key={rIdx}>{seg.base}</span>
@@ -947,11 +947,11 @@ export const QuizStudentTamaire: React.FC<QuizStudentTamaireProps> = ({
           data-testid="student-eyes-up-overlay"
           className="flex-1 bg-slate-950/95 rounded-2xl border-2 border-amber-400 p-3 flex flex-col justify-between text-center shadow-xl"
         >
-          <div className="flex items-center justify-between gap-2">
-            <span className="px-2.5 py-0.5 rounded-full bg-amber-400 text-slate-950 font-black text-[10px] uppercase tracking-wider shadow">
+          <div className="flex flex-nowrap items-center justify-between gap-2 overflow-x-auto no-scrollbar">
+            <span className="px-2.5 py-0.5 rounded-full bg-amber-400 text-slate-950 font-black text-[10px] uppercase tracking-wider shadow whitespace-nowrap shrink-0">
               📢 玉かぞえセレモニー • TALLYING BAGS!
             </span>
-            <span className="text-[10px] font-bold text-amber-300">
+            <span className="text-[10px] font-bold text-amber-300 whitespace-nowrap shrink-0">
               👀 メイン画面と上の3Dカゴを見よう！
             </span>
           </div>

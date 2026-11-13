@@ -163,9 +163,9 @@ export const WhatsMissingStudent: React.FC<WhatsMissingStudentProps> = ({
       {/* ====================================================================
           1. TOP HEADER BAR: SEAT PROFILE, ROOM PIN & XP BADGE
          ==================================================================== */}
-      <div className="bg-slate-900 border-2 border-slate-800 rounded-2xl px-3.5 py-2 flex flex-wrap items-center justify-between gap-2 shrink-0">
+      <div className="bg-slate-900 border-2 border-slate-800 rounded-2xl px-3.5 py-2 flex flex-nowrap items-center justify-between gap-2 shrink-0 overflow-x-auto no-scrollbar whitespace-nowrap">
         {/* Left: Student Seat & Name */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 shrink-0">
           <div className="flex items-center gap-1.5 bg-slate-800 px-2.5 py-1 rounded-xl border border-slate-700">
             <User size={14} className="text-teal-400" />
             <select
@@ -189,7 +189,7 @@ export const WhatsMissingStudent: React.FC<WhatsMissingStudentProps> = ({
           </div>
 
           {/* Room Code Input */}
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1 shrink-0">
             <input
               type="text"
               value={roomInput}
@@ -202,7 +202,7 @@ export const WhatsMissingStudent: React.FC<WhatsMissingStudentProps> = ({
                 playPop();
                 joinRoom(roomInput);
               }}
-              className="px-2.5 py-1 rounded-xl bg-teal-600 hover:bg-teal-500 text-white text-xs font-black flex items-center gap-1 cursor-pointer active:scale-95 transition"
+              className="px-2.5 py-1 rounded-xl bg-teal-600 hover:bg-teal-500 text-white text-xs font-black flex items-center gap-1 cursor-pointer active:scale-95 transition shrink-0"
             >
               {isConnected ? (
                 <>
@@ -220,7 +220,7 @@ export const WhatsMissingStudent: React.FC<WhatsMissingStudentProps> = ({
         </div>
 
         {/* Right: XP Earned & Exit */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 shrink-0">
           <div className="px-3 py-1 rounded-xl bg-amber-500/20 border border-amber-400/40 text-amber-300 font-black text-xs flex items-center gap-1">
             <Sparkles size={13} />
             <span>+{xpEarned} XP</span>
@@ -249,11 +249,11 @@ export const WhatsMissingStudent: React.FC<WhatsMissingStudentProps> = ({
                 'Look at the Front TV!',
                 <>
                   <ruby>
-                    前<rt className="text-[9px]">まえ</rt>
+                    前<rt>まえ</rt>
                   </ruby>
                   のテレビを
                   <ruby>
-                    見<rt className="text-[9px]">み</rt>
+                    見<rt>み</rt>
                   </ruby>
                   よう！
                 </>
@@ -265,11 +265,11 @@ export const WhatsMissingStudent: React.FC<WhatsMissingStudentProps> = ({
                 <>
                   カーテンが
                   <ruby>
-                    閉<rt className="text-[8px]">し</rt>
+                    閉<rt>し</rt>
                   </ruby>
                   まるまえにカードを
                   <ruby>
-                    覚<rt className="text-[8px]">おぼ</rt>
+                    覚<rt>おぼ</rt>
                   </ruby>
                   えてね！
                 </>
@@ -289,11 +289,11 @@ export const WhatsMissingStudent: React.FC<WhatsMissingStudentProps> = ({
                 'Close your eyes! No peeking!',
                 <>
                   <ruby>
-                    目<rt className="text-[9px]">め</rt>
+                    目<rt>め</rt>
                   </ruby>
                   をつむって！まだ
                   <ruby>
-                    見<rt className="text-[9px]">み</rt>
+                    見<rt>み</rt>
                   </ruby>
                   ちゃダメ！
                 </>
@@ -305,7 +305,7 @@ export const WhatsMissingStudent: React.FC<WhatsMissingStudentProps> = ({
                 <>
                   なにが
                   <ruby>
-                    消<rt className="text-[8px]">き</rt>
+                    消<rt>き</rt>
                   </ruby>
                   えるかな？ じゅんびしてね…
                 </>
@@ -328,11 +328,11 @@ export const WhatsMissingStudent: React.FC<WhatsMissingStudentProps> = ({
                     'ANSWER LOCKED IN! 🔒',
                     <>
                       <ruby>
-                        回答<rt className="text-[8px]">かいとう</rt>
+                        回答<rt>かいとう</rt>
                       </ruby>
                       ロック
                       <ruby>
-                        完了<rt className="text-[8px]">かんりょう</rt>
+                        完了<rt>かんりょう</rt>
                       </ruby>
                       ！ 🔒
                     </>
@@ -355,7 +355,7 @@ export const WhatsMissingStudent: React.FC<WhatsMissingStudentProps> = ({
                     <>
                       テレビのオープンを
                       <ruby>
-                        待<rt className="text-[7px]">ま</rt>
+                        待<rt>ま</rt>
                       </ruby>
                       ってね…
                     </>
@@ -373,11 +373,11 @@ export const WhatsMissingStudent: React.FC<WhatsMissingStudentProps> = ({
                           'TAP THE 2 MISSING CARDS!',
                           <>
                             <ruby>
-                              消<rt className="text-[7px]">き</rt>
+                              消<rt>き</rt>
                             </ruby>
                             えたカードを2
                             <ruby>
-                              枚<rt className="text-[7px]">まい</rt>
+                              枚<rt>まい</rt>
                             </ruby>
                             タップしよう！ ({selectedIds.length}/2)
                           </>
@@ -387,7 +387,7 @@ export const WhatsMissingStudent: React.FC<WhatsMissingStudentProps> = ({
                           <>
                             どのカードが
                             <ruby>
-                              消<rt className="text-[7px]">き</rt>
+                              消<rt>き</rt>
                             </ruby>
                             えた？ タップしよう！
                           </>
@@ -458,7 +458,7 @@ export const WhatsMissingStudent: React.FC<WhatsMissingStudentProps> = ({
                     {t(
                       'CORRECT! +10 XP!',
                       <>
-                        大<ruby>正解<rt className="text-[8px]">せいかい</rt></ruby>！ +10 XP!
+                        大<ruby>正解<rt>せいかい</rt></ruby>！ +10 XP!
                       </>
                     )}
                   </span>

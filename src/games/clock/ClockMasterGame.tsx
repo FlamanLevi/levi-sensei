@@ -171,9 +171,9 @@ export const ClockMasterGame: React.FC<ClockMasterGameProps> = ({ onExit }) => {
       {/* =========================================================================
           1. TOP CONTROL BAR (Language, Theme, Mute, Mode Tabs)
          ========================================================================= */}
-      <div className="bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 rounded-2xl sm:rounded-3xl p-3 shadow-md flex items-center justify-between gap-3 mb-3">
+      <div className="bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 rounded-2xl sm:rounded-3xl p-3 shadow-md flex flex-nowrap items-center justify-between gap-3 mb-3 overflow-x-auto no-scrollbar whitespace-nowrap">
         {/* Left: Brand & Activity Title */}
-        <div className="flex items-center gap-2 min-w-0">
+        <div className="flex items-center gap-2 min-w-0 shrink-0">
           <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-amber-400 to-orange-500 text-white flex items-center justify-center text-xl shadow-md shrink-0">
             🕰️
           </div>
@@ -182,9 +182,9 @@ export const ClockMasterGame: React.FC<ClockMasterGameProps> = ({ onExit }) => {
               {t(
                 'What Time Is It? Clock Master',
                 <>
-                  <ruby>今<rt className="text-[8px] font-normal text-slate-400">いま</rt></ruby>
-                  <ruby>何時<rt className="text-[8px] font-normal text-slate-400">なんじ</rt></ruby>？
-                  <ruby>時計<rt className="text-[8px] font-normal text-slate-400">とけい</rt></ruby>マスター
+                  <ruby>今<rt>いま</rt></ruby>
+                  <ruby>何時<rt>なんじ</rt></ruby>？
+                  <ruby>時計<rt>とけい</rt></ruby>マスター
                 </>
               )}
             </h2>
@@ -195,36 +195,36 @@ export const ClockMasterGame: React.FC<ClockMasterGameProps> = ({ onExit }) => {
         </div>
 
         {/* Center: Activity Mode Segmented Tabs */}
-        <div className="hidden lg:grid grid-cols-3 gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl text-xs font-black">
+        <div className="grid grid-cols-3 gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl text-xs font-black shrink-0">
           <button
             onClick={() => { playPop(); setGameMode('DAILY_ROUTINE'); }}
-            className={`px-3 py-1.5 rounded-lg transition-all ${
+            className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
               gameMode === 'DAILY_ROUTINE'
                 ? 'bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-xs'
-                : 'text-slate-500 hover:text-slate-800'
+                : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
             }`}
           >
-            {t('Daily Routine', <>1<ruby>日<rt className="text-[7px]">にち</rt></ruby>の<ruby>生活<rt className="text-[7px]">せいかつ</rt></ruby></>)}
+            {t('Daily Routine', <>1<ruby>日<rt>にち</rt></ruby>の<ruby>生活<rt>せいかつ</rt></ruby></>)}
           </button>
           <button
             onClick={() => { playPop(); setGameMode('SANDBOX'); }}
-            className={`px-3 py-1.5 rounded-lg transition-all ${
+            className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
               gameMode === 'SANDBOX'
                 ? 'bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-xs'
-                : 'text-slate-500 hover:text-slate-800'
+                : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
             }`}
           >
-            {t('Interactive Sandbox', <><ruby>自由<rt className="text-[7px]">じゆう</rt></ruby><ruby>操作<rt className="text-[7px]">そうさ</rt></ruby>・<ruby>教具<rt className="text-[7px]">きょうぐ</rt></ruby></>)}
+            {t('Interactive Sandbox', <><ruby>自由<rt>じゆう</rt></ruby><ruby>操作<rt>そうさ</rt></ruby>・<ruby>教具<rt>きょうぐ</rt></ruby></>)}
           </button>
           <button
             onClick={() => { playPop(); setGameMode('SET_TIME'); }}
-            className={`px-3 py-1.5 rounded-lg transition-all ${
+            className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
               gameMode === 'SET_TIME'
                 ? 'bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-xs'
-                : 'text-slate-500 hover:text-slate-800'
+                : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
             }`}
           >
-            {t('Set the Clock Challenge', <><ruby>時計<rt className="text-[7px]">とけい</rt></ruby><ruby>合<rt className="text-[7px]">あ</rt></ruby>わせクイズ</>)}
+            {t('Set the Clock Challenge', <><ruby>時計<rt>とけい</rt></ruby><ruby>合<rt>あ</rt></ruby>わせクイズ</>)}
           </button>
         </div>
 
@@ -232,16 +232,16 @@ export const ClockMasterGame: React.FC<ClockMasterGameProps> = ({ onExit }) => {
         <div className="flex items-center gap-1.5 shrink-0 flex-nowrap">
           {/* Text Language Toggle */}
           <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-0.5 rounded-lg border border-slate-200 dark:border-slate-700 text-[10px]">
-            <span className="text-slate-400 px-1 font-bold">文</span>
+            <span className="text-slate-500 dark:text-slate-400 px-1 font-bold">文</span>
             <button
               onClick={() => { playPop(); setTextLang('en'); }}
-              className={`px-1.5 py-0.5 rounded font-black ${textLang === 'en' ? 'bg-white dark:bg-slate-700 text-blue-600 shadow-xs' : 'text-slate-500'}`}
+              className={`px-1.5 py-0.5 rounded font-black cursor-pointer ${textLang === 'en' ? 'bg-white dark:bg-slate-700 text-blue-600 shadow-xs' : 'text-slate-500'}`}
             >
               EN
             </button>
             <button
               onClick={() => { playPop(); setTextLang('ja'); }}
-              className={`px-1.5 py-0.5 rounded font-black ${textLang === 'ja' ? 'bg-white dark:bg-slate-700 text-blue-600 shadow-xs' : 'text-slate-500'}`}
+              className={`px-1.5 py-0.5 rounded font-black cursor-pointer ${textLang === 'ja' ? 'bg-white dark:bg-slate-700 text-blue-600 shadow-xs' : 'text-slate-500'}`}
             >
               日
             </button>
@@ -249,22 +249,22 @@ export const ClockMasterGame: React.FC<ClockMasterGameProps> = ({ onExit }) => {
 
           {/* Voice Language Toggle */}
           <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-0.5 rounded-lg border border-slate-200 dark:border-slate-700 text-[10px]">
-            <span className="text-slate-400 pl-1 pr-0.5">🗣️</span>
+            <span className="text-slate-500 dark:text-slate-400 pl-1 pr-0.5">🗣️</span>
             <button
               onClick={() => { playPop(); setIsVoiceEnabled(true); setVoiceLang('en'); }}
-              className={`px-1.5 py-0.5 rounded font-black ${isVoiceEnabled && voiceLang === 'en' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-500'}`}
+              className={`px-1.5 py-0.5 rounded font-black cursor-pointer ${isVoiceEnabled && voiceLang === 'en' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-500'}`}
             >
               EN
             </button>
             <button
               onClick={() => { playPop(); setIsVoiceEnabled(true); setVoiceLang('ja'); }}
-              className={`px-1.5 py-0.5 rounded font-black ${isVoiceEnabled && voiceLang === 'ja' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-500'}`}
+              className={`px-1.5 py-0.5 rounded font-black cursor-pointer ${isVoiceEnabled && voiceLang === 'ja' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-500'}`}
             >
               日
             </button>
             <button
               onClick={() => { playPop(); setIsVoiceEnabled(false); }}
-              className={`px-1 py-0.5 rounded font-bold ${!isVoiceEnabled ? 'bg-slate-300 dark:bg-slate-600 text-slate-800' : 'text-slate-400'}`}
+              className={`px-1 py-0.5 rounded font-bold cursor-pointer ${!isVoiceEnabled ? 'bg-slate-300 dark:bg-slate-600 text-slate-800' : 'text-slate-500'}`}
             >
               OFF
             </button>
@@ -273,7 +273,7 @@ export const ClockMasterGame: React.FC<ClockMasterGameProps> = ({ onExit }) => {
           {/* Theme Toggle (§7 Invariant) */}
           <button
             onClick={() => { playPop(); toggleTheme(); }}
-            className="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-200 transition-colors"
+            className="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-200 transition-colors cursor-pointer"
           >
             {theme === 'dark' ? <Sun size={15} className="text-amber-400" /> : <Moon size={15} className="text-indigo-500" />}
           </button>
@@ -281,7 +281,7 @@ export const ClockMasterGame: React.FC<ClockMasterGameProps> = ({ onExit }) => {
           {/* Repeat Spoken Time Button */}
           <button
             onClick={() => speakTime(hour, minute, period)}
-            className="w-8 h-8 rounded-lg bg-blue-600 hover:bg-blue-500 text-white flex items-center justify-center shadow-md active:scale-95 transition-all"
+            className="w-8 h-8 rounded-lg bg-blue-600 hover:bg-blue-500 text-white flex items-center justify-center shadow-md active:scale-95 transition-all cursor-pointer"
             title="Pronounce Time"
           >
             <Volume2 size={16} />
@@ -292,26 +292,26 @@ export const ClockMasterGame: React.FC<ClockMasterGameProps> = ({ onExit }) => {
       {/* =========================================================================
           2. SECONDARY CONTROLS (Display Toggle, Resolution, Style Toggles)
          ========================================================================= */}
-      <div className="bg-slate-100 dark:bg-slate-800/80 p-2 sm:p-3 rounded-2xl border border-slate-200 dark:border-slate-700 flex flex-wrap items-center justify-between gap-3 text-xs mb-3">
+      <div className="bg-slate-100 dark:bg-slate-800/80 p-2 sm:p-3 rounded-2xl border border-slate-200 dark:border-slate-700 flex flex-nowrap items-center justify-between gap-3 text-xs mb-3 overflow-x-auto no-scrollbar whitespace-nowrap">
         {/* Clock View Switcher (Analog / Digital / Split) */}
-        <div className="flex items-center gap-2">
-          <span className="font-bold text-slate-500 dark:text-slate-400">{t('Display:', <><ruby>表示<rt className="text-[7px]">ひょうじ</rt></ruby>:</>)}</span>
+        <div className="flex items-center gap-2 shrink-0">
+          <span className="font-bold text-slate-600 dark:text-slate-300">{t('Display:', <><ruby>表示<rt>ひょうじ</rt></ruby>:</>)}</span>
           <div className="flex bg-white dark:bg-slate-900 p-0.5 rounded-xl border border-slate-200 dark:border-slate-700">
             <button
               onClick={() => { playPop(); setDisplayType('ANALOG'); }}
-              className={`px-2.5 py-1 rounded-lg font-black transition-all ${displayType === 'ANALOG' ? 'bg-blue-600 text-white shadow-xs' : 'text-slate-500'}`}
+              className={`px-2.5 py-1 rounded-lg font-black transition-all cursor-pointer ${displayType === 'ANALOG' ? 'bg-blue-600 text-white shadow-xs' : 'text-slate-500'}`}
             >
-              {t('Analog Only', <><ruby>針<rt className="text-[7px]">はり</rt></ruby><ruby>時計<rt className="text-[7px]">とけい</rt></ruby>のみ</>)}
+              {t('Analog Only', <><ruby>針<rt>はり</rt></ruby><ruby>時計<rt>とけい</rt></ruby>のみ</>)}
             </button>
             <button
               onClick={() => { playPop(); setDisplayType('SPLIT'); }}
-              className={`px-2.5 py-1 rounded-lg font-black transition-all ${displayType === 'SPLIT' ? 'bg-blue-600 text-white shadow-xs' : 'text-slate-500'}`}
+              className={`px-2.5 py-1 rounded-lg font-black transition-all cursor-pointer ${displayType === 'SPLIT' ? 'bg-blue-600 text-white shadow-xs' : 'text-slate-500'}`}
             >
-              {t('Split (Both)', <><ruby>両方<rt className="text-[7px]">りょうほう</rt></ruby><ruby>表示<rt className="text-[7px]">ひょうじ</rt></ruby></>)}
+              {t('Split (Both)', <><ruby>両方<rt>りょうほう</rt></ruby><ruby>表示<rt>ひょうじ</rt></ruby></>)}
             </button>
             <button
               onClick={() => { playPop(); setDisplayType('DIGITAL'); }}
-              className={`px-2.5 py-1 rounded-lg font-black transition-all ${displayType === 'DIGITAL' ? 'bg-blue-600 text-white shadow-xs' : 'text-slate-500'}`}
+              className={`px-2.5 py-1 rounded-lg font-black transition-all cursor-pointer ${displayType === 'DIGITAL' ? 'bg-blue-600 text-white shadow-xs' : 'text-slate-500'}`}
             >
               {t('Digital Only', 'デジタルのみ')}
             </button>
@@ -319,18 +319,18 @@ export const ClockMasterGame: React.FC<ClockMasterGameProps> = ({ onExit }) => {
         </div>
 
         {/* Digital Style Toggle: Retro 7-Segment LCD vs Modern LED */}
-        <div className="flex items-center gap-2">
-          <span className="font-bold text-slate-500 dark:text-slate-400">{t('Digital Style:', <><ruby>時計<rt className="text-[7px]">とけい</rt></ruby>デザイン:</>)}</span>
+        <div className="flex items-center gap-2 shrink-0">
+          <span className="font-bold text-slate-600 dark:text-slate-300">{t('Digital Style:', <><ruby>時計<rt>とけい</rt></ruby>デザイン:</>)}</span>
           <div className="flex bg-white dark:bg-slate-900 p-0.5 rounded-xl border border-slate-200 dark:border-slate-700">
             <button
               onClick={() => { playPop(); setDigitalStyle('RETRO_LCD'); }}
-              className={`px-2.5 py-1 rounded-lg font-black transition-all ${digitalStyle === 'RETRO_LCD' ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-500'}`}
+              className={`px-2.5 py-1 rounded-lg font-black transition-all cursor-pointer ${digitalStyle === 'RETRO_LCD' ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-500'}`}
             >
               📟 {t('Retro 7-Segment LCD', 'レトロLCD')}
             </button>
             <button
               onClick={() => { playPop(); setDigitalStyle('MODERN_LED'); }}
-              className={`px-2.5 py-1 rounded-lg font-black transition-all ${digitalStyle === 'MODERN_LED' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-500'}`}
+              className={`px-2.5 py-1 rounded-lg font-black transition-all cursor-pointer ${digitalStyle === 'MODERN_LED' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-500'}`}
             >
               ✨ {t('Modern Studio', 'モダンLED')}
             </button>
@@ -338,14 +338,14 @@ export const ClockMasterGame: React.FC<ClockMasterGameProps> = ({ onExit }) => {
         </div>
 
         {/* Step / Resolution Ladder (:00, :30, :15, :05, 1m) */}
-        <div className="flex items-center gap-2">
-          <span className="font-bold text-slate-500 dark:text-slate-400">{t('Steps:', <><ruby>目盛<rt className="text-[7px]">めも</rt></ruby>り<ruby>刻<rt className="text-[7px]">きざ</rt></ruby>み:</>)}</span>
+        <div className="flex items-center gap-2 shrink-0">
+          <span className="font-bold text-slate-600 dark:text-slate-300">{t('Steps:', <><ruby>目盛<rt>めも</rt></ruby>り<ruby>刻<rt>きざ</rt></ruby>み:</>)}</span>
           <div className="flex bg-white dark:bg-slate-900 p-0.5 rounded-xl border border-slate-200 dark:border-slate-700">
             {[60, 30, 15, 5, 1].map((res) => (
               <button
                 key={res}
                 onClick={() => { playPop(); setResolution(res as TimeResolution); }}
-                className={`px-2 py-1 rounded-lg font-mono font-black text-xs ${resolution === res ? 'bg-amber-500 text-slate-950 shadow-xs' : 'text-slate-500'}`}
+                className={`px-2 py-1 rounded-lg font-mono font-black text-xs cursor-pointer ${resolution === res ? 'bg-amber-500 text-slate-950 shadow-xs' : 'text-slate-500'}`}
               >
                 {res === 60 ? ':00' : res === 1 ? '1m' : `:${res.toString().padStart(2, '0')}`}
               </button>
@@ -360,10 +360,10 @@ export const ClockMasterGame: React.FC<ClockMasterGameProps> = ({ onExit }) => {
       <div className="flex-1 bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 rounded-3xl p-4 sm:p-6 shadow-xl flex flex-col items-center justify-center my-1 relative overflow-hidden">
         {/* Daily Routine Hero Card (if in Routine mode) */}
         {gameMode === 'DAILY_ROUTINE' && (
-          <div className={`w-full max-w-xl mb-4 p-3 sm:p-4 rounded-2xl bg-gradient-to-r ${targetRoutine.color} text-white shadow-lg flex items-center justify-between`}>
-            <div className="flex items-center gap-3">
-              <span className="text-3xl sm:text-4xl">{targetRoutine.icon}</span>
-              <div>
+          <div className={`w-full max-w-2xl mb-4 p-3 sm:p-4 rounded-2xl bg-gradient-to-r ${targetRoutine.color} text-white shadow-lg flex items-center justify-between gap-3`}>
+            <div className="flex items-center gap-3 min-w-0">
+              <span className="text-3xl sm:text-4xl shrink-0">{targetRoutine.icon}</span>
+              <div className="min-w-0">
                 <span className="text-xs font-black uppercase tracking-wider opacity-90">
                   {targetRoutine.enTitle}
                 </span>
@@ -380,9 +380,9 @@ export const ClockMasterGame: React.FC<ClockMasterGameProps> = ({ onExit }) => {
                 const nextIdx = (DAILY_ROUTINES.findIndex(r => r.id === targetRoutine.id) + 1) % DAILY_ROUTINES.length;
                 handleSelectRoutine(DAILY_ROUTINES[nextIdx]);
               }}
-              className="px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 text-white font-black text-xs transition-all active:scale-95 flex items-center gap-1"
+              className="px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 text-white font-black text-xs transition-all active:scale-95 flex items-center gap-1 shrink-0 cursor-pointer"
             >
-              <span>{t('Next Activity', <><ruby>次<rt className="text-[7px]">つぎ</rt></ruby>の<ruby>生活<rt className="text-[7px]">せいかつ</rt></ruby></>)}</span>
+              <span>{t('Next Activity', <><ruby>次<rt>つぎ</rt></ruby>の<ruby>生活<rt>せいかつ</rt></ruby></>)}</span>
               <ChevronRight size={14} />
             </button>
           </div>
@@ -405,8 +405,8 @@ export const ClockMasterGame: React.FC<ClockMasterGameProps> = ({ onExit }) => {
                 resolution={resolution}
                 size={420}
               />
-              <span className="text-[11px] font-bold text-slate-400 mt-2">
-                {t('👆 Drag hands to set time', <>👆 <ruby>針<rt className="text-[7px]">はり</rt></ruby>をドラッグして<ruby>動<rt className="text-[7px]">うご</rt></ruby>かせるよ</>)}
+              <span className="text-[11px] font-bold text-slate-600 dark:text-slate-300 mt-2">
+                {t('👆 Drag hands to set time', <>👆 <ruby>針<rt>はり</rt></ruby>をドラッグして<ruby>動<rt>うご</rt></ruby>かせるよ</>)}
               </span>
             </div>
           )}
@@ -428,15 +428,15 @@ export const ClockMasterGame: React.FC<ClockMasterGameProps> = ({ onExit }) => {
                 <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-xl border border-slate-200 dark:border-slate-700">
                   <button
                     onClick={() => { playPop(); setPeriod('a.m.'); }}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-black ${period === 'a.m.' ? 'bg-amber-400 text-slate-950 shadow-xs' : 'text-slate-500'}`}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-black cursor-pointer ${period === 'a.m.' ? 'bg-amber-400 text-slate-950 shadow-xs' : 'text-slate-500'}`}
                   >
-                    {t('A.M.', <><ruby>午前<rt className="text-[7px]">ごぜん</rt></ruby></>)}
+                    {t('A.M.', <><ruby>午前<rt>ごぜん</rt></ruby></>)}
                   </button>
                   <button
                     onClick={() => { playPop(); setPeriod('p.m.'); }}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-black ${period === 'p.m.' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-500'}`}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-black cursor-pointer ${period === 'p.m.' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-500'}`}
                   >
-                    {t('P.M.', <><ruby>午後<rt className="text-[7px]">ごご</rt></ruby></>)}
+                    {t('P.M.', <><ruby>午後<rt>ごご</rt></ruby></>)}
                   </button>
                 </div>
 
@@ -447,7 +447,7 @@ export const ClockMasterGame: React.FC<ClockMasterGameProps> = ({ onExit }) => {
                       playPop();
                       setMinute(m => ((m - resolution) % 60 + 60) % 60);
                     }}
-                    className="px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 font-mono font-bold text-xs hover:bg-slate-200"
+                    className="px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 font-mono font-bold text-xs hover:bg-slate-200 cursor-pointer"
                   >
                     -{resolution}m
                   </button>
@@ -456,7 +456,7 @@ export const ClockMasterGame: React.FC<ClockMasterGameProps> = ({ onExit }) => {
                       playPop();
                       setMinute(m => (m + resolution) % 60);
                     }}
-                    className="px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 font-mono font-bold text-xs hover:bg-slate-200"
+                    className="px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 font-mono font-bold text-xs hover:bg-slate-200 cursor-pointer"
                   >
                     +{resolution}m
                   </button>
@@ -465,7 +465,7 @@ export const ClockMasterGame: React.FC<ClockMasterGameProps> = ({ onExit }) => {
                       playPop();
                       setHour(h => (h % 12) + 1);
                     }}
-                    className="px-2.5 py-1.5 rounded-xl bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-300 font-bold text-xs"
+                    className="px-2.5 py-1.5 rounded-xl bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-300 font-bold text-xs cursor-pointer"
                   >
                     +1h
                   </button>
@@ -479,13 +479,13 @@ export const ClockMasterGame: React.FC<ClockMasterGameProps> = ({ onExit }) => {
         {feedback === 'CORRECT' && (
           <div className="absolute bottom-4 px-6 py-2.5 rounded-2xl bg-emerald-500 text-white font-black text-sm flex items-center gap-2 shadow-xl animate-in zoom-in-95">
             <CheckCircle2 size={18} />
-            <span>{t('Correct! Wonderful job!', <><ruby>正解<rt className="text-[7px]">せいかい</rt></ruby>！そのとおり！</>)}</span>
+            <span>{t('Correct! Wonderful job!', <><ruby>正解<rt>せいかい</rt></ruby>！そのとおり！</>)}</span>
           </div>
         )}
         {feedback === 'WRONG' && (
           <div className="absolute bottom-4 px-6 py-2.5 rounded-2xl bg-rose-500 text-white font-black text-sm flex items-center gap-2 shadow-xl animate-in zoom-in-95">
             <span>❌</span>
-            <span>{t('Try again! Look closely at the hands.', <>もう<ruby>一度<rt className="text-[7px]">いちど</rt></ruby>！<ruby>針<rt className="text-[7px]">はり</rt></ruby>の<ruby>位置<rt className="text-[7px]">いち</rt></ruby>をよく<ruby>見<rt className="text-[7px]">み</rt></ruby>てね。</>)}</span>
+            <span>{t('Try again! Look closely at the hands.', <>もう<ruby>一度<rt>いちど</rt></ruby>！<ruby>針<rt>はり</rt></ruby>の<ruby>位置<rt>いち</rt></ruby>をよく<ruby>見<rt>み</rt></ruby>てね。</>)}</span>
           </div>
         )}
       </div>
@@ -503,7 +503,7 @@ export const ClockMasterGame: React.FC<ClockMasterGameProps> = ({ onExit }) => {
                 <button
                   key={r.id}
                   onClick={() => handleSelectRoutine(r)}
-                  className={`px-3 py-2 rounded-xl text-xs font-black transition-all flex items-center gap-2 shrink-0 border ${
+                  className={`px-3 py-2 rounded-xl text-xs font-black transition-all flex items-center gap-2 shrink-0 border cursor-pointer ${
                     isActive
                       ? 'bg-blue-600 text-white border-blue-500 shadow-md scale-102 ring-2 ring-blue-300'
                       : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50'
@@ -519,7 +519,7 @@ export const ClockMasterGame: React.FC<ClockMasterGameProps> = ({ onExit }) => {
                             item.ruby ? (
                               <ruby key={idx}>
                                 {item.base}
-                                <rt className="text-[7px]">{item.ruby}</rt>
+                                <rt>{item.ruby}</rt>
                               </ruby>
                             ) : (
                               <span key={idx}>{item.base}</span>
@@ -538,10 +538,10 @@ export const ClockMasterGame: React.FC<ClockMasterGameProps> = ({ onExit }) => {
           </div>
         ) : gameMode === 'SET_TIME' ? (
           /* Check Answer Button & Score */
-          <div className="w-full flex items-center justify-between">
-            <div className="flex items-center gap-3">
+          <div className="w-full flex flex-nowrap items-center justify-between gap-3 overflow-x-auto no-scrollbar whitespace-nowrap">
+            <div className="flex items-center gap-3 shrink-0">
               <span className="text-sm font-black text-slate-900 dark:text-white">
-                {t('Goal:', <><ruby>目標<rt className="text-[7px]">もくひょう</rt></ruby>:</>)} <strong className="text-blue-600 dark:text-blue-400 font-mono text-base">{targetRoutine.phrase}</strong>
+                {t('Goal:', <><ruby>目標<rt>もくひょう</rt></ruby>:</>)} <strong className="text-blue-600 dark:text-blue-400 font-mono text-base">{targetRoutine.phrase}</strong>
               </span>
               <span className="text-xs font-mono font-bold text-amber-500">
                 Score: {score} pts (Streak: {streak})
@@ -549,28 +549,28 @@ export const ClockMasterGame: React.FC<ClockMasterGameProps> = ({ onExit }) => {
             </div>
             <button
               onClick={handleCheckAnswer}
-              className="px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-sm shadow-md transition-all active:scale-95 flex items-center gap-2"
+              className="px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-sm shadow-md transition-all active:scale-95 flex items-center gap-2 shrink-0 cursor-pointer"
             >
-              <span>{t('Check Time!', <><ruby>時間<rt className="text-[7px]">じかん</rt></ruby>をたしかめる！</>)}</span>
+              <span>{t('Check Time!', <><ruby>時間<rt>じかん</rt></ruby>をたしかめる！</>)}</span>
               <ChevronRight size={16} />
             </button>
           </div>
         ) : (
           /* Sandbox Actions: Random Roll & Speak */
-          <div className="w-full flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-500 dark:text-slate-400">
+          <div className="w-full flex flex-nowrap items-center justify-between gap-3 overflow-x-auto no-scrollbar whitespace-nowrap">
+            <span className="text-xs font-bold text-slate-600 dark:text-slate-300 shrink-0">
               {t(
                 'Teacher Manipulative Sandbox: Drag hands or roll random time.',
-                <><ruby>自由<rt className="text-[7px]">じゆう</rt></ruby>に<ruby>時計<rt className="text-[7px]">とけい</rt></ruby>を<ruby>動<rt className="text-[7px]">うご</rt></ruby>かして「What time is it?」と<ruby>質問<rt className="text-[7px]">しつもん</rt></ruby>してみよう。</>
+                <><ruby>自由<rt>じゆう</rt></ruby>に<ruby>時計<rt>とけい</rt></ruby>を<ruby>動<rt>うご</rt></ruby>かして「What time is it?」と<ruby>質問<rt>しつもん</rt></ruby>してみよう。</>
               )}
             </span>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 shrink-0">
               <button
                 onClick={rollRandomTime}
-                className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs shadow-md transition-all active:scale-95 flex items-center gap-1.5"
+                className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs shadow-md transition-all active:scale-95 flex items-center gap-1.5 cursor-pointer"
               >
                 <span>🎲</span>
-                <span>{t('Random Time', <>ランダム<ruby>出題<rt className="text-[7px]">しゅつだい</rt></ruby></>)}</span>
+                <span>{t('Random Time', <>ランダム<ruby>出題<rt>しゅつだい</rt></ruby></>)}</span>
               </button>
             </div>
           </div>

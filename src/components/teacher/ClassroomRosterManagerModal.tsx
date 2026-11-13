@@ -247,7 +247,7 @@ export const ClassroomRosterManagerModal: React.FC<ClassroomRosterManagerModalPr
       onClick={onClose}
     >
       <div 
-        className="w-full max-w-6xl max-h-[96vh] bg-white dark:bg-slate-900 rounded-3xl border-4 border-indigo-400 dark:border-indigo-600 shadow-2xl flex flex-col overflow-hidden text-slate-900 dark:text-white"
+        className="w-full max-w-6xl max-h-[96dvh] bg-white dark:bg-slate-900 rounded-3xl border-4 border-indigo-400 dark:border-indigo-600 shadow-2xl flex flex-col overflow-hidden text-slate-900 dark:text-white"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header Bar */}
@@ -258,7 +258,7 @@ export const ClassroomRosterManagerModal: React.FC<ClassroomRosterManagerModalPr
             </div>
             <div className="min-w-0">
               <h2 className="text-sm sm:text-base font-black tracking-tight leading-tight truncate">
-                {t('Class Roster & Profile Studio', <><ruby>名簿<rt className="text-[7px]">めいぼ</rt></ruby>・児童プロファイル管理</>)}
+                {t('Class Roster & Profile Studio', <><ruby>名簿<rt>めいぼ</rt></ruby>・児童プロファイル管理</>)}
               </h2>
               <p className="text-[10px] text-slate-400 font-bold truncate">
                 {t('Reset names, avatars, passcodes to school defaults & release seats', '表示名・アイコン・合言葉の初期化、席の解除')}

@@ -3839,7 +3839,7 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
             <div className="text-[11px] font-black uppercase tracking-wider text-rose-200 flex items-center justify-between gap-2">
               <span>
                 <ruby>
-                  赤組<rt className="text-[9px]">あかぐみ</rt>
+                  赤組<rt>あかぐみ</rt>
                 </ruby>{' '}
                 カゴ (RED)
               </span>
@@ -3978,7 +3978,7 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
               )}
               <span>
                 <ruby>
-                  白組<rt className="text-[9px]">しろぐみ</rt>
+                  白組<rt>しろぐみ</rt>
                 </ruby>{' '}
                 カゴ (WHITE)
               </span>

@@ -76,6 +76,7 @@ export async function updateStudentProfileInfo(
   // 2. If it's a real student seat (1-35), update Firebase RTDB student node
   if (attendanceNumber > 0) {
     try {
+      await ensureAnonymousAuth();
       const studentPath = `schools/${schoolId}/classes/${classId}/students/${attendanceNumber}`;
       await safeUpdate(studentPath, {
         nickname: updatedProfile.nickname,
@@ -417,11 +418,11 @@ export async function claimAttendanceNumber(
 
   // Update cloud roster for real student seats (1-35); seat 0 (teacher/tester) stays local
   if (attendanceNumber > 0) {
+    const uid = await ensureAnonymousAuth();
     await safeSet(studentPath, profile);
 
     // Mirror to SSO device binding (/users/$uid)
     try {
-      const uid = await ensureAnonymousAuth();
       if (uid) {
         await safeSet(`users/${uid}`, {
           schoolId,
@@ -459,6 +460,9 @@ export async function addRewardsToProfile(
   additionalStats?: AdditionalGameStats
 ): Promise<RewardedStudentProfile | null> {
   try {
+    if (attendanceNumber > 0) {
+      await ensureAnonymousAuth();
+    }
     const studentPath = 'schools/' + schoolId + '/classes/' + classId + '/students/' + attendanceNumber;
     const cloudExisting = await safeGet<StudentProfile>(studentPath);
     const localExisting = getSavedStudentProfile();
@@ -659,6 +663,7 @@ export async function releaseStudentNumber(
   attendanceNumber: number
 ): Promise<void> {
   try {
+    await ensureAnonymousAuth();
     const studentPath = 'schools/' + schoolId + '/classes/' + classId + '/students/' + attendanceNumber;
     await safeRemove(studentPath);
   } catch (err) {
@@ -676,6 +681,7 @@ export async function updateStudentProfileByTeacher(
   updates: { nickname?: string; avatar?: string; callsign?: string; secretCharm?: string }
 ): Promise<StudentProfile | null> {
   try {
+    await ensureAnonymousAuth();
     const studentPath = 'schools/' + schoolId + '/classes/' + classId + '/students/' + attendanceNumber;
     const existing = await safeGet<StudentProfile>(studentPath);
     const fallbackAvatar = getRandomAvatarEmoji(attendanceNumber);
@@ -726,6 +732,7 @@ export async function resetStudentFieldToDefault(
   field: ResetProfileField
 ): Promise<StudentProfile | null> {
   try {
+    await ensureAnonymousAuth();
     const studentPath = 'schools/' + schoolId + '/classes/' + classId + '/students/' + attendanceNumber;
     const existing = await safeGet<StudentProfile>(studentPath);
     if (!existing) return null;
@@ -805,6 +812,7 @@ export async function purchaseShopItem(
     const item = getShopItemById(itemId);
     if (!item) return { success: false, error: 'Item not found' };
 
+    await ensureAnonymousAuth();
     const studentPath = `schools/${schoolId}/classes/${classId}/students/${attendanceNumber}`;
     const cloudExisting = await safeGet<StudentProfile>(studentPath);
     const localExisting = getSavedStudentProfile();
@@ -884,6 +892,7 @@ export async function equipProfileItem(
   itemId: string | null
 ): Promise<{ success: boolean; profile?: StudentProfile }> {
   try {
+    await ensureAnonymousAuth();
     const studentPath = `schools/${schoolId}/classes/${classId}/students/${attendanceNumber}`;
     const cloudExisting = await safeGet<StudentProfile>(studentPath);
     const localExisting = getSavedStudentProfile();
@@ -931,6 +940,7 @@ export async function spinLuckyGacha(
 ): Promise<{ success: boolean; wonItem?: ShopItem; bonusXp?: number; profile?: StudentProfile; error?: string }> {
   try {
     const GACHA_COST = 100;
+    await ensureAnonymousAuth();
     const studentPath = `schools/${schoolId}/classes/${classId}/students/${attendanceNumber}`;
     const cloudExisting = await safeGet<StudentProfile>(studentPath);
     const localExisting = getSavedStudentProfile();

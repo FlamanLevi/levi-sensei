@@ -761,26 +761,28 @@ export const StudentDeviceLinker: React.FC<StudentDeviceLinkerProps> = ({ onLink
             </div>
           </div>
         ) : !activeSchoolId ? (
-          /* Step 0: School Secret Word (No school names revealed!) */
-          <div className="text-center mb-6">
-            <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight mb-1 flex items-center justify-center gap-2">
-              <span>🔑</span>
-              <span>{t('School Secret Word', 'がっこうの あいことば')}</span>
-            </h2>
-            <div className="mb-4 p-3 rounded-2xl bg-gradient-to-r from-purple-500/10 via-indigo-500/10 to-teal-500/10 border-2 border-purple-300 dark:border-purple-700/60 max-w-sm mx-auto text-center shadow-xs">
-              <div className="flex items-center justify-center gap-1.5 text-purple-700 dark:text-purple-300 font-black text-xs mb-0.5">
-                <span>📺</span>
-                <span>{t('TV Setup Screen PIN / QR', 'テレビに4桁PIN・QRコードが出てる？')}</span>
+          /* Step 0: School Secret Word (No school names revealed!) — 2-Column Landscape */
+          <div className="max-w-4xl mx-auto my-2 grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-7 items-center text-left">
+            <div className="space-y-3">
+              <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
+                <span>🔑</span>
+                <span>{t('School Secret Word', 'がっこうの あいことば')}</span>
+              </h2>
+              <div className="p-3.5 rounded-2xl bg-gradient-to-r from-purple-500/10 via-indigo-500/10 to-teal-500/10 border-2 border-purple-300 dark:border-purple-700/60 shadow-xs">
+                <div className="flex items-center gap-1.5 text-purple-700 dark:text-purple-300 font-black text-xs sm:text-sm mb-1">
+                  <span>📺</span>
+                  <span>{t('TV Setup Screen PIN / QR', 'テレビに4桁PIN・QRコードが出てる？')}</span>
+                </div>
+                <p className="text-xs font-bold text-slate-600 dark:text-slate-300 leading-snug">
+                  {t('Scan QR with camera, or type the 4-digit PIN on the right!', 'カメラでQRコードを読むか、右の枠に4桁PINを入れて決定してね！')}
+                </p>
               </div>
-              <p className="text-[11px] font-bold text-slate-500 dark:text-slate-400 leading-snug">
-                {t('Scan QR with camera, or type the 4-digit PIN below!', 'カメラでQRコードを読むか、下の枠に4桁PINを入れて決定してね！')}
+              <p className="text-xs font-bold text-slate-500 dark:text-slate-400 leading-relaxed">
+                {t('Or enter the secret word given by your teacher:', 'または 先生から教えてもらった「あいことば」を入力してください：')}
               </p>
             </div>
-            <p className="text-xs font-bold text-slate-400 mb-4 leading-relaxed max-w-sm mx-auto">
-              {t('Or enter the secret word from your teacher:', 'または 先生から教えてもらった「あいことば」:')}
-            </p>
 
-            <form onSubmit={handleKeywordSubmit} className="max-w-sm mx-auto space-y-3">
+            <form onSubmit={handleKeywordSubmit} className="w-full p-4 sm:p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/70 border-2 border-slate-200 dark:border-slate-700 space-y-3">
               <div className="relative">
                 <input
                   type="text"
@@ -791,7 +793,7 @@ export const StudentDeviceLinker: React.FC<StudentDeviceLinkerProps> = ({ onLink
                   }}
                   placeholder={t('PIN or Secret Word', '4桁PIN / あいことば')}
                   autoFocus
-                  className={`w-full py-4 px-4 text-center font-black text-2xl uppercase tracking-widest rounded-2xl border-2 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white transition-all focus:outline-none focus:ring-4 placeholder:tracking-widest placeholder:text-slate-300 dark:placeholder:text-slate-600 ${
+                  className={`w-full py-4 px-4 text-center font-black text-2xl uppercase tracking-widest rounded-2xl border-2 bg-white dark:bg-slate-900 text-slate-900 dark:text-white transition-all focus:outline-none focus:ring-4 placeholder:tracking-widest placeholder:text-slate-300 dark:placeholder:text-slate-600 ${
                     keywordError
                       ? 'border-rose-400 dark:border-rose-500 focus:ring-rose-200 dark:focus:ring-rose-950/50'
                       : 'border-slate-300 dark:border-slate-700 focus:border-emerald-500 focus:ring-emerald-200 dark:focus:ring-emerald-950/40'
@@ -800,7 +802,7 @@ export const StudentDeviceLinker: React.FC<StudentDeviceLinkerProps> = ({ onLink
               </div>
 
               {keywordError && (
-                <p className="text-xs font-black text-rose-500 animate-in fade-in">
+                <p className="text-xs font-black text-rose-500 animate-in fade-in text-center">
                   {t('Secret word not found. Please check with your teacher!', '合言葉がみつかりません。先生にかくにんしてね！')}
                 </p>
               )}
@@ -808,7 +810,7 @@ export const StudentDeviceLinker: React.FC<StudentDeviceLinkerProps> = ({ onLink
               <button
                 type="submit"
                 disabled={!keywordInput.trim()}
-                className={`w-full py-4 rounded-2xl font-black text-base text-white transition-all shadow-md flex items-center justify-center gap-2 ${
+                className={`w-full py-4 rounded-2xl font-black text-base text-white transition-all shadow-md flex items-center justify-center gap-2 whitespace-nowrap ${
                   keywordInput.trim()
                     ? 'bg-gradient-to-r from-emerald-500 to-teal-600 hover:brightness-105 active:scale-98 cursor-pointer'
                     : 'bg-slate-300 dark:bg-slate-700 cursor-not-allowed text-slate-400'
@@ -983,16 +985,16 @@ export const StudentDeviceLinker: React.FC<StudentDeviceLinkerProps> = ({ onLink
               </div>
 
               {/* Status Legend */}
-              <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-5 mt-2 sm:mt-2.5 text-[10px] sm:text-[11px] font-bold">
-                <span className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
+              <div className="flex items-center justify-center gap-3 sm:gap-5 mt-2 sm:mt-2.5 text-[10px] sm:text-[11px] font-bold flex-nowrap overflow-x-auto no-scrollbar whitespace-nowrap">
+                <span className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400 shrink-0">
                   <span className="w-2.5 h-2.5 rounded-full bg-white dark:bg-slate-800 border-2 border-slate-300 dark:border-slate-600 inline-block" />
                   <span>{t('Available (Tap to set up)', '空いている席（タップして登録）')}</span>
                 </span>
-                <span className="flex items-center gap-1.5 text-amber-700 dark:text-amber-400">
+                <span className="flex items-center gap-1.5 text-amber-700 dark:text-amber-400 shrink-0">
                   <span className="w-2.5 h-2.5 rounded-full bg-amber-400 inline-block" />
                   <span>{t('Taken (Tap to reclaim)', '登録済み（タップで引き継ぎ）')}</span>
                 </span>
-                <span className="flex items-center gap-1.5 text-rose-600 dark:text-rose-400">
+                <span className="flex items-center gap-1.5 text-rose-600 dark:text-rose-400 shrink-0">
                   <span className="w-2.5 h-2.5 rounded-full bg-rose-500 inline-block" />
                   <span>{t('Locked (3m wait / Teacher PIN)', 'ロック中（3分待つか先生PIN）')}</span>
                 </span>
@@ -1011,7 +1013,7 @@ export const StudentDeviceLinker: React.FC<StudentDeviceLinkerProps> = ({ onLink
           }}
         >
           <div
-            className="bg-white dark:bg-slate-900 rounded-3xl sm:rounded-4xl w-[96vw] max-w-5xl h-[94vh] max-h-[820px] p-5 sm:p-7 md:p-8 shadow-2xl border-4 sm:border-6 border-emerald-400 dark:border-emerald-500 relative flex flex-col justify-between overflow-y-auto overscroll-contain animate-in zoom-in-95 duration-150"
+            className="bg-white dark:bg-slate-900 rounded-3xl sm:rounded-4xl w-[96vw] max-w-5xl h-[94dvh] max-h-[820px] p-5 sm:p-7 md:p-8 shadow-2xl border-4 sm:border-6 border-emerald-400 dark:border-emerald-500 relative flex flex-col justify-between overflow-y-auto overscroll-contain animate-in zoom-in-95 duration-150"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
@@ -1255,7 +1257,7 @@ export const StudentDeviceLinker: React.FC<StudentDeviceLinkerProps> = ({ onLink
       {/* Reclaim / Secret Pass-Charm Challenge Modal (Large Child-Friendly Stage) */}
       {reclaimingNum !== null && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-slate-950/75 backdrop-blur-xs select-none animate-in fade-in duration-150">
-          <div className="bg-white dark:bg-slate-900 rounded-3xl sm:rounded-4xl p-5 sm:p-7 md:p-8 max-w-2xl w-full shadow-2xl border-4 sm:border-6 border-amber-400 dark:border-amber-500 text-center animate-in zoom-in-95 duration-150 flex flex-col max-h-[92vh]">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl sm:rounded-4xl p-5 sm:p-6 md:p-7 max-w-3xl w-full shadow-2xl border-4 sm:border-6 border-amber-400 dark:border-amber-500 text-center animate-in zoom-in-95 duration-150 flex flex-col max-h-[92dvh]">
             <div className="shrink-0">
               <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-3xl bg-amber-100 dark:bg-amber-950/80 border-3 border-amber-400 dark:border-amber-600 flex items-center justify-center mx-auto mb-3 shadow-md">
                 <AvatarDisplay avatar={claimedNumbers[reclaimingNum]?.avatar || '🪑'} sizeClassName="w-10 h-10 sm:w-14 sm:h-14" />
@@ -1277,7 +1279,7 @@ export const StudentDeviceLinker: React.FC<StudentDeviceLinkerProps> = ({ onLink
               <p className="text-xs sm:text-sm font-bold text-slate-600 dark:text-slate-300 mb-3 leading-relaxed">
                 {t(
                   `Choose your secret charm to unlock this seat:`,
-                  <>{claimedNumbers[reclaimingNum]?.nickname || `${reclaimingNum}番`}の<ruby>合言葉<rt className="text-[8px] font-normal text-slate-400">あいことば</rt></ruby>（ひみつのマーク）をえらんでね！</>
+                  <>{claimedNumbers[reclaimingNum]?.nickname || `${reclaimingNum}番`}の<ruby>合言葉<rt>あいことば</rt></ruby>（ひみつのマーク）をえらんでね！</>
                 )}
               </p>
 
@@ -1311,7 +1313,7 @@ export const StudentDeviceLinker: React.FC<StudentDeviceLinkerProps> = ({ onLink
                     type="button"
                     disabled={submitting}
                     onClick={() => handleChallengePick(charm.emoji)}
-                    className="h-20 sm:h-22 rounded-2xl bg-amber-50 hover:bg-amber-100 disabled:opacity-50 dark:bg-slate-800 dark:hover:bg-slate-750 border-2 sm:border-3 border-amber-300 dark:border-amber-700/80 hover:border-amber-400 active:scale-95 transition-all shadow-xs flex flex-col items-center justify-center gap-1 cursor-pointer"
+                    className="h-20 sm:h-22 rounded-2xl bg-amber-50 hover:bg-amber-100 disabled:opacity-50 dark:bg-slate-800 dark:hover:bg-slate-700 border-2 sm:border-3 border-amber-300 dark:border-amber-700/80 hover:border-amber-400 active:scale-95 transition-all shadow-xs flex flex-col items-center justify-center gap-1 cursor-pointer"
                   >
                     <span className="text-3xl sm:text-4xl leading-none">{charm.emoji}</span>
                     <span className="text-xs font-black text-slate-800 dark:text-slate-200 truncate w-full px-1 text-center">
@@ -1323,17 +1325,17 @@ export const StudentDeviceLinker: React.FC<StudentDeviceLinkerProps> = ({ onLink
             </div>
 
             {/* Bottom Actions: Teacher PIN Override + Wrong Seat Escape */}
-            <div className="shrink-0 flex flex-col sm:flex-row items-center gap-2 pt-3 border-t border-slate-200 dark:border-slate-800">
+            <div className="shrink-0 grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-3 border-t border-slate-200 dark:border-slate-800">
               <button
                 type="button"
                 onClick={() => handleOpenTeacherUnlock(reclaimingNum)}
-                className="w-full sm:flex-1 py-2.5 px-3 rounded-xl bg-amber-100 hover:bg-amber-200 dark:bg-amber-950/70 dark:hover:bg-amber-900/80 text-amber-900 dark:text-amber-200 font-black text-xs sm:text-sm flex items-center justify-center gap-1.5 transition-colors cursor-pointer border border-amber-300 dark:border-amber-700"
+                className="w-full py-2.5 px-3 rounded-xl bg-amber-100 hover:bg-amber-200 dark:bg-amber-950/70 dark:hover:bg-amber-900/80 text-amber-900 dark:text-amber-200 font-black text-xs sm:text-sm flex items-center justify-center gap-1.5 transition-colors cursor-pointer border border-amber-300 dark:border-amber-700 whitespace-nowrap"
               >
                 <span>👨‍🏫</span>
                 <span>
                   {t(
                     'Teacher PIN Override',
-                    <><ruby>合言葉<rt className="text-[8px] font-normal text-slate-400">あいことば</rt></ruby>を忘れたら先生PINで解除</>
+                    <><ruby>合言葉<rt>あいことば</rt></ruby>を忘れたら先生PINで解除</>
                   )}
                 </span>
               </button>
@@ -1345,7 +1347,7 @@ export const StudentDeviceLinker: React.FC<StudentDeviceLinkerProps> = ({ onLink
                   setChallengeError(false);
                   setReclaimAttempts(0);
                 }}
-                className="w-full sm:flex-1 py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 font-black text-xs sm:text-sm transition-colors cursor-pointer"
+                className="w-full py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 font-black text-xs sm:text-sm transition-colors cursor-pointer whitespace-nowrap"
               >
                 {t('No, I picked the wrong number', 'いいえ、番号をまちがえました')}
               </button>
@@ -1379,7 +1381,7 @@ export const StudentDeviceLinker: React.FC<StudentDeviceLinkerProps> = ({ onLink
               {t(
                 `Too many incorrect secret charm attempts. For security, this seat is temporarily locked on this device.`,
                 <>
-                  <ruby>合言葉<rt className="text-[8px] font-normal text-slate-400">あいことば</rt></ruby>（ひみつのマーク）が2回ちがったため、セキュリティ保護のためこの端末での受付を3分間ロックしています。
+                  <ruby>合言葉<rt>あいことば</rt></ruby>（ひみつのマーク）が2回ちがったため、セキュリティ保護のためこの端末での受付を3分間ロックしています。
                 </>
               )}
             </p>
@@ -1410,7 +1412,7 @@ export const StudentDeviceLinker: React.FC<StudentDeviceLinkerProps> = ({ onLink
                 <span>
                   {t(
                     'Teacher Unlock with PIN',
-                    <><ruby>先生<rt className="text-[8px] font-normal text-white/70">せんせい</rt></ruby>（Levi-Sensei）にPINで解除してもらう</>
+                    <><ruby>先生<rt>せんせい</rt></ruby>（Levi-Sensei）にPINで解除してもらう</>
                   )}
                 </span>
               </button>

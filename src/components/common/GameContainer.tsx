@@ -108,23 +108,23 @@ export const GameContainer: React.FC<GameContainerProps> = ({
   return (
     <div className={`w-full bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white flex flex-col select-none overflow-x-clip print:bg-white print:overflow-visible print:h-auto print:max-h-none ${
       isScrollable 
-        ? 'min-h-screen overflow-y-auto' 
+        ? 'min-h-dvh overflow-y-auto' 
         : 'h-[100dvh] max-h-[100dvh] overflow-hidden'
     }`}>
       {/* Game Header Bar */}
       <div className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-md px-3 py-2 sm:px-4 sm:py-2.5 flex items-center justify-between border-b border-slate-200 dark:border-slate-800 shrink-0 sticky top-0 z-40 gap-2 shadow-xs print:hidden">
-        <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-wrap">
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1 flex-nowrap">
           <button
             onClick={handleBack}
-            className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white font-black text-xs flex items-center gap-1.5 transition-none active:scale-95 shrink-0"
+            className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white font-black text-xs flex items-center gap-1.5 transition-none active:scale-95 shrink-0 whitespace-nowrap"
           >
             <ArrowLeft size={16} />
-            <span className="hidden xs:inline">BACK TO HUB</span>
+            <span className="hidden xs:inline">{t('BACK TO HUB', 'ハブに戻る')}</span>
           </button>
-          <div className="flex items-center gap-2 min-w-0">
-            <h2 className="text-base sm:text-lg font-black tracking-tight truncate">{title}</h2>
-            {jaTitle && <span className="text-xs font-bold text-amber-400 hidden md:inline shrink-0">{jaTitle}</span>}
-            <span className="text-[11px] font-black px-2 py-0.5 rounded-full bg-blue-600 text-white shrink-0">
+          <div className="flex items-center gap-2 min-w-0 flex-1 flex-nowrap">
+            <h2 className="text-base sm:text-lg font-black tracking-tight truncate min-w-0">{title}</h2>
+            {jaTitle && <span className="text-xs font-bold text-amber-500 dark:text-amber-400 hidden md:inline shrink-0 whitespace-nowrap">{jaTitle}</span>}
+            <span className="text-[11px] font-black px-2 py-0.5 rounded-full bg-blue-600 text-white shrink-0 whitespace-nowrap">
               {activeGrade}
             </span>
 
@@ -133,13 +133,13 @@ export const GameContainer: React.FC<GameContainerProps> = ({
               <div className="relative shrink-0" ref={scopeMenuRef}>
               <button
                 onClick={() => setIsScopeMenuOpen(!isScopeMenuOpen)}
-                className="px-2.5 py-1 rounded-xl bg-slate-700/80 hover:bg-slate-700 text-indigo-300 hover:text-indigo-200 border border-indigo-400/30 text-xs font-black flex items-center gap-1.5 transition-all cursor-pointer shadow-xs active:scale-95"
+                className="px-2.5 py-1 rounded-xl bg-slate-700/80 hover:bg-slate-700 text-indigo-300 hover:text-indigo-200 border border-indigo-400/30 text-xs font-black flex items-center gap-1.5 transition-all cursor-pointer shadow-xs active:scale-95 whitespace-nowrap"
                 title={t("Change vocabulary pool scope", "出題単語の範囲を変更")}
               >
-                <BookOpen size={13} className="text-indigo-400" />
+                <BookOpen size={13} className="text-indigo-400 shrink-0" />
                 <span className="hidden sm:inline">{getScopeName(vocabularyScope)}</span>
                 <span className="text-[10px] text-indigo-300 font-bold">({scopedWords.length})</span>
-                <ChevronDown size={12} className="text-indigo-400" />
+                <ChevronDown size={12} className="text-indigo-400 shrink-0" />
               </button>
 
               {isScopeMenuOpen && (
@@ -249,7 +249,7 @@ export const GameContainer: React.FC<GameContainerProps> = ({
           </div>
         </div>
 
-        <div className="flex items-center gap-1.5 sm:gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 flex-nowrap">
           <LanguageToggle size="sm" />
           <button
             onClick={() => { playPop(); openDiceModal(); }}

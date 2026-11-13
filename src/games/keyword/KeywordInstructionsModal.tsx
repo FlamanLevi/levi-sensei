@@ -60,15 +60,15 @@ const TUTORIAL_SLIDES: TutorialSlide[] = [
     titleJa: (
       <>
         <ruby>
-          画面<rt className="text-[10px] sm:text-xs font-bold text-slate-400">がめん</rt>
+          画面<rt>がめん</rt>
         </ruby>
         のポーズをして、「
         <ruby>
-          合言葉<rt className="text-[10px] sm:text-xs font-bold text-slate-400">あいことば</rt>
+          合言葉<rt>あいことば</rt>
         </ruby>
         」を
         <ruby>
-          覚<rt className="text-[10px] sm:text-xs font-bold text-slate-400">おぼ</rt>
+          覚<rt>おぼ</rt>
         </ruby>
         えよう！
       </>
@@ -78,35 +78,35 @@ const TUTORIAL_SLIDES: TutorialSlide[] = [
       <>
         2
         <ruby>
-          人<rt className="text-[10px] sm:text-xs font-bold text-slate-400">にん</rt>
+          人<rt>にん</rt>
         </ruby>
         ペアの
         <ruby>
-          真<rt className="text-[10px] sm:text-xs font-bold text-slate-400">ま</rt>
+          真<rt>ま</rt>
         </ruby>
         ん
         <ruby>
-          中<rt className="text-[10px] sm:text-xs font-bold text-slate-400">なか</rt>
+          中<rt>なか</rt>
         </ruby>
         にiPad（または
         <ruby>
-          消<rt className="text-[10px] sm:text-xs font-bold text-slate-400">け</rt>
+          消<rt>け</rt>
         </ruby>
         しゴム）を
         <ruby>
-          置<rt className="text-[10px] sm:text-xs font-bold text-slate-400">お</rt>
+          置<rt>お</rt>
         </ruby>
         き、
         <ruby>
-          両手<rt className="text-[10px] sm:text-xs font-bold text-slate-400">りょうて</rt>
+          両手<rt>りょうて</rt>
         </ruby>
         を
         <ruby>
-          頭<rt className="text-[10px] sm:text-xs font-bold text-slate-400">あたま</rt>
+          頭<rt>あたま</rt>
         </ruby>
         ・
         <ruby>
-          肩<rt className="text-[10px] sm:text-xs font-bold text-slate-400">かた</rt>
+          肩<rt>かた</rt>
         </ruby>
         ・ひざにのせてスタンバイしよう！
       </>
@@ -141,15 +141,15 @@ const TUTORIAL_SLIDES: TutorialSlide[] = [
       <>
         カードの
         <ruby>
-          英語<rt className="text-[10px] sm:text-xs font-bold text-slate-400">えいご</rt>
+          英語<rt>えいご</rt>
         </ruby>
         をよく
         <ruby>
-          聞<rt className="text-[10px] sm:text-xs font-bold text-slate-400">き</rt>
+          聞<rt>き</rt>
         </ruby>
         いて、みんなで
         <ruby>
-          元気<rt className="text-[10px] sm:text-xs font-bold text-slate-400">げんき</rt>
+          元気<rt>げんき</rt>
         </ruby>
         にリピート！
       </>
@@ -159,35 +159,35 @@ const TUTORIAL_SLIDES: TutorialSlide[] = [
       <>
         テレビに
         <ruby>
-          次々<rt className="text-[10px] sm:text-xs font-bold text-slate-400">つぎつぎ</rt>
+          次々<rt>つぎつぎ</rt>
         </ruby>
         と
         <ruby>
-          出<rt className="text-[10px] sm:text-xs font-bold text-slate-400">で</rt>
+          出<rt>で</rt>
         </ruby>
         るカードの
         <ruby>
-          英語<rt className="text-[10px] sm:text-xs font-bold text-slate-400">えいご</rt>
+          英語<rt>えいご</rt>
         </ruby>
         を
         <ruby>
-          聞<rt className="text-[10px] sm:text-xs font-bold text-slate-400">き</rt>
+          聞<rt>き</rt>
         </ruby>
         いて、クラス
         <ruby>
-          全員<rt className="text-[10px] sm:text-xs font-bold text-slate-400">ぜんいん</rt>
+          全員<rt>ぜんいん</rt>
         </ruby>
         で
         <ruby>
-          声<rt className="text-[10px] sm:text-xs font-bold text-slate-400">こえ</rt>
+          声<rt>こえ</rt>
         </ruby>
         に
         <ruby>
-          出<rt className="text-[10px] sm:text-xs font-bold text-slate-400">だ</rt>
+          出<rt>だ</rt>
         </ruby>
         して
         <ruby>
-          発音<rt className="text-[10px] sm:text-xs font-bold text-slate-400">はつおん</rt>
+          発音<rt>はつおん</rt>
         </ruby>
         しよう！
       </>
@@ -222,15 +222,15 @@ const TUTORIAL_SLIDES: TutorialSlide[] = [
       <>
         「
         <ruby>
-          合言葉<rt className="text-[10px] sm:text-xs font-bold text-slate-400">あいことば</rt>
+          合言葉<rt>あいことば</rt>
         </ruby>
         」が
         <ruby>
-          出<rt className="text-[10px] sm:text-xs font-bold text-slate-400">で</rt>
+          出<rt>で</rt>
         </ruby>
         た
         <ruby>
-          瞬間<rt className="text-[10px] sm:text-xs font-bold text-slate-400">しゅんかん</rt>
+          瞬間<rt>しゅんかん</rt>
         </ruby>
         にすばやくタップ（キャッチ）！
       </>
@@ -240,34 +240,34 @@ const TUTORIAL_SLIDES: TutorialSlide[] = [
       <>
         「
         <ruby>
-          合言葉<rt className="text-[10px] sm:text-xs font-bold text-slate-400">あいことば</rt>
+          合言葉<rt>あいことば</rt>
         </ruby>
         」が
         <ruby>
-          出<rt className="text-[10px] sm:text-xs font-bold text-slate-400">で</rt>
+          出<rt>で</rt>
         </ruby>
         たら、
         <ruby>
-          自分<rt className="text-[10px] sm:text-xs font-bold text-slate-400">じぶん</rt>
+          自分<rt>じぶん</rt>
         </ruby>
         のカラーゾーン（🔴
         <ruby>
-          赤<rt className="text-[10px] sm:text-xs font-bold text-slate-400">あか</rt>
+          赤<rt>あか</rt>
         </ruby>
         ／🔵
         <ruby>
-          青<rt className="text-[10px] sm:text-xs font-bold text-slate-400">あお</rt>
+          青<rt>あお</rt>
         </ruby>
         ）をすばやくタップ！0.001
         <ruby>
-          秒<rt className="text-[10px] sm:text-xs font-bold text-slate-400">びょう</rt>
+          秒<rt>びょう</rt>
         </ruby>
         <ruby>
-          単位<rt className="text-[10px] sm:text-xs font-bold text-slate-400">たんい</rt>
+          単位<rt>たんい</rt>
         </ruby>
         でスピード
         <ruby>
-          判定<rt className="text-[10px] sm:text-xs font-bold text-slate-400">はんてい</rt>
+          判定<rt>はんてい</rt>
         </ruby>
         されるよ！
       </>
@@ -302,15 +302,15 @@ const TUTORIAL_SLIDES: TutorialSlide[] = [
     titleJa: (
       <>
         <ruby>
-          違<rt className="text-[10px] sm:text-xs font-bold text-slate-400">ちが</rt>
+          違<rt>ちが</rt>
         </ruby>
         う
         <ruby>
-          言葉<rt className="text-[10px] sm:text-xs font-bold text-slate-400">ことば</rt>
+          言葉<rt>ことば</rt>
         </ruby>
         でタップすると「おてつき」！
         <ruby>
-          相手<rt className="text-[10px] sm:text-xs font-bold text-slate-400">あいて</rt>
+          相手<rt>あいて</rt>
         </ruby>
         にポイント！
       </>
@@ -320,19 +320,19 @@ const TUTORIAL_SLIDES: TutorialSlide[] = [
       <>
         「
         <ruby>
-          合言葉<rt className="text-[10px] sm:text-xs font-bold text-slate-400">あいことば</rt>
+          合言葉<rt>あいことば</rt>
         </ruby>
         」ではないカードでさわると、ホイッスルが
         <ruby>
-          鳴<rt className="text-[10px] sm:text-xs font-bold text-slate-400">な</rt>
+          鳴<rt>な</rt>
         </ruby>
         ってイエローカード！
         <ruby>
-          相手<rt className="text-[10px] sm:text-xs font-bold text-slate-400">あいて</rt>
+          相手<rt>あいて</rt>
         </ruby>
         に＋1ポイントが
         <ruby>
-          入<rt className="text-[10px] sm:text-xs font-bold text-slate-400">はい</rt>
+          入<rt>はい</rt>
         </ruby>
         っちゃうよ！
       </>
@@ -464,11 +464,11 @@ export const KeywordInstructionsModal: React.FC<KeywordInstructionsModalProps> =
       onClick={onClose}
     >
       <div
-        className="w-[98vw] max-w-[1800px] h-[95vh] max-h-[980px] flex flex-col bg-white dark:bg-slate-900 border-4 sm:border-6 border-amber-400 dark:border-amber-500 rounded-3xl shadow-2xl overflow-hidden transition-all duration-200"
+        className="w-[98vw] max-w-[1800px] h-[95dvh] max-h-[980px] flex flex-col bg-white dark:bg-slate-900 border-4 sm:border-6 border-amber-400 dark:border-amber-500 rounded-3xl shadow-2xl overflow-hidden transition-all duration-200"
         onClick={(e) => e.stopPropagation()}
       >
         {/* HEADER BAR */}
-        <div className="flex items-center justify-between px-3.5 sm:px-6 py-2 sm:py-2.5 bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-slate-950 shrink-0 min-h-[46px] sm:min-h-[50px]">
+        <div className="flex items-center justify-between gap-2 px-3.5 sm:px-6 py-2 sm:py-2.5 bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-slate-950 shrink-0 min-h-[46px] sm:min-h-[50px]">
           <div className="min-w-0 flex-1 flex items-center gap-2">
             <span className="text-base sm:text-xl shrink-0">📖</span>
             <h1 className="text-xs sm:text-base md:text-lg font-black tracking-wide text-slate-950 truncate">
@@ -476,11 +476,11 @@ export const KeywordInstructionsModal: React.FC<KeywordInstructionsModalProps> =
                 <>
                   キーワードグラブの
                   <ruby>
-                    遊<rt className="text-[8px] sm:text-[9px] font-bold">あそ</rt>
+                    遊<rt>あそ</rt>
                   </ruby>
                   び
                   <ruby>
-                    方<rt className="text-[8px] sm:text-[9px] font-bold">かた</rt>
+                    方<rt>かた</rt>
                   </ruby>
                   ・ルール
                 </>
@@ -508,11 +508,11 @@ export const KeywordInstructionsModal: React.FC<KeywordInstructionsModalProps> =
               {isFullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
             </button>
 
-            <div className="flex bg-slate-950/25 p-0.5 rounded-xl text-xs sm:text-sm font-black">
+            <div className="flex bg-slate-950/25 p-0.5 rounded-xl text-xs sm:text-sm font-black shrink-0 flex-nowrap">
               <button
                 type="button"
                 onClick={() => setLang('ja')}
-                className={`px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg transition-all cursor-pointer ${
+                className={`px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg transition-all cursor-pointer whitespace-nowrap ${
                   isJa
                     ? 'bg-white text-slate-950 shadow-sm'
                     : 'text-slate-900 hover:text-white'
@@ -523,7 +523,7 @@ export const KeywordInstructionsModal: React.FC<KeywordInstructionsModalProps> =
               <button
                 type="button"
                 onClick={() => setLang('en')}
-                className={`px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg transition-all cursor-pointer ${
+                className={`px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg transition-all cursor-pointer whitespace-nowrap ${
                   !isJa
                     ? 'bg-white text-slate-950 shadow-sm'
                     : 'text-slate-900 hover:text-white'
@@ -562,7 +562,7 @@ export const KeywordInstructionsModal: React.FC<KeywordInstructionsModalProps> =
               <div className="flex items-center justify-center gap-4 sm:gap-6 text-3xl sm:text-4xl md:text-5xl leading-none">
                 {currentSlide.graphicIcons}
               </div>
-              <span className="text-xs sm:text-sm md:text-base font-black tracking-wide bg-white/95 dark:bg-slate-900/95 px-5 sm:px-7 py-1 rounded-full border border-slate-200 dark:border-slate-700 shadow-xs mt-2 leading-none">
+              <span className="text-xs sm:text-sm md:text-base font-black tracking-wide bg-white/95 dark:bg-slate-900/95 px-5 sm:px-7 py-1 rounded-full border border-slate-200 dark:border-slate-700 shadow-xs mt-2 leading-none whitespace-nowrap">
                 {isJa ? currentSlide.badgeJa : currentSlide.badgeEn}
               </span>
             </div>
@@ -604,18 +604,18 @@ export const KeywordInstructionsModal: React.FC<KeywordInstructionsModalProps> =
         </div>
 
         {/* FOOTER CONTROLS */}
-        <div className="px-3 sm:px-6 py-2.5 sm:py-3 bg-slate-50 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 flex items-center justify-center shrink-0 gap-2.5 sm:gap-4 flex-wrap">
+        <div className="px-3 sm:px-6 py-2.5 sm:py-3 bg-slate-50 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 flex flex-nowrap items-center justify-center shrink-0 gap-2.5 sm:gap-4 overflow-x-auto no-scrollbar">
           <button
             type="button"
             onClick={handlePrev}
             disabled={currentSlideIndex <= 0}
-            className="px-3.5 sm:px-5 py-1.5 sm:py-2.5 rounded-2xl bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 disabled:opacity-25 disabled:cursor-not-allowed text-slate-800 dark:text-slate-200 font-bold text-xs sm:text-sm md:text-base flex items-center gap-1.5 transition-all cursor-pointer shadow-xs"
+            className="px-3.5 sm:px-5 py-1.5 sm:py-2.5 rounded-2xl bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 disabled:opacity-25 disabled:cursor-not-allowed text-slate-800 dark:text-slate-200 font-bold text-xs sm:text-sm md:text-base flex items-center gap-1.5 transition-all cursor-pointer shadow-xs shrink-0 whitespace-nowrap"
           >
             <ChevronLeft size={18} />
             <span>{isJa ? 'まえへ' : 'Back'}</span>
           </button>
 
-          <div className="flex items-center gap-1.5 sm:gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 flex-nowrap">
             {TUTORIAL_SLIDES.map((slide, idx) => {
               const isActive = idx === currentSlideIndex;
               return (
@@ -623,7 +623,7 @@ export const KeywordInstructionsModal: React.FC<KeywordInstructionsModalProps> =
                   key={slide.step}
                   type="button"
                   onClick={() => handleJumpToSlide(idx)}
-                  className={`w-8 h-8 sm:w-10 sm:h-10 md:w-11 md:h-11 rounded-full font-black text-xs sm:text-sm md:text-base flex items-center justify-center transition-all cursor-pointer ${
+                  className={`w-8 h-8 sm:w-10 sm:h-10 md:w-11 md:h-11 rounded-full font-black text-xs sm:text-sm md:text-base flex items-center justify-center transition-all cursor-pointer shrink-0 ${
                     isActive
                       ? `${slide.theme.pillBg} shadow-md scale-110 ring-2 ring-amber-400`
                       : 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-300 dark:hover:bg-slate-700'
@@ -639,7 +639,7 @@ export const KeywordInstructionsModal: React.FC<KeywordInstructionsModalProps> =
             <button
               type="button"
               onClick={handleNext}
-              className="px-4 sm:px-6 py-1.5 sm:py-2.5 rounded-2xl bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white font-black text-xs sm:text-sm md:text-base shadow-md hover:shadow-lg transition-all cursor-pointer flex items-center gap-1.5"
+              className="px-4 sm:px-6 py-1.5 sm:py-2.5 rounded-2xl bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white font-black text-xs sm:text-sm md:text-base shadow-md hover:shadow-lg transition-all cursor-pointer flex items-center gap-1.5 shrink-0 whitespace-nowrap"
             >
               <span>{isJa ? 'つぎへ' : 'Next'}</span>
               <ChevronRight size={18} />
@@ -651,7 +651,7 @@ export const KeywordInstructionsModal: React.FC<KeywordInstructionsModalProps> =
                 soundEffects.playCorrect();
                 onClose();
               }}
-              className="px-5 sm:px-8 py-1.5 sm:py-2.5 rounded-2xl bg-amber-500 hover:bg-amber-400 active:scale-95 text-slate-950 font-black text-xs sm:text-sm md:text-base shadow-md hover:shadow-lg transition-all cursor-pointer flex items-center gap-2 animate-pulse"
+              className="px-5 sm:px-8 py-1.5 sm:py-2.5 rounded-2xl bg-amber-500 hover:bg-amber-400 active:scale-95 text-slate-950 font-black text-xs sm:text-sm md:text-base shadow-md hover:shadow-lg transition-all cursor-pointer flex items-center gap-2 animate-pulse shrink-0 whitespace-nowrap"
             >
               <Play size={16} className="fill-slate-950" />
               <span>{isJa ? 'ゲームをはじめる！' : "Let's Play!"}</span>

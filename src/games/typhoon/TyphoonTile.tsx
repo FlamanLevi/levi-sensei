@@ -42,7 +42,7 @@ export const TyphoonTile: React.FC<TyphoonTileProps> = ({
     <button
       type="button"
       onClick={onSelect}
-      className="group relative w-full h-full min-h-[90px] sm:min-h-[110px] md:min-h-[125px] rounded-2xl sm:rounded-3xl border-3 sm:border-4 border-slate-700 dark:border-slate-600 bg-gradient-to-br from-slate-800 via-slate-850 to-slate-900 hover:from-indigo-600 hover:to-blue-700 text-white shadow-xl hover:shadow-2xl transition-all duration-150 transform hover:-translate-y-1 active:translate-y-0.5 cursor-pointer flex flex-col items-center justify-center p-2 select-none overflow-hidden"
+      className="group relative w-full h-full min-h-[90px] sm:min-h-[110px] md:min-h-[125px] rounded-2xl sm:rounded-3xl border-3 sm:border-4 border-slate-700 dark:border-slate-600 bg-gradient-to-br from-slate-800 via-slate-900 to-slate-950 hover:from-indigo-600 hover:to-blue-700 text-white shadow-xl hover:shadow-2xl transition-all duration-150 transform hover:-translate-y-1 active:translate-y-0.5 cursor-pointer flex flex-col items-center justify-center p-2 select-none overflow-hidden"
     >
       <div className="absolute top-1.5 left-2 sm:top-2 sm:left-2.5 text-[10px] sm:text-xs font-black font-mono text-slate-400 group-hover:text-white/80">
         {subLabel}

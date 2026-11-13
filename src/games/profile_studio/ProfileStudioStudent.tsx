@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from '@/context/LanguageContext';
 import { SchoolId, StudentProfile, SCHOOL_CONFIGS, getRandomAvatarEmoji } from '@/types/roster';
+import { ensureAnonymousAuth } from '@/services/firebase';
 import { safeSubscribe, safeSet, safeGet } from '@/services/rtdbSafe';
 import { claimAttendanceNumber, getSavedStudentProfile, unlinkStudentDevice } from '@/services/studentProfile';
 import { soundEffects } from '@/services/soundEffects';
@@ -152,7 +153,8 @@ export const ProfileStudioStudent: React.FC<ProfileStudioStudentProps> = ({
         seatNum === 0 ? 'TEACH' : undefined
       );
 
-      // Refresh RTDB setup room seat
+      // Refresh RTDB setup room seat (guarantees auth even for Seat 00)
+      await ensureAnonymousAuth();
       await safeSet(`setupRooms/${code}/boundSeats/${seatNum}`, {
         ...existingInfo,
         boundAt: Date.now(),
@@ -207,7 +209,8 @@ export const ProfileStudioStudent: React.FC<ProfileStudioStudentProps> = ({
         selectedSeat === 0 ? 'TEACH' : undefined
       );
 
-      // 2. Notify setup room in RTDB that this seat is claimed
+      // 2. Notify setup room in RTDB that this seat is claimed (guarantees auth even for Seat 00)
+      await ensureAnonymousAuth();
       const seatInfo: BoundSeatInfo = {
         attendanceNumber: selectedSeat,
         nickname: finalNickname,
@@ -240,13 +243,13 @@ export const ProfileStudioStudent: React.FC<ProfileStudioStudentProps> = ({
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-100 dark:bg-slate-950 flex flex-col items-center justify-center p-4">
-        <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl border-2 border-slate-200 dark:border-slate-800 animate-pulse">
+      <div className="min-h-dvh bg-slate-100 dark:bg-slate-950 flex flex-col items-center justify-center p-4">
+        <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 max-w-md w-full text-center shadow-2xl border-2 border-slate-200 dark:border-slate-800 animate-pulse">
           <div className="text-4xl mb-3">🔄</div>
           <h2 className="text-lg font-black text-slate-900 dark:text-white mb-1">
             {t('Connecting to Classroom...', '教室に接続中...')}
           </h2>
-          <p className="text-xs font-bold text-slate-400">
+          <p className="text-xs font-bold text-slate-500 dark:text-slate-400">
             {t(`Classroom Setup PIN: ${code}`, `PINコード: ${code}`)}
           </p>
         </div>
@@ -256,8 +259,8 @@ export const ProfileStudioStudent: React.FC<ProfileStudioStudentProps> = ({
 
   if (error || !roomState) {
     return (
-      <div className="min-h-screen bg-slate-100 dark:bg-slate-950 flex flex-col items-center justify-center p-4">
-        <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl border-2 border-rose-300 dark:border-rose-900">
+      <div className="min-h-dvh bg-slate-100 dark:bg-slate-950 flex flex-col items-center justify-center p-4">
+        <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 max-w-md w-full text-center shadow-2xl border-2 border-rose-300 dark:border-rose-900">
           <div className="text-4xl mb-3">⚠️</div>
           <h2 className="text-lg font-black text-rose-600 dark:text-rose-400 mb-2">
             {t('Connection Error', '接続エラー')}
@@ -282,67 +285,71 @@ export const ProfileStudioStudent: React.FC<ProfileStudioStudentProps> = ({
   // 3. Celebration Screen: When profile is successfully linked!
   if (linkedProfile) {
     return (
-      <div className="min-h-screen bg-slate-100 dark:bg-slate-950 flex flex-col items-center justify-center p-4 select-none">
-        <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 max-w-md w-full text-center shadow-2xl border-4 border-emerald-400 dark:border-emerald-500 animate-in zoom-in-95 duration-200">
-          <div className="w-20 h-20 rounded-3xl bg-gradient-to-tr from-emerald-500 to-teal-600 text-white flex items-center justify-center mx-auto mb-4 text-4xl shadow-xl animate-bounce">
-            {linkedProfile.avatar || selectedAvatar}
+      <div className="min-h-dvh bg-slate-100 dark:bg-slate-950 flex flex-col items-center justify-center p-4 select-none">
+        <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 max-w-md md:max-w-2xl w-full shadow-2xl border-4 border-emerald-400 dark:border-emerald-500 animate-in zoom-in-95 duration-200 grid grid-cols-1 md:grid-cols-12 gap-5 items-center">
+          <div className="md:col-span-5 flex flex-col items-center text-center">
+            <div className="w-20 h-20 rounded-3xl bg-gradient-to-tr from-emerald-500 to-teal-600 text-white flex items-center justify-center mb-3 text-4xl shadow-xl animate-bounce">
+              {linkedProfile.avatar || selectedAvatar}
+            </div>
+
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 font-black text-xs mb-2">
+              <CheckCircle2 size={14} />
+              <span>{t('iPad Setup Complete!', 'iPadセットアップ完了！')}</span>
+            </span>
+
+            <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-1">
+              {linkedProfile.nickname}
+            </h2>
+
+            <p className="text-sm font-bold text-slate-500 dark:text-slate-400">
+              {schoolConfig?.name || '小学校'} • {roomState.classId} #{linkedProfile.attendanceNumber}
+            </p>
           </div>
 
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 font-black text-xs mb-2">
-            <CheckCircle2 size={14} />
-            <span>{t('iPad Setup Complete!', 'iPadセットアップ完了！')}</span>
-          </span>
+          <div className="md:col-span-7 flex flex-col gap-3">
+            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-600 dark:text-slate-300 leading-relaxed text-center md:text-left">
+              {t(
+                'Your iPad is now permanently linked to this seat. Look at the Front TV to see your desk light up!',
+                <>このiPadの<ruby>設定<rt>せってい</rt></ruby>が<ruby>完了<rt>かんりょう</rt></ruby>しました！<ruby>前<rt>まえ</rt></ruby>のテレビで<ruby>席<rt>せき</rt></ruby>が<ruby>光<rt>ひか</rt></ruby>っているのを<ruby>確認<rt>かくにん</rt></ruby>しよう！</>
+              )}
+            </div>
 
-          <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-1">
-            {linkedProfile.nickname}
-          </h2>
+            <button
+              type="button"
+              onClick={() => onFinished(linkedProfile)}
+              className="w-full py-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-black text-base shadow-xl hover:brightness-105 active:scale-98 transition-all flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <span>{t('Go to Student Home', 'ホーム画面へすすむ')}</span>
+              <ArrowRight size={18} />
+            </button>
 
-          <p className="text-sm font-bold text-slate-500 dark:text-slate-400 mb-6">
-            {schoolConfig?.name || '小学校'} • {roomState.classId} #{linkedProfile.attendanceNumber}
-          </p>
-
-          <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 mb-6 text-xs font-bold text-slate-600 dark:text-slate-300 leading-relaxed">
-            {t(
-              'Your iPad is now permanently linked to this seat. Look at the Front TV to see your desk light up!',
-              <>このiPadの<ruby>設定<rt className="text-[7px]">せってい</rt></ruby>が<ruby>完了<rt className="text-[7px]">かんりょう</rt></ruby>しました！<ruby>前<rt className="text-[7px]">まえ</rt></ruby>のテレビで<ruby>席<rt className="text-[7px]">せき</rt></ruby>が<ruby>光<rt className="text-[7px]">ひか</rt></ruby>っているのを<ruby>確認<rt className="text-[7px]">かくにん</rt></ruby>しよう！</>
-            )}
+            <button
+              type="button"
+              onClick={async () => {
+                soundEffects.playTick();
+                await unlinkStudentDevice();
+                setLinkedProfile(null);
+                setSelectedSeat(null);
+              }}
+              className="w-full py-2 text-xs font-bold text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors cursor-pointer"
+            >
+              {t('Oops, wrong number? Pick again', '番号を間違えた？ 選び直す')}
+            </button>
           </div>
-
-          <button
-            type="button"
-            onClick={() => onFinished(linkedProfile)}
-            className="w-full py-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-black text-base shadow-xl hover:brightness-105 active:scale-98 transition-all flex items-center justify-center gap-2 cursor-pointer"
-          >
-            <span>{t('Go to Student Home', 'ホーム画面へすすむ')}</span>
-            <ArrowRight size={18} />
-          </button>
-
-          <button
-            type="button"
-            onClick={async () => {
-              soundEffects.playTick();
-              await unlinkStudentDevice();
-              setLinkedProfile(null);
-              setSelectedSeat(null);
-            }}
-            className="w-full py-2.5 text-xs font-bold text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 transition-colors cursor-pointer mt-1"
-          >
-            {t('Oops, wrong number? Pick again', '番号を間違えた？ 選び直す')}
-          </button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-white flex flex-col p-4 sm:p-6 select-none">
+    <div className="min-h-dvh bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-white flex flex-col p-4 sm:p-6 select-none">
       {/* Header Bar */}
-      <div className="max-w-4xl mx-auto w-full flex items-center justify-between mb-4">
+      <div className="max-w-4xl mx-auto w-full flex items-center justify-between mb-4 gap-2">
         {onCancel ? (
           <button
             type="button"
             onClick={onCancel}
-            className="flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 px-3 py-1.5 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 text-xs font-bold text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white px-3 py-1.5 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors cursor-pointer shrink-0"
           >
             <ArrowLeft size={16} />
             <span>{t('Cancel', 'もどる')}</span>
@@ -351,11 +358,11 @@ export const ProfileStudioStudent: React.FC<ProfileStudioStudentProps> = ({
           <div />
         )}
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 shrink-0 flex-nowrap whitespace-nowrap">
           <span className="px-3 py-1 rounded-full bg-purple-100 dark:bg-purple-950/80 text-purple-700 dark:text-purple-300 font-black text-xs shadow-xs">
             {schoolConfig?.shortKanji || schoolConfig?.name || '学校'} {roomState.classId}
           </span>
-          <span className="font-mono text-xs font-black text-slate-400">
+          <span className="font-mono text-xs font-black text-slate-500 dark:text-slate-400">
             PIN: {code}
           </span>
         </div>
@@ -369,9 +376,9 @@ export const ProfileStudioStudent: React.FC<ProfileStudioStudentProps> = ({
             📱
           </div>
           <h1 className="text-xl sm:text-2xl font-black tracking-tight">
-            {t('Pick Your Attendance Number', <><ruby>自分<rt className="text-[8px] font-normal text-slate-400">じぶん</rt></ruby>の<ruby>出席番号<rt className="text-[8px] font-normal text-slate-400">しゅっせきばんごう</rt></ruby>をえらぼう！</>)}
+            {t('Pick Your Attendance Number', <><ruby>自分<rt>じぶん</rt></ruby>の<ruby>出席番号<rt>しゅっせきばんごう</rt></ruby>をえらぼう！</>)}
           </h1>
-          <p className="text-xs font-bold text-slate-400 mt-0.5">
+          <p className="text-xs font-bold text-slate-500 dark:text-slate-400 mt-0.5">
             {t('Tap your desk number to link this iPad', '番号をタップしてこのiPadをつなぐ')}
           </p>
         </div>
@@ -385,7 +392,7 @@ export const ProfileStudioStudent: React.FC<ProfileStudioStudentProps> = ({
                 <span className="text-xs sm:text-sm font-black text-emerald-800 dark:text-emerald-300 block truncate">
                   {t(`Welcome back, #${existingSavedProfile.attendanceNumber} ${existingSavedProfile.nickname}!`, `おかえり！ #${existingSavedProfile.attendanceNumber} ${existingSavedProfile.nickname}`)}
                 </span>
-                <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold">
+                <span className="text-[10px] text-slate-600 dark:text-slate-300 font-bold">
                   {t('Tap to connect this iPad immediately', '1タップでこの番号として接続する')}
                 </span>
               </div>
@@ -461,7 +468,7 @@ export const ProfileStudioStudent: React.FC<ProfileStudioStudentProps> = ({
                       👨‍🏫 {language === 'ja' ? '先生' : 'Teacher'}
                     </span>
                   ) : (
-                    <span className="text-[10px] font-bold text-slate-400 opacity-60">
+                    <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 opacity-75">
                       {language === 'ja' ? '空席' : 'Empty'}
                     </span>
                   )}
@@ -483,7 +490,7 @@ export const ProfileStudioStudent: React.FC<ProfileStudioStudentProps> = ({
                   <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-white leading-tight">
                     {selectedSeat === 0 ? t('Teacher Profile Setup', '00番 先生プロフィールの設定') : t(`Seat #${selectedSeat}`, `出席番号: ${selectedSeat}番`)}
                   </h3>
-                  <span className="text-xs text-slate-400 font-bold">
+                  <span className="text-xs text-slate-500 dark:text-slate-400 font-bold">
                     {schoolConfig?.shortKanji || '学校'} {roomState.classId}
                   </span>
                 </div>
@@ -496,7 +503,7 @@ export const ProfileStudioStudent: React.FC<ProfileStudioStudentProps> = ({
 
             {/* Avatar Selector Carousel */}
             <div className="mb-4">
-              <label className="block text-xs font-black text-slate-500 dark:text-slate-400 mb-2">
+              <label className="block text-xs font-black text-slate-600 dark:text-slate-300 mb-2">
                 {t('Choose Avatar Emoji:', 'すきなアイコンをえらぼう:')}
               </label>
               <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
@@ -522,7 +529,7 @@ export const ProfileStudioStudent: React.FC<ProfileStudioStudentProps> = ({
 
             {/* Nickname Input */}
             <div className="mb-5">
-              <label className="block text-xs font-black text-slate-500 dark:text-slate-400 mb-1.5">
+              <label className="block text-xs font-black text-slate-600 dark:text-slate-300 mb-1.5">
                 {t('Name on Screen (Optional):', '表示する名前 (省略OK・そのままでもOK):')}
               </label>
               <input
@@ -562,27 +569,29 @@ export const ProfileStudioStudent: React.FC<ProfileStudioStudentProps> = ({
             onClick={() => setReclaimTarget(null)}
           >
             <div 
-              className="bg-white dark:bg-slate-900 rounded-3xl p-6 max-w-sm w-full text-center shadow-2xl border-4 border-emerald-400 dark:border-emerald-600"
+              className="bg-white dark:bg-slate-900 rounded-3xl p-6 max-w-md md:max-w-xl w-full shadow-2xl border-4 border-emerald-400 dark:border-emerald-600 grid grid-cols-1 md:grid-cols-2 gap-5 items-center"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="w-16 h-16 rounded-3xl bg-gradient-to-tr from-emerald-500 to-teal-600 text-white flex items-center justify-center mx-auto mb-3 text-3xl shadow-md">
-                {reclaimTarget.info.avatar || '🐼'}
+              <div className="flex flex-col items-center text-center">
+                <div className="w-16 h-16 rounded-3xl bg-gradient-to-tr from-emerald-500 to-teal-600 text-white flex items-center justify-center mb-3 text-3xl shadow-md">
+                  {reclaimTarget.info.avatar || '🐼'}
+                </div>
+
+                <span className={`font-mono text-xs font-black px-2 py-0.5 rounded-lg ${reclaimTarget.num === 0 ? 'bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300' : 'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300'} mb-1 inline-block`}>
+                  {reclaimTarget.num === 0 ? '00 先生' : `#${reclaimTarget.num}`}
+                </span>
+
+                <h3 className="text-xl font-black text-slate-900 dark:text-white mb-1">
+                  {reclaimTarget.info.nickname}
+                </h3>
+
+                <p className="text-xs text-slate-600 dark:text-slate-300 font-bold leading-relaxed">
+                  {t(
+                    `Log in to this iPad as ${reclaimTarget.num === 0 ? '00 先生' : `#${reclaimTarget.num}`} ${reclaimTarget.info.nickname}?`,
+                    `このiPadを「${reclaimTarget.num === 0 ? '00 先生' : `#${reclaimTarget.num}`} ${reclaimTarget.info.nickname}」としてログインしますか？`
+                  )}
+                </p>
               </div>
-
-              <span className={`font-mono text-xs font-black px-2 py-0.5 rounded-lg ${reclaimTarget.num === 0 ? 'bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300' : 'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300'} mb-1 inline-block`}>
-                {reclaimTarget.num === 0 ? '00 先生' : `#${reclaimTarget.num}`}
-              </span>
-
-              <h3 className="text-xl font-black text-slate-900 dark:text-white mb-1">
-                {reclaimTarget.info.nickname}
-              </h3>
-
-              <p className="text-xs text-slate-500 dark:text-slate-400 mb-6 font-bold leading-relaxed">
-                {t(
-                  `Log in to this iPad as ${reclaimTarget.num === 0 ? '00 先生' : `#${reclaimTarget.num}`} ${reclaimTarget.info.nickname}?`,
-                  `このiPadを「${reclaimTarget.num === 0 ? '00 先生' : `#${reclaimTarget.num}`} ${reclaimTarget.info.nickname}」としてログインしますか？`
-                )}
-              </p>
 
               <div className="flex flex-col gap-2">
                 <button

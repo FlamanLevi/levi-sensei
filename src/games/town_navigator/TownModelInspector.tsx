@@ -197,7 +197,7 @@ export const TIER1_CATALOG: Record<Exclude<Tier1Model, 'AVENUE_8'>, BuildingDef>
     code: 'hwg5_u19_00',
     nameEn: 'House',
     nameJa: '家',
-    rubyName: <ruby>家<rt className="text-[8px]">いえ</rt></ruby>,
+    rubyName: <ruby>家<rt>いえ</rt></ruby>,
     audioPath: '/sound_suite/hwg/word_0641/hwg_word_0641_house_jenny.mp3',
     illustWebp: '/cards/illustration/hwg5_u19_00_house_illust.webp',
     illustPng: '/cards/illustration/hwg5_u19_00_house_illust.png',
@@ -228,7 +228,7 @@ export const TIER1_CATALOG: Record<Exclude<Tier1Model, 'AVENUE_8'>, BuildingDef>
     code: 'hwg5_u19_99',
     nameEn: 'Empty Lot / Pocket Park',
     nameJa: '空き地・広場',
-    rubyName: (<><ruby>空<rt className="text-[8px]">あ</rt></ruby>き<ruby>地<rt className="text-[8px]">ち</rt></ruby>・<ruby>広<rt className="text-[8px]">ひろ</rt></ruby>ば</>),
+    rubyName: (<><ruby>空<rt>あ</rt></ruby>き<ruby>地<rt>ち</rt></ruby>・<ruby>広<rt>ひろ</rt></ruby>ば</>),
     audioPath: '',
     illustWebp: '',
     illustPng: '',
@@ -259,7 +259,7 @@ export const TIER1_CATALOG: Record<Exclude<Tier1Model, 'AVENUE_8'>, BuildingDef>
     code: 't0_apartment',
     nameEn: 'Apartment Block',
     nameJa: 'アパート (低層マンション)',
-    rubyName: <ruby>集合住宅<rt className="text-[8px]">アパート</rt></ruby>,
+    rubyName: <ruby>集合住宅<rt>アパート</rt></ruby>,
     audioPath: '',
     illustWebp: '',
     illustPng: '',
@@ -292,7 +292,7 @@ export const TIER1_CATALOG: Record<Exclude<Tier1Model, 'AVENUE_8'>, BuildingDef>
     code: 'hwg5_u19_13',
     nameEn: 'Bus Stop',
     nameJa: 'バス停',
-    rubyName: <ruby>バス<rt className="text-[8px]">ばす</rt>停<rt className="text-[8px]">てい</rt></ruby>,
+    rubyName: <ruby>バス<rt>ばす</rt>停<rt>てい</rt></ruby>,
     audioPath: '/sound_suite/hwg/word_0036/hwg_word_0036_bus_stop_jenny.mp3',
     illustWebp: '/cards/illustration/hwg5_u19_13_bus_stop_illust.webp',
     illustPng: '/cards/illustration/hwg5_u19_13_bus_stop_illust.png',
@@ -323,7 +323,7 @@ export const TIER1_CATALOG: Record<Exclude<Tier1Model, 'AVENUE_8'>, BuildingDef>
     code: 'hwg5_u19_05',
     nameEn: 'Post Office',
     nameJa: '郵便局',
-    rubyName: <ruby>郵便局<rt className="text-[8px]">ゆうびんきょく</rt></ruby>,
+    rubyName: <ruby>郵便局<rt>ゆうびんきょく</rt></ruby>,
     audioPath: '/sound_suite/hwg/word_0650/hwg_word_0650_post_office_jenny.mp3',
     illustWebp: '/cards/illustration/hwg5_u19_05_post_office_illust.webp',
     illustPng: '/cards/illustration/hwg5_u19_05_post_office_illust.png',
@@ -385,7 +385,7 @@ export const TIER1_CATALOG: Record<Exclude<Tier1Model, 'AVENUE_8'>, BuildingDef>
     code: 't0_police_box',
     nameEn: 'Police Box (Koban)',
     nameJa: '交番',
-    rubyName: <ruby>交番<rt className="text-[8px]">こうばん</rt></ruby>,
+    rubyName: <ruby>交番<rt>こうばん</rt></ruby>,
     audioPath: '',
     illustWebp: '',
     illustPng: '',
@@ -416,7 +416,7 @@ export const TIER1_CATALOG: Record<Exclude<Tier1Model, 'AVENUE_8'>, BuildingDef>
     code: 'hwg5_u19_02',
     nameEn: 'Bookstore',
     nameJa: '本屋',
-    rubyName: <ruby>本屋<rt className="text-[8px]">ほんや</rt></ruby>,
+    rubyName: <ruby>本屋<rt>ほんや</rt></ruby>,
     audioPath: '/sound_suite/hwg/word_0621/hwg_word_0621_bookstore_jenny.mp3',
     illustWebp: '/cards/illustration/hwg5_u19_02_bookstore_illust.webp',
     illustPng: '/cards/illustration/hwg5_u19_02_bookstore_illust.png',
@@ -447,7 +447,7 @@ export const TIER1_CATALOG: Record<Exclude<Tier1Model, 'AVENUE_8'>, BuildingDef>
     code: 'hwg5_u19_11',
     nameEn: 'Flower Shop',
     nameJa: '花屋',
-    rubyName: <ruby>花屋<rt className="text-[8px]">はなや</rt></ruby>,
+    rubyName: <ruby>花屋<rt>はなや</rt></ruby>,
     audioPath: '/sound_suite/hwg/word_0637/hwg_word_0637_flower_shop_jenny.mp3',
     illustWebp: '/cards/illustration/hwg5_u19_11_flower_shop_illust.webp',
     illustPng: '/cards/illustration/hwg5_u19_11_flower_shop_illust.png',
@@ -515,7 +515,7 @@ export const TIER2_CATALOG: Record<Exclude<Tier2Model, 'BOULEVARD_13'>, Building
     code: 'hwg5_u19_01',
     nameEn: 'School',
     nameJa: '学校',
-    rubyName: <ruby>学校<rt className="text-[8px]">がっこう</rt></ruby>,
+    rubyName: <ruby>学校<rt>がっこう</rt></ruby>,
     audioPath: '/sound_suite/hwg/word_0281/hwg_word_0281_school_jenny.mp3',
     illustWebp: '/cards/illustration/hwg5_u19_01_school_illust.webp',
     illustPng: '/cards/illustration/hwg5_u19_01_school_illust.png',
@@ -546,7 +546,7 @@ export const TIER2_CATALOG: Record<Exclude<Tier2Model, 'BOULEVARD_13'>, Building
     code: 'hwg6_u09_20',
     nameEn: 'Junior High School',
     nameJa: '中学校',
-    rubyName: <ruby>中学校<rt className="text-[8px]">ちゅうがっこう</rt></ruby>,
+    rubyName: <ruby>中学校<rt>ちゅうがっこう</rt></ruby>,
     audioPath: '',
     illustWebp: '/cards/illustration/hwg6_u09_20_junior_high_school_illust.png',
     illustPng: '/cards/illustration/hwg6_u09_20_junior_high_school_illust.png',
@@ -578,7 +578,7 @@ export const TIER2_CATALOG: Record<Exclude<Tier2Model, 'BOULEVARD_13'>, Building
     code: 'hwg6_u09_21',
     nameEn: 'Department Store',
     nameJa: 'デパート (百貨店)',
-    rubyName: <ruby>百貨店<rt className="text-[8px]">デパート</rt></ruby>,
+    rubyName: <ruby>百貨店<rt>デパート</rt></ruby>,
     audioPath: '',
     illustWebp: '/cards/illustration/hwg6_u09_21_department_store_illust.png',
     illustPng: '/cards/illustration/hwg6_u09_21_department_store_illust.png',
@@ -610,7 +610,7 @@ export const TIER2_CATALOG: Record<Exclude<Tier2Model, 'BOULEVARD_13'>, Building
     code: 'hwg6_u09_22',
     nameEn: 'Swimming Pool',
     nameJa: 'プール',
-    rubyName: <ruby>水泳場<rt className="text-[8px]">プール</rt></ruby>,
+    rubyName: <ruby>水泳場<rt>プール</rt></ruby>,
     audioPath: '',
     illustWebp: '/cards/illustration/hwg6_u09_22_swimming_pool_illust.png',
     illustPng: '/cards/illustration/hwg6_u09_22_swimming_pool_illust.png',
@@ -643,7 +643,7 @@ export const TIER2_CATALOG: Record<Exclude<Tier2Model, 'BOULEVARD_13'>, Building
     code: 'hwg5_u19_06',
     nameEn: 'Fire Station',
     nameJa: '消防署',
-    rubyName: <ruby>消防署<rt className="text-[8px]">しょうぼうしょ</rt></ruby>,
+    rubyName: <ruby>消防署<rt>しょうぼうしょ</rt></ruby>,
     audioPath: '/sound_suite/hwg/word_0634/hwg_word_0634_fire_station_jenny.mp3',
     illustWebp: '/cards/illustration/hwg5_u19_06_fire_station_illust.webp',
     illustPng: '/cards/illustration/hwg5_u19_06_fire_station_illust.png',
@@ -674,7 +674,7 @@ export const TIER2_CATALOG: Record<Exclude<Tier2Model, 'BOULEVARD_13'>, Building
     code: 'hwg5_u19_07',
     nameEn: 'Police Station',
     nameJa: '警察署',
-    rubyName: <ruby>警察署<rt className="text-[8px]">けいさつしょ</rt></ruby>,
+    rubyName: <ruby>警察署<rt>けいさつしょ</rt></ruby>,
     audioPath: '/sound_suite/hwg/word_0648/hwg_word_0648_police_station_jenny.mp3',
     illustWebp: '/cards/illustration/hwg5_u19_07_police_station_illust.webp',
     illustPng: '/cards/illustration/hwg5_u19_07_police_station_illust.png',
@@ -705,7 +705,7 @@ export const TIER2_CATALOG: Record<Exclude<Tier2Model, 'BOULEVARD_13'>, Building
     code: 'hwg5_u19_08',
     nameEn: 'Hospital',
     nameJa: '病院',
-    rubyName: <ruby>病院<rt className="text-[8px]">びょういん</rt></ruby>,
+    rubyName: <ruby>病院<rt>びょういん</rt></ruby>,
     audioPath: '/sound_suite/hwg/word_0640/hwg_word_0640_hospital_jenny.mp3',
     illustWebp: '/cards/illustration/hwg5_u19_08_hospital_illust.webp',
     illustPng: '/cards/illustration/hwg5_u19_08_hospital_illust.png',
@@ -736,7 +736,7 @@ export const TIER2_CATALOG: Record<Exclude<Tier2Model, 'BOULEVARD_13'>, Building
     code: 'hwg5_u19_09',
     nameEn: 'City Hall',
     nameJa: '市役所',
-    rubyName: <ruby>市役所<rt className="text-[8px]">しやくしょ</rt></ruby>,
+    rubyName: <ruby>市役所<rt>しやくしょ</rt></ruby>,
     audioPath: '/sound_suite/hwg/word_0056/hwg_word_0056_city_hall_jenny.mp3',
     illustWebp: '/cards/illustration/hwg5_u19_09_city_hall_illust.webp',
     illustPng: '/cards/illustration/hwg5_u19_09_city_hall_illust.png',
@@ -767,7 +767,7 @@ export const TIER2_CATALOG: Record<Exclude<Tier2Model, 'BOULEVARD_13'>, Building
     code: 'hwg5_u19_03',
     nameEn: 'Station',
     nameJa: '駅',
-    rubyName: <ruby>駅<rt className="text-[8px]">えき</rt></ruby>,
+    rubyName: <ruby>駅<rt>えき</rt></ruby>,
     audioPath: '/sound_suite/hwg/word_0656/hwg_word_0656_station_jenny.mp3',
     illustWebp: '/cards/illustration/hwg5_u19_03_station_illust.webp',
     illustPng: '/cards/illustration/hwg5_u19_03_station_illust.png',
@@ -798,7 +798,7 @@ export const TIER2_CATALOG: Record<Exclude<Tier2Model, 'BOULEVARD_13'>, Building
     code: 'hwg5_u19_04',
     nameEn: 'Library',
     nameJa: '図書館',
-    rubyName: <ruby>図書館<rt className="text-[8px]">としょかん</rt></ruby>,
+    rubyName: <ruby>図書館<rt>としょかん</rt></ruby>,
     audioPath: '/sound_suite/hwg/word_0590/hwg_word_0590_library_jenny.mp3',
     illustWebp: '/cards/illustration/hwg5_u19_04_library_illust.webp',
     illustPng: '/cards/illustration/hwg5_u19_04_library_illust.png',
@@ -860,7 +860,7 @@ export const TIER2_CATALOG: Record<Exclude<Tier2Model, 'BOULEVARD_13'>, Building
     code: 'hwg5_u19_16',
     nameEn: 'Gym',
     nameJa: '体育館',
-    rubyName: <ruby>体育館<rt className="text-[8px]">たいいくかん</rt></ruby>,
+    rubyName: <ruby>体育館<rt>たいいくかん</rt></ruby>,
     audioPath: '/sound_suite/hwg/word_0586/hwg_word_0586_gym_jenny.mp3',
     illustWebp: '/cards/illustration/hwg5_u19_16_gym_illust.webp',
     illustPng: '/cards/illustration/hwg5_u19_16_gym_illust.png',
@@ -891,7 +891,7 @@ export const TIER2_CATALOG: Record<Exclude<Tier2Model, 'BOULEVARD_13'>, Building
     code: 'hwg5_u19_19',
     nameEn: 'Museum',
     nameJa: '博物館',
-    rubyName: <ruby>博物館<rt className="text-[8px]">はくぶつかん</rt></ruby>,
+    rubyName: <ruby>博物館<rt>はくぶつかん</rt></ruby>,
     audioPath: '/sound_suite/hwg/word_0644/hwg_word_0644_museum_jenny.mp3',
     illustWebp: '/cards/illustration/hwg5_u19_19_museum_illust.webp',
     illustPng: '/cards/illustration/hwg5_u19_19_museum_illust.png',
@@ -922,7 +922,7 @@ export const TIER2_CATALOG: Record<Exclude<Tier2Model, 'BOULEVARD_13'>, Building
     code: 'hwg5_u19_20',
     nameEn: 'Temple',
     nameJa: '寺',
-    rubyName: <ruby>寺<rt className="text-[8px]">てら</rt></ruby>,
+    rubyName: <ruby>寺<rt>てら</rt></ruby>,
     audioPath: '/sound_suite/hwg/word_0661/hwg_word_0661_temple_jenny.mp3',
     illustWebp: '/cards/illustration/hwg5_u19_20_temple_illust.webp',
     illustPng: '/cards/illustration/hwg5_u19_20_temple_illust.png',
@@ -953,7 +953,7 @@ export const TIER2_CATALOG: Record<Exclude<Tier2Model, 'BOULEVARD_13'>, Building
     code: 'hwg5_u19_21',
     nameEn: 'Shrine',
     nameJa: '神社',
-    rubyName: <ruby>神社<rt className="text-[8px]">じんじゃ</rt></ruby>,
+    rubyName: <ruby>神社<rt>じんじゃ</rt></ruby>,
     audioPath: '/sound_suite/hwg/word_0653/hwg_word_0653_shrine_jenny.mp3',
     illustWebp: '/cards/illustration/hwg5_u19_21_shrine_illust.webp',
     illustPng: '/cards/illustration/hwg5_u19_21_shrine_illust.png',
@@ -984,7 +984,7 @@ export const TIER2_CATALOG: Record<Exclude<Tier2Model, 'BOULEVARD_13'>, Building
     code: 'hwg5_u19_14',
     nameEn: 'Park',
     nameJa: '公園',
-    rubyName: <ruby>公園<rt className="text-[8px]">こうえん</rt></ruby>,
+    rubyName: <ruby>公園<rt>こうえん</rt></ruby>,
     audioPath: '/sound_suite/hwg/word_0645/hwg_word_0645_park_jenny.mp3',
     illustWebp: '/cards/illustration/hwg5_u19_14_park_illust.webp',
     illustPng: '/cards/illustration/hwg5_u19_14_park_illust.png',
@@ -1015,7 +1015,7 @@ export const TIER2_CATALOG: Record<Exclude<Tier2Model, 'BOULEVARD_13'>, Building
     code: 'hwg5_u19_23',
     nameEn: 'Garden',
     nameJa: '庭園',
-    rubyName: <ruby>庭園<rt className="text-[8px]">ていえん</rt></ruby>,
+    rubyName: <ruby>庭園<rt>ていえん</rt></ruby>,
     audioPath: '/sound_suite/hwg/word_0123/hwg_word_0123_garden_jenny.mp3',
     illustWebp: '/cards/illustration/hwg5_u19_23_garden_illust.webp',
     illustPng: '/cards/illustration/hwg5_u19_23_garden_illust.png',
@@ -1052,7 +1052,7 @@ export const TIER3_CATALOG: Record<Exclude<Tier3Model, 'ESPLANADE_5'>, BuildingD
     code: 'hwg5_u19_15',
     nameEn: 'Stadium',
     nameJa: '競技場',
-    rubyName: <ruby>競技場<rt className="text-[8px]">きょうぎじょう</rt></ruby>,
+    rubyName: <ruby>競技場<rt>きょうぎじょう</rt></ruby>,
     audioPath: '/sound_suite/hwg/word_0322/hwg_word_0322_stadium_jenny.mp3',
     illustWebp: '/cards/illustration/hwg5_u19_15_stadium_illust.webp',
     illustPng: '/cards/illustration/hwg5_u19_15_stadium_illust.png',
@@ -1083,7 +1083,7 @@ export const TIER3_CATALOG: Record<Exclude<Tier3Model, 'ESPLANADE_5'>, BuildingD
     code: 'hwg5_u19_17',
     nameEn: 'Zoo',
     nameJa: '動物園',
-    rubyName: <ruby>動物園<rt className="text-[8px]">どうぶつえん</rt></ruby>,
+    rubyName: <ruby>動物園<rt>どうぶつえん</rt></ruby>,
     audioPath: '/sound_suite/hwg/word_0663/hwg_word_0663_zoo_jenny.mp3',
     illustWebp: '/cards/illustration/hwg5_u19_17_zoo_illust.webp',
     illustPng: '/cards/illustration/hwg5_u19_17_zoo_illust.png',
@@ -1114,7 +1114,7 @@ export const TIER3_CATALOG: Record<Exclude<Tier3Model, 'ESPLANADE_5'>, BuildingD
     code: 'hwg5_u19_18',
     nameEn: 'Aquarium',
     nameJa: '水族館',
-    rubyName: <ruby>水族館<rt className="text-[8px]">すいぞくかん</rt></ruby>,
+    rubyName: <ruby>水族館<rt>すいぞくかん</rt></ruby>,
     audioPath: '/sound_suite/hwg/word_0616/hwg_word_0616_aquarium_jenny.mp3',
     illustWebp: '/cards/illustration/hwg5_u19_18_aquarium_illust.webp',
     illustPng: '/cards/illustration/hwg5_u19_18_aquarium_illust.png',
@@ -1145,7 +1145,7 @@ export const TIER3_CATALOG: Record<Exclude<Tier3Model, 'ESPLANADE_5'>, BuildingD
     code: 'hwg5_u19_22',
     nameEn: 'Castle',
     nameJa: '城',
-    rubyName: <ruby>城<rt className="text-[8px]">しろ</rt></ruby>,
+    rubyName: <ruby>城<rt>しろ</rt></ruby>,
     audioPath: '/sound_suite/hwg/word_0624/hwg_word_0624_castle_jenny.mp3',
     illustWebp: '/cards/illustration/hwg5_u19_22_castle_illust.webp',
     illustPng: '/cards/illustration/hwg5_u19_22_castle_illust.png',
@@ -1176,7 +1176,7 @@ export const TIER3_CATALOG: Record<Exclude<Tier3Model, 'ESPLANADE_5'>, BuildingD
     code: 'hwg5_u19_25',
     nameEn: 'Amusement Park',
     nameJa: '遊園地',
-    rubyName: <ruby>遊園地<rt className="text-[8px]">ゆうえんち</rt></ruby>,
+    rubyName: <ruby>遊園地<rt>ゆうえんち</rt></ruby>,
     audioPath: '/sound_suite/hwg/word_0615/hwg_word_0615_amusement_park_jenny.mp3',
     illustWebp: '/cards/illustration/hwg5_u19_25_amusement_park_illust.webp',
     illustPng: '/cards/illustration/hwg5_u19_25_amusement_park_illust.png',
@@ -2328,10 +2328,10 @@ export const TownModelInspector: React.FC<TownModelInspectorProps> = ({ onExit }
   const CurrentIcon = currentDef?.icon || Building2;
 
   return (
-    <div className="fixed inset-0 w-screen h-screen flex flex-col bg-slate-950 text-white font-sans overflow-hidden select-none z-50">
+    <div className="fixed inset-0 w-screen h-dvh flex flex-col bg-slate-950 text-white font-sans overflow-hidden select-none z-50">
       {/* Top Header Bar */}
-      <div className="absolute top-0 left-0 right-0 z-20 flex flex-wrap items-center justify-between px-3 sm:px-6 py-2 bg-slate-900/85 backdrop-blur-md border-b border-slate-800 gap-2">
-        <div className="flex items-center gap-2 max-w-[80vw] overflow-hidden">
+      <div className="absolute top-0 left-0 right-0 z-20 flex flex-nowrap items-center justify-between px-3 sm:px-6 py-2 bg-slate-900/85 backdrop-blur-md border-b border-slate-800 gap-2 overflow-x-auto no-scrollbar whitespace-nowrap">
+        <div className="flex items-center gap-2 min-w-0 flex-1 flex-nowrap">
           {onExit && (
             <button
               onClick={onExit}
@@ -2345,14 +2345,14 @@ export const TownModelInspector: React.FC<TownModelInspectorProps> = ({ onExit }
           {/* Mode Switcher: Inspector vs Navigator */}
           <div className="flex items-center bg-slate-950/80 p-0.5 rounded-xl border border-slate-700/80 shrink-0">
             <button
-              className="flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-black bg-amber-500 text-slate-950 shadow-sm"
+              className="flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-black bg-amber-500 text-slate-950 shadow-sm whitespace-nowrap shrink-0"
             >
               <Layers className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">Model Inspector</span>
             </button>
             <button
               onClick={() => setViewMode('NAVIGATOR')}
-              className="flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-black text-slate-400 hover:text-white transition-all"
+              className="flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-black text-slate-300 hover:text-white transition-all whitespace-nowrap shrink-0"
               title="Switch to 3D Town Navigator"
             >
               <Compass className="w-3.5 h-3.5" />
@@ -2364,30 +2364,30 @@ export const TownModelInspector: React.FC<TownModelInspectorProps> = ({ onExit }
           <div className="flex items-center bg-slate-950/80 p-0.5 rounded-xl border border-slate-700/80 shrink-0">
             <button
               onClick={() => handleTierSwitch('TIER_1')}
-              className={`px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-black transition-all ${
+              className={`px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-black transition-all whitespace-nowrap shrink-0 ${
                 activeTier === 'TIER_1'
                   ? 'bg-amber-500 text-slate-950 shadow-sm'
-                  : 'text-slate-400 hover:text-white'
+                  : 'text-slate-300 hover:text-white'
               }`}
             >
               🏘️ Tier 1 (6m)
             </button>
             <button
               onClick={() => handleTierSwitch('TIER_2')}
-              className={`px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-black transition-all ${
+              className={`px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-black transition-all whitespace-nowrap shrink-0 ${
                 activeTier === 'TIER_2'
                   ? 'bg-blue-500 text-slate-950 shadow-sm'
-                  : 'text-slate-400 hover:text-white'
+                  : 'text-slate-300 hover:text-white'
               }`}
             >
               🏛️ Tier 2 (12m)
             </button>
             <button
               onClick={() => handleTierSwitch('TIER_3')}
-              className={`px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-black transition-all ${
+              className={`px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-black transition-all whitespace-nowrap shrink-0 ${
                 activeTier === 'TIER_3'
                   ? 'bg-purple-500 text-white shadow-sm'
-                  : 'text-slate-400 hover:text-white'
+                  : 'text-slate-300 hover:text-white'
               }`}
             >
               🎡 Tier 3 (18m)
@@ -2395,19 +2395,19 @@ export const TownModelInspector: React.FC<TownModelInspectorProps> = ({ onExit }
           </div>
 
           {/* Building Selector Tabs (Scrollable) */}
-          <div className="flex items-center bg-slate-800/90 p-1 rounded-2xl border border-slate-700 overflow-x-auto scrollbar-none gap-1">
+          <div className="flex items-center bg-slate-800/90 p-1 rounded-2xl border border-slate-700 overflow-x-auto no-scrollbar gap-1 min-w-0 flex-1">
             {activeTier === 'TIER_1' ? (
               <button
                 onClick={() => setActiveModel('AVENUE_8')}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-black text-xs transition-all whitespace-nowrap shrink-0 ${
                   activeModel === 'AVENUE_8'
                     ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 shadow-md scale-105'
-                    : 'text-slate-400 hover:text-white'
+                    : 'text-slate-300 hover:text-white'
                 }`}
               >
                 <Building2 size={15} />
                 <span>
-                  <ruby>並<rt className="text-[8px]">なら</rt></ruby>べて比較 (8-Lot Avenue)
+                  <ruby>並<rt>なら</rt></ruby>べて比較 (8-Lot Avenue)
                 </span>
               </button>
             ) : activeTier === 'TIER_2' ? (
@@ -2416,12 +2416,12 @@ export const TownModelInspector: React.FC<TownModelInspectorProps> = ({ onExit }
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-black text-xs transition-all whitespace-nowrap shrink-0 ${
                   activeModel === 'BOULEVARD_13'
                     ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-md scale-105'
-                    : 'text-slate-400 hover:text-white'
+                    : 'text-slate-300 hover:text-white'
                 }`}
               >
                 <Building2 size={15} />
                 <span>
-                  <ruby>並<rt className="text-[8px]">なら</rt></ruby>べて比較 (16-Lot Boulevard)
+                  <ruby>並<rt>なら</rt></ruby>べて比較 (16-Lot Boulevard)
                 </span>
               </button>
             ) : (
@@ -2430,12 +2430,12 @@ export const TownModelInspector: React.FC<TownModelInspectorProps> = ({ onExit }
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-black text-xs transition-all whitespace-nowrap shrink-0 ${
                   activeModel === 'ESPLANADE_5'
                     ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-md scale-105'
-                    : 'text-slate-400 hover:text-white'
+                    : 'text-slate-300 hover:text-white'
                 }`}
               >
                 <Building2 size={15} />
                 <span>
-                  <ruby>並<rt className="text-[8px]">なら</rt></ruby>べて比較 (5-Lot Esplanade)
+                  <ruby>並<rt>なら</rt></ruby>べて比較 (5-Lot Esplanade)
                 </span>
               </button>
             )}
@@ -2454,7 +2454,7 @@ export const TownModelInspector: React.FC<TownModelInspectorProps> = ({ onExit }
                     className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl font-black text-xs transition-all whitespace-nowrap shrink-0 ${
                       isActive
                         ? `${def.pillBg} text-white shadow-md scale-105`
-                        : 'text-slate-400 hover:text-white'
+                        : 'text-slate-300 hover:text-white'
                     }`}
                   >
                     <Icon size={14} />
@@ -2475,7 +2475,7 @@ export const TownModelInspector: React.FC<TownModelInspectorProps> = ({ onExit }
                     className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl font-black text-xs transition-all whitespace-nowrap shrink-0 ${
                       isActive
                         ? `${def.pillBg} text-white shadow-md scale-105`
-                        : 'text-slate-400 hover:text-white'
+                        : 'text-slate-300 hover:text-white'
                     }`}
                   >
                     <Icon size={14} />
@@ -2496,7 +2496,7 @@ export const TownModelInspector: React.FC<TownModelInspectorProps> = ({ onExit }
                     className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl font-black text-xs transition-all whitespace-nowrap shrink-0 ${
                       isActive
                         ? `${def.pillBg} text-white shadow-md scale-105`
-                        : 'text-slate-400 hover:text-white'
+                        : 'text-slate-300 hover:text-white'
                     }`}
                   >
                     <Icon size={14} />
@@ -2521,14 +2521,14 @@ export const TownModelInspector: React.FC<TownModelInspectorProps> = ({ onExit }
         </div>
 
         {/* Action Buttons */}
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex items-center gap-2 shrink-0 flex-nowrap whitespace-nowrap">
           {/* 1.35m Student Scale Figure Toggle */}
           <button
             onClick={() => setShowScaleFigure(!showScaleFigure)}
-            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border text-xs font-bold transition-all ${
+            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border text-xs font-bold transition-all shrink-0 whitespace-nowrap ${
               showScaleFigure 
                 ? 'bg-emerald-600 border-emerald-400 text-white shadow-md' 
-                : 'bg-slate-800 border-slate-700 text-slate-400 hover:text-white'
+                : 'bg-slate-800 border-slate-700 text-slate-300 hover:text-white'
             }`}
             title="Toggle 1.35m Elementary Student Scale Mannequin"
           >
@@ -2538,7 +2538,7 @@ export const TownModelInspector: React.FC<TownModelInspectorProps> = ({ onExit }
 
           <button
             onClick={playVoice}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs shadow-md transition-all active:scale-95"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs shadow-md transition-all active:scale-95 shrink-0 whitespace-nowrap"
             title="Listen to textbook native pronunciation"
           >
             <Volume2 size={16} />
@@ -2557,7 +2557,7 @@ export const TownModelInspector: React.FC<TownModelInspectorProps> = ({ onExit }
           {ambientSoundLabel && (
             <button
               onClick={playAmbientSFX}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-black text-xs shadow-md transition-all active:scale-95"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-black text-xs shadow-md transition-all active:scale-95 shrink-0 whitespace-nowrap"
               title="Play authentic Japanese atmospheric sound effect"
             >
               <Sparkles size={15} className="text-yellow-300" />
@@ -2567,10 +2567,10 @@ export const TownModelInspector: React.FC<TownModelInspectorProps> = ({ onExit }
 
           <button
             onClick={() => setShowCardOverlay(!showCardOverlay)}
-            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border text-xs font-bold transition-all ${
+            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border text-xs font-bold transition-all shrink-0 whitespace-nowrap ${
               showCardOverlay 
                 ? 'bg-blue-600 border-blue-400 text-white' 
-                : 'bg-slate-800 border-slate-700 text-slate-400 hover:text-white'
+                : 'bg-slate-800 border-slate-700 text-slate-300 hover:text-white'
             }`}
           >
             <Layers size={15} />
@@ -2581,8 +2581,8 @@ export const TownModelInspector: React.FC<TownModelInspectorProps> = ({ onExit }
 
       {/* Palette Swatch Bar (Visible when HOUSE or APARTMENT is active) */}
       {(activeModel === 'HOUSE' || activeModel === 'APARTMENT') && (
-        <div className="absolute top-14 left-4 z-20 flex flex-wrap items-center gap-1.5 p-1.5 rounded-2xl bg-slate-900/90 backdrop-blur-md border border-slate-800 shadow-xl max-w-[95vw] max-h-[140px] overflow-y-auto">
-          <span className="flex items-center gap-1 text-[11px] font-bold text-slate-400 px-2">
+        <div className="absolute top-14 left-4 z-20 flex flex-nowrap items-center gap-1.5 p-1.5 rounded-2xl bg-slate-900/90 backdrop-blur-md border border-slate-800 shadow-xl max-w-[92vw] overflow-x-auto no-scrollbar whitespace-nowrap">
+          <span className="flex items-center gap-1 text-[11px] font-bold text-slate-300 px-2 shrink-0 whitespace-nowrap">
             <Palette size={13} className="text-amber-400" />
             <span className="hidden sm:inline">Exterior Palette:</span>
           </span>
@@ -2590,7 +2590,7 @@ export const TownModelInspector: React.FC<TownModelInspectorProps> = ({ onExit }
             <button
               key={pal.id}
               onClick={() => setSelectedHousePalette(pal.id)}
-              className={`flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-xs font-bold border transition-all ${
+              className={`flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-xs font-bold border transition-all shrink-0 whitespace-nowrap ${
                 selectedHousePalette === pal.id
                   ? 'bg-amber-400 text-slate-950 border-amber-300 shadow-md scale-105'
                   : 'bg-slate-800 border-slate-700 text-slate-300 hover:text-white'
@@ -2598,7 +2598,7 @@ export const TownModelInspector: React.FC<TownModelInspectorProps> = ({ onExit }
               title={pal.nameJa}
             >
               <span
-                className="w-3 h-3 rounded-full border border-black/30 shadow-inner"
+                className="w-3 h-3 rounded-full border border-black/30 shadow-inner shrink-0"
                 style={{ backgroundColor: '#' + pal.roofTile.toString(16).padStart(6, '0') }}
               />
               <span>{pal.nameEn}</span>
@@ -2609,8 +2609,8 @@ export const TownModelInspector: React.FC<TownModelInspectorProps> = ({ onExit }
 
       {/* Pocket Park 12-Theme Swatch Bar (Visible when EMPTY_LOT is active) */}
       {activeModel === 'EMPTY_LOT' && (
-        <div className="absolute top-14 left-4 z-20 flex flex-wrap items-center gap-1.5 p-1.5 rounded-2xl bg-slate-900/90 backdrop-blur-md border border-slate-800 shadow-xl max-w-[95vw] max-h-[140px] overflow-y-auto">
-          <span className="flex items-center gap-1 text-[11px] font-bold text-slate-400 px-2">
+        <div className="absolute top-14 left-4 z-20 flex flex-nowrap items-center gap-1.5 p-1.5 rounded-2xl bg-slate-900/90 backdrop-blur-md border border-slate-800 shadow-xl max-w-[92vw] overflow-x-auto no-scrollbar whitespace-nowrap">
+          <span className="flex items-center gap-1 text-[11px] font-bold text-slate-300 px-2 shrink-0 whitespace-nowrap">
             <Trees size={13} className="text-emerald-400" />
             <span className="hidden sm:inline">Park Theme (12):</span>
           </span>
@@ -2618,7 +2618,7 @@ export const TownModelInspector: React.FC<TownModelInspectorProps> = ({ onExit }
             <button
               key={theme.id}
               onClick={() => setSelectedParkTheme(theme.id as EmptyLotVariant)}
-              className={`flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-xs font-bold border transition-all ${
+              className={`flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-xs font-bold border transition-all shrink-0 whitespace-nowrap ${
                 selectedParkTheme === theme.id
                   ? 'bg-emerald-400 text-slate-950 border-emerald-300 shadow-md scale-105'
                   : 'bg-slate-800 border-slate-700 text-slate-300 hover:text-white'
@@ -2732,13 +2732,13 @@ export const TownModelInspector: React.FC<TownModelInspectorProps> = ({ onExit }
       )}
 
       {/* Bottom Floating Control Dock */}
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex flex-wrap items-center justify-center gap-2 px-3 sm:px-4 py-2 rounded-2xl bg-slate-900/85 backdrop-blur-md border border-slate-800 shadow-2xl max-w-[95vw]">
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex flex-nowrap items-center justify-start sm:justify-center gap-2 px-3 sm:px-4 py-2 rounded-2xl bg-slate-900/85 backdrop-blur-md border border-slate-800 shadow-2xl max-w-[95vw] overflow-x-auto no-scrollbar whitespace-nowrap">
         {/* Camera View Angle Buttons */}
-        <div className="flex items-center bg-slate-800/80 p-1 rounded-xl gap-1">
+        <div className="flex items-center bg-slate-800/80 p-1 rounded-xl gap-1 shrink-0 flex-nowrap">
           <button
             onClick={() => setCameraView('FRONT')}
-            className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
-              activeAngle === 'FRONT' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'
+            className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all shrink-0 whitespace-nowrap ${
+              activeAngle === 'FRONT' ? 'bg-blue-600 text-white' : 'text-slate-300 hover:text-white'
             }`}
             title="Pedestrian Eye-Level View"
           >
@@ -2746,8 +2746,8 @@ export const TownModelInspector: React.FC<TownModelInspectorProps> = ({ onExit }
           </button>
           <button
             onClick={() => setCameraView('RACER')}
-            className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
-              activeAngle === 'RACER' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'
+            className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all shrink-0 whitespace-nowrap ${
+              activeAngle === 'RACER' ? 'bg-blue-600 text-white' : 'text-slate-300 hover:text-white'
             }`}
             title="Desk Grand Prix Kart View"
           >
@@ -2755,8 +2755,8 @@ export const TownModelInspector: React.FC<TownModelInspectorProps> = ({ onExit }
           </button>
           <button
             onClick={() => setCameraView('ISOMETRIC')}
-            className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
-              activeAngle === 'ISOMETRIC' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'
+            className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all shrink-0 whitespace-nowrap ${
+              activeAngle === 'ISOMETRIC' ? 'bg-blue-600 text-white' : 'text-slate-300 hover:text-white'
             }`}
             title="45° Isometric Town View"
           >
@@ -2764,8 +2764,8 @@ export const TownModelInspector: React.FC<TownModelInspectorProps> = ({ onExit }
           </button>
           <button
             onClick={() => setCameraView('DETAIL_1')}
-            className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
-              activeAngle === 'DETAIL_1' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'
+            className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all shrink-0 whitespace-nowrap ${
+              activeAngle === 'DETAIL_1' ? 'bg-blue-600 text-white' : 'text-slate-300 hover:text-white'
             }`}
             title={
               activeModel === 'AVENUE_8' 
@@ -2787,8 +2787,8 @@ export const TownModelInspector: React.FC<TownModelInspectorProps> = ({ onExit }
           </button>
           <button
             onClick={() => setCameraView('DETAIL_2')}
-            className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
-              activeAngle === 'DETAIL_2' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'
+            className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all shrink-0 whitespace-nowrap ${
+              activeAngle === 'DETAIL_2' ? 'bg-blue-600 text-white' : 'text-slate-300 hover:text-white'
             }`}
             title={
               activeModel === 'AVENUE_8' 
@@ -2811,14 +2811,14 @@ export const TownModelInspector: React.FC<TownModelInspectorProps> = ({ onExit }
         </div>
 
         {/* Divider */}
-        <div className="w-px h-6 bg-slate-700 hidden sm:block" />
+        <div className="w-px h-6 bg-slate-700 hidden sm:block shrink-0" />
 
         {/* Lighting Mode Buttons (4 times of day) */}
-        <div className="flex items-center bg-slate-800/80 p-1 rounded-xl gap-1">
+        <div className="flex items-center bg-slate-800/80 p-1 rounded-xl gap-1 shrink-0 flex-nowrap">
           <button
             onClick={() => setLightingMode('SUNRISE')}
-            className={`flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-bold transition-all ${
-              lightingMode === 'SUNRISE' ? 'bg-amber-400 text-slate-950 shadow-sm' : 'text-slate-400 hover:text-white'
+            className={`flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-bold transition-all shrink-0 whitespace-nowrap ${
+              lightingMode === 'SUNRISE' ? 'bg-amber-400 text-slate-950 shadow-sm' : 'text-slate-300 hover:text-white'
             }`}
             title="Sunrise (Dawn)"
           >
@@ -2827,8 +2827,8 @@ export const TownModelInspector: React.FC<TownModelInspectorProps> = ({ onExit }
           </button>
           <button
             onClick={() => setLightingMode('NOON')}
-            className={`flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-bold transition-all ${
-              lightingMode === 'NOON' ? 'bg-sky-400 text-slate-950 shadow-sm' : 'text-slate-400 hover:text-white'
+            className={`flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-bold transition-all shrink-0 whitespace-nowrap ${
+              lightingMode === 'NOON' ? 'bg-sky-400 text-slate-950 shadow-sm' : 'text-slate-300 hover:text-white'
             }`}
             title="Noon (Midday Sun)"
           >
@@ -2837,8 +2837,8 @@ export const TownModelInspector: React.FC<TownModelInspectorProps> = ({ onExit }
           </button>
           <button
             onClick={() => setLightingMode('SUNSET')}
-            className={`flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-bold transition-all ${
-              lightingMode === 'SUNSET' ? 'bg-orange-500 text-white shadow-sm' : 'text-slate-400 hover:text-white'
+            className={`flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-bold transition-all shrink-0 whitespace-nowrap ${
+              lightingMode === 'SUNSET' ? 'bg-orange-500 text-white shadow-sm' : 'text-slate-300 hover:text-white'
             }`}
             title="Sunset (Golden Hour)"
           >
@@ -2847,8 +2847,8 @@ export const TownModelInspector: React.FC<TownModelInspectorProps> = ({ onExit }
           </button>
           <button
             onClick={() => setLightingMode('MIDNIGHT')}
-            className={`flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-bold transition-all ${
-              lightingMode === 'MIDNIGHT' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
+            className={`flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-bold transition-all shrink-0 whitespace-nowrap ${
+              lightingMode === 'MIDNIGHT' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-300 hover:text-white'
             }`}
             title="Midnight (Night Lanterns)"
           >
@@ -2858,10 +2858,10 @@ export const TownModelInspector: React.FC<TownModelInspectorProps> = ({ onExit }
         </div>
 
         {/* Divider */}
-        <div className="w-px h-6 bg-slate-700 hidden sm:block" />
+        <div className="w-px h-6 bg-slate-700 hidden sm:block shrink-0" />
 
         {/* Weather Mode Buttons (6 weather presets) */}
-        <div className="flex items-center bg-slate-800/80 p-1 rounded-xl gap-1 overflow-x-auto">
+        <div className="flex items-center bg-slate-800/80 p-1 rounded-xl gap-1 shrink-0 flex-nowrap">
           {WEATHER_MODE_ORDER.map((wMode) => {
             const wPreset = WEATHER_PRESETS[wMode];
             const isActive = weather === wMode;
@@ -2882,7 +2882,7 @@ export const TownModelInspector: React.FC<TownModelInspectorProps> = ({ onExit }
                       : wMode === 'HEAVY_SNOW'
                       ? 'bg-slate-200 text-slate-950 shadow-sm'
                       : 'bg-pink-400 text-slate-950 shadow-sm'
-                    : 'text-slate-400 hover:text-white'
+                    : 'text-slate-300 hover:text-white'
                 }`}
                 title={`${wPreset.labelEn} (${wPreset.labelJa})`}
               >
@@ -2897,16 +2897,16 @@ export const TownModelInspector: React.FC<TownModelInspectorProps> = ({ onExit }
         </div>
 
         {/* Divider */}
-        <div className="w-px h-6 bg-slate-700 hidden sm:block" />
+        <div className="w-px h-6 bg-slate-700 hidden sm:block shrink-0" />
 
         {/* Feature Toggles */}
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1.5 shrink-0 flex-nowrap">
           <button
             onClick={() => setAutoRotate(!autoRotate)}
-            className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold border transition-all ${
+            className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold border transition-all shrink-0 whitespace-nowrap ${
               autoRotate 
                 ? 'bg-emerald-600/30 border-emerald-500 text-emerald-300' 
-                : 'bg-slate-800 border-slate-700 text-slate-400'
+                : 'bg-slate-800 border-slate-700 text-slate-300 hover:text-white'
             }`}
             title="Toggle smooth auto-rotation"
           >
@@ -2916,10 +2916,10 @@ export const TownModelInspector: React.FC<TownModelInspectorProps> = ({ onExit }
 
           <button
             onClick={() => setShowWireframe(!showWireframe)}
-            className={`px-2.5 py-1 rounded-lg text-xs font-bold border transition-all ${
+            className={`px-2.5 py-1 rounded-lg text-xs font-bold border transition-all shrink-0 whitespace-nowrap ${
               showWireframe 
                 ? 'bg-purple-600/30 border-purple-500 text-purple-300' 
-                : 'bg-slate-800 border-slate-700 text-slate-400'
+                : 'bg-slate-800 border-slate-700 text-slate-300 hover:text-white'
             }`}
             title="Inspect polygon wireframe mesh"
           >
@@ -2928,10 +2928,10 @@ export const TownModelInspector: React.FC<TownModelInspectorProps> = ({ onExit }
 
           <button
             onClick={() => setIncludeHedge(!includeHedge)}
-            className={`px-2.5 py-1 rounded-lg text-xs font-bold border transition-all ${
+            className={`px-2.5 py-1 rounded-lg text-xs font-bold border transition-all shrink-0 whitespace-nowrap ${
               includeHedge 
                 ? 'bg-green-600/30 border-green-500 text-green-300' 
-                : 'bg-slate-800 border-slate-700 text-slate-400'
+                : 'bg-slate-800 border-slate-700 text-slate-300 hover:text-white'
             }`}
             title="Toggle trees and greenery"
           >

@@ -179,7 +179,7 @@ export class TownCanvasRenderer {
     const cols = grid[0].length;
     const { originX, originY, centerX, centerY } = getGridMetrics(rows, cols);
     const rect = this.canvas.getBoundingClientRect();
-    const dpr = window.devicePixelRatio || 1;
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.25);
 
     // Synchronize canvas buffer with display resolution
     const targetW = Math.max(1, Math.round(rect.width * dpr));

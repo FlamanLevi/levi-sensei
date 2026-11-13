@@ -304,18 +304,18 @@ export const QuizHostGrandPrix3D: React.FC<QuizHostGrandPrix3DProps> = ({
     >
       {/* Top Broadcast Control Bar */}
       {!isLobby && (
-        <header className="h-14 bg-slate-900 border-b border-slate-800 px-3 sm:px-5 flex items-center justify-between shrink-0 z-30">
+        <header className="h-14 bg-slate-900 border-b border-slate-800 px-3 sm:px-5 flex items-center justify-between gap-2 shrink-0 z-30 flex-nowrap">
           {/* Left: Title, Room PIN & Race Mode */}
-          <div className="flex items-center gap-2.5 min-w-0">
-            <span className="text-2xl">🏎️</span>
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-sm sm:text-base font-black text-white tracking-tight">
+          <div className="flex items-center gap-2 min-w-0 flex-1 overflow-x-auto no-scrollbar flex-nowrap">
+            <span className="text-2xl shrink-0">🏎️</span>
+            <div className="flex items-center gap-2 flex-nowrap shrink-0">
+              <span className="text-sm sm:text-base font-black text-white tracking-tight whitespace-nowrap">
                 {t('3D Suzuka Grand Prix', '3D 鈴鹿グランプリ')}
               </span>
-              <span className="px-2.5 py-0.5 rounded-full bg-amber-500 text-slate-950 font-mono font-black text-xs shadow-xs">
+              <span className="px-2.5 py-0.5 rounded-full bg-amber-500 text-slate-950 font-mono font-black text-xs shadow-xs whitespace-nowrap">
                 PIN: {roomCode}
               </span>
-              <span className="px-2.5 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-cyan-400 font-black text-xs flex items-center gap-1">
+              <span className="px-2.5 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-cyan-400 font-black text-xs flex items-center gap-1 whitespace-nowrap">
                 <Flag size={11} />
                 <span>
                   {isTimeTrial
@@ -327,16 +327,16 @@ export const QuizHostGrandPrix3D: React.FC<QuizHostGrandPrix3DProps> = ({
           </div>
 
           {/* Center: Live Race Stopwatch / Countdown */}
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex items-center gap-2 shrink-0 flex-nowrap">
             {raceFinishGraceStartTime && !isTimeTrial ? (
-              <div className="px-3.5 py-1 rounded-xl bg-rose-600 text-white font-black text-xs sm:text-sm flex items-center gap-2 animate-pulse shadow-lg">
+              <div className="px-3.5 py-1 rounded-xl bg-rose-600 text-white font-black text-xs sm:text-sm flex items-center gap-2 animate-pulse shadow-lg whitespace-nowrap">
                 <Clock size={15} />
                 <span>
                   {t(`FINAL COUNTDOWN: ${graceRemainingSeconds}s`, `終了カウントダウン: 残り${graceRemainingSeconds}秒`)}
                 </span>
               </div>
             ) : (
-              <div className="px-3.5 py-1 rounded-xl bg-slate-950 border border-slate-800 font-mono font-black text-sm sm:text-base text-amber-400 flex items-center gap-2">
+              <div className="px-3.5 py-1 rounded-xl bg-slate-950 border border-slate-800 font-mono font-black text-sm sm:text-base text-amber-400 flex items-center gap-2 whitespace-nowrap">
                 <Clock size={15} className="text-amber-400" />
                 <span>{isTimeTrial ? formatTimer(timeTrialRemainingMs) : formatTimer(elapsedMs)}</span>
               </div>
@@ -344,12 +344,12 @@ export const QuizHostGrandPrix3D: React.FC<QuizHostGrandPrix3DProps> = ({
           </div>
 
           {/* Right: Host Action Controls (+5 Bots, Eyes Up, BGM, Finish Race, Exit) */}
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex items-center gap-2 shrink-0 flex-nowrap">
             {onAddBots && (
               <button
                 type="button"
                 onClick={() => onAddBots(5)}
-                className="px-2.5 py-1.5 rounded-xl bg-indigo-950/80 hover:bg-indigo-900 border border-indigo-700/80 text-indigo-300 font-bold text-xs flex items-center gap-1 cursor-pointer transition-all active:scale-95"
+                className="px-2.5 py-1.5 rounded-xl bg-indigo-950/80 hover:bg-indigo-900 border border-indigo-700/80 text-indigo-300 font-bold text-xs flex items-center gap-1 cursor-pointer transition-all active:scale-95 whitespace-nowrap"
                 title="Add 5 AI Bot Racers"
               >
                 <Users size={13} />
@@ -361,7 +361,7 @@ export const QuizHostGrandPrix3D: React.FC<QuizHostGrandPrix3DProps> = ({
               <button
                 type="button"
                 onClick={onToggleEyesUp}
-                className={`px-2.5 py-1.5 rounded-xl font-black text-xs flex items-center gap-1 cursor-pointer transition-all active:scale-95 border ${
+                className={`px-2.5 py-1.5 rounded-xl font-black text-xs flex items-center gap-1 cursor-pointer transition-all active:scale-95 border whitespace-nowrap ${
                   eyesUp
                     ? 'bg-amber-400 text-slate-950 border-amber-300 animate-pulse'
                     : 'bg-slate-800 hover:bg-slate-700 text-amber-300 border-slate-700'
@@ -376,7 +376,7 @@ export const QuizHostGrandPrix3D: React.FC<QuizHostGrandPrix3DProps> = ({
               <button
                 type="button"
                 onClick={onToggleBgmMute}
-                className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 cursor-pointer transition-all active:scale-95 flex items-center gap-1"
+                className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 cursor-pointer transition-all active:scale-95 flex items-center gap-1 shrink-0"
                 title={bgmTrackTitle || 'BGM'}
               >
                 <Music size={14} className="text-indigo-400" />
@@ -387,7 +387,7 @@ export const QuizHostGrandPrix3D: React.FC<QuizHostGrandPrix3DProps> = ({
             <button
               type="button"
               onClick={handleManualOrAutoFinish}
-              className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs flex items-center gap-1.5 cursor-pointer transition-all active:scale-95 shadow-md"
+              className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs flex items-center gap-1.5 cursor-pointer transition-all active:scale-95 shadow-md whitespace-nowrap"
             >
               <Flag size={13} />
               <span>{t('Finish Race', 'レース終了・表彰台へ')}</span>
@@ -397,7 +397,7 @@ export const QuizHostGrandPrix3D: React.FC<QuizHostGrandPrix3DProps> = ({
               <button
                 type="button"
                 onClick={onExit}
-                className="px-2.5 py-1.5 rounded-xl bg-rose-950/60 hover:bg-rose-900 border border-rose-800 text-rose-300 font-black text-xs cursor-pointer transition-all active:scale-95"
+                className="px-2.5 py-1.5 rounded-xl bg-rose-950/60 hover:bg-rose-900 border border-rose-800 text-rose-300 font-black text-xs cursor-pointer transition-all active:scale-95 whitespace-nowrap"
               >
                 {t('Exit', '終了')}
               </button>
@@ -410,9 +410,9 @@ export const QuizHostGrandPrix3D: React.FC<QuizHostGrandPrix3DProps> = ({
       <main className="flex-1 w-full h-full min-h-0 flex relative overflow-hidden">
         {/* Top-Left & Top-Right Floating Camera & Start Lights Bar */}
         {!isLobby && (
-          <div className="absolute top-3 left-3 right-3 z-20 flex items-center justify-between pointer-events-none">
-            <div className="flex items-center flex-wrap gap-1 p-1 rounded-xl bg-slate-950/88 backdrop-blur-md border border-slate-800 pointer-events-auto shadow-xl text-xs font-black">
-              <span className="text-amber-400 px-2 flex items-center gap-1 shrink-0">
+          <div className="absolute top-3 left-3 right-3 z-20 flex items-center justify-between gap-2 pointer-events-none">
+            <div className="flex items-center flex-nowrap overflow-x-auto no-scrollbar max-w-full gap-1 p-1 rounded-xl bg-slate-950/88 backdrop-blur-md border border-slate-800 pointer-events-auto shadow-xl text-xs font-black">
+              <span className="text-amber-400 px-2 flex items-center gap-1 shrink-0 whitespace-nowrap">
                 <Tv size={12} />
                 <span>TV CAM:</span>
               </span>
@@ -427,7 +427,7 @@ export const QuizHostGrandPrix3D: React.FC<QuizHostGrandPrix3DProps> = ({
                   key={mode}
                   type="button"
                   onClick={() => setCameraMode(mode)}
-                  className={`px-2.5 py-1 rounded-lg transition-all cursor-pointer ${
+                  className={`px-2.5 py-1 rounded-lg transition-all cursor-pointer shrink-0 whitespace-nowrap ${
                     cameraMode === mode
                       ? 'bg-amber-500 text-slate-950 font-black shadow-xs'
                       : 'text-slate-400 hover:text-white'

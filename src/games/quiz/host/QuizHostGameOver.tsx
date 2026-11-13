@@ -456,16 +456,16 @@ export const QuizHostGameOver: React.FC<QuizHostGameOverProps> = ({
   const troubleList = Object.values(troubleWords);
 
   return (
-    <div className="flex flex-col h-full max-w-[92vw] max-h-[92vh] mx-auto w-full p-2 sm:p-4 text-slate-900 dark:text-white select-none overflow-y-auto relative print:max-h-none print:max-w-none print:overflow-visible print:p-0 print:h-auto">
+    <div className="flex flex-col h-full max-w-[92vw] max-h-[92dvh] mx-auto w-full p-2 sm:p-4 text-slate-900 dark:text-white select-none overflow-y-auto relative print:max-h-none print:max-w-none print:overflow-visible print:p-0 print:h-auto">
       {/* Top Header */}
-      <div className="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-800 shrink-0 print:hidden">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-amber-400 to-orange-500 flex items-center justify-center shadow-lg text-white font-black text-xl">
+      <div className="flex items-center justify-between gap-2 pb-4 border-b border-slate-200 dark:border-slate-800 shrink-0 print:hidden flex-nowrap">
+        <div className="flex items-center gap-3 min-w-0 flex-1">
+          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-amber-400 to-orange-500 flex items-center justify-center shadow-lg text-white font-black text-xl shrink-0">
             {isSprint ? '🏎️' : isVolleyball ? '🧺' : isTug ? '🚩' : '🏆'}
           </div>
-          <div>
-            <h2 className="text-2xl font-black tracking-tight flex items-center gap-2">
-              <span>
+          <div className="min-w-0 flex-1">
+            <h2 className="text-xl sm:text-2xl font-black tracking-tight flex items-center gap-2 truncate">
+              <span className="truncate">
                 {isSprint
                   ? (isTimeTrial ? t('F1 Time Trial Results', 'タイムアタック 結果発表！') : t('F1 Grand Prix Podium', 'グランプリ 最終結果発表！'))
                   : isVolleyball
@@ -477,12 +477,12 @@ export const QuizHostGameOver: React.FC<QuizHostGameOverProps> = ({
                         : t('Game Over', '最終結果発表！')}
               </span>
               {isSprint && (
-                <span className="text-xs px-2.5 py-0.5 rounded-full bg-rose-500 text-white font-black tracking-wider">
+                <span className="text-xs px-2.5 py-0.5 rounded-full bg-rose-500 text-white font-black tracking-wider shrink-0 whitespace-nowrap">
                   🏁 {isTimeTrial ? 'TIME TRIAL' : 'GRAND PRIX'}
                 </span>
               )}
             </h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+            <p className="text-xs text-slate-500 dark:text-slate-400 font-medium truncate">
               {isSprint
                 ? (isTimeTrial
                     ? t(`Time Trial finished! Honoring drivers with the most correct answers in ${sprintSettings?.timeLimitSeconds || 60} seconds.`, `タイムアタック終了！${sprintSettings?.timeLimitSeconds || 60}秒間で最も多く正解したドライバーを表彰します。`)
@@ -502,11 +502,11 @@ export const QuizHostGameOver: React.FC<QuizHostGameOverProps> = ({
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 flex-nowrap overflow-x-auto no-scrollbar">
           {/* Class Co-Op Vault Banner */}
           {classVault && vaultTierInfo && (
             <div
-              className="flex items-center gap-2 px-3 py-1.5 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border-2 border-amber-300 dark:border-amber-700 shadow-2xs"
+              className="hidden xl:flex items-center gap-2 px-3 py-1.5 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border-2 border-amber-300 dark:border-amber-700 shadow-2xs shrink-0"
               title={t(
                 `Class Energy Vault: ${classVault.totalEnergy.toLocaleString()} pts. 10% of class scores are deposited here toward shared milestones!`,
                 `クラス団結エナジー: ${classVault.totalEnergy.toLocaleString()} pts。全員のクイズ得点の10%がここに貯まり、クラス合同のマスコットが解放されます！`
@@ -538,7 +538,7 @@ export const QuizHostGameOver: React.FC<QuizHostGameOverProps> = ({
           {onTroubleWordsRematch && troubleList.length > 0 && (
             <button
               onClick={onTroubleWordsRematch}
-              className="px-4 py-2.5 rounded-2xl font-black text-xs text-white bg-gradient-to-r from-rose-600 to-amber-600 hover:from-rose-500 hover:to-amber-500 shadow-md active:scale-95 transition-all flex items-center gap-1.5 animate-pulse cursor-pointer"
+              className="px-3.5 py-2.5 rounded-2xl font-black text-xs text-white bg-gradient-to-r from-rose-600 to-amber-600 hover:from-rose-500 hover:to-amber-500 shadow-md active:scale-95 transition-all flex items-center gap-1.5 animate-pulse cursor-pointer shrink-0 whitespace-nowrap"
               title={isMathRound ? t("Start targeted review round with missed math questions", "間違えた苦手問題だけでリマッチを開始") : t("Start targeted review round with missed words", "間違えた苦手単語だけでリマッチを開始")}
             >
               <AlertCircle size={15} />
@@ -548,7 +548,7 @@ export const QuizHostGameOver: React.FC<QuizHostGameOverProps> = ({
 
           <button
             onClick={onPlayAgainSame || onPlayAgain}
-            className="px-4 py-2.5 rounded-2xl font-black text-xs text-white bg-blue-600 hover:bg-blue-500 shadow-md active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer"
+            className="px-3.5 py-2.5 rounded-2xl font-black text-xs text-white bg-blue-600 hover:bg-blue-500 shadow-md active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer shrink-0 whitespace-nowrap"
             title={isSoloWarmup ? t("Play again with current settings", "同じ設定でスコアをリセットしてもう一度プレイ") : t("Play again with current settings, keeping same room PIN", "同じ部屋PINのまま、スコアをリセットして再戦")}
           >
             <RotateCcw size={15} />
@@ -558,7 +558,7 @@ export const QuizHostGameOver: React.FC<QuizHostGameOverProps> = ({
           {onPlayAgainChange && (
             <button
               onClick={onPlayAgainChange}
-              className="px-3.5 py-2.5 rounded-2xl font-bold text-xs text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/50 hover:bg-indigo-100 dark:hover:bg-indigo-900 border border-indigo-200 dark:border-indigo-800 transition-colors flex items-center gap-1 cursor-pointer"
+              className="px-3 py-2.5 rounded-2xl font-bold text-xs text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/50 hover:bg-indigo-100 dark:hover:bg-indigo-900 border border-indigo-200 dark:border-indigo-800 transition-colors flex items-center gap-1 cursor-pointer shrink-0 whitespace-nowrap"
             >
               <span>⚙️</span>
               <span>{t("Change Settings", "設定変更")}</span>
@@ -566,34 +566,34 @@ export const QuizHostGameOver: React.FC<QuizHostGameOverProps> = ({
           )}
 
           {/* View Mode Switcher: Podium vs Debrief */}
-          <div className="flex items-center p-1 rounded-2xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 shadow-inner shrink-0">
+          <div className="flex items-center p-1 rounded-2xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 shadow-inner shrink-0 flex-nowrap">
             <button
               onClick={() => setViewMode('PODIUM')}
-              className={`px-3 py-2 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer ${
+              className={`px-3 py-2 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
                 viewMode === 'PODIUM'
                   ? 'bg-amber-400 text-slate-950 shadow-md'
                   : 'text-slate-600 dark:text-slate-300 hover:text-slate-900'
               }`}
             >
               <span>🏆</span>
-              <span>{t("Podium", <><ruby>表彰式<rt className="text-[7px]">ひょうしょうしき</rt></ruby></>)}</span>
+              <span>{t("Podium", <><ruby>表彰式<rt>ひょうしょうしき</rt></ruby></>)}</span>
             </button>
             <button
               onClick={() => setViewMode('DEBRIEF')}
-              className={`px-3 py-2 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer ${
+              className={`px-3 py-2 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
                 viewMode === 'DEBRIEF'
                   ? 'bg-indigo-600 text-white shadow-md'
                   : 'text-slate-600 dark:text-slate-300 hover:text-slate-900'
               }`}
             >
               <span>📈</span>
-              <span>{t("Class Debrief", <><ruby>授業分析<rt className="text-[7px]">じゅぎょうぶんせき</rt></ruby></>)}</span>
+              <span>{t("Class Debrief", <><ruby>授業分析<rt>じゅぎょうぶんせき</rt></ruby></>)}</span>
             </button>
           </div>
 
           <button
             onClick={onExit}
-            className="px-3.5 py-2.5 rounded-2xl font-bold text-xs text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex items-center gap-1.5 cursor-pointer"
+            className="px-3 py-2.5 rounded-2xl font-bold text-xs text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex items-center gap-1.5 cursor-pointer shrink-0 whitespace-nowrap"
           >
             <Home size={15} />
             <span>{t("Hub / Exit", "Hub (もどる)")}</span>
@@ -871,7 +871,7 @@ export const QuizHostGameOver: React.FC<QuizHostGameOverProps> = ({
                     <div className="flex items-center justify-between border-b border-blue-900/60 pb-2 mb-2">
                       <span className="font-black text-xs sm:text-sm text-blue-300 flex items-center gap-1.5">
                         <span className="text-lg">🎯</span>
-                        <span><ruby>百発百中<rt className="text-[7px]">ひゃっぱつひゃくちゅう</rt></ruby>賞</span>
+                        <span><ruby>百発百中<rt>ひゃっぱつひゃくちゅう</rt></ruby>賞</span>
                       </span>
                       <span className="text-[10px] text-blue-400 font-bold">Accuracy Aces</span>
                     </div>
@@ -903,7 +903,7 @@ export const QuizHostGameOver: React.FC<QuizHostGameOverProps> = ({
                     <div className="flex items-center justify-between border-b border-amber-900/60 pb-2 mb-2">
                       <span className="font-black text-xs sm:text-sm text-amber-300 flex items-center gap-1.5">
                         <span className="text-lg">⚡</span>
-                        <span><ruby>電光石火<rt className="text-[7px]">でんこうせっか</rt></ruby>賞</span>
+                        <span><ruby>電光石火<rt>でんこうせっか</rt></ruby>賞</span>
                       </span>
                       <span className="text-[10px] text-amber-400 font-bold">Speed Stars</span>
                     </div>
@@ -932,7 +932,7 @@ export const QuizHostGameOver: React.FC<QuizHostGameOverProps> = ({
                     <div className="flex items-center justify-between border-b border-rose-900/60 pb-2 mb-2">
                       <span className="font-black text-xs sm:text-sm text-rose-300 flex items-center gap-1.5">
                         <span className="text-lg">🔥</span>
-                        <span><ruby>炎<rt className="text-[7px]">ほのお</rt></ruby>のストリーク賞</span>
+                        <span><ruby>炎<rt>ほのお</rt></ruby>のストリーク賞</span>
                       </span>
                       <span className="text-[10px] text-rose-400 font-bold">Streak Kings</span>
                     </div>
@@ -961,7 +961,7 @@ export const QuizHostGameOver: React.FC<QuizHostGameOverProps> = ({
                     <div className="flex items-center justify-between border-b border-emerald-900/60 pb-2 mb-2">
                       <span className="font-black text-xs sm:text-sm text-emerald-300 flex items-center gap-1.5">
                         <span className="text-lg">🛡️</span>
-                        <span><ruby>粘<rt className="text-[7px]">ねば</rt>り強<rt className="text-[7px]">づよ</rt>さ<rt></rt></ruby>賞</span>
+                        <span><ruby>粘<rt>ねば</rt></ruby>り<ruby>強<rt>づよ</rt></ruby>さ賞</span>
                       </span>
                       <span className="text-[10px] text-emerald-400 font-bold">Iron Grit</span>
                     </div>
@@ -1441,11 +1441,11 @@ export const QuizHostGameOver: React.FC<QuizHostGameOverProps> = ({
                   <span>
                     {isMathRound
                       ? (isSoloWarmup
-                          ? t("Start Rematch with Trouble Questions", <>この<ruby>苦手<rt className="text-[7px] font-normal text-white">にがて</rt></ruby><ruby>問題<rt className="text-[7px] font-normal text-white">もんだい</rt></ruby>で<ruby>即座<rt className="text-[7px] font-normal text-white">そくざ</rt></ruby>に<ruby>再戦<rt className="text-[7px] font-normal text-white">さいせん</rt></ruby>スタート！</>)
-                          : t("Start 1-Click Fast Rematch with Trouble Questions (Keep PIN)", <>この<ruby>苦手<rt className="text-[7px] font-normal text-white">にがて</rt></ruby><ruby>問題<rt className="text-[7px] font-normal text-white">もんだい</rt></ruby>で<ruby>即座<rt className="text-[7px] font-normal text-white">そくざ</rt></ruby>に<ruby>再戦<rt className="text-[7px] font-normal text-white">さいせん</rt></ruby>スタート！ (<ruby>部屋<rt className="text-[7px] font-normal text-white">へや</rt></ruby>PIN<ruby>維持<rt className="text-[7px] font-normal text-white">いじ</rt></ruby>)</>))
+                          ? t("Start Rematch with Trouble Questions", <>この<ruby>苦手<rt>にがて</rt></ruby><ruby>問題<rt>もんだい</rt></ruby>で<ruby>即座<rt>そくざ</rt></ruby>に<ruby>再戦<rt>さいせん</rt></ruby>スタート！</>)
+                          : t("Start 1-Click Fast Rematch with Trouble Questions (Keep PIN)", <>この<ruby>苦手<rt>にがて</rt></ruby><ruby>問題<rt>もんだい</rt></ruby>で<ruby>即座<rt>そくざ</rt></ruby>に<ruby>再戦<rt>さいせん</rt></ruby>スタート！ (<ruby>部屋<rt>へや</rt></ruby>PIN<ruby>維持<rt>いじ</rt></ruby>)</>))
                       : (isSoloWarmup
-                          ? t("Start Rematch with Trouble Words", <>この<ruby>苦手<rt className="text-[7px] font-normal text-white">にがて</rt></ruby><ruby>単語<rt className="text-[7px] font-normal text-white">たんご</rt></ruby>で<ruby>即座<rt className="text-[7px] font-normal text-white">そくざ</rt></ruby>に<ruby>再戦<rt className="text-[7px] font-normal text-white">さいせん</rt></ruby>スタート！</>)
-                          : t("Start 1-Click Fast Rematch with Trouble Words (Keep PIN)", <>この<ruby>苦手<rt className="text-[7px] font-normal text-white">にがて</rt></ruby><ruby>単語<rt className="text-[7px] font-normal text-white">たんご</rt></ruby>で<ruby>即座<rt className="text-[7px] font-normal text-white">そくざ</rt></ruby>に<ruby>再戦<rt className="text-[7px] font-normal text-white">さいせん</rt></ruby>スタート！ (<ruby>部屋<rt className="text-[7px] font-normal text-white">へや</rt></ruby>PIN<ruby>維持<rt className="text-[7px] font-normal text-white">いじ</rt></ruby>)</>))}
+                          ? t("Start Rematch with Trouble Words", <>この<ruby>苦手<rt>にがて</rt></ruby><ruby>単語<rt>たんご</rt></ruby>で<ruby>即座<rt>そくざ</rt></ruby>に<ruby>再戦<rt>さいせん</rt></ruby>スタート！</>)
+                          : t("Start 1-Click Fast Rematch with Trouble Words (Keep PIN)", <>この<ruby>苦手<rt>にがて</rt></ruby><ruby>単語<rt>たんご</rt></ruby>で<ruby>即座<rt>そくざ</rt></ruby>に<ruby>再戦<rt>さいせん</rt></ruby>スタート！ (<ruby>部屋<rt>へや</rt></ruby>PIN<ruby>維持<rt>いじ</rt></ruby>)</>))}
                   </span>
                 </button>
               </div>
@@ -1462,13 +1462,13 @@ export const QuizHostGameOver: React.FC<QuizHostGameOverProps> = ({
               <BookOpen className="text-indigo-600 dark:text-indigo-400" size={20} />
               <h3 className="text-base font-black text-indigo-950 dark:text-indigo-200">
                 {isMathRound
-                  ? t('Session Math Problems Recap', <><ruby>練習<rt className="text-[7px] font-normal text-indigo-950 dark:text-indigo-200">れんしゅう</rt></ruby><ruby>問題<rt className="text-[7px] font-normal text-indigo-950 dark:text-indigo-200">もんだい</rt></ruby>のまとめ<ruby>復習<rt className="text-[7px] font-normal text-indigo-950 dark:text-indigo-200">ふくしゅう</rt></ruby></>)
-                  : t('Session Flashcard Recap', <><ruby>練習<rt className="text-[7px] font-normal text-indigo-950 dark:text-indigo-200">れんしゅう</rt></ruby><ruby>単語<rt className="text-[7px] font-normal text-indigo-950 dark:text-indigo-200">たんご</rt></ruby>のまとめ<ruby>復習<rt className="text-[7px] font-normal text-indigo-950 dark:text-indigo-200">ふくしゅう</rt></ruby></>)}
+                  ? t('Session Math Problems Recap', <><ruby>練習<rt>れんしゅう</rt></ruby><ruby>問題<rt>もんだい</rt></ruby>のまとめ<ruby>復習<rt>ふくしゅう</rt></ruby></>)
+                  : t('Session Flashcard Recap', <><ruby>練習<rt>れんしゅう</rt></ruby><ruby>単語<rt>たんご</rt></ruby>のまとめ<ruby>復習<rt>ふくしゅう</rt></ruby></>)}
               </h3>
             </div>
             {!isMathRound && (
               <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400">
-                {t('Tap any card to repeat pronunciation! 🗣️', <>カードをタップして<ruby>発音<rt className="text-[7px] font-normal text-indigo-600 dark:text-indigo-400">はつおん</rt></ruby>を<ruby>確認<rt className="text-[7px] font-normal text-indigo-600 dark:text-indigo-400">かくにん</rt></ruby>しよう！ 🗣️</>)}
+                {t('Tap any card to repeat pronunciation! 🗣️', <>カードをタップして<ruby>発音<rt>はつおん</rt></ruby>を<ruby>確認<rt>かくにん</rt></ruby>しよう！ 🗣️</>)}
               </span>
             )}
           </div>

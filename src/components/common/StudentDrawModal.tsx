@@ -579,22 +579,22 @@ export const StudentDrawModal: React.FC = () => {
       }}
     >
       <div
-        className="bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 rounded-3xl max-w-md sm:max-w-lg w-full p-3 sm:p-5 shadow-2xl flex flex-col relative select-none my-auto max-h-[96vh] overflow-y-auto"
+        className="bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 rounded-3xl max-w-md md:max-w-4xl w-full p-3 sm:p-5 shadow-2xl flex flex-col relative select-none my-auto max-h-[95dvh] overflow-y-auto"
         onClick={e => e.stopPropagation()}
       >
         {/* Top Header Bar */}
-        <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2.5 mb-3 min-h-[46px]">
+        <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2.5 mb-3 min-h-[46px] gap-2 shrink-0">
           <div className="flex items-center gap-2 min-w-0 flex-1 pr-1">
             <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-amber-400 to-orange-500 text-white flex items-center justify-center shadow-md shrink-0">
               <span className="text-xl">🎯</span>
             </div>
-            <div className="min-w-0">
+            <div className="min-w-0 flex-1">
               <h2 className="text-sm sm:text-base font-black text-slate-900 dark:text-white tracking-tight leading-tight truncate">
                 <span>
                   {t(
                     'Student Picker',
                     <>
-                      <ruby>出席番号<rt className="text-[8px] font-normal text-slate-400">しゅっせきばんごう</rt></ruby>くじ
+                      <ruby>出席番号<rt>しゅっせきばんごう</rt></ruby>くじ
                     </>
                   )}
                 </span>
@@ -603,7 +603,7 @@ export const StudentDrawModal: React.FC = () => {
                 {t(
                   'Random student number drawer (1–35 + Sensei 00)',
                   <>
-                    ランダム<ruby>出席番号<rt className="text-[7px] font-normal text-slate-400">しゅっせきばんごう</rt></ruby>＆<ruby>先生<rt className="text-[7px] font-normal text-slate-400">せんせい</rt></ruby>00<ruby>番<rt className="text-[7px] font-normal text-slate-400">ばん</rt></ruby>チャレンジ
+                    ランダム<ruby>出席番号<rt>しゅっせきばんごう</rt></ruby>＆<ruby>先生<rt>せんせい</rt></ruby>00<ruby>番<rt>ばん</rt></ruby>チャレンジ
                   </>
                 )}
               </p>
@@ -705,470 +705,487 @@ export const StudentDrawModal: React.FC = () => {
           </div>
         </div>
 
-        {/* Mode Toggle & Settings Bar */}
-        <div className="mb-2 bg-slate-100 dark:bg-slate-800/60 p-1.5 sm:p-2 rounded-2xl space-y-1.5 text-xs">
-          {/* Row 1: Mode Switcher (3 Equal-Width Tabs) */}
-          <div className="h-7 sm:h-8 grid grid-cols-3 gap-1 bg-slate-200/80 dark:bg-slate-800 p-0.5 rounded-lg">
-            <button
-              onClick={() => { playPop(); setMode('WHEEL'); }}
-              disabled={isSpinning}
-              className={`h-6 sm:h-7 rounded-md text-[11px] font-black flex items-center justify-center gap-1 transition-all cursor-pointer ${
-                mode === 'WHEEL'
-                  ? 'bg-blue-600 text-white shadow-xs'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-              }`}
-            >
-              <span>🎡</span>
-              <span className="truncate">{t('Wheel', 'ルーレット')}</span>
-            </button>
-            <button
-              onClick={() => { playPop(); setMode('SLOT'); }}
-              disabled={isSpinning}
-              className={`h-6 sm:h-7 rounded-md text-[11px] font-black flex items-center justify-center gap-1 transition-all cursor-pointer ${
-                mode === 'SLOT'
-                  ? 'bg-indigo-600 text-white shadow-xs'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-              }`}
-            >
-              <span>🎰</span>
-              <span className="truncate">{t('Slot Reel', 'スロット')}</span>
-            </button>
-            <button
-              onClick={() => { playPop(); setMode('STICKS'); }}
-              disabled={isSpinning}
-              className={`h-6 sm:h-7 rounded-md text-[11px] font-black flex items-center justify-center gap-1 transition-all cursor-pointer ${
-                mode === 'STICKS'
-                  ? 'bg-amber-600 text-white shadow-xs'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-              }`}
-            >
-              <span>🥢</span>
-              <span className="truncate">
-                {t(
-                  'Sticks',
-                  <>
-                    くじ<ruby>引<rt className="text-[7px] font-normal text-slate-400">び</rt></ruby>き<ruby>棒<rt className="text-[7px] font-normal text-slate-400">ぼう</rt></ruby>
-                  </>
-                )}
-              </span>
-            </button>
-          </div>
-
-          {/* Row 2: Roster Config (Class Size + Teacher 00) */}
-          <div className="h-7 sm:h-8 flex items-center justify-between gap-1.5">
-            <div className="flex items-center bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-700 px-2 h-6 sm:h-7 gap-1.5 shadow-xs">
-              <span className="text-[10px] font-bold text-slate-400 select-none">
-                {t(
-                  'Class:',
-                  <>
-                    <ruby>人数<rt className="text-[7px] font-normal text-slate-400">にんずう</rt></ruby>:
-                  </>
-                )}
-              </span>
-              <button
-                onClick={() => { playPop(); setMaxStudents(prev => Math.max(15, prev - 1)); }}
-                disabled={isSpinning || maxStudents <= 15}
-                className="w-4 h-4 rounded hover:bg-slate-200 dark:hover:bg-slate-700 font-bold flex items-center justify-center text-xs disabled:opacity-30 cursor-pointer"
-              >
-                -
-              </button>
-              <span className="font-mono font-black text-slate-900 dark:text-white text-xs min-w-4 text-center">
-                {maxStudents}
-              </span>
-              <button
-                onClick={() => { playPop(); setMaxStudents(prev => Math.min(40, prev + 1)); }}
-                disabled={isSpinning || maxStudents >= 40}
-                className="w-4 h-4 rounded hover:bg-slate-200 dark:hover:bg-slate-700 font-bold flex items-center justify-center text-xs disabled:opacity-30 cursor-pointer"
-              >
-                +
-              </button>
-            </div>
-
-            <button
-              onClick={() => { playPop(); setIncludeTeacher(prev => !prev); }}
-              disabled={isSpinning}
-              className={`h-6 sm:h-7 px-2 rounded-lg text-[10px] font-black flex items-center gap-1 border transition-all cursor-pointer shrink-0 ${
-                includeTeacher
-                  ? 'bg-amber-100 dark:bg-amber-950/60 border-amber-300 dark:border-amber-700 text-amber-800 dark:text-amber-300 shadow-xs'
-                  : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-400'
-              }`}
-              title={textLang === 'ja' ? '先生（00番）をくじに含める' : 'Include Teacher (00) in drawing pool'}
-            >
-              <span>👨‍🏫 00</span>
-              {includeTeacher && <Check size={11} className="text-amber-600 dark:text-amber-400 stroke-[3]" />}
-            </button>
-          </div>
-        </div>
-
-        {/* Main Stage: Wheel, Slot Reel, or Popsicle Sticks (Locked Height to eliminate jump) */}
-        <div className="h-[310px] sm:h-[330px] flex items-center justify-center relative overflow-hidden my-1">
-          {mode === 'WHEEL' ? (
-            /* Mode 1: High-Roller Casino Wheel */
-            <div className="relative flex flex-col items-center justify-center scale-95 sm:scale-100">
-              {/* 3D Flapper Pointer at 12 o'clock */}
-              <div className="absolute -top-3.5 z-30 flex flex-col items-center filter drop-shadow-xl pointer-events-none">
-                <div className="w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 shadow-md z-10 flex items-center justify-center">
-                  <div className="w-2.5 h-0.5 bg-slate-600 rotate-45" />
+        {/* Two-Column Landscape Body */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+          {/* LEFT WING: Visual Spinner / Slot / Sticks Stage */}
+          <div className="md:col-span-7 h-[300px] sm:h-[340px] flex items-center justify-center relative overflow-hidden rounded-2xl bg-slate-50/70 dark:bg-slate-950/50 border border-slate-200/70 dark:border-slate-800/80">
+            {mode === 'WHEEL' ? (
+              /* Mode 1: High-Roller Casino Wheel */
+              <div className="relative flex flex-col items-center justify-center scale-95 sm:scale-100">
+                {/* 3D Flapper Pointer at 12 o'clock */}
+                <div className="absolute -top-3.5 z-30 flex flex-col items-center filter drop-shadow-xl pointer-events-none">
+                  <div className="w-5 h-5 rounded-full bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 border border-slate-600 shadow-md z-10 flex items-center justify-center">
+                    <div className="w-2.5 h-0.5 bg-slate-600 rotate-45" />
+                  </div>
+                  <div
+                    className={`-mt-2.5 transition-transform duration-75 origin-top ${
+                      pointerDeflect ? '-rotate-12 scale-95' : 'rotate-0'
+                    }`}
+                  >
+                    <div className="w-0 h-0 border-l-[13px] border-l-transparent border-r-[13px] border-r-transparent border-t-[30px] border-t-amber-400 filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]" />
+                    <div className="w-0 h-0 border-l-[9px] border-l-transparent border-r-[9px] border-r-transparent border-t-[22px] border-t-amber-200 -mt-[28px] mx-auto opacity-80" />
+                  </div>
                 </div>
-                <div
-                  className={`-mt-2.5 transition-transform duration-75 origin-top ${
-                    pointerDeflect ? '-rotate-12 scale-95' : 'rotate-0'
-                  }`}
-                >
-                  <div className="w-0 h-0 border-l-[13px] border-l-transparent border-r-[13px] border-r-transparent border-t-[30px] border-t-amber-400 filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]" />
-                  <div className="w-0 h-0 border-l-[9px] border-l-transparent border-r-[9px] border-r-transparent border-t-[22px] border-t-amber-200 -mt-[28px] mx-auto opacity-80" />
-                </div>
+
+                {/* Crisp Retina Canvas Wheel */}
+                <canvas
+                  ref={canvasRef}
+                  width={400}
+                  height={400}
+                  className="w-[280px] h-[280px] sm:w-[320px] sm:h-[320px] transition-transform"
+                />
               </div>
-
-              {/* Crisp Retina Canvas Wheel */}
-              <canvas
-                ref={canvasRef}
-                width={400}
-                height={400}
-                className="w-[280px] h-[280px] sm:w-[320px] sm:h-[320px] transition-transform"
-              />
-            </div>
-          ) : mode === 'SLOT' ? (
-            /* Mode 2: Vegas Arcade Slot Cabinet */
-            <div className="w-full max-w-sm flex items-center justify-center gap-3 px-2">
-              <div className="relative flex-1 bg-gradient-to-b from-slate-900 via-slate-950 to-slate-900 rounded-3xl border-4 border-amber-400/90 shadow-[0_0_25px_rgba(245,158,11,0.25)] overflow-hidden">
-                {/* Vintage Marquee Header */}
-                <div className="h-7 bg-gradient-to-r from-amber-600 via-yellow-400 to-amber-600 border-b-2 border-amber-300 flex items-center justify-between px-3 text-slate-950 font-black text-[10px] tracking-wider uppercase select-none shadow-sm">
-                  <span className="flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-red-600 animate-ping" />
-                    <span>LUCKY DRAW</span>
-                  </span>
-                  <span className="font-mono text-[11px] bg-slate-950 text-amber-400 px-1.5 py-0.5 rounded border border-amber-300">
-                    777
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <span>ATTENDANCE</span>
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-ping" />
-                  </span>
-                </div>
-
-                {/* 3D Curved Cylindrical Reel Window */}
-                <div className="relative h-52 flex items-center justify-center overflow-hidden">
-                  <div className="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-slate-950 via-slate-950/85 to-transparent z-10 pointer-events-none" />
-                  <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-slate-950 via-slate-950/85 to-transparent z-10 pointer-events-none" />
-                  <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-0.5 bg-gradient-to-r from-transparent via-white/20 to-transparent z-15 pointer-events-none" />
-
-                  {/* Glowing Neon Center Payline Marker */}
-                  <div className="absolute inset-x-2 h-18 border-y-2 border-amber-400 bg-amber-400/10 z-10 pointer-events-none flex items-center justify-between px-3 shadow-[0_0_15px_rgba(251,191,36,0.25)]">
-                    <div className="flex items-center text-amber-400 text-sm font-black animate-pulse">
-                      <span>▶</span>
-                      <span className="-ml-1">▶</span>
-                    </div>
-                    <div className="flex items-center text-amber-400 text-sm font-black animate-pulse">
-                      <span className="-mr-1">◀</span>
-                      <span>◀</span>
-                    </div>
+            ) : mode === 'SLOT' ? (
+              /* Mode 2: Vegas Arcade Slot Cabinet */
+              <div className="w-full max-w-sm flex items-center justify-center gap-3 px-2">
+                <div className="relative flex-1 bg-gradient-to-b from-slate-900 via-slate-950 to-slate-900 rounded-3xl border-4 border-amber-400/90 shadow-[0_0_25px_rgba(245,158,11,0.25)] overflow-hidden">
+                  {/* Vintage Marquee Header */}
+                  <div className="h-7 bg-gradient-to-r from-amber-600 via-yellow-400 to-amber-600 border-b-2 border-amber-300 flex items-center justify-between px-3 text-slate-950 font-black text-[10px] tracking-wider uppercase select-none shadow-sm">
+                    <span className="flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-red-600 animate-ping" />
+                      <span>LUCKY DRAW</span>
+                    </span>
+                    <span className="font-mono text-[11px] bg-slate-950 text-amber-400 px-1.5 py-0.5 rounded border border-amber-300">
+                      777
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <span>ATTENDANCE</span>
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-ping" />
+                    </span>
                   </div>
 
-                  {/* 5-Row Vertical Barrel Perspective */}
-                  <div className="flex flex-col items-center justify-center">
-                    {activePool.length > 0 ? (
-                      (() => {
-                        const count = activePool.length;
-                        const p2 = (slotDisplayIndex - 2 + count) % count;
-                        const p1 = (slotDisplayIndex - 1 + count) % count;
-                        const cur = activePool[slotDisplayIndex];
-                        const n1 = (slotDisplayIndex + 1) % count;
-                        const n2 = (slotDisplayIndex + 2) % count;
+                  {/* 3D Curved Cylindrical Reel Window */}
+                  <div className="relative h-52 flex items-center justify-center overflow-hidden">
+                    <div className="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-slate-950 via-slate-950/85 to-transparent z-10 pointer-events-none" />
+                    <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-slate-950 via-slate-950/85 to-transparent z-10 pointer-events-none" />
+                    <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-0.5 bg-gradient-to-r from-transparent via-white/20 to-transparent z-15 pointer-events-none" />
 
-                        return (
-                          <div className="flex flex-col items-center justify-center gap-1.5">
-                            <div className="opacity-20 scale-75 -translate-y-2 text-xl font-black text-slate-400 font-mono">
-                              {activePool[p2] === '00' ? '👨‍🏫 00' : `#${activePool[p2]}`}
+                    {/* Glowing Neon Center Payline Marker */}
+                    <div className="absolute inset-x-2 h-18 border-y-2 border-amber-400 bg-amber-400/10 z-10 pointer-events-none flex items-center justify-between px-3 shadow-[0_0_15px_rgba(251,191,36,0.25)]">
+                      <div className="flex items-center text-amber-400 text-sm font-black animate-pulse">
+                        <span>▶</span>
+                        <span className="-ml-1">▶</span>
+                      </div>
+                      <div className="flex items-center text-amber-400 text-sm font-black animate-pulse">
+                        <span className="-mr-1">◀</span>
+                        <span>◀</span>
+                      </div>
+                    </div>
+
+                    {/* 5-Row Vertical Barrel Perspective */}
+                    <div className="flex flex-col items-center justify-center">
+                      {activePool.length > 0 ? (
+                        (() => {
+                          const count = activePool.length;
+                          const p2 = (slotDisplayIndex - 2 + count) % count;
+                          const p1 = (slotDisplayIndex - 1 + count) % count;
+                          const cur = activePool[slotDisplayIndex];
+                          const n1 = (slotDisplayIndex + 1) % count;
+                          const n2 = (slotDisplayIndex + 2) % count;
+
+                          return (
+                            <div className="flex flex-col items-center justify-center gap-1.5">
+                              <div className="opacity-20 scale-75 -translate-y-2 text-xl font-black text-slate-400 font-mono">
+                                {activePool[p2] === '00' ? '👨‍🏫 00' : `#${activePool[p2]}`}
+                              </div>
+                              <div className="opacity-45 scale-90 text-2xl font-black text-slate-300 font-mono">
+                                {activePool[p1] === '00' ? '👨‍🏫 00' : `#${activePool[p1]}`}
+                              </div>
+                              <div
+                                className={`scale-105 font-black text-5xl sm:text-6xl font-mono py-0.5 flex items-center gap-2 ${
+                                  cur === '00'
+                                    ? 'text-amber-400 drop-shadow-[0_0_20px_rgba(245,158,11,0.9)]'
+                                    : 'text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.6)]'
+                                }`}
+                              >
+                                {cur === '00' ? (
+                                  <div className="flex items-center gap-1.5">
+                                    <span className="text-3xl">👨‍🏫</span>
+                                    <span>00</span>
+                                  </div>
+                                ) : (
+                                  <span>#{cur}</span>
+                                )}
+                              </div>
+                              <div className="opacity-45 scale-90 text-2xl font-black text-slate-300 font-mono">
+                                {activePool[n1] === '00' ? '👨‍🏫 00' : `#${activePool[n1]}`}
+                              </div>
+                              <div className="opacity-20 scale-75 translate-y-2 text-xl font-black text-slate-400 font-mono">
+                                {activePool[n2] === '00' ? '👨‍🏫 00' : `#${activePool[n2]}`}
+                              </div>
                             </div>
-                            <div className="opacity-45 scale-90 text-2xl font-black text-slate-300 font-mono">
-                              {activePool[p1] === '00' ? '👨‍🏫 00' : `#${activePool[p1]}`}
-                            </div>
-                            <div
-                              className={`scale-105 font-black text-5xl sm:text-6xl font-mono py-0.5 flex items-center gap-2 ${
-                                cur === '00'
-                                  ? 'text-amber-400 drop-shadow-[0_0_20px_rgba(245,158,11,0.9)]'
-                                  : 'text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.6)]'
-                              }`}
-                            >
-                              {cur === '00' ? (
-                                <div className="flex items-center gap-1.5">
-                                  <span className="text-3xl">👨‍🏫</span>
-                                  <span>00</span>
-                                </div>
-                              ) : (
-                                <span>#{cur}</span>
-                              )}
-                            </div>
-                            <div className="opacity-45 scale-90 text-2xl font-black text-slate-300 font-mono">
-                              {activePool[n1] === '00' ? '👨‍🏫 00' : `#${activePool[n1]}`}
-                            </div>
-                            <div className="opacity-20 scale-75 translate-y-2 text-xl font-black text-slate-400 font-mono">
-                              {activePool[n2] === '00' ? '👨‍🏫 00' : `#${activePool[n2]}`}
-                            </div>
+                          );
+                        })()
+                      ) : (
+                        <div className="text-slate-400 font-bold text-sm">Pool Empty</div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Physical Chrome Pull Lever on Right */}
+                <div className="flex flex-col items-center justify-center pt-6">
+                  <button
+                    onClick={!isSpinning ? handleStartSpin : undefined}
+                    disabled={isSpinning || activePool.length === 0}
+                    className={`group flex flex-col items-center cursor-pointer transition-transform duration-200 select-none ${
+                      isLeverPulled ? 'translate-y-6 rotate-6' : 'hover:-translate-y-1'
+                    }`}
+                    title={textLang === 'ja' ? 'レバーを引いて回す！' : 'Pull Lever to Draw!'}
+                  >
+                    <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-rose-700 via-rose-500 to-rose-300 border-2 border-rose-900 shadow-xl group-hover:scale-110 transition-transform relative">
+                      <div className="absolute top-1 left-1.5 w-2 h-2 rounded-full bg-white/70 blur-[0.5px]" />
+                    </div>
+                    <div className="w-2.5 h-16 bg-gradient-to-r from-slate-400 via-slate-100 to-slate-400 border-x border-slate-500 shadow-sm" />
+                    <div className="w-6 h-6 rounded-lg bg-gradient-to-b from-slate-700 to-slate-900 border border-slate-600 shadow-md flex items-center justify-center">
+                      <div className="w-2 h-2 rounded-full bg-slate-400" />
+                    </div>
+                  </button>
+                </div>
+              </div>
+            ) : (
+              /* Mode 3: Traditional Classroom Popsicle Sticks */
+              <div className="w-full max-w-sm flex flex-col items-center justify-center relative">
+                {/* Risen Winning Stick Display */}
+                {isStickRising && selectedNumber && (
+                  <div className="absolute -top-6 z-30 flex flex-col items-center animate-in zoom-in-90 slide-in-from-bottom-14 duration-500">
+                    <div className="w-20 sm:w-24 h-48 sm:h-52 rounded-t-3xl rounded-b-lg bg-gradient-to-r from-[#d4af7e] via-[#f7e6ce] to-[#c29b68] border-2 border-[#8c5822] shadow-2xl flex flex-col items-center justify-between p-2 relative overflow-hidden">
+                      <div className="absolute inset-0 bg-amber-900/5 mix-blend-multiply pointer-events-none" />
+                      
+                      {selectedNumber === '00' ? (
+                        <>
+                          <div className="w-full py-1 px-1 rounded-full bg-gradient-to-r from-amber-500 to-yellow-400 text-slate-950 font-black text-[10px] text-center shadow-xs truncate">
+                            ⭐ {activeTeacherProfile?.jaName || 'SENSEI'} ⭐
                           </div>
-                        );
-                      })()
-                    ) : (
-                      <div className="text-slate-400 font-bold text-sm">Pool Empty</div>
-                    )}
+                          <div className="flex flex-col items-center my-auto">
+                            <span className="text-4xl mb-0.5">{activeTeacherProfile?.avatar || '👨‍🏫'}</span>
+                            <span className="text-4xl sm:text-5xl font-black font-mono text-amber-900 drop-shadow-sm">00</span>
+                          </div>
+                          <div className="text-[10px] font-black text-amber-950 truncate max-w-full">
+                            {t(
+                              `${activeTeacherProfile?.name || 'Teacher'}'s Turn`,
+                              <>
+                                <span className="mr-0.5">{activeTeacherProfile?.jaName || '先生'}</span>の<ruby>番<rt>ばん</rt></ruby>
+                              </>
+                            )}
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="w-full py-0.5 rounded-full bg-amber-900/10 text-amber-950 font-black text-[10px] text-center">
+                            🌸 {t('ATTENDANCE', <><ruby>出席番号<rt>しゅっせきばんごう</rt></ruby></>)} 🌸
+                          </div>
+                          <div className="flex flex-col items-center my-auto">
+                            <span className="text-[10px] font-bold text-amber-900/80 uppercase">Student</span>
+                            <span className="text-4xl sm:text-5xl font-black font-mono text-amber-950 drop-shadow-xs">
+                              #{selectedNumber}
+                            </span>
+                          </div>
+                          <div className="text-[10px] font-black text-amber-950">
+                            {t(`No. ${selectedNumber}`, <>{selectedNumber} <ruby>番<rt>ばん</rt></ruby></>)}
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* The Ceramic Classroom Stick Jar with Fanned Wooden Sticks */}
+                <div
+                  className={`relative flex flex-col items-center transition-transform ${
+                    isSpinning && !isStickRising ? 'animate-bounce' : ''
+                  }`}
+                  style={{
+                    transform: isSpinning && !isStickRising ? `rotate(${(rattleTick - 1.5) * 2}deg)` : 'none',
+                  }}
+                >
+                  {/* Fanned Sticks inside Jar */}
+                  <div className="relative w-44 h-32 flex items-end justify-center overflow-visible">
+                    {STICK_TILT_ANGLES.map((angle, idx) => {
+                      const isGoldTip = idx === 6 && includeTeacher;
+                      return (
+                        <div
+                          key={idx}
+                          className="absolute bottom-0 w-6 h-28 rounded-t-xl border border-[#96632c]/60 shadow-sm transition-transform duration-300 origin-bottom"
+                          style={{
+                            transform: `rotate(${angle}deg) translateY(${Math.abs(angle) * 0.4}px)`,
+                            background: isGoldTip
+                              ? 'linear-gradient(to top, #c29b68 70%, #fbbf24 70%)'
+                              : 'linear-gradient(to right, #d4af7e, #f7e6ce, #c29b68)',
+                          }}
+                        >
+                          {isGoldTip && (
+                            <div className="text-[8px] text-center font-bold text-amber-900 pt-0.5">
+                              ★
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* Ceramic Jar Front */}
+                  <div className="relative -mt-6 w-36 sm:w-40 h-28 bg-gradient-to-b from-[#8c502b] via-[#6e371a] to-[#4a220e] border-t-4 border-amber-500/80 rounded-b-3xl rounded-t-sm shadow-2xl flex flex-col items-center justify-center p-2 z-10">
+                    <div className="w-full py-1.5 rounded-lg bg-amber-100 dark:bg-amber-950/80 border border-amber-300 dark:border-amber-700/80 text-amber-900 dark:text-amber-200 font-black text-xs text-center shadow-inner flex items-center justify-center gap-1">
+                      <span>🌸</span>
+                      <span className="font-serif tracking-wider">
+                        {t('Attendance', <><ruby>出席番号<rt>しゅっせきばんごう</rt></ruby></>)}
+                      </span>
+                      <span>🌸</span>
+                    </div>
+                    <div className="text-[10px] font-bold text-amber-300/80 mt-1 font-mono">
+                      {activePool.length} {t('sticks', <><ruby>本<rt>ほん</rt></ruby></>)}
+                    </div>
                   </div>
                 </div>
               </div>
+            )}
+          </div>
 
-              {/* Physical Chrome Pull Lever on Right */}
-              <div className="flex flex-col items-center justify-center pt-6">
+          {/* RIGHT WING: Mode Config, Result Banner & Actions */}
+          <div className="md:col-span-5 flex flex-col justify-between gap-2.5 h-full">
+            {/* Mode Toggle & Settings Bar */}
+            <div className="bg-slate-100 dark:bg-slate-800/60 p-2 rounded-2xl space-y-2 text-xs">
+              {/* Row 1: Mode Switcher (3 Equal-Width Tabs) */}
+              <div className="h-8 grid grid-cols-3 gap-1 bg-slate-200/80 dark:bg-slate-800 p-0.5 rounded-lg">
                 <button
-                  onClick={!isSpinning ? handleStartSpin : undefined}
-                  disabled={isSpinning || activePool.length === 0}
-                  className={`group flex flex-col items-center cursor-pointer transition-transform duration-200 select-none ${
-                    isLeverPulled ? 'translate-y-6 rotate-6' : 'hover:-translate-y-1'
+                  onClick={() => { playPop(); setMode('WHEEL'); }}
+                  disabled={isSpinning}
+                  className={`h-7 rounded-md text-[11px] font-black flex items-center justify-center gap-1 transition-all cursor-pointer whitespace-nowrap ${
+                    mode === 'WHEEL'
+                      ? 'bg-blue-600 text-white shadow-xs'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                   }`}
-                  title={textLang === 'ja' ? 'レバーを引いて回す！' : 'Pull Lever to Draw!'}
                 >
-                  <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-rose-700 via-rose-500 to-rose-300 border-2 border-rose-900 shadow-xl group-hover:scale-110 transition-transform relative">
-                    <div className="absolute top-1 left-1.5 w-2 h-2 rounded-full bg-white/70 blur-[0.5px]" />
-                  </div>
-                  <div className="w-2.5 h-16 bg-gradient-to-r from-slate-400 via-slate-100 to-slate-400 border-x border-slate-500 shadow-sm" />
-                  <div className="w-6 h-6 rounded-lg bg-gradient-to-b from-slate-700 to-slate-900 border border-slate-600 shadow-md flex items-center justify-center">
-                    <div className="w-2 h-2 rounded-full bg-slate-400" />
-                  </div>
+                  <span>🎡</span>
+                  <span className="truncate">{t('Wheel', 'ルーレット')}</span>
+                </button>
+                <button
+                  onClick={() => { playPop(); setMode('SLOT'); }}
+                  disabled={isSpinning}
+                  className={`h-7 rounded-md text-[11px] font-black flex items-center justify-center gap-1 transition-all cursor-pointer whitespace-nowrap ${
+                    mode === 'SLOT'
+                      ? 'bg-indigo-600 text-white shadow-xs'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                  }`}
+                >
+                  <span>🎰</span>
+                  <span className="truncate">{t('Slot Reel', 'スロット')}</span>
+                </button>
+                <button
+                  onClick={() => { playPop(); setMode('STICKS'); }}
+                  disabled={isSpinning}
+                  className={`h-7 rounded-md text-[11px] font-black flex items-center justify-center gap-1 transition-all cursor-pointer whitespace-nowrap ${
+                    mode === 'STICKS'
+                      ? 'bg-amber-600 text-white shadow-xs'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                  }`}
+                >
+                  <span>🥢</span>
+                  <span className="truncate">
+                    {t(
+                      'Sticks',
+                      <>
+                        くじ<ruby>引<rt>び</rt></ruby>き<ruby>棒<rt>ぼう</rt></ruby>
+                      </>
+                    )}
+                  </span>
+                </button>
+              </div>
+
+              {/* Row 2: Roster Config (Class Size + Teacher 00) */}
+              <div className="h-8 flex items-center justify-between gap-1.5">
+                <div className="flex items-center bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-700 px-2 h-7 gap-1.5 shadow-xs">
+                  <span className="text-[10px] font-bold text-slate-600 dark:text-slate-300 select-none whitespace-nowrap">
+                    {t(
+                      'Class:',
+                      <>
+                        <ruby>人数<rt>にんずう</rt></ruby>:
+                      </>
+                    )}
+                  </span>
+                  <button
+                    onClick={() => { playPop(); setMaxStudents(prev => Math.max(15, prev - 1)); }}
+                    disabled={isSpinning || maxStudents <= 15}
+                    className="w-4 h-4 rounded hover:bg-slate-200 dark:hover:bg-slate-700 font-bold flex items-center justify-center text-xs disabled:opacity-30 cursor-pointer"
+                  >
+                    -
+                  </button>
+                  <span className="font-mono font-black text-slate-900 dark:text-white text-xs min-w-4 text-center">
+                    {maxStudents}
+                  </span>
+                  <button
+                    onClick={() => { playPop(); setMaxStudents(prev => Math.min(40, prev + 1)); }}
+                    disabled={isSpinning || maxStudents >= 40}
+                    className="w-4 h-4 rounded hover:bg-slate-200 dark:hover:bg-slate-700 font-bold flex items-center justify-center text-xs disabled:opacity-30 cursor-pointer"
+                  >
+                    +
+                  </button>
+                </div>
+
+                <button
+                  onClick={() => { playPop(); setIncludeTeacher(prev => !prev); }}
+                  disabled={isSpinning}
+                  className={`h-7 px-2 rounded-lg text-[10px] font-black flex items-center gap-1 border transition-all cursor-pointer shrink-0 whitespace-nowrap ${
+                    includeTeacher
+                      ? 'bg-amber-100 dark:bg-amber-950/60 border-amber-300 dark:border-amber-700 text-amber-800 dark:text-amber-300 shadow-xs'
+                      : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-400'
+                  }`}
+                  title={textLang === 'ja' ? '先生（00番）をくじに含める' : 'Include Teacher (00) in drawing pool'}
+                >
+                  <span>👨‍🏫 00</span>
+                  {includeTeacher && <Check size={11} className="text-amber-600 dark:text-amber-400 stroke-[3]" />}
                 </button>
               </div>
             </div>
-          ) : (
-            /* Mode 3: Traditional Classroom Popsicle Sticks */
-            <div className="w-full max-w-sm flex flex-col items-center justify-center relative">
-              {/* Risen Winning Stick Display */}
-              {isStickRising && selectedNumber && (
-                <div className="absolute -top-6 z-30 flex flex-col items-center animate-in zoom-in-90 slide-in-from-bottom-14 duration-500">
-                  <div className="w-20 sm:w-24 h-48 sm:h-52 rounded-t-3xl rounded-b-lg bg-gradient-to-r from-[#d4af7e] via-[#f7e6ce] to-[#c29b68] border-2 border-[#8c5822] shadow-2xl flex flex-col items-center justify-between p-2 relative overflow-hidden">
-                    <div className="absolute inset-0 bg-amber-900/5 mix-blend-multiply pointer-events-none" />
-                    
-                    {selectedNumber === '00' ? (
-                      <>
-                        <div className="w-full py-1 px-1 rounded-full bg-gradient-to-r from-amber-500 to-yellow-400 text-slate-950 font-black text-[10px] text-center shadow-xs truncate">
-                          ⭐ {activeTeacherProfile?.jaName || 'SENSEI'} ⭐
-                        </div>
-                        <div className="flex flex-col items-center my-auto">
-                          <span className="text-4xl mb-0.5">{activeTeacherProfile?.avatar || '👨‍🏫'}</span>
-                          <span className="text-4xl sm:text-5xl font-black font-mono text-amber-900 drop-shadow-sm">00</span>
-                        </div>
-                        <div className="text-[10px] font-black text-amber-950 truncate max-w-full">
+
+            {/* Winner Announcement Slot (Fixed min-height in landscape to prevent stage jitter) */}
+            <div className="min-h-[116px] flex flex-col justify-center">
+              {showResultBanner && selectedNumber ? (
+                <div className="p-3 rounded-2xl bg-gradient-to-r from-amber-500/20 via-orange-500/20 to-amber-500/20 border-2 border-amber-400 dark:border-amber-500 flex flex-col items-center text-center animate-in zoom-in-95 duration-200">
+                  {selectedNumber === '00' ? (
+                    <>
+                      <div className="flex items-center gap-1.5 text-amber-600 dark:text-amber-400 text-xs font-black uppercase tracking-wider mb-0.5">
+                        <Sparkles size={13} className="animate-spin" />
+                        <span>
                           {t(
-                            `${activeTeacherProfile?.name || 'Teacher'}'s Turn`,
+                            'SPECIAL DRAW!',
                             <>
-                              <span className="mr-0.5">{activeTeacherProfile?.jaName || '先生'}</span>の<ruby>番<rt className="text-[7px] font-normal text-amber-900">ばん</rt></ruby>
+                              まさかの<ruby>先生<rt>せんせい</rt></ruby><ruby>指名<rt>しめい</rt></ruby>！
                             </>
                           )}
-                        </div>
-                      </>
-                    ) : (
-                      <>
-                        <div className="w-full py-0.5 rounded-full bg-amber-900/10 text-amber-950 font-black text-[10px] text-center">
-                          🌸 {t('ATTENDANCE', <><ruby>出席番号<rt className="text-[7px] font-normal text-amber-900">しゅっせきばんごう</rt></ruby></>)} 🌸
-                        </div>
-                        <div className="flex flex-col items-center my-auto">
-                          <span className="text-[10px] font-bold text-amber-900/80 uppercase">Student</span>
-                          <span className="text-4xl sm:text-5xl font-black font-mono text-amber-950 drop-shadow-xs">
-                            #{selectedNumber}
-                          </span>
-                        </div>
-                        <div className="text-[10px] font-black text-amber-950">
-                          {t(`No. ${selectedNumber}`, <>{selectedNumber} <ruby>番<rt className="text-[7px] font-normal text-amber-900">ばん</rt></ruby></>)}
-                        </div>
-                      </>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              {/* The Ceramic Classroom Stick Jar with Fanned Wooden Sticks */}
-              <div
-                className={`relative flex flex-col items-center transition-transform ${
-                  isSpinning && !isStickRising ? 'animate-bounce' : ''
-                }`}
-                style={{
-                  transform: isSpinning && !isStickRising ? `rotate(${(rattleTick - 1.5) * 2}deg)` : 'none',
-                }}
-              >
-                {/* Fanned Sticks inside Jar */}
-                <div className="relative w-44 h-32 flex items-end justify-center overflow-visible">
-                  {STICK_TILT_ANGLES.map((angle, idx) => {
-                    const isGoldTip = idx === 6 && includeTeacher;
-                    return (
-                      <div
-                        key={idx}
-                        className="absolute bottom-0 w-6 h-28 rounded-t-xl border border-[#96632c]/60 shadow-sm transition-transform duration-300 origin-bottom"
-                        style={{
-                          transform: `rotate(${angle}deg) translateY(${Math.abs(angle) * 0.4}px)`,
-                          background: isGoldTip
-                            ? 'linear-gradient(to top, #c29b68 70%, #fbbf24 70%)'
-                            : 'linear-gradient(to right, #d4af7e, #f7e6ce, #c29b68)',
-                        }}
-                      >
-                        {isGoldTip && (
-                          <div className="text-[8px] text-center font-bold text-amber-900 pt-0.5">
-                            ★
-                          </div>
+                        </span>
+                        <Sparkles size={13} className="animate-spin" />
+                      </div>
+                      <div className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white flex items-center gap-1.5">
+                        <span>{activeTeacherProfile?.avatar || '👨‍🏫'}</span>
+                        <span>
+                          {t(
+                            `${activeTeacherProfile?.name || 'Teacher'}'s Turn!`,
+                            <>
+                              <span className="text-amber-500 mr-1">{activeTeacherProfile?.jaName || '先生'}</span>の<ruby>番<rt>ばん</rt></ruby>です！
+                            </>
+                          )}
+                        </span>
+                        <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-amber-400 text-slate-950 font-black">
+                          00
+                        </span>
+                      </div>
+                      <p className="text-[11px] font-bold text-amber-700 dark:text-amber-300 mt-0.5">
+                        {t(
+                          `${activeTeacherProfile?.name || 'Sensei'} was picked! It's Teacher's turn!`,
+                          <>
+                            <span className="font-black text-amber-800 dark:text-amber-200 mr-1">{activeTeacherProfile?.jaName || '先生'}</span>が<ruby>選<rt>えら</rt></ruby>ばれました！
+                          </>
+                        )}
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <div className="text-[11px] font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider">
+                        {t(
+                          'Selected Student',
+                          <>
+                            <ruby>指名<rt>しめい</rt></ruby>された<ruby>児童<rt>じどう</rt></ruby>
+                          </>
                         )}
                       </div>
-                    );
-                  })}
-                </div>
-
-                {/* Ceramic Jar Front */}
-                <div className="relative -mt-6 w-36 sm:w-40 h-28 bg-gradient-to-b from-[#8c502b] via-[#6e371a] to-[#4a220e] border-t-4 border-amber-500/80 rounded-b-3xl rounded-t-sm shadow-2xl flex flex-col items-center justify-center p-2 z-10">
-                  <div className="w-full py-1.5 rounded-lg bg-amber-100 dark:bg-amber-950/80 border border-amber-300 dark:border-amber-700/80 text-amber-900 dark:text-amber-200 font-black text-xs text-center shadow-inner flex items-center justify-center gap-1">
-                    <span>🌸</span>
-                    <span className="font-serif tracking-wider">
-                      {t('Attendance', <><ruby>出席番号<rt className="text-[7px] font-normal text-amber-900 dark:text-amber-200">しゅっせきばんごう</rt></ruby></>)}
-                    </span>
-                    <span>🌸</span>
-                  </div>
-                  <div className="text-[10px] font-bold text-amber-300/80 mt-1 font-mono">
-                    {activePool.length} {t('sticks', <><ruby>本<rt className="text-[7px] font-normal text-amber-300">ほん</rt></ruby></>)}
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Winner Announcement Banner */}
-        {showResultBanner && selectedNumber && (
-          <div className="my-1.5 p-2.5 sm:p-3 rounded-2xl bg-gradient-to-r from-amber-500/20 via-orange-500/20 to-amber-500/20 border-2 border-amber-400 dark:border-amber-500 flex flex-col items-center text-center animate-in zoom-in-95 duration-200">
-            {selectedNumber === '00' ? (
-              <>
-                <div className="flex items-center gap-1.5 text-amber-600 dark:text-amber-400 text-xs font-black uppercase tracking-wider mb-0.5">
-                  <Sparkles size={13} className="animate-spin" />
-                  <span>
-                    {t(
-                      'SPECIAL DRAW!',
-                      <>
-                        まさかの<ruby>先生<rt className="text-[7px] font-normal text-amber-600 dark:text-amber-400">せんせい</rt></ruby><ruby>指名<rt className="text-[7px] font-normal text-amber-600 dark:text-amber-400">しめい</rt></ruby>！
-                      </>
-                    )}
-                  </span>
-                  <Sparkles size={13} className="animate-spin" />
-                </div>
-                <div className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white flex items-center gap-1.5">
-                  <span>{activeTeacherProfile?.avatar || '👨‍🏫'}</span>
-                  <span>
-                    {t(
-                      `${activeTeacherProfile?.name || 'Teacher'}'s Turn!`,
-                      <>
-                        <span className="text-amber-500 mr-1">{activeTeacherProfile?.jaName || '先生'}</span>の<ruby>番<rt className="text-[8px] font-normal text-slate-400">ばん</rt></ruby>です！
-                      </>
-                    )}
-                  </span>
-                  <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-amber-400 text-slate-950 font-black">
-                    00
-                  </span>
-                </div>
-                <p className="text-[11px] font-bold text-amber-700 dark:text-amber-300 mt-0.5">
-                  {t(
-                    `${activeTeacherProfile?.name || 'Sensei'} was picked! It's Teacher's turn!`,
-                    <>
-                      <span className="font-black text-amber-800 dark:text-amber-200 mr-1">{activeTeacherProfile?.jaName || '先生'}</span>が<ruby>選<rt className="text-[7px] font-normal text-amber-600 dark:text-amber-400">えら</rt></ruby>ばれました！
-                    </>
-                  )}
-                </p>
-              </>
-            ) : (
-              <>
-                <div className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                  {t(
-                    'Selected Student',
-                    <>
-                      <ruby>指名<rt className="text-[7px] font-normal text-slate-400">しめい</rt></ruby>された<ruby>児童<rt className="text-[7px] font-normal text-slate-400">じどう</rt></ruby>
+                      <div className="text-3xl sm:text-4xl font-black text-blue-600 dark:text-blue-400 tracking-tight font-mono leading-none my-1">
+                        #{selectedNumber}
+                      </div>
+                      <div className="text-xs font-black text-slate-700 dark:text-slate-300">
+                        {t(
+                          `Attendance Number ${selectedNumber}`,
+                          <>
+                            <ruby>出席番号<rt>しゅっせきばんごう</rt></ruby> {selectedNumber} <ruby>番<rt>ばん</rt></ruby>
+                          </>
+                        )}
+                      </div>
                     </>
                   )}
                 </div>
-                <div className="text-3xl sm:text-4xl font-black text-blue-600 dark:text-blue-400 tracking-tight font-mono leading-none my-0.5">
-                  #{selectedNumber}
+              ) : (
+                <div className="p-3 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/30 flex flex-col items-center justify-center text-center min-h-[116px]">
+                  <span className="text-2xl mb-1">{isSpinning ? '✨' : '🎯'}</span>
+                  <p className="text-xs font-black text-slate-500 dark:text-slate-400">
+                    {isSpinning
+                      ? t('Picking a lucky student...', 'だれが当たるかな...？')
+                      : t('Press Draw to pick a student!', 'スタートを押して指名しよう！')}
+                  </p>
                 </div>
-                <div className="text-xs font-black text-slate-700 dark:text-slate-300">
-                  {t(
-                    `Attendance Number ${selectedNumber}`,
-                    <>
-                      <ruby>出席番号<rt className="text-[8px] font-normal text-slate-400">しゅっせきばんごう</rt></ruby> {selectedNumber} <ruby>番<rt className="text-[8px] font-normal text-slate-400">ばん</rt></ruby>
-                    </>
-                  )}
-                </div>
-              </>
-            )}
-          </div>
-        )}
-
-        {/* Master Action Button Cluster */}
-        <div className="mt-2 space-y-1.5">
-          {!showResultBanner ? (
-            <button
-              onClick={handleStartSpin}
-              disabled={isSpinning || activePool.length === 0}
-              className="w-full h-11 sm:h-12 rounded-xl sm:rounded-2xl font-black text-sm sm:text-base text-white bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 active:scale-98 transition-all shadow-lg flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
-            >
-              <Play size={17} className={isSpinning ? 'animate-spin shrink-0' : 'shrink-0'} />
-              <span className="truncate whitespace-nowrap">
-                {isSpinning
-                  ? t('Drawing Number...', <><ruby>抽選中<rt className="text-[8px] font-normal text-white/80">ちゅうせんちゅう</rt></ruby>...</>)
-                  : mode === 'STICKS'
-                  ? t('DRAW STICK! (Space)', <><ruby>棒<rt className="text-[8px] font-normal text-white/80">ぼう</rt></ruby>を<ruby>引<rt className="text-[8px] font-normal text-white/80">ひ</rt></ruby>く！[スペース]</>)
-                  : t('SPIN! (Draw Number)', <>スタート！(くじを<ruby>引<rt className="text-[8px] font-normal text-white/80">ひ</rt></ruby>く)</>)}
-              </span>
-            </button>
-          ) : (
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                onClick={handleRemoveAndSpinAgain}
-                className="h-10 sm:h-11 px-3 rounded-xl font-black text-xs sm:text-sm text-white bg-rose-600 hover:bg-rose-500 active:scale-98 transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer"
-                title={textLang === 'ja' ? 'この番号を除外してすぐに次を回す' : 'Exclude this number and draw the next person immediately'}
-              >
-                <span>🔴</span>
-                <span className="truncate">
-                  {selectedNumber === '00'
-                    ? t('Remove & Next', <><ruby>先生除外<rt className="text-[7px] font-normal text-white/80">せんせいじょがい</rt></ruby>で<ruby>次<rt className="text-[7px] font-normal text-white/80">つぎ</rt></ruby>へ</>)
-                    : t(`Remove #${selectedNumber}`, <>{selectedNumber}<ruby>番除外<rt className="text-[7px] font-normal text-white/80">ばんじょがい</rt></ruby>で<ruby>次<rt className="text-[7px] font-normal text-white/80">つぎ</rt></ruby>へ</>)}
-                </span>
-              </button>
-
-              <button
-                onClick={handleKeepAndSpinAgain}
-                className="h-10 sm:h-11 px-3 rounded-xl font-black text-xs sm:text-sm text-white bg-emerald-600 hover:bg-emerald-500 active:scale-98 transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer"
-                title={textLang === 'ja' ? '番号を残したまま次を回す' : 'Keep this number in the pool and draw again'}
-              >
-                <span>🟢</span>
-                <span className="truncate">{t('Keep & Draw Next', <>そのまま<ruby>次<rt className="text-[7px] font-normal text-white/80">つぎ</rt></ruby>へ</>)}</span>
-              </button>
-            </div>
-          )}
-
-          {/* Bottom Roster Status & Excluded Summary */}
-          <div className="h-5 flex items-center justify-between text-[10px] sm:text-[11px] font-bold text-slate-500 dark:text-slate-400 px-1 overflow-hidden">
-            <div className="flex items-center gap-1.5 min-w-0 truncate">
-              <span>{t('Pool:', <><ruby>候補<rt className="text-[7px] font-normal text-slate-400">こうほ</rt></ruby>:</>)}</span>
-              <span className="font-mono text-slate-900 dark:text-white font-black">
-                {activePool.length} / {fullRoster.length} {t('students', <><ruby>名<rt className="text-[7px] font-normal text-slate-400">めい</rt></ruby></>)}
-              </span>
-              {excludedNumbers.length > 0 && (
-                <span className="text-rose-500 font-bold truncate">
-                  ({excludedNumbers.length} {t('removed', <><ruby>名除外<rt className="text-[7px] font-normal text-rose-400">めいじょがい</rt></ruby></>)})
-                </span>
               )}
             </div>
 
-            {excludedNumbers.length > 0 && (
-              <button
-                onClick={handleResetPool}
-                disabled={isSpinning}
-                className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 flex items-center gap-1 font-bold text-[10px] transition-colors shrink-0 cursor-pointer"
-                title={textLang === 'ja' ? '全員を復活させる' : 'Restore all numbers back to the pool'}
-              >
-                <RotateCcw size={10} />
-                <span>{t('Reset', <><ruby>全員復活<rt className="text-[7px] font-normal text-slate-400">ぜんいんふっかつ</rt></ruby></>)}</span>
-              </button>
-            )}
+            {/* Master Action Button Cluster */}
+            <div className="space-y-1.5">
+              {!showResultBanner ? (
+                <button
+                  onClick={handleStartSpin}
+                  disabled={isSpinning || activePool.length === 0}
+                  className="w-full h-11 sm:h-12 rounded-xl sm:rounded-2xl font-black text-sm sm:text-base text-white bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 active:scale-98 transition-all shadow-lg flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                >
+                  <Play size={17} className={isSpinning ? 'animate-spin shrink-0' : 'shrink-0'} />
+                  <span className="truncate whitespace-nowrap">
+                    {isSpinning
+                      ? t('Drawing Number...', <><ruby>抽選中<rt>ちゅうせんちゅう</rt></ruby>...</>)
+                      : mode === 'STICKS'
+                      ? t('DRAW STICK! (Space)', <><ruby>棒<rt>ぼう</rt></ruby>を<ruby>引<rt>ひ</rt></ruby>く！[スペース]</>)
+                      : t('SPIN! (Draw Number)', <>スタート！(くじを<ruby>引<rt>ひ</rt></ruby>く)</>)}
+                  </span>
+                </button>
+              ) : (
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    onClick={handleRemoveAndSpinAgain}
+                    className="h-10 sm:h-11 px-3 rounded-xl font-black text-xs sm:text-sm text-white bg-rose-600 hover:bg-rose-500 active:scale-98 transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer"
+                    title={textLang === 'ja' ? 'この番号を除外してすぐに次を回す' : 'Exclude this number and draw the next person immediately'}
+                  >
+                    <span>🔴</span>
+                    <span className="truncate">
+                      {selectedNumber === '00'
+                        ? t('Remove & Next', <><ruby>先生除外<rt>せんせいじょがい</rt></ruby>で<ruby>次<rt>つぎ</rt></ruby>へ</>)
+                        : t(`Remove #${selectedNumber}`, <>{selectedNumber}<ruby>番除外<rt>ばんじょがい</rt></ruby>で<ruby>次<rt>つぎ</rt></ruby>へ</>)}
+                    </span>
+                  </button>
+
+                  <button
+                    onClick={handleKeepAndSpinAgain}
+                    className="h-10 sm:h-11 px-3 rounded-xl font-black text-xs sm:text-sm text-white bg-emerald-600 hover:bg-emerald-500 active:scale-98 transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer"
+                    title={textLang === 'ja' ? '番号を残したまま次を回す' : 'Keep this number in the pool and draw again'}
+                  >
+                    <span>🟢</span>
+                    <span className="truncate">{t('Keep & Draw Next', <>そのまま<ruby>次<rt>つぎ</rt></ruby>へ</>)}</span>
+                  </button>
+                </div>
+              )}
+
+              {/* Bottom Roster Status & Excluded Summary */}
+              <div className="h-5 flex items-center justify-between text-[10px] sm:text-[11px] font-bold text-slate-600 dark:text-slate-300 px-1 overflow-hidden">
+                <div className="flex items-center gap-1.5 min-w-0 truncate">
+                  <span>{t('Pool:', <><ruby>候補<rt>こうほ</rt></ruby>:</>)}</span>
+                  <span className="font-mono text-slate-900 dark:text-white font-black">
+                    {activePool.length} / {fullRoster.length} {t('students', <><ruby>名<rt>めい</rt></ruby></>)}
+                  </span>
+                  {excludedNumbers.length > 0 && (
+                    <span className="text-rose-500 font-bold truncate">
+                      ({excludedNumbers.length} {t('removed', <><ruby>名除外<rt>めいじょがい</rt></ruby></>)})
+                    </span>
+                  )}
+                </div>
+
+                {excludedNumbers.length > 0 && (
+                  <button
+                    onClick={handleResetPool}
+                    disabled={isSpinning}
+                    className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 flex items-center gap-1 font-bold text-[10px] transition-colors shrink-0 cursor-pointer whitespace-nowrap"
+                    title={textLang === 'ja' ? '全員を復活させる' : 'Restore all numbers back to the pool'}
+                  >
+                    <RotateCcw size={10} />
+                    <span>{t('Reset', <><ruby>全員復活<rt>ぜんいんふっかつ</rt></ruby></>)}</span>
+                  </button>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </div>

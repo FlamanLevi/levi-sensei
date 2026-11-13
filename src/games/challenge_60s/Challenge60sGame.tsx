@@ -174,15 +174,15 @@ export const Challenge60sGame: React.FC<Challenge60sGameProps> = () => {
   return (
     <div className="w-full flex-1 flex flex-col justify-between p-2 sm:p-4 select-none relative font-['UD_Digi_Kyokasho_NP-R','Zen_Maru_Gothic',sans-serif]">
       {/* 1. Header Bar */}
-      <div className="bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 rounded-2xl sm:rounded-3xl p-2.5 sm:p-3.5 shadow-md flex flex-wrap items-center justify-between gap-3 mb-2 shrink-0">
-        <div className="flex items-center gap-2">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-rose-500 to-amber-500 text-white flex items-center justify-center text-xl shadow-md">
+      <div className="bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 rounded-2xl sm:rounded-3xl p-2.5 sm:p-3.5 shadow-md flex flex-nowrap items-center justify-between gap-2.5 mb-2 shrink-0 overflow-x-auto no-scrollbar whitespace-nowrap">
+        <div className="flex items-center gap-2 shrink-0">
+          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-rose-500 to-amber-500 text-white flex items-center justify-center text-xl shadow-md shrink-0">
             ⚡
           </div>
-          <div>
-            <h2 className="text-base sm:text-xl font-black text-slate-900 dark:text-white flex items-center gap-2">
-              <span>{t('60-Second Class Sprint', <>60<ruby>秒<rt className="text-[7px]">びょう</rt></ruby>クラスチャレンジ</>)}</span>
-              <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300">
+          <div className="min-w-0">
+            <h2 className="text-base sm:text-xl font-black text-slate-900 dark:text-white flex items-center gap-2 whitespace-nowrap">
+              <span>{t('60-Second Class Sprint', <>60<ruby>秒<rt>びょう</rt></ruby>クラスチャレンジ</>)}</span>
+              <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300 shrink-0">
                 Stream 🅰️ TV
               </span>
             </h2>
@@ -190,7 +190,7 @@ export const Challenge60sGame: React.FC<Challenge60sGameProps> = () => {
         </div>
 
         {/* Center: Live Stopwatch LCD */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5 shrink-0">
           <div className={`px-4 py-1.5 rounded-2xl font-mono font-black text-xl sm:text-2xl shadow-inner border flex items-center gap-2 ${
             secondsLeft <= 10 && phase === 'RUNNING'
               ? 'bg-rose-600 text-white border-rose-400 animate-pulse'
@@ -201,12 +201,12 @@ export const Challenge60sGame: React.FC<Challenge60sGameProps> = () => {
           </div>
 
           <span className="text-xs font-black font-mono px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
-            {wordsCleared} {t('Cleared', <><ruby>語<rt className="text-[7px]">ご</rt></ruby><ruby>突破<rt className="text-[7px]">とっぱ</rt></ruby></>)}
+            {wordsCleared} {t('Cleared', <><ruby>語<rt>ご</rt></ruby><ruby>突破<rt>とっぱ</rt></ruby></>)}
           </span>
         </div>
 
         {/* Right Controls: Duration & Reset */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 shrink-0">
           {phase === 'READY' && (
             <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-1 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700">
               {[30, 45, 60, 90].map((sec) => (
@@ -227,7 +227,7 @@ export const Challenge60sGame: React.FC<Challenge60sGameProps> = () => {
           <button
             type="button"
             onClick={handleReset}
-            className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-600 dark:text-slate-300 transition cursor-pointer"
+            className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-600 dark:text-slate-300 transition cursor-pointer shrink-0"
             title="Reset"
           >
             <RotateCcw size={16} />
@@ -238,65 +238,94 @@ export const Challenge60sGame: React.FC<Challenge60sGameProps> = () => {
       {/* 2. Main Sprint Display */}
       <div className="flex-1 flex flex-col justify-between my-1 min-h-0">
         {phase === 'COMPLETED' ? (
-          /* Results Celebration Screen */
-          <div className="flex-1 bg-white dark:bg-slate-900 border-4 border-amber-400 dark:border-amber-500 rounded-3xl p-6 shadow-2xl flex flex-col items-center justify-center text-center animate-in zoom-in-95 duration-200 my-auto">
-            <span className="text-7xl mb-2 animate-bounce">🏆</span>
-            <span className="text-xs font-black uppercase tracking-widest text-amber-600 dark:text-amber-400">
-              TIME UP! • SPRINT COMPLETE
-            </span>
-            <h3 className="text-3xl sm:text-5xl font-black text-slate-900 dark:text-white my-1">
-              {wordsCleared} {t('Words Mastered!', <><ruby>単語<rt className="text-[9px]">たんご</rt></ruby>クリア！</>)}
-            </h3>
-            <p className="text-sm sm:text-base font-bold text-slate-600 dark:text-slate-300 mb-6">
-              {t('Outstanding team fluency and energetic chanting!', 'クラス全員で大きな声を出して記録を達成しました！')}
-            </p>
-
-            <div className="grid grid-cols-3 gap-3 w-full max-w-lg mb-6">
-              <div className="p-3 bg-slate-50 dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700">
-                <span className="text-[10px] font-bold text-slate-400 block">{t('MAX COMBO', '最大連鎖')}</span>
-                <span className="text-2xl font-black text-amber-500 font-mono">x{maxCombo}</span>
-              </div>
-              <div className="p-3 bg-slate-50 dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700">
-                <span className="text-[10px] font-bold text-slate-400 block">{t('VOICE BOOSTS', '大声ボーナス')}</span>
-                <span className="text-2xl font-black text-rose-500 font-mono">{loudBonuses}</span>
-              </div>
-              <div className="p-3 bg-slate-50 dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700">
-                <span className="text-[10px] font-bold text-slate-400 block">{t('TOTAL SCORE', '合計得点')}</span>
-                <span className="text-2xl font-black text-emerald-500 font-mono">{totalScore}</span>
-              </div>
+          /* Results Celebration Screen (2-Column Landscape) */
+          <div className="flex-1 bg-white dark:bg-slate-900 border-4 border-amber-400 dark:border-amber-500 rounded-3xl p-5 sm:p-8 shadow-2xl grid grid-cols-1 md:grid-cols-12 gap-6 items-center animate-in zoom-in-95 duration-200">
+            <div className="md:col-span-6 flex flex-col items-center md:items-start text-center md:text-left">
+              <span className="text-6xl sm:text-7xl mb-2 animate-bounce">🏆</span>
+              <span className="text-xs font-black uppercase tracking-widest text-amber-600 dark:text-amber-400">
+                TIME UP! • SPRINT COMPLETE
+              </span>
+              <h3 className="text-3xl sm:text-5xl font-black text-slate-900 dark:text-white my-1.5">
+                {wordsCleared} {t('Words Mastered!', <><ruby>単語<rt>たんご</rt></ruby>クリア！</>)}
+              </h3>
+              <p className="text-sm sm:text-base font-bold text-slate-600 dark:text-slate-300">
+                {t('Outstanding team fluency and energetic chanting!', 'クラス全員で大きな声を出して記録を達成しました！')}
+              </p>
             </div>
 
-            <button
-              type="button"
-              onClick={handleReset}
-              className="px-8 py-3.5 rounded-2xl bg-gradient-to-r from-rose-500 to-amber-500 text-white font-black text-base shadow-xl hover:scale-105 active:scale-95 transition cursor-pointer"
-            >
-              🔄 {t('Challenge Again! (Space)', <>もう<ruby>一度<rt className="text-[7px]">いちど</rt></ruby>チャレンジ！ [Space]</>)}
-            </button>
+            <div className="md:col-span-6 flex flex-col justify-center gap-4">
+              <div className="grid grid-cols-3 gap-3 w-full text-center">
+                <div className="p-3 sm:p-4 bg-slate-50 dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700">
+                  <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 block">{t('MAX COMBO', '最大連鎖')}</span>
+                  <span className="text-2xl sm:text-3xl font-black text-amber-500 font-mono">x{maxCombo}</span>
+                </div>
+                <div className="p-3 sm:p-4 bg-slate-50 dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700">
+                  <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 block">{t('VOICE BOOSTS', '大声ボーナス')}</span>
+                  <span className="text-2xl sm:text-3xl font-black text-rose-500 font-mono">{loudBonuses}</span>
+                </div>
+                <div className="p-3 sm:p-4 bg-slate-50 dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700">
+                  <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 block">{t('TOTAL SCORE', '合計得点')}</span>
+                  <span className="text-2xl sm:text-3xl font-black text-emerald-500 font-mono">{totalScore}</span>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleReset}
+                className="w-full px-8 py-4 rounded-2xl bg-gradient-to-r from-rose-500 to-amber-500 text-white font-black text-base shadow-xl hover:scale-[1.02] active:scale-95 transition cursor-pointer"
+              >
+                🔄 {t('Challenge Again! (Space)', <>もう<ruby>一度<rt>いちど</rt></ruby>チャレンジ！ [Space]</>)}
+              </button>
+            </div>
           </div>
         ) : phase === 'READY' ? (
-          /* Ready Screen */
-          <div className="flex-1 bg-white dark:bg-slate-900 border-4 border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-2xl flex flex-col items-center justify-center text-center my-auto">
-            <div className="w-24 h-24 rounded-3xl bg-gradient-to-tr from-rose-500 to-amber-500 text-white flex items-center justify-center text-5xl shadow-xl animate-pulse mb-3">
-              ⚡
+          /* Ready Screen (2-Column Landscape) */
+          <div className="flex-1 bg-white dark:bg-slate-900 border-4 border-slate-200 dark:border-slate-800 rounded-3xl p-5 sm:p-8 shadow-2xl grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+            <div className="md:col-span-7 flex flex-col items-center md:items-start text-center md:text-left">
+              <div className="w-20 h-20 rounded-3xl bg-gradient-to-tr from-rose-500 to-amber-500 text-white flex items-center justify-center text-4xl shadow-xl animate-pulse mb-3">
+                ⚡
+              </div>
+              <h3 className="text-2xl sm:text-4xl font-black text-slate-900 dark:text-white mb-2">
+                {t('Ready for the 60-Second Sprint?', <>60<ruby>秒<rt>びょう</rt></ruby>スプリントに<ruby>挑戦<rt>ちょうせん</rt></ruby>！</>)}
+              </h3>
+              <p className="text-sm sm:text-base font-bold text-slate-600 dark:text-slate-300 max-w-2xl leading-relaxed">
+                {t(
+                  'Cards flash rapidly. The entire class shouts the English word together! The teacher presses Spacebar to approve and advance!',
+                  <>カードが<ruby>次々<rt>つぎつぎ</rt></ruby>と<ruby>現<rt>あらわ</rt></ruby>れます！クラス<ruby>全員<rt>ぜんいん</rt></ruby>で<ruby>元気に<rt>げんきに</rt></ruby><ruby>英語<rt>えいご</rt></ruby>を<ruby>発音<rt>はつおん</rt></ruby>しよう！</>
+                )}
+              </p>
             </div>
-            <h3 className="text-2xl sm:text-4xl font-black text-slate-900 dark:text-white mb-2">
-              {t('Ready for the 60-Second Sprint?', <>60<ruby>秒<rt className="text-[8px]">びょう</rt></ruby>スプリントに<ruby>挑戦<rt className="text-[8px]">ちょうせん</rt></ruby>！</>)}
-            </h3>
-            <p className="text-xs sm:text-sm font-bold text-slate-500 dark:text-slate-400 max-w-md mb-6 leading-relaxed">
-              {t(
-                'Cards flash rapidly. The entire class shouts the English word together! The teacher presses Spacebar to approve and advance!',
-                <>カードが<ruby>次々<rt className="text-[7px]">つぎつぎ</rt></ruby>と<ruby>現<rt className="text-[7px]">あらわ</rt></ruby>れます！クラス<ruby>全員<rt className="text-[7px]">ぜんいん</rt></ruby>で<ruby>元気に<rt className="text-[7px]">げんきに</rt></ruby><ruby>英語<rt className="text-[7px]">えいご</rt></ruby>を<ruby>発音<rt className="text-[7px]">はつおん</rt></ruby>しよう！</>
-              )}
-            </p>
-            <button
-              type="button"
-              onClick={handleStartSprint}
-              className="px-10 py-4 rounded-2xl bg-gradient-to-r from-rose-500 via-orange-500 to-amber-500 hover:brightness-110 text-white font-black text-xl shadow-xl hover:scale-105 active:scale-95 transition flex items-center gap-3 cursor-pointer"
-            >
-              <Play size={24} fill="currentColor" />
-              <span>{t('START SPRINT! (Space)', <>スタート！ [Space]</>)}</span>
-            </button>
+
+            <div className="md:col-span-5 flex flex-col items-stretch gap-4 bg-slate-50 dark:bg-slate-800/70 rounded-2xl p-5 border border-slate-200 dark:border-slate-700">
+              <div className="flex items-center justify-between text-xs font-black text-slate-600 dark:text-slate-300">
+                <span>⏱️ {t('Sprint Duration', <>チャレンジ<ruby>時間<rt>じかん</rt></ruby></>)}</span>
+                <span className="font-mono text-rose-600 dark:text-rose-400">{durationSec}s</span>
+              </div>
+              <div className="grid grid-cols-4 gap-2">
+                {[30, 45, 60, 90].map((sec) => (
+                  <button
+                    key={sec}
+                    type="button"
+                    onClick={() => setDurationSec(sec as SprintDuration)}
+                    className={`py-2 rounded-xl text-xs font-black transition-all cursor-pointer border ${
+                      durationSec === sec
+                        ? 'bg-rose-600 text-white border-rose-500 shadow-sm'
+                        : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700'
+                    }`}
+                  >
+                    {sec}s
+                  </button>
+                ))}
+              </div>
+              <button
+                type="button"
+                onClick={handleStartSprint}
+                className="w-full px-8 py-4 rounded-2xl bg-gradient-to-r from-rose-500 via-orange-500 to-amber-500 hover:brightness-110 text-white font-black text-xl shadow-xl hover:scale-[1.02] active:scale-95 transition flex items-center justify-center gap-3 cursor-pointer"
+              >
+                <Play size={24} fill="currentColor" />
+                <span>{t('START SPRINT! (Space)', <>スタート！ [Space]</>)}</span>
+              </button>
+            </div>
           </div>
         ) : (
           /* Active Flashcard Stage */
@@ -339,7 +368,7 @@ export const Challenge60sGame: React.FC<Challenge60sGameProps> = () => {
             }`}
           >
             <CheckCircle2 size={18} />
-            <span>{t('NEXT CARD! [Space]', <>できた！<ruby>次<rt className="text-[7px]">つぎ</rt></ruby>へ [Space]</>)}</span>
+            <span>{t('NEXT CARD! [Space]', <>できた！<ruby>次<rt>つぎ</rt></ruby>へ [Space]</>)}</span>
           </button>
         </div>
       </div>

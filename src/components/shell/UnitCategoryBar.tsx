@@ -131,9 +131,9 @@ export const UnitCategoryBar: React.FC = () => {
             🧺
           </div>
           <div className="min-w-0">
-            <div className="flex items-center gap-1.5 leading-none mb-1">
-              <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">
-                {language === 'ja' ? <ruby>授業デッキ<rt className="text-[7px]">じゅぎょうでっき</rt></ruby> : 'Lesson Deck'}
+            <div className="flex items-center gap-1.5 leading-tight mb-0.5">
+              <span className="text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                {language === 'ja' ? <ruby>授業デッキ<rt>じゅぎょうでっき</rt></ruby> : 'Lesson Deck'}
               </span>
               <span className="text-[9px] font-bold px-1.5 py-0.2 rounded-full bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300">
                 {activeGrade}

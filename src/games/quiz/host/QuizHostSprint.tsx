@@ -268,7 +268,7 @@ export const QuizHostSprint: React.FC<QuizHostSprintProps> = ({
                 {isTimeTrial ? t('TIME TRIAL', 'タイムアタック') : t('SPRINT', 'スプリント')}
               </span>
             </h2>
-            <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded-full bg-slate-850 text-slate-300 border border-slate-700/80 whitespace-nowrap">
+            <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded-full bg-slate-800/90 text-slate-300 border border-slate-700/80 whitespace-nowrap">
               PIN: {roomCode}
             </span>
           </div>

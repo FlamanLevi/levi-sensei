@@ -84,21 +84,22 @@ All games reside in `src/games/<game_id>/` (NEVER in `src/components/games/`):
   ```css
   font-family: 'UD Digi Kyokasho NP-R', 'UD Digi Kyokasho NK-R', 'UD Digi Kyokasho N-R', 'BIZ UDPGothic', 'Zen Maru Gothic', sans-serif;
   ```
-- Kanji in core instructions, titles, and cards must include MEXT-approved furigana using `<ruby>漢字<rt className="text-[7px] sm:text-[9px]">よみがな</rt></ruby>` or furigana helper components.
+- Kanji in core instructions, titles, and cards must include MEXT-approved furigana using semantic `<ruby>漢字<rt>よみがな</rt></ruby>` or furigana helper components, relying on global `ruby`/`rt` styling in `src/index.css` (`0.58em`, projector-safe contrast) rather than `text-[7px] text-slate-400` overrides.
 - Compact auxiliary pills, micro-badges (`h-5`), numbers, and target English words do NOT require ruby, preventing baseline and vertical alignment distortions.
 
-#### 3c. Classroom Contrast & Touch Targets
-- Support both Light and Dark themes (`dark:bg-slate-900`, `dark:bg-slate-950`).
+#### 3c. Landscape Multi-Column Layouts, Contrast & Touch Targets
+- **Landscape-First Multi-Column Design**: Primary devices are landscape iPads in kickstand folios and 16:9 TVs/projectors. Avoid tall, centered single-column vertical stacks (`max-w-md flex-col`) for lobbies, setups, game-over screens, or multi-section modals—use 2- or 3-column horizontal layouts (`md:grid-cols-2`, `lg:grid-cols-3`, twin-wing panels, or sidebar + stage) sized to fit cleanly within `100dvh` with minimal scrolling, collapsing to 1 column only on narrow portrait viewports.
+- Support both Light and Dark themes (`dark:bg-slate-900`, `dark:bg-slate-950`—never invent invalid Tailwind classes like `slate-850`).
 - Touch targets on interactive elements must be at least `48px` (`h-12` or `h-13`) for comfortable tapping on classroom iPads.
 
 ---
 
 ### 4. Layout Architecture: CinemaStageLayout & Settings Modals
 
-For all Stream 🅰️ (Front TV) activities:
+For standard **Stream 🅰️ (Front TV)** presenter activities (while grid/board-driven activities like Memory/Concentration or Criss-Cross may use bespoke multi-column boards):
 
 #### 4a. Standard Screen Ratios (Landscape / TV)
-- **20%–33% Left Tower / Teacher Stand**: Aligns with the teacher's physical standing position on the left side of the blackboard/TV.
+- **20%–33% Left Tower / Teacher Stand (Landscape / TV)**: Aligns with the teacher's physical standing position on the left side of the blackboard/TV.
 - **66%–80% Main Cinema Stage**: Frameless, single-surface design with giant illustrations and adaptive typography readable from 8 meters away.
 - **Responsive Portrait / Mobile Fallback**: On narrow or portrait viewports (e.g. iPad in portrait), the left sidebar must collapse gracefully into a sleek header drawer or bottom bar.
 - Implementation pattern:

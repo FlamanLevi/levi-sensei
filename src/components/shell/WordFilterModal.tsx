@@ -224,7 +224,7 @@ export const WordFilterModal: React.FC = () => {
       onClick={closeWordFilterModal}
     >
       <div
-        className="bg-white dark:bg-slate-900 rounded-3xl p-4 sm:p-6 max-w-6xl w-full shadow-2xl border-2 border-slate-200 dark:border-slate-800 flex flex-col max-h-[94vh] text-slate-900 dark:text-slate-100 my-auto"
+        className="bg-white dark:bg-slate-900 rounded-3xl p-4 sm:p-6 max-w-6xl w-full shadow-2xl border-2 border-slate-200 dark:border-slate-800 flex flex-col max-h-[94dvh] text-slate-900 dark:text-slate-100 my-auto"
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
@@ -236,7 +236,7 @@ export const WordFilterModal: React.FC = () => {
                 <span>
                   {t(
                     'Lesson Deck Studio',
-                    <><ruby>授業<rt className="text-[7px]">じゅぎょう</rt></ruby>デッキ・<ruby>教材<rt className="text-[7px]">きょうざい</rt></ruby>スタジオ</>
+                    <><ruby>授業<rt>じゅぎょう</rt></ruby>デッキ・<ruby>教材<rt>きょうざい</rt></ruby>スタジオ</>
                   )}
                 </span>
               </h3>
@@ -260,7 +260,7 @@ export const WordFilterModal: React.FC = () => {
                 setLanguage(language === 'en' ? 'ja' : 'en');
               }}
               title={t('Toggle Language (EN / 日)', '言語切り替え（EN / 日）')}
-              className="h-8 px-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-black transition-all flex items-center justify-center cursor-pointer border border-slate-200/50 dark:border-slate-700"
+              className="h-8 px-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-black transition-all flex items-center justify-center cursor-pointer border border-slate-200/50 dark:border-slate-700 whitespace-nowrap"
             >
               {language === 'en' ? '文 EN' : '文 日'}
             </button>
@@ -294,41 +294,41 @@ export const WordFilterModal: React.FC = () => {
         </div>
 
         {/* Studio Body: Split View (Left: Units/Themes, Right: Word Cards Deck) */}
-        <div className="flex-1 min-h-0 flex flex-col lg:flex-row gap-4">
+        <div className="flex-1 min-h-0 flex flex-col md:flex-row gap-4">
           
           {/* LEFT COLUMN: Curriculum & Units Checklist */}
-          <div className="lg:w-80 xl:w-96 flex flex-col shrink-0 border-b lg:border-b-0 lg:border-r border-slate-200 dark:border-slate-800 pb-3 lg:pb-0 lg:pr-4">
+          <div className="md:w-72 lg:w-80 xl:w-96 flex flex-col shrink-0 border-b md:border-b-0 md:border-r border-slate-200 dark:border-slate-800 pb-3 md:pb-0 md:pr-4">
             
             {/* Mode Switch Tabs: Units vs Themes */}
-            <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-2xl border border-slate-200 dark:border-slate-700 mb-2.5 shrink-0 text-xs font-black">
+            <div className="grid grid-cols-2 bg-slate-100 dark:bg-slate-800 p-1 rounded-2xl border border-slate-200 dark:border-slate-700 mb-2.5 shrink-0 text-xs font-black">
               <button
                 type="button"
                 onClick={() => { playPop(); setStudioMode('UNIT'); }}
-                className={`flex-1 py-1.5 rounded-xl flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                className={`h-8 rounded-xl flex items-center justify-center gap-1.5 transition-all cursor-pointer whitespace-nowrap px-2 ${
                   studioMode === 'UNIT'
                     ? 'bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-sm'
                     : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
-                <BookOpen size={14} />
-                <span>{language === 'ja' ? <ruby>教科書単元<rt className="text-[7px]">きょうかしょたんげん</rt></ruby> : 'Textbook Units'}</span>
+                <BookOpen size={14} className="shrink-0" />
+                <span className="truncate">{language === 'ja' ? <ruby>教科書単元<rt>きょうかしょたんげん</rt></ruby> : 'Textbook Units'}</span>
               </button>
               <button
                 type="button"
                 onClick={() => { playPop(); setStudioMode('THEME'); }}
-                className={`flex-1 py-1.5 rounded-xl flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                className={`h-8 rounded-xl flex items-center justify-center gap-1.5 transition-all cursor-pointer whitespace-nowrap px-2 ${
                   studioMode === 'THEME'
                     ? 'bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-sm'
                     : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
-                <LayoutGrid size={14} />
-                <span>{language === 'ja' ? <ruby>テーマ・分野<rt className="text-[7px]">てーま・ぶんや</rt></ruby> : 'Thematic Topics'}</span>
+                <LayoutGrid size={14} className="shrink-0" />
+                <span className="truncate">{language === 'ja' ? <ruby>テーマ・分野<rt>てーま・ぶんや</rt></ruby> : 'Thematic Topics'}</span>
               </button>
             </div>
 
             {/* Scrollable Unit / Theme List */}
-            <div className="flex-1 overflow-y-auto pr-1 space-y-1.5 max-h-52 lg:max-h-none">
+            <div className="flex-1 overflow-y-auto pr-1 space-y-1.5 max-h-48 md:max-h-none">
               {studioMode === 'UNIT' ? (
                 <>
                   {/* Option: All Units */}
@@ -482,10 +482,10 @@ export const WordFilterModal: React.FC = () => {
           <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
             
             {/* Search & Bulk Curation Bar */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 mb-3 shrink-0 bg-slate-50 dark:bg-slate-850 p-2.5 rounded-2xl border border-slate-200/70 dark:border-slate-800">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 mb-3 shrink-0 bg-slate-50 dark:bg-slate-800/70 p-2 rounded-2xl border border-slate-200/70 dark:border-slate-800">
               
               {/* Search input */}
-              <div className="relative flex-1 min-w-0">
+              <div className="relative w-full sm:w-44 lg:w-52 shrink-0">
                 <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400" />
                 <input
                   type="text"
@@ -497,33 +497,33 @@ export const WordFilterModal: React.FC = () => {
               </div>
 
               {/* Quick Preset Buttons */}
-              <div className="flex items-center gap-1.5 shrink-0 flex-wrap">
+              <div className="flex items-center gap-1.5 flex-1 min-w-0 flex-nowrap overflow-x-auto no-scrollbar">
                 <button
                   type="button"
                   onClick={() => { playPop(); includeAllWords(); }}
-                  className="h-8 px-2.5 rounded-xl bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all border border-slate-200 dark:border-slate-700 flex items-center gap-1 cursor-pointer"
+                  className="h-8 px-2.5 rounded-xl bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all border border-slate-200 dark:border-slate-700 flex items-center gap-1 cursor-pointer shrink-0 whitespace-nowrap"
                 >
-                  <CheckCheck size={14} className="text-emerald-500" />
-                  <span>{t('Select All', <><ruby>全選択<rt className="text-[7px]">ぜんせんたく</rt></ruby></>)}</span>
+                  <CheckCheck size={14} className="text-emerald-500 shrink-0" />
+                  <span>{t('Select All', <><ruby>全選択<rt>ぜんせんたく</rt></ruby></>)}</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => { playPop(); excludeAllWords(); }}
-                  className="h-8 px-2.5 rounded-xl bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all border border-slate-200 dark:border-slate-700 flex items-center gap-1 cursor-pointer"
+                  className="h-8 px-2.5 rounded-xl bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all border border-slate-200 dark:border-slate-700 flex items-center gap-1 cursor-pointer shrink-0 whitespace-nowrap"
                 >
-                  <FilterX size={14} className="text-slate-400" />
-                  <span>{t('Clear All', <><ruby>全解除<rt className="text-[7px]">ぜんかいじょ</rt></ruby></>)}</span>
+                  <FilterX size={14} className="text-slate-400 shrink-0" />
+                  <span>{t('Clear All', <><ruby>全解除<rt>ぜんかいじょ</rt></ruby></>)}</span>
                 </button>
 
                 {totalCandidates >= 5 && (
                   <button
                     type="button"
                     onClick={() => { playPop(); selectRandomWords(5); }}
-                    className="h-8 px-2.5 rounded-xl bg-teal-50 dark:bg-teal-950/60 hover:bg-teal-100 dark:hover:bg-teal-900/60 text-teal-700 dark:text-teal-300 text-xs font-black transition-all border border-teal-200 dark:border-teal-800 flex items-center gap-1 cursor-pointer"
+                    className="h-8 px-2.5 rounded-xl bg-teal-50 dark:bg-teal-950/60 hover:bg-teal-100 dark:hover:bg-teal-900/60 text-teal-700 dark:text-teal-300 text-xs font-black transition-all border border-teal-200 dark:border-teal-800 flex items-center gap-1 cursor-pointer shrink-0 whitespace-nowrap"
                     title={t("Random 5 cards (ideal for quick sprint quiz)", "5問クイズ用のランダム5語")}
                   >
-                    <Sparkles size={12} />
+                    <Sparkles size={12} className="shrink-0" />
                     <span>{t("Random 5", "5問")}</span>
                   </button>
                 )}
@@ -532,10 +532,10 @@ export const WordFilterModal: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => { playPop(); selectRandomWords(10); }}
-                    className="h-8 px-2.5 rounded-xl bg-blue-50 dark:bg-blue-950/60 hover:bg-blue-100 dark:hover:bg-blue-900/60 text-blue-700 dark:text-blue-300 text-xs font-black transition-all border border-blue-200 dark:border-blue-800 flex items-center gap-1 cursor-pointer"
+                    className="h-8 px-2.5 rounded-xl bg-blue-50 dark:bg-blue-950/60 hover:bg-blue-100 dark:hover:bg-blue-900/60 text-blue-700 dark:text-blue-300 text-xs font-black transition-all border border-blue-200 dark:border-blue-800 flex items-center gap-1 cursor-pointer shrink-0 whitespace-nowrap"
                     title={t("Random 10 cards (ideal for quick Kahoot or Sprint quiz)", "10問クイズ用のランダム10語")}
                   >
-                    <Sparkles size={12} />
+                    <Sparkles size={12} className="shrink-0" />
                     <span>{t("Random 10", "10問")}</span>
                   </button>
                 )}
@@ -544,10 +544,10 @@ export const WordFilterModal: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => { playPop(); selectRandomWords(15); }}
-                    className="h-8 px-2.5 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 text-xs font-black transition-all border border-indigo-200 dark:border-indigo-800 flex items-center gap-1 cursor-pointer"
+                    className="h-8 px-2.5 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 text-xs font-black transition-all border border-indigo-200 dark:border-indigo-800 flex items-center gap-1 cursor-pointer shrink-0 whitespace-nowrap"
                     title={t("Random 15 cards", "15問プリセット")}
                   >
-                    <Sparkles size={12} />
+                    <Sparkles size={12} className="shrink-0" />
                     <span>{t("Random 15", "15問")}</span>
                   </button>
                 )}
@@ -558,21 +558,21 @@ export const WordFilterModal: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => { playPop(); selectUppercaseOnly(); }}
-                      className="h-8 px-2.5 rounded-xl bg-orange-50 dark:bg-orange-950/60 hover:bg-orange-100 dark:hover:bg-orange-900/60 text-orange-700 dark:text-orange-300 text-xs font-black transition-all border border-orange-200 dark:border-orange-800 flex items-center gap-1.5 cursor-pointer shrink-0"
+                      className="h-8 px-2.5 rounded-xl bg-orange-50 dark:bg-orange-950/60 hover:bg-orange-100 dark:hover:bg-orange-900/60 text-orange-700 dark:text-orange-300 text-xs font-black transition-all border border-orange-200 dark:border-orange-800 flex items-center gap-1.5 cursor-pointer shrink-0 whitespace-nowrap"
                       title={t("Select only uppercase letters A-Z", "大文字 (A-Z) のみを選択")}
                     >
                       <span className="font-mono font-black text-xs">A-Z</span>
-                      <span>{t("Uppercase", <><ruby>大文字<rt className="text-[7px]">おおもじ</rt></ruby></>)}</span>
+                      <span>{t("Uppercase", <><ruby>大文字<rt>おおもじ</rt></ruby></>)}</span>
                     </button>
 
                     <button
                       type="button"
                       onClick={() => { playPop(); selectLowercaseOnly(); }}
-                      className="h-8 px-2.5 rounded-xl bg-sky-50 dark:bg-sky-950/60 hover:bg-sky-100 dark:hover:bg-sky-900/60 text-sky-700 dark:text-sky-300 text-xs font-black transition-all border border-sky-200 dark:border-sky-800 flex items-center gap-1.5 cursor-pointer shrink-0"
+                      className="h-8 px-2.5 rounded-xl bg-sky-50 dark:bg-sky-950/60 hover:bg-sky-100 dark:hover:bg-sky-900/60 text-sky-700 dark:text-sky-300 text-xs font-black transition-all border border-sky-200 dark:border-sky-800 flex items-center gap-1.5 cursor-pointer shrink-0 whitespace-nowrap"
                       title={t("Select only lowercase letters a-z", "小文字 (a-z) のみを選択")}
                     >
                       <span className="font-mono font-black text-xs">a-z</span>
-                      <span>{t("Lowercase", <><ruby>小文字<rt className="text-[7px]">こもじ</rt></ruby></>)}</span>
+                      <span>{t("Lowercase", <><ruby>小文字<rt>こもじ</rt></ruby></>)}</span>
                     </button>
                   </>
                 )}
@@ -585,7 +585,7 @@ export const WordFilterModal: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => { playPop(); selectLetterRange('a', 'm'); }}
-                      className="h-8 px-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/60 hover:bg-amber-100 dark:hover:bg-amber-900/60 text-amber-700 dark:text-amber-300 text-xs font-black transition-all border border-amber-200 dark:border-amber-800 flex items-center gap-1 cursor-pointer shrink-0"
+                      className="h-8 px-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/60 hover:bg-amber-100 dark:hover:bg-amber-900/60 text-amber-700 dark:text-amber-300 text-xs font-black transition-all border border-amber-200 dark:border-amber-800 flex items-center gap-1 cursor-pointer shrink-0 whitespace-nowrap"
                       title={t("Textbook Page 24: First Half (13 letters)", "教科書24ページ：前半 (13文字)")}
                     >
                       <BookOpen size={12} />
@@ -596,7 +596,7 @@ export const WordFilterModal: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => { playPop(); selectLetterRange('n', 'z'); }}
-                      className="h-8 px-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/60 hover:bg-amber-100 dark:hover:bg-amber-900/60 text-amber-700 dark:text-amber-300 text-xs font-black transition-all border border-amber-200 dark:border-amber-800 flex items-center gap-1 cursor-pointer shrink-0"
+                      className="h-8 px-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/60 hover:bg-amber-100 dark:hover:bg-amber-900/60 text-amber-700 dark:text-amber-300 text-xs font-black transition-all border border-amber-200 dark:border-amber-800 flex items-center gap-1 cursor-pointer shrink-0 whitespace-nowrap"
                       title={t("Textbook Page 25: Second Half (13 letters)", "教科書25ページ：後半 (13文字)")}
                     >
                       <BookOpen size={12} />
@@ -615,7 +615,7 @@ export const WordFilterModal: React.FC = () => {
                           key={chunk}
                           type="button"
                           onClick={() => { playPop(); selectLetterRange(start, end); }}
-                          className="h-8 px-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 text-xs font-black transition-all border border-emerald-200 dark:border-emerald-800 flex items-center gap-1 cursor-pointer shrink-0"
+                          className="h-8 px-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 text-xs font-black transition-all border border-emerald-200 dark:border-emerald-800 flex items-center gap-1 cursor-pointer shrink-0 whitespace-nowrap"
                           title={t(`Select letters ${chunk}`, `${chunk} の文字を選択`)}
                         >
                           <span className="font-mono font-black text-[11px]">{label}</span>
@@ -631,21 +631,21 @@ export const WordFilterModal: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => { playPop(); selectSingularWordsOnly(); }}
-                      className="h-8 px-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/60 hover:bg-amber-100 dark:hover:bg-amber-900/60 text-amber-700 dark:text-amber-300 text-xs font-black transition-all border border-amber-200 dark:border-amber-800 flex items-center gap-1.5 cursor-pointer shrink-0"
+                      className="h-8 px-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/60 hover:bg-amber-100 dark:hover:bg-amber-900/60 text-amber-700 dark:text-amber-300 text-xs font-black transition-all border border-amber-200 dark:border-amber-800 flex items-center gap-1.5 cursor-pointer shrink-0 whitespace-nowrap"
                       title={t("Select only singular items", "単数形のカードのみを選択")}
                     >
                       <span className="w-3.5 h-3.5 rounded-full bg-amber-200 dark:bg-amber-800 text-[10px] flex items-center justify-center font-bold">1</span>
-                      <span>{t("Singular", <><ruby>単数<rt className="text-[7px]">たんすう</rt></ruby></>)}</span>
+                      <span>{t("Singular", <><ruby>単数<rt>たんすう</rt></ruby></>)}</span>
                     </button>
 
                     <button
                       type="button"
                       onClick={() => { playPop(); selectPluralWordsOnly(); }}
-                      className="h-8 px-2.5 rounded-xl bg-purple-50 dark:bg-purple-950/60 hover:bg-purple-100 dark:hover:bg-purple-900/60 text-purple-700 dark:text-purple-300 text-xs font-black transition-all border border-purple-200 dark:border-purple-800 flex items-center gap-1.5 cursor-pointer shrink-0"
+                      className="h-8 px-2.5 rounded-xl bg-purple-50 dark:bg-purple-950/60 hover:bg-purple-100 dark:hover:bg-purple-900/60 text-purple-700 dark:text-purple-300 text-xs font-black transition-all border border-purple-200 dark:border-purple-800 flex items-center gap-1.5 cursor-pointer shrink-0 whitespace-nowrap"
                       title={t("Select only plural items", "複数形のカードのみを選択")}
                     >
                       <span className="w-3.5 h-3.5 rounded-full bg-purple-200 dark:bg-purple-800 text-[10px] flex items-center justify-center font-bold">2+</span>
-                      <span>{t("Plural", <><ruby>複数<rt className="text-[7px]">ふくすう</rt></ruby></>)}</span>
+                      <span>{t("Plural", <><ruby>複数<rt>ふくすう</rt></ruby></>)}</span>
                     </button>
                   </>
                 )}

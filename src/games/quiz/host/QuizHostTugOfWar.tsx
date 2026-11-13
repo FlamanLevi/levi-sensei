@@ -303,13 +303,13 @@ export const QuizHostTugOfWar: React.FC<QuizHostTugOfWarProps> = ({
   const ribbonPositionPercent = 50 + (displacement * 0.42);
 
   return (
-    <div className="relative w-full h-screen max-h-screen overflow-hidden bg-slate-950 text-white flex flex-col select-none">
+    <div className="relative w-full h-dvh max-h-dvh overflow-hidden bg-slate-950 text-white flex flex-col select-none">
       {/* 1. Header Bar: Full Controls Cluster with Integrated Eyes Up & Audio */}
-      <div className="h-16 sm:h-18 bg-slate-950/90 backdrop-blur border-b border-slate-800 px-4 sm:px-6 flex items-center justify-between shrink-0 z-40">
+      <div className="h-16 sm:h-18 bg-slate-950/90 backdrop-blur border-b border-slate-800 px-4 sm:px-6 flex items-center justify-between gap-2 shrink-0 z-40 flex-nowrap">
         {/* Left: Timer, Bots & Attention Lock */}
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0 overflow-x-auto no-scrollbar flex-nowrap">
           {/* Main Countdown Timer */}
-          <div className="flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-2xl bg-slate-900 border border-slate-700 shadow-inner">
+          <div className="flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-2xl bg-slate-900 border border-slate-700 shadow-inner shrink-0 whitespace-nowrap">
             <Clock className={`w-5 h-5 ${timeRemainingSeconds <= 10 ? 'text-rose-500 animate-pulse' : 'text-amber-400'}`} />
             <span className={`text-xl sm:text-2xl font-black tabular-nums tracking-wider ${timeRemainingSeconds <= 10 ? 'text-rose-400' : 'text-slate-100'}`}>
               {Math.floor(timeRemainingSeconds / 60)}:{(timeRemainingSeconds % 60).toString().padStart(2, '0')}
@@ -320,7 +320,7 @@ export const QuizHostTugOfWar: React.FC<QuizHostTugOfWarProps> = ({
           {onAddBots && !matchEnded && (
             <button
               onClick={() => onAddBots(4)}
-              className="px-2.5 py-1.5 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition active:scale-95 cursor-pointer"
+              className="px-2.5 py-1.5 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition active:scale-95 cursor-pointer shrink-0 whitespace-nowrap"
               title={t('Add 4 Practice Bots', 'テスト用ボット4名追加')}
             >
               +4 {t('Bots', 'ボット')}
@@ -332,7 +332,7 @@ export const QuizHostTugOfWar: React.FC<QuizHostTugOfWarProps> = ({
             <button
               type="button"
               onClick={onToggleEyesUp}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-black border transition-all active:scale-95 cursor-pointer ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-black border transition-all active:scale-95 cursor-pointer shrink-0 whitespace-nowrap ${
                 eyesUp
                   ? 'bg-amber-400 text-slate-950 border-amber-300 ring-2 ring-amber-400/50 animate-pulse'
                   : 'bg-slate-800/80 hover:bg-slate-700 text-amber-300 border-amber-500/30'
@@ -346,12 +346,12 @@ export const QuizHostTugOfWar: React.FC<QuizHostTugOfWarProps> = ({
         </div>
 
         {/* Center: Sports Day Headband Banner with Multi-Round Win Dots */}
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0 flex-nowrap">
           {/* Red Team Badge & Series Wins */}
-          <div className="flex items-center gap-1.5 sm:gap-2 px-3 py-1 rounded-2xl bg-rose-950/50 border border-rose-800/80">
+          <div className="flex items-center gap-1.5 sm:gap-2 px-3 py-1 rounded-2xl bg-rose-950/50 border border-rose-800/80 shrink-0 whitespace-nowrap">
             <span className="w-3.5 h-3.5 rounded-full bg-rose-500 shadow-lg shadow-rose-500/50" />
             <span className="text-base sm:text-lg font-black text-rose-400 tracking-wide">
-              <ruby>赤組<rt className="text-[8px]">あかぐみ</rt></ruby>
+              <ruby>赤組<rt>あかぐみ</rt></ruby>
             </span>
             {targetWins > 1 && (
               <div className="flex items-center gap-1 ml-1" title={`${currentRedWins} / ${targetWins} 勝`}>
@@ -370,7 +370,7 @@ export const QuizHostTugOfWar: React.FC<QuizHostTugOfWarProps> = ({
           </div>
 
           {/* Center Round / VS Pill */}
-          <div className="flex flex-col items-center">
+          <div className="flex flex-col items-center shrink-0 whitespace-nowrap">
             {targetWins > 1 ? (
               <div className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-slate-900 border border-amber-500/30 text-[11px] font-black text-amber-400">
                 {isMatchPoint && <span className="animate-pulse">🔥</span>}
@@ -384,7 +384,7 @@ export const QuizHostTugOfWar: React.FC<QuizHostTugOfWarProps> = ({
           </div>
 
           {/* White Team Badge & Series Wins */}
-          <div className="flex items-center gap-1.5 sm:gap-2 px-3 py-1 rounded-2xl bg-slate-900 border border-slate-700">
+          <div className="flex items-center gap-1.5 sm:gap-2 px-3 py-1 rounded-2xl bg-slate-900 border border-slate-700 shrink-0 whitespace-nowrap">
             {targetWins > 1 && (
               <div className="flex items-center gap-1 mr-1" title={`${currentWhiteWins} / ${targetWins} 勝`}>
                 {Array.from({ length: targetWins }).map((_, i) => (
@@ -400,17 +400,17 @@ export const QuizHostTugOfWar: React.FC<QuizHostTugOfWarProps> = ({
               </div>
             )}
             <span className="text-base sm:text-lg font-black text-slate-100 tracking-wide">
-              <ruby>白組<rt className="text-[8px]">しろぐみ</rt></ruby>
+              <ruby>白組<rt>しろぐみ</rt></ruby>
             </span>
             <span className="w-3.5 h-3.5 rounded-full bg-white shadow-lg shadow-white/50" />
           </div>
         </div>
 
         {/* Right: BGM Mute, Referee Whistle & Exit */}
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0 flex-nowrap">
           {/* Integrated BGM Control */}
           {onToggleBgmMute && (
-            <div className="flex items-center gap-1.5 bg-slate-900 border border-slate-800 px-2.5 py-1.5 rounded-xl">
+            <div className="flex items-center gap-1.5 bg-slate-900 border border-slate-800 px-2.5 py-1.5 rounded-xl shrink-0">
               <Music size={14} className={`text-indigo-400 ${!isBgmMuted ? 'animate-bounce' : ''}`} />
               <button
                 type="button"
@@ -430,7 +430,7 @@ export const QuizHostTugOfWar: React.FC<QuizHostTugOfWarProps> = ({
                 handleFreezeAndEnd(win, 'TIME');
                 soundEffects.playWhistle(1.0);
               }}
-              className="px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-black bg-rose-600 hover:bg-rose-500 text-white shadow-lg transition active:scale-95 cursor-pointer"
+              className="px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-black bg-rose-600 hover:bg-rose-500 text-white shadow-lg transition active:scale-95 cursor-pointer whitespace-nowrap"
             >
               {t('Whistle (Finish)', '笛を吹く (終了)')}
             </button>
@@ -443,7 +443,7 @@ export const QuizHostTugOfWar: React.FC<QuizHostTugOfWarProps> = ({
                   handleStartNextRound();
                 }
               }}
-              className="px-4 py-2 sm:px-5 sm:py-2 rounded-xl text-xs sm:text-sm font-black bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-slate-950 shadow-xl shadow-amber-500/30 transition animate-bounce cursor-pointer"
+              className="px-4 py-2 sm:px-5 sm:py-2 rounded-xl text-xs sm:text-sm font-black bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-slate-950 shadow-xl shadow-amber-500/30 transition animate-bounce cursor-pointer whitespace-nowrap"
             >
               {isMatchDecided ? t('Results & Awards →', '表彰・結果発表 →') : t(`Next Round (R${currentRound + 1}) →`, `第${currentRound + 1}回戦へ →`)}
             </button>
@@ -452,7 +452,7 @@ export const QuizHostTugOfWar: React.FC<QuizHostTugOfWarProps> = ({
           {onExit && (
             <button
               onClick={onExit}
-              className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition cursor-pointer"
+              className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition cursor-pointer shrink-0"
               title={t('Exit', '終了')}
             >
               ✕
@@ -512,7 +512,7 @@ export const QuizHostTugOfWar: React.FC<QuizHostTugOfWarProps> = ({
                 <div>
                   <div className="text-xs sm:text-sm font-black text-rose-400 flex items-center gap-1">
                     <span>🔴</span>
-                    <ruby>赤組<rt className="text-[7px]">あかぐみ</rt></ruby> PULLS
+                    <ruby>赤組<rt>あかぐみ</rt></ruby> PULLS
                   </div>
                   <div className="text-[10px] sm:text-[11px] text-slate-400 font-bold flex items-center gap-2">
                     <span>⚡ {redPullRate} p/m</span>
@@ -533,11 +533,11 @@ export const QuizHostTugOfWar: React.FC<QuizHostTugOfWarProps> = ({
                 <div className="text-[10px] sm:text-xs font-black text-amber-300 flex items-center gap-1.5 mb-1">
                   {displacement < -8 ? (
                     <span className="text-rose-400 animate-pulse">
-                      🔴 <ruby>赤組<rt className="text-[7px]">あかぐみ</rt></ruby> リード中！ (+{leadPulls}回) あと{remainingToRedWin}回で一本勝ち
+                      🔴 <ruby>赤組<rt>あかぐみ</rt></ruby> リード中！ (+{leadPulls}回) あと{remainingToRedWin}回で一本勝ち
                     </span>
                   ) : displacement > 8 ? (
                     <span className="text-slate-100 animate-pulse">
-                      ⚪ <ruby>白組<rt className="text-[7px]">しろぐみ</rt></ruby> リード中！ (+{leadPulls}回) あと{remainingToWhiteWin}回で一本勝ち
+                      ⚪ <ruby>白組<rt>しろぐみ</rt></ruby> リード中！ (+{leadPulls}回) あと{remainingToWhiteWin}回で一本勝ち
                     </span>
                   ) : (
                     <span>⚖️ 互角！ DEAD CENTER (50/50)</span>
@@ -585,7 +585,7 @@ export const QuizHostTugOfWar: React.FC<QuizHostTugOfWarProps> = ({
               <div className="flex items-center gap-2 sm:gap-3 shrink-0 text-right">
                 <div>
                   <div className="text-xs sm:text-sm font-black text-slate-200 flex items-center justify-end gap-1">
-                    <ruby>白組<rt className="text-[7px]">しろぐみ</rt></ruby> PULLS
+                    <ruby>白組<rt>しろぐみ</rt></ruby> PULLS
                     <span>⚪</span>
                   </div>
                   <div className="text-[10px] sm:text-[11px] text-slate-400 font-bold flex items-center justify-end gap-2">
@@ -622,125 +622,130 @@ export const QuizHostTugOfWar: React.FC<QuizHostTugOfWarProps> = ({
         </div>
       </div>
 
-      {/* 6. Victory / Round Result Modal Overlay */}
+      {/* 6. Victory / Round Result Modal Overlay (2-Column Landscape Wing Card) */}
       {matchEnded && (
-        <div className="absolute inset-0 bg-slate-950/85 backdrop-blur-md z-50 flex flex-col items-center justify-center p-6 animate-in fade-in zoom-in-95 duration-200">
-          <div className="w-full max-w-xl bg-slate-900 border-4 border-amber-400 rounded-3xl p-6 sm:p-8 shadow-2xl text-center flex flex-col items-center">
-            {/* Top Victory Trophy or Round Flag */}
-            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-amber-400 text-slate-950 flex items-center justify-center text-3xl sm:text-4xl shadow-xl shadow-amber-400/30 mb-3 animate-bounce">
-              {isMatchDecided ? '🏆' : '🚩'}
+        <div className="absolute inset-0 bg-slate-950/85 backdrop-blur-md z-50 flex flex-col items-center justify-center p-4 sm:p-6 animate-in fade-in zoom-in-95 duration-200">
+          <div className="w-full max-w-3xl bg-slate-900 border-4 border-amber-400 rounded-3xl p-5 sm:p-7 shadow-2xl grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 items-center max-h-[90dvh] overflow-y-auto">
+            {/* Left Column: Trophy Emblem, Round Badge & Winner Banner */}
+            <div className="flex flex-col items-center text-center">
+              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-amber-400 text-slate-950 flex items-center justify-center text-3xl sm:text-4xl shadow-xl shadow-amber-400/30 mb-3 animate-bounce">
+                {isMatchDecided ? '🏆' : '🚩'}
+              </div>
+
+              <span className="text-xs sm:text-sm font-black px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 uppercase tracking-widest mb-2">
+                {isMatchDecided
+                  ? (winReason === 'IPPON' ? t('Clean Sweep Victory! (一本勝ち)', '一本勝ち！完全優勝！') : t('Match Decided! (優勝決定)', '試合終了！優勝決定！'))
+                  : (winReason === 'IPPON' ? t(`Round ${currentRound} Swept! (一本勝ち)`, `第${currentRound}回戦 一本勝ち！`) : t(`Round ${currentRound} Complete!`, `第${currentRound}回戦 終了！`))}
+              </span>
+
+              {/* Winner Announcement Banner */}
+              {roundWinner === 'team_red' && (
+                <div className="my-2">
+                  <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-rose-500 tracking-tight">
+                    <ruby>赤組<rt>あかぐみ</rt></ruby>の{isMatchDecided && matchFormat !== 'SINGLE' ? '完全優勝' : '勝利'}！
+                  </h2>
+                  <p className="text-sm sm:text-base font-bold text-rose-300 mt-1">
+                    🔴 {isMatchDecided && matchFormat !== 'SINGLE' ? 'RED TEAM WINS THE MATCH!' : `RED TEAM TAKES ROUND ${currentRound}!`}
+                  </p>
+                </div>
+              )}
+
+              {roundWinner === 'team_white' && (
+                <div className="my-2">
+                  <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-100 tracking-tight">
+                    <ruby>白組<rt>しろぐみ</rt></ruby>の{isMatchDecided && matchFormat !== 'SINGLE' ? '完全優勝' : '勝利'}！
+                  </h2>
+                  <p className="text-sm sm:text-base font-bold text-slate-300 mt-1">
+                    ⚪ {isMatchDecided && matchFormat !== 'SINGLE' ? 'WHITE TEAM WINS THE MATCH!' : `WHITE TEAM TAKES ROUND ${currentRound}!`}
+                  </p>
+                </div>
+              )}
+
+              {roundWinner === 'draw' && (
+                <div className="my-2">
+                  <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-amber-400 tracking-tight">
+                    <ruby>引き分け<rt>ひきわけ</rt></ruby>！
+                  </h2>
+                  <p className="text-sm sm:text-base font-bold text-amber-200 mt-1">
+                    ⚖️ {isMatchDecided ? "IT'S A TIE!" : `ROUND ${currentRound} IS A DRAW!`}
+                  </p>
+                </div>
+              )}
             </div>
 
-            <span className="text-xs sm:text-sm font-black px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 uppercase tracking-widest mb-2">
-              {isMatchDecided
-                ? (winReason === 'IPPON' ? t('Clean Sweep Victory! (一本勝ち)', '一本勝ち！完全優勝！') : t('Match Decided! (優勝決定)', '試合終了！優勝決定！'))
-                : (winReason === 'IPPON' ? t(`Round ${currentRound} Swept! (一本勝ち)`, `第${currentRound}回戦 一本勝ち！`) : t(`Round ${currentRound} Complete!`, `第${currentRound}回戦 終了！`))}
-            </span>
-
-            {/* Winner Announcement Banner */}
-            {roundWinner === 'team_red' && (
-              <div className="my-2">
-                <h2 className="text-3xl sm:text-5xl font-black text-rose-500 tracking-tight">
-                  <ruby>赤組<rt className="text-sm">あかぐみ</rt></ruby>の{isMatchDecided && matchFormat !== 'SINGLE' ? '完全優勝' : '勝利'}！
-                </h2>
-                <p className="text-sm sm:text-base font-bold text-rose-300 mt-1">
-                  🔴 {isMatchDecided && matchFormat !== 'SINGLE' ? 'RED TEAM WINS THE MATCH!' : `RED TEAM TAKES ROUND ${currentRound}!`}
-                </p>
-              </div>
-            )}
-
-            {roundWinner === 'team_white' && (
-              <div className="my-2">
-                <h2 className="text-3xl sm:text-5xl font-black text-slate-100 tracking-tight">
-                  <ruby>白組<rt className="text-sm">しろぐみ</rt></ruby>の{isMatchDecided && matchFormat !== 'SINGLE' ? '完全優勝' : '勝利'}！
-                </h2>
-                <p className="text-sm sm:text-base font-bold text-slate-300 mt-1">
-                  ⚪ {isMatchDecided && matchFormat !== 'SINGLE' ? 'WHITE TEAM WINS THE MATCH!' : `WHITE TEAM TAKES ROUND ${currentRound}!`}
-                </p>
-              </div>
-            )}
-
-            {roundWinner === 'draw' && (
-              <div className="my-2">
-                <h2 className="text-3xl sm:text-5xl font-black text-amber-400 tracking-tight">
-                  <ruby>引き分け<rt className="text-sm">ひきわけ</rt></ruby>！
-                </h2>
-                <p className="text-sm sm:text-base font-bold text-amber-200 mt-1">
-                  ⚖️ {isMatchDecided ? "IT'S A TIE!" : `ROUND ${currentRound} IS A DRAW!`}
-                </p>
-              </div>
-            )}
-
-            {/* Series Score Standings for Best-of format */}
-            {matchFormat !== 'SINGLE' && (
-              <div className="w-full my-3 p-3 rounded-2xl bg-slate-950/80 border border-amber-500/30 flex items-center justify-around">
-                <div className="flex flex-col items-center">
-                  <span className="text-xs font-bold text-rose-400">🔴 赤組</span>
-                  <span className="text-2xl font-black text-rose-400">{nextRedWins} 勝</span>
-                  <div className="flex gap-1 mt-1">
-                    {Array.from({ length: targetWins }).map((_, i) => (
-                      <span key={i} className={`w-2.5 h-2.5 rounded-full ${i < nextRedWins ? 'bg-rose-500 shadow-sm shadow-rose-500' : 'border border-rose-500/40 bg-slate-900'}`} />
-                    ))}
+            {/* Right Column: Standings, Match Pull Stats & Next Actions */}
+            <div className="flex flex-col justify-center gap-3 w-full">
+              {/* Series Score Standings for Best-of format */}
+              {matchFormat !== 'SINGLE' && (
+                <div className="w-full p-3 rounded-2xl bg-slate-950/80 border border-amber-500/30 flex items-center justify-around">
+                  <div className="flex flex-col items-center">
+                    <span className="text-xs font-bold text-rose-400">🔴 赤組</span>
+                    <span className="text-2xl font-black text-rose-400">{nextRedWins} 勝</span>
+                    <div className="flex gap-1 mt-1">
+                      {Array.from({ length: targetWins }).map((_, i) => (
+                        <span key={i} className={`w-2.5 h-2.5 rounded-full ${i < nextRedWins ? 'bg-rose-500 shadow-sm shadow-rose-500' : 'border border-rose-500/40 bg-slate-900'}`} />
+                      ))}
+                    </div>
+                  </div>
+                  <div className="text-slate-500 font-black text-sm">
+                    {t('vs', '対')}
+                  </div>
+                  <div className="flex flex-col items-center">
+                    <span className="text-xs font-bold text-slate-200">⚪ 白組</span>
+                    <span className="text-2xl font-black text-slate-100">{nextWhiteWins} 勝</span>
+                    <div className="flex gap-1 mt-1">
+                      {Array.from({ length: targetWins }).map((_, i) => (
+                        <span key={i} className={`w-2.5 h-2.5 rounded-full ${i < nextWhiteWins ? 'bg-white shadow-sm shadow-white' : 'border border-slate-500 bg-slate-900'}`} />
+                      ))}
+                    </div>
                   </div>
                 </div>
-                <div className="text-slate-500 font-black text-sm">
-                  {t('vs', '対')}
-                </div>
-                <div className="flex flex-col items-center">
-                  <span className="text-xs font-bold text-slate-200">⚪ 白組</span>
-                  <span className="text-2xl font-black text-slate-100">{nextWhiteWins} 勝</span>
-                  <div className="flex gap-1 mt-1">
-                    {Array.from({ length: targetWins }).map((_, i) => (
-                      <span key={i} className={`w-2.5 h-2.5 rounded-full ${i < nextWhiteWins ? 'bg-white shadow-sm shadow-white' : 'border border-slate-500 bg-slate-900'}`} />
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
+              )}
 
-            {/* Match Stats summary */}
-            <div className="w-full grid grid-cols-2 gap-3 my-3 p-3 rounded-2xl bg-slate-950/60 border border-slate-800 text-xs sm:text-sm">
-              <div className="text-left border-r border-slate-800 pr-2">
-                <span className="font-black text-rose-400 block">🔴 <ruby>赤組<rt className="text-[7px]">あかぐみ</rt></ruby></span>
-                <span className="text-slate-300 block">{t('Round Pulls', 'この回の引き数')}: <strong>{frozenStats?.redRound ?? redRoundCorrect}</strong></span>
-                {matchFormat !== 'SINGLE' && (
-                  <span className="text-slate-400 text-[11px] block">{t('Total pulls', '通算引き数')}: {frozenStats?.redTotal ?? redTotalCorrect}</span>
-                )}
+              {/* Match Stats summary */}
+              <div className="w-full grid grid-cols-2 gap-3 p-3 rounded-2xl bg-slate-950/60 border border-slate-800 text-xs sm:text-sm">
+                <div className="text-left border-r border-slate-800 pr-2">
+                  <span className="font-black text-rose-400 block">🔴 <ruby>赤組<rt>あかぐみ</rt></ruby></span>
+                  <span className="text-slate-300 block">{t('Round Pulls', 'この回の引き数')}: <strong>{frozenStats?.redRound ?? redRoundCorrect}</strong></span>
+                  {matchFormat !== 'SINGLE' && (
+                    <span className="text-slate-400 text-[11px] block">{t('Total pulls', '通算引き数')}: {frozenStats?.redTotal ?? redTotalCorrect}</span>
+                  )}
+                </div>
+                <div className="text-right pl-2">
+                  <span className="font-black text-slate-200 block">⚪ <ruby>白組<rt>しろぐみ</rt></ruby></span>
+                  <span className="text-slate-300 block">{t('Round Pulls', 'この回の引き数')}: <strong>{frozenStats?.whiteRound ?? whiteRoundCorrect}</strong></span>
+                  {matchFormat !== 'SINGLE' && (
+                    <span className="text-slate-400 text-[11px] block">{t('Total pulls', '通算引き数')}: {frozenStats?.whiteTotal ?? whiteTotalCorrect}</span>
+                  )}
+                </div>
               </div>
-              <div className="text-right pl-2">
-                <span className="font-black text-slate-200 block">⚪ <ruby>白組<rt className="text-[7px]">しろぐみ</rt></ruby></span>
-                <span className="text-slate-300 block">{t('Round Pulls', 'この回の引き数')}: <strong>{frozenStats?.whiteRound ?? whiteRoundCorrect}</strong></span>
-                {matchFormat !== 'SINGLE' && (
-                  <span className="text-slate-400 text-[11px] block">{t('Total pulls', '通算引き数')}: {frozenStats?.whiteTotal ?? whiteTotalCorrect}</span>
-                )}
-              </div>
-            </div>
 
-            {/* Action buttons */}
-            {isMatchDecided ? (
-              <button
-                onClick={() => onFinishTugOfWar(matchWinner)}
-                className="w-full py-3 sm:py-4 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-slate-950 text-base sm:text-lg font-black shadow-xl shadow-amber-500/20 transition active:scale-95 cursor-pointer"
-              >
-                {t('Continue to Awards & Badges →', '表彰・MVPバッジ発表へ進む →')}
-              </button>
-            ) : (
-              <div className="w-full flex flex-col gap-2">
+              {/* Action buttons */}
+              {isMatchDecided ? (
                 <button
-                  onClick={handleStartNextRound}
+                  onClick={() => onFinishTugOfWar(matchWinner)}
                   className="w-full py-3 sm:py-4 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-slate-950 text-base sm:text-lg font-black shadow-xl shadow-amber-500/20 transition active:scale-95 cursor-pointer"
                 >
-                  {t(`Start Round ${currentRound + 1} →`, `第${currentRound + 1}回戦を始める →`)}
+                  {t('Continue to Awards & Badges →', '表彰・MVPバッジ発表へ進む →')}
                 </button>
-                <button
-                  type="button"
-                  onClick={() => onFinishTugOfWar(matchWinner)}
-                  className="text-xs font-bold text-slate-400 hover:text-white transition underline cursor-pointer py-1"
-                >
-                  {t('End Match Now & Proceed to Awards', 'ここで試合を終了して表彰へ進む')}
-                </button>
-              </div>
-            )}
+              ) : (
+                <div className="w-full flex flex-col gap-2">
+                  <button
+                    onClick={handleStartNextRound}
+                    className="w-full py-3 sm:py-4 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-slate-950 text-base sm:text-lg font-black shadow-xl shadow-amber-500/20 transition active:scale-95 cursor-pointer"
+                  >
+                    {t(`Start Round ${currentRound + 1} →`, `第${currentRound + 1}回戦を始める →`)}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => onFinishTugOfWar(matchWinner)}
+                    className="text-xs font-bold text-slate-400 hover:text-white transition underline cursor-pointer py-1"
+                  >
+                    {t('End Match Now & Proceed to Awards', 'ここで試合を終了して表彰へ進む')}
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}

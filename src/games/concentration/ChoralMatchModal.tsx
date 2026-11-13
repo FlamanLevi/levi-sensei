@@ -33,90 +33,92 @@ export const ChoralMatchModal: React.FC<ChoralMatchModalProps> = ({
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="relative bg-gradient-to-b from-white to-indigo-50/90 dark:from-slate-800 dark:to-slate-900 border-4 border-amber-400 ring-8 ring-amber-400/30 rounded-3xl p-6 sm:p-8 max-w-lg w-full text-center shadow-2xl space-y-5 animate-scaleUp"
+        className="relative bg-gradient-to-b from-white to-indigo-50/90 dark:from-slate-800 dark:to-slate-900 border-4 border-amber-400 ring-8 ring-amber-400/30 rounded-3xl p-5 sm:p-6 max-w-2xl sm:max-w-3xl w-full shadow-2xl animate-scaleUp max-h-[90dvh] overflow-y-auto"
       >
-        {/* Confetti celebration badge */}
-        <div className="flex items-center justify-center gap-2">
-          <span className="px-4 py-1.5 rounded-full text-sm sm:text-base font-black bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 text-white shadow-lg flex items-center gap-2 animate-bounce">
+        {/* Top Celebration & Team Point Strip */}
+        <div className="flex flex-nowrap items-center justify-center gap-2 mb-4 overflow-x-auto no-scrollbar whitespace-nowrap">
+          <span className="px-4 py-1.5 rounded-full text-sm sm:text-base font-black bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 text-white shadow-lg flex items-center gap-2 shrink-0">
             <Sparkles size={18} />
-            <span>{t('🎉 MATCH FOUND!', <>🎉 ペア<ruby>成立<rt className="text-[7px]">せいりつ</rt></ruby>！</>)}</span>
+            <span>{t('🎉 MATCH FOUND!', <>🎉 ペア<ruby>成立<rt>せいりつ</rt></ruby>！</>)}</span>
           </span>
+          {winningTeam && (
+            <>
+              <div className={`px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-black flex items-center gap-1.5 shadow-sm shrink-0 ${winningTeam.bgLight} ${winningTeam.border} border-2 ${winningTeam.text}`}>
+                <span>{winningTeam.badge}</span>
+                <span>{t(`${winningTeam.name} +1 Pair!`, <>{winningTeam.ja} に ＋1 ペア！</>)}</span>
+              </div>
+              {streak > 1 && (
+                <span className="px-3 py-1 bg-amber-400 text-amber-950 rounded-full text-xs sm:text-sm font-black shrink-0 animate-pulse">
+                  {t(`🔥 ${streak} streak! Go again!`, `🔥 ${streak}連続正解！ もう1回！`)}
+                </span>
+              )}
+            </>
+          )}
         </div>
 
-        {/* Team point notification */}
-        {winningTeam && (
-          <div className="flex items-center justify-center gap-2 flex-wrap">
-            <div className={`px-4 py-1.5 rounded-2xl text-sm sm:text-base font-black flex items-center gap-2 shadow-sm ${winningTeam.bgLight} ${winningTeam.border} border-2 ${winningTeam.text}`}>
-              <span>{winningTeam.badge}</span>
-              <span>{t(`${winningTeam.name} +1 Pair!`, <>{winningTeam.ja} に ＋1 ペア！</>)}</span>
-            </div>
-            {streak > 1 && (
-              <span className="px-3 py-1 bg-amber-400 text-amber-950 rounded-xl text-xs sm:text-sm font-black animate-pulse">
-                {t(`🔥 ${streak} streak! Go again!`, `🔥 ${streak}連続正解！ もう1回！`)}
-              </span>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-center">
+          {/* Left Column: Artwork */}
+          <div className="w-44 h-44 sm:w-56 sm:h-56 mx-auto rounded-3xl bg-white dark:bg-slate-700 p-4 border-4 border-amber-300 dark:border-amber-500 shadow-inner flex items-center justify-center">
+            {imageUrl ? (
+              <img
+                src={imageUrl}
+                alt={card.english}
+                className="w-full h-full object-contain drop-shadow-md"
+              />
+            ) : (
+              <span className="text-6xl">📖</span>
             )}
           </div>
-        )}
 
-        {/* Artwork */}
-        <div className="w-44 h-44 sm:w-56 sm:h-56 mx-auto rounded-3xl bg-white dark:bg-slate-700 p-4 border-4 border-amber-300 dark:border-amber-500 shadow-inner flex items-center justify-center">
-          {imageUrl ? (
-            <img
-              src={imageUrl}
-              alt={card.english}
-              className="w-full h-full object-contain drop-shadow-md"
-            />
-          ) : (
-            <span className="text-6xl">📖</span>
-          )}
-        </div>
+          {/* Right Column: Choral Word, Ruby, Choral Prompt & Next Button */}
+          <div className="flex flex-col items-center md:items-stretch text-center md:text-left justify-between gap-3.5">
+            <div className="space-y-1.5 text-center">
+              <div className="flex items-center justify-center gap-3">
+                <h3 className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-wide">
+                  {card.english}
+                </h3>
+                <button
+                  onClick={onPlayAudio}
+                  className="w-10 h-10 rounded-full bg-sky-500 hover:bg-sky-600 text-white flex items-center justify-center shadow-md transition-transform active:scale-90 cursor-pointer shrink-0"
+                  title={t('Listen to audio', '発音を聞く')}
+                >
+                  <Volume2 size={20} />
+                </button>
+              </div>
 
-        {/* Choral English Word & Audio */}
-        <div className="space-y-1">
-          <div className="flex items-center justify-center gap-3">
-            <h3 className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-wide">
-              {card.english}
-            </h3>
+              {/* Bilingual Japanese with Ruby Furigana */}
+              <div className="text-base sm:text-xl font-bold text-slate-600 dark:text-slate-300">
+                <RubyText
+                  ruby={card.ruby}
+                  kanji={card.ja_kanji}
+                  hiragana={card.ja_hiragana}
+                />
+              </div>
+
+              {/* Katakana Pronunciation Guide */}
+              {card.en_katakana && (
+                <div className="text-xs sm:text-sm font-black text-amber-600 dark:text-amber-400">
+                  【{card.en_katakana}】
+                </div>
+              )}
+            </div>
+
+            {/* Choral repetition banner */}
+            <div className="bg-amber-100 dark:bg-amber-950/50 border border-amber-300 dark:border-amber-700 rounded-2xl py-2 px-4 text-amber-900 dark:text-amber-200 text-xs sm:text-sm font-black flex items-center justify-center gap-2">
+              <span>🗣️</span>
+              <span>{t('Repeat after me!', <>先生に続いて言ってみよう！</>)}</span>
+            </div>
+
+            {/* Next / Dismiss button */}
             <button
-              onClick={onPlayAudio}
-              className="w-10 h-10 rounded-full bg-sky-500 hover:bg-sky-600 text-white flex items-center justify-center shadow-md transition-transform active:scale-90 cursor-pointer"
-              title={t('Listen to audio', '発音を聞く')}
+              onClick={onDismiss}
+              className="w-full py-3 sm:py-3.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:brightness-110 active:scale-95 text-white font-black text-sm sm:text-base rounded-2xl shadow-lg flex items-center justify-center gap-2 transition cursor-pointer"
             >
-              <Volume2 size={20} />
+              <span>{t('Next → (Space)', 'つぎへ進む (Space)')}</span>
+              <ChevronRight size={18} />
             </button>
           </div>
-
-          {/* Bilingual Japanese with Ruby Furigana */}
-          <div className="text-base sm:text-xl font-bold text-slate-600 dark:text-slate-300">
-            <RubyText
-              ruby={card.ruby}
-              kanji={card.ja_kanji}
-              hiragana={card.ja_hiragana}
-            />
-          </div>
-
-          {/* Katakana Pronunciation Guide */}
-          {card.en_katakana && (
-            <div className="text-xs sm:text-sm font-black text-amber-600 dark:text-amber-400">
-              【{card.en_katakana}】
-            </div>
-          )}
         </div>
-
-        {/* Choral repetition banner */}
-        <div className="bg-amber-100 dark:bg-amber-950/50 border border-amber-300 dark:border-amber-700 rounded-2xl py-2 px-4 text-amber-900 dark:text-amber-200 text-xs sm:text-sm font-black flex items-center justify-center gap-2">
-          <span>🗣️</span>
-          <span>{t('Repeat after me!', <>先生に続いて言ってみよう！</>)}</span>
-        </div>
-
-        {/* Next / Dismiss button */}
-        <button
-          onClick={onDismiss}
-          className="w-full py-3 sm:py-3.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:brightness-110 active:scale-95 text-white font-black text-sm sm:text-base rounded-2xl shadow-lg flex items-center justify-center gap-2 transition cursor-pointer"
-        >
-          <span>{t('Next → (Space)', 'つぎへ進む (Space)')}</span>
-          <ChevronRight size={18} />
-        </button>
       </div>
     </div>
   );

@@ -648,7 +648,7 @@ export const KeywordGame: React.FC<KeywordGameProps> = ({ onExit }) => {
           >
             <BookOpen size={13} className="text-amber-400 shrink-0" />
             <span className="truncate">
-              {t('Rules', <><ruby>遊<rt className="text-[7px]">あそ</rt></ruby>び<ruby>方<rt className="text-[7px]">かた</rt></ruby></>)}
+              {t('Rules', <><ruby>遊<rt>あそ</rt></ruby>び<ruby>方<rt>かた</rt></ruby></>)}
             </span>
           </button>
 
@@ -680,7 +680,7 @@ export const KeywordGame: React.FC<KeywordGameProps> = ({ onExit }) => {
       <div className="bg-slate-950/70 rounded-2xl border border-slate-800/80 p-2 flex flex-col gap-1.5 shrink-0">
         <div className="flex items-center justify-between">
           <span className="text-[10px] font-black uppercase tracking-wider text-amber-400">
-            🎯 {t('Target Keyword', <><ruby>合言葉<rt className="text-[7px]">あいことば</rt></ruby></>)}
+            🎯 {t('Target Keyword', <><ruby>合言葉<rt>あいことば</rt></ruby></>)}
           </span>
           {gameState === 'SELECTING' && (
             <button
@@ -723,7 +723,7 @@ export const KeywordGame: React.FC<KeywordGameProps> = ({ onExit }) => {
           <span className="text-[10px] font-black uppercase tracking-wider text-sky-400 flex items-center gap-1">
             <span>🙆</span>
             <span>
-              {t('Ready Pose', <><ruby>体<rt className="text-[7px]">からだ</rt></ruby>のポーズ</>)}
+              {t('Ready Pose', <><ruby>体<rt>からだ</rt></ruby>のポーズ</>)}
             </span>
           </span>
           <button
@@ -737,7 +737,7 @@ export const KeywordGame: React.FC<KeywordGameProps> = ({ onExit }) => {
             className={`text-[10px] font-black px-2 py-0.5 rounded-lg border transition cursor-pointer disabled:opacity-40 ${
               selectedPoseMode === 'random'
                 ? 'bg-amber-500 text-slate-950 border-amber-400 font-black shadow-xs'
-                : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-750'
+                : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700'
             }`}
           >
             🎲 {t('Random', 'ランダム')}
@@ -758,7 +758,7 @@ export const KeywordGame: React.FC<KeywordGameProps> = ({ onExit }) => {
               className={`py-1 px-1 rounded-xl text-xs font-black border transition-all cursor-pointer flex items-center justify-center gap-1 ${
                 selectedPoseMode === pose.id
                   ? 'bg-sky-600 border-sky-400 text-white shadow-xs ring-1 ring-sky-300'
-                  : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-white hover:bg-slate-850'
+                  : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-white hover:bg-slate-800'
               }`}
               title={`${language === 'ja' ? pose.ja : pose.en} (Key ${idx + 1})`}
             >
@@ -778,7 +778,7 @@ export const KeywordGame: React.FC<KeywordGameProps> = ({ onExit }) => {
             <div className="flex items-center gap-1.5">
               <Trophy size={13} className="text-amber-400" />
               <span className="text-[10px] font-black uppercase tracking-wider text-slate-300">
-                {t('Scoreboard', <><ruby>得点板<rt className="text-[7px]">とくてんばん</rt></ruby></>)}
+                {t('Scoreboard', <><ruby>得点板<rt>とくてんばん</rt></ruby></>)}
               </span>
             </div>
             <button
@@ -825,7 +825,7 @@ export const KeywordGame: React.FC<KeywordGameProps> = ({ onExit }) => {
             <span className="text-[10px] font-black uppercase tracking-wider text-amber-400 flex items-center gap-1">
               <Users size={12} />
               <span>
-                {t('18-Desk Duel Heat Map', <>18<ruby>机<rt className="text-[7px]">つくえ</rt></ruby>リアルタイム対戦</>)}
+                {t('18-Desk Duel Heat Map', <>18<ruby>机<rt>つくえ</rt></ruby>リアルタイム対戦</>)}
               </span>
             </span>
             <button
@@ -947,7 +947,7 @@ export const KeywordGame: React.FC<KeywordGameProps> = ({ onExit }) => {
           'Keyword Grab',
           <>
             <ruby>
-              合言葉<rt className="text-[7px]">あいことば</rt>
+              合言葉<rt>あいことば</rt>
             </ruby>
             ゲーム
           </>
@@ -976,7 +976,7 @@ export const KeywordGame: React.FC<KeywordGameProps> = ({ onExit }) => {
           {gameState === 'SELECTING' && (
             <div className="flex flex-col items-center justify-between text-center w-full h-full py-1">
               {keywordItem && (
-                <div className="flex-1 w-full flex items-center justify-center p-2 sm:p-4 min-h-0 bg-slate-50 dark:bg-slate-850/80 rounded-2xl border-2 border-amber-200 dark:border-slate-700/60 shadow-inner mb-2 overflow-hidden">
+                <div className="flex-1 w-full flex items-center justify-center p-2 sm:p-4 min-h-0 bg-slate-50 dark:bg-slate-800/80 rounded-2xl border-2 border-amber-200 dark:border-slate-700/60 shadow-inner mb-2 overflow-hidden">
                   {displayTier === 'WORD_ONLY' ? (
                     <div className="flex flex-col items-center justify-center p-4">
                       <span
@@ -1037,35 +1037,35 @@ export const KeywordGame: React.FC<KeywordGameProps> = ({ onExit }) => {
                     <>
                       合言葉を
                       <ruby>
-                        確認<rt className="text-[7px]">かくにん</rt>
+                        確認<rt>かくにん</rt>
                       </ruby>
                       したらポーズをとってスタートしよう！
                     </>
                   )}
                 </p>
 
-                <div className="flex flex-wrap items-center justify-center gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-2xl mx-auto">
                   <button
                     onClick={() => handleReadyPhase(false)}
-                    className="px-8 sm:px-10 py-3 sm:py-3.5 rounded-2xl bg-amber-500 hover:bg-amber-400 active:scale-95 text-slate-950 font-black text-lg sm:text-xl shadow-xl hover:shadow-2xl transition-all cursor-pointer flex items-center justify-center gap-2.5"
+                    className="w-full px-6 py-3 sm:py-3.5 rounded-2xl bg-amber-500 hover:bg-amber-400 active:scale-95 text-slate-950 font-black text-lg sm:text-xl shadow-xl hover:shadow-2xl transition-all cursor-pointer flex items-center justify-center gap-2.5 whitespace-nowrap"
                   >
-                    <Play size={22} className="fill-slate-950" />
+                    <Play size={22} className="fill-slate-950 shrink-0" />
                     <span>
                       {t(
                         'READY! (Take Pose)',
                         <>
                           <ruby>
-                            ポーズ<rt className="text-[7px]">ぽーず</rt>
+                            ポーズ<rt>ぽーず</rt>
                           </ruby>
                           へ
                           <ruby>
-                            進<rt className="text-[7px]">すす</rt>
+                            進<rt>すす</rt>
                           </ruby>
                           む！
                         </>
                       )}
                     </span>
-                    <span className="text-xl">{currentRoundPose.emoji}</span>
+                    <span className="text-xl shrink-0">{currentRoundPose.emoji}</span>
                   </button>
 
                   {/* Pillar 4: 1-Click Hands-Free Autopilot Launch */}
@@ -1074,18 +1074,18 @@ export const KeywordGame: React.FC<KeywordGameProps> = ({ onExit }) => {
                       setAutopilotConfig((prev) => ({ ...prev, enabled: true }));
                       handleReadyPhase(true);
                     }}
-                    className="px-6 sm:px-8 py-3 sm:py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 active:scale-95 text-slate-950 font-black text-base sm:text-lg shadow-xl transition-all cursor-pointer flex items-center justify-center gap-2 border-2 border-emerald-200"
+                    className="w-full px-6 py-3 sm:py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 active:scale-95 text-slate-950 font-black text-base sm:text-lg shadow-xl transition-all cursor-pointer flex items-center justify-center gap-2 border-2 border-emerald-200 whitespace-nowrap"
                     title={t(
                       'Automatically counts down pose and cycles cards hands-free!',
                       'ポーズのカウントダウンからカードめくりまで自動で進行します！'
                     )}
                   >
-                    <Bot size={22} />
+                    <Bot size={22} className="shrink-0" />
                     <span>
                       {t(
                         'Autopilot START',
                         <>
-                          ハンズフリー<ruby>自動開始<rt className="text-[7px]">じどうかいし</rt></ruby>
+                          ハンズフリー<ruby>自動開始<rt>じどうかいし</rt></ruby>
                         </>
                       )}
                     </span>
@@ -1245,11 +1245,11 @@ export const KeywordGame: React.FC<KeywordGameProps> = ({ onExit }) => {
                   <>
                     💥{' '}
                     <ruby>
-                      合言葉<rt className="text-[9px]">あいことば</rt>
+                      合言葉<rt>あいことば</rt>
                     </ruby>
                     が
                     <ruby>
-                      出<rt className="text-[9px]">で</rt>
+                      出<rt>で</rt>
                     </ruby>
                     た！ 💥
                   </>
@@ -1273,7 +1273,7 @@ export const KeywordGame: React.FC<KeywordGameProps> = ({ onExit }) => {
                     {language === 'ja' ? (
                       <>
                         <ruby>
-                          取<rt className="text-[11px]">と</rt>
+                          取<rt>と</rt>
                         </ruby>
                         って！！
                       </>
@@ -1296,7 +1296,7 @@ export const KeywordGame: React.FC<KeywordGameProps> = ({ onExit }) => {
                           {t(
                             'Top 3 Fastest Reflexes!',
                             <>
-                              クラス<ruby>最速<rt className="text-[7px]">さいそく</rt></ruby>トップ3！
+                              クラス<ruby>最速<rt>さいそく</rt></ruby>トップ3！
                             </>
                           )}
                         </span>
@@ -1351,7 +1351,7 @@ export const KeywordGame: React.FC<KeywordGameProps> = ({ onExit }) => {
                 <div className="flex items-center justify-center gap-3 mt-1">
                   <button
                     onClick={() => handleReadyPhase()}
-                    className="px-6 sm:px-8 py-2.5 sm:py-3 rounded-2xl bg-white hover:bg-slate-100 active:scale-95 text-slate-900 font-black text-sm sm:text-base shadow-xl transition-all cursor-pointer flex items-center gap-2"
+                    className="px-6 sm:px-8 py-2.5 sm:py-3 rounded-2xl bg-white hover:bg-slate-100 active:scale-95 text-slate-900 font-black text-sm sm:text-base shadow-xl transition-all cursor-pointer flex items-center gap-2 whitespace-nowrap"
                   >
                     <span>🔄</span>
                     <span>
@@ -1359,7 +1359,7 @@ export const KeywordGame: React.FC<KeywordGameProps> = ({ onExit }) => {
                         'Same Word Again',
                         <>
                           <ruby>
-                            同<rt className="text-[7px]">おな</rt>
+                            同<rt>おな</rt>
                           </ruby>
                           じ言葉でもう1回
                         </>
@@ -1371,7 +1371,7 @@ export const KeywordGame: React.FC<KeywordGameProps> = ({ onExit }) => {
                       pickRandomKeyword();
                       setGameState('SELECTING');
                     }}
-                    className="px-6 sm:px-8 py-2.5 sm:py-3 rounded-2xl bg-slate-950 hover:bg-slate-900 active:scale-95 text-yellow-300 border-2 border-yellow-300 font-black text-sm sm:text-base shadow-xl transition-all cursor-pointer flex items-center gap-2"
+                    className="px-6 sm:px-8 py-2.5 sm:py-3 rounded-2xl bg-slate-950 hover:bg-slate-900 active:scale-95 text-yellow-300 border-2 border-yellow-300 font-black text-sm sm:text-base shadow-xl transition-all cursor-pointer flex items-center gap-2 whitespace-nowrap"
                   >
                     <span>🎲</span>
                     <span>
@@ -1379,7 +1379,7 @@ export const KeywordGame: React.FC<KeywordGameProps> = ({ onExit }) => {
                         'Next Keyword (Space)',
                         <>
                           <ruby>
-                            次<rt className="text-[7px]">つぎ</rt>
+                            次<rt>つぎ</rt>
                           </ruby>
                           の言葉 (Space)
                         </>
@@ -1422,56 +1422,60 @@ export const KeywordGame: React.FC<KeywordGameProps> = ({ onExit }) => {
         onClose={() => setIsInstructionsOpen(false)}
       />
 
-      {/* 1-Tap QR Code Modal for Classroom Projector */}
+      {/* 1-Tap QR Code Modal for Classroom Projector (Landscape 2-Column) */}
       {isQrModalOpen && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-xs select-none"
           onClick={() => setIsQrModalOpen(false)}
         >
           <div
-            className="w-full max-w-sm bg-slate-900 border-4 border-amber-400 text-white rounded-3xl p-6 shadow-2xl flex flex-col items-center text-center space-y-4"
+            className="w-full max-w-xl bg-slate-900 border-4 border-amber-400 text-white rounded-3xl p-5 sm:p-6 shadow-2xl flex flex-col gap-4"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between w-full">
+            <div className="flex items-center justify-between w-full border-b border-slate-800 pb-2.5">
               <span className="text-sm font-black text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
                 <QrCode size={16} />
                 <span>{t('Scan with iPad Camera', 'iPadのカメラでスキャン')}</span>
               </span>
               <button
                 onClick={() => setIsQrModalOpen(false)}
-                className="w-7 h-7 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center cursor-pointer"
+                className="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center cursor-pointer"
               >
                 <X size={16} />
               </button>
             </div>
 
-            {qrDataUrl ? (
-              <div className="bg-white p-3 rounded-2xl shadow-xl">
-                <img
-                  src={qrDataUrl}
-                  alt="Room QR Code"
-                  className="w-56 h-56 object-contain"
-                />
-              </div>
-            ) : (
-              <div className="w-56 h-56 bg-slate-800 rounded-2xl flex items-center justify-center animate-pulse">
-                <span>Generating QR...</span>
-              </div>
-            )}
-
-            <div className="space-y-1">
-              <span className="text-xs font-bold text-slate-400 block uppercase">
-                {t('Classroom Room PIN', 'ルームPINコード')}
-              </span>
-              <span className="text-3xl font-mono font-black text-amber-300 tracking-widest block">
-                {roomCode}
-              </span>
-              <p className="text-xs font-bold text-slate-300 pt-1">
-                {t(
-                  'Students scan to automatically join this live duel!',
-                  'カメラを向けるだけで自動でペア画面に対戦接続！'
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 items-center">
+              <div className="flex items-center justify-center">
+                {qrDataUrl ? (
+                  <div className="bg-white p-3 rounded-2xl shadow-xl">
+                    <img
+                      src={qrDataUrl}
+                      alt="Room QR Code"
+                      className="w-48 h-48 sm:w-52 sm:h-52 object-contain"
+                    />
+                  </div>
+                ) : (
+                  <div className="w-48 h-48 sm:w-52 sm:h-52 bg-slate-800 rounded-2xl flex items-center justify-center animate-pulse">
+                    <span>Generating QR...</span>
+                  </div>
                 )}
-              </p>
+              </div>
+
+              <div className="space-y-2 text-center sm:text-left">
+                <span className="text-xs font-bold text-slate-400 block uppercase">
+                  {t('Classroom Room PIN', 'ルームPINコード')}
+                </span>
+                <span className="text-4xl font-mono font-black text-amber-300 tracking-widest block">
+                  {roomCode}
+                </span>
+                <p className="text-xs sm:text-sm font-bold text-slate-300 pt-1 leading-relaxed">
+                  {t(
+                    'Students scan to automatically join this live duel!',
+                    'カメラを向けるだけで自動でペア画面に対戦接続！'
+                  )}
+                </p>
+              </div>
             </div>
           </div>
         </div>

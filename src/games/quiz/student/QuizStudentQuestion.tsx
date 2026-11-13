@@ -167,32 +167,32 @@ export const QuizStudentQuestion: React.FC<QuizStudentQuestionProps> = ({
       secondsLeft <= 5 && !hasAnswered ? 'ring-4 ring-rose-500/70 inset transition-all duration-300' : ''
     }`}>
       {/* Top Banner */}
-      <div className="flex items-center justify-between pb-1.5 shrink-0">
-        <div className="flex items-center gap-2">
-          <span className="text-xs font-black px-3 py-1 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+      <div className="flex flex-nowrap items-center justify-between gap-2 pb-1.5 shrink-0">
+        <div className="flex items-center gap-2 min-w-0 flex-nowrap overflow-x-auto no-scrollbar">
+          <span className="text-xs font-black px-3 py-1 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 whitespace-nowrap shrink-0">
             Q {question.questionIndex + 1} / {question.totalQuestions}
           </span>
           {teamId && TEAM_PRESETS[teamId] && (
-            <span className="text-xs font-black px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 flex items-center gap-1">
+            <span className="text-xs font-black px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 flex items-center gap-1 whitespace-nowrap shrink-0">
               <span>{TEAM_PRESETS[teamId].emoji}</span>
               <span>{language === 'ja' ? TEAM_PRESETS[teamId].jaName : TEAM_PRESETS[teamId].name}</span>
             </span>
           )}
           {ipadDisplayMode === 'EYES_UP' && !hasAnswered && (
-            <span className="flex items-center gap-1 text-[11px] font-bold text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/60 px-2.5 py-1 rounded-full">
+            <span className="flex items-center gap-1 text-[11px] font-bold text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/60 px-2.5 py-1 rounded-full whitespace-nowrap shrink-0">
               <Eye size={12} />
-              <span>{t('Look at TV! (Eyes Up)', <><ruby>前<rt className="text-[8px] font-normal">まえ</rt></ruby>を<ruby>見<rt className="text-[8px] font-normal">み</rt></ruby>てね！</>)}</span>
+              <span>{t('Look at TV! (Eyes Up)', <><ruby>前<rt>まえ</rt></ruby>を<ruby>見<rt>み</rt></ruby>てね！</>)}</span>
             </span>
           )}
         </div>
 
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2.5 shrink-0 flex-nowrap">
           <PandaMascot 
             mood={secondsLeft <= 5 && !hasAnswered ? 'panicking' : hasAnswered ? 'cheering' : 'idle'} 
             size={38}
           />
 
-          <div className="flex items-center gap-1.5 text-xs font-bold text-slate-400">
+          <div className="flex items-center gap-1.5 text-xs font-bold text-slate-400 whitespace-nowrap shrink-0">
             <Clock size={13} className={secondsLeft <= 5 ? 'text-rose-500 animate-spin' : ''} />
             <span className={`font-mono font-black text-xs ${secondsLeft <= 5 ? 'text-rose-500 font-bold animate-pulse' : 'text-slate-600 dark:text-slate-300'}`}>
               {secondsLeft}s
@@ -200,9 +200,9 @@ export const QuizStudentQuestion: React.FC<QuizStudentQuestionProps> = ({
           </div>
 
           {hasAnswered && (
-            <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 text-xs font-black">
+            <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 text-xs font-black whitespace-nowrap shrink-0">
               <CheckCircle2 size={14} />
-              <span>{t('Submitted!', <><ruby>送信完了<rt className="text-[8px] font-normal">そうしんかんりょう</rt></ruby>！</>)}</span>
+              <span>{t('Submitted!', <><ruby>送信完了<rt>そうしんかんりょう</rt></ruby>！</>)}</span>
             </div>
           )}
         </div>
@@ -288,7 +288,7 @@ export const QuizStudentQuestion: React.FC<QuizStudentQuestionProps> = ({
             </div>
 
             <span className="text-xs sm:text-sm font-black text-slate-600 dark:text-slate-300 mb-2 block">
-              {t("Tap your buddy while waiting!", <>タップしてあそびながら<ruby>待<rt className="text-[8px] font-normal text-slate-400">ま</rt></ruby>っててね！</>)}
+              {t("Tap your buddy while waiting!", <>タップしてあそびながら<ruby>待<rt>ま</rt></ruby>っててね！</>)}
             </span>
 
             {/* Locked-in Answer Confirmation Pill */}
@@ -316,13 +316,13 @@ export const QuizStudentQuestion: React.FC<QuizStudentQuestionProps> = ({
                   🤔
                 </div>
                 <h4 className="text-xl sm:text-2xl font-black tracking-tight drop-shadow-md text-center">
-                  {t('Think First!', <>まずは<ruby>頭<rt className="text-[8px] font-normal text-indigo-300">あたま</rt></ruby>で<ruby>考<rt className="text-[8px] font-normal text-indigo-300">かんが</rt></ruby>えよう！</>)}
+                  {t('Think First!', <>まずは<ruby>頭<rt>あたま</rt></ruby>で<ruby>考<rt>かんが</rt></ruby>えよう！</>)}
                 </h4>
                 <p className="text-xs sm:text-sm font-bold text-indigo-200 mt-1.5 text-center">
-                  {t('Remember the word in English... buttons opening soon!', <><ruby>英語<rt className="text-[8px] font-normal text-indigo-300">えいご</rt></ruby>を<ruby>思<rt className="text-[8px] font-normal text-indigo-300">おも</rt></ruby>い<ruby>出<rt className="text-[8px] font-normal text-indigo-300">だ</rt></ruby>してね... まもなくボタンが<ruby>開<rt className="text-[8px] font-normal text-indigo-300">ひら</rt></ruby>きます！</>)}
+                  {t('Remember the word in English... buttons opening soon!', <><ruby>英語<rt>えいご</rt></ruby>を<ruby>思<rt>おも</rt></ruby>い<ruby>出<rt>だ</rt></ruby>してね... まもなくボタンが<ruby>開<rt>ひら</rt></ruby>きます！</>)}
                 </p>
                 <div className="mt-4 px-5 py-2 rounded-full bg-white/20 border border-white/30 text-base font-mono font-black animate-pulse">
-                  {t(`Remaining: ${recallSecondsLeft}s`, <><ruby>残<rt className="text-[8px] font-normal">のこ</rt></ruby>り {recallSecondsLeft} <ruby>秒<rt className="text-[8px] font-normal">びょう</rt></ruby></>)}
+                  {t(`Remaining: ${recallSecondsLeft}s`, <><ruby>残<rt>のこ</rt></ruby>り {recallSecondsLeft} <ruby>秒<rt>びょう</rt></ruby></>)}
                 </div>
               </div>
             )}
@@ -375,7 +375,7 @@ export const QuizStudentQuestion: React.FC<QuizStudentQuestionProps> = ({
                       <span
                         className={`font-black leading-none text-white drop-shadow-md select-none text-6xl sm:text-8xl md:text-9xl`}
                         style={{
-                          fontSize: 'min(14vh, 22vw, 110px)',
+                          fontSize: 'min(14dvh, 22vw, 110px)',
                           lineHeight: 1
                         }}
                       >
@@ -417,7 +417,6 @@ export const QuizStudentQuestion: React.FC<QuizStudentQuestionProps> = ({
                               kanji={option.ja_kanji}
                               hiragana={option.ja_hiragana}
                               className="text-sm sm:text-lg md:text-xl font-black text-white drop-shadow-md leading-tight text-center"
-                              rtClassName="text-[10px] sm:text-xs font-normal text-white/90 select-none"
                             />
                           ) : (
                             <>
@@ -446,15 +445,15 @@ export const QuizStudentQuestion: React.FC<QuizStudentQuestionProps> = ({
       <div className="pt-1 text-center shrink-0">
         {hasAnswered ? (
           <p className="text-xs font-black text-slate-600 dark:text-slate-400">
-            {t('✓ Answer submitted! Watch the main screen for the reveal!', <>✓ <ruby>回答<rt className="text-[8px] font-normal">かいとう</rt></ruby>を<ruby>送信<rt className="text-[8px] font-normal">そうしん</rt></ruby>しました！<ruby>前<rt className="text-[8px] font-normal">まえ</rt></ruby>の<ruby>画面<rt className="text-[8px] font-normal">がめん</rt></ruby>の<ruby>正解発表<rt className="text-[8px] font-normal">せいかいはっぴょう</rt></ruby>を<ruby>待<rt className="text-[8px] font-normal">ま</rt></ruby>ってね！</>)}
+            {t('✓ Answer submitted! Watch the main screen for the reveal!', <>✓ <ruby>回答<rt>かいとう</rt></ruby>を<ruby>送信<rt>そうしん</rt></ruby>しました！<ruby>前<rt>まえ</rt></ruby>の<ruby>画面<rt>がめん</rt></ruby>の<ruby>正解発表<rt>せいかいはっぴょう</rt></ruby>を<ruby>待<rt>ま</rt></ruby>ってね！</>)}
           </p>
         ) : isRecallLocked ? (
           <p className="text-xs font-black text-indigo-600 dark:text-indigo-400 animate-pulse">
-            {t('🤔 Thinking time... recall the English word in your mind!', <>🤔 <ruby>思考<rt className="text-[8px] font-normal">しこう</rt></ruby>タイム<ruby>中<rt className="text-[8px] font-normal">ちゅう</rt></ruby>... <ruby>頭<rt className="text-[8px] font-normal">あたま</rt></ruby>の<ruby>中<rt className="text-[8px] font-normal">なか</rt></ruby>で<ruby>英単語<rt className="text-[8px] font-normal">えいたんご</rt></ruby>を<ruby>思<rt className="text-[8px] font-normal">おも</rt></ruby>い<ruby>出<rt className="text-[8px] font-normal">だ</rt></ruby>そう！</>)}
+            {t('🤔 Thinking time... recall the English word in your mind!', <>🤔 <ruby>思考<rt>しこう</rt></ruby>タイム<ruby>中<rt>ちゅう</rt></ruby>... <ruby>頭<rt>あたま</rt></ruby>の<ruby>中<rt>なか</rt></ruby>で<ruby>英単語<rt>えいたんご</rt></ruby>を<ruby>思<rt>おも</rt></ruby>い<ruby>出<rt>だ</rt></ruby>そう！</>)}
           </p>
         ) : (
           <p className="text-xs font-bold text-slate-400 dark:text-slate-500 animate-pulse">
-            {t('Tap the button for the correct color quickly!', <><ruby>正<rt className="text-[8px] font-normal">ただ</rt></ruby>しいと<ruby>思<rt className="text-[8px] font-normal">おも</rt></ruby>う<ruby>色<rt className="text-[8px] font-normal">いろ</rt></ruby>のボタンを<ruby>素早<rt className="text-[8px] font-normal">すばや</rt></ruby>くタップ！</>)}
+            {t('Tap the button for the correct color quickly!', <><ruby>正<rt>ただ</rt></ruby>しいと<ruby>思<rt>おも</rt></ruby>う<ruby>色<rt>いろ</rt></ruby>のボタンを<ruby>素早<rt>すばや</rt></ruby>くタップ！</>)}
           </p>
         )}
       </div>

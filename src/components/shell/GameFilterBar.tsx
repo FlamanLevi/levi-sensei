@@ -134,7 +134,7 @@ export const GameFilterBar: React.FC<GameFilterBarProps> = ({
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
             <span>
               {language === 'ja' ? (
-                <><ruby>今<rt className="text-[7px]">いま</rt></ruby>すぐプレイ</>
+                <><ruby>今<rt>いま</rt></ruby>すぐプレイ</>
               ) : (
                 'Playable Now'
               )}
@@ -160,11 +160,11 @@ export const GameFilterBar: React.FC<GameFilterBarProps> = ({
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2.5 pt-1">
         {/* Dropdown 1: Teaching Moment */}
         <div className="flex flex-col">
-          <label className="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 flex items-center gap-1 mb-1 px-1">
+          <label className="text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-1 mb-1 px-1">
             <span>⚡</span>
             <span>
               {language === 'ja' ? (
-                <><ruby>授業<rt className="text-[7px]">じゅぎょう</rt></ruby>フェーズ</>
+                <><ruby>授業<rt>じゅぎょう</rt></ruby>フェーズ</>
               ) : (
                 'Teaching Moment'
               )}
@@ -195,11 +195,11 @@ export const GameFilterBar: React.FC<GameFilterBarProps> = ({
 
         {/* Dropdown 2: Target Skill */}
         <div className="flex flex-col">
-          <label className="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 flex items-center gap-1 mb-1 px-1">
+          <label className="text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-1 mb-1 px-1">
             <span>🎯</span>
             <span>
               {language === 'ja' ? (
-                <><ruby>指導<rt className="text-[7px]">しどう</rt></ruby>スキル</>
+                <><ruby>指導<rt>しどう</rt></ruby>スキル</>
               ) : (
                 'Skill Focus'
               )}
@@ -227,11 +227,11 @@ export const GameFilterBar: React.FC<GameFilterBarProps> = ({
 
         {/* Dropdown 3: Delivery Stream */}
         <div className="flex flex-col">
-          <label className="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 flex items-center gap-1 mb-1 px-1">
+          <label className="text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-1 mb-1 px-1">
             <span>📺</span>
             <span>
               {language === 'ja' ? (
-                <><ruby>配信<rt className="text-[7px]">はいしん</rt></ruby>・<ruby>投影<rt className="text-[7px]">とうえい</rt></ruby></>
+                <><ruby>配信<rt>はいしん</rt></ruby>・<ruby>投影<rt>とうえい</rt></ruby></>
               ) : (
                 'Delivery Stream'
               )}
@@ -258,11 +258,11 @@ export const GameFilterBar: React.FC<GameFilterBarProps> = ({
 
         {/* Dropdown 4: Player Format */}
         <div className="flex flex-col">
-          <label className="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 flex items-center gap-1 mb-1 px-1">
+          <label className="text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-1 mb-1 px-1">
             <span>👥</span>
             <span>
               {language === 'ja' ? (
-                <><ruby>参加<rt className="text-[7px]">さんか</rt></ruby><ruby>形式<rt className="text-[7px]">けいしき</rt></ruby></>
+                <><ruby>参加<rt>さんか</rt></ruby><ruby>形式<rt>けいしき</rt></ruby></>
               ) : (
                 'Player Format'
               )}
@@ -290,11 +290,11 @@ export const GameFilterBar: React.FC<GameFilterBarProps> = ({
 
         {/* Dropdown 5: Sort Order */}
         <div className="flex flex-col">
-          <label className="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 flex items-center gap-1 mb-1 px-1">
+          <label className="text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-1 mb-1 px-1">
             <span>↕️</span>
             <span>
               {language === 'ja' ? (
-                <><ruby>並<rt className="text-[7px]">なら</rt></ruby>び<ruby>替<rt className="text-[7px]">か</rt></ruby>え</>
+                <><ruby>並<rt>なら</rt></ruby>び<ruby>替<rt>か</rt></ruby>え</>
               ) : (
                 'Sort Order'
               )}
@@ -320,14 +320,14 @@ export const GameFilterBar: React.FC<GameFilterBarProps> = ({
       </div>
 
       {/* Tier 3: Summary + Reset Active Filters */}
-      <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-100 dark:border-slate-800/80">
-        <div className="flex items-center gap-1.5 flex-wrap">
-          <span>{language === 'ja' ? <ruby>表示中<rt className="text-[7px]">ひょうじちゅう</rt></ruby> : 'Showing'}:</span>
+      <div className="flex items-center justify-between gap-2 text-xs text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-100 dark:border-slate-800/80">
+        <div className="flex items-center gap-1.5 min-w-0 flex-1 overflow-x-auto no-scrollbar whitespace-nowrap">
+          <span>{language === 'ja' ? <ruby>表示中<rt>ひょうじちゅう</rt></ruby> : 'Showing'}:</span>
           <strong className="text-slate-900 dark:text-white font-black">{filteredCount}</strong>
-          <span>/ {totalCount} {language === 'ja' ? <><ruby>件<rt className="text-[7px]">けん</rt></ruby>のアクティビティ</> : 'activities'}</span>
+          <span>/ {totalCount} {language === 'ja' ? <><ruby>件<rt>けん</rt></ruby>のアクティビティ</> : 'activities'}</span>
           {readyCount > 0 && (
             <span className="ml-1 text-emerald-600 dark:text-emerald-400 font-bold">
-              ({readyCount} {language === 'ja' ? <><ruby>件<rt className="text-[7px]">けん</rt></ruby>が<ruby>即座<rt className="text-[7px]">そくざ</rt></ruby>に<ruby>起動可能<rt className="text-[7px]">きどうかのう</rt></ruby></> : 'ready to launch'})
+              ({readyCount} {language === 'ja' ? <><ruby>件<rt>けん</rt></ruby>が<ruby>即座<rt>そくざ</rt></ruby>に<ruby>起動可能<rt>きどうかのう</rt></ruby></> : 'ready to launch'})
             </span>
           )}
         </div>
@@ -336,12 +336,12 @@ export const GameFilterBar: React.FC<GameFilterBarProps> = ({
           <button
             type="button"
             onClick={onResetFilters}
-            className="text-blue-600 dark:text-blue-400 hover:underline font-bold flex items-center gap-1 text-xs cursor-pointer py-1 px-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-950/40 transition-colors"
+            className="text-blue-600 dark:text-blue-400 hover:underline font-bold flex items-center gap-1 text-xs cursor-pointer py-1 px-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-950/40 transition-colors shrink-0 whitespace-nowrap"
           >
             <RotateCcw size={12} />
             <span>
               {language === 'ja' ? (
-                <><ruby>条件<rt className="text-[7px]">じょうけん</rt></ruby>リセット</>
+                <><ruby>条件<rt>じょうけん</rt></ruby>リセット</>
               ) : (
                 'Reset Filters'
               )}

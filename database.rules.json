@@ -78,7 +78,25 @@
     "setupRooms": {
       "$roomCode": {
         ".read": true,
-        ".write": true
+        ".write": "auth != null"
+      }
+    },
+    "concentration_rooms": {
+      "$roomCode": {
+        ".read": true,
+        ".write": "auth != null"
+      }
+    },
+    "keyword_rooms": {
+      "$roomCode": {
+        ".read": true,
+        ".write": "auth != null"
+      }
+    },
+    "missing_rooms": {
+      "$roomCode": {
+        ".read": true,
+        ".write": "auth != null"
       }
     },
     "users": {
@@ -97,25 +115,25 @@
               ".indexOn": ["xp", "attendanceNumber"],
               "$attendanceNumber": {
                 ".read": true,
-                ".write": true,
+                ".write": "auth != null",
                 ".validate": "newData.hasChildren(['attendanceNumber', 'nickname'])"
               }
             },
             "sessions": {
               ".read": true,
-              ".write": true,
+              ".write": "auth != null",
               "$sessionId": {
                 ".read": true,
-                ".write": true
+                ".write": "auth != null"
               }
             },
             "analyticsSummary": {
               ".read": true,
-              ".write": true
+              ".write": "auth != null"
             },
             "classVault": {
               ".read": true,
-              ".write": true
+              ".write": "auth != null"
             }
           }
         }

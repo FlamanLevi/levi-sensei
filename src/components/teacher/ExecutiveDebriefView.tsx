@@ -132,7 +132,7 @@ export const ExecutiveDebriefView: React.FC<ExecutiveDebriefViewProps> = ({
           <div>
             <div className="flex items-center gap-2">
               <h2 className="text-xl sm:text-2xl font-black tracking-tight">
-                {analytics.classId} {t("Formative Debrief & Psychometrics", <><ruby>授業分析<rt className="text-[7px]">じゅぎょうぶんせき</rt></ruby>デブリーフ</>)}
+                {analytics.classId} {t("Formative Debrief & Psychometrics", <><ruby>授業分析<rt>じゅぎょうぶんせき</rt></ruby>デブリーフ</>)}
               </h2>
               <span className="px-2.5 py-0.5 rounded-full text-xs font-black bg-indigo-100 dark:bg-indigo-950/70 text-indigo-700 dark:text-indigo-300">
                 {analytics.grade}
@@ -144,58 +144,58 @@ export const ExecutiveDebriefView: React.FC<ExecutiveDebriefViewProps> = ({
           </div>
         </div>
 
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex items-center gap-2 shrink-0 flex-nowrap">
           {/* Sub-tab navigation */}
           <div className="flex items-center p-1 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-black">
             <button
               onClick={() => setSelectedTab('OVERVIEW')}
-              className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+              className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer whitespace-nowrap ${
                 selectedTab === 'OVERVIEW'
                   ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-xs'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
               }`}
             >
-              {t("Overview", <><ruby>概要<rt className="text-[7px]">がいよう</rt></ruby></>)}
+              {t("Overview", <><ruby>概要<rt>がいよう</rt></ruby></>)}
             </button>
             <button
               onClick={() => setSelectedTab('PSYCHOMETRICS')}
-              className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+              className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer whitespace-nowrap ${
                 selectedTab === 'PSYCHOMETRICS'
                   ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-xs'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
               }`}
             >
-              {t("Item Psychometrics", <><ruby>単語別分析<rt className="text-[7px]">たんごべつぶんせき</rt></ruby></>)}
+              {t("Item Psychometrics", <><ruby>単語別分析<rt>たんごべつぶんせき</rt></ruby></>)}
             </button>
             <button
               onClick={() => setSelectedTab('SCAFFOLDING')}
-              className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+              className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer whitespace-nowrap ${
                 selectedTab === 'SCAFFOLDING'
                   ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-xs'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
               }`}
             >
-              {t("Co-Teaching Scaffolding", <><ruby>個別支援<rt className="text-[7px]">こべつしえん</rt></ruby> (机間指導)</>)}
+              {t("Co-Teaching Scaffolding", <><ruby>個別支援<rt>こべつしえん</rt></ruby> (机間指導)</>)}
             </button>
           </div>
 
           {/* Print Options Cluster */}
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5 shrink-0">
             <button
               onClick={() => handlePrint(false)}
-              className="px-3 py-2 rounded-xl font-black text-xs text-white bg-slate-900 dark:bg-slate-700 hover:bg-slate-800 dark:hover:bg-slate-600 shadow-md flex items-center gap-1.5 cursor-pointer active:scale-95 transition-all"
+              className="px-3 py-2 rounded-xl font-black text-xs text-white bg-slate-900 dark:bg-slate-700 hover:bg-slate-800 dark:hover:bg-slate-600 shadow-md flex items-center gap-1.5 cursor-pointer active:scale-95 transition-all whitespace-nowrap"
               title={t("Print Executive 1-Pager for HRT or Administration", "教員・校長提出用A4エグゼクティブレポートを印刷")}
             >
               <Printer size={14} />
-              <span>{t("Print 1-Pager (PDF)", <><ruby>要約印刷<rt className="text-[7px]">ようやくいんさつ</rt></ruby> (1枚)</>)}</span>
+              <span>{t("Print 1-Pager (PDF)", <><ruby>要約印刷<rt>ようやくいんさつ</rt></ruby> (1枚)</>)}</span>
             </button>
             <button
               onClick={() => handlePrint(true)}
-              className="px-3 py-2 rounded-xl font-black text-xs text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/50 hover:bg-indigo-100 dark:hover:bg-indigo-900 border border-indigo-200 dark:border-indigo-800 shadow-xs flex items-center gap-1.5 cursor-pointer active:scale-95 transition-all hidden sm:flex"
+              className="px-3 py-2 rounded-xl font-black text-xs text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/50 hover:bg-indigo-100 dark:hover:bg-indigo-900 border border-indigo-200 dark:border-indigo-800 shadow-xs flex items-center gap-1.5 cursor-pointer active:scale-95 transition-all hidden sm:flex whitespace-nowrap"
               title={t("Print Complete 3-Page Dossier (All sections)", "全3セクション（概要・単語分析・個別支援）をまとめて印刷")}
             >
               <FileText size={14} />
-              <span>{t("Print All (3-Page)", <><ruby>全項目印刷<rt className="text-[7px]">ぜんこうもくいんさつ</rt></ruby> (3枚)</>)}</span>
+              <span>{t("Print All (3-Page)", <><ruby>全項目印刷<rt>ぜんこうもくいんさつ</rt></ruby> (3枚)</>)}</span>
             </button>
           </div>
 
@@ -216,7 +216,7 @@ export const ExecutiveDebriefView: React.FC<ExecutiveDebriefViewProps> = ({
         <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-tr from-blue-50 to-indigo-50 dark:from-slate-900 dark:to-indigo-950/40 border-2 border-blue-200 dark:border-indigo-800 shadow-sm">
           <div className="flex items-center justify-between text-blue-600 dark:text-blue-400 mb-1">
             <span className="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">
-              {t("TOTAL TOUCHES", <><ruby>総解答回数<rt className="text-[7px]">そうかいとうかいすう</rt></ruby></>)}
+              {t("TOTAL TOUCHES", <><ruby>総解答回数<rt>そうかいとうかいすう</rt></ruby></>)}
             </span>
             <Flame size={18} />
           </div>
@@ -235,7 +235,7 @@ export const ExecutiveDebriefView: React.FC<ExecutiveDebriefViewProps> = ({
         <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-tr from-emerald-50 to-teal-50 dark:from-slate-900 dark:to-teal-950/40 border-2 border-emerald-200 dark:border-teal-800 shadow-sm">
           <div className="flex items-center justify-between text-emerald-600 dark:text-emerald-400 mb-1">
             <span className="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">
-              {t("ACTIVE PARTICIPATION", <><ruby>参加率<rt className="text-[7px]">さんかりつ</rt></ruby></>)}
+              {t("ACTIVE PARTICIPATION", <><ruby>参加率<rt>さんかりつ</rt></ruby></>)}
             </span>
             <Users size={18} />
           </div>
@@ -251,7 +251,7 @@ export const ExecutiveDebriefView: React.FC<ExecutiveDebriefViewProps> = ({
         <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-tr from-amber-50 to-orange-50 dark:from-slate-900 dark:to-orange-950/40 border-2 border-amber-200 dark:border-amber-800 shadow-sm">
           <div className="flex items-center justify-between text-amber-600 dark:text-amber-400 mb-1">
             <span className="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">
-              {t("CLASS MASTERY", <><ruby>学級正解率<rt className="text-[7px]">がっきゅうせいかいりつ</rt></ruby></>)}
+              {t("CLASS MASTERY", <><ruby>学級正解率<rt>がっきゅうせいかいりつ</rt></ruby></>)}
             </span>
             <CheckCircle2 size={18} />
           </div>
@@ -267,7 +267,7 @@ export const ExecutiveDebriefView: React.FC<ExecutiveDebriefViewProps> = ({
         <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-tr from-purple-50 to-pink-50 dark:from-slate-900 dark:to-purple-950/40 border-2 border-purple-200 dark:border-purple-800 shadow-sm">
           <div className="flex items-center justify-between text-purple-600 dark:text-purple-400 mb-1">
             <span className="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">
-              {t("RESPONSE SPEED", <><ruby>平均即答速度<rt className="text-[7px]">へいきんそくとうそくど</rt></ruby></>)}
+              {t("RESPONSE SPEED", <><ruby>平均即答速度<rt>へいきんそくとうそくど</rt></ruby></>)}
             </span>
             <Clock size={18} />
           </div>
@@ -288,7 +288,7 @@ export const ExecutiveDebriefView: React.FC<ExecutiveDebriefViewProps> = ({
             <div className="flex items-center gap-2 mb-2">
               <span className="text-xl">🪄</span>
               <span className="text-xs font-black uppercase tracking-wider text-amber-700 dark:text-amber-400">
-                {t("AUTOMATED JTE LESSON PLANNER · NEXT CLASS ACTION", <><ruby>次回授業提案<rt className="text-[7px]">じかいじゅぎょうていあん</rt></ruby> · ウォームアップ案</>)}
+                {t("AUTOMATED JTE LESSON PLANNER · NEXT CLASS ACTION", <><ruby>次回授業提案<rt>じかいじゅぎょうていあん</rt></ruby> · ウォームアップ案</>)}
               </span>
             </div>
             <h3 className="text-lg sm:text-xl font-black text-slate-900 dark:text-white mb-2">
@@ -327,7 +327,7 @@ export const ExecutiveDebriefView: React.FC<ExecutiveDebriefViewProps> = ({
                 <div className="flex items-center gap-2">
                   <Brain size={18} className="text-indigo-600 dark:text-indigo-400" />
                   <h4 className="text-base font-black">
-                    {t("Cognitive Fluency Quadrant", <><ruby>認知想起<rt className="text-[7px]">にんちそうき</rt></ruby>スピード<ruby>分布<rt className="text-[7px]">ぶんぷ</rt></ruby></>)}
+                    {t("Cognitive Fluency Quadrant", <><ruby>認知想起<rt>にんちそうき</rt></ruby>スピード<ruby>分布<rt>ぶんぷ</rt></ruby></>)}
                   </h4>
                 </div>
                 <span className="text-[10px] font-bold text-slate-400">Total: {analytics.totalClassTouches} responses</span>
@@ -337,7 +337,7 @@ export const ExecutiveDebriefView: React.FC<ExecutiveDebriefViewProps> = ({
                 {/* Fast & Correct */}
                 <div className="p-3.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-800">
                   <div className="flex justify-between items-center mb-1 text-emerald-700 dark:text-emerald-300 font-black">
-                    <span>⚡ {t("Automaticity", <><ruby>即座想起<rt className="text-[7px]">そくざそうき</rt></ruby></>)}</span>
+                    <span>⚡ {t("Automaticity", <><ruby>即座想起<rt>そくざそうき</rt></ruby></>)}</span>
                     <span className="text-base font-mono">{analytics.latencyQuadrants.fastCorrect}</span>
                   </div>
                   <p className="text-[10px] text-slate-600 dark:text-slate-400">
@@ -348,7 +348,7 @@ export const ExecutiveDebriefView: React.FC<ExecutiveDebriefViewProps> = ({
                 {/* Slow & Correct */}
                 <div className="p-3.5 rounded-2xl bg-blue-50 dark:bg-blue-950/40 border border-blue-300 dark:border-blue-800">
                   <div className="flex justify-between items-center mb-1 text-blue-700 dark:text-blue-300 font-black">
-                    <span>🤔 {t("Processing", <><ruby>思考想起<rt className="text-[7px]">しこうそうき</rt></ruby></>)}</span>
+                    <span>🤔 {t("Processing", <><ruby>思考想起<rt>しこうそうき</rt></ruby></>)}</span>
                     <span className="text-base font-mono">{analytics.latencyQuadrants.slowCorrect}</span>
                   </div>
                   <p className="text-[10px] text-slate-600 dark:text-slate-400">
@@ -359,7 +359,7 @@ export const ExecutiveDebriefView: React.FC<ExecutiveDebriefViewProps> = ({
                 {/* Fast & Incorrect */}
                 <div className="p-3.5 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-300 dark:border-rose-800">
                   <div className="flex justify-between items-center mb-1 text-rose-700 dark:text-rose-300 font-black">
-                    <span>🎲 {t("Impulsive Guess", <><ruby>直感推測<rt className="text-[7px]">ちょっかんすいそく</rt></ruby></>)}</span>
+                    <span>🎲 {t("Impulsive Guess", <><ruby>直感推測<rt>ちょっかんすいそく</rt></ruby></>)}</span>
                     <span className="text-base font-mono">{analytics.latencyQuadrants.fastIncorrect}</span>
                   </div>
                   <p className="text-[10px] text-slate-600 dark:text-slate-400">
@@ -370,7 +370,7 @@ export const ExecutiveDebriefView: React.FC<ExecutiveDebriefViewProps> = ({
                 {/* Slow & Incorrect */}
                 <div className="p-3.5 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-800">
                   <div className="flex justify-between items-center mb-1 text-amber-700 dark:text-amber-300 font-black">
-                    <span>🛑 {t("Confusion", <><ruby>迷い誤答<rt className="text-[7px]">まよいごとう</rt></ruby></>)}</span>
+                    <span>🛑 {t("Confusion", <><ruby>迷い誤答<rt>まよいごとう</rt></ruby></>)}</span>
                     <span className="text-base font-mono">{analytics.latencyQuadrants.slowIncorrect}</span>
                   </div>
                   <p className="text-[10px] text-slate-600 dark:text-slate-400">
@@ -387,7 +387,7 @@ export const ExecutiveDebriefView: React.FC<ExecutiveDebriefViewProps> = ({
                   <div className="flex items-center gap-2">
                     <TrendingUp size={18} className="text-emerald-600 dark:text-emerald-400" />
                     <h4 className="text-base font-black">
-                      {t("Endurance & Stamina Curve", <><ruby>周回持続力<rt className="text-[7px]">しゅうかいじぞくりょく</rt></ruby> (疲労カーブ)</>)}
+                      {t("Endurance & Stamina Curve", <><ruby>周回持続力<rt>しゅうかいじぞくりょく</rt></ruby> (疲労カーブ)</>)}
                     </h4>
                   </div>
                   <span className="text-[10px] font-bold text-slate-400">
@@ -570,7 +570,7 @@ export const ExecutiveDebriefView: React.FC<ExecutiveDebriefViewProps> = ({
             <div className="flex items-center gap-2 mb-3 text-rose-600 dark:text-rose-400">
               <AlertTriangle size={18} />
               <h4 className="text-base font-black">
-                {t("Desk-Circling Scaffolding Targets", <><ruby>机間巡視<rt className="text-[7px]">きかんじゅんし</rt></ruby> · <ruby>個別声<rt className="text-[7px]">こべつこえ</rt></ruby>かけ対象</>)}
+                {t("Desk-Circling Scaffolding Targets", <><ruby>机間巡視<rt>きかんじゅんし</rt></ruby> · <ruby>個別声<rt>こべつこえ</rt></ruby>かけ対象</>)}
               </h4>
             </div>
             <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">
@@ -618,7 +618,7 @@ export const ExecutiveDebriefView: React.FC<ExecutiveDebriefViewProps> = ({
             <div className="flex items-center gap-2 mb-3 text-indigo-600 dark:text-indigo-400">
               <Award size={18} />
               <h4 className="text-base font-black">
-                {t("Quiet Achiever Recognition", <><ruby>静<rt className="text-[7px]">しず</rt></ruby>かな<ruby>実力者<rt className="text-[7px]">じつりょくしゃ</rt></ruby> (積極性の発見)</>)}
+                {t("Quiet Achiever Recognition", <><ruby>静<rt>しず</rt></ruby>かな<ruby>実力者<rt>じつりょくしゃ</rt></ruby> (積極性の発見)</>)}
               </h4>
             </div>
             <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">

@@ -178,34 +178,34 @@ export const TownNavigatorDispatcher: React.FC<DispatcherProps> = ({
   const schoolDisplayName = activeSchool === 'toyogaoka' ? '豊ヶ丘 (Toyogaoka)' : '二子玉川 (Futako-Tamagawa)';
 
   return (
-    <div className="fixed inset-0 w-screen h-screen overflow-hidden bg-slate-950 text-white flex flex-col select-none font-sans z-50">
+    <div className="fixed inset-0 w-screen h-dvh overflow-hidden bg-slate-950 text-white flex flex-col select-none font-sans z-50">
       {/* 1. DISPATCHER HEADER */}
-      <header className="flex items-center justify-between px-4 sm:px-6 py-2.5 bg-slate-900/90 border-b border-slate-800 backdrop-blur-md shrink-0">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-sky-500/20 border border-sky-400/40 flex items-center justify-center text-sky-400">
+      <header className="flex items-center justify-between gap-2 flex-nowrap px-4 sm:px-6 py-2.5 bg-slate-900/90 border-b border-slate-800 backdrop-blur-md shrink-0">
+        <div className="flex items-center gap-3 min-w-0 flex-1">
+          <div className="w-9 h-9 rounded-xl bg-sky-500/20 border border-sky-400/40 flex items-center justify-center text-sky-400 shrink-0">
             <Radio className="w-5 h-5 animate-pulse" />
           </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="font-black text-sm sm:text-base tracking-wide text-white">
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-2 min-w-0">
+              <h1 className="font-black text-sm sm:text-base tracking-wide text-white truncate">
                 MISSION CONTROL <span className="text-sky-400 font-medium text-xs sm:text-sm">街の案内係 (ディスパッチャー)</span>
               </h1>
-              <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+              <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 shrink-0 whitespace-nowrap">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" /> LIVE GPS SYNC
               </span>
             </div>
-            <p className="text-[11px] text-slate-400">
+            <p className="text-[11px] text-slate-400 truncate">
               Active Area: <span className="font-semibold text-slate-200">{schoolDisplayName}</span>
             </p>
           </div>
         </div>
 
         {/* Right header actions */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 shrink-0 flex-nowrap whitespace-nowrap">
           {onSwitchTo3D && (
             <button
               onClick={onSwitchTo3D}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-200 text-xs sm:text-sm font-bold border border-slate-700 transition cursor-pointer"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-200 text-xs sm:text-sm font-bold border border-slate-700 transition cursor-pointer shrink-0 whitespace-nowrap"
             >
               <Eye className="w-4 h-4 text-amber-400" />
               <span>3D Street View</span>

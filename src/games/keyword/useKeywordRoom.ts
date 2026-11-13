@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { VocabularyItem } from '@data/types';
+import { ensureAnonymousAuth } from '@/services/firebase';
 import { safeSet, safeUpdate, safeSubscribe, getServerTime } from '@/services/rtdbSafe';
 import {
   KeywordRoomMeta,
@@ -171,6 +172,7 @@ export function useKeywordRoom({
           updatedAt: getServerTime(),
         };
         pendingStateRef.current = null;
+        await ensureAnonymousAuth();
         await safeUpdate(`/keyword_rooms/${roomCode}/state`, payload);
         return true;
       } else {
@@ -179,7 +181,7 @@ export function useKeywordRoom({
           ...partialState,
         };
         if (!throttleTimerRef.current) {
-          throttleTimerRef.current = setTimeout(() => {
+          throttleTimerRef.current = setTimeout(async () => {
             throttleTimerRef.current = null;
             if (pendingStateRef.current && roomCode) {
               lastWriteTimeRef.current = Date.now();
@@ -188,7 +190,8 @@ export function useKeywordRoom({
                 updatedAt: getServerTime(),
               };
               pendingStateRef.current = null;
-              safeUpdate(`/keyword_rooms/${roomCode}/state`, payload);
+              await ensureAnonymousAuth();
+              safeUpdate(`/keyword_rooms/${roomCode}/state`, payload).catch(() => {});
             }
           }, THROTTLE_MS - elapsed);
         }
@@ -241,6 +244,7 @@ export function useKeywordRoom({
       setRoomState(state);
       setPairsMap(defaultPairs);
 
+      await ensureAnonymousAuth();
       await safeSet(`/keyword_rooms/${generatedCode}`, {
         meta,
         state,
@@ -284,6 +288,7 @@ export function useKeywordRoom({
   const setReadyPose = useCallback(
     async (poseId: string, roundNumber: number) => {
       if (!roomCode) return;
+      await ensureAnonymousAuth();
       const now = getServerTime();
 
       // Clear previous round results across desks while preserving scores & streaks
@@ -402,6 +407,7 @@ export function useKeywordRoom({
     const freshDesks = generateDefault18Desks();
     setPairsMap(freshDesks);
     if (!roomCode) return;
+    await ensureAnonymousAuth();
     await safeSet(`/keyword_rooms/${roomCode}/pairs`, freshDesks);
   }, [roomCode]);
 
@@ -448,6 +454,7 @@ export function useKeywordRoom({
       };
 
       setPairsMap((prev) => ({ ...prev, [pairId]: pairPayload }));
+      await ensureAnonymousAuth();
       await safeUpdate(
         `/keyword_rooms/${targetRoomCode}/pairs/${pairId}`,
         pairPayload
@@ -519,6 +526,7 @@ export function useKeywordRoom({
       setPairsMap((prev) => ({ ...prev, [pairId]: updatedPair }));
 
       if (roomCode) {
+        await ensureAnonymousAuth();
         await safeUpdate(`/keyword_rooms/${roomCode}/pairs/${pairId}`, {
           scoreLeft: nextScoreLeft,
           scoreRight: nextScoreRight,
@@ -617,6 +625,7 @@ export function useKeywordRoom({
       setPairsMap((prev) => ({ ...prev, [pairId]: updatedPair }));
 
       if (roomCode) {
+        await ensureAnonymousAuth();
         await safeUpdate(`/keyword_rooms/${roomCode}/pairs/${pairId}`, {
           scoreLeft: nextScoreLeft,
           scoreRight: nextScoreRight,

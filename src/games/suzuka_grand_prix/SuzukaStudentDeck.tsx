@@ -198,19 +198,19 @@ export const SuzukaStudentDeck: React.FC<SuzukaStudentDeckProps> = ({
         {!hideTelemetryHeader && (
           <>
             <div className="flex items-center justify-between pb-1.5 mb-1 shrink-0 text-xs font-bold border-b border-slate-800">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-rose-400 font-black flex items-center gap-1">
+              <div className="flex items-center gap-2 flex-nowrap overflow-x-auto no-scrollbar whitespace-nowrap">
+                <span className="text-rose-400 font-black flex items-center gap-1 shrink-0">
                   <Flag size={11} />
                   <span>Q {questionNumber} / {totalQuestions}</span>
                 </span>
-                <span className="text-slate-600">·</span>
-                <span className="text-cyan-400 font-mono-tabular font-black">
+                <span className="text-slate-600 shrink-0">·</span>
+                <span className="text-cyan-400 font-mono-tabular font-black shrink-0">
                   ⚡ {Math.round(speedKmh)} KM/H
                 </span>
                 {isCornerLimited && (
                   <>
-                    <span className="text-slate-600">·</span>
-                    <span className="text-rose-300 font-mono-tabular font-black text-[11px] flex items-center gap-1">
+                    <span className="text-slate-600 shrink-0">·</span>
+                    <span className="text-rose-300 font-mono-tabular font-black text-[11px] flex items-center gap-1 shrink-0">
                       <AlertTriangle size={11} className="text-rose-400" />
                       <span>{t(`RED ZONE MAX ${cornerSpeedLimit}`, `減速帯 ${cornerSpeedLimit}`)}</span>
                     </span>
@@ -218,8 +218,8 @@ export const SuzukaStudentDeck: React.FC<SuzukaStudentDeckProps> = ({
                 )}
                 {isPassingLane && (
                   <>
-                    <span className="text-slate-600">·</span>
-                    <span className="text-cyan-300 font-mono-tabular font-black text-[11px] flex items-center gap-1">
+                    <span className="text-slate-600 shrink-0">·</span>
+                    <span className="text-cyan-300 font-mono-tabular font-black text-[11px] flex items-center gap-1 shrink-0">
                       <Sparkles size={11} className="text-cyan-400" />
                       <span>{t('PASSING LANE', '追越レーン')}</span>
                     </span>
@@ -227,8 +227,8 @@ export const SuzukaStudentDeck: React.FC<SuzukaStudentDeckProps> = ({
                 )}
                 {currentStreak > 0 && (
                   <>
-                    <span className="text-slate-600">·</span>
-                    <span className="flex items-center gap-1 text-amber-400 font-black">
+                    <span className="text-slate-600 shrink-0">·</span>
+                    <span className="flex items-center gap-1 text-amber-400 font-black shrink-0">
                       <Flame size={12} />
                       <span>x{currentStreak} {t('NITRO!', 'かそく!')}</span>
                     </span>
@@ -280,15 +280,15 @@ export const SuzukaStudentDeck: React.FC<SuzukaStudentDeckProps> = ({
                       {question.promptText}
                     </h4>
                   ) : question.promptType === 'JA_MEANING' ? (
-                    <div className="flex items-center justify-center gap-2 flex-wrap">
+                    <div className="flex items-center justify-center gap-2 flex-nowrap min-w-0">
                       <RubyText
                         ruby={question.targetWordRuby}
                         kanji={question.targetWordJa}
                         hiragana={question.targetWordHiragana}
-                        className="text-xl sm:text-2xl font-black text-white text-center leading-tight"
-                        rtClassName="text-[10px] sm:text-[11px] font-semibold text-cyan-300 select-none"
+                        className="text-xl sm:text-2xl font-black text-white text-center leading-tight truncate"
+                        rtClassName="text-cyan-300 font-semibold select-none"
                       />
-                      <span className="text-sm sm:text-base font-bold text-slate-300">
+                      <span className="text-sm sm:text-base font-bold text-slate-300 whitespace-nowrap shrink-0">
                         {t('in English?', 'は英語で？')}
                       </span>
                     </div>
@@ -411,7 +411,6 @@ export const SuzukaStudentDeck: React.FC<SuzukaStudentDeckProps> = ({
                               kanji={option.ja_kanji}
                               hiragana={option.ja_hiragana}
                               className={`${fontSizeClass} font-black text-white text-center leading-tight`}
-                              rtClassName="text-[10px] sm:text-xs font-normal text-white/90 select-none"
                             />
                           ) : showPhonicsChunks ? (
                             <span className={`w-full text-white leading-tight ${fontSizeClass} truncate`}>
@@ -464,15 +463,15 @@ export const SuzukaStudentDeck: React.FC<SuzukaStudentDeckProps> = ({
                     {question.promptText}
                   </h4>
                 ) : question.promptType === 'JA_MEANING' ? (
-                  <div className="flex items-center justify-center gap-2 flex-wrap">
+                  <div className="flex items-center justify-center gap-2 flex-nowrap min-w-0">
                     <RubyText
                       ruby={question.targetWordRuby}
                       kanji={question.targetWordJa}
                       hiragana={question.targetWordHiragana}
-                      className="text-xl sm:text-2xl md:text-3xl font-black text-white text-center leading-tight"
-                      rtClassName="text-[10px] sm:text-[11px] font-semibold text-cyan-300 select-none"
+                      className="text-xl sm:text-2xl md:text-3xl font-black text-white text-center leading-tight truncate"
+                      rtClassName="text-cyan-300 font-semibold select-none"
                     />
-                    <span className="text-sm sm:text-base md:text-lg font-bold text-slate-300">
+                    <span className="text-sm sm:text-base md:text-lg font-bold text-slate-300 whitespace-nowrap shrink-0">
                       {t('in English?', 'は英語で？')}
                     </span>
                   </div>
@@ -596,7 +595,6 @@ export const SuzukaStudentDeck: React.FC<SuzukaStudentDeckProps> = ({
                         kanji={opt.ja_kanji}
                         hiragana={opt.ja_hiragana}
                         className={`${info.fontSizeClass} font-black ${textColor} leading-tight truncate text-center`}
-                        rtClassName="text-[9px] sm:text-[10px] font-normal select-none"
                       />
                     </div>
                   );
@@ -777,7 +775,7 @@ export const SuzukaStudentDeck: React.FC<SuzukaStudentDeckProps> = ({
           <div className="grid grid-cols-2 gap-1.5 sm:gap-2 relative w-full flex-1 min-h-0">
             {/* Constructive Pit-Stop Mistake Coach Overlay */}
             {penaltySecondsLeft > 0 && (
-              <div className="absolute inset-x-2 top-1/2 -translate-y-1/2 z-30 mx-auto max-w-md pointer-events-none flex flex-col items-center justify-center rounded-2xl bg-slate-950/96 border-2 border-amber-400 text-white py-1.5 px-3 shadow-xl max-w-sm">
+              <div className="absolute inset-x-2 top-1/2 -translate-y-1/2 z-30 mx-auto max-w-sm pointer-events-none flex flex-col items-center justify-center rounded-2xl bg-slate-950/96 border-2 border-amber-400 text-white py-1.5 px-3 shadow-xl">
                 <div className="flex items-center gap-2 text-amber-400 font-black text-xs sm:text-sm tracking-wide">
                   <span>🔧</span>
                   <span>
@@ -893,7 +891,6 @@ export const SuzukaStudentDeck: React.FC<SuzukaStudentDeckProps> = ({
                           kanji={option.ja_kanji}
                           hiragana={option.ja_hiragana}
                           className={`${fontSizeClass} font-black text-white text-center leading-tight`}
-                          rtClassName="text-[10px] sm:text-xs font-normal text-white/90 select-none"
                         />
                       ) : showPhonicsChunks ? (
                         <span className={`w-full text-white leading-tight ${fontSizeClass} truncate`}>

@@ -97,23 +97,23 @@ export const QuizHostLeaderboard: React.FC<QuizHostLeaderboardProps> = ({
   const maxAvgScore = Math.max(1, ...teamList.map(t => t.averageScore));
 
   return (
-    <div className="flex flex-col h-full max-w-[92vw] max-h-[92vh] mx-auto w-full p-2 sm:p-4 text-slate-900 dark:text-white select-none relative overflow-hidden">
+    <div className="flex flex-col h-full max-w-[92vw] max-h-[92dvh] mx-auto w-full p-2 sm:p-4 text-slate-900 dark:text-white select-none relative overflow-hidden">
       {/* Top Header Bar */}
-      <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800 shrink-0">
-        <div className="flex items-center gap-3">
-          <Trophy className="text-amber-400" size={26} />
-          <h2 className="text-2xl font-black tracking-tight">
+      <div className="flex items-center justify-between gap-2 pb-3 border-b border-slate-200 dark:border-slate-800 shrink-0 flex-nowrap">
+        <div className="flex items-center gap-3 min-w-0 flex-1 overflow-x-auto no-scrollbar flex-nowrap">
+          <Trophy className="text-amber-400 shrink-0" size={26} />
+          <h2 className="text-2xl font-black tracking-tight shrink-0 whitespace-nowrap">
             {t('Leaderboard', 'ランキング')}
           </h2>
-          <span className="text-xs font-bold text-slate-400">
-            {t(`Round ${questionIndex + 1} of ${totalQuestions}`, <><ruby>第<rt className="text-[7px] font-normal text-slate-400">だい</rt></ruby>{questionIndex + 1}<ruby>問<rt className="text-[7px] font-normal text-slate-400">もん</rt></ruby> / <ruby>全<rt className="text-[7px] font-normal text-slate-400">ぜん</rt></ruby>{totalQuestions}<ruby>問<rt className="text-[7px] font-normal text-slate-400">もん</rt></ruby></>)}
+          <span className="text-xs font-bold text-slate-400 shrink-0 whitespace-nowrap">
+            {t(`Round ${questionIndex + 1} of ${totalQuestions}`, <><ruby>第<rt>だい</rt></ruby>{questionIndex + 1}<ruby>問<rt>もん</rt></ruby> / <ruby>全<rt>ぜん</rt></ruby>{totalQuestions}<ruby>問<rt>もん</rt></ruby></>)}
           </span>
           {/* 1-tap pause toggle button */}
           {!isLastQuestion && (
             <button
               type="button"
               onClick={() => setIsPaused(p => !p)}
-              className={`flex items-center gap-1 text-xs font-bold px-2.5 py-0.5 rounded-full cursor-pointer transition-all ${
+              className={`flex items-center gap-1 text-xs font-bold px-2.5 py-0.5 rounded-full cursor-pointer transition-all shrink-0 whitespace-nowrap ${
                 isPaused
                   ? 'bg-amber-400 text-slate-950 font-black animate-pulse shadow-xs ring-2 ring-amber-300'
                   : 'text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800'
@@ -122,13 +122,13 @@ export const QuizHostLeaderboard: React.FC<QuizHostLeaderboardProps> = ({
             >
               {isPaused ? <Pause size={12} className="fill-current" /> : <Clock size={12} />}
               <span className="font-mono">
-                {isPaused ? t('PAUSED [P]', <><ruby>一時<rt className="text-[7px] font-normal text-slate-900">いちじ</rt></ruby><ruby>停止<rt className="text-[7px] font-normal text-slate-900">ていし</rt></ruby> [P]</>) : `${countdown}s`}
+                {isPaused ? t('PAUSED [P]', <><ruby>一時<rt>いちじ</rt></ruby><ruby>停止<rt>ていし</rt></ruby> [P]</>) : `${countdown}s`}
               </span>
             </button>
           )}
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 shrink-0 flex-nowrap">
           {onExit && (
             <button
               onClick={() => {
@@ -136,21 +136,21 @@ export const QuizHostLeaderboard: React.FC<QuizHostLeaderboardProps> = ({
                   onExit();
                 }
               }}
-              className="px-3 py-2 rounded-2xl font-black text-xs text-rose-500 hover:text-rose-600 bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/60 border border-rose-200 dark:border-rose-900 active:scale-95 transition-all"
+              className="px-3 py-2 rounded-2xl font-black text-xs text-rose-500 hover:text-rose-600 bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/60 border border-rose-200 dark:border-rose-900 active:scale-95 transition-all whitespace-nowrap"
               title={t('End quiz and disband room', 'クイズを終了して解散')}
             >
-              <span>{t('✕ End', <>✕ <ruby>終了<rt className="text-[7px] font-normal text-rose-500">しゅうりょう</rt></ruby></>)}</span>
+              <span>{t('✕ End', <>✕ <ruby>終了<rt>しゅうりょう</rt></ruby></>)}</span>
             </button>
           )}
 
           <button
             onClick={onNext}
-            className="px-6 py-2 rounded-2xl font-black text-sm text-white bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 shadow-xl shadow-emerald-500/20 active:scale-95 transition-all flex items-center gap-2 cursor-pointer"
+            className="px-6 py-2 rounded-2xl font-black text-sm text-white bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 shadow-xl shadow-emerald-500/20 active:scale-95 transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap"
           >
             <span>
               {isLastQuestion
-                ? t('FINAL RESULTS', <><ruby>最終<rt className="text-[7px] font-normal text-white">さいしゅう</rt></ruby><ruby>結果<rt className="text-[7px] font-normal text-white">けっか</rt></ruby><ruby>発表<rt className="text-[7px] font-normal text-white">はっぴょう</rt></ruby></>)
-                : <>{t('NEXT QUESTION', <><ruby>次<rt className="text-[7px] font-normal text-white">つぎ</rt></ruby>の<ruby>問題<rt className="text-[7px] font-normal text-white">もんだい</rt></ruby>へ</>)} ({isPaused ? 'PAUSED' : `${countdown}s`})</>}
+                ? t('FINAL RESULTS', <><ruby>最終<rt>さいしゅう</rt></ruby><ruby>結果<rt>けっか</rt></ruby><ruby>発表<rt>はっぴょう</rt></ruby></>)
+                : <>{t('NEXT QUESTION', <><ruby>次<rt>つぎ</rt></ruby>の<ruby>問題<rt>もんだい</rt></ruby>へ</>)} ({isPaused ? 'PAUSED' : `${countdown}s`})</>}
             </span>
             <ArrowRight size={16} />
             <span className="opacity-75 font-mono text-xs">[Space]</span>
@@ -160,28 +160,28 @@ export const QuizHostLeaderboard: React.FC<QuizHostLeaderboardProps> = ({
 
       {/* Team Mode Tabs (if in Team Mode) */}
       {gameMode === 'TEAM' && (
-        <div className="flex items-center justify-center gap-2 pt-4 shrink-0">
+        <div className="flex items-center justify-center gap-2 pt-4 shrink-0 flex-nowrap">
           <button
             onClick={() => setViewTab('TEAMS')}
-            className={`px-4 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 ${
+            className={`px-4 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 whitespace-nowrap ${
               viewTab === 'TEAMS'
                 ? 'bg-emerald-600 text-white shadow-md'
                 : 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-300'
             }`}
           >
             <Users size={14} />
-            <span>{t('Team Ranks', <>チーム<ruby>順位<rt className="text-[7px] font-normal">じゅんい</rt></ruby></>)}</span>
+            <span>{t('Team Ranks', <>チーム<ruby>順位<rt>じゅんい</rt></ruby></>)}</span>
           </button>
           <button
             onClick={() => setViewTab('PLAYERS')}
-            className={`px-4 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 ${
+            className={`px-4 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 whitespace-nowrap ${
               viewTab === 'PLAYERS'
                 ? 'bg-emerald-600 text-white shadow-md'
                 : 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-300'
             }`}
           >
             <User size={14} />
-            <span>{t('Individual MVPs', <><ruby>個人<rt className="text-[7px] font-normal">こじん</rt></ruby> Top 5</>)}</span>
+            <span>{t('Individual MVPs', <><ruby>個人<rt>こじん</rt></ruby> Top 5</>)}</span>
           </button>
         </div>
       )}
@@ -221,16 +221,16 @@ export const QuizHostLeaderboard: React.FC<QuizHostLeaderboardProps> = ({
                     <span className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white flex items-center gap-2">
                       <span>{tItem.preset.emoji}</span>
                       <span>{language === 'ja' ? tItem.preset.jaName : tItem.preset.name}</span>
-                      <span className="text-xs font-bold text-slate-400">({tItem.memberCount}{t(' players', <><ruby>人<rt className="text-[7px] font-normal text-slate-400">にん</rt></ruby></>)})</span>
+                      <span className="text-xs font-bold text-slate-400">({tItem.memberCount}{t(' players', <><ruby>人<rt>にん</rt></ruby></>)})</span>
                     </span>
                   </div>
 
                   <div className="text-right">
                     <div className="text-lg sm:text-2xl font-black text-slate-900 dark:text-white font-mono">
-                      {tItem.averageScore.toLocaleString()} <span className="text-xs font-bold text-slate-400">{t('pts / person', <>pts / <ruby>人<rt className="text-[7px] font-normal text-slate-400">にん</rt></ruby></>)}</span>
+                      {tItem.averageScore.toLocaleString()} <span className="text-xs font-bold text-slate-400">{t('pts / person', <>pts / <ruby>人<rt>にん</rt></ruby></>)}</span>
                     </div>
                     <div className="text-[11px] font-bold text-slate-400">
-                      {t('Team Total:', <>チーム<ruby>合計<rt className="text-[7px] font-normal text-slate-400">ごうけい</rt></ruby>:</>)} {tItem.score.toLocaleString()} pts
+                      {t('Team Total:', <>チーム<ruby>合計<rt>ごうけい</rt></ruby>:</>)} {tItem.score.toLocaleString()} pts
                     </div>
                   </div>
                 </div>
@@ -274,7 +274,7 @@ export const QuizHostLeaderboard: React.FC<QuizHostLeaderboardProps> = ({
         <div className="flex-1 flex flex-col justify-center space-y-3 my-auto py-6">
           {top5.length === 0 ? (
             <div className="text-center text-slate-400 py-12 text-sm font-bold">
-              {t('No player scores recorded yet.', <>まだスコアが<ruby>記録<rt className="text-[7px] font-normal text-slate-400">きろく</rt></ruby>されていません</>)}
+              {t('No player scores recorded yet.', <>まだスコアが<ruby>記録<rt>きろく</rt></ruby>されていません</>)}
             </div>
           ) : (
             top5.map((p, idx) => {
@@ -336,7 +336,7 @@ export const QuizHostLeaderboard: React.FC<QuizHostLeaderboardProps> = ({
                     {p.currentStreak >= 2 && (
                       <div className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-rose-100 dark:bg-rose-950 text-rose-600 dark:text-rose-400 text-xs font-black animate-pulse">
                         <Flame size={14} fill="currentColor" />
-                        <span>{p.currentStreak} {t('in a row!', <><ruby>問<rt className="text-[7px] font-normal text-rose-600 dark:text-rose-400">もん</rt></ruby><ruby>連続<rt className="text-[7px] font-normal text-rose-600 dark:text-rose-400">れんぞく</rt></ruby><ruby>正解<rt className="text-[7px] font-normal text-rose-600 dark:text-rose-400">せいかい</rt></ruby>！</>)}</span>
+                        <span>{p.currentStreak} {t('in a row!', <><ruby>問<rt>もん</rt></ruby><ruby>連続<rt>れんぞく</rt></ruby><ruby>正解<rt>せいかい</rt></ruby>！</>)}</span>
                       </div>
                     )}
                   </div>
@@ -361,7 +361,7 @@ export const QuizHostLeaderboard: React.FC<QuizHostLeaderboardProps> = ({
 
       {/* Bottom Hint */}
       <div className="text-center pb-2 text-xs font-bold text-slate-400 shrink-0">
-        {t('Press Space or click button above to continue', <>Space キー または <ruby>上<rt className="text-[7px] font-normal text-slate-400">うえ</rt></ruby>のボタンをクリックして<ruby>進<rt className="text-[7px] font-normal text-slate-400">すす</rt></ruby>む</>)}
+        {t('Press Space or click button above to continue', <>Space キー または <ruby>上<rt>うえ</rt></ruby>のボタンをクリックして<ruby>進<rt>すす</rt></ruby>む</>)}
       </div>
 
       {/* Emergency Blackout Shutter (KeyB / period) */}

@@ -330,6 +330,7 @@ export function useClassroomRoom<TGameState = any, TPlayerAction = any>(
     const handleVisibilityChange = async () => {
       if (document.visibilityState === 'visible') {
         try {
+          await ensureAnonymousAuth();
           const now = Date.now();
           await safeUpdate(`rooms/${pin}/players/${currentPlayer.id}`, {
             lastSeen: now
@@ -343,6 +344,7 @@ export function useClassroomRoom<TGameState = any, TPlayerAction = any>(
 
     const handleOnline = async () => {
       try {
+        await ensureAnonymousAuth();
         const now = Date.now();
         await safeUpdate(`rooms/${pin}/players/${currentPlayer.id}`, {
           lastSeen: now
@@ -364,9 +366,13 @@ export function useClassroomRoom<TGameState = any, TPlayerAction = any>(
     // Heartbeat every 20 seconds while active
     const heartbeatInterval = setInterval(() => {
       if (document.visibilityState === 'visible') {
-        safeUpdate(`rooms/${pin}/players/${currentPlayer.id}`, {
-          lastSeen: Date.now()
-        }).catch(() => {});
+        ensureAnonymousAuth()
+          .then(() =>
+            safeUpdate(`rooms/${pin}/players/${currentPlayer.id}`, {
+              lastSeen: Date.now()
+            })
+          )
+          .catch(() => {});
       }
     }, 20000);
 
@@ -440,6 +446,7 @@ export function useClassroomRoom<TGameState = any, TPlayerAction = any>(
     async (gameData?: TGameState): Promise<void> => {
       if (!pin) return;
       try {
+        await ensureAnonymousAuth();
         const updates: Record<string, any> = {
           'metadata/status': 'IN_GAME',
           'status': 'IN_GAME',
@@ -461,6 +468,7 @@ export function useClassroomRoom<TGameState = any, TPlayerAction = any>(
     async (phase: RoomStatus, gameDataPatch?: Partial<TGameState>): Promise<void> => {
       if (!pin) return;
       try {
+        await ensureAnonymousAuth();
         const updates: Record<string, any> = {
           'metadata/status': phase,
           'status': phase,
@@ -484,6 +492,7 @@ export function useClassroomRoom<TGameState = any, TPlayerAction = any>(
     async (nextRoundNumber?: number, roundGameData?: Partial<TGameState>): Promise<void> => {
       if (!pin) return;
       try {
+        await ensureAnonymousAuth();
         const currentRound = roomRef.current?.metadata.round || 1;
         const targetRound = nextRoundNumber !== undefined ? nextRoundNumber : currentRound + 1;
 
@@ -514,6 +523,7 @@ export function useClassroomRoom<TGameState = any, TPlayerAction = any>(
     async (roundResults?: any): Promise<void> => {
       if (!pin) return;
       try {
+        await ensureAnonymousAuth();
         const updates: Record<string, any> = {
           'metadata/status': 'ROUND_REVEAL',
           'status': 'ROUND_REVEAL',
@@ -534,6 +544,7 @@ export function useClassroomRoom<TGameState = any, TPlayerAction = any>(
   const showLeaderboard = useCallback(async (): Promise<void> => {
     if (!pin) return;
     try {
+      await ensureAnonymousAuth();
       await safeUpdate(`rooms/${pin}`, {
         'metadata/status': 'LEADERBOARD',
         'status': 'LEADERBOARD',
@@ -549,6 +560,7 @@ export function useClassroomRoom<TGameState = any, TPlayerAction = any>(
     async (finalData?: any): Promise<void> => {
       if (!pin) return;
       try {
+        await ensureAnonymousAuth();
         const updates: Record<string, any> = {
           'metadata/status': 'GAME_OVER',
           'status': 'GAME_OVER',
@@ -577,6 +589,7 @@ export function useClassroomRoom<TGameState = any, TPlayerAction = any>(
   const closeRoom = useCallback(async (): Promise<void> => {
     if (!pin) return;
     try {
+      await ensureAnonymousAuth();
       await safeUpdate(`rooms/${pin}`, {
         'metadata/status': 'CLOSED',
         'status': 'CLOSED',
@@ -606,6 +619,7 @@ export function useClassroomRoom<TGameState = any, TPlayerAction = any>(
     async (playerId: string): Promise<void> => {
       if (!pin) return;
       try {
+        await ensureAnonymousAuth();
         const playerToKick = roomRef.current?.players?.[playerId];
         await safeRemove(`rooms/${pin}/players/${playerId}`);
         await safeRemove(`rooms/${pin}/playerActions/${playerId}`).catch(() => {});
@@ -633,6 +647,7 @@ export function useClassroomRoom<TGameState = any, TPlayerAction = any>(
     async (playerId: string, newTeamId: TeamId): Promise<void> => {
       if (!pin) return;
       try {
+        await ensureAnonymousAuth();
         await safeUpdate(`rooms/${pin}/players/${playerId}`, {
           teamId: newTeamId
         });
@@ -660,6 +675,7 @@ export function useClassroomRoom<TGameState = any, TPlayerAction = any>(
     async (playerId: string, delta: number, streakIncrement = true): Promise<void> => {
       if (!pin) return;
       try {
+        await ensureAnonymousAuth();
         await safeTransaction<ClassroomPlayer>(
           `rooms/${pin}/players/${playerId}`,
           (current) => {
@@ -701,6 +717,7 @@ export function useClassroomRoom<TGameState = any, TPlayerAction = any>(
     async (updater: TGameState | ((prev: TGameState) => TGameState)): Promise<void> => {
       if (!pin) return;
       try {
+        await ensureAnonymousAuth();
         const nextData =
           typeof updater === 'function'
             ? (updater as (prev: TGameState) => TGameState)(roomRef.current?.gameData as TGameState)
@@ -719,6 +736,7 @@ export function useClassroomRoom<TGameState = any, TPlayerAction = any>(
     async (patch: Partial<TGameState>): Promise<void> => {
       if (!pin) return;
       try {
+        await ensureAnonymousAuth();
         const updates: Record<string, any> = {};
         Object.entries(patch).forEach(([k, v]) => {
           updates[`gameData/${k}`] = v;
@@ -735,6 +753,7 @@ export function useClassroomRoom<TGameState = any, TPlayerAction = any>(
   const clearPlayerActions = useCallback(async (): Promise<void> => {
     if (!pin) return;
     try {
+      await ensureAnonymousAuth();
       await safeSet(`rooms/${pin}/playerActions`, {});
     } catch (err: any) {
       console.error('[useClassroomRoom] Error clearing player actions:', err);
@@ -838,6 +857,7 @@ export function useClassroomRoom<TGameState = any, TPlayerAction = any>(
     async (action: TPlayerAction): Promise<void> => {
       if (!pin || !currentPlayer?.id) return;
       try {
+        await ensureAnonymousAuth();
         const actionPayload = {
           ...action,
           playerId: currentPlayer.id,
@@ -856,6 +876,7 @@ export function useClassroomRoom<TGameState = any, TPlayerAction = any>(
     async (patch: Partial<ClassroomPlayer>): Promise<void> => {
       if (!pin || !currentPlayer?.id) return;
       try {
+        await ensureAnonymousAuth();
         const cleanedPatch = deepClean(patch);
         await safeUpdate(`rooms/${pin}/players/${currentPlayer.id}`, cleanedPatch);
         setCurrentPlayer((prev) => (prev ? { ...prev, ...patch } : null));
@@ -870,6 +891,7 @@ export function useClassroomRoom<TGameState = any, TPlayerAction = any>(
   const leaveRoom = useCallback(async (): Promise<void> => {
     if (!pin || !currentPlayer?.id) return;
     try {
+      await ensureAnonymousAuth();
       const pId = currentPlayer.id;
       const attNum = currentPlayer.attendanceNumber;
       await safeRemove(`rooms/${pin}/players/${pId}`);
@@ -898,6 +920,7 @@ export function useClassroomRoom<TGameState = any, TPlayerAction = any>(
     async (attendanceNumber: number): Promise<boolean> => {
       if (!pin || !currentPlayer?.id) return false;
       try {
+        await ensureAnonymousAuth();
         const path = `rooms/${pin}/boundStudents/${attendanceNumber}`;
         const result = await safeTransaction<{
           playerId: string;
@@ -941,6 +964,7 @@ export function useClassroomRoom<TGameState = any, TPlayerAction = any>(
     async (attendanceNumber: number): Promise<void> => {
       if (!pin) return;
       try {
+        await ensureAnonymousAuth();
         await safeRemove(`rooms/${pin}/boundStudents/${attendanceNumber}`);
       } catch (err: any) {
         console.error('[useClassroomRoom] Error releasing attendance number:', err);
@@ -953,6 +977,7 @@ export function useClassroomRoom<TGameState = any, TPlayerAction = any>(
   const heartbeat = useCallback(async (): Promise<void> => {
     if (!pin || !currentPlayer?.id) return;
     try {
+      await ensureAnonymousAuth();
       await safeUpdate(`rooms/${pin}/players/${currentPlayer.id}`, {
         lastSeen: Date.now()
       });

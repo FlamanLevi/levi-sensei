@@ -11,7 +11,7 @@ import {
   getServerTime,
   initServerTimeSync
 } from '@/services/rtdbSafe';
-import { sweepStaleRooms } from '@/services/roomSweeper';
+import { sweepStaleRooms, clearClassRoomPointers } from '@/services/roomSweeper';
 import { 
   QuizRoomState, 
   QuizQuestion, 
@@ -176,6 +176,17 @@ function mergeLivePlayers(
   return merged;
 }
 
+function sanitizeQuestionsForPublicRoom(
+  questions: QuizQuestion[],
+  gamePlayType?: QuizHostSettings['gamePlayType']
+): QuizQuestion[] {
+  // Only Kahoot hides answers from student devices; Sprint, 3D Grand Prix, Tug of War, and Volleyball grade locally for 0ms responsiveness.
+  if ((gamePlayType || 'KAHOOT') !== 'KAHOOT') {
+    return questions;
+  }
+  return questions.map(({ correctOptionId: _correct, distractorOptionIds: _distractors, ...rest }) => rest);
+}
+
 export function useQuizRoom(
   initialRoomCode?: string,
   options?: { isHost?: boolean; isStudent?: boolean; playerId?: string }
@@ -188,6 +199,8 @@ export function useQuizRoom(
   const questionsRef = useRef<QuizQuestion[]>([]);
   const settingsRef = useRef<QuizHostSettings | null>(null);
   const isRevealingRef = useRef<boolean>(false);
+  const roomRef = useRef<QuizRoomState | null>(null);
+  roomRef.current = room;
 
   // Automatic Screen Wake Lock & Folio Wake Server-Time Re-Sync across 40 Student iPads
   useEffect(() => {
@@ -548,7 +561,7 @@ export function useQuizRoom(
         choiceImageMode: settings.choiceImageMode,
         englishReadingAid: settings.englishReadingAid,
         timeLimitSeconds: settings.timeLimitSeconds,
-        questions,
+        questions: sanitizeQuestionsForPublicRoom(questions, settings.gamePlayType),
         bgm: settings.bgm,
         vocabularyScope: settings.vocabularyScope,
         selectedUnits: settings.selectedUnits || undefined
@@ -589,6 +602,7 @@ export function useQuizRoom(
   const endGame = useCallback(async (awards?: any[]) => {
     if (!roomCode) return;
     soundEffects.playFanfare();
+    await ensureAnonymousAuth();
 
     let sessionAnalytics: SessionAnalytics | undefined;
     try {
@@ -611,19 +625,14 @@ export function useQuizRoom(
     if (awards && awards.length > 0) {
       updateData.awardedBadges = awards;
     }
-    if (room?.schoolId && room?.classId && !room?.isStudentHost) {
+    const currentRoom = roomRef.current || room;
+    if (currentRoom?.schoolId && currentRoom?.classId && !currentRoom?.isStudentHost) {
       try {
         const snap = await safeGet<QuizRoomState>(`rooms/${roomCode}`);
         const totalPoints = Object.values(snap?.players || {}).reduce((sum, p) => sum + (p.score || 0), 0);
-        depositClassEnergy(room.schoolId, room.classId, totalPoints, roomCode).catch(() => {});
+        depositClassEnergy(currentRoom.schoolId, currentRoom.classId, totalPoints, roomCode).catch(() => {});
       } catch {}
-      safeGet<{ code: string }>(`schools/${room.schoolId}/classes/${room.classId}/analyticsSummary/activeRoom`)
-        .then((cur) => {
-          if (cur?.code === roomCode) {
-            safeRemove(`schools/${room.schoolId}/classes/${room.classId}/analyticsSummary/activeRoom`).catch(() => {});
-          }
-        })
-        .catch(() => {});
+      clearClassRoomPointers(currentRoom.schoolId, currentRoom.classId, roomCode).catch(() => {});
     }
     await safeUpdate(`rooms/${roomCode}`, updateData);
   }, [roomCode, getAuthoritativeQuestions, room?.schoolId, room?.classId]);
@@ -631,6 +640,7 @@ export function useQuizRoom(
   // Host: Send next question (cleans responses node and local responses state)
   const nextQuestion = useCallback(async (index: number) => {
     if (!roomCode) return;
+    await ensureAnonymousAuth();
     const rawQuestions = await getAuthoritativeQuestions();
     const questions = [...rawQuestions].sort((a, b) => (a.questionIndex ?? 0) - (b.questionIndex ?? 0));
     if (questions.length === 0) return;
@@ -678,6 +688,7 @@ export function useQuizRoom(
     soundEffects.playReveal();
 
     try {
+      await ensureAnonymousAuth();
       // 350ms Wi-Fi flush buffer so student answers tapped at 0.0s arrive before grading
       await new Promise(resolve => setTimeout(resolve, 350));
 
@@ -860,6 +871,7 @@ export function useQuizRoom(
   const showLeaderboard = useCallback(async () => {
     if (!roomCode) return;
     soundEffects.playFanfare();
+    await ensureAnonymousAuth();
     await safeUpdate(`rooms/${roomCode}`, {
       status: 'LEADERBOARD'
     });
@@ -870,6 +882,7 @@ export function useQuizRoom(
     if (!roomCode) return;
     const now = getServerTime();
     try {
+      await ensureAnonymousAuth();
       livePlayersRef.current = {};
       const duration = settingsRef.current?.sprintSettings?.timeLimitSeconds || room?.sprintSettings?.timeLimitSeconds || 60;
       const modeType = settingsRef.current?.gamePlayType || room?.gamePlayType;
@@ -895,6 +908,7 @@ export function useQuizRoom(
   const triggerSprintGraceCountdown = useCallback(async () => {
     if (!roomCode) return;
     try {
+      await ensureAnonymousAuth();
       await safeUpdate(`rooms/${roomCode}`, {
         raceFinishGraceStartTime: getServerTime()
       });
@@ -908,6 +922,7 @@ export function useQuizRoom(
     if (!roomCode) return;
     soundEffects.playCheckeredFlag();
     try {
+      await ensureAnonymousAuth();
       // Allow 250ms (2x 125ms spoke throttle window) for in-flight student iPad packets to land
       await new Promise((resolve) => setTimeout(resolve, 250));
 
@@ -1060,13 +1075,7 @@ export function useQuizRoom(
           const totalPoints = (playerList || []).reduce((sum, p) => sum + (p.score || 0), 0);
           depositClassEnergy(roomVal.schoolId, roomVal.classId, totalPoints, roomCode).catch(() => {});
         } catch {}
-        safeGet<{ code: string }>(`schools/${roomVal.schoolId}/classes/${roomVal.classId}/analyticsSummary/activeRoom`)
-          .then((cur) => {
-            if (cur?.code === roomCode) {
-              safeRemove(`schools/${roomVal.schoolId}/classes/${roomVal.classId}/analyticsSummary/activeRoom`).catch(() => {});
-            }
-          })
-          .catch(() => {});
+        clearClassRoomPointers(roomVal.schoolId, roomVal.classId, roomCode).catch(() => {});
       }
       await safeUpdate(`rooms/${roomCode}`, updateData);
     } catch (err: any) {
@@ -1079,6 +1088,7 @@ export function useQuizRoom(
     if (!roomCode) return;
     const now = getServerTime();
     try {
+      await ensureAnonymousAuth();
       livePlayersRef.current = {};
       await safeRemove(`roomPlayers/${roomCode}`).catch(() => {});
       const duration = settingsRef.current?.tugOfWarSettings?.timeLimitSeconds || room?.tugOfWarSettings?.timeLimitSeconds || 60;
@@ -1107,6 +1117,7 @@ export function useQuizRoom(
     if (!roomCode) return;
     const now = getServerTime();
     try {
+      await ensureAnonymousAuth();
       // Snapshot & merge cumulative player stats from Round N before resetting spoke node for Round N+1
       const [basePlayers, livePlayers] = await Promise.all([
         safeGet<Record<string, QuizPlayer>>(`rooms/${roomCode}/players`),
@@ -1147,6 +1158,7 @@ export function useQuizRoom(
   const freezeTugOfWar = useCallback(async () => {
     if (!roomCode) return;
     try {
+      await ensureAnonymousAuth();
       await safeUpdate(`rooms/${roomCode}`, {
         tugOfWarFinished: true
       });
@@ -1161,6 +1173,7 @@ export function useQuizRoom(
     soundEffects.playWhistle(1.2);
     soundEffects.playFanfare();
     try {
+      await ensureAnonymousAuth();
       // Allow 250ms (2x 125ms spoke throttle window) for in-flight student iPad packets to land
       await new Promise((resolve) => setTimeout(resolve, 250));
 
@@ -1217,13 +1230,7 @@ export function useQuizRoom(
           const totalPoints = (playerList || []).reduce((sum, p) => sum + (p.score || 0), 0);
           depositClassEnergy(roomVal.schoolId, roomVal.classId, totalPoints, roomCode).catch(() => {});
         } catch {}
-        safeGet<{ code: string }>(`schools/${roomVal.schoolId}/classes/${roomVal.classId}/analyticsSummary/activeRoom`)
-          .then((cur) => {
-            if (cur?.code === roomCode) {
-              safeRemove(`schools/${roomVal.schoolId}/classes/${roomVal.classId}/analyticsSummary/activeRoom`).catch(() => {});
-            }
-          })
-          .catch(() => {});
+        clearClassRoomPointers(roomVal.schoolId, roomVal.classId, roomCode).catch(() => {});
       }
       await safeUpdate(`rooms/${roomCode}`, updateData);
     } catch (err: any) {
@@ -1236,6 +1243,7 @@ export function useQuizRoom(
     if (!roomCode) return;
     const now = getServerTime();
     try {
+      await ensureAnonymousAuth();
       livePlayersRef.current = {};
       await safeRemove(`roomPlayers/${roomCode}`).catch(() => {});
       const duration = settingsRef.current?.volleyballSettings?.timeLimitSeconds || room?.volleyballSettings?.timeLimitSeconds || 60;
@@ -1256,6 +1264,7 @@ export function useQuizRoom(
   const freezeVolleyball = useCallback(async () => {
     if (!roomCode) return;
     try {
+      await ensureAnonymousAuth();
       await safeUpdate(`rooms/${roomCode}`, {
         volleyballFinished: true
       });
@@ -1270,6 +1279,7 @@ export function useQuizRoom(
     soundEffects.playWhistle(1.2);
     soundEffects.playFanfare();
     try {
+      await ensureAnonymousAuth();
       // Allow 250ms (2x 125ms spoke throttle window) for in-flight student iPad packets to land
       await new Promise((resolve) => setTimeout(resolve, 250));
 
@@ -1327,13 +1337,7 @@ export function useQuizRoom(
           const totalPoints = (playerList || []).reduce((sum, p) => sum + (p.score || 0), 0);
           depositClassEnergy(roomVal.schoolId, roomVal.classId, totalPoints, roomCode).catch(() => {});
         } catch {}
-        safeGet<{ code: string }>(`schools/${roomVal.schoolId}/classes/${roomVal.classId}/analyticsSummary/activeRoom`)
-          .then((cur) => {
-            if (cur?.code === roomCode) {
-              safeRemove(`schools/${roomVal.schoolId}/classes/${roomVal.classId}/analyticsSummary/activeRoom`).catch(() => {});
-            }
-          })
-          .catch(() => {});
+        clearClassRoomPointers(roomVal.schoolId, roomVal.classId, roomCode).catch(() => {});
       }
       await safeUpdate(`rooms/${roomCode}`, updateData);
     } catch (err: any) {
@@ -1350,6 +1354,8 @@ export function useQuizRoom(
     if (!roomCode) return false;
     setLoading(true);
     try {
+      await ensureAnonymousAuth();
+      const currentRoom = roomRef.current;
       const existingPlayers = (await safeGet<Record<string, QuizPlayer>>(`rooms/${roomCode}/players`)) || {};
       const resetPlayers: Record<string, QuizPlayer> = {};
 
@@ -1372,15 +1378,16 @@ export function useQuizRoom(
         };
       });
 
-      const isTug = (updatedSettings?.gamePlayType || room?.gamePlayType) === 'TUG_OF_WAR';
-      const isVolleyball = (updatedSettings?.gamePlayType || room?.gamePlayType) === 'VOLLEYBALL';
-      const isVolleyballVs = isVolleyball && (updatedSettings?.volleyballSettings?.gameStyle === 'TEAM_VS' || room?.volleyballSettings?.gameStyle === 'TEAM_VS');
+      const resolvedGamePlayType = updatedSettings?.gamePlayType || currentRoom?.gamePlayType || settingsRef.current?.gamePlayType || 'KAHOOT';
+      const isTug = resolvedGamePlayType === 'TUG_OF_WAR';
+      const isVolleyball = resolvedGamePlayType === 'VOLLEYBALL';
+      const isVolleyballVs = isVolleyball && (updatedSettings?.volleyballSettings?.gameStyle === 'TEAM_VS' || currentRoom?.volleyballSettings?.gameStyle === 'TEAM_VS');
       const activeTeams: TeamId[] = (isTug || isVolleyballVs)
         ? ['team_red', 'team_white']
         : (updatedSettings?.activeTeams 
           || (updatedSettings?.teamCount ? (updatedSettings.teamCount === 2 ? ['team_red', 'team_white'] : RAINBOW_TEAM_ORDER.slice(0, updatedSettings.teamCount)) : undefined)
-          || room?.activeTeams 
-          || (room?.teamCount === 2 ? ['team_red', 'team_white'] : RAINBOW_TEAM_ORDER.slice(0, room?.teamCount || 2)));
+          || currentRoom?.activeTeams 
+          || (currentRoom?.teamCount === 2 ? ['team_red', 'team_white'] : RAINBOW_TEAM_ORDER.slice(0, currentRoom?.teamCount || 2)));
 
       const initialTeamScores: Partial<Record<TeamId, any>> = {};
       activeTeams.forEach(tId => {
@@ -1400,7 +1407,7 @@ export function useQuizRoom(
       });
 
       // In Team Mode, Tug of War, or Volleyball VS, re-balance connected players evenly across active teams on reset
-      if (room?.mode === 'TEAM' || isTug || isVolleyballVs) {
+      if (currentRoom?.mode === 'TEAM' || isTug || isVolleyballVs) {
         const playerEntries = Object.entries(resetPlayers);
         playerEntries.forEach(([_, p], idx) => {
           if (activeTeams.length > 0) {
@@ -1432,7 +1439,7 @@ export function useQuizRoom(
         players: resetPlayers,
         teamScores: initialTeamScores,
         troubleWords: {},
-        questions: newQuestions,
+        questions: sanitizeQuestionsForPublicRoom(newQuestions, resolvedGamePlayType),
         totalQuestions: newQuestions.length,
         raceStartTime: null,
         raceDurationSeconds: null,
@@ -1473,16 +1480,18 @@ export function useQuizRoom(
 
       await safeUpdate(`rooms/${roomCode}`, updates);
 
-      if (room?.schoolId && room?.classId) {
-        await safeSet(
-          `schools/${room.schoolId}/classes/${room.classId}/analyticsSummary/activeRoom`,
-          {
-            code: roomCode,
-            gamePlayType: updates.gamePlayType || room.gamePlayType || 'KAHOOT',
-            unit: room.unit,
-            updatedAt: getServerTime()
-          }
-        ).catch(() => {});
+      if (currentRoom?.schoolId && currentRoom?.classId && !currentRoom?.isStudentHost) {
+        const teacherRoomSummary = {
+          code: roomCode,
+          gamePlayType: resolvedGamePlayType,
+          unit: currentRoom.unit,
+          isTeacher: true,
+          updatedAt: getServerTime()
+        };
+        await Promise.all([
+          safeSet(`schools/${currentRoom.schoolId}/classes/${currentRoom.classId}/analyticsSummary/teacherRoom`, teacherRoomSummary),
+          safeSet(`schools/${currentRoom.schoolId}/classes/${currentRoom.classId}/analyticsSummary/activeRoom`, teacherRoomSummary)
+        ]).catch(() => {});
       }
 
       setLoading(false);
@@ -1499,18 +1508,16 @@ export function useQuizRoom(
   const closeRoom = useCallback(async () => {
     if (!roomCode) return;
     try {
+      await ensureAnonymousAuth();
+      const currentRoom = roomRef.current || room;
       try {
         sessionStorage.removeItem(`quiz_host_questions_${roomCode}`);
       } catch {}
       safeRemove(`hostSessions/${roomCode}`).catch(() => {});
       safeRemove(`roomResponses/${roomCode}`).catch(() => {});
       safeRemove(`roomPlayers/${roomCode}`).catch(() => {});
-      if (room?.schoolId && room?.classId && !room?.isStudentHost) {
-        const currentActive = await safeGet<{ code: string }>(`schools/${room.schoolId}/classes/${room.classId}/analyticsSummary/activeRoom`).catch(() => null);
-        if (currentActive?.code === roomCode) {
-          safeRemove(`schools/${room.schoolId}/classes/${room.classId}/analyticsSummary/teacherRoom`).catch(() => {});
-          safeRemove(`schools/${room.schoolId}/classes/${room.classId}/analyticsSummary/activeRoom`).catch(() => {});
-        }
+      if (currentRoom?.schoolId && currentRoom?.classId && !currentRoom?.isStudentHost) {
+        await clearClassRoomPointers(currentRoom.schoolId, currentRoom.classId, roomCode).catch(() => {});
       }
 
       await safeUpdate(`rooms/${roomCode}`, { status: 'CLOSED', updatedAt: getServerTime() });
@@ -1530,6 +1537,7 @@ export function useQuizRoom(
   const kickPlayer = useCallback(async (playerId: string) => {
     if (!roomCode) return;
     try {
+      await ensureAnonymousAuth();
       const playerToKick = room?.players?.[playerId];
       await safeRemove(`rooms/${roomCode}/players/${playerId}`);
       await safeRemove(`roomPlayers/${roomCode}/${playerId}`).catch(() => {});
@@ -1561,7 +1569,7 @@ export function useQuizRoom(
           mvpScore: sorted[0]?.score || 0,
         });
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error("Error kicking player:", err);
     }
   }, [roomCode, room]);
@@ -1570,10 +1578,11 @@ export function useQuizRoom(
   const changePlayerTeam = useCallback(async (playerId: string, newTeamId: TeamId) => {
     if (!roomCode) return;
     try {
+      await ensureAnonymousAuth();
       await safeUpdate(`rooms/${roomCode}/players/${playerId}`, {
         teamId: newTeamId
       });
-    } catch (err) {
+    } catch (err: any) {
       console.error("Error changing player team:", err);
     }
   }, [roomCode]);
@@ -1582,9 +1591,10 @@ export function useQuizRoom(
   const toggleEyesUp = useCallback(async (forcedState?: boolean) => {
     if (!roomCode) return;
     try {
+      await ensureAnonymousAuth();
       const nextState = forcedState !== undefined ? forcedState : !room?.eyesUp;
       await safeUpdate(`rooms/${roomCode}`, { eyesUp: nextState });
-    } catch (err) {
+    } catch (err: any) {
       console.error("Error toggling eyes up front:", err);
     }
   }, [roomCode, room?.eyesUp]);
@@ -1733,6 +1743,7 @@ export function useQuizRoom(
   const updateKartTheme = useCallback(async (themeId: string) => {
     if (!roomCode || !options?.playerId) return;
     try {
+      await ensureAnonymousAuth();
       await safeUpdate(`rooms/${roomCode}/players/${options.playerId}`, {
         kartTheme: themeId
       });
@@ -1755,6 +1766,7 @@ export function useQuizRoom(
   }) => {
     if (!roomCode || !options?.playerId) return;
     try {
+      await ensureAnonymousAuth();
       const payload: Record<string, any> = {};
       if (updates.nickname !== undefined) payload.nickname = updates.nickname;
       if (updates.avatar !== undefined) payload.avatar = updates.avatar;
@@ -1784,6 +1796,7 @@ export function useQuizRoom(
       : (hostStartTime > 0 ? Math.min(timeLimit, Math.max(100, getServerTime() - hostStartTime)) : 1000);
 
     try {
+      await ensureAnonymousAuth();
       await safeSet(`roomResponses/${roomCode}/${playerId}`, {
         answerId: optionId,
         timeTakenMs,
@@ -1885,6 +1898,7 @@ export function useQuizRoom(
       if (!throttler) {
         throttler = createRtdbWriteThrottler<Record<string, any>>(
           async (mergedPatch) => {
+            await ensureAnonymousAuth();
             await safeUpdate(`roomPlayers/${roomCode}/${playerId}`, mergedPatch).catch(() => {});
           },
           125 // 8 Hz nominal rate (strictly within GEMINI.md §5 5-10 Hz ceiling)
@@ -1902,6 +1916,7 @@ export function useQuizRoom(
   const leaveRoom = useCallback(async (playerId: string) => {
     if (!roomCode) return;
     try {
+      await ensureAnonymousAuth();
       await safeRemove(`rooms/${roomCode}/players/${playerId}`);
       await safeRemove(`roomPlayers/${roomCode}/${playerId}`).catch(() => {});
       try {
@@ -1928,6 +1943,7 @@ export function useQuizRoom(
     score: number
   ): Promise<boolean> => {
     try {
+      await ensureAnonymousAuth();
       const boundPath = `rooms/${code}/boundStudents/${attendanceNumber}`;
       const result = await safeTransaction<{ playerId: string; nickname: string; score: number; claimedAt: number }>(
         boundPath,
@@ -1951,6 +1967,7 @@ export function useQuizRoom(
     attendanceNumber: number
   ): Promise<void> => {
     try {
+      await ensureAnonymousAuth();
       await safeRemove(`rooms/${code}/boundStudents/${attendanceNumber}`);
     } catch (err) {
       console.error("Error releasing room attendance number:", err);

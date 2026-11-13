@@ -154,12 +154,12 @@ export const EigoShopModal: React.FC<EigoShopModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
       <div 
-        className="w-full max-w-4xl max-h-[94vh] flex flex-col rounded-3xl bg-white dark:bg-slate-900 border-4 border-amber-400 dark:border-amber-500 shadow-2xl overflow-hidden text-slate-900 dark:text-slate-100"
+        className="w-full max-w-4xl max-h-[94dvh] flex flex-col rounded-3xl bg-white dark:bg-slate-900 border-4 border-amber-400 dark:border-amber-500 shadow-2xl overflow-hidden text-slate-900 dark:text-slate-100"
         style={{ fontFamily: "'UD Digi Kyokasho NP-R', 'UD Digi Kyokasho NK-R', 'BIZ UDPGothic', 'Zen Maru Gothic', sans-serif" }}
       >
         {/* Modal Header */}
-        <div className="p-4 sm:p-6 bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-white flex items-center justify-between shrink-0 shadow-lg">
-          <div className="flex items-center gap-3.5 min-w-0">
+        <div className="p-4 sm:p-5 bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-white flex items-center justify-between gap-3 shrink-0 shadow-lg">
+          <div className="flex items-center gap-3.5 min-w-0 flex-1">
             {/* Live Equipped Avatar Preview */}
             <div className="p-2 rounded-2xl bg-white/20 backdrop-blur-md shrink-0 shadow-inner">
               <AvatarDisplay 
@@ -169,26 +169,26 @@ export const EigoShopModal: React.FC<EigoShopModalProps> = ({
               />
             </div>
 
-            <div className="min-w-0">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="px-2.5 py-0.5 rounded-full text-xs font-black bg-amber-950/40 text-amber-200 border border-amber-300/40">
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-2 flex-nowrap overflow-x-auto no-scrollbar">
+                <span className="px-2.5 py-0.5 rounded-full text-xs font-black bg-amber-950/40 text-amber-200 border border-amber-300/40 whitespace-nowrap shrink-0">
                   {profile.classId} #{profile.attendanceNumber}
                 </span>
-                <span className="px-3 py-0.5 rounded-full text-xs font-black bg-yellow-300 text-slate-950 shadow-xs flex items-center gap-1">
+                <span className="px-3 py-0.5 rounded-full text-xs font-black bg-yellow-300 text-slate-950 shadow-xs flex items-center gap-1 whitespace-nowrap shrink-0">
                   <Coins size={13} className="text-amber-800" />
                   <span>{currentGold.toLocaleString()} Gold</span>
                 </span>
-                <span className="px-2.5 py-0.5 rounded-full text-xs font-black bg-white/20 text-white border border-white/30">
+                <span className="px-2.5 py-0.5 rounded-full text-xs font-black bg-white/20 text-white border border-white/30 whitespace-nowrap shrink-0">
                   ⭐️ Lv. {currentLevel}
                 </span>
               </div>
 
-              <div className="flex items-center gap-2 mt-1">
+              <div className="flex items-center gap-2 mt-1 min-w-0">
                 <h2 className="text-xl sm:text-2xl font-black tracking-tight truncate">
                   {profile.nickname}
                 </h2>
                 {equipped.title && (
-                  <span className="px-2.5 py-0.5 rounded-lg bg-white/25 text-white font-black text-xs shrink-0 border border-white/20">
+                  <span className="px-2.5 py-0.5 rounded-lg bg-white/25 text-white font-black text-xs shrink-0 whitespace-nowrap border border-white/20">
                     {equipped.title}
                   </span>
                 )}
@@ -210,14 +210,14 @@ export const EigoShopModal: React.FC<EigoShopModalProps> = ({
 
         {/* Feedback Notice Toast */}
         {feedbackNotice && (
-          <div className="bg-emerald-600 text-white px-4 py-2 text-center text-xs sm:text-sm font-black animate-in fade-in slide-in-from-top-1">
+          <div className="bg-emerald-600 text-white px-4 py-2 text-center text-xs sm:text-sm font-black animate-in fade-in slide-in-from-top-1 shrink-0">
             {feedbackNotice}
           </div>
         )}
 
         {/* Tab Navigation */}
-        <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/60 px-3 sm:px-4 pt-2 shrink-0 overflow-x-auto">
-          <div className="flex items-center gap-1.5 sm:gap-2">
+        <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/60 px-3 sm:px-4 pt-2 shrink-0 overflow-x-auto no-scrollbar">
+          <div className="flex items-center gap-1.5 sm:gap-2 flex-nowrap">
             {/* Tab 1: Auras */}
             <button
               type="button"
@@ -225,7 +225,7 @@ export const EigoShopModal: React.FC<EigoShopModalProps> = ({
                 playPop();
                 setActiveTab('aura');
               }}
-              className={`px-3 sm:px-4 py-2.5 sm:py-3 font-black text-xs sm:text-sm rounded-t-2xl flex items-center gap-1.5 border-b-3 transition-all cursor-pointer whitespace-nowrap ${
+              className={`px-3 sm:px-4 py-2.5 sm:py-3 font-black text-xs sm:text-sm rounded-t-2xl flex items-center gap-1.5 border-b-3 transition-all cursor-pointer whitespace-nowrap shrink-0 ${
                 activeTab === 'aura'
                   ? 'border-amber-500 text-amber-600 dark:text-amber-400 bg-white dark:bg-slate-900 shadow-xs'
                   : 'border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
@@ -242,7 +242,7 @@ export const EigoShopModal: React.FC<EigoShopModalProps> = ({
                 playPop();
                 setActiveTab('avatar');
               }}
-              className={`px-3 sm:px-4 py-2.5 sm:py-3 font-black text-xs sm:text-sm rounded-t-2xl flex items-center gap-1.5 border-b-3 transition-all cursor-pointer whitespace-nowrap ${
+              className={`px-3 sm:px-4 py-2.5 sm:py-3 font-black text-xs sm:text-sm rounded-t-2xl flex items-center gap-1.5 border-b-3 transition-all cursor-pointer whitespace-nowrap shrink-0 ${
                 activeTab === 'avatar'
                   ? 'border-amber-500 text-amber-600 dark:text-amber-400 bg-white dark:bg-slate-900 shadow-xs'
                   : 'border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
@@ -259,7 +259,7 @@ export const EigoShopModal: React.FC<EigoShopModalProps> = ({
                 playPop();
                 setActiveTab('kart');
               }}
-              className={`px-3 sm:px-4 py-2.5 sm:py-3 font-black text-xs sm:text-sm rounded-t-2xl flex items-center gap-1.5 border-b-3 transition-all cursor-pointer whitespace-nowrap ${
+              className={`px-3 sm:px-4 py-2.5 sm:py-3 font-black text-xs sm:text-sm rounded-t-2xl flex items-center gap-1.5 border-b-3 transition-all cursor-pointer whitespace-nowrap shrink-0 ${
                 activeTab === 'kart'
                   ? 'border-amber-500 text-amber-600 dark:text-amber-400 bg-white dark:bg-slate-900 shadow-xs'
                   : 'border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
@@ -276,7 +276,7 @@ export const EigoShopModal: React.FC<EigoShopModalProps> = ({
                 playPop();
                 setActiveTab('title');
               }}
-              className={`px-3 sm:px-4 py-2.5 sm:py-3 font-black text-xs sm:text-sm rounded-t-2xl flex items-center gap-1.5 border-b-3 transition-all cursor-pointer whitespace-nowrap ${
+              className={`px-3 sm:px-4 py-2.5 sm:py-3 font-black text-xs sm:text-sm rounded-t-2xl flex items-center gap-1.5 border-b-3 transition-all cursor-pointer whitespace-nowrap shrink-0 ${
                 activeTab === 'title'
                   ? 'border-amber-500 text-amber-600 dark:text-amber-400 bg-white dark:bg-slate-900 shadow-xs'
                   : 'border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
@@ -293,7 +293,7 @@ export const EigoShopModal: React.FC<EigoShopModalProps> = ({
                 playPop();
                 setActiveTab('gacha');
               }}
-              className={`px-3 sm:px-4 py-2.5 sm:py-3 font-black text-xs sm:text-sm rounded-t-2xl flex items-center gap-1.5 border-b-3 transition-all cursor-pointer whitespace-nowrap ${
+              className={`px-3 sm:px-4 py-2.5 sm:py-3 font-black text-xs sm:text-sm rounded-t-2xl flex items-center gap-1.5 border-b-3 transition-all cursor-pointer whitespace-nowrap shrink-0 ${
                 activeTab === 'gacha'
                   ? 'border-purple-500 text-purple-600 dark:text-purple-400 bg-white dark:bg-slate-900 shadow-xs'
                   : 'border-transparent text-purple-500 hover:text-purple-700 dark:hover:text-purple-300'
@@ -310,71 +310,82 @@ export const EigoShopModal: React.FC<EigoShopModalProps> = ({
 
         {/* Tab Body */}
         <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
-          {/* TAB: GACHA MACHINE */}
+          {/* TAB: GACHA MACHINE - 2-Column Landscape Panel */}
           {activeTab === 'gacha' && (
-            <div className="max-w-xl mx-auto p-6 sm:p-8 rounded-3xl bg-gradient-to-b from-purple-500/10 via-indigo-500/10 to-purple-500/20 dark:from-purple-950/40 dark:to-indigo-950/40 border-3 border-purple-400 dark:border-purple-600 text-center space-y-5">
-              <div className="flex justify-center">
-                <div className={`text-6xl sm:text-7xl p-4 rounded-3xl bg-white dark:bg-slate-800 shadow-xl border-3 border-purple-300 transition-all ${
+            <div className="max-w-3xl mx-auto p-5 sm:p-6 rounded-3xl bg-gradient-to-br from-purple-500/10 via-indigo-500/10 to-purple-500/20 dark:from-purple-950/40 dark:to-indigo-950/40 border-3 border-purple-400 dark:border-purple-600 grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+              {/* Left Column: Capsule Showcase & Pitch */}
+              <div className="flex flex-col items-center text-center space-y-3">
+                <div className={`text-6xl sm:text-7xl p-5 rounded-3xl bg-white dark:bg-slate-800 shadow-xl border-3 border-purple-300 transition-all ${
                   gachaSpinning ? 'animate-spin scale-110' : ''
                 }`}>
                   🎰
                 </div>
-              </div>
-
-              <div>
-                <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">
-                  {t('Levi Sensei Lucky Capsule Gacha', 'リヴァイ先生のラッキーガチャ')}
-                </h3>
-                <p className="text-xs sm:text-sm font-bold text-slate-600 dark:text-slate-300 mt-1">
-                  {t(
-                    'Spin for 100 Gold! Guarantees a brand new Aura, Rare Avatar, Kart, or Title!',
-                    '1回 100 Gold！ まだ持っていないオーラ・アバター・カート・称号が必ず当たる！'
-                  )}
-                </p>
-              </div>
-
-              {/* Gacha Result Display */}
-              {gachaResult && (
-                <div className="p-4 rounded-2xl bg-white dark:bg-slate-800 border-2 border-purple-400 shadow-lg animate-in zoom-in-95 duration-200">
-                  <span className="text-3xl block mb-1">🎉</span>
-                  {gachaResult.wonItem ? (
-                    <div>
-                      <span className="text-xs font-black text-purple-600 dark:text-purple-400 uppercase tracking-widest block">
-                        {t('NEW UNLOCK!', '新アイテム獲得！')}
-                      </span>
-                      <strong className="text-lg font-black text-slate-900 dark:text-white block mt-0.5">
-                        {gachaResult.wonItem.icon} {language === 'ja' ? gachaResult.wonItem.jaName : gachaResult.wonItem.name}
-                      </strong>
-                      <p className="text-xs font-bold text-slate-500 dark:text-slate-400 mt-1">
-                        {language === 'ja' ? gachaResult.wonItem.jaDescription : gachaResult.wonItem.description}
-                      </p>
-                    </div>
-                  ) : (
-                    <div>
-                      <span className="text-xs font-black text-amber-600 dark:text-amber-400 uppercase tracking-widest block">
-                        {t('CATALOG MASTER!', '全アイテムコンプリート！')}
-                      </span>
-                      <strong className="text-lg font-black text-slate-900 dark:text-white block mt-0.5">
-                        ⭐️ +{gachaResult.bonusXp} Master XP!
-                      </strong>
-                    </div>
-                  )}
+                <div>
+                  <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">
+                    {t('Levi Sensei Lucky Capsule Gacha', 'リヴァイ先生のラッキーガチャ')}
+                  </h3>
+                  <p className="text-xs sm:text-sm font-bold text-slate-600 dark:text-slate-300 mt-1">
+                    {t(
+                      'Spin for 100 Gold! Guarantees a brand new Aura, Rare Avatar, Kart, or Title!',
+                      '1回 100 Gold！ まだ持っていないオーラ・アバター・カート・称号が必ず当たる！'
+                    )}
+                  </p>
                 </div>
-              )}
+              </div>
 
-              {/* Action Button */}
-              <button
-                type="button"
-                disabled={currentGold < 100 || gachaSpinning}
-                onClick={handleGachaSpin}
-                className={`w-full py-4 rounded-2xl font-black text-base sm:text-lg shadow-xl active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer ${
-                  currentGold >= 100
-                    ? 'bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-700 hover:from-purple-500 hover:to-indigo-500 text-white shadow-purple-500/25'
-                    : 'bg-slate-300 dark:bg-slate-800 text-slate-500 dark:text-slate-400 cursor-not-allowed'
-                }`}
-              >
-                <span>{gachaSpinning ? '🎰 ガチャ回転中...' : t('Spin Gacha (100 Gold)', 'ガチャを回す (100 Gold 🪙)')}</span>
-              </button>
+              {/* Right Column: Result Stage & Spin Trigger */}
+              <div className="flex flex-col justify-center space-y-4">
+                {gachaResult ? (
+                  <div className="p-4 rounded-2xl bg-white dark:bg-slate-800 border-2 border-purple-400 shadow-lg text-center animate-in zoom-in-95 duration-200">
+                    <span className="text-3xl block mb-1">🎉</span>
+                    {gachaResult.wonItem ? (
+                      <div>
+                        <span className="text-xs font-black text-purple-600 dark:text-purple-400 uppercase tracking-widest block">
+                          {t('NEW UNLOCK!', '新アイテム獲得！')}
+                        </span>
+                        <strong className="text-lg font-black text-slate-900 dark:text-white block mt-0.5">
+                          {gachaResult.wonItem.icon} {language === 'ja' ? gachaResult.wonItem.jaName : gachaResult.wonItem.name}
+                        </strong>
+                        <p className="text-xs font-bold text-slate-500 dark:text-slate-400 mt-1">
+                          {language === 'ja' ? gachaResult.wonItem.jaDescription : gachaResult.wonItem.description}
+                        </p>
+                      </div>
+                    ) : (
+                      <div>
+                        <span className="text-xs font-black text-amber-600 dark:text-amber-400 uppercase tracking-widest block">
+                          {t('CATALOG MASTER!', '全アイテムコンプリート！')}
+                        </span>
+                        <strong className="text-lg font-black text-slate-900 dark:text-white block mt-0.5">
+                          ⭐️ +{gachaResult.bonusXp} Master XP!
+                        </strong>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="p-4 rounded-2xl bg-white/75 dark:bg-slate-800/75 border-2 border-dashed border-purple-300 dark:border-purple-700 text-center space-y-1.5">
+                    <span className="text-2xl block">✨🎁✨</span>
+                    <p className="text-xs font-black text-purple-800 dark:text-purple-200">
+                      {t('Zero Duplicates! Always unlocks something new.', 'ダブりなし！持っていないアイテムが必ず手に入ります。')}
+                    </p>
+                    <p className="text-[11px] font-bold text-slate-500 dark:text-slate-400">
+                      {t(`Your balance: ${currentGold.toLocaleString()} Gold`, `いまの所持ゴールド: ${currentGold.toLocaleString()} Gold`)}
+                    </p>
+                  </div>
+                )}
+
+                <button
+                  type="button"
+                  disabled={currentGold < 100 || gachaSpinning}
+                  onClick={handleGachaSpin}
+                  className={`w-full py-4 rounded-2xl font-black text-base sm:text-lg shadow-xl active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                    currentGold >= 100
+                      ? 'bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-700 hover:from-purple-500 hover:to-indigo-500 text-white shadow-purple-500/25'
+                      : 'bg-slate-300 dark:bg-slate-800 text-slate-500 dark:text-slate-400 cursor-not-allowed'
+                  }`}
+                >
+                  <span>{gachaSpinning ? '🎰 ガチャ回転中...' : t('Spin Gacha (100 Gold)', 'ガチャを回す (100 Gold 🪙)')}</span>
+                </button>
+              </div>
             </div>
           )}
 

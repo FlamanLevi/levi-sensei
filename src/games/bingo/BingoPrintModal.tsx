@@ -339,33 +339,33 @@ export const BingoPrintModal: React.FC<BingoPrintModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 overflow-y-auto">
-      <div className="w-full max-w-4xl bg-white dark:bg-slate-900 rounded-3xl border border-slate-300 dark:border-slate-800 shadow-2xl overflow-hidden flex flex-col max-h-[95vh]">
+      <div className="w-full max-w-5xl bg-white dark:bg-slate-900 rounded-3xl border border-slate-300 dark:border-slate-800 shadow-2xl overflow-hidden flex flex-col max-h-[95dvh]">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60">
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-2xl bg-amber-500 text-slate-950 font-black">
+        <div className="flex items-center justify-between gap-3 px-6 py-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 shrink-0">
+          <div className="flex items-center gap-3 min-w-0 flex-1">
+            <div className="p-2.5 rounded-2xl bg-amber-500 text-slate-950 font-black shrink-0">
               <Printer size={22} />
             </div>
-            <div>
-              <h2 className="text-xl font-black text-slate-900 dark:text-white">
+            <div className="min-w-0 flex-1">
+              <h2 className="text-xl font-black text-slate-900 dark:text-white truncate">
                 {t('Classroom Bingo Card Generator', 'ビンゴカード印刷')}
               </h2>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
+              <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
                 {unitName || t('Current Unit', '選択中単元')} • {words.length} {t('Vocabulary Words', '単語')} • {cardCount} {t(`Unique Cards (${totalPages} A4 Pages)`, `枚のカード (${totalPages}枚のA4用紙)`)}
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-1.5 shrink-0">
+          <div className="flex items-center gap-1.5 shrink-0 flex-nowrap">
             <button
               onClick={toggleTheme}
-              className="p-2 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition"
+              className="p-2 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition cursor-pointer"
               title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
             >
               {theme === 'dark' ? <Sun size={20} className="text-amber-400" /> : <Moon size={20} className="text-indigo-400" />}
             </button>
             <button
               onClick={onClose}
-              className="p-2 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition"
+              className="p-2 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition cursor-pointer"
             >
               <X size={20} />
             </button>
@@ -373,9 +373,9 @@ export const BingoPrintModal: React.FC<BingoPrintModalProps> = ({
         </div>
 
         {/* Options Toolbar */}
-        <div className="px-6 py-3 bg-slate-100 dark:bg-slate-800/40 border-b border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-3 text-xs">
+        <div className="px-6 py-3 bg-slate-100 dark:bg-slate-800/40 border-b border-slate-200 dark:border-slate-800 flex flex-nowrap items-center justify-between gap-3 text-xs overflow-x-auto no-scrollbar shrink-0">
           {/* Card Count */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 shrink-0 whitespace-nowrap">
             <span className="font-bold text-slate-600 dark:text-slate-300">{t('Sheets:', '印刷枚数:')}</span>
             <div className="flex bg-white dark:bg-slate-800 rounded-xl p-0.5 border border-slate-300 dark:border-slate-700">
               {[10, 20, 35, 40].map((num) => (
@@ -385,7 +385,7 @@ export const BingoPrintModal: React.FC<BingoPrintModalProps> = ({
                     setCardCount(num);
                     setPreviewPageIdx(0);
                   }}
-                  className={`px-3 py-1 font-black rounded-lg transition ${
+                  className={`px-3 py-1 font-black rounded-lg transition whitespace-nowrap cursor-pointer ${
                     cardCount === num
                       ? 'bg-amber-500 text-slate-950 shadow'
                       : 'text-slate-500 dark:text-slate-400 hover:text-slate-900'
@@ -398,12 +398,12 @@ export const BingoPrintModal: React.FC<BingoPrintModalProps> = ({
           </div>
 
           {/* Mode */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 shrink-0 whitespace-nowrap">
             <span className="font-bold text-slate-600 dark:text-slate-300">{t('Mode:', '表示形式:')}</span>
             <div className="flex bg-white dark:bg-slate-800 rounded-xl p-0.5 border border-slate-300 dark:border-slate-700">
               <button
                 onClick={() => setDisplayMode('picture_word')}
-                className={`px-2.5 py-1 font-bold rounded-lg transition ${
+                className={`px-2.5 py-1 font-bold rounded-lg transition whitespace-nowrap cursor-pointer ${
                   displayMode === 'picture_word'
                     ? 'bg-amber-500 text-slate-950 shadow'
                     : 'text-slate-500 dark:text-slate-400'
@@ -413,7 +413,7 @@ export const BingoPrintModal: React.FC<BingoPrintModalProps> = ({
               </button>
               <button
                 onClick={() => setDisplayMode('picture_only')}
-                className={`px-2.5 py-1 font-bold rounded-lg transition ${
+                className={`px-2.5 py-1 font-bold rounded-lg transition whitespace-nowrap cursor-pointer ${
                   displayMode === 'picture_only'
                     ? 'bg-amber-500 text-slate-950 shadow'
                     : 'text-slate-500 dark:text-slate-400'
@@ -425,7 +425,7 @@ export const BingoPrintModal: React.FC<BingoPrintModalProps> = ({
           </div>
 
           {/* Center Free Space */}
-          <label className="flex items-center gap-2 cursor-pointer font-bold text-slate-700 dark:text-slate-300">
+          <label className="flex items-center gap-2 cursor-pointer font-bold text-slate-700 dark:text-slate-300 shrink-0 whitespace-nowrap">
             <input
               type="checkbox"
               checked={includeFreeCenter}
@@ -437,44 +437,44 @@ export const BingoPrintModal: React.FC<BingoPrintModalProps> = ({
         </div>
 
         {/* Live Preview Area with Page Paging */}
-        <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-slate-200 dark:bg-slate-950/60">
-          <div className="mb-3 flex items-center justify-between text-xs text-slate-600 dark:text-slate-400 font-bold">
-            <div className="flex items-center gap-2">
-              <span>PREVIEW: A4 Page {previewPageIdx + 1} of {totalPages} (Cards #{previewPageIdx * 2 + 1} & #{previewPageIdx * 2 + 2})</span>
+        <div className="flex-1 overflow-y-auto p-4 sm:p-5 bg-slate-200 dark:bg-slate-950/60">
+          <div className="mb-3 flex items-center justify-between gap-3 text-xs text-slate-600 dark:text-slate-400 font-bold">
+            <div className="flex items-center gap-2 min-w-0 truncate">
+              <span className="truncate">PREVIEW: A4 Page {previewPageIdx + 1} of {totalPages} (Cards #{previewPageIdx * 2 + 1} & #{previewPageIdx * 2 + 2})</span>
             </div>
             {/* Paging controls */}
-            <div className="flex items-center gap-1 bg-white dark:bg-slate-800 rounded-xl p-1 border border-slate-300 dark:border-slate-700">
+            <div className="flex items-center gap-1 bg-white dark:bg-slate-800 rounded-xl p-1 border border-slate-300 dark:border-slate-700 shrink-0 flex-nowrap">
               <button
                 onClick={() => setPreviewPageIdx((p) => Math.max(0, p - 1))}
                 disabled={previewPageIdx === 0}
-                className="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-30"
+                className="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-30 cursor-pointer"
               >
                 <ChevronLeft size={16} />
               </button>
-              <span className="px-2 text-xs font-mono font-bold">
+              <span className="px-2 text-xs font-mono font-bold whitespace-nowrap">
                 {previewPageIdx + 1} / {totalPages}
               </span>
               <button
                 onClick={() => setPreviewPageIdx((p) => Math.min(totalPages - 1, p + 1))}
                 disabled={previewPageIdx >= totalPages - 1}
-                className="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-30"
+                className="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-30 cursor-pointer"
               >
                 <ChevronRight size={16} />
               </button>
             </div>
           </div>
 
-          {/* Interactive Page Preview (Shows 2 cards with cut line) */}
-          <div className="w-full max-w-lg mx-auto bg-white text-slate-900 border-4 border-slate-900 rounded-2xl p-4 shadow-2xl space-y-4">
+          {/* Interactive Page Preview (Shows 2 cards side-by-side on landscape with cut line) */}
+          <div className="w-full max-w-4xl mx-auto bg-white text-slate-900 border-4 border-slate-900 rounded-2xl p-4 shadow-2xl grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-3 md:gap-4 items-stretch">
             {/* Card 1 */}
             {previewCard1 && (
-              <div className="border-2 border-slate-800 rounded-xl p-3 bg-white">
-                <div className="flex items-center justify-between border-b-2 border-slate-900 pb-1.5 mb-2">
-                  <span className="font-black text-xs tracking-wider">
+              <div className="border-2 border-slate-800 rounded-xl p-3 bg-white flex flex-col">
+                <div className="flex items-center justify-between gap-2 border-b-2 border-slate-900 pb-1.5 mb-2">
+                  <span className="font-black text-xs tracking-wider truncate">
                     ★ LEVI-SENSEI BINGO ★ ({unitName || 'Eigo'})
                   </span>
-                  <span className="text-xs font-bold font-mono">
-                    Card #{previewPageIdx * 2 + 1} | Name: __________
+                  <span className="text-[11px] font-bold font-mono shrink-0 whitespace-nowrap">
+                    #{previewPageIdx * 2 + 1} | Name: ______
                   </span>
                 </div>
 
@@ -533,23 +533,23 @@ export const BingoPrintModal: React.FC<BingoPrintModalProps> = ({
             )}
 
             {/* Cut line */}
-            <div className="w-full flex items-center justify-center gap-2 text-slate-400 text-[10px] font-mono py-1">
+            <div className="w-full md:w-auto flex md:flex-col items-center justify-center gap-2 text-slate-400 text-[10px] font-mono py-1 md:py-0 md:px-1 shrink-0">
               <span>✂️</span>
-              <span className="border-t-2 border-dashed border-slate-300 flex-1"></span>
-              <span>CUT HERE / きりとりせん</span>
-              <span className="border-t-2 border-dashed border-slate-300 flex-1"></span>
+              <span className="border-t-2 md:border-t-0 md:border-l-2 border-dashed border-slate-300 flex-1 w-full md:w-0 md:h-full"></span>
+              <span className="whitespace-nowrap md:[writing-mode:vertical-rl]">CUT HERE</span>
+              <span className="border-t-2 md:border-t-0 md:border-l-2 border-dashed border-slate-300 flex-1 w-full md:w-0 md:h-full"></span>
               <span>✂️</span>
             </div>
 
             {/* Card 2 */}
-            {previewCard2 && (
-              <div className="border-2 border-slate-800 rounded-xl p-3 bg-white">
-                <div className="flex items-center justify-between border-b-2 border-slate-900 pb-1.5 mb-2">
-                  <span className="font-black text-xs tracking-wider">
+            {previewCard2 ? (
+              <div className="border-2 border-slate-800 rounded-xl p-3 bg-white flex flex-col">
+                <div className="flex items-center justify-between gap-2 border-b-2 border-slate-900 pb-1.5 mb-2">
+                  <span className="font-black text-xs tracking-wider truncate">
                     ★ LEVI-SENSEI BINGO ★ ({unitName || 'Eigo'})
                   </span>
-                  <span className="text-xs font-bold font-mono">
-                    Card #{previewPageIdx * 2 + 2} | Name: __________
+                  <span className="text-[11px] font-bold font-mono shrink-0 whitespace-nowrap">
+                    #{previewPageIdx * 2 + 2} | Name: ______
                   </span>
                 </div>
 
@@ -605,16 +605,20 @@ export const BingoPrintModal: React.FC<BingoPrintModalProps> = ({
                   })}
                 </div>
               </div>
+            ) : (
+              <div className="border-2 border-dashed border-slate-200 rounded-xl p-3 flex items-center justify-center text-xs font-bold text-slate-400">
+                {t('Blank half-sheet', '余白')}
+              </div>
             )}
           </div>
         </div>
 
         {/* Footer actions */}
-        <div className="flex flex-wrap items-center justify-between gap-3 px-6 py-4 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
-          <div className="flex items-center gap-2">
+        <div className="flex flex-nowrap items-center justify-between gap-3 px-6 py-4 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-x-auto no-scrollbar shrink-0">
+          <div className="flex items-center gap-2 shrink-0">
             <button
               onClick={handleOpenInNewTab}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-bold transition"
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-bold transition whitespace-nowrap cursor-pointer"
               title={t('Open full document in a new tab', '全ページを別ウィンドウで開く')}
             >
               <ExternalLink size={14} />
@@ -622,16 +626,16 @@ export const BingoPrintModal: React.FC<BingoPrintModalProps> = ({
             </button>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 shrink-0 flex-nowrap">
             <button
               onClick={onClose}
-              className="px-4 py-2 rounded-xl text-sm font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+              className="px-4 py-2 rounded-xl text-sm font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition whitespace-nowrap cursor-pointer"
             >
               {t('Close', '閉じる')}
             </button>
             <button
               onClick={handlePrint}
-              className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-sm shadow-lg hover:shadow-xl transition transform active:scale-95"
+              className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-sm shadow-lg hover:shadow-xl transition transform active:scale-95 whitespace-nowrap cursor-pointer"
             >
               <Printer size={18} />
               {t(`Print ${cardCount} Cards (${totalPages} A4 Pages)`, `${cardCount}枚のカードを印刷 (${totalPages}ページ)`)}

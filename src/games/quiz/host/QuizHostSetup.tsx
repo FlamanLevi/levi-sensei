@@ -345,11 +345,11 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({ onStart, onCancel,
             {subject === 'MATH' ? '📐' : '🏆'}
           </div>
           <div className="min-w-0">
-            <div className="flex items-center gap-2 flex-wrap">
-              <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
+            <div className="flex items-center gap-2 flex-nowrap min-w-0">
+              <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight truncate min-w-0">
                 {subject === 'MATH' ? t('Keisan Arena', 'けいさんアリーナ') : t('Eigo Arena', 'ライブ4択バトル')}
               </h2>
-              <span className={`text-xs font-black px-2.5 py-0.5 rounded-full shrink-0 ${
+              <span className={`text-xs font-black px-2.5 py-0.5 rounded-full shrink-0 whitespace-nowrap ${
                 subject === 'MATH'
                   ? 'bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200'
                   : 'bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300'
@@ -437,11 +437,11 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({ onStart, onCancel,
           {/* 1-Tap Class Selection with Grade Tabs */}
           <div className="flex flex-col gap-2 pt-2 border-t border-indigo-100 dark:border-indigo-900/50">
             {/* Grade Tabs (1-6) */}
-            <div className="flex items-center gap-1.5 flex-wrap">
-              <span className="text-[11px] font-black text-slate-600 dark:text-slate-400 mr-1 flex items-center gap-1">
+            <div className="flex items-center gap-1.5 flex-nowrap overflow-x-auto no-scrollbar">
+              <span className="text-[11px] font-black text-slate-600 dark:text-slate-400 mr-1 flex items-center gap-1 shrink-0 whitespace-nowrap">
                 <span className="text-sm">🏫</span>
                 {language === 'ja' ? (
-                  <ruby>学年<rt className="text-[7px]">がくねん</rt></ruby>
+                  <ruby>学年<rt>がくねん</rt></ruby>
                 ) : (
                   'Grade:'
                 )}
@@ -454,7 +454,7 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({ onStart, onCancel,
                     key={gNum}
                     type="button"
                     onClick={() => setClassGradeTab(gNum)}
-                    className={`h-7 px-2.5 rounded-lg text-xs font-black transition-all cursor-pointer flex items-center gap-1 ${
+                    className={`h-7 px-2.5 rounded-lg text-xs font-black transition-all cursor-pointer flex items-center gap-1 shrink-0 whitespace-nowrap ${
                       isTabActive
                         ? 'bg-indigo-600 text-white shadow-xs'
                         : hasSelectedClass
@@ -470,10 +470,10 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({ onStart, onCancel,
             </div>
 
             {/* Class Buttons for Active Grade Tab */}
-            <div className="flex items-center gap-1.5 flex-wrap">
-              <span className="text-[11px] font-black text-slate-600 dark:text-slate-400 mr-1">
+            <div className="flex items-center gap-1.5 flex-nowrap overflow-x-auto no-scrollbar py-0.5">
+              <span className="text-[11px] font-black text-slate-600 dark:text-slate-400 mr-1 shrink-0 whitespace-nowrap">
                 {language === 'ja' ? (
-                  <><ruby>{classGradeTab}年<rt className="text-[7px]">ねん</rt></ruby>クラス<ruby>選択<rt className="text-[7px]">せんたく</rt></ruby>:</>
+                  <><ruby>{classGradeTab}年<rt>ねん</rt></ruby>クラス<ruby>選択<rt>せんたく</rt></ruby>:</>
                 ) : (
                   `G${classGradeTab} Classes:`
                 )}
@@ -492,7 +492,7 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({ onStart, onCancel,
                         setActiveClassId(cId);
                       }
                     }}
-                    className={`h-8 px-3 rounded-xl text-xs font-black transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                    className={`h-8 px-3 rounded-xl text-xs font-black transition-all cursor-pointer flex items-center justify-center gap-1.5 shrink-0 whitespace-nowrap ${
                       isSelected
                         ? 'bg-indigo-600 text-white shadow-sm ring-2 ring-indigo-400 dark:ring-indigo-500 scale-105'
                         : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700'
@@ -519,7 +519,7 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({ onStart, onCancel,
                   setSelectedClassId('TEST');
                   setRecordRoster(false);
                 }}
-                className={`h-8 px-3 rounded-xl text-xs font-black transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                className={`h-8 px-3 rounded-xl text-xs font-black transition-all cursor-pointer flex items-center justify-center gap-1.5 shrink-0 whitespace-nowrap ${
                   selectedClassId === 'TEST' || !recordRoster
                     ? 'bg-purple-600 text-white shadow-sm ring-2 ring-purple-400 dark:ring-purple-500 scale-105'
                     : 'bg-white dark:bg-slate-800 text-purple-700 dark:text-purple-300 hover:bg-purple-50 dark:hover:bg-purple-950/40 border border-purple-200 dark:border-purple-800'
@@ -540,7 +540,7 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({ onStart, onCancel,
                 <span className="truncate">
                   {language === 'ja' ? (
                     <>
-                      <ruby>時間割<rt className="text-[7px]">じかんわり</rt></ruby>（{scheduleSuggestion?.period.name} {scheduleSuggestion?.period.jaName}）の<ruby>予定<rt className="text-[7px]">よてい</rt></ruby>は <strong className="text-indigo-600 dark:text-indigo-400">{suggestedClass}</strong> です。
+                      <ruby>時間割<rt>じかんわり</rt></ruby>（{scheduleSuggestion?.period.name} {scheduleSuggestion?.period.jaName}）の<ruby>予定<rt>よてい</rt></ruby>は <strong className="text-indigo-600 dark:text-indigo-400">{suggestedClass}</strong> です。
                     </>
                   ) : (
                     <>
@@ -1354,7 +1354,7 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({ onStart, onCancel,
                 className={`p-3 rounded-2xl border-2 text-left transition-all flex items-start gap-2.5 ${
                   sprintMode === 'LAP_RACE'
                     ? 'border-emerald-500 bg-white dark:bg-slate-900 text-emerald-950 dark:text-emerald-100 shadow-sm ring-1 ring-emerald-400/40'
-                    : 'border-emerald-200/60 dark:border-emerald-900/40 text-slate-600 dark:text-slate-400 hover:bg-white/40 dark:hover:bg-slate-850'
+                    : 'border-emerald-200/60 dark:border-emerald-900/40 text-slate-600 dark:text-slate-400 hover:bg-white/40 dark:hover:bg-slate-800/80'
                 }`}
               >
                 <div className={`p-1.5 rounded-lg shrink-0 ${sprintMode === 'LAP_RACE' ? 'bg-emerald-600 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'}`}>
@@ -1374,7 +1374,7 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({ onStart, onCancel,
                 className={`p-3 rounded-2xl border-2 text-left transition-all flex items-start gap-2.5 ${
                   sprintMode === 'TIME_TRIAL'
                     ? 'border-emerald-500 bg-white dark:bg-slate-900 text-emerald-950 dark:text-emerald-100 shadow-sm ring-1 ring-emerald-400/40'
-                    : 'border-emerald-200/60 dark:border-emerald-900/40 text-slate-600 dark:text-slate-400 hover:bg-white/40 dark:hover:bg-slate-850'
+                    : 'border-emerald-200/60 dark:border-emerald-900/40 text-slate-600 dark:text-slate-400 hover:bg-white/40 dark:hover:bg-slate-800/80'
                 }`}
               >
                 <div className={`p-1.5 rounded-lg shrink-0 ${sprintMode === 'TIME_TRIAL' ? 'bg-emerald-600 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'}`}>
@@ -1968,15 +1968,15 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({ onStart, onCancel,
         ) : (
         <>
         <div>
-          <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
-            <label className="text-xs font-black text-slate-400 uppercase tracking-wider block">
+          <div className="flex flex-nowrap items-center justify-between gap-2 mb-2 overflow-x-auto no-scrollbar">
+            <label className="text-xs font-black text-slate-400 uppercase tracking-wider shrink-0 whitespace-nowrap">
               {gamePlayType === 'KAHOOT' ? t('7. Question Varieties', '7. 出題バリエーション') : t('4. Question Varieties', '4. 出題バリエーション')}
             </label>
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1.5 shrink-0 flex-nowrap">
               <button
                 type="button"
                 onClick={() => setPromptTypes(['JA_MEANING', 'EN_TO_JA', 'IMAGE_ONLY', 'AUDIO_ONLY'])}
-                className="px-2.5 py-1 rounded-lg text-[11px] font-black border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:border-blue-400 transition-colors cursor-pointer"
+                className="px-2.5 py-1 rounded-lg text-[11px] font-black border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:border-blue-400 transition-colors cursor-pointer whitespace-nowrap shrink-0"
               >
                 {t('📘 Basic 4', '📘 基本4種')}
               </button>
@@ -1987,14 +1987,14 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({ onStart, onCancel,
                     ? ['JA_MEANING', 'IMAGE_ONLY', 'PHONICS_MASK', 'SHORT_CLOZE', 'CATEGORY_HUNT', 'THREE_HINTS']
                     : ['JA_MEANING', 'EN_TO_JA', 'IMAGE_ONLY', 'PHONICS_MASK', 'CATEGORY_HUNT']
                 )}
-                className="px-2.5 py-1 rounded-lg text-[11px] font-black border border-indigo-300 dark:border-indigo-700 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100 transition-colors cursor-pointer"
+                className="px-2.5 py-1 rounded-lg text-[11px] font-black border border-indigo-300 dark:border-indigo-700 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100 transition-colors cursor-pointer whitespace-nowrap shrink-0"
               >
                 {t('✨ Fun Mix', '✨ 応用ミックス')}
               </button>
               <button
                 type="button"
                 onClick={() => setPromptTypes(['JA_MEANING', 'EN_TO_JA', 'IMAGE_ONLY', 'AUDIO_ONLY', 'PHONICS_MASK', 'SHORT_CLOZE', 'CATEGORY_HUNT', 'THREE_HINTS'])}
-                className="px-2.5 py-1 rounded-lg text-[11px] font-black border border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 hover:bg-amber-100 transition-colors cursor-pointer"
+                className="px-2.5 py-1 rounded-lg text-[11px] font-black border border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 hover:bg-amber-100 transition-colors cursor-pointer whitespace-nowrap shrink-0"
               >
                 {t('🎯 All 8', '🎯 全8種フル')}
               </button>
@@ -2444,7 +2444,7 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({ onStart, onCancel,
               {t(
                 'Classroom Sound Pack (High-Energy Audio)',
                 <>
-                  <ruby>教室<rt className="text-[7px] font-normal text-slate-400">きょうしつ</rt></ruby>のBGMサウンドパック
+                  <ruby>教室<rt>きょうしつ</rt></ruby>のBGMサウンドパック
                 </>
               )}
             </label>

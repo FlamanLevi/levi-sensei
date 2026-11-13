@@ -61,7 +61,7 @@ export const WorksheetPage: React.FC<WorksheetPageProps> = ({
     ),
     ja: useRuby ? (
       <>
-        ぼく・わたしの モンスターです。<ruby>名前<rt className="text-[7.5px] font-normal text-slate-500">なまえ</rt></ruby>は ＿＿ です。
+        ぼく・わたしの モンスターです。<ruby>名前<rt className="font-normal">なまえ</rt></ruby>は ＿＿ です。
       </>
     ) : (
       'ぼく・わたしの モンスターです。なまえは ＿＿ です。'
@@ -82,7 +82,7 @@ export const WorksheetPage: React.FC<WorksheetPageProps> = ({
     ),
     ja: useRuby ? (
       <>
-        {shape.nameJa} の <ruby>体<rt className="text-[7.5px] font-normal text-slate-500">からだ</rt></ruby>です。
+        {shape.nameJa} の <ruby>体<rt className="font-normal">からだ</rt></ruby>です。
       </>
     ) : (
       `${shape.nameJa} の からだ です。`
@@ -115,12 +115,12 @@ export const WorksheetPage: React.FC<WorksheetPageProps> = ({
       );
       jaText = useRuby ? (
         <>
-          {p.partId === 'eyes' && <ruby>目<rt className="text-[7.5px] font-normal text-slate-500">め</rt></ruby>}
-          {p.partId === 'ears' && <ruby>耳<rt className="text-[7.5px] font-normal text-slate-500">みみ</rt></ruby>}
-          {p.partId === 'nose' && <ruby>鼻<rt className="text-[7.5px] font-normal text-slate-500">はな</rt></ruby>}
-          {p.partId === 'mouth' && <ruby>口<rt className="text-[7.5px] font-normal text-slate-500">くち</rt></ruby>}
+          {p.partId === 'eyes' && <ruby>目<rt className="font-normal">め</rt></ruby>}
+          {p.partId === 'ears' && <ruby>耳<rt className="font-normal">みみ</rt></ruby>}
+          {p.partId === 'nose' && <ruby>鼻<rt className="font-normal">はな</rt></ruby>}
+          {p.partId === 'mouth' && <ruby>口<rt className="font-normal">くち</rt></ruby>}
           {p.partId === 'arms' && 'うで'}
-          {p.partId === 'legs' && <ruby>足<rt className="text-[7.5px] font-normal text-slate-500">あし</rt></ruby>}
+          {p.partId === 'legs' && <ruby>足<rt className="font-normal">あし</rt></ruby>}
           {p.partId === 'horns' && 'つの'}
           {p.partId === 'wings' && 'はね'}
           {p.partId === 'tails' && 'しっぽ'}
@@ -191,12 +191,12 @@ export const WorksheetPage: React.FC<WorksheetPageProps> = ({
       const en = `${capSingular}(s): ___`;
       const ja = useRuby ? (
         <>
-          {p.partId === 'eyes' && <ruby>目<rt className="text-[6.5px]">め</rt></ruby>}
-          {p.partId === 'ears' && <ruby>耳<rt className="text-[6.5px]">みみ</rt></ruby>}
-          {p.partId === 'nose' && <ruby>鼻<rt className="text-[6.5px]">はな</rt></ruby>}
-          {p.partId === 'mouth' && <ruby>口<rt className="text-[6.5px]">くち</rt></ruby>}
+          {p.partId === 'eyes' && <ruby>目<rt className="font-normal">め</rt></ruby>}
+          {p.partId === 'ears' && <ruby>耳<rt className="font-normal">みみ</rt></ruby>}
+          {p.partId === 'nose' && <ruby>鼻<rt className="font-normal">はな</rt></ruby>}
+          {p.partId === 'mouth' && <ruby>口<rt className="font-normal">くち</rt></ruby>}
           {p.partId === 'arms' && 'うで'}
-          {p.partId === 'legs' && <ruby>足<rt className="text-[6.5px]">あし</rt></ruby>}
+          {p.partId === 'legs' && <ruby>足<rt className="font-normal">あし</rt></ruby>}
           {p.partId === 'horns' && 'つの'}
           {p.partId === 'wings' && 'はね'}
           {p.partId === 'tails' && 'しっぽ'}
@@ -260,7 +260,7 @@ export const WorksheetPage: React.FC<WorksheetPageProps> = ({
             <p className="text-[10px] sm:text-[11px] print:text-[10px] font-bold text-slate-700">
               {useRuby ? (
                 <>
-                  <ruby>自分<rt className="text-[7px] text-slate-500 font-normal">じぶん</rt></ruby>だけの モンスターを <ruby>描<rt className="text-[7px] text-slate-500 font-normal">か</rt></ruby>いて、<ruby>英語<rt className="text-[7px] text-slate-500 font-normal">えいご</rt></ruby>で <ruby>発表<rt className="text-[7px] text-slate-500 font-normal">はっぴょう</rt></ruby>しよう！
+                  <ruby>自分<rt className="font-normal">じぶん</rt></ruby>だけの モンスターを <ruby>描<rt className="font-normal">か</rt></ruby>いて、<ruby>英語<rt className="font-normal">えいご</rt></ruby>で <ruby>発表<rt className="font-normal">はっぴょう</rt></ruby>しよう！
                 </>
               ) : (
                 'じぶんだけの モンスターを かいて、えいごで はっぴょうしよう！'
@@ -306,13 +306,13 @@ export const WorksheetPage: React.FC<WorksheetPageProps> = ({
                 <span className="text-xs font-black bg-slate-800 text-white px-1.5 py-0.2 rounded text-[9.5px] uppercase">
                   {isStudentChoice ? (
                     useRuby ? (
-                      <>📋 <ruby>自分<rt className="text-[7px] text-slate-300 font-normal">じぶん</rt></ruby>の <ruby>設計図<rt className="text-[7px] text-slate-300 font-normal">せっけいず</rt></ruby></>
+                      <>📋 <ruby>自分<rt className="font-normal">じぶん</rt></ruby>の <ruby>設計図<rt className="font-normal">せっけいず</rt></ruby></>
                     ) : (
                       '📋 じぶんの せっけいず'
                     )
                   ) : (
                     useRuby ? (
-                      <>📋 <ruby>設計図<rt className="text-[7px] text-slate-300 font-normal">せっけいず</rt></ruby></>
+                      <>📋 <ruby>設計図<rt className="font-normal">せっけいず</rt></ruby></>
                     ) : (
                       '📋 せっけいず'
                     )
@@ -398,13 +398,13 @@ export const WorksheetPage: React.FC<WorksheetPageProps> = ({
           <div className="w-[71%] border-2 border-dashed border-slate-600 rounded-2xl flex flex-col items-center justify-between p-3 relative bg-white overflow-hidden min-h-0">
             <div className="w-full flex items-center justify-between text-[11px] font-bold text-slate-500 z-10 shrink-0">
               {useRuby ? (
-                <span>👇 この<ruby>形<rt className="text-[7px] text-slate-400 font-normal">かたち</rt></ruby>をからだにして、<ruby>目<rt className="text-[7px] text-slate-400 font-normal">め</rt></ruby>・<ruby>口<rt className="text-[7px] text-slate-400 font-normal">くち</rt></ruby>・うで・<ruby>足<rt className="text-[7px] text-slate-400 font-normal">あし</rt></ruby>などを<ruby>描<rt className="text-[7px] text-slate-400 font-normal">か</rt></ruby>こう！</span>
+                <span>👇 この<ruby>形<rt className="font-normal">かたち</rt></ruby>をからだにして、<ruby>目<rt className="font-normal">め</rt></ruby>・<ruby>口<rt className="font-normal">くち</rt></ruby>・うで・<ruby>足<rt className="font-normal">あし</rt></ruby>などを<ruby>描<rt className="font-normal">か</rt></ruby>こう！</span>
               ) : (
                 <span>👇 この かたち を からだにして、め・くち・うで・あし などを かこう！</span>
               )}
               <span className="text-[10px] text-slate-400">
                 {useRuby ? (
-                  <>※ まわりや<ruby>中<rt className="text-[7px] text-slate-400 font-normal">なか</rt></ruby>に<ruby>自由<rt className="text-[7px] text-slate-400 font-normal">じゆう</rt></ruby>に<ruby>描<rt className="text-[7px] text-slate-400 font-normal">か</rt></ruby>いてOK！</>
+                  <>※ まわりや<ruby>中<rt className="font-normal">なか</rt></ruby>に<ruby>自由<rt className="font-normal">じゆう</rt></ruby>に<ruby>描<rt className="font-normal">か</rt></ruby>いてOK！</>
                 ) : (
                   '※ まわりや なかに じゆうに かいてOK！'
                 )}
@@ -422,7 +422,7 @@ export const WorksheetPage: React.FC<WorksheetPageProps> = ({
 
             <div className="w-full text-center text-[10px] text-slate-400 font-medium z-10 shrink-0">
               {useRuby ? (
-                <>★ <ruby>色鉛筆<rt className="text-[7px] text-slate-400 font-normal">いろえんぴつ</rt></ruby>やクレヨンで<ruby>色<rt className="text-[7px] text-slate-400 font-normal">いろ</rt></ruby>をぬって、かっこいいモンスターを<ruby>完成<rt className="text-[7px] text-slate-400 font-normal">かんせい</rt></ruby>させよう！</>
+                <>★ <ruby>色鉛筆<rt className="font-normal">いろえんぴつ</rt></ruby>やクレヨンで<ruby>色<rt className="font-normal">いろ</rt></ruby>をぬって、かっこいいモンスターを<ruby>完成<rt className="font-normal">かんせい</rt></ruby>させよう！</>
               ) : (
                 '★ いろえんぴつ や クレヨン で いろ を ぬって、かっこいい モンスター を かんせい させよう！'
               )}
@@ -463,7 +463,7 @@ export const WorksheetPage: React.FC<WorksheetPageProps> = ({
           <p className="text-[11px] sm:text-xs print:text-[10px] font-bold text-slate-700 mt-0.5">
             {useRuby ? (
               <>
-                <ruby>自分<rt className="text-[7px] text-slate-500 font-normal">じぶん</rt></ruby>だけの モンスターを <ruby>描<rt className="text-[7px] text-slate-500 font-normal">か</rt></ruby>いて、<ruby>英語<rt className="text-[7px] text-slate-500 font-normal">えいご</rt></ruby>で <ruby>発表<rt className="text-[7px] text-slate-500 font-normal">はっぴょう</rt></ruby>しよう！
+                <ruby>自分<rt className="font-normal">じぶん</rt></ruby>だけの モンスターを <ruby>描<rt className="font-normal">か</rt></ruby>いて、<ruby>英語<rt className="font-normal">えいご</rt></ruby>で <ruby>発表<rt className="font-normal">はっぴょう</rt></ruby>しよう！
               </>
             ) : (
               'じぶんだけの モンスターを かいて、えいごで はっぴょうしよう！'
@@ -506,20 +506,20 @@ export const WorksheetPage: React.FC<WorksheetPageProps> = ({
             <span className="text-xs font-black bg-slate-800 text-white px-2 py-0.2 rounded text-[10px] uppercase">
               {isStudentChoice ? (
                 useRuby ? (
-                  <>📋 <ruby>自分<rt className="text-[7px] text-slate-300 font-normal">じぶん</rt></ruby>の <ruby>設計図<rt className="text-[7px] text-slate-300 font-normal">せっけいず</rt></ruby> / My Blueprint</>
+                  <>📋 <ruby>自分<rt className="font-normal">じぶん</rt></ruby>の <ruby>設計図<rt className="font-normal">せっけいず</rt></ruby> / My Blueprint</>
                 ) : (
                   '📋 じぶんの せっけいず / My Blueprint'
                 )
               ) : (
                 useRuby ? (
-                  <>📋 <ruby>設計図<rt className="text-[7px] text-slate-300 font-normal">せっけいず</rt></ruby> / Blueprint</>
+                  <>📋 <ruby>設計図<rt className="font-normal">せっけいず</rt></ruby> / Blueprint</>
                 ) : (
                   '📋 せっけいず / Blueprint'
                 )
               )}
             </span>
             <div className="flex items-center gap-1 text-[11px] font-black text-slate-800">
-              <span>{useRuby ? <>からだの<ruby>形<rt className="text-[7px] text-slate-400 font-normal">かたち</rt></ruby>:</> : 'からだの かたち:'}</span>
+              <span>{useRuby ? <>からだの<ruby>形<rt className="font-normal">かたち</rt></ruby>:</> : 'からだの かたち:'}</span>
               <span className="bg-amber-100 text-amber-900 border border-amber-300 px-1.5 py-0.2 rounded font-black text-xs">
                 {shape.icon} {shape.nameEn} ({shape.nameJa})
               </span>
@@ -559,13 +559,13 @@ export const WorksheetPage: React.FC<WorksheetPageProps> = ({
       <div className="border-2 border-dashed border-slate-600 rounded-2xl flex-1 min-h-[140mm] max-h-[148mm] flex flex-col items-center justify-between p-3 relative bg-white overflow-hidden my-1 shrink-0">
         <div className="w-full flex items-center justify-between text-[11px] font-bold text-slate-500 z-10 shrink-0">
           {useRuby ? (
-            <span>👇 この<ruby>形<rt className="text-[7px] text-slate-400 font-normal">かたち</rt></ruby>をからだにして、<ruby>目<rt className="text-[7px] text-slate-400 font-normal">め</rt></ruby>・<ruby>口<rt className="text-[7px] text-slate-400 font-normal">くち</rt></ruby>・うで・<ruby>足<rt className="text-[7px] text-slate-400 font-normal">あし</rt></ruby>などを<ruby>描<rt className="text-[7px] text-slate-400 font-normal">か</rt></ruby>こう！</span>
+            <span>👇 この<ruby>形<rt className="font-normal">かたち</rt></ruby>をからだにして、<ruby>目<rt className="font-normal">め</rt></ruby>・<ruby>口<rt className="font-normal">くち</rt></ruby>・うで・<ruby>足<rt className="font-normal">あし</rt></ruby>などを<ruby>描<rt className="font-normal">か</rt></ruby>こう！</span>
           ) : (
             <span>👇 この かたち を からだにして、め・くち・うで・あし などを かこう！</span>
           )}
           <span className="text-[10px] text-slate-400">
             {useRuby ? (
-              <>※ まわりや<ruby>中<rt className="text-[7px] text-slate-400 font-normal">なか</rt></ruby>に<ruby>自由<rt className="text-[7px] text-slate-400 font-normal">じゆう</rt></ruby>に<ruby>描<rt className="text-[7px] text-slate-400 font-normal">か</rt></ruby>いてOK！</>
+              <>※ まわりや<ruby>中<rt className="font-normal">なか</rt></ruby>に<ruby>自由<rt className="font-normal">じゆう</rt></ruby>に<ruby>描<rt className="font-normal">か</rt></ruby>いてOK！</>
             ) : (
               '※ まわりや なかに じゆうに かいてOK！'
             )}
@@ -583,7 +583,7 @@ export const WorksheetPage: React.FC<WorksheetPageProps> = ({
 
         <div className="w-full text-center text-[10px] text-slate-400 font-medium z-10 shrink-0">
           {useRuby ? (
-            <>★ <ruby>色鉛筆<rt className="text-[7px] text-slate-400 font-normal">いろえんぴつ</rt></ruby>やクレヨンで<ruby>色<rt className="text-[7px] text-slate-400 font-normal">いろ</rt></ruby>をぬって、かっこいいモンスターを<ruby>完成<rt className="text-[7px] text-slate-400 font-normal">かんせい</rt></ruby>させよう！</>
+            <>★ <ruby>色鉛筆<rt className="font-normal">いろえんぴつ</rt></ruby>やクレヨンで<ruby>色<rt className="font-normal">いろ</rt></ruby>をぬって、かっこいいモンスターを<ruby>完成<rt className="font-normal">かんせい</rt></ruby>させよう！</>
           ) : (
             '★ いろえんぴつ や クレヨン で いろ を ぬって、かっこいい モンスター を かんせい させよう！'
           )}
@@ -600,13 +600,13 @@ export const WorksheetPage: React.FC<WorksheetPageProps> = ({
             <span className="text-[10px] text-slate-600 font-bold">
               {isStudentChoice ? (
                 useRuby ? (
-                  <><ruby>数<rt className="text-[7px] text-slate-400 font-normal">かず</rt></ruby>を<ruby>書<rt className="text-[7px] text-slate-400 font-normal">か</rt></ruby>いて、ことばに〇をつけよう！</>
+                  <><ruby>数<rt className="font-normal">かず</rt></ruby>を<ruby>書<rt className="font-normal">か</rt></ruby>いて、ことばに〇をつけよう！</>
                 ) : (
                   'かずを かいて、ことばに 〇を つけよう！'
                 )
               ) : (
                 useRuby ? (
-                  <><ruby>絵<rt className="text-[7px] text-slate-400 font-normal">え</rt></ruby>を<ruby>見<rt className="text-[7px] text-slate-400 font-normal">み</rt></ruby>せながら、<ruby>順番<rt className="text-[7px] text-slate-400 font-normal">じゅんばん</rt></ruby>に<ruby>英語<rt className="text-[7px] text-slate-400 font-normal">えいご</rt></ruby>で<ruby>言<rt className="text-[7px] text-slate-400 font-normal">い</rt></ruby>ってみよう！</>
+                  <><ruby>絵<rt className="font-normal">え</rt></ruby>を<ruby>見<rt className="font-normal">み</rt></ruby>せながら、<ruby>順番<rt className="font-normal">じゅんばん</rt></ruby>に<ruby>英語<rt className="font-normal">えいご</rt></ruby>で<ruby>言<rt className="font-normal">い</rt></ruby>ってみよう！</>
                 ) : (
                   'えを みせながら、じゅんばんに えいごで いってみよう！'
                 )

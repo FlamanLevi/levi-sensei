@@ -553,13 +553,13 @@ export const KeywordStudentPair: React.FC<KeywordStudentPairProps> = ({
       {/* ====================================================================
           1. TOP STATUS & DESK BINDING BAR (Pinned height for Zero Layout Shift)
          ==================================================================== */}
-      <div className="bg-slate-900 border-2 border-slate-800 rounded-2xl px-3 py-1.5 flex flex-wrap items-center justify-between gap-2 shrink-0 min-h-[48px] z-20">
+      <div className="bg-slate-900 border-2 border-slate-800 rounded-2xl px-3 py-1.5 flex flex-nowrap items-center justify-between gap-2 shrink-0 h-12 overflow-x-auto no-scrollbar whitespace-nowrap z-20">
         {/* Left: Desk Selector & Connection Status */}
-        <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1.5 bg-slate-800 px-2.5 py-1 rounded-xl border border-slate-700 h-8">
-            <Users size={14} className="text-amber-400" />
-            <span className="text-xs font-black text-amber-300">
-              {t('Desk:', <><ruby>机<rt className="text-[7px]">つくえ</rt></ruby>:</>)}
+        <div className="flex items-center gap-2 shrink-0">
+          <div className="flex items-center gap-1.5 bg-slate-800 px-2.5 py-1 rounded-xl border border-slate-700 h-8 shrink-0">
+            <Users size={14} className="text-amber-400 shrink-0" />
+            <span className="text-xs font-black text-amber-300 shrink-0">
+              {t('Desk:', <><ruby>机<rt>つくえ</rt></ruby>:</>)}
             </span>
             <select
               value={deskNumber}
@@ -570,7 +570,7 @@ export const KeywordStudentPair: React.FC<KeywordStudentPairProps> = ({
                   joinDeskPair(roomCode, nextDesk);
                 }
               }}
-              className="bg-slate-950 text-white font-black text-xs px-2 py-0.5 rounded-lg border border-slate-700 cursor-pointer"
+              className="bg-slate-950 text-white font-black text-xs px-2 py-0.5 rounded-lg border border-slate-700 cursor-pointer shrink-0"
             >
               {Array.from({ length: 18 }, (_, i) => i + 1).map((d) => {
                 const sL = (d - 1) * 2 + 1;
@@ -585,13 +585,13 @@ export const KeywordStudentPair: React.FC<KeywordStudentPairProps> = ({
           </div>
 
           {/* Room Join Input or Status Pill */}
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1 shrink-0">
             <input
               type="text"
               value={roomInput}
               onChange={(e) => setRoomInput(e.target.value.toUpperCase())}
               placeholder="KW-123"
-              className="w-20 h-8 bg-slate-950 border border-slate-700 rounded-xl px-2 text-xs font-mono font-black text-amber-300 uppercase"
+              className="w-20 h-8 bg-slate-950 border border-slate-700 rounded-xl px-2 text-xs font-mono font-black text-amber-300 uppercase shrink-0"
             />
             <button
               onClick={() => {
@@ -603,7 +603,7 @@ export const KeywordStudentPair: React.FC<KeywordStudentPairProps> = ({
                   setIsOfflineAutonomous(true);
                 }
               }}
-              className="h-8 px-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-black transition active:scale-95 cursor-pointer flex items-center"
+              className="h-8 px-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-black transition active:scale-95 cursor-pointer flex items-center shrink-0 whitespace-nowrap"
             >
               {isConnected && !isOfflineAutonomous ? (
                 <span className="flex items-center gap-1">
@@ -621,22 +621,22 @@ export const KeywordStudentPair: React.FC<KeywordStudentPairProps> = ({
         </div>
 
         {/* Center: Target Keyword & Pose Banner */}
-        <div className="flex items-center gap-3 bg-slate-950/90 px-3 py-1 rounded-xl border border-amber-500/40 h-8">
+        <div className="flex items-center gap-3 bg-slate-950/90 px-3 py-1 rounded-xl border border-amber-500/40 h-8 shrink-0">
           <div className="flex items-center gap-1.5">
-            <span className="text-[10px] font-black text-amber-400 uppercase">
-              🎯 {t('Keyword:', <><ruby>合言葉<rt className="text-[7px]">あいことば</rt></ruby>:</>)}
+            <span className="text-[10px] font-black text-amber-400 uppercase whitespace-nowrap">
+              🎯 {t('Keyword:', <><ruby>合言葉<rt>あいことば</rt></ruby>:</>)}
             </span>
-            <span className="text-sm sm:text-base font-black text-white tracking-wide">
+            <span className="text-sm sm:text-base font-black text-white tracking-wide whitespace-nowrap">
               {activeKeywordEnglish || '---'}
             </span>
             {activeKeywordJa && (
-              <span className="text-xs font-bold text-amber-300">
+              <span className="text-xs font-bold text-amber-300 whitespace-nowrap">
                 ({activeKeywordJa})
               </span>
             )}
           </div>
           <span className="text-slate-700">|</span>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1 shrink-0 whitespace-nowrap">
             <span className="text-base">{activePose.emoji}</span>
             <span className="text-xs font-black text-sky-300">
               {language === 'ja' ? activePose.jaRuby : activePose.en}
@@ -645,20 +645,20 @@ export const KeywordStudentPair: React.FC<KeywordStudentPairProps> = ({
         </div>
 
         {/* Right: Offline Practice Trigger / Rematch / Exit */}
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1.5 shrink-0">
           <button
             onClick={startOfflineRally}
-            className="h-8 px-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs flex items-center gap-1 shadow transition active:scale-95 cursor-pointer"
+            className="h-8 px-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs flex items-center gap-1 shadow transition active:scale-95 cursor-pointer shrink-0 whitespace-nowrap"
           >
             <Play size={13} className="fill-slate-950" />
             <span>
-              {t('Solo Pair Deal', <><ruby>ペア練習<rt className="text-[7px]">れんしゅう</rt></ruby></>)}
+              {t('Solo Pair Deal', <><ruby>ペア練習<rt>れんしゅう</rt></ruby></>)}
             </span>
           </button>
           {onExit && (
             <button
               onClick={onExit}
-              className="h-8 px-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold cursor-pointer"
+              className="h-8 px-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold cursor-pointer shrink-0 whitespace-nowrap"
             >
               {t('Exit', '終了')}
             </button>
@@ -724,7 +724,7 @@ export const KeywordStudentPair: React.FC<KeywordStudentPairProps> = ({
             </div>
             <div className="text-right">
               <span className="text-[10px] font-bold text-rose-200 uppercase block">
-                {t('Points', <><ruby>得点<rt className="text-[7px]">とくてん</rt></ruby></>)}
+                {t('Points', <><ruby>得点<rt>とくてん</rt></ruby></>)}
               </span>
               <span className="text-2xl sm:text-3xl font-black text-white leading-none">
                 {scoreLeft}
@@ -743,7 +743,7 @@ export const KeywordStudentPair: React.FC<KeywordStudentPairProps> = ({
                     {t(
                       'FALSE START! / FOUL!',
                       <>
-                        おてつき！<ruby>反則<rt className="text-[8px]">はんそく</rt></ruby>！
+                        おてつき！<ruby>反則<rt>はんそく</rt></ruby>！
                       </>
                     )}
                   </span>
@@ -783,7 +783,7 @@ export const KeywordStudentPair: React.FC<KeywordStudentPairProps> = ({
               <div className="space-y-2 animate-bounce">
                 <Trophy size={58} className="text-yellow-300 mx-auto drop-shadow-lg" />
                 <div className="text-3xl sm:text-5xl font-black text-white drop-shadow-md">
-                  {t('RED WINS!', <>赤の<ruby>勝<rt className="text-[8px]">か</rt></ruby>ち！</>)}
+                  {t('RED WINS!', <>赤の<ruby>勝<rt>か</rt></ruby>ち！</>)}
                 </div>
 
                 {showReactionTiers && reactionTierInfo && (
@@ -799,7 +799,7 @@ export const KeywordStudentPair: React.FC<KeywordStudentPairProps> = ({
                   </div>
                 )}
 
-                <div className="flex flex-wrap items-center justify-center gap-2">
+                <div className="flex flex-nowrap items-center justify-center gap-2 whitespace-nowrap">
                   <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-black/45 border border-yellow-300 text-yellow-200 font-mono font-black text-sm sm:text-base">
                     <Zap size={15} />
                     <span>{roundReactionMs}ms</span>
@@ -841,7 +841,7 @@ export const KeywordStudentPair: React.FC<KeywordStudentPairProps> = ({
               <div className="space-y-2">
                 <div className="text-5xl sm:text-6xl animate-pulse">👂</div>
                 <div className="text-xl sm:text-2xl font-black text-rose-200">
-                  {t('LISTEN... (Do Not Touch!)', <>よく<ruby>聞<rt className="text-[7px]">き</rt></ruby>いて！（まだ触っちゃダメ）</>)}
+                  {t('LISTEN... (Do Not Touch!)', <>よく<ruby>聞<rt>き</rt></ruby>いて！（まだ触っちゃダメ）</>)}
                 </div>
                 {activeCurrentWordEnglish && (
                   <div className="px-4 py-1 rounded-full bg-black/40 text-slate-300 font-black text-sm">
@@ -954,7 +954,7 @@ export const KeywordStudentPair: React.FC<KeywordStudentPairProps> = ({
             </div>
             <div className="text-right">
               <span className="text-[10px] font-bold text-sky-200 uppercase block">
-                {t('Points', <><ruby>得点<rt className="text-[7px]">とくてん</rt></ruby></>)}
+                {t('Points', <><ruby>得点<rt>とくてん</rt></ruby></>)}
               </span>
               <span className="text-2xl sm:text-3xl font-black text-white leading-none">
                 {scoreRight}
@@ -973,7 +973,7 @@ export const KeywordStudentPair: React.FC<KeywordStudentPairProps> = ({
                     {t(
                       'FALSE START! / FOUL!',
                       <>
-                        おてつき！<ruby>反則<rt className="text-[8px]">はんそく</rt></ruby>！
+                        おてつき！<ruby>反則<rt>はんそく</rt></ruby>！
                       </>
                     )}
                   </span>
@@ -1013,7 +1013,7 @@ export const KeywordStudentPair: React.FC<KeywordStudentPairProps> = ({
               <div className="space-y-2 animate-bounce">
                 <Trophy size={58} className="text-yellow-300 mx-auto drop-shadow-lg" />
                 <div className="text-3xl sm:text-5xl font-black text-white drop-shadow-md">
-                  {t('BLUE WINS!', <>青の<ruby>勝<rt className="text-[8px]">か</rt></ruby>ち！</>)}
+                  {t('BLUE WINS!', <>青の<ruby>勝<rt>か</rt></ruby>ち！</>)}
                 </div>
 
                 {showReactionTiers && reactionTierInfo && (
@@ -1029,7 +1029,7 @@ export const KeywordStudentPair: React.FC<KeywordStudentPairProps> = ({
                   </div>
                 )}
 
-                <div className="flex flex-wrap items-center justify-center gap-2">
+                <div className="flex flex-nowrap items-center justify-center gap-2 whitespace-nowrap">
                   <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-black/45 border border-yellow-300 text-yellow-200 font-mono font-black text-sm sm:text-base">
                     <Zap size={15} />
                     <span>{roundReactionMs}ms</span>
@@ -1071,7 +1071,7 @@ export const KeywordStudentPair: React.FC<KeywordStudentPairProps> = ({
               <div className="space-y-2">
                 <div className="text-5xl sm:text-6xl animate-pulse">👂</div>
                 <div className="text-xl sm:text-2xl font-black text-sky-200">
-                  {t('LISTEN... (Do Not Touch!)', <>よく<ruby>聞<rt className="text-[7px]">き</rt></ruby>いて！（まだ触っちゃダメ）</>)}
+                  {t('LISTEN... (Do Not Touch!)', <>よく<ruby>聞<rt>き</rt></ruby>いて！（まだ触っちゃダメ）</>)}
                 </div>
                 {activeCurrentWordEnglish && (
                   <div className="px-4 py-1 rounded-full bg-black/40 text-slate-300 font-black text-sm">
@@ -1108,7 +1108,7 @@ export const KeywordStudentPair: React.FC<KeywordStudentPairProps> = ({
           onClick={() => setIsPartnerPickerOpen(false)}
         >
           <div
-            className="w-full max-w-2xl bg-slate-900 border-4 border-sky-400 text-white rounded-3xl p-4 sm:p-6 shadow-2xl flex flex-col max-h-[90vh]"
+            className="w-full max-w-2xl bg-slate-900 border-4 border-sky-400 text-white rounded-3xl p-4 sm:p-6 shadow-2xl flex flex-col max-h-[90dvh]"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between border-b border-slate-800 pb-3 mb-3">
@@ -1153,7 +1153,7 @@ export const KeywordStudentPair: React.FC<KeywordStudentPairProps> = ({
                         ? 'opacity-40 border-slate-700 bg-slate-950 cursor-not-allowed'
                         : isSelectedPartner
                         ? 'bg-sky-500 text-slate-950 border-white ring-2 ring-sky-300 shadow-lg scale-105'
-                        : 'bg-slate-800/90 hover:bg-slate-750 border-slate-700 hover:border-sky-400 active:scale-95'
+                        : 'bg-slate-800/90 hover:bg-slate-700 border-slate-700 hover:border-sky-400 active:scale-95'
                     }`}
                   >
                     <div className="flex items-center justify-between w-full text-[10px] font-black text-slate-400">

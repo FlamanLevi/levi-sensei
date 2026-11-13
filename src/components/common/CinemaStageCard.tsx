@@ -27,7 +27,7 @@ export const CinemaStageCard: React.FC<CinemaStageCardProps> = ({
   hiragana,
   onAudioClick,
   badge,
-  maxImageHeightClass = 'max-h-[min(56vh,540px)]',
+  maxImageHeightClass = 'max-h-[min(56dvh,540px)]',
   emptyPlaceholder,
   className = '',
   children
@@ -90,7 +90,6 @@ export const CinemaStageCard: React.FC<CinemaStageCardProps> = ({
                 kanji={kanji}
                 hiragana={hiragana}
                 className="text-xl md:text-2xl lg:text-3xl font-bold text-amber-600 dark:text-amber-400"
-                rtClassName="text-[9px] md:text-[11px] font-medium text-amber-600/80 dark:text-amber-400/80"
               />
             </div>
           )}

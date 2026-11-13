@@ -399,8 +399,8 @@ export const MysteryPencilCaseGame: React.FC<MysteryPencilCaseGameProps> = ({ on
       <div className="space-y-3">
         {/* Presets */}
         <div>
-          <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 block mb-1.5">
-            {t('Preset Challenge Levels', <>チャレンジ<ruby>難易度<rt className="text-[7px]">なんいど</rt></ruby></>)}
+          <span className="text-[10px] font-black uppercase tracking-wider text-slate-300 block mb-1.5">
+            {t('Preset Challenge Levels', <>チャレンジ<ruby>難易度<rt>なんいど</rt></ruby></>)}
           </span>
           <div className="grid grid-cols-2 gap-1.5">
             {[
@@ -419,7 +419,7 @@ export const MysteryPencilCaseGame: React.FC<MysteryPencilCaseGameProps> = ({ on
                 }`}
               >
                 <div className="text-xs font-bold truncate">{p.label}</div>
-                <div className="text-[9px] text-slate-400 truncate">{p.sub}</div>
+                <div className="text-[9px] text-slate-300 truncate">{p.sub}</div>
               </button>
             ))}
           </div>
@@ -427,8 +427,8 @@ export const MysteryPencilCaseGame: React.FC<MysteryPencilCaseGameProps> = ({ on
 
         {/* 4 Modular Feature Toggles */}
         <div className="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-2.5">
-          <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 block mb-2">
-            {t('Grammar Feature Toggles', <>文法<ruby>要素<rt className="text-[7px]">ようそ</rt></ruby>トグル</>)}
+          <span className="text-[10px] font-black uppercase tracking-wider text-slate-300 block mb-2">
+            {t('Grammar Feature Toggles', <>文法<ruby>要素<rt>ようそ</rt></ruby>トグル</>)}
           </span>
           <div className="grid grid-cols-2 gap-1.5">
             {/* Quantity Toggle */}
@@ -499,7 +499,7 @@ export const MysteryPencilCaseGame: React.FC<MysteryPencilCaseGameProps> = ({ on
 
         {/* Master Flip Toggle */}
         <div className="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-2.5">
-          <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 block mb-1.5">
+          <span className="text-[10px] font-black uppercase tracking-wider text-slate-300 block mb-1.5">
             {t('Language Flip (Front / Back)', '日英ウラ表の切替')}
           </span>
           <button
@@ -547,9 +547,9 @@ export const MysteryPencilCaseGame: React.FC<MysteryPencilCaseGameProps> = ({ on
           </button>
         </div>
 
-        <div className="px-2.5 py-1.5 rounded-xl bg-slate-950/40 border border-slate-800/80 text-[10px] text-slate-400 flex items-center justify-between">
-          <span><kbd className="font-mono text-slate-300">Space</kbd>: {isGuidedMode ? t('Next Step', '次のステップ') : t('Next Card', '次のカード')}</span>
-          <span><kbd className="font-mono text-slate-300">F</kbd>: {t('Flip All', '裏表')}</span>
+        <div className="px-2.5 py-1.5 rounded-xl bg-slate-950/40 border border-slate-800/80 text-[10px] text-slate-300 flex items-center justify-between">
+          <span><kbd className="font-mono text-slate-200">Space</kbd>: {isGuidedMode ? t('Next Step', '次のステップ') : t('Next Card', '次のカード')}</span>
+          <span><kbd className="font-mono text-slate-200">F</kbd>: {t('Flip All', '裏表')}</span>
         </div>
       </div>
     </div>
@@ -587,7 +587,7 @@ export const MysteryPencilCaseGame: React.FC<MysteryPencilCaseGameProps> = ({ on
         ) : (
           <>
             <Shuffle size={20} strokeWidth={2.5} />
-            <span>{t('NEXT STATIONERY ITEM (Space)', <>つぎの<ruby>文房具<rt className="text-[8px]">ぶんぼうぐ</rt></ruby>へ (Space)</>)}</span>
+            <span>{t('NEXT STATIONERY ITEM (Space)', <>つぎの<ruby>文房具<rt>ぶんぼうぐ</rt></ruby>へ (Space)</>)}</span>
           </>
         )}
       </button>
@@ -609,7 +609,7 @@ export const MysteryPencilCaseGame: React.FC<MysteryPencilCaseGameProps> = ({ on
       <CinemaStageLayout
         sidebarWidth="compact"
         onExit={onExit}
-        title={t('Dialogue Flowchart (Do you have a...?)', <><ruby>質問<rt className="text-[7px]">しつもん</rt></ruby>フローチャート (Unit 5)</>)}
+        title={t('Dialogue Flowchart (Do you have a...?)', <><ruby>質問<rt>しつもん</rt></ruby>フローチャート (Unit 5)</>)}
         badge={
           <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-blue-500 text-white uppercase tracking-wider">
             FLOWCHART
@@ -622,19 +622,19 @@ export const MysteryPencilCaseGame: React.FC<MysteryPencilCaseGameProps> = ({ on
         <div className="w-full h-full flex flex-col justify-between gap-1.5 sm:gap-2 p-1 sm:p-2 overflow-y-auto custom-scrollbar select-none">
           
           {/* Quick Header Toggle Bar */}
-          <div className="flex items-center justify-between px-3 py-1.5 rounded-2xl bg-white/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 shadow-sm shrink-0 flex-wrap gap-1.5">
-            <div className="flex items-center gap-1.5 flex-wrap">
-              <span className="text-[11px] font-black text-slate-400 uppercase tracking-wider hidden sm:inline">
+          <div className="flex items-center justify-between px-3 py-1.5 rounded-2xl bg-white/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 shadow-sm shrink-0 flex-nowrap overflow-x-auto no-scrollbar whitespace-nowrap gap-2">
+            <div className="flex items-center gap-1.5 flex-nowrap shrink-0">
+              <span className="text-[11px] font-black text-slate-600 dark:text-slate-300 uppercase tracking-wider hidden sm:inline shrink-0">
                 {t('Modifiers:', '構文トグル:')}
               </span>
               
               {/* Pill 1: Quantity */}
               <button
                 onClick={() => setToggles(p => ({ ...p, hasQuantity: !p.hasQuantity }))}
-                className={`px-2.5 py-1 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-1 ${
+                className={`px-2.5 py-1 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-1 shrink-0 ${
                   toggles.hasQuantity
                     ? 'bg-amber-400 text-slate-950 font-black shadow-xs ring-1 ring-amber-400'
-                    : 'bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-slate-200'
+                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
                 <span>🔢</span>
@@ -644,10 +644,10 @@ export const MysteryPencilCaseGame: React.FC<MysteryPencilCaseGameProps> = ({ on
               {/* Pill 2: Color */}
               <button
                 onClick={() => setToggles(p => ({ ...p, hasColor: !p.hasColor }))}
-                className={`px-2.5 py-1 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-1 ${
+                className={`px-2.5 py-1 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-1 shrink-0 ${
                   toggles.hasColor
                     ? 'bg-rose-500 text-white font-black shadow-xs ring-1 ring-rose-400'
-                    : 'bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-slate-200'
+                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
                 <span>🎨</span>
@@ -657,10 +657,10 @@ export const MysteryPencilCaseGame: React.FC<MysteryPencilCaseGameProps> = ({ on
               {/* Pill 3: And */}
               <button
                 onClick={() => setToggles(p => ({ ...p, hasAnd: !p.hasAnd }))}
-                className={`px-2.5 py-1 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-1 ${
+                className={`px-2.5 py-1 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-1 shrink-0 ${
                   toggles.hasAnd
                     ? 'bg-emerald-500 text-white font-black shadow-xs ring-1 ring-emerald-400'
-                    : 'bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-slate-200'
+                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
                 <span>➕</span>
@@ -670,10 +670,10 @@ export const MysteryPencilCaseGame: React.FC<MysteryPencilCaseGameProps> = ({ on
               {/* Pill 4: But */}
               <button
                 onClick={() => setToggles(p => ({ ...p, hasBut: !p.hasBut }))}
-                className={`px-2.5 py-1 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-1 ${
+                className={`px-2.5 py-1 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-1 shrink-0 ${
                   toggles.hasBut
                     ? 'bg-purple-500 text-white font-black shadow-xs ring-1 ring-purple-400'
-                    : 'bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-slate-200'
+                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
                 <span>🔄</span>
@@ -681,8 +681,8 @@ export const MysteryPencilCaseGame: React.FC<MysteryPencilCaseGameProps> = ({ on
               </button>
             </div>
 
-            <div className="flex items-center gap-2 text-xs font-bold text-slate-500">
-              <span className="px-2 py-0.5 rounded-lg bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 font-mono">
+            <div className="flex items-center gap-2 text-xs font-bold text-slate-600 dark:text-slate-300 shrink-0">
+              <span className="px-2 py-0.5 rounded-lg bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 font-mono shrink-0">
                 {activePreset}
               </span>
             </div>
@@ -780,7 +780,7 @@ export const MysteryPencilCaseGame: React.FC<MysteryPencilCaseGameProps> = ({ on
                         )}
                         <span>?</span>
                       </h2>
-                      <p className="text-[11px] sm:text-xs text-slate-400 dark:text-slate-500 font-medium mt-1">
+                      <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 font-medium mt-1">
                         Tap card to flip to Japanese
                       </p>
                     </div>
@@ -793,7 +793,7 @@ export const MysteryPencilCaseGame: React.FC<MysteryPencilCaseGameProps> = ({ on
                         <RubyText ruby={targetItem.ruby} kanji={targetItem.jaKanji} hiragana={targetItem.jaHiragana} />
                         <span>を持っていますか？</span>
                       </h2>
-                      <p className="text-[11px] sm:text-xs text-slate-400 dark:text-slate-500 font-medium mt-1">
+                      <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 font-medium mt-1">
                         タップして英語に戻す
                       </p>
                     </div>
@@ -899,7 +899,7 @@ export const MysteryPencilCaseGame: React.FC<MysteryPencilCaseGameProps> = ({ on
               </div>
 
               {/* Visual Items in Yes Card: Target Item + Optional And Item */}
-              <div className="my-auto py-1 flex items-center justify-center gap-2 sm:gap-4 flex-wrap">
+              <div className="my-auto py-1 flex items-center justify-center gap-2 sm:gap-4 flex-nowrap overflow-x-auto no-scrollbar">
                 {/* Target Item Graphic */}
                 <div className="flex flex-col items-center">
                   <div className={`w-16 sm:w-20 md:w-24 h-16 sm:h-20 md:h-24 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border-2 p-1.5 shadow-sm flex items-center justify-center relative ${

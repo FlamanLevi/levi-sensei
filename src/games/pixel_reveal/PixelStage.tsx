@@ -92,7 +92,7 @@ export const PixelStage: React.FC<PixelStageProps> = ({
       </div>
 
       {/* Center Mystery Stage Viewport */}
-      <div className="relative w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl h-[210px] sm:h-[260px] md:h-[300px] lg:h-[340px] rounded-3xl overflow-hidden border-4 border-amber-400 dark:border-amber-600 shadow-inner bg-white dark:bg-slate-800 flex items-center justify-center">
+      <div className="relative w-full max-w-md md:max-w-2xl lg:max-w-3xl h-[min(46dvh,280px)] sm:h-[min(50dvh,320px)] md:h-[min(52dvh,360px)] lg:h-[min(54dvh,400px)] rounded-3xl overflow-hidden border-4 border-amber-400 dark:border-amber-600 shadow-inner bg-white dark:bg-slate-800 flex items-center justify-center">
         {/* The Card Artwork with filter / scale applied */}
         <div
           className="w-full h-full p-4 flex flex-col items-center justify-center transition-all duration-500 ease-out overflow-hidden"
@@ -107,7 +107,7 @@ export const PixelStage: React.FC<PixelStageProps> = ({
               src={imageUrl}
               alt={card.english}
               onError={() => setImgError(true)}
-              className="max-h-[170px] sm:max-h-[210px] md:max-h-[250px] lg:max-h-[280px] w-auto object-contain drop-shadow-xl"
+              className="max-h-[min(36dvh,220px)] md:max-h-[min(42dvh,300px)] w-auto object-contain drop-shadow-xl"
             />
           ) : (
             <div className="text-center p-4">

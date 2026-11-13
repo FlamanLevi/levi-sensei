@@ -98,24 +98,24 @@ export const StudentStatsModal: React.FC<StudentStatsModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/75 backdrop-blur-md animate-in fade-in duration-200">
       <div 
-        className="w-full max-w-4xl max-h-[92vh] flex flex-col rounded-3xl bg-white dark:bg-slate-900 border-3 border-amber-400 dark:border-amber-500 shadow-2xl overflow-hidden text-slate-900 dark:text-slate-100"
+        className="w-full max-w-4xl max-h-[92dvh] flex flex-col rounded-3xl bg-white dark:bg-slate-900 border-3 border-amber-400 dark:border-amber-500 shadow-2xl overflow-hidden text-slate-900 dark:text-slate-100"
         style={{ fontFamily: "'UD Digi Kyokasho NP-R', 'UD Digi Kyokasho NK-R', 'BIZ UDPGothic', 'Zen Maru Gothic', sans-serif" }}
       >
         {/* Modal Header */}
-        <div className="p-4 sm:p-6 bg-gradient-to-r from-teal-600 via-emerald-600 to-teal-700 text-white flex items-center justify-between shrink-0 shadow-md">
-          <div className="flex items-center gap-3.5 min-w-0">
+        <div className="p-4 sm:p-5 bg-gradient-to-r from-teal-600 via-emerald-600 to-teal-700 text-white flex items-center justify-between gap-3 shrink-0 shadow-md">
+          <div className="flex items-center gap-3.5 min-w-0 flex-1">
             <span className="text-3xl sm:text-4xl p-2 rounded-2xl bg-white/20 backdrop-blur-md shrink-0 shadow-inner">
               {profile.avatar || '🐼'}
             </span>
-            <div className="min-w-0">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="px-2.5 py-0.5 rounded-full text-xs font-black bg-emerald-950/40 border border-emerald-300/40 text-emerald-200">
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-2 flex-nowrap overflow-x-auto no-scrollbar">
+                <span className="px-2.5 py-0.5 rounded-full text-xs font-black bg-emerald-950/40 border border-emerald-300/40 text-emerald-200 whitespace-nowrap shrink-0">
                   {profile.classId} #{profile.attendanceNumber}
                 </span>
-                <span className="px-2.5 py-0.5 rounded-full text-xs font-black bg-yellow-300/30 text-yellow-200 border border-yellow-300/40">
+                <span className="px-2.5 py-0.5 rounded-full text-xs font-black bg-yellow-300/30 text-yellow-200 border border-yellow-300/40 whitespace-nowrap shrink-0">
                   ⭐️ Lv. {profile.level} ({profile.xp.toLocaleString()} XP)
                 </span>
-                <span className="px-2.5 py-0.5 rounded-full text-xs font-black bg-amber-400/30 text-amber-200 border border-amber-300/40">
+                <span className="px-2.5 py-0.5 rounded-full text-xs font-black bg-amber-400/30 text-amber-200 border border-amber-300/40 whitespace-nowrap shrink-0">
                   🪙 {profile.gold} Gold
                 </span>
               </div>
@@ -142,14 +142,14 @@ export const StudentStatsModal: React.FC<StudentStatsModalProps> = ({
 
         {/* Tab Navigation */}
         <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/60 px-4 pt-2 shrink-0">
-          <div className="flex items-center gap-2 overflow-x-auto">
+          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar flex-nowrap">
             <button
               type="button"
               onClick={() => {
                 playPop();
                 setActiveTab('badges');
               }}
-              className={`px-4 py-3 font-black text-xs sm:text-sm rounded-t-2xl flex items-center gap-2 border-b-3 transition-all cursor-pointer ${
+              className={`px-4 py-3 font-black text-xs sm:text-sm rounded-t-2xl flex items-center gap-2 border-b-3 transition-all cursor-pointer whitespace-nowrap shrink-0 ${
                 activeTab === 'badges'
                   ? 'border-amber-500 text-amber-600 dark:text-amber-400 bg-white dark:bg-slate-900 shadow-xs'
                   : 'border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
@@ -168,7 +168,7 @@ export const StudentStatsModal: React.FC<StudentStatsModalProps> = ({
                 playPop();
                 setActiveTab('performance');
               }}
-              className={`px-4 py-3 font-black text-xs sm:text-sm rounded-t-2xl flex items-center gap-2 border-b-3 transition-all cursor-pointer ${
+              className={`px-4 py-3 font-black text-xs sm:text-sm rounded-t-2xl flex items-center gap-2 border-b-3 transition-all cursor-pointer whitespace-nowrap shrink-0 ${
                 activeTab === 'performance'
                   ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-white dark:bg-slate-900 shadow-xs'
                   : 'border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
@@ -184,7 +184,7 @@ export const StudentStatsModal: React.FC<StudentStatsModalProps> = ({
                 playPop();
                 setActiveTab('troubleWords');
               }}
-              className={`px-4 py-3 font-black text-xs sm:text-sm rounded-t-2xl flex items-center gap-2 border-b-3 transition-all cursor-pointer ${
+              className={`px-4 py-3 font-black text-xs sm:text-sm rounded-t-2xl flex items-center gap-2 border-b-3 transition-all cursor-pointer whitespace-nowrap shrink-0 ${
                 activeTab === 'troubleWords'
                   ? 'border-blue-500 text-blue-600 dark:text-blue-400 bg-white dark:bg-slate-900 shadow-xs'
                   : 'border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
@@ -207,14 +207,14 @@ export const StudentStatsModal: React.FC<StudentStatsModalProps> = ({
           {activeTab === 'badges' && (
             <div className="space-y-4">
               {/* Filter pills & Untappd Explainer */}
-              <div className="flex flex-wrap items-center justify-between gap-3 bg-amber-50 dark:bg-amber-950/30 p-3 sm:p-4 rounded-2xl border border-amber-200 dark:border-amber-800/60">
-                <div className="flex items-center gap-2">
-                  <span className="text-xl">🎖️</span>
-                  <div>
-                    <h4 className="font-black text-xs sm:text-sm text-amber-950 dark:text-amber-200">
+              <div className="flex flex-nowrap items-center justify-between gap-3 bg-amber-50 dark:bg-amber-950/30 p-3 sm:p-4 rounded-2xl border border-amber-200 dark:border-amber-800/60 overflow-x-auto no-scrollbar">
+                <div className="flex items-center gap-2 min-w-0 flex-1">
+                  <span className="text-xl shrink-0">🎖️</span>
+                  <div className="min-w-0 flex-1">
+                    <h4 className="font-black text-xs sm:text-sm text-amber-950 dark:text-amber-200 truncate">
                       {t('Untappd-Style Leveling Badges', '回数をかさねてバッジをレベルアップ！')}
                     </h4>
-                    <p className="text-[11px] font-bold text-amber-800 dark:text-amber-300">
+                    <p className="text-[11px] font-bold text-amber-800 dark:text-amber-300 truncate">
                       {t(
                         'Each level requires 1 more award than the last! Reach Level 6 by April!',
                         '賞をとるたびにカウントアップ！ 1回 ➔ 3回 ➔ 6回 ➔ 10回 でどんどんランクアップ！'
@@ -223,7 +223,7 @@ export const StudentStatsModal: React.FC<StudentStatsModalProps> = ({
                   </div>
                 </div>
 
-                <div className="flex items-center gap-1.5 bg-white dark:bg-slate-800 p-1 rounded-xl border border-amber-300 dark:border-amber-700">
+                <div className="flex items-center gap-1.5 bg-white dark:bg-slate-800 p-1 rounded-xl border border-amber-300 dark:border-amber-700 shrink-0 flex-nowrap">
                   {(['all', 'earned', 'locked'] as BadgeFilter[]).map((f) => (
                     <button
                       key={f}
@@ -232,7 +232,7 @@ export const StudentStatsModal: React.FC<StudentStatsModalProps> = ({
                         playPop();
                         setBadgeFilter(f);
                       }}
-                      className={`px-3 py-1 rounded-lg text-xs font-black transition-all cursor-pointer ${
+                      className={`px-3 py-1 rounded-lg text-xs font-black transition-all cursor-pointer whitespace-nowrap shrink-0 ${
                         badgeFilter === f
                           ? 'bg-amber-500 text-white shadow-xs'
                           : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'

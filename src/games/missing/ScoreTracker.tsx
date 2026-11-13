@@ -39,7 +39,7 @@ export const ScoreTracker: React.FC<ScoreTrackerProps> = ({
   }> = [
     {
       key: 'red',
-      label: t('Red 🔴', <><ruby>赤<rt className="text-[7px] font-normal">あか</rt></ruby> 🔴</>),
+      label: t('Red 🔴', <><ruby>赤<rt>あか</rt></ruby> 🔴</>),
       plainLabel: t('Red', '赤'),
       color: 'bg-rose-500 hover:bg-rose-600 text-white',
       badge: 'bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300',
@@ -48,7 +48,7 @@ export const ScoreTracker: React.FC<ScoreTrackerProps> = ({
     },
     {
       key: 'blue',
-      label: t('Blue 🔵', <><ruby>青<rt className="text-[7px] font-normal">あお</rt></ruby> 🔵</>),
+      label: t('Blue 🔵', <><ruby>青<rt>あお</rt></ruby> 🔵</>),
       plainLabel: t('Blue', '青'),
       color: 'bg-blue-500 hover:bg-blue-600 text-white',
       badge: 'bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300',
@@ -57,7 +57,7 @@ export const ScoreTracker: React.FC<ScoreTrackerProps> = ({
     },
     {
       key: 'yellow',
-      label: t('Yellow 🟡', <><ruby>黄<rt className="text-[7px] font-normal">き</rt></ruby> 🟡</>),
+      label: t('Yellow 🟡', <><ruby>黄<rt>き</rt></ruby> 🟡</>),
       plainLabel: t('Yellow', '黄'),
       color: 'bg-amber-500 hover:bg-amber-600 text-white',
       badge: 'bg-amber-100 text-amber-900 dark:bg-amber-950 dark:text-amber-300',
@@ -66,7 +66,7 @@ export const ScoreTracker: React.FC<ScoreTrackerProps> = ({
     },
     {
       key: 'green',
-      label: t('Green 🟢', <><ruby>緑<rt className="text-[7px] font-normal">みどり</rt></ruby> 🟢</>),
+      label: t('Green 🟢', <><ruby>緑<rt>みどり</rt></ruby> 🟢</>),
       plainLabel: t('Green', '緑'),
       color: 'bg-emerald-500 hover:bg-emerald-600 text-white',
       badge: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300',
@@ -88,8 +88,8 @@ export const ScoreTracker: React.FC<ScoreTrackerProps> = ({
               {t(`Streak: ${streak}`, <>連続: {streak}回</>)}
             </span>
           </div>
-          <span className="text-[10px] font-bold text-slate-400 hidden sm:inline">
-            {t('Team Scores', <>チーム<ruby>得点<rt className="text-[7px] font-normal text-slate-400">とくてん</rt></ruby><ruby>表<rt className="text-[7px] font-normal text-slate-400">ひょう</rt></ruby></>)}
+          <span className="text-[10px] font-bold text-slate-600 dark:text-slate-300 hidden sm:inline">
+            {t('Team Scores', <>チーム<ruby>得点<rt>とくてん</rt></ruby><ruby>表<rt>ひょう</rt></ruby></>)}
           </span>
         </div>
 

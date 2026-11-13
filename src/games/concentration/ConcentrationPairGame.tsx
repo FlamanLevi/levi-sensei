@@ -392,15 +392,15 @@ export const ConcentrationPairGame: React.FC<ConcentrationPairGameProps> = ({
       {/* ====================================================================
           1. TOP STATUS BAR: BLUE PLAYER (P2), DESK SELECTOR & ROOM SYNC
          ==================================================================== */}
-      <div className="bg-slate-900 border-2 border-slate-800 rounded-2xl px-3 py-1.5 flex flex-wrap items-center justify-between gap-2 shrink-0 z-20">
+      <div className="bg-slate-900 border-2 border-slate-800 rounded-2xl px-3 py-1.5 flex flex-nowrap items-center justify-between gap-2 shrink-0 z-20 overflow-x-auto no-scrollbar whitespace-nowrap">
         {/* Left: Desk Selector & Wi-Fi Sync */}
-        <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1.5 bg-slate-800 px-2 py-0.5 rounded-xl border border-slate-700">
-            <Users size={13} className="text-amber-400" />
+        <div className="flex items-center gap-2 shrink-0">
+          <div className="flex items-center gap-1.5 bg-slate-800 px-2 py-0.5 rounded-xl border border-slate-700 shrink-0">
+            <Users size={13} className="text-amber-400 shrink-0" />
             <select
               value={deskNumber}
               onChange={(e) => setDeskNumber(Number(e.target.value))}
-              className="bg-slate-950 text-white font-black text-xs px-2 py-0.5 rounded-lg border border-slate-700 cursor-pointer"
+              className="bg-slate-950 text-white font-black text-xs px-2 py-0.5 rounded-lg border border-slate-700 cursor-pointer shrink-0"
             >
               {Array.from({ length: 18 }, (_, i) => i + 1).map((d) => (
                 <option key={d} value={d}>
@@ -410,20 +410,20 @@ export const ConcentrationPairGame: React.FC<ConcentrationPairGameProps> = ({
             </select>
           </div>
 
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1 shrink-0">
             <input
               type="text"
               value={roomInput}
               onChange={(e) => setRoomInput(e.target.value.toUpperCase())}
               placeholder="MM-123"
-              className="w-18 bg-slate-950 border border-slate-700 rounded-lg px-2 py-0.5 text-xs font-mono font-black text-amber-300 uppercase"
+              className="w-18 bg-slate-950 border border-slate-700 rounded-lg px-2 py-0.5 text-xs font-mono font-black text-amber-300 uppercase shrink-0"
             />
             <button
               onClick={() => {
                 playPop();
                 if (roomInput.trim()) setRoomCode(roomInput.trim());
               }}
-              className="px-2 py-0.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-black cursor-pointer"
+              className="px-2 py-0.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-black cursor-pointer shrink-0"
             >
               {isConnected ? (
                 <Wifi size={11} className="text-emerald-300" />
@@ -436,7 +436,7 @@ export const ConcentrationPairGame: React.FC<ConcentrationPairGameProps> = ({
 
         {/* Center: Blue Player (P2) Badge */}
         <div
-          className={`flex items-center gap-2 px-3 py-1 rounded-xl border-2 transition-all ${
+          className={`flex items-center gap-2 px-3 py-1 rounded-xl border-2 transition-all shrink-0 ${
             !isP1Turn && !isGameComplete
               ? 'bg-sky-600 border-sky-300 ring-2 ring-sky-300 shadow-lg animate-pulse'
               : 'bg-slate-900 border-sky-600/40 opacity-70'
@@ -452,11 +452,11 @@ export const ConcentrationPairGame: React.FC<ConcentrationPairGameProps> = ({
         </div>
 
         {/* Right: Sneak Peek & TV Spectator Switch */}
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1.5 shrink-0">
           <button
             onClick={() => startSneakPeek(3)}
             disabled={peekCountdown !== null || isGameComplete}
-            className="px-2.5 py-1 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-xs font-black flex items-center gap-1 cursor-pointer transition active:scale-95 disabled:opacity-40"
+            className="px-2.5 py-1 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-xs font-black flex items-center gap-1 cursor-pointer transition active:scale-95 disabled:opacity-40 shrink-0"
             title={t('Peek at cards for 3s', '3秒チラ見せ')}
           >
             <Eye size={13} />
@@ -466,7 +466,7 @@ export const ConcentrationPairGame: React.FC<ConcentrationPairGameProps> = ({
           {onOpenSpectatorTV && (
             <button
               onClick={() => onOpenSpectatorTV(roomCode)}
-              className="px-2.5 py-1 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold flex items-center gap-1 cursor-pointer"
+              className="px-2.5 py-1 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold flex items-center gap-1 cursor-pointer shrink-0"
               title={t('Open Tournament Board on Front TV', 'TV観戦画面')}
             >
               <Tv size={13} />
@@ -477,7 +477,7 @@ export const ConcentrationPairGame: React.FC<ConcentrationPairGameProps> = ({
           {onExit && (
             <button
               onClick={onExit}
-              className="px-2 py-1 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold cursor-pointer"
+              className="px-2 py-1 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold cursor-pointer shrink-0"
             >
               {t('Exit', '終了')}
             </button>
@@ -495,9 +495,9 @@ export const ConcentrationPairGame: React.FC<ConcentrationPairGameProps> = ({
             <Trophy size={64} className="text-yellow-400 animate-bounce" />
             <h2 className="text-3xl sm:text-5xl font-black text-white">
               {scoreP1 > scoreP2
-                ? t('RED WINS!', <>🔴 赤組の<ruby>勝<rt className="text-[9px]">か</rt></ruby>ち！</>)
+                ? t('RED WINS!', <>🔴 赤組の<ruby>勝<rt>か</rt></ruby>ち！</>)
                 : scoreP2 > scoreP1
-                ? t('BLUE WINS!', <>🔵 青組の<ruby>勝<rt className="text-[9px]">か</rt></ruby>ち！</>)
+                ? t('BLUE WINS!', <>🔵 青組の<ruby>勝<rt>か</rt></ruby>ち！</>)
                 : t('IT\'S A TIE! GREAT JOB!', <>ひきわけ！ ナイスゲーム！</>)}
             </h2>
             <p className="text-base sm:text-lg font-bold text-amber-300">
@@ -508,7 +508,7 @@ export const ConcentrationPairGame: React.FC<ConcentrationPairGameProps> = ({
               className="px-8 py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-black text-lg sm:text-xl shadow-xl transition-all transform hover:scale-105 active:scale-95 flex items-center gap-2 cursor-pointer"
             >
               <RotateCcw size={20} />
-              <span>{t('Rematch (Deal Fresh Deck)', <><ruby>再戦<rt className="text-[8px]">さいせん</rt></ruby>（新しいカード）</>)}</span>
+              <span>{t('Rematch (Deal Fresh Deck)', <><ruby>再戦<rt>さいせん</rt></ruby>（新しいカード）</>)}</span>
             </button>
           </div>
         )}
@@ -554,33 +554,33 @@ export const ConcentrationPairGame: React.FC<ConcentrationPairGameProps> = ({
       <div className="shrink-0 space-y-1.5 z-20">
         {/* Oral Speaking Check Confirmation Sheet */}
         {pendingMatchCard && pendingMatchIndices && (
-          <div className="w-full bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 rounded-2xl p-2.5 sm:p-3 text-slate-950 flex flex-wrap items-center justify-between gap-2 shadow-xl border-2 border-yellow-300 animate-fadeIn">
-            <div className="flex items-center gap-2">
-              <span className="text-2xl animate-bounce">🗣️</span>
-              <div>
-                <span className="text-[10px] font-black uppercase tracking-wider block text-slate-900">
+          <div className="w-full bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 rounded-2xl p-2.5 sm:p-3 text-slate-950 flex flex-nowrap items-center justify-between gap-2 shadow-xl border-2 border-yellow-300 animate-fadeIn overflow-x-auto no-scrollbar">
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="text-2xl animate-bounce shrink-0">🗣️</span>
+              <div className="min-w-0">
+                <span className="text-[10px] font-black uppercase tracking-wider block text-slate-900 truncate">
                   {t(
                     `${isP1Turn ? 'RED' : 'BLUE'}: Speak to your partner!`,
                     `${isP1Turn ? '赤組' : '青組'}: ペアの友達に言ってみよう！`
                   )}
                 </span>
-                <span className="text-base sm:text-lg font-black text-white drop-shadow-sm">
+                <span className="text-base sm:text-lg font-black text-white drop-shadow-sm truncate block">
                   {getTargetSpeakingPrompt(pendingMatchCard)}
                 </span>
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 shrink-0 whitespace-nowrap">
               <button
                 onClick={() => playCardAudio(pendingMatchCard)}
-                className="p-2 rounded-xl bg-white/20 hover:bg-white/30 text-white transition active:scale-95 cursor-pointer"
+                className="p-2 rounded-xl bg-white/20 hover:bg-white/30 text-white transition active:scale-95 cursor-pointer shrink-0"
                 title={t('Listen to audio', '発音を聞く')}
               >
                 <Volume2 size={16} />
               </button>
               <button
                 onClick={() => finalizeMatchedPair(pendingMatchIndices, pendingMatchCard)}
-                className="px-4 py-2 rounded-xl bg-slate-950 hover:bg-slate-900 active:scale-95 text-yellow-300 font-black text-xs sm:text-sm flex items-center gap-1.5 shadow-lg border border-yellow-300 cursor-pointer"
+                className="px-4 py-2 rounded-xl bg-slate-950 hover:bg-slate-900 active:scale-95 text-yellow-300 font-black text-xs sm:text-sm flex items-center gap-1.5 shadow-lg border border-yellow-300 cursor-pointer shrink-0 whitespace-nowrap"
               >
                 <ThumbsUp size={15} />
                 <span>{t('Partner Said It! 👍', '言えた！確認 👍')}</span>
@@ -590,10 +590,10 @@ export const ConcentrationPairGame: React.FC<ConcentrationPairGameProps> = ({
         )}
 
         {/* Bottom Bar: Red Player (P1) Badge & Deck Rematch */}
-        <div className="bg-slate-900 border-2 border-slate-800 rounded-2xl px-3 py-1.5 flex flex-wrap items-center justify-between gap-2">
+        <div className="bg-slate-900 border-2 border-slate-800 rounded-2xl px-3 py-1.5 flex flex-nowrap items-center justify-between gap-2 overflow-x-auto no-scrollbar whitespace-nowrap">
           {/* Red Player (P1) Badge */}
           <div
-            className={`flex items-center gap-2 px-3 py-1 rounded-xl border-2 transition-all ${
+            className={`flex items-center gap-2 px-3 py-1 rounded-xl border-2 transition-all shrink-0 ${
               isP1Turn && !isGameComplete
                 ? 'bg-rose-600 border-rose-300 ring-2 ring-rose-300 shadow-lg animate-pulse'
                 : 'bg-slate-900 border-rose-600/40 opacity-70'
@@ -609,7 +609,7 @@ export const ConcentrationPairGame: React.FC<ConcentrationPairGameProps> = ({
           </div>
 
           {/* Turn Prompt Banner */}
-          <div className="text-xs font-black text-slate-300 text-center">
+          <div className="text-xs font-black text-slate-300 text-center min-w-0 truncate flex-1">
             {!isGameComplete ? (
               <span>
                 {isP1Turn
@@ -626,7 +626,7 @@ export const ConcentrationPairGame: React.FC<ConcentrationPairGameProps> = ({
           {/* Quick Rematch / Reset */}
           <button
             onClick={() => setupPairDeck(true)}
-            className="px-3 py-1 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 border border-slate-700 text-xs font-black flex items-center gap-1 transition active:scale-95 cursor-pointer"
+            className="px-3 py-1 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 border border-slate-700 text-xs font-black flex items-center gap-1 transition active:scale-95 cursor-pointer shrink-0 whitespace-nowrap"
           >
             <RotateCcw size={13} />
             <span>{t('New Deck', 'カード配り直し')}</span>

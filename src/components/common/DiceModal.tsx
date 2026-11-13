@@ -485,7 +485,7 @@ export const DiceModal: React.FC = () => {
       }}
     >
       <div
-        className="bg-white dark:bg-slate-900 border-3 sm:border-4 border-slate-200 dark:border-slate-800 rounded-2xl sm:rounded-3xl w-[98vw] sm:w-[95vw] max-w-5xl h-[95vh] sm:h-[94vh] max-h-[960px] p-3 sm:p-5 shadow-2xl flex flex-col justify-between relative select-none my-auto overflow-y-auto sm:overflow-hidden"
+        className="bg-white dark:bg-slate-900 border-3 sm:border-4 border-slate-200 dark:border-slate-800 rounded-2xl sm:rounded-3xl w-[98vw] sm:w-[95vw] max-w-5xl h-[95dvh] sm:h-[94dvh] max-h-[960px] p-3 sm:p-5 shadow-2xl flex flex-col justify-between relative select-none my-auto overflow-y-auto sm:overflow-hidden"
         onClick={e => e.stopPropagation()}
       >
         {/* Top Header */}

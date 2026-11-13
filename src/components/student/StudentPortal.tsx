@@ -453,7 +453,7 @@ export const StudentPortal: React.FC = () => {
   // Sleeping state if another tab was opened on this device
   if (isTabSuperseded) {
     return (
-      <div className="w-full min-h-[60vh] flex flex-col items-center justify-center p-6 text-center animate-in fade-in">
+      <div className="w-full min-h-[60dvh] flex flex-col items-center justify-center p-6 text-center animate-in fade-in">
         <div className="w-16 h-16 rounded-3xl bg-amber-100 dark:bg-amber-950/60 border-2 border-amber-400 text-amber-700 dark:text-amber-300 flex items-center justify-center text-3xl mb-4 shadow-md">
           💤
         </div>
@@ -480,7 +480,7 @@ export const StudentPortal: React.FC = () => {
   // Loading state while restoring cloud profile on fresh reload
   if (isCheckingCloud) {
     return (
-      <div className="w-full min-h-[50vh] flex flex-col items-center justify-center p-8 text-center animate-in fade-in">
+      <div className="w-full min-h-[50dvh] flex flex-col items-center justify-center p-8 text-center animate-in fade-in">
         <div className="w-12 h-12 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mb-4" />
         <p className="text-base font-black text-slate-700 dark:text-slate-200">
           {t('Checking profile...', 'プロフィールを確認中...')}
@@ -504,7 +504,7 @@ export const StudentPortal: React.FC = () => {
   // 2. Student Host Fast-Path
   if (isHostingQuiz) {
     return (
-      <div className="min-h-screen bg-slate-950 text-white flex flex-col">
+      <div className="min-h-dvh bg-slate-950 text-white flex flex-col">
         <QuizHostContainer
           isStudentHost={true}
           onExit={() => {
@@ -557,7 +557,7 @@ export const StudentPortal: React.FC = () => {
                   <>このiPadはまえのクラス【<span className="font-black text-amber-700 dark:text-amber-300">{profile.classId} {profile.attendanceNumber}番</span>】のままです。いまのクラス【<span className="font-black text-emerald-600 dark:text-emerald-400">{classMismatchNotice.targetClass}</span>】の席をえらびますか？</>
                 )}
               </p>
-              <div className="flex flex-wrap items-center gap-2 mt-3">
+              <div className="flex items-center gap-2 mt-3 flex-nowrap overflow-x-auto no-scrollbar">
                 <button
                   type="button"
                   onClick={async () => {
@@ -570,7 +570,7 @@ export const StudentPortal: React.FC = () => {
                     setClassMismatchNotice(null);
                     setProfile(null);
                   }}
-                  className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs sm:text-sm shadow-md transition-all active:scale-95 cursor-pointer flex items-center gap-1.5"
+                  className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs sm:text-sm shadow-md transition-all active:scale-95 cursor-pointer flex items-center gap-1.5 whitespace-nowrap shrink-0"
                 >
                   <Check size={16} />
                   <span>{t(`Yes, switch to ${classMismatchNotice.targetClass}`, `はい、【${classMismatchNotice.targetClass}】の席をえらぶ`)}</span>
@@ -578,7 +578,7 @@ export const StudentPortal: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setClassMismatchNotice(null)}
-                  className="px-3.5 py-2.5 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-700 font-black text-xs transition-all cursor-pointer"
+                  className="px-3.5 py-2.5 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-700 font-black text-xs transition-all cursor-pointer whitespace-nowrap shrink-0"
                 >
                   {t(`Keep as ${profile.classId}`, `このまま【${profile.classId}】をつづける`)}
                 </button>
@@ -652,10 +652,10 @@ export const StudentPortal: React.FC = () => {
       <div className="bg-gradient-to-r from-emerald-500 via-teal-500 to-blue-500 rounded-3xl p-6 md:p-8 text-white shadow-xl mb-8 relative overflow-hidden">
         <div className="relative z-10 w-full">
           {/* Top Row: School/Class Badge (left) and Add App to iPad (right) */}
-          <div className="flex items-center justify-between gap-2 mb-3">
-            <div>
+          <div className="flex items-center justify-between gap-2 mb-3 flex-nowrap">
+            <div className="min-w-0">
               {profile && (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black bg-emerald-950/40 border border-emerald-300/40 text-emerald-200">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black bg-emerald-950/40 border border-emerald-300/40 text-emerald-200 whitespace-nowrap">
                   <ShieldCheck size={14} />
                   <span>
                     {profile.attendanceNumber === 0
@@ -669,7 +669,7 @@ export const StudentPortal: React.FC = () => {
             {!isStandaloneApp && (
               <button
                 onClick={() => setIsAddToHomeModalOpen(true)}
-                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black bg-white/20 hover:bg-white/30 backdrop-blur-md transition-colors cursor-pointer text-white shadow-xs ml-auto"
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black bg-white/20 hover:bg-white/30 backdrop-blur-md transition-colors cursor-pointer text-white shadow-xs ml-auto shrink-0 whitespace-nowrap"
                 title={t("How to add app to iPad Home Screen", "iPadのホーム画面にアプリアイコンを追加する方法")}
               >
                 <Smartphone size={13} />
@@ -679,7 +679,7 @@ export const StudentPortal: React.FC = () => {
           </div>
 
           {/* Middle Row: Personalized Greeting with Aura & Title */}
-          <div className="flex items-center gap-3 my-2 flex-wrap">
+          <div className="flex items-center gap-3 my-2 min-w-0">
             {profile && (
               <div className="p-1 rounded-2xl bg-white/20 backdrop-blur-md shrink-0 shadow-inner">
                 <AvatarDisplay 
@@ -689,9 +689,9 @@ export const StudentPortal: React.FC = () => {
                 />
               </div>
             )}
-            <div>
-              <div className="flex items-center gap-2 flex-wrap">
-                <h2 className="text-2xl md:text-4xl font-black tracking-tight leading-tight">
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-2 flex-nowrap overflow-x-auto no-scrollbar">
+                <h2 className="text-2xl md:text-4xl font-black tracking-tight leading-tight truncate">
                   {profile
                     ? (language === 'ja'
                         ? `こんにちは、${profile.nickname}さん！`
@@ -699,7 +699,7 @@ export const StudentPortal: React.FC = () => {
                     : t("Hello! Welcome to Levi Sensei's English Room", "Hello! リヴァイ先生のえいごルーム")}
                 </h2>
                 {profile?.equipped?.title && (
-                  <span className="px-2.5 py-0.5 rounded-xl bg-amber-400 text-slate-950 font-black text-xs sm:text-sm shadow-md border border-amber-300">
+                  <span className="px-2.5 py-0.5 rounded-xl bg-amber-400 text-slate-950 font-black text-xs sm:text-sm shadow-md border border-amber-300 shrink-0 whitespace-nowrap">
                     {profile.equipped.title}
                   </span>
                 )}
@@ -709,25 +709,25 @@ export const StudentPortal: React.FC = () => {
 
           {/* Bottom Row: Stats on Left, Actions on Right */}
           {profile ? (
-            <div className="flex flex-wrap items-center justify-between gap-3 text-emerald-100 font-bold text-xs md:text-sm mt-3">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="bg-white/20 px-3 py-1 rounded-xl">⭐️ {t(`Level ${profile.level}`, `レベル ${profile.level}`)} ({profile.xp.toLocaleString()} XP)</span>
-                <span className="bg-white/20 px-3 py-1 rounded-xl">🪙 {profile.gold} Gold</span>
+            <div className="flex items-center justify-between gap-2.5 text-emerald-100 font-bold text-xs md:text-sm mt-3 flex-nowrap overflow-x-auto no-scrollbar">
+              <div className="flex items-center gap-2 flex-nowrap shrink-0">
+                <span className="bg-white/20 px-3 py-1 rounded-xl shrink-0 whitespace-nowrap">⭐️ {t(`Level ${profile.level}`, `レベル ${profile.level}`)} ({profile.xp.toLocaleString()} XP)</span>
+                <span className="bg-white/20 px-3 py-1 rounded-xl shrink-0 whitespace-nowrap">🪙 {profile.gold} Gold</span>
                 {profile.callsign && (
-                  <span className="bg-white/20 px-2.5 py-1 rounded-xl uppercase font-mono tracking-wider font-black text-xs" title="Broadcast Callsign">
+                  <span className="bg-white/20 px-2.5 py-1 rounded-xl uppercase font-mono tracking-wider font-black text-xs shrink-0 whitespace-nowrap" title="Broadcast Callsign">
                     🏎️ {profile.callsign}
                   </span>
                 )}
               </div>
 
-              <div className="flex items-center gap-2 shrink-0 ml-auto flex-wrap sm:flex-nowrap">
+              <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 ml-auto flex-nowrap">
                 <button
                   type="button"
                   onClick={() => {
                     playPop();
                     setIsShopOpen(true);
                   }}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs transition-all shadow-md active:scale-95 cursor-pointer border border-amber-300"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs transition-all shadow-md active:scale-95 cursor-pointer border border-amber-300 shrink-0 whitespace-nowrap"
                   title={t("Eigo Shop: Buy auras, rare avatars, and karts", "えいごショップ：オーラや限定アバターを購入")}
                 >
                   <span>🛍️</span>
@@ -739,7 +739,7 @@ export const StudentPortal: React.FC = () => {
                     playPop();
                     setIsStatsModalOpen(true);
                   }}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/25 hover:bg-white/35 active:scale-95 text-white font-black text-xs transition-all shadow-xs cursor-pointer border border-white/20"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/25 hover:bg-white/35 active:scale-95 text-white font-black text-xs transition-all shadow-xs cursor-pointer border border-white/20 shrink-0 whitespace-nowrap"
                   title={t("View learning stats and trophies", "学習カルテとトロフィーケース")}
                 >
                   <span>📊</span>
@@ -747,11 +747,11 @@ export const StudentPortal: React.FC = () => {
                 </button>
                 <button
                   onClick={() => setIsEditProfileOpen(true)}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/25 hover:bg-white/35 active:scale-95 text-white font-black text-xs transition-all shadow-xs cursor-pointer border border-white/20"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/25 hover:bg-white/35 active:scale-95 text-white font-black text-xs transition-all shadow-xs cursor-pointer border border-white/20 shrink-0 whitespace-nowrap"
                   title={t("Edit nickname and avatar", "ニックネームとアバターを変更")}
                 >
                   <Edit3 size={12} />
-                  <span>{t("Edit Profile", "プロフィール変更")}</span>
+                  <span>{t("Edit Profile", "プロフィール")}</span>
                 </button>
                 {profile.attendanceNumber === 0 && (
                   <button
@@ -762,11 +762,11 @@ export const StudentPortal: React.FC = () => {
                       localStorage.setItem('levi_sensei_role', 'TEACHER');
                       window.location.href = '/teacher';
                     }}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs transition-all shadow-md active:scale-95 cursor-pointer border border-amber-300"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs transition-all shadow-md active:scale-95 cursor-pointer border border-amber-300 shrink-0 whitespace-nowrap"
                     title={t("Return to Teacher Hub", "先生ポータルに戻る")}
                   >
                     <span>👨‍🏫</span>
-                    <span>{t("Teacher Hub", "先生ハブに戻る")}</span>
+                    <span>{t("Teacher Hub", "先生ハブ")}</span>
                   </button>
                 )}
                 <button
@@ -775,29 +775,29 @@ export const StudentPortal: React.FC = () => {
                     playPop();
                     setIsUnlinkModalOpen(true);
                   }}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 active:scale-95 text-white font-black text-xs transition-all shadow-xs cursor-pointer border border-white/20"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 active:scale-95 text-white font-black text-xs transition-all shadow-xs cursor-pointer border border-white/20 shrink-0 whitespace-nowrap"
                   title={t("Switch student or class", "席の交代・別のクラスをえらぶ")}
                 >
                   <RefreshCw size={12} />
-                  <span>{profile.attendanceNumber === 0 ? t("Exit Test Mode", "テストモード終了") : t("Switch Seat / Student", "席の交代・べつの人？")}</span>
+                  <span>{profile.attendanceNumber === 0 ? t("Exit Test Mode", "テスト終了") : t("Switch Seat", "席をかえる")}</span>
                 </button>
               </div>
             </div>
           ) : (
             <p className="text-xs md:text-sm text-emerald-100 font-bold leading-relaxed mt-2">
-              {t("Choose your grade and let's have fun learning English together!", <>じぶんの<ruby>学年<rt className="text-[8px] font-normal text-emerald-200">がくねん</rt></ruby>をえらんで、たのしく<ruby>英語<rt className="text-[8px] font-normal text-emerald-200">えいご</rt></ruby>であそぼう！</>)}
+              {t("Choose your grade and let's have fun learning English together!", <>じぶんの<ruby>学年<rt>がくねん</rt></ruby>をえらんで、たのしく<ruby>英語<rt>えいご</rt></ruby>であそぼう！</>)}
             </p>
           )}
         </div>
         <div className="absolute -right-6 -bottom-6 w-44 h-44 bg-white/10 rounded-full blur-xl pointer-events-none" />
       </div>
 
-      {/* Grade Selector for Kids (only shown if not linked to a class/seat) */}
+      {/* Grade Selector (only shown if not linked to a class/seat) */}
       {!profile && (
         <div className="mb-8">
           <h3 className="text-sm font-black text-slate-700 dark:text-slate-300 mb-3 flex items-center gap-2">
             <span>🎒</span>
-            <span>{t("Choose your grade:", <>あなたの<ruby>学年<rt className="text-[8px] font-normal text-slate-400">がくねん</rt></ruby>をえらんでね:</>)}</span>
+            <span>{t("Choose your grade:", <>あなたの<ruby>学年<rt>がくねん</rt></ruby>をえらんでね:</>)}</span>
           </h3>
           <div className="grid grid-cols-3 sm:grid-cols-6 gap-2.5">
             {STUDENT_GRADES.map(item => {
@@ -821,7 +821,7 @@ export const StudentPortal: React.FC = () => {
         </div>
       )}
 
-      {/* Primary Activities for Kids (Stream B, Stream C, Stream D) */}
+      {/* Primary Activities for Students (Stream B, Stream C, Stream D) */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         {/* Card 1: Stream B - Join Class Game */}
         <div className="bg-white dark:bg-slate-800 rounded-3xl p-6 border-2 border-slate-200 dark:border-slate-700 shadow-xs hover:shadow-xl transition-all flex flex-col justify-between group">
@@ -903,30 +903,30 @@ export const StudentPortal: React.FC = () => {
       {profile && (
         <div className="mb-10 p-4 sm:p-6 rounded-3xl bg-[#faf8f5] dark:bg-slate-900 border-3 border-amber-400/80 dark:border-amber-500/50 shadow-md relative overflow-hidden">
           {/* Header */}
-          <div className="flex flex-wrap items-center justify-between gap-2 pb-3 mb-3 border-b-2 border-dashed border-amber-300 dark:border-amber-700/60">
-            <div className="flex items-center gap-2">
+          <div className="flex items-center justify-between gap-2 pb-3 mb-3 border-b-2 border-dashed border-amber-300 dark:border-amber-700/60 flex-nowrap overflow-x-auto no-scrollbar">
+            <div className="flex items-center gap-2 min-w-0 flex-1">
               <button
                 type="button"
                 onClick={handleCanadaTrigger}
-                className="text-xl sm:text-2xl hover:scale-125 transition-transform cursor-pointer"
+                className="text-xl sm:text-2xl hover:scale-125 transition-transform cursor-pointer shrink-0"
                 title={isCanadaMode ? "🇨🇦 カナダちゃん！" : "🍁 タップしてみてね！"}
               >
                 {isCanadaMode ? "🍁" : "🌸"}
               </button>
-              <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-1.5">
+              <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-1.5 min-w-0 truncate">
                 {t(
                   isCanadaMode ? "Canada-chan's English Stamp Card 🇨🇦" : "Levi-Sensei's English Stamp Card",
                   isCanadaMode ? (
                     <>カナダちゃん<span className="text-xs font-bold text-red-500">🇨🇦🍁</span>の えいごスタンプカード</>
                   ) : (
-                    <>リヴァイ<ruby>先生<rt className="text-[8px] font-normal text-slate-400">せんせい</rt></ruby>の えいごスタンプカード</>
+                    <>リヴァイ<ruby>先生<rt>せんせい</rt></ruby>の えいごスタンプカード</>
                   )
                 )}
               </h3>
               <button
                 type="button"
                 onClick={handleCanadaTrigger}
-                className={`text-[10px] font-black px-2 py-0.5 rounded-full border transition-all cursor-pointer active:scale-95 flex items-center gap-1 ${
+                className={`text-[10px] font-black px-2 py-0.5 rounded-full border transition-all cursor-pointer active:scale-95 flex items-center gap-1 shrink-0 whitespace-nowrap ${
                   isCanadaMode
                     ? 'bg-red-500 text-white border-red-600 shadow-sm animate-pulse'
                     : 'bg-red-50 hover:bg-red-100 dark:bg-red-950/40 dark:hover:bg-red-900/40 text-red-600 dark:text-red-300 border-red-200 dark:border-red-800/60'
@@ -937,9 +937,9 @@ export const StudentPortal: React.FC = () => {
                 <span>{isCanadaMode ? "カナダちゃん🍁" : "カナダちゃん？"}</span>
               </button>
             </div>
-            <div className="text-xs font-black text-amber-900 dark:text-amber-300 bg-amber-100 dark:bg-amber-950/80 px-3 py-1 rounded-full border border-amber-300 dark:border-amber-800">
+            <div className="text-xs font-black text-amber-900 dark:text-amber-300 bg-amber-100 dark:bg-amber-950/80 px-3 py-1 rounded-full border border-amber-300 dark:border-amber-800 shrink-0 whitespace-nowrap">
               {profile.attendanceNumber === 0 
-                ? t("Teacher / Tester Card (Canada-chan 🇨🇦)", <><ruby>先生<rt className="text-[7px] font-normal text-amber-900 dark:text-amber-300">せんせい</rt></ruby>・カナダちゃんカード 🇨🇦</>)
+                ? t("Teacher / Tester Card (Canada-chan 🇨🇦)", <><ruby>先生<rt>せんせい</rt></ruby>・カナダちゃんカード 🇨🇦</>)
                 : `${profile.classId} #${profile.attendanceNumber} ${profile.nickname}`}
             </div>
           </div>
@@ -964,8 +964,8 @@ export const StudentPortal: React.FC = () => {
                         : 'bg-white/60 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700/80 opacity-60'
                   }`}
                 >
-                  <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 mb-1">
-                    {t(`Day ${dayNum}`, <>{dayNum}<ruby>日目<rt className="text-[7px] font-normal text-slate-400">にちめ</rt></ruby></>)}
+                  <span className="text-[10px] font-bold text-slate-600 dark:text-slate-300 mb-1">
+                    {t(`Day ${dayNum}`, <>{dayNum}<ruby>日目<rt>にちめ</rt></ruby></>)}
                   </span>
                   
                   <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center border-2 border-dashed relative">
@@ -1060,28 +1060,29 @@ export const StudentPortal: React.FC = () => {
           onClick={() => setIsGroupModalOpen(false)}
         >
           <div
-            className="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl border-4 border-white dark:border-slate-800 flex flex-col text-slate-900 dark:text-white relative"
+            className="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 md:p-7 max-w-2xl w-full max-h-[90dvh] overflow-y-auto shadow-2xl border-4 border-white dark:border-slate-800 flex flex-col text-slate-900 dark:text-white relative"
             onClick={e => e.stopPropagation()}
           >
-            <button
-              onClick={() => setIsGroupModalOpen(false)}
-              className="absolute top-5 right-5 p-2 rounded-full text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
-            >
-              <X size={20} />
-            </button>
-
-            <div className="flex items-center gap-3 mb-5">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-teal-500 to-emerald-600 text-white flex items-center justify-center shadow-md shrink-0">
-                <Users size={24} />
+            <div className="flex items-center justify-between gap-3 mb-4 pb-3 border-b border-slate-100 dark:border-slate-800 flex-nowrap">
+              <div className="flex items-center gap-3 min-w-0 flex-1">
+                <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-teal-500 to-emerald-600 text-white flex items-center justify-center shadow-md shrink-0">
+                  <Users size={22} />
+                </div>
+                <div className="min-w-0">
+                  <h3 className="text-lg sm:text-xl font-black tracking-tight truncate">
+                    {t("Group & Pair Play", "友だち・グループ対戦")}
+                  </h3>
+                  <span className="text-[11px] font-black text-teal-600 dark:text-teal-400">
+                    Stream 🅲 (2〜6 Players)
+                  </span>
+                </div>
               </div>
-              <div>
-                <h3 className="text-lg sm:text-xl font-black tracking-tight">
-                  {t("Group & Pair Play", "友だち・グループ対戦")}
-                </h3>
-                <span className="text-[11px] font-black text-teal-600 dark:text-teal-400">
-                  Stream 🅲 (2〜6 Players)
-                </span>
-              </div>
+              <button
+                onClick={() => setIsGroupModalOpen(false)}
+                className="p-2 rounded-full text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer shrink-0"
+              >
+                <X size={20} />
+              </button>
             </div>
 
             {/* Segmented Mode Selector: Join vs Host */}
@@ -1089,7 +1090,7 @@ export const StudentPortal: React.FC = () => {
               <button
                 type="button"
                 onClick={() => { playPop(); setGroupTab('JOIN'); }}
-                className={`py-2 px-3 rounded-xl font-black text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                className={`py-2 px-3 rounded-xl font-black text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap ${
                   groupTab === 'JOIN'
                     ? 'bg-white dark:bg-slate-700 text-teal-700 dark:text-teal-300 shadow-sm'
                     : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
@@ -1101,7 +1102,7 @@ export const StudentPortal: React.FC = () => {
               <button
                 type="button"
                 onClick={() => { playPop(); setGroupTab('HOST'); }}
-                className={`py-2 px-3 rounded-xl font-black text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                className={`py-2 px-3 rounded-xl font-black text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap ${
                   groupTab === 'HOST'
                     ? 'bg-white dark:bg-slate-700 text-teal-700 dark:text-teal-300 shadow-sm'
                     : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
@@ -1113,64 +1114,75 @@ export const StudentPortal: React.FC = () => {
             </div>
 
             {groupTab === 'JOIN' ? (
-              <form onSubmit={handleGroupPinSubmit} className="space-y-4">
-                <p className="text-xs text-slate-500 dark:text-slate-400 font-medium leading-relaxed">
-                  {t("Enter the 4-digit code given by your table leader or friend!", "友だちや班のリーダーが教えてくれた4けたの部屋番号を入れてね！")}
-                </p>
-                <input
-                  type="text"
-                  inputMode="numeric"
-                  pattern="[0-9]*"
-                  maxLength={4}
-                  value={groupPinCode}
-                  onChange={e => setGroupPinCode(e.target.value.replace(/\D/g, ''))}
-                  placeholder="1 2 3 4"
-                  autoFocus
-                  className="w-full py-4 text-center font-mono font-black text-3xl tracking-widest rounded-2xl border-2 border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-100 dark:focus:ring-teal-950/40"
-                />
-                <button
-                  type="submit"
-                  disabled={groupPinCode.length !== 4}
-                  className={`w-full py-3.5 rounded-2xl font-black text-sm text-white transition-all shadow-md ${
-                    groupPinCode.length === 4
-                      ? 'bg-gradient-to-r from-teal-500 to-emerald-600 hover:brightness-105 active:scale-98 cursor-pointer'
-                      : 'bg-slate-300 dark:bg-slate-700 cursor-not-allowed text-slate-500 dark:text-slate-400'
-                  }`}
-                >
-                  {t("Join Group Now!", "グループに参加する！")}
-                </button>
-              </form>
-            ) : (
-              <div className="space-y-4 text-center">
-                <p className="text-xs text-slate-500 dark:text-slate-400 font-medium leading-relaxed">
-                  {t("You become the table leader! Launch the game room on this iPad so your tablemates can join with your room code.", "あなたがリーダーになって部屋をつくろう！このiPadに対戦アリーナと部屋番号が表示され、班のみんなが参加できます。")}
-                </p>
-
-                <div className="p-4 rounded-2xl bg-teal-50 dark:bg-teal-950/50 border-2 border-teal-200 dark:border-teal-800 flex flex-col items-center gap-2">
-                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-teal-500 to-emerald-600 text-white flex items-center justify-center text-2xl shadow-md">
-                    👑
+              <form onSubmit={handleGroupPinSubmit} className="grid grid-cols-1 md:grid-cols-[1fr_1.15fr] gap-4 items-center">
+                <div className="p-4 rounded-2xl bg-teal-50 dark:bg-teal-950/40 border border-teal-200 dark:border-teal-800/70 space-y-1.5">
+                  <div className="text-xs font-black text-teal-700 dark:text-teal-300 flex items-center gap-1.5">
+                    <span>🔢</span>
+                    <span>{t("4-Digit Room PIN", "4けたの部屋番号")}</span>
                   </div>
-                  <h4 className="text-sm font-black text-teal-950 dark:text-teal-200">
-                    {t("Table Leader Arena", "班のリーダー対戦")}
-                  </h4>
-                  <p className="text-xs text-slate-600 dark:text-slate-400 max-w-xs leading-relaxed">
-                    {t("Choose any game (Sprint Race, Tug-of-War, Bean Bag Toss, or Quiz) and host for your friends!", "スプリントレース、つなひき、玉入れ、早押しクイズを自由にえらんで対戦できます！")}
+                  <p className="text-xs text-slate-600 dark:text-slate-300 font-medium leading-relaxed">
+                    {t("Enter the 4-digit code given by your table leader or friend!", "友だちや班のリーダーが教えてくれた4けたの部屋番号を入れてね！")}
                   </p>
                 </div>
+                <div className="space-y-3">
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    maxLength={4}
+                    value={groupPinCode}
+                    onChange={e => setGroupPinCode(e.target.value.replace(/\D/g, ''))}
+                    placeholder="1 2 3 4"
+                    autoFocus
+                    className="w-full py-3.5 text-center font-mono font-black text-3xl tracking-widest rounded-2xl border-2 border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-100 dark:focus:ring-teal-950/40"
+                  />
+                  <button
+                    type="submit"
+                    disabled={groupPinCode.length !== 4}
+                    className={`w-full py-3.5 rounded-2xl font-black text-sm text-white transition-all shadow-md whitespace-nowrap ${
+                      groupPinCode.length === 4
+                        ? 'bg-gradient-to-r from-teal-500 to-emerald-600 hover:brightness-105 active:scale-98 cursor-pointer'
+                        : 'bg-slate-300 dark:bg-slate-700 cursor-not-allowed text-slate-500 dark:text-slate-400'
+                    }`}
+                  >
+                    {t("Join Group Now!", "グループに参加する！")}
+                  </button>
+                </div>
+              </form>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-[1.15fr_1fr] gap-4 items-center">
+                <div className="p-4 rounded-2xl bg-teal-50 dark:bg-teal-950/50 border-2 border-teal-200 dark:border-teal-800 flex items-start gap-3 text-left">
+                  <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-teal-500 to-emerald-600 text-white flex items-center justify-center text-xl shadow-md shrink-0">
+                    👑
+                  </div>
+                  <div className="min-w-0">
+                    <h4 className="text-sm font-black text-teal-950 dark:text-teal-200 mb-1">
+                      {t("Table Leader Arena", "班のリーダー対戦")}
+                    </h4>
+                    <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                      {t("Choose Sprint Race, Tug-of-War, Bean Bag Toss, or Quiz and host for your friends!", "スプリントレース、つなひき、玉入れ、早押しクイズを自由にえらんで対戦できます！")}
+                    </p>
+                  </div>
+                </div>
 
-                <button
-                  type="button"
-                  onClick={() => {
-                    playPop();
-                    setIsGroupModalOpen(false);
-                    setIsHostingQuiz(true);
-                  }}
-                  className="w-full py-4 rounded-2xl bg-gradient-to-r from-teal-500 to-emerald-600 hover:brightness-105 active:scale-98 text-white font-black text-sm shadow-md transition-all cursor-pointer flex items-center justify-center gap-2"
-                >
-                  <Crown size={18} />
-                  <span>{t("Launch Room as Leader", "リーダーとして部屋をつくる！")}</span>
-                  <ArrowRight size={18} />
-                </button>
+                <div className="space-y-3">
+                  <p className="text-xs text-slate-500 dark:text-slate-400 font-medium leading-relaxed">
+                    {t("Launch the game room on this iPad so your tablemates can join with your room code.", "このiPadに対戦アリーナと部屋番号を表示して、班のみんなを招待しよう！")}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      playPop();
+                      setIsGroupModalOpen(false);
+                      setIsHostingQuiz(true);
+                    }}
+                    className="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-teal-500 to-emerald-600 hover:brightness-105 active:scale-98 text-white font-black text-sm shadow-md transition-all cursor-pointer flex items-center justify-center gap-2 whitespace-nowrap"
+                  >
+                    <Crown size={18} />
+                    <span>{t("Launch Room as Leader", "リーダーとして部屋をつくる！")}</span>
+                    <ArrowRight size={18} />
+                  </button>
+                </div>
               </div>
             )}
           </div>
@@ -1184,32 +1196,33 @@ export const StudentPortal: React.FC = () => {
           onClick={() => setIsSoloModalOpen(false)}
         >
           <div
-            className="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 max-w-2xl w-full shadow-2xl border-4 border-white dark:border-slate-800 flex flex-col text-slate-900 dark:text-white relative max-h-[90vh] overflow-y-auto"
+            className="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 md:p-7 max-w-4xl w-full shadow-2xl border-4 border-white dark:border-slate-800 flex flex-col text-slate-900 dark:text-white relative max-h-[90dvh] overflow-y-auto"
             onClick={e => e.stopPropagation()}
           >
-            <button
-              onClick={() => setIsSoloModalOpen(false)}
-              className="absolute top-5 right-5 p-2 rounded-full text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
-            >
-              <X size={20} />
-            </button>
-
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-400 to-orange-500 text-white flex items-center justify-center shadow-md shrink-0">
-                <Gamepad2 size={24} />
+            <div className="flex items-center justify-between gap-3 mb-5 pb-3 border-b border-slate-100 dark:border-slate-800 flex-nowrap">
+              <div className="flex items-center gap-3 min-w-0 flex-1">
+                <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-amber-400 to-orange-500 text-white flex items-center justify-center shadow-md shrink-0">
+                  <Gamepad2 size={22} />
+                </div>
+                <div className="min-w-0">
+                  <h3 className="text-lg sm:text-xl font-black tracking-tight truncate">
+                    {t("Solo Practice Arcade", "ひとりで特訓・ミニゲーム")}
+                  </h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 font-medium truncate">
+                    {t("Stream 🅳: Practice at your own pace and earn XP & Gold!", "Stream 🅳: じぶんのペースで特訓して、レベルアップしよう！")}
+                  </p>
+                </div>
               </div>
-              <div>
-                <h3 className="text-lg sm:text-xl font-black tracking-tight">
-                  {t("Solo Practice Arcade", "ひとりで特訓・ミニゲーム")}
-                </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
-                  {t("Stream 🅳: Practice at your own pace and earn XP & Gold!", "Stream 🅳: じぶんのペースで特訓して、レベルアップしよう！")}
-                </p>
-              </div>
+              <button
+                onClick={() => setIsSoloModalOpen(false)}
+                className="p-2 rounded-full text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer shrink-0"
+              >
+                <X size={20} />
+              </button>
             </div>
 
             {/* Game Selection Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
               {/* Game 1: Pixel Reveal */}
               <button
                 type="button"
@@ -1361,95 +1374,97 @@ export const StudentPortal: React.FC = () => {
           onClick={() => setIsAddToHomeModalOpen(false)}
         >
           <div
-            className="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl border-4 border-white dark:border-slate-800 flex flex-col text-slate-900 dark:text-white relative"
+            className="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 md:p-7 max-w-md md:max-w-3xl w-full shadow-2xl border-4 border-white dark:border-slate-800 flex flex-col text-slate-900 dark:text-white relative"
             onClick={e => e.stopPropagation()}
           >
             <button
               onClick={() => setIsAddToHomeModalOpen(false)}
-              className="absolute top-5 right-5 p-2 rounded-full text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              className="absolute top-4 right-4 sm:top-5 sm:right-5 p-2 rounded-full text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
             >
               <X size={20} />
             </button>
 
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-600 text-white flex items-center justify-center shadow-md shrink-0">
-                <Smartphone size={24} />
+            <div className="flex items-center gap-3 mb-4 pr-8">
+              <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-600 text-white flex items-center justify-center shadow-md shrink-0">
+                <Smartphone size={22} />
               </div>
-              <div>
-                <h3 className="text-lg sm:text-xl font-black">
+              <div className="min-w-0">
+                <h3 className="text-lg sm:text-xl font-black truncate">
                   {t("Add Levi Sensei to iPad Home Screen", "iPadのホーム画面に「リヴァイ先生」を追加")}
                 </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400 font-bold">
+                <p className="text-xs text-slate-500 dark:text-slate-400 font-bold truncate">
                   {t("One-time setup for 1-tap app launch every class!", "1回設定すれば、次の授業からはアイコンを1タップで起動できます！")}
                 </p>
               </div>
             </div>
 
-            {/* 3 Steps */}
-            <div className="space-y-3 my-2">
+            {/* 3 Steps side-by-side on landscape tablets */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 my-1">
               {/* Step 1 */}
-              <div className="flex items-start gap-3.5 p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700">
+              <div className="flex md:flex-col items-start gap-3 p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700">
                 <div className="w-7 h-7 rounded-xl bg-indigo-600 text-white font-black text-xs flex items-center justify-center shrink-0">
                   1
                 </div>
                 <div className="flex-1 text-xs">
-                  <p className="font-black text-slate-900 dark:text-white mb-0.5">
+                  <p className="font-black text-slate-900 dark:text-white mb-1">
                     {t('Tap the Safari Share button', 'Safariの画面の「共有ボタン」をタップ')}
                   </p>
-                  <p className="text-slate-500 dark:text-slate-400 font-medium">
+                  <p className="text-slate-600 dark:text-slate-300 font-medium leading-relaxed">
                     {t('Look for the square icon with an arrow pointing up [⎋] at the top-right (or bottom).', '画面の右上（または下）にある、四角から矢印が出ているアイコン [⎋] です。')}
                   </p>
                 </div>
               </div>
 
               {/* Step 2 */}
-              <div className="flex items-start gap-3.5 p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700">
+              <div className="flex md:flex-col items-start gap-3 p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700">
                 <div className="w-7 h-7 rounded-xl bg-indigo-600 text-white font-black text-xs flex items-center justify-center shrink-0">
                   2
                 </div>
                 <div className="flex-1 text-xs">
-                  <p className="font-black text-slate-900 dark:text-white mb-0.5">
+                  <p className="font-black text-slate-900 dark:text-white mb-1">
                     {t('Select "Add to Home Screen"', '「ホーム画面に追加」をえらぶ')}
                   </p>
-                  <p className="text-slate-500 dark:text-slate-400 font-medium">
+                  <p className="text-slate-600 dark:text-slate-300 font-medium leading-relaxed">
                     {t('Scroll down the share sheet and tap "Add to Home Screen" [ ➕ ].', '出てきたメニューを少し下にスクロールして、「ホーム画面に追加」[ ➕ ] をタップします。')}
                   </p>
                 </div>
               </div>
 
               {/* Step 3 */}
-              <div className="flex items-start gap-3.5 p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700">
+              <div className="flex md:flex-col items-start gap-3 p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700">
                 <div className="w-7 h-7 rounded-xl bg-emerald-600 text-white font-black text-xs flex items-center justify-center shrink-0">
                   3
                 </div>
                 <div className="flex-1 text-xs">
-                  <p className="font-black text-slate-900 dark:text-white mb-0.5">
+                  <p className="font-black text-slate-900 dark:text-white mb-1">
                     {t('Tap "Add" at the top-right', '右上の「追加」をタップ！')}
                   </p>
-                  <p className="text-slate-500 dark:text-slate-400 font-medium">
+                  <p className="text-slate-600 dark:text-slate-300 font-medium leading-relaxed">
                     {t('A dedicated "Levi Sensei" icon appears on your iPad! It launches in full-screen standalone mode with no browser bars.', 'iPadのホーム画面にパンダの「リヴァイ先生」アプリアイコンができます！次回からアドレス入力やロイロは不要です！')}
                   </p>
                 </div>
               </div>
             </div>
 
-            {/* Note about LoiLoNote */}
-            <div className="mt-3 p-3 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-[11px] text-amber-900 dark:text-amber-200 flex items-center gap-2">
-              <span>💡</span>
-              <span>
-                {t(
-                  'If you are currently inside LoiLoNote, tap the compass icon [🧭 Safari] at top-right first to open in Safari!',
-                  'ロイロノートの中で開いている場合は、まず画面右上のコンパス印 [🧭 Safariで開く] を押してSafariで開いてから追加してください！'
-                )}
-              </span>
-            </div>
+            {/* Footer: LoiLoNote tip + CTA side-by-side in landscape */}
+            <div className="mt-4 flex flex-col md:flex-row md:items-center gap-3">
+              <div className="flex-1 p-3 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-[11px] text-amber-900 dark:text-amber-200 flex items-center gap-2">
+                <span className="shrink-0">💡</span>
+                <span>
+                  {t(
+                    'If you are currently inside LoiLoNote, tap the compass icon [🧭 Safari] at top-right first to open in Safari!',
+                    'ロイロノートの中で開いている場合は、まず画面右上のコンパス印 [🧭 Safariで開く] を押してSafariで開いてから追加してください！'
+                  )}
+                </span>
+              </div>
 
-            <button
-              onClick={() => setIsAddToHomeModalOpen(false)}
-              className="mt-4 w-full py-3 rounded-2xl font-black text-sm text-white bg-indigo-600 hover:bg-indigo-700 transition-colors cursor-pointer"
-            >
-              {t("Got it!", "わかりました！")}
-            </button>
+              <button
+                onClick={() => setIsAddToHomeModalOpen(false)}
+                className="w-full md:w-auto md:min-w-[180px] shrink-0 py-3 px-6 rounded-2xl font-black text-sm text-white bg-indigo-600 hover:bg-indigo-700 transition-colors cursor-pointer whitespace-nowrap"
+              >
+                {t("Got it!", "わかりました！")}
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -1503,7 +1518,7 @@ export const StudentPortal: React.FC = () => {
             <p className="text-xs sm:text-sm font-bold text-slate-600 dark:text-slate-300 mb-5 leading-relaxed">
               {t(
                 `Do you want to unlink this iPad from ${profile.classId} #${profile.attendanceNumber} (${profile.nickname})?`,
-                <>このiPadの<ruby>登録<rt className="text-[8px] font-normal text-slate-400">とうろく</rt></ruby>【<span className="font-black text-emerald-600 dark:text-emerald-400">{profile.classId} {profile.attendanceNumber}番</span>】を<ruby>解除<rt className="text-[8px] font-normal text-slate-400">かいじょ</rt></ruby>して、べつの席やクラスをえらび直しますか？</>
+                <>このiPadの<ruby>登録<rt>とうろく</rt></ruby>【<span className="font-black text-emerald-600 dark:text-emerald-400">{profile.classId} {profile.attendanceNumber}番</span>】を<ruby>解除<rt>かいじょ</rt></ruby>して、べつの席やクラスをえらび直しますか？</>
               )}
             </p>
 

@@ -163,41 +163,41 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
   return (
     <div className="flex flex-col w-full h-full min-h-0 max-w-7xl mx-auto px-3 sm:px-5 py-2 sm:py-3 text-slate-900 dark:text-white select-none overflow-hidden">
       {/* Top Header Bar with prominent START GAME + Settings + Cancel */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-2.5 border-b border-slate-200 dark:border-slate-800 shrink-0">
-        <div className="flex flex-wrap items-center gap-2">
+      <div className="flex items-center justify-between gap-2 pb-2.5 border-b border-slate-200 dark:border-slate-800 shrink-0 flex-nowrap">
+        <div className="flex items-center gap-1.5 min-w-0 flex-1 overflow-x-auto no-scrollbar flex-nowrap">
           {isStudentHost ? (
-            <span className="text-xs font-black px-3 py-1 rounded-full bg-teal-100 dark:bg-teal-950/60 text-teal-800 dark:text-teal-200 flex items-center gap-1.5 border border-teal-200 dark:border-teal-800">
+            <span className="text-xs font-black px-3 py-1 rounded-full bg-teal-100 dark:bg-teal-950/60 text-teal-800 dark:text-teal-200 flex items-center gap-1.5 border border-teal-200 dark:border-teal-800 shrink-0 whitespace-nowrap">
               <span>👑</span>
               <span>{t('Table Leader Game', '班のリーダー対戦')}</span>
             </span>
           ) : schoolConfig && classId ? (
-            <span className="text-xs font-black px-3 py-1 rounded-full bg-indigo-100 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 flex items-center gap-1.5 border border-indigo-200 dark:border-indigo-800">
+            <span className="text-xs font-black px-3 py-1 rounded-full bg-indigo-100 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 flex items-center gap-1.5 border border-indigo-200 dark:border-indigo-800 shrink-0 whitespace-nowrap">
               <School size={13} />
               <span>{language === 'ja' ? schoolConfig.shortKanji : schoolConfig.name.split(' ')[0]}</span>
               <span>{classId}</span>
             </span>
           ) : null}
           {subject === 'MATH' ? (
-            <span className="text-xs font-black px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200 border border-emerald-300 dark:border-emerald-700 flex items-center gap-1.5 shadow-2xs">
+            <span className="text-xs font-black px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200 border border-emerald-300 dark:border-emerald-700 flex items-center gap-1.5 shadow-2xs shrink-0 whitespace-nowrap">
               <span>📐</span>
               <span>{MATH_GRADES[mathGrade || 'G1']?.badge || '小1'} 算数</span>
               <span>•</span>
               <span>{MATH_DOMAINS[mathDomain || 'ALL']?.nameJa || '全領域'}</span>
             </span>
           ) : (
-            <span className="text-xs font-black px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300">
+            <span className="text-xs font-black px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300 shrink-0 whitespace-nowrap">
               {grade} {vocabularyScope !== 'CUSTOM_UNITS' && unit !== 'ALL' ? `• ${unit}` : ''}
             </span>
           )}
           {vocabularyScope && vocabularyScope !== 'CURRENT' && (
-            <span className="text-xs font-black px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-200 border border-amber-300 dark:border-amber-800">
+            <span className="text-xs font-black px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-200 border border-amber-300 dark:border-amber-800 shrink-0 whitespace-nowrap">
               {vocabularyScope === 'CUSTOM_UNITS' ? `📦 ${selectedUnits?.length || 0} ${language === 'ja' ? '単元バンドル' : 'Units'}` :
                vocabularyScope === 'PRIOR_REVIEW' ? '⏪ ' + (language === 'ja' ? '過去学年復習' : 'Prior Review') :
                vocabularyScope === 'ALL_ELEMENTARY' ? '🌟 ' + (language === 'ja' ? '小3〜小6 全単語' : 'All Elementary') :
                '📖 ' + (language === 'ja' ? '学年全単元' : 'All Units')}
             </span>
           )}
-          <span className={`text-xs font-black px-3 py-1 rounded-full border ${
+          <span className={`text-xs font-black px-3 py-1 rounded-full border shrink-0 whitespace-nowrap ${
             gameMode === 'TEAM' 
               ? 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800' 
               : 'bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border-purple-300 dark:border-purple-800'
@@ -211,11 +211,11 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
         </div>
 
         {/* Top-Right Action Cluster: START GAME + Settings + Cancel */}
-        <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 flex-nowrap">
           {onToggleEyesUp && (
             <button
               onClick={onToggleEyesUp}
-              className={`px-3.5 py-2 rounded-2xl font-bold text-xs transition-all flex items-center gap-1.5 cursor-pointer shadow-xs border active:scale-95 ${
+              className={`px-3 sm:px-3.5 py-2 rounded-2xl font-bold text-xs transition-all flex items-center gap-1.5 cursor-pointer shadow-xs border active:scale-95 whitespace-nowrap ${
                 eyesUp
                   ? 'bg-amber-400 text-slate-950 border-amber-300 ring-2 ring-amber-400/50 animate-pulse font-black'
                   : 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800/60 hover:bg-amber-100 dark:hover:bg-amber-900/60'
@@ -230,7 +230,7 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
           {onEditSettings && (
             <button
               onClick={onEditSettings}
-              className="px-3.5 py-2 rounded-2xl font-bold text-xs text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/50 hover:bg-indigo-100 dark:hover:bg-indigo-900 border border-indigo-200 dark:border-indigo-800 active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer shadow-xs"
+              className="px-3 sm:px-3.5 py-2 rounded-2xl font-bold text-xs text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/50 hover:bg-indigo-100 dark:hover:bg-indigo-900 border border-indigo-200 dark:border-indigo-800 active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer shadow-xs whitespace-nowrap"
               title={t('Edit settings without disbanding room', '生徒を退室させずに設定を変更する')}
             >
               <Settings size={15} />
@@ -240,7 +240,7 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
 
           <button
             onClick={onStart}
-            className="px-6 sm:px-7 py-2 sm:py-2.5 rounded-2xl font-black text-sm sm:text-base text-white bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 shadow-xl shadow-emerald-500/25 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer"
+            className="px-5 sm:px-7 py-2 sm:py-2.5 rounded-2xl font-black text-sm sm:text-base text-white bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 shadow-xl shadow-emerald-500/25 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap"
           >
             <Play size={18} fill="white" />
             <span>{t('START GAME', 'ゲーム開始')}</span>
@@ -249,7 +249,7 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
 
           <button
             onClick={onCancel}
-            className="text-xs font-bold text-rose-500 hover:text-rose-600 dark:text-rose-400 px-3 py-2 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer"
+            className="text-xs font-bold text-rose-500 hover:text-rose-600 dark:text-rose-400 px-3 py-2 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer whitespace-nowrap"
           >
             {t('✕ Cancel Room', '✕ 解散')}
           </button>
@@ -283,7 +283,7 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
                 <img
                   src={qrDataUrl}
                   alt={`Join room ${roomCode}`}
-                  className="w-48 h-48 sm:w-56 sm:h-56 xl:w-64 xl:h-64 max-h-[38vh] object-contain rounded-2xl"
+                  className="w-48 h-48 sm:w-56 sm:h-56 xl:w-64 xl:h-64 max-h-[38dvh] object-contain rounded-2xl"
                 />
               ) : (
                 <div className="w-48 h-48 sm:w-56 sm:h-56 xl:w-64 xl:h-64 flex items-center justify-center bg-slate-100 rounded-2xl text-xs text-slate-400">
@@ -308,10 +308,10 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
         {/* Right Column: Viewport-Locked Student Roster & Teams Grid with Internal Scrollbar (7 cols) */}
         <div className="lg:col-span-7 flex flex-col justify-between p-4 sm:p-5 bg-white dark:bg-slate-900 border-4 border-slate-200 dark:border-slate-800 rounded-3xl shadow-xl min-h-0 overflow-hidden">
           {/* Roster Header */}
-          <div className="flex items-center justify-between pb-2.5 border-b border-slate-200 dark:border-slate-800 mb-2 shrink-0">
-            <div className="flex items-center gap-2">
-              <Users className="text-blue-500" size={20} />
-              <h3 className="text-base font-black text-slate-900 dark:text-white flex items-baseline gap-1">
+          <div className="flex items-center justify-between pb-2.5 border-b border-slate-200 dark:border-slate-800 mb-2 shrink-0 flex-nowrap gap-2">
+            <div className="flex items-center gap-2 min-w-0 flex-nowrap">
+              <Users className="text-blue-500 shrink-0" size={20} />
+              <h3 className="text-base font-black text-slate-900 dark:text-white flex items-baseline gap-1 whitespace-nowrap">
                 <span>{isStudentHost ? t('Connected Players:', '参加中のプレイヤー:') : t('Connected Students:', '接続中の生徒:')}</span>
                 <span className="text-blue-600 dark:text-blue-400 font-mono text-xl">{playerList.length}</span>
                 {!isStudentHost && expectedCapacity > 0 && (
@@ -324,7 +324,7 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
                 )}
               </h3>
               {botCount > 0 && (
-                <span className="text-[11px] font-black px-2 py-0.5 rounded-full bg-indigo-100 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 flex items-center gap-1">
+                <span className="text-[11px] font-black px-2 py-0.5 rounded-full bg-indigo-100 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 flex items-center gap-1 shrink-0 whitespace-nowrap">
                   <span>🤖</span>
                   <span>{botCount} {language === 'ja' ? '体' : 'Bots'}</span>
                 </span>
@@ -334,7 +334,7 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
             {/* Class Energy Vault Co-Op Meter */}
             {classVault && vaultTierInfo && (
               <div
-                className="hidden sm:flex items-center gap-2 px-3 py-1 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border-2 border-amber-300 dark:border-amber-800 shadow-2xs"
+                className="hidden sm:flex items-center gap-2 px-3 py-1 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border-2 border-amber-300 dark:border-amber-800 shadow-2xs shrink-0"
                 title={t(
                   `Class Energy Vault: ${classVault.totalEnergy.toLocaleString()} pts. 10% of quiz scores are deposited here toward shared milestones!`,
                   `クラス団結エナジー: ${classVault.totalEnergy.toLocaleString()} pts。全員のクイズ得点の10%がここに貯まり、クラス合同のマスコットが解放されます！`
@@ -359,11 +359,11 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
               </div>
             )}
             {playerList.length === 0 ? (
-              <span className="text-xs text-slate-400 font-medium animate-pulse">
+              <span className="text-xs text-slate-400 font-medium animate-pulse shrink-0 whitespace-nowrap">
                 {t('Waiting for students to scan...', '生徒のスキャンを待っています...')}
               </span>
             ) : (
-              <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+              <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1 shrink-0 whitespace-nowrap">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
                 <span>{t('Ready to play!', '参加準備OK!')}</span>
               </span>
@@ -372,8 +372,8 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
 
           {/* Streamlined Single-Row CPU Practice Bots Control Bar */}
           {onAddBots && (
-            <div className="px-2.5 py-1.5 mb-2 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-xs shrink-0 flex items-center justify-between gap-1.5 flex-wrap">
-              <div className="flex items-center gap-1.5">
+            <div className="px-2.5 py-1.5 mb-2 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-xs shrink-0 flex items-center justify-between gap-1.5 flex-nowrap overflow-x-auto no-scrollbar">
+              <div className="flex items-center gap-1.5 shrink-0 whitespace-nowrap">
                 <Bot size={15} className="text-indigo-500 shrink-0" />
                 <span className="font-black text-slate-800 dark:text-slate-200 text-[11px]">
                   {t('Practice Bots', '練習ボット')}
@@ -387,7 +387,7 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
                 </span>
               </div>
 
-              <div className="flex items-center gap-1 flex-wrap">
+              <div className="flex items-center gap-1 shrink-0 flex-nowrap">
                 {/* Chill */}
                 <div className="flex items-center gap-0.5 px-1.5 py-0.5 rounded-lg bg-white dark:bg-slate-900 border border-emerald-200 dark:border-emerald-950">
                   <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 mr-0.5">🐢</span>
@@ -455,7 +455,7 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
                   type="button"
                   disabled={botCount >= 30}
                   onClick={() => onAddBots(6, 'mixed')}
-                  className="px-2 py-1 font-black text-[10px] rounded-lg bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white shadow-xs transition-all cursor-pointer active:scale-95 disabled:opacity-40 flex items-center gap-1"
+                  className="px-2 py-1 font-black text-[10px] rounded-lg bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white shadow-xs transition-all cursor-pointer active:scale-95 disabled:opacity-40 flex items-center gap-1 whitespace-nowrap"
                   title={t('Add 6 mixed bots (2 Chill, 2 Normal, 2 Fast)', 'バランス型6体追加 (おだやか2・ふつう2・てごわい2)')}
                 >
                   <span>🎲</span>
@@ -465,7 +465,7 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
                   <button
                     type="button"
                     onClick={onClearBots}
-                    className="px-2 py-1 font-bold text-[10px] rounded-lg bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 text-rose-600 dark:text-rose-300 border border-rose-200 dark:border-rose-800 transition-all cursor-pointer active:scale-95"
+                    className="px-2 py-1 font-bold text-[10px] rounded-lg bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 text-rose-600 dark:text-rose-300 border border-rose-200 dark:border-rose-800 transition-all cursor-pointer active:scale-95 whitespace-nowrap"
                   >
                     {t('Clear', '全削除')}
                   </button>

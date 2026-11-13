@@ -29,7 +29,7 @@ export const TyphoonEventModal: React.FC<TyphoonEventModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 animate-in fade-in duration-200 select-none">
       <div
-        className="w-full max-w-xl bg-white dark:bg-slate-900 border-4 border-amber-400 dark:border-amber-500 rounded-3xl p-6 sm:p-8 shadow-2xl flex flex-col items-center text-center animate-in zoom-in-95 duration-200"
+        className="w-full max-w-xl md:max-w-2xl max-h-[92dvh] overflow-y-auto bg-white dark:bg-slate-900 border-4 border-amber-400 dark:border-amber-500 rounded-3xl p-6 sm:p-8 shadow-2xl flex flex-col items-center text-center animate-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Giant Event Emoji */}
@@ -49,7 +49,7 @@ export const TyphoonEventModal: React.FC<TyphoonEventModalProps> = ({
         {!needsTargetTeam && (
           <div className="w-full space-y-4">
             <p className="text-sm sm:text-base font-bold text-slate-600 dark:text-slate-300">
-              {activeTeam.emoji} <strong>{activeTeam.jaName}</strong> に <strong>{eventInfo.label}</strong> {t("points awarded!", <><ruby>点獲得<rt className="text-[7px]">てんかくとく</rt></ruby>！</>)}
+              {activeTeam.emoji} <strong>{activeTeam.jaName}</strong> に <strong>{eventInfo.label}</strong> {t("points awarded!", <><ruby>点獲得<rt>てんかくとく</rt></ruby>！</>)}
             </p>
 
             <button
@@ -57,7 +57,7 @@ export const TyphoonEventModal: React.FC<TyphoonEventModalProps> = ({
               onClick={onConfirmPoints}
               className="w-full py-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-black text-base shadow-xl active:scale-98 transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
-              <span>{t("Next Team (Space)", <><ruby>得点<rt className="text-[7px]">とくてん</rt></ruby>を<ruby>加<rt className="text-[7px]">くわ</rt></ruby>えて<ruby>次<rt className="text-[7px]">つぎ</rt></ruby>のチームへ [Space]</>)}</span>
+              <span>{t("Next Team (Space)", <><ruby>得点<rt>とくてん</rt></ruby>を<ruby>加<rt>くわ</rt></ruby>えて<ruby>次<rt>つぎ</rt></ruby>のチームへ [Space]</>)}</span>
               <ArrowRight size={18} />
             </button>
           </div>
@@ -67,9 +67,9 @@ export const TyphoonEventModal: React.FC<TyphoonEventModalProps> = ({
         {needsTargetTeam && (
           <div className="w-full space-y-3">
             <div className="p-3 rounded-2xl bg-amber-50 dark:bg-amber-950/60 border border-amber-300 dark:border-amber-800 text-xs sm:text-sm font-black text-amber-900 dark:text-amber-200">
-              {event === 'TYPHOON' && t("🌀 Choose a rival team to blow away their points!", <>🌀 ポイントを<ruby>吹<rt className="text-[7px]">ふ</rt></ruby>き<ruby>飛<rt className="text-[7px]">と</rt></ruby>ばす<ruby>相手<rt className="text-[7px]">あいて</rt></ruby>チームを<ruby>選<rt className="text-[7px]">えら</rt></ruby>んでください！</>)}
-              {event === 'SWAP' && t("🔄 Choose a rival team to swap scores with!", <>🔄 スコアを<ruby>丸<rt className="text-[7px]">まる</rt></ruby>ごと<ruby>入<rt className="text-[7px]">い</rt></ruby>れ<ruby>替<rt className="text-[7px]">か</rt></ruby>える<ruby>相手<rt className="text-[7px]">あいて</rt></ruby>チームを<ruby>選<rt className="text-[7px]">えら</rt></ruby>んでください！</>)}
-              {event === 'STEAL_200' && t("🥷 Choose a rival team to steal 200 points from!", <>🥷 200ポイントを<ruby>横取<rt className="text-[7px]">よこど</rt></ruby>りする<ruby>相手<rt className="text-[7px]">あいて</rt></ruby>チームを<ruby>選<rt className="text-[7px]">えら</rt></ruby>んでください！</>)}
+              {event === 'TYPHOON' && t("🌀 Choose a rival team to blow away their points!", <>🌀 ポイントを<ruby>吹<rt>ふ</rt></ruby>き<ruby>飛<rt>と</rt></ruby>ばす<ruby>相手<rt>あいて</rt></ruby>チームを<ruby>選<rt>えら</rt></ruby>んでください！</>)}
+              {event === 'SWAP' && t("🔄 Choose a rival team to swap scores with!", <>🔄 スコアを<ruby>丸<rt>まる</rt></ruby>ごと<ruby>入<rt>い</rt></ruby>れ<ruby>替<rt>か</rt></ruby>える<ruby>相手<rt>あいて</rt></ruby>チームを<ruby>選<rt>えら</rt></ruby>んでください！</>)}
+              {event === 'STEAL_200' && t("🥷 Choose a rival team to steal 200 points from!", <>🥷 200ポイントを<ruby>横取<rt>よこど</rt></ruby>りする<ruby>相手<rt>あいて</rt></ruby>チームを<ruby>選<rt>えら</rt></ruby>んでください！</>)}
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 pt-1">

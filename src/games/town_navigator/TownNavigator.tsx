@@ -1404,7 +1404,7 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
   }, [questNavigationHint, showRoadArrows, questMode]);
 
   return (
-    <div className="fixed inset-0 w-screen h-screen overflow-hidden bg-slate-900 select-none font-sans z-50">
+    <div className="fixed inset-0 w-screen h-dvh overflow-hidden bg-slate-900 select-none font-sans z-50">
       {viewRole === 'DISPATCHER_2D' && townMap && (
         <TownNavigatorDispatcher
           townMap={townMap}
@@ -1422,7 +1422,7 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
       <div ref={mountRef} className="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing" />
 
       {/* TOP HEADER CONTROLS BAR */}
-      <header className="absolute top-0 left-0 right-0 z-30 flex items-center justify-between px-3 sm:px-6 py-2.5 bg-slate-900/95 border-b border-slate-700/80 text-white min-h-[52px]">
+      <header className="absolute top-0 left-0 right-0 z-30 flex flex-nowrap overflow-x-auto no-scrollbar whitespace-nowrap items-center justify-between gap-2 px-3 sm:px-6 py-2 bg-slate-900/95 border-b border-slate-700/80 text-white min-h-[52px]">
         {/* Left: Exit & Mode Switching & Grade Selector */}
         <div className="flex items-center gap-2 sm:gap-3 shrink-0">
           {onExit && (
@@ -1441,7 +1441,7 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
             {onSwitchToInspector && (
               <button
                 onClick={onSwitchToInspector}
-                className="flex items-center gap-1 px-2.5 sm:px-3 py-1 rounded-lg text-xs font-bold text-slate-400 hover:text-slate-200 transition cursor-pointer"
+                className="flex items-center gap-1 px-2.5 sm:px-3 py-1 rounded-lg text-xs font-bold text-slate-300 hover:text-white transition cursor-pointer"
               >
                 <Layers className="w-3.5 h-3.5" />
                 <span className="hidden md:inline">Model Inspector</span>
@@ -1453,7 +1453,7 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
               className={`flex items-center gap-1 px-2.5 sm:px-3 py-1 rounded-lg text-xs font-bold transition cursor-pointer ${
                 viewRole === 'TRAVELER_3D'
                   ? 'bg-amber-500 text-slate-950 shadow-sm'
-                  : 'text-slate-400 hover:text-slate-200'
+                  : 'text-slate-300 hover:text-white'
               }`}
             >
               <Compass className="w-3.5 h-3.5" />
@@ -1465,7 +1465,7 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
               className={`flex items-center gap-1 px-2.5 sm:px-3 py-1 rounded-lg text-xs font-bold transition cursor-pointer ${
                 viewRole === 'DISPATCHER_2D'
                   ? 'bg-sky-500 text-white shadow-sm'
-                  : 'text-slate-400 hover:text-slate-200'
+                  : 'text-slate-300 hover:text-white'
               }`}
               title="2D Mission Control Dispatcher Console / 案内係モード"
             >
@@ -1482,7 +1482,7 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
               className={`flex items-center gap-1 px-2.5 sm:px-3 py-1 rounded-lg text-xs font-black transition ${
                 selectedGrade === 5
                   ? 'bg-sky-500 text-slate-950 shadow-sm'
-                  : 'text-slate-400 hover:text-slate-200'
+                  : 'text-slate-300 hover:text-white'
               }`}
               title="Grade 5 Curriculum (Here We Go 5: School, Hospital, Shops)"
             >
@@ -1494,7 +1494,7 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
               className={`flex items-center gap-1 px-2.5 sm:px-3 py-1 rounded-lg text-xs font-black transition ${
                 selectedGrade === 6
                   ? 'bg-indigo-500 text-white shadow-sm'
-                  : 'text-slate-400 hover:text-slate-200'
+                  : 'text-slate-300 hover:text-white'
               }`}
               title="Grade 6 Curriculum (Here We Go 6: Junior High School, Department Store, Swimming Pool)"
             >
@@ -1505,7 +1505,7 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
         </div>
 
         {/* Center: Seed Indicator & Regenerate */}
-        <div className="flex items-center gap-1.5 sm:gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
           <button
             onClick={handleRegenerate}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 text-xs sm:text-sm font-black shadow-md active:scale-95 transition"

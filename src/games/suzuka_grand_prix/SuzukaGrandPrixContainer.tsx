@@ -568,24 +568,24 @@ export const SuzukaGrandPrixContainer: React.FC = () => {
   return (
     <div className="fixed inset-0 w-screen h-dvh flex flex-col bg-slate-950 text-white overflow-hidden select-none z-40">
       {/* 1. Compact Classroom Simulation Toolbar */}
-      <header className="h-13 bg-slate-900 border-b border-slate-800 px-3 sm:px-4 flex items-center justify-between shrink-0 z-30 relative">
+      <header className="h-13 bg-slate-900 border-b border-slate-800 px-3 sm:px-4 flex flex-nowrap items-center justify-between gap-2 shrink-0 z-30 relative">
         {/* Left: Game Identity & Active Unit */}
-        <div className="flex items-center gap-2.5 min-w-0">
-          <span className="text-xl font-display font-bold tracking-tight text-white whitespace-nowrap">
+        <div className="flex items-center gap-2.5 min-w-0 flex-1">
+          <span className="text-xl font-display font-bold tracking-tight text-white whitespace-nowrap shrink-0">
             SUZUKA GP 3D
           </span>
-          <span className="text-slate-600 hidden sm:inline">·</span>
+          <span className="text-slate-600 hidden sm:inline shrink-0">·</span>
           <span className="text-xs font-bold text-amber-400 truncate hidden sm:inline">
             {activeUnit.gradeLabelJa} — {activeUnit.titleEn}
           </span>
         </div>
 
         {/* Center: View Mode Segmented Switcher */}
-        <div className="flex items-center p-0.5 rounded-xl bg-slate-950 border border-slate-800 text-xs font-bold shrink-0">
+        <div className="flex items-center flex-nowrap p-0.5 rounded-xl bg-slate-950 border border-slate-800 text-xs font-bold shrink-0">
           <button
             type="button"
             onClick={() => setPrototypeView('COCKPIT')}
-            className={`px-2.5 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors cursor-pointer whitespace-nowrap ${
+            className={`px-2.5 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
               prototypeView === 'COCKPIT'
                 ? 'bg-amber-500 text-slate-950 font-black'
                 : 'text-slate-400 hover:text-white'
@@ -593,13 +593,13 @@ export const SuzukaGrandPrixContainer: React.FC = () => {
             title="Student iPad (3D Cockpit + ESL Quiz Deck)"
           >
             <Tablet size={13} />
-            <span className="hidden md:inline">{t('Student iPad', '生徒iPad')}</span>
+            <span className="hidden md:inline whitespace-nowrap">{t('Student iPad', '生徒iPad')}</span>
           </button>
 
           <button
             type="button"
             onClick={() => setPrototypeView('BROADCAST')}
-            className={`px-2.5 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors cursor-pointer whitespace-nowrap ${
+            className={`px-2.5 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
               prototypeView === 'BROADCAST'
                 ? 'bg-amber-500 text-slate-950 font-black'
                 : 'text-slate-400 hover:text-white'
@@ -607,13 +607,13 @@ export const SuzukaGrandPrixContainer: React.FC = () => {
             title="Teacher Dynabook / Front TV Broadcast"
           >
             <Tv size={13} />
-            <span className="hidden md:inline">{t('Teacher TV', '先生TV画面')}</span>
+            <span className="hidden md:inline whitespace-nowrap">{t('Teacher TV', '先生TV画面')}</span>
           </button>
 
           <button
             type="button"
             onClick={() => setPrototypeView('SPLIT')}
-            className={`px-2.5 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors cursor-pointer whitespace-nowrap ${
+            className={`px-2.5 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
               prototypeView === 'SPLIT'
                 ? 'bg-amber-500 text-slate-950 font-black'
                 : 'text-slate-400 hover:text-white'
@@ -621,12 +621,12 @@ export const SuzukaGrandPrixContainer: React.FC = () => {
             title="Side-by-side Teacher TV + Student iPad Preview"
           >
             <Columns size={13} />
-            <span className="hidden md:inline">{t('Split View', '2画面同時')}</span>
+            <span className="hidden md:inline whitespace-nowrap">{t('Split View', '2画面同時')}</span>
           </button>
         </div>
 
         {/* Right: Pit Garage, Curriculum & Penalty Settings, Bots, Pause, Podium, Exit */}
-        <div className="flex items-center gap-1.5 shrink-0 relative">
+        <div className="flex items-center flex-nowrap gap-1.5 shrink-0 relative">
           {/* Pit Garage & ESL Unit Drawer Toggle */}
           <button
             type="button"
@@ -920,9 +920,9 @@ export const SuzukaGrandPrixContainer: React.FC = () => {
             }`}
           >
             {/* TV Broadcast Camera Bar */}
-            <div className="absolute top-3 left-3 right-3 z-20 flex items-center justify-between pointer-events-none">
-              <div className="flex items-center flex-wrap gap-1 p-1 rounded-xl bg-slate-950/92 border border-slate-800 pointer-events-auto shadow-xl text-xs font-black">
-                <span className="text-amber-400 px-2 flex items-center gap-1 shrink-0">
+            <div className="absolute top-3 left-3 right-3 z-20 flex items-center justify-between gap-2 pointer-events-none">
+              <div className="flex items-center flex-nowrap gap-1 p-1 rounded-xl bg-slate-950/92 border border-slate-800 pointer-events-auto shadow-xl text-xs font-black overflow-x-auto no-scrollbar min-w-0">
+                <span className="text-amber-400 px-2 flex items-center gap-1 shrink-0 whitespace-nowrap">
                   <Tv size={12} />
                   <span>TV CAM:</span>
                 </span>
@@ -939,7 +939,7 @@ export const SuzukaGrandPrixContainer: React.FC = () => {
                     key={mode}
                     type="button"
                     onClick={() => setCameraMode(mode)}
-                    className={`px-2.5 py-1 rounded-lg transition-colors cursor-pointer whitespace-nowrap ${
+                    className={`px-2.5 py-1 rounded-lg transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
                       cameraMode === mode
                         ? 'bg-amber-500 text-slate-950 font-black'
                         : 'text-slate-400 hover:text-white'
@@ -949,7 +949,7 @@ export const SuzukaGrandPrixContainer: React.FC = () => {
                   </button>
                 ))}
 
-                <div className="h-4 w-px bg-slate-800 mx-0.5" />
+                <div className="h-4 w-px bg-slate-800 mx-0.5 shrink-0" />
 
                 <select
                   value={
@@ -1164,9 +1164,9 @@ export const SuzukaGrandPrixContainer: React.FC = () => {
                 return (
                   <div className="absolute bottom-1.5 left-2 right-2 sm:bottom-2 sm:left-4 sm:right-4 z-20 pointer-events-none">
                     <div className="w-full bg-slate-950/92 border border-slate-700/90 rounded-xl p-1.5 sm:p-2 shadow-lg flex flex-col gap-1">
-                      <div className="flex items-center justify-between gap-1.5 flex-wrap text-xs font-bold px-1">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <span className="text-rose-400 font-black flex items-center gap-1">
+                      <div className="flex items-center justify-between gap-2 flex-nowrap overflow-x-auto no-scrollbar text-xs font-bold px-1 whitespace-nowrap">
+                        <div className="flex items-center gap-2 flex-nowrap shrink-0">
+                          <span className="text-rose-400 font-black flex items-center gap-1 shrink-0">
                             <Flag size={11} />
                             <span>
                               Q {(studentQuestionIdx % activeQuestions.length) + 1} /{' '}
@@ -1174,16 +1174,16 @@ export const SuzukaGrandPrixContainer: React.FC = () => {
                             </span>
                           </span>
 
-                          <span className="text-slate-600">·</span>
+                          <span className="text-slate-600 shrink-0">·</span>
 
-                          <span className="text-cyan-300 font-mono-tabular font-black">
+                          <span className="text-cyan-300 font-mono-tabular font-black shrink-0">
                             ⚡ {Math.round(studentSpeed)} KM/H
                           </span>
 
                           {isCornerLimited && (
                             <>
-                              <span className="text-slate-600">·</span>
-                              <span className="text-rose-300 font-mono-tabular font-black text-[11px] flex items-center gap-1">
+                              <span className="text-slate-600 shrink-0">·</span>
+                              <span className="text-rose-300 font-mono-tabular font-black text-[11px] flex items-center gap-1 shrink-0">
                                 <AlertTriangle size={11} className="text-rose-400" />
                                 <span>
                                   {t(
@@ -1195,22 +1195,22 @@ export const SuzukaGrandPrixContainer: React.FC = () => {
                             </>
                           )}
 
-                          <span className="text-slate-600">·</span>
+                          <span className="text-slate-600 shrink-0">·</span>
 
                           {isPassingLane ? (
-                            <span className="text-cyan-300 font-mono-tabular font-black text-[11px] flex items-center gap-1">
+                            <span className="text-cyan-300 font-mono-tabular font-black text-[11px] flex items-center gap-1 shrink-0">
                               <Sparkles size={11} className="text-cyan-400" />
                               <span>{t('PASSING LANE', 'おいこし (追越)')}</span>
                             </span>
                           ) : (
-                            <span className="text-slate-400 font-mono-tabular font-bold text-[11px]">
+                            <span className="text-slate-400 font-mono-tabular font-bold text-[11px] shrink-0">
                               {t('DRIVING LANE', 'そうこう (走行)')}
                             </span>
                           )}
                         </div>
 
                         {studentStreak > 0 && (
-                          <span className="flex items-center gap-1 text-amber-300 font-black text-xs">
+                          <span className="flex items-center gap-1 text-amber-300 font-black text-xs shrink-0">
                             <Flame size={12} className="text-amber-400" />
                             <span>
                               x{studentStreak} {t('NITRO!', 'かそく!')}
@@ -1307,7 +1307,7 @@ export const SuzukaGrandPrixContainer: React.FC = () => {
         {/* Pause Modal */}
         {isPaused && !isVictoryModalOpen && (
           <div className="fixed inset-0 z-50 bg-slate-950/90 flex items-center justify-center p-4">
-            <div className="max-w-md w-full bg-slate-900 border-2 border-slate-700 rounded-3xl p-6 shadow-2xl text-center space-y-5">
+            <div className="max-w-xl w-full bg-slate-900 border-2 border-slate-700 rounded-3xl p-6 shadow-2xl text-center space-y-5">
               <div className="space-y-1">
                 <h2 className="text-2xl font-display font-bold text-white">
                   {t('RACE PAUSED', '一時停止中')}
@@ -1365,104 +1365,109 @@ export const SuzukaGrandPrixContainer: React.FC = () => {
           </div>
         )}
 
-        {/* Victory / Podium & Vocabulary Mastery Modal */}
+        {/* Victory / Podium & Vocabulary Mastery Modal (Landscape 2-Column) */}
         {isVictoryModalOpen && (
-          <div className="fixed inset-0 z-50 bg-slate-950/92 flex items-center justify-center p-4 overflow-y-auto">
-            <div className="max-w-lg w-full bg-slate-900 border-2 border-amber-400/80 rounded-3xl p-6 shadow-2xl space-y-5">
-              <div className="text-center space-y-1">
+          <div className="fixed inset-0 z-50 bg-slate-950/92 flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+            <div className="max-w-4xl w-full max-h-[92dvh] bg-slate-900 border-2 border-amber-400/80 rounded-3xl p-4 sm:p-6 shadow-2xl flex flex-col gap-4 overflow-hidden">
+              <div className="text-center space-y-1 shrink-0 border-b border-slate-800 pb-3">
                 <div className="text-xs font-black text-amber-400 uppercase tracking-widest">
                   🏁 SUZUKA GRAND PRIX PODIUM & ESL REPORT
                 </div>
-                <h2 className="text-2xl sm:text-3xl font-display font-bold text-white">
+                <h2 className="text-xl sm:text-3xl font-display font-bold text-white">
                   {t('Checkered Flag! Race Complete!', 'チェッカーフラッグ！完走おめでとう！')}
                 </h2>
               </div>
 
-              {/* Top 3 Podium Standings */}
-              <div className="grid grid-cols-3 gap-2.5">
-                {sortedRacers.slice(0, 3).map((r, idx) => (
-                  <div
-                    key={r.id}
-                    className={`p-3 rounded-2xl border text-center ${
-                      idx === 0
-                        ? 'bg-amber-500/15 border-amber-400 text-amber-300'
-                        : 'bg-slate-950 border-slate-800 text-slate-200'
-                    }`}
-                  >
-                    <div className="text-lg font-black">
-                      {idx === 0 ? '🥇 P1' : idx === 1 ? '🥈 P2' : '🥉 P3'}
-                    </div>
-                    <div className="text-xs font-bold truncate mt-0.5">
-                      #{r.number} {r.name}
-                    </div>
-                    <div className="text-[11px] font-mono-tabular text-slate-400 mt-0.5">
-                      {Math.round(Math.max(0, r.distanceMeters))}m
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Mastery Metrics */}
-              <div className="grid grid-cols-3 gap-2 text-center">
-                <div className="p-3 rounded-2xl bg-slate-950 border border-slate-800">
-                  <div className="text-[10px] font-bold text-slate-400">FINAL SCORE</div>
-                  <div className="text-xl font-mono-tabular font-black text-emerald-400">
-                    {studentScore.toLocaleString()}
-                  </div>
-                </div>
-                <div className="p-3 rounded-2xl bg-slate-950 border border-slate-800">
-                  <div className="text-[10px] font-bold text-slate-400">ACCURACY</div>
-                  <div className="text-xl font-mono-tabular font-black text-cyan-400">
-                    {accuracyPct}%
-                  </div>
-                </div>
-                <div className="p-3 rounded-2xl bg-slate-950 border border-slate-800">
-                  <div className="text-[10px] font-bold text-slate-400">WORDS MASTERED</div>
-                  <div className="text-xl font-mono-tabular font-black text-amber-400">
-                    {masteredWordIds.length}/{activeQuestions.length}
-                  </div>
-                </div>
-              </div>
-
-              {/* Vocabulary Words Practiced List */}
-              <div className="bg-slate-950 border border-slate-800 rounded-2xl p-3 space-y-1.5">
-                <div className="text-[11px] font-black text-slate-400 uppercase tracking-wider">
-                  {t('Unit Vocabulary & Phonics Summary', '今回の学習英単語＆フォニックス')}
-                </div>
-                <div className="grid grid-cols-2 gap-1.5 max-h-32 overflow-y-auto pr-1">
-                  {activeQuestions.map((q) => {
-                    const isMastered = masteredWordIds.includes(q.targetWordId);
-                    return (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 min-h-0 flex-1 overflow-y-auto">
+                {/* Left Column: Podium Standings, Metrics & Actions */}
+                <div className="flex flex-col justify-between gap-3">
+                  {/* Top 3 Podium Standings */}
+                  <div className="grid grid-cols-3 gap-2">
+                    {sortedRacers.slice(0, 3).map((r, idx) => (
                       <div
-                        key={q.targetWordId}
-                        className="flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-slate-900 text-xs"
+                        key={r.id}
+                        className={`p-2.5 sm:p-3 rounded-2xl border text-center ${
+                          idx === 0
+                            ? 'bg-amber-500/15 border-amber-400 text-amber-300'
+                            : 'bg-slate-950 border-slate-800 text-slate-200'
+                        }`}
                       >
-                        <span className="font-black text-white">{q.targetWordEnglish}</span>
-                        <span className="text-slate-400 text-[11px]">
-                          {q.targetWordJa} {isMastered ? '✅' : ''}
-                        </span>
+                        <div className="text-base sm:text-lg font-black">
+                          {idx === 0 ? '🥇 P1' : idx === 1 ? '🥈 P2' : '🥉 P3'}
+                        </div>
+                        <div className="text-xs font-bold truncate mt-0.5">
+                          #{r.number} {r.name}
+                        </div>
+                        <div className="text-[11px] font-mono-tabular text-slate-400 mt-0.5">
+                          {Math.round(Math.max(0, r.distanceMeters))}m
+                        </div>
                       </div>
-                    );
-                  })}
-                </div>
-              </div>
+                    ))}
+                  </div>
 
-              <div className="flex gap-3">
-                <button
-                  type="button"
-                  data-start="true"
-                  onClick={handleResetRace}
-                  className="flex-1 py-3 px-5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-sm cursor-pointer shadow-lg"
-                >
-                  {t('Race Again 🏁', 'もう一度レースする 🏁')}
-                </button>
-                <button
-                  type="button"
-                  onClick={exitToHub}
-                  className="py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-sm cursor-pointer"
-                >
-                  {t('Title Screen', 'タイトルへ')}
-                </button>
+                  {/* Mastery Metrics */}
+                  <div className="grid grid-cols-3 gap-2 text-center">
+                    <div className="p-2.5 sm:p-3 rounded-2xl bg-slate-950 border border-slate-800">
+                      <div className="text-[10px] font-bold text-slate-400">FINAL SCORE</div>
+                      <div className="text-lg sm:text-xl font-mono-tabular font-black text-emerald-400">
+                        {studentScore.toLocaleString()}
+                      </div>
+                    </div>
+                    <div className="p-2.5 sm:p-3 rounded-2xl bg-slate-950 border border-slate-800">
+                      <div className="text-[10px] font-bold text-slate-400">ACCURACY</div>
+                      <div className="text-lg sm:text-xl font-mono-tabular font-black text-cyan-400">
+                        {accuracyPct}%
+                      </div>
+                    </div>
+                    <div className="p-2.5 sm:p-3 rounded-2xl bg-slate-950 border border-slate-800">
+                      <div className="text-[10px] font-bold text-slate-400">WORDS MASTERED</div>
+                      <div className="text-lg sm:text-xl font-mono-tabular font-black text-amber-400">
+                        {masteredWordIds.length}/{activeQuestions.length}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-2.5 pt-1">
+                    <button
+                      type="button"
+                      data-start="true"
+                      onClick={handleResetRace}
+                      className="flex-1 py-3 px-4 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-sm cursor-pointer shadow-lg"
+                    >
+                      {t('Race Again 🏁', 'もう一度レースする 🏁')}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={exitToHub}
+                      className="py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-sm cursor-pointer shrink-0"
+                    >
+                      {t('Title Screen', 'タイトルへ')}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Right Column: Vocabulary Words Practiced List */}
+                <div className="bg-slate-950 border border-slate-800 rounded-2xl p-3 flex flex-col min-h-0">
+                  <div className="text-[11px] font-black text-slate-400 uppercase tracking-wider mb-2 shrink-0">
+                    {t('Unit Vocabulary & Phonics Summary', '今回の学習英単語＆フォニックス')}
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 flex-1 min-h-0 max-h-56 overflow-y-auto pr-1">
+                    {activeQuestions.map((q) => {
+                      const isMastered = masteredWordIds.includes(q.targetWordId);
+                      return (
+                        <div
+                          key={q.targetWordId}
+                          className="flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-lg bg-slate-900 text-xs"
+                        >
+                          <span className="font-black text-white truncate">{q.targetWordEnglish}</span>
+                          <span className="text-slate-400 text-[11px] shrink-0">
+                            {q.targetWordJa} {isMastered ? '✅' : ''}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
               </div>
             </div>
           </div>

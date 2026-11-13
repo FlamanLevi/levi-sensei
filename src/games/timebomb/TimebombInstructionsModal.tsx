@@ -50,13 +50,13 @@ const TUTORIAL_SLIDES: TutorialSlide[] = [
     badgeEn: '🧍 Everyone Stand Up',
     titleJa: (
       <>
-        <ruby>全員<rt className="text-[10px] sm:text-xs font-bold text-slate-400">ぜんいん</rt></ruby><ruby>席<rt className="text-[10px] sm:text-xs font-bold text-slate-400">せき</rt></ruby>の<ruby>横<rt className="text-[10px] sm:text-xs font-bold text-slate-400">よこ</rt></ruby>に<ruby>立<rt className="text-[10px] sm:text-xs font-bold text-slate-400">た</rt></ruby>って、1<ruby>人目<rt className="text-[10px] sm:text-xs font-bold text-slate-400">ひとりめ</rt></ruby>の<ruby>人<rt className="text-[10px] sm:text-xs font-bold text-slate-400">ひと</rt></ruby>がボールを<ruby>持<rt className="text-[10px] sm:text-xs font-bold text-slate-400">も</rt></ruby>とう！
+        <ruby>全員<rt>ぜんいん</rt></ruby><ruby>席<rt>せき</rt></ruby>の<ruby>横<rt>よこ</rt></ruby>に<ruby>立<rt>た</rt></ruby>って、1<ruby>人目<rt>ひとりめ</rt></ruby>の<ruby>人<rt>ひと</rt></ruby>がボールを<ruby>持<rt>も</rt></ruby>とう！
       </>
     ),
     titleEn: 'Everyone Stand by Your Desks! Player 1 Holds the Ball!',
     instructionJa: (
       <>
-        <ruby>全員<rt className="text-[10px] sm:text-xs font-bold text-slate-400">ぜんいん</rt></ruby><ruby>席<rt className="text-[10px] sm:text-xs font-bold text-slate-400">せき</rt></ruby>の<ruby>横<rt className="text-[10px] sm:text-xs font-bold text-slate-400">よこ</rt></ruby>に<ruby>立<rt className="text-[10px] sm:text-xs font-bold text-slate-400">た</rt></ruby>ってスタンバイしよう。1<ruby>人目<rt className="text-[10px] sm:text-xs font-bold text-slate-400">ひとりめ</rt></ruby>の<ruby>人<rt className="text-[10px] sm:text-xs font-bold text-slate-400">ひと</rt></ruby>がボールを<ruby>両手<rt className="text-[10px] sm:text-xs font-bold text-slate-400">りょうて</rt></ruby>で<ruby>持<rt className="text-[10px] sm:text-xs font-bold text-slate-400">も</rt></ruby>って、<ruby>音楽<rt className="text-[10px] sm:text-xs font-bold text-slate-400">おんがく</rt></ruby>を<ruby>待<rt className="text-[10px] sm:text-xs font-bold text-slate-400">ま</rt></ruby>とう。
+        <ruby>全員<rt>ぜんいん</rt></ruby><ruby>席<rt>せき</rt></ruby>の<ruby>横<rt>よこ</rt></ruby>に<ruby>立<rt>た</rt></ruby>ってスタンバイしよう。1<ruby>人目<rt>ひとりめ</rt></ruby>の<ruby>人<rt>ひと</rt></ruby>がボールを<ruby>両手<rt>りょうて</rt></ruby>で<ruby>持<rt>も</rt></ruby>って、<ruby>音楽<rt>おんがく</rt></ruby>を<ruby>待<rt>ま</rt></ruby>とう。
       </>
     ),
     instructionEn: 'Everyone stands up by their desk. Player 1 holds the ball with two hands and waits for the music to begin!',
@@ -87,13 +87,13 @@ const TUTORIAL_SLIDES: TutorialSlide[] = [
     badgeEn: '📍 Passing Formation',
     titleJa: (
       <>
-        ボールを<ruby>回<rt className="text-[10px] sm:text-xs font-bold text-slate-400">まわ</rt></ruby>す<ruby>順番<rt className="text-[10px] sm:text-xs font-bold text-slate-400">じゅんばん</rt></ruby>を<ruby>確認<rt className="text-[10px] sm:text-xs font-bold text-slate-400">かくにん</rt></ruby>しよう！
+        ボールを<ruby>回<rt>まわ</rt></ruby>す<ruby>順番<rt>じゅんばん</rt></ruby>を<ruby>確認<rt>かくにん</rt></ruby>しよう！
       </>
     ),
     titleEn: 'Check How to Pass the Ball Down the Room!',
     instructionJa: (
       <>
-        みんな<ruby>席<rt className="text-[10px] sm:text-xs font-bold text-slate-400">せき</rt></ruby>の<ruby>横<rt className="text-[10px] sm:text-xs font-bold text-slate-400">よこ</rt></ruby>に<ruby>立<rt className="text-[10px] sm:text-xs font-bold text-slate-400">た</rt></ruby>ったまま、1<ruby>列目<rt className="text-[10px] sm:text-xs font-bold text-slate-400">れつめ</rt></ruby>から<ruby>次<rt className="text-[10px] sm:text-xs font-bold text-slate-400">つぎ</rt></ruby>の<ruby>列<rt className="text-[10px] sm:text-xs font-bold text-slate-400">れつ</rt></ruby>へジグザグに<ruby>渡<rt className="text-[10px] sm:text-xs font-bold text-slate-400">わた</rt></ruby>していこう。
+        みんな<ruby>席<rt>せき</rt></ruby>の<ruby>横<rt>よこ</rt></ruby>に<ruby>立<rt>た</rt></ruby>ったまま、1<ruby>列目<rt>れつめ</rt></ruby>から<ruby>次<rt>つぎ</rt></ruby>の<ruby>列<rt>れつ</rt></ruby>へジグザグに<ruby>渡<rt>わた</rt></ruby>していこう。
       </>
     ),
     instructionEn: 'Stand by your desks and pass the ball down each row in a zigzag line!',
@@ -123,13 +123,13 @@ const TUTORIAL_SLIDES: TutorialSlide[] = [
     badgeEn: '📢 Say Word & Pass',
     titleJa: (
       <>
-        <ruby>画面<rt className="text-[10px] sm:text-xs font-bold text-slate-400">がめん</rt></ruby>の<ruby>英語<rt className="text-[10px] sm:text-xs font-bold text-slate-400">えいご</rt></ruby>を<ruby>言<rt className="text-[10px] sm:text-xs font-bold text-slate-400">い</rt></ruby>って、すぐ<ruby>隣<rt className="text-[10px] sm:text-xs font-bold text-slate-400">となり</rt></ruby>へパス！
+        <ruby>画面<rt>がめん</rt></ruby>の<ruby>英語<rt>えいご</rt></ruby>を<ruby>言<rt>い</rt></ruby>って、すぐ<ruby>隣<rt>となり</rt></ruby>へパス！
       </>
     ),
     titleEn: 'Say the Word on Screen and Pass Right Away!',
     instructionJa: (
       <>
-        <ruby>画面<rt className="text-[10px] sm:text-xs font-bold text-slate-400">がめん</rt></ruby>にカードが<ruby>出<rt className="text-[10px] sm:text-xs font-bold text-slate-400">で</rt></ruby>たら、ボールを<ruby>持<rt className="text-[10px] sm:text-xs font-bold text-slate-400">も</rt></ruby>つ<ruby>人<rt className="text-[10px] sm:text-xs font-bold text-slate-400">ひと</rt></ruby>が<ruby>英語<rt className="text-[10px] sm:text-xs font-bold text-slate-400">えいご</rt></ruby>を<ruby>言<rt className="text-[10px] sm:text-xs font-bold text-slate-400">い</rt></ruby>って、すぐに<ruby>隣<rt className="text-[10px] sm:text-xs font-bold text-slate-400">となり</rt></ruby>へ<ruby>手渡<rt className="text-[10px] sm:text-xs font-bold text-slate-400">てわた</rt></ruby>そう！
+        <ruby>画面<rt>がめん</rt></ruby>にカードが<ruby>出<rt>で</rt></ruby>たら、ボールを<ruby>持<rt>も</rt></ruby>つ<ruby>人<rt>ひと</rt></ruby>が<ruby>英語<rt>えいご</rt></ruby>を<ruby>言<rt>い</rt></ruby>って、すぐに<ruby>隣<rt>となり</rt></ruby>へ<ruby>手渡<rt>てわた</rt></ruby>そう！
       </>
     ),
     instructionEn: 'Look at the screen! Say the English word aloud and pass the ball to the next person right away!',
@@ -159,13 +159,13 @@ const TUTORIAL_SLIDES: TutorialSlide[] = [
     badgeEn: '🤝 Help Friends in Need',
     titleJa: (
       <>
-        <ruby>困<rt className="text-[10px] sm:text-xs font-bold text-slate-400">こま</rt></ruby>っている<ruby>友達<rt className="text-[10px] sm:text-xs font-bold text-slate-400">ともだち</rt></ruby>がいたら、みんなでヒントを<ruby>出<rt className="text-[10px] sm:text-xs font-bold text-slate-400">だ</rt></ruby>して<ruby>助<rt className="text-[10px] sm:text-xs font-bold text-slate-400">たす</rt></ruby>けよう！
+        <ruby>困<rt>こま</rt></ruby>っている<ruby>友達<rt>ともだち</rt></ruby>がいたら、みんなでヒントを<ruby>出<rt>だ</rt></ruby>して<ruby>助<rt>たす</rt></ruby>けよう！
       </>
     ),
     titleEn: 'If Your Friend Gets Stuck, Chime In to Help!',
     instructionJa: (
       <>
-        ボールを<ruby>持<rt className="text-[10px] sm:text-xs font-bold text-slate-400">も</rt></ruby>つ<ruby>人<rt className="text-[10px] sm:text-xs font-bold text-slate-400">ひと</rt></ruby>の<ruby>声<rt className="text-[10px] sm:text-xs font-bold text-slate-400">こえ</rt></ruby>をよく<ruby>聞<rt className="text-[10px] sm:text-xs font-bold text-slate-400">き</rt></ruby>こう！もし<ruby>言<rt className="text-[10px] sm:text-xs font-bold text-slate-400">い</rt></ruby>えなくて<ruby>困<rt className="text-[10px] sm:text-xs font-bold text-slate-400">こま</rt></ruby>っていたら、<ruby>周<rt className="text-[10px] sm:text-xs font-bold text-slate-400">まわ</rt></ruby>りのみんながやさしくヒントを<ruby>教<rt className="text-[10px] sm:text-xs font-bold text-slate-400">おし</rt></ruby>えてあげよう！
+        ボールを<ruby>持<rt>も</rt></ruby>つ<ruby>人<rt>ひと</rt></ruby>の<ruby>声<rt>こえ</rt></ruby>をよく<ruby>聞<rt>き</rt></ruby>こう！もし<ruby>言<rt>い</rt></ruby>えなくて<ruby>困<rt>こま</rt></ruby>っていたら、<ruby>周<rt>まわ</rt></ruby>りのみんながやさしくヒントを<ruby>教<rt>おし</rt></ruby>えてあげよう！
       </>
     ),
     instructionEn: 'Listen quietly while the runner speaks! If they need help, kindly chime in together with the answer.',
@@ -195,13 +195,13 @@ const TUTORIAL_SLIDES: TutorialSlide[] = [
     badgeEn: '⏱️ Time’s Up!',
     titleJa: (
       <>
-        「ジュージュー！🔥」「パチン！🎈」と<ruby>鳴<rt className="text-[10px] sm:text-xs font-bold text-slate-400">な</rt></ruby>ったらストップ！
+        「ジュージュー！🔥」「パチン！🎈」と<ruby>鳴<rt>な</rt></ruby>ったらストップ！
       </>
     ),
     titleEn: 'When It Sizzles or Pops, Freeze in Place!',
     instructionJa: (
       <>
-        タイマーの<ruby>音<rt className="text-[10px] sm:text-xs font-bold text-slate-400">おと</rt></ruby>が<ruby>鳴<rt className="text-[10px] sm:text-xs font-bold text-slate-400">な</rt></ruby>った<ruby>瞬間<rt className="text-[10px] sm:text-xs font-bold text-slate-400">しゅんかん</rt></ruby>にボールを<ruby>持<rt className="text-[10px] sm:text-xs font-bold text-slate-400">も</rt></ruby>っていた<ruby>人<rt className="text-[10px] sm:text-xs font-bold text-slate-400">ひと</rt></ruby>が、このラウンドの「スター」！
+        タイマーの<ruby>音<rt>おと</rt></ruby>が<ruby>鳴<rt>な</rt></ruby>った<ruby>瞬間<rt>しゅんかん</rt></ruby>にボールを<ruby>持<rt>も</rt></ruby>っていた<ruby>人<rt>ひと</rt></ruby>が、このラウンドの「スター」！
       </>
     ),
     instructionEn: 'When the secret timer goes off, whoever is holding the ball is the star of the round!',
@@ -231,13 +231,13 @@ const TUTORIAL_SLIDES: TutorialSlide[] = [
     badgeEn: '🎉 Fun Mini-Mission',
     titleJa: (
       <>
-        <ruby>画面<rt className="text-[10px] sm:text-xs font-bold text-slate-400">がめん</rt></ruby>に<ruby>出<rt className="text-[10px] sm:text-xs font-bold text-slate-400">で</rt></ruby>る<ruby>楽<rt className="text-[10px] sm:text-xs font-bold text-slate-400">たの</rt></ruby>しいミニミッションをやってみよう！
+        <ruby>画面<rt>がめん</rt></ruby>に<ruby>出<rt>で</rt></ruby>る<ruby>楽<rt>たの</rt></ruby>しいミニミッションをやってみよう！
       </>
     ),
     titleEn: 'Complete the Fun Mini-Mission on Screen!',
     instructionJa: (
       <>
-        「<ruby>動物<rt className="text-[10px] sm:text-xs font-bold text-slate-400">どうぶつ</rt></ruby>の<ruby>鳴<rt className="text-[10px] sm:text-xs font-bold text-slate-400">な</rt></ruby>きまね」や「ポーズ」などのお<ruby>題<rt className="text-[10px] sm:text-xs font-bold text-slate-400">だい</rt></ruby>にトライ！できたらみんなで<ruby>大拍手<rt className="text-[10px] sm:text-xs font-bold text-slate-400">だいはくしゅ</rt></ruby>！
+        「<ruby>動物<rt>どうぶつ</rt></ruby>の<ruby>鳴<rt>な</rt></ruby>きまね」や「ポーズ」などのお<ruby>題<rt>だい</rt></ruby>にトライ！できたらみんなで<ruby>大拍手<rt>だいはくしゅ</rt></ruby>！
       </>
     ),
     instructionEn: 'Act out an animal sound, fun pose, or dance! Everyone cheers with a big "Good job!"',
@@ -267,13 +267,13 @@ const TUTORIAL_SLIDES: TutorialSlide[] = [
     badgeEn: '🛡️ Safe Play & Manners',
     titleJa: (
       <>
-        <ruby>立<rt className="text-[10px] sm:text-xs font-bold text-slate-400">た</rt></ruby>ったまま<ruby>両手<rt className="text-[10px] sm:text-xs font-bold text-slate-400">りょうて</rt></ruby>で<ruby>手渡<rt className="text-[10px] sm:text-xs font-bold text-slate-400">てわた</rt></ruby>し！<ruby>絶対<rt className="text-[10px] sm:text-xs font-bold text-slate-400">ぜったい</rt></ruby>に<ruby>投<rt className="text-[10px] sm:text-xs font-bold text-slate-400">な</rt></ruby>げたり<ruby>走<rt className="text-[10px] sm:text-xs font-bold text-slate-400">はし</rt></ruby>ったりしない！
+        <ruby>立<rt>た</rt></ruby>ったまま<ruby>両手<rt>りょうて</rt></ruby>で<ruby>手渡<rt>てわた</rt></ruby>し！<ruby>絶対<rt>ぜったい</rt></ruby>に<ruby>投<rt>な</rt></ruby>げたり<ruby>走<rt>はし</rt></ruby>ったりしない！
       </>
     ),
     titleEn: 'Hand Over with Two Hands! Never Throw or Run!',
     instructionJa: (
       <>
-        <ruby>自分<rt className="text-[10px] sm:text-xs font-bold text-slate-400">じぶん</rt></ruby>の<ruby>場所<rt className="text-[10px] sm:text-xs font-bold text-slate-400">ばしょ</rt></ruby>に<ruby>立<rt className="text-[10px] sm:text-xs font-bold text-slate-400">た</rt></ruby>ったまま、となりの<ruby>人<rt className="text-[10px] sm:text-xs font-bold text-slate-400">ひと</rt></ruby>へ<ruby>両手<rt className="text-[10px] sm:text-xs font-bold text-slate-400">りょうて</rt></ruby>でやさしく<ruby>手渡<rt className="text-[10px] sm:text-xs font-bold text-slate-400">てわた</rt></ruby>そう。<ruby>走<rt className="text-[10px] sm:text-xs font-bold text-slate-400">はし</rt></ruby>ったり、ボールを<ruby>投<rt className="text-[10px] sm:text-xs font-bold text-slate-400">な</rt></ruby>げたりするのは<ruby>絶対<rt className="text-[10px] sm:text-xs font-bold text-slate-400">ぜったい</rt></ruby>にダメ！
+        <ruby>自分<rt>じぶん</rt></ruby>の<ruby>場所<rt>ばしょ</rt></ruby>に<ruby>立<rt>た</rt></ruby>ったまま、となりの<ruby>人<rt>ひと</rt></ruby>へ<ruby>両手<rt>りょうて</rt></ruby>でやさしく<ruby>手渡<rt>てわた</rt></ruby>そう。<ruby>走<rt>はし</rt></ruby>ったり、ボールを<ruby>投<rt>な</rt></ruby>げたりするのは<ruby>絶対<rt>ぜったい</rt></ruby>にダメ！
       </>
     ),
     instructionEn: 'Stay in your standing spot and hand the ball over gently with two hands. Never throw the ball or run across the room!',
@@ -330,11 +330,11 @@ export const TimebombInstructionsModal: React.FC<TimebombInstructionsModalProps>
   const activeTitleJa = currentSlide.step === 2
     ? (passingRouteMode === 'zigzag' ? (
         <>
-          <ruby>席<rt className="text-[10px] sm:text-xs font-bold text-slate-400">せき</rt></ruby>の<ruby>横<rt className="text-[10px] sm:text-xs font-bold text-slate-400">よこ</rt></ruby>に<ruby>立<rt className="text-[10px] sm:text-xs font-bold text-slate-400">た</rt></ruby>って、ジグザグにボールを<ruby>回<rt className="text-[10px] sm:text-xs font-bold text-slate-400">まわ</rt></ruby>そう！
+          <ruby>席<rt>せき</rt></ruby>の<ruby>横<rt>よこ</rt></ruby>に<ruby>立<rt>た</rt></ruby>って、ジグザグにボールを<ruby>回<rt>まわ</rt></ruby>そう！
         </>
       ) : (
         <>
-          <ruby>教室<rt className="text-[10px] sm:text-xs font-bold text-slate-400">きょうしつ</rt></ruby>の<ruby>壁<rt className="text-[10px] sm:text-xs font-bold text-slate-400">かべ</rt></ruby>の<ruby>近<rt className="text-[10px] sm:text-xs font-bold text-slate-400">ちか</rt></ruby>くで、みんなで<ruby>大<rt className="text-[10px] sm:text-xs font-bold text-slate-400">おお</rt></ruby>きな<ruby>円<rt className="text-[10px] sm:text-xs font-bold text-slate-400">えん</rt></ruby>を<ruby>作<rt className="text-[10px] sm:text-xs font-bold text-slate-400">つく</rt></ruby>ろう！
+          <ruby>教室<rt>きょうしつ</rt></ruby>の<ruby>壁<rt>かべ</rt></ruby>の<ruby>近<rt>ちか</rt></ruby>くで、みんなで<ruby>大<rt>おお</rt></ruby>きな<ruby>円<rt>えん</rt></ruby>を<ruby>作<rt>つく</rt></ruby>ろう！
         </>
       ))
     : currentSlide.titleJa;
@@ -348,11 +348,11 @@ export const TimebombInstructionsModal: React.FC<TimebombInstructionsModalProps>
   const activeInstructionJa = currentSlide.step === 2
     ? (passingRouteMode === 'zigzag' ? (
         <>
-          みんな<ruby>席<rt className="text-[10px] sm:text-xs font-bold text-slate-400">せき</rt></ruby>の<ruby>横<rt className="text-[10px] sm:text-xs font-bold text-slate-400">よこ</rt></ruby>に<ruby>立<rt className="text-[10px] sm:text-xs font-bold text-slate-400">た</rt></ruby>ったまま、1<ruby>列目<rt className="text-[10px] sm:text-xs font-bold text-slate-400">れつめ</rt></ruby>から<ruby>次<rt className="text-[10px] sm:text-xs font-bold text-slate-400">つぎ</rt></ruby>の<ruby>列<rt className="text-[10px] sm:text-xs font-bold text-slate-400">れつ</rt></ruby>へジグザグに<ruby>渡<rt className="text-[10px] sm:text-xs font-bold text-slate-400">わた</rt></ruby>していこう。
+          みんな<ruby>席<rt>せき</rt></ruby>の<ruby>横<rt>よこ</rt></ruby>に<ruby>立<rt>た</rt></ruby>ったまま、1<ruby>列目<rt>れつめ</rt></ruby>から<ruby>次<rt>つぎ</rt></ruby>の<ruby>列<rt>れつ</rt></ruby>へジグザグに<ruby>渡<rt>わた</rt></ruby>していこう。
         </>
       ) : (
         <>
-          <ruby>壁<rt className="text-[10px] sm:text-xs font-bold text-slate-400">かべ</rt></ruby>の<ruby>近<rt className="text-[10px] sm:text-xs font-bold text-slate-400">ちか</rt></ruby>くに<ruby>並<rt className="text-[10px] sm:text-xs font-bold text-slate-400">なら</rt></ruby>んで<ruby>大<rt className="text-[10px] sm:text-xs font-bold text-slate-400">おお</rt></ruby>きな<ruby>円<rt className="text-[10px] sm:text-xs font-bold text-slate-400">えん</rt></ruby>を<ruby>作<rt className="text-[10px] sm:text-xs font-bold text-slate-400">つく</rt></ruby>り、となりへボールを<ruby>渡<rt className="text-[10px] sm:text-xs font-bold text-slate-400">わた</rt></ruby>していこう。
+          <ruby>壁<rt>かべ</rt></ruby>の<ruby>近<rt>ちか</rt></ruby>くに<ruby>並<rt>なら</rt></ruby>んで<ruby>大<rt>おお</rt></ruby>きな<ruby>円<rt>えん</rt></ruby>を<ruby>作<rt>つく</rt></ruby>り、となりへボールを<ruby>渡<rt>わた</rt></ruby>していこう。
         </>
       ))
     : currentSlide.instructionJa;
@@ -473,20 +473,20 @@ export const TimebombInstructionsModal: React.FC<TimebombInstructionsModalProps>
       onClick={onClose}
     >
       <div
-        className="w-[98vw] max-w-[1800px] h-[95vh] max-h-[980px] flex flex-col bg-white dark:bg-slate-900 border-4 sm:border-6 border-amber-400 dark:border-amber-500 rounded-3xl shadow-2xl overflow-hidden transition-all duration-200"
+        className="w-[98vw] max-w-[1800px] h-[95dvh] max-h-[980px] flex flex-col bg-white dark:bg-slate-900 border-4 sm:border-6 border-amber-400 dark:border-amber-500 rounded-3xl shadow-2xl overflow-hidden transition-all duration-200"
         onClick={e => e.stopPropagation()}
       >
         {/* ====================================================================
             HEADER BAR: Title, Fullscreen, Lang & Theme Toggles, Close
            ==================================================================== */}
-        <div className="flex items-center justify-between px-3.5 sm:px-6 py-2 sm:py-2.5 bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-slate-950 shrink-0 min-h-[46px] sm:min-h-[50px]">
+        <div className="flex items-center justify-between gap-2 px-3.5 sm:px-6 py-2 sm:py-2.5 bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-slate-950 shrink-0 min-h-[46px] sm:min-h-[50px]">
           {/* Left: Modal Title */}
           <div className="min-w-0 flex-1 flex items-center gap-2">
             <span className="text-base sm:text-xl shrink-0">🥔</span>
             <h1 className="text-xs sm:text-base md:text-lg font-black tracking-wide text-slate-950 truncate">
               {isJa ? (
                 <>
-                  ホットポテト＆ポップ・リレーの<ruby>遊<rt className="text-[8px] sm:text-[9px] font-bold">あそ</rt></ruby>び<ruby>方<rt className="text-[8px] sm:text-[9px] font-bold">かた</rt></ruby>・ルール
+                  ホットポテト＆ポップ・リレーの<ruby>遊<rt>あそ</rt></ruby>び<ruby>方<rt>かた</rt></ruby>・ルール
                 </>
               ) : (
                 'Hot Potato & Pop Relay · How to Play & Rules'
@@ -515,11 +515,11 @@ export const TimebombInstructionsModal: React.FC<TimebombInstructionsModalProps>
             </button>
 
             {/* Language Toggle */}
-            <div className="flex bg-slate-950/25 p-0.5 rounded-xl text-xs sm:text-sm font-black">
+            <div className="flex bg-slate-950/25 p-0.5 rounded-xl text-xs sm:text-sm font-black shrink-0 flex-nowrap">
               <button
                 type="button"
                 onClick={() => setLang('ja')}
-                className={`px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg transition-all cursor-pointer ${
+                className={`px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg transition-all cursor-pointer whitespace-nowrap ${
                   isJa ? 'bg-white text-slate-950 shadow-sm' : 'text-slate-900 hover:text-white'
                 }`}
               >
@@ -528,7 +528,7 @@ export const TimebombInstructionsModal: React.FC<TimebombInstructionsModalProps>
               <button
                 type="button"
                 onClick={() => setLang('en')}
-                className={`px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg transition-all cursor-pointer ${
+                className={`px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg transition-all cursor-pointer whitespace-nowrap ${
                   !isJa ? 'bg-white text-slate-950 shadow-sm' : 'text-slate-900 hover:text-white'
                 }`}
               >
@@ -567,7 +567,7 @@ export const TimebombInstructionsModal: React.FC<TimebombInstructionsModalProps>
             className={`w-full h-full rounded-2xl sm:rounded-3xl border-4 ${currentSlide.theme.border} bg-white dark:bg-slate-900 p-3 sm:p-5 md:p-6 shadow-xl flex flex-col items-center justify-between text-center relative transition-all duration-200 overflow-y-auto`}
           >
             {/* 1. TOP ANCHOR: Visual Diagram & Card 2 Side-by-Side Dual-Mode Switcher */}
-            <div className="shrink-0 flex items-center justify-center gap-3 sm:gap-5 flex-wrap mt-0">
+            <div className="shrink-0 flex flex-nowrap items-center justify-center gap-3 sm:gap-5 max-w-full overflow-x-auto no-scrollbar mt-0">
               {/* Illustration Box */}
               <div
                 className={`w-auto min-w-[190px] max-w-fit px-6 sm:px-8 py-1.5 sm:py-2.5 rounded-2xl sm:rounded-3xl border-3 ${currentSlide.theme.border} ${currentSlide.theme.graphicBg} flex flex-col items-center justify-center shrink-0 shadow-inner`}
@@ -575,21 +575,21 @@ export const TimebombInstructionsModal: React.FC<TimebombInstructionsModalProps>
                 <div className="flex items-center justify-center gap-3 sm:gap-4 text-2xl sm:text-3xl md:text-4xl leading-none">
                   {activeGraphicIcons}
                 </div>
-                <span className="text-[11px] sm:text-xs md:text-sm font-black tracking-wide bg-white/95 dark:bg-slate-900/95 px-4 sm:px-5 py-0.5 rounded-full border border-slate-200 dark:border-slate-700 shadow-xs mt-1.5 leading-none">
+                <span className="text-[11px] sm:text-xs md:text-sm font-black tracking-wide bg-white/95 dark:bg-slate-900/95 px-4 sm:px-5 py-0.5 rounded-full border border-slate-200 dark:border-slate-700 shadow-xs mt-1.5 leading-none whitespace-nowrap">
                   {isJa ? activeBadgeJa : activeBadgeEn}
                 </span>
               </div>
 
               {/* Card 2 Side-by-Side Dual-Mode Toggle */}
               {currentSlide.step === 2 && (
-                <div className="flex bg-slate-100 dark:bg-slate-800 p-1 sm:p-1.5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs shrink-0 gap-1 animate-in fade-in zoom-in-95 duration-150">
+                <div className="flex flex-nowrap bg-slate-100 dark:bg-slate-800 p-1 sm:p-1.5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs shrink-0 gap-1 animate-in fade-in zoom-in-95 duration-150">
                   <button
                     type="button"
                     onClick={() => {
                       setPassingRouteMode('zigzag');
                       soundEffects.playCardFlip();
                     }}
-                    className={`px-3 sm:px-4 py-1.5 rounded-xl font-black text-xs sm:text-sm transition-all cursor-pointer flex items-center gap-1.5 ${
+                    className={`px-3 sm:px-4 py-1.5 rounded-xl font-black text-xs sm:text-sm transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap shrink-0 ${
                       passingRouteMode === 'zigzag'
                         ? 'bg-sky-500 text-white shadow-xs'
                         : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
@@ -604,7 +604,7 @@ export const TimebombInstructionsModal: React.FC<TimebombInstructionsModalProps>
                       setPassingRouteMode('circle');
                       soundEffects.playCardFlip();
                     }}
-                    className={`px-3 sm:px-4 py-1.5 rounded-xl font-black text-xs sm:text-sm transition-all cursor-pointer flex items-center gap-1.5 ${
+                    className={`px-3 sm:px-4 py-1.5 rounded-xl font-black text-xs sm:text-sm transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap shrink-0 ${
                       passingRouteMode === 'circle'
                         ? 'bg-sky-500 text-white shadow-xs'
                         : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
@@ -658,13 +658,13 @@ export const TimebombInstructionsModal: React.FC<TimebombInstructionsModalProps>
         {/* ====================================================================
             FOOTER CONTROLS: [Back] [1] [2] [3] [4] [5] [6] [7] [Next / Let's Play]
            ==================================================================== */}
-        <div className="px-3 sm:px-6 py-2.5 sm:py-3 bg-slate-50 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 flex items-center justify-center shrink-0 gap-2.5 sm:gap-4 flex-wrap">
+        <div className="px-3 sm:px-6 py-2.5 sm:py-3 bg-slate-50 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 flex flex-nowrap items-center justify-center shrink-0 gap-2.5 sm:gap-4 overflow-x-auto no-scrollbar">
           {/* Back Button */}
           <button
             type="button"
             onClick={handlePrev}
             disabled={currentSlideIndex <= 0}
-            className="px-3.5 sm:px-5 py-1.5 sm:py-2.5 rounded-2xl bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 disabled:opacity-25 disabled:cursor-not-allowed text-slate-800 dark:text-slate-200 font-bold text-xs sm:text-sm md:text-base flex items-center gap-1.5 transition-all cursor-pointer shadow-xs"
+            className="px-3.5 sm:px-5 py-1.5 sm:py-2.5 rounded-2xl bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 disabled:opacity-25 disabled:cursor-not-allowed text-slate-800 dark:text-slate-200 font-bold text-xs sm:text-sm md:text-base flex items-center gap-1.5 transition-all cursor-pointer shadow-xs shrink-0 whitespace-nowrap"
             title={isJa ? '前のカード (←キー)' : 'Previous Card (← Arrow)'}
           >
             <ChevronLeft size={18} />
@@ -672,7 +672,7 @@ export const TimebombInstructionsModal: React.FC<TimebombInstructionsModalProps>
           </button>
 
           {/* 7 Interactive Step Indicator Dots / Number Pills */}
-          <div className="flex items-center gap-1.5 sm:gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 flex-nowrap">
             {TUTORIAL_SLIDES.map((slide, idx) => {
               const isActive = idx === currentSlideIndex;
               return (
@@ -680,7 +680,7 @@ export const TimebombInstructionsModal: React.FC<TimebombInstructionsModalProps>
                   key={slide.step}
                   type="button"
                   onClick={() => handleJumpToSlide(idx)}
-                  className={`w-8 h-8 sm:w-10 sm:h-10 md:w-11 md:h-11 rounded-full font-black text-xs sm:text-sm md:text-base flex items-center justify-center transition-all cursor-pointer ${
+                  className={`w-8 h-8 sm:w-10 sm:h-10 md:w-11 md:h-11 rounded-full font-black text-xs sm:text-sm md:text-base flex items-center justify-center transition-all cursor-pointer shrink-0 ${
                     isActive
                       ? `${slide.theme.pillBg} shadow-md scale-110 ring-2 ring-amber-400`
                       : 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-300 dark:hover:bg-slate-700'
@@ -698,7 +698,7 @@ export const TimebombInstructionsModal: React.FC<TimebombInstructionsModalProps>
             <button
               type="button"
               onClick={handleNext}
-              className="px-4 sm:px-6 py-1.5 sm:py-2.5 rounded-2xl bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white font-black text-xs sm:text-sm md:text-base shadow-md hover:shadow-lg transition-all cursor-pointer flex items-center gap-1.5"
+              className="px-4 sm:px-6 py-1.5 sm:py-2.5 rounded-2xl bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white font-black text-xs sm:text-sm md:text-base shadow-md hover:shadow-lg transition-all cursor-pointer flex items-center gap-1.5 shrink-0 whitespace-nowrap"
               title={isJa ? '次のカード (→キー / スペース)' : 'Next Card (→ Arrow / Space)'}
             >
               <span>{isJa ? 'つぎへ' : 'Next'}</span>
@@ -711,7 +711,7 @@ export const TimebombInstructionsModal: React.FC<TimebombInstructionsModalProps>
                 soundEffects.playCorrect();
                 onClose();
               }}
-              className="px-5 sm:px-8 py-1.5 sm:py-2.5 rounded-2xl bg-amber-500 hover:bg-amber-400 active:scale-95 text-slate-950 font-black text-xs sm:text-sm md:text-base shadow-md hover:shadow-lg transition-all cursor-pointer flex items-center gap-2 animate-pulse"
+              className="px-5 sm:px-8 py-1.5 sm:py-2.5 rounded-2xl bg-amber-500 hover:bg-amber-400 active:scale-95 text-slate-950 font-black text-xs sm:text-sm md:text-base shadow-md hover:shadow-lg transition-all cursor-pointer flex items-center gap-2 animate-pulse shrink-0 whitespace-nowrap"
               title={isJa ? 'ゲーム開始 (Enter)' : 'Start Game (Enter)'}
             >
               <Play size={16} className="fill-slate-950" />

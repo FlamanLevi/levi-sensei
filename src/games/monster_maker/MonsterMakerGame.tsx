@@ -173,9 +173,9 @@ export const MonsterMakerGame: React.FC<MonsterMakerGameProps> = () => {
           ========================================================================= */}
       <div className="w-full max-w-7xl mx-auto p-2 sm:p-4 print:hidden flex flex-col gap-3">
         {/* Top Control Bar: Mode Tabs & Primary Actions */}
-        <div className="bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 rounded-2xl p-2.5 sm:p-3 shadow-md flex flex-wrap items-center justify-between gap-2.5">
+        <div className="bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 rounded-2xl p-2.5 sm:p-3 shadow-md flex flex-nowrap overflow-x-auto no-scrollbar whitespace-nowrap items-center justify-between gap-2.5">
           {/* Mode Switcher Tabs */}
-          <div className="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">
+          <div className="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl shrink-0">
             <button
               onClick={() => {
                 soundEffects.playTick();
@@ -184,7 +184,7 @@ export const MonsterMakerGame: React.FC<MonsterMakerGameProps> = () => {
               className={`px-3 py-1.5 rounded-lg font-black text-xs sm:text-sm flex items-center gap-1.5 transition-all cursor-pointer ${
                 activeTab === 'PRINT'
                   ? 'bg-indigo-600 text-white shadow-xs'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                  : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
               <Printer size={16} />
@@ -202,7 +202,7 @@ export const MonsterMakerGame: React.FC<MonsterMakerGameProps> = () => {
               className={`px-3 py-1.5 rounded-lg font-black text-xs sm:text-sm flex items-center gap-1.5 transition-all cursor-pointer ${
                 activeTab === 'TV_DEMO'
                   ? 'bg-amber-500 text-slate-950 shadow-xs'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                  : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
               <Tv size={16} />
@@ -212,7 +212,7 @@ export const MonsterMakerGame: React.FC<MonsterMakerGameProps> = () => {
 
           {/* Orientation Toggle: Landscape vs Portrait */}
           {activeTab === 'PRINT' && (
-            <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">
+            <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl shrink-0">
               <button
                 onClick={() => {
                   soundEffects.playTick();
@@ -221,7 +221,7 @@ export const MonsterMakerGame: React.FC<MonsterMakerGameProps> = () => {
                 className={`px-3 py-1.5 rounded-lg text-xs font-black flex items-center gap-1.5 transition-all cursor-pointer ${
                   orientation === 'landscape'
                     ? 'bg-emerald-600 text-white shadow-xs'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                    : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
                 }`}
                 title="Landscape A4: Left artwork, Right full speech"
               >
@@ -237,7 +237,7 @@ export const MonsterMakerGame: React.FC<MonsterMakerGameProps> = () => {
                 className={`px-3 py-1.5 rounded-lg text-xs font-black flex items-center gap-1.5 transition-all cursor-pointer ${
                   orientation === 'portrait'
                     ? 'bg-emerald-600 text-white shadow-xs'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                    : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
                 }`}
                 title="Portrait A4"
               >
@@ -249,7 +249,7 @@ export const MonsterMakerGame: React.FC<MonsterMakerGameProps> = () => {
 
           {/* Part Count Mode Toggle: Free Choice (Blank) vs Random Pre-filled */}
           {activeTab === 'PRINT' && (
-            <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">
+            <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl shrink-0">
               <button
                 onClick={() => {
                   soundEffects.playTick();
@@ -258,7 +258,7 @@ export const MonsterMakerGame: React.FC<MonsterMakerGameProps> = () => {
                 className={`px-3 py-1.5 rounded-lg text-xs font-black flex items-center gap-1.5 transition-all cursor-pointer ${
                   countMode === 'studentChoice'
                     ? 'bg-amber-500 text-slate-950 shadow-xs'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                    : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
                 }`}
                 title="Students draw whatever number of parts they want and write their own numbers"
               >
@@ -274,7 +274,7 @@ export const MonsterMakerGame: React.FC<MonsterMakerGameProps> = () => {
                 className={`px-3 py-1.5 rounded-lg text-xs font-black flex items-center gap-1.5 transition-all cursor-pointer ${
                   countMode === 'random'
                     ? 'bg-amber-500 text-slate-950 shadow-xs'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                    : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
                 }`}
                 title="Random count pre-printed on each sheet"
               >
@@ -285,7 +285,7 @@ export const MonsterMakerGame: React.FC<MonsterMakerGameProps> = () => {
           )}
 
           {/* Action Button Cluster */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 shrink-0 flex-nowrap">
             {activeTab === 'PRINT' && (
               <>
                 <button
@@ -408,20 +408,20 @@ export const MonsterMakerGame: React.FC<MonsterMakerGameProps> = () => {
               </div>
 
               {/* Japanese Notation Switcher */}
-              <div className="col-span-full border-t border-slate-200 dark:border-slate-800 pt-3 flex items-center justify-between">
-                <label className="text-xs font-black text-slate-600 dark:text-slate-400 uppercase tracking-wider">
+              <div className="col-span-full border-t border-slate-200 dark:border-slate-800 pt-3 flex items-center justify-between gap-2 flex-nowrap overflow-x-auto no-scrollbar">
+                <label className="text-xs font-black text-slate-600 dark:text-slate-300 uppercase tracking-wider whitespace-nowrap min-w-0 truncate">
                   {t('Japanese Ruby & Kanji Standards', '日本語のふりがな・表記設定')}
                 </label>
-                <div className="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">
+                <div className="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl shrink-0 flex-nowrap whitespace-nowrap">
                   <button
                     onClick={() => {
                       soundEffects.playTick();
                       setJapaneseNotation('ruby');
                     }}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-black transition-all cursor-pointer ${
+                    className={`px-3 py-1.5 rounded-lg text-xs font-black transition-all cursor-pointer whitespace-nowrap shrink-0 ${
                       japaneseNotation === 'ruby'
                         ? 'bg-indigo-600 text-white shadow-xs'
-                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
+                        : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
                     }`}
                   >
                     <span>{t('MEXT Kanji + Furigana (漢字＋ふりがな)', '漢字＋ふりがな (推奨)')}</span>
@@ -431,10 +431,10 @@ export const MonsterMakerGame: React.FC<MonsterMakerGameProps> = () => {
                       soundEffects.playTick();
                       setJapaneseNotation('hiragana');
                     }}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-black transition-all cursor-pointer ${
+                    className={`px-3 py-1.5 rounded-lg text-xs font-black transition-all cursor-pointer whitespace-nowrap shrink-0 ${
                       japaneseNotation === 'hiragana'
                         ? 'bg-indigo-600 text-white shadow-xs'
-                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
+                        : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
                     }`}
                   >
                     <span>{t('All Hiragana (ひらがなのみ)', 'ひらがなのみ')}</span>
@@ -445,10 +445,10 @@ export const MonsterMakerGame: React.FC<MonsterMakerGameProps> = () => {
 
             {/* Row 2: Shapes Pool Selection */}
             <div>
-              <label className="block text-xs font-black text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-black text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1.5">
                 {t('Enabled Body Shapes (Randomly Distributed)', '使用するからだの形（生徒にランダム配分）')}
               </label>
-              <div className="flex flex-wrap gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 {ALL_SHAPE_IDS.map((id) => {
                   const shape = SHAPES_DATA[id];
                   const isEnabled = enabledShapes.includes(id);
@@ -456,17 +456,19 @@ export const MonsterMakerGame: React.FC<MonsterMakerGameProps> = () => {
                     <button
                       key={id}
                       onClick={() => toggleShape(id)}
-                      className={`px-3 py-1.5 rounded-xl border-2 text-xs font-black flex items-center gap-1.5 transition-all cursor-pointer ${
+                      className={`px-3 py-1.5 rounded-xl border-2 text-xs font-black flex items-center justify-between gap-1.5 transition-all cursor-pointer min-w-0 ${
                         isEnabled
                           ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-900 dark:text-indigo-200'
-                          : 'border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-800/40 text-slate-400 opacity-60'
+                          : 'border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-800/60 text-slate-500 dark:text-slate-400 opacity-75 hover:opacity-100'
                       }`}
                     >
-                      <span>{shape.icon}</span>
-                      <span>
-                        {shape.nameEn} ({shape.nameJa})
+                      <span className="flex items-center gap-1.5 min-w-0 truncate">
+                        <span className="shrink-0">{shape.icon}</span>
+                        <span className="truncate">
+                          {shape.nameEn} ({shape.nameJa})
+                        </span>
                       </span>
-                      {isEnabled && <Check size={13} className="text-indigo-600 dark:text-indigo-400" />}
+                      {isEnabled && <Check size={13} className="text-indigo-600 dark:text-indigo-400 shrink-0" />}
                     </button>
                   );
                 })}
@@ -475,10 +477,10 @@ export const MonsterMakerGame: React.FC<MonsterMakerGameProps> = () => {
 
             {/* Row 3: Body Parts Selection */}
             <div>
-              <label className="block text-xs font-black text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-black text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1.5">
                 {t('Enabled Body Parts Checklist', 'モンスターのパーツ指定')}
               </label>
-              <div className="flex flex-wrap gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
                 {ALL_BODY_PART_IDS.map((id) => {
                   const part = BODY_PARTS_DATA[id];
                   const isEnabled = enabledBodyParts.includes(id);
@@ -486,17 +488,19 @@ export const MonsterMakerGame: React.FC<MonsterMakerGameProps> = () => {
                     <button
                       key={id}
                       onClick={() => toggleBodyPart(id)}
-                      className={`px-3 py-1.5 rounded-xl border-2 text-xs font-black flex items-center gap-1.5 transition-all cursor-pointer ${
+                      className={`px-3 py-1.5 rounded-xl border-2 text-xs font-black flex items-center justify-between gap-1.5 transition-all cursor-pointer min-w-0 ${
                         isEnabled
                           ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-900 dark:text-emerald-200'
-                          : 'border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-800/40 text-slate-400 opacity-60'
+                          : 'border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-800/60 text-slate-500 dark:text-slate-400 opacity-75 hover:opacity-100'
                       }`}
                     >
-                      <span>{part.icon}</span>
-                      <span>
-                        {part.namePlural} ({part.jaName})
+                      <span className="flex items-center gap-1.5 min-w-0 truncate">
+                        <span className="shrink-0">{part.icon}</span>
+                        <span className="truncate">
+                          {part.namePlural} ({part.jaName})
+                        </span>
                       </span>
-                      {isEnabled && <Check size={13} className="text-emerald-600 dark:text-emerald-400" />}
+                      {isEnabled && <Check size={13} className="text-emerald-600 dark:text-emerald-400 shrink-0" />}
                     </button>
                   );
                 })}
@@ -520,15 +524,15 @@ export const MonsterMakerGame: React.FC<MonsterMakerGameProps> = () => {
         {activeTab === 'PRINT' && (
           <div className="flex flex-col gap-3">
             {/* View Mode Bar */}
-            <div className="flex items-center justify-between text-xs font-black text-slate-600 dark:text-slate-400 px-1">
-              <div className="flex items-center gap-2">
-                <span>
+            <div className="flex items-center justify-between gap-2 text-xs font-black text-slate-600 dark:text-slate-300 px-1 flex-nowrap overflow-x-auto no-scrollbar whitespace-nowrap">
+              <div className="flex items-center gap-2 shrink-0 flex-nowrap">
+                <span className="whitespace-nowrap">
                   {t('Previewing:', 'プレビュー表示:')} {sheets.length} {t('Worksheets Ready', '枚のシート')}
                 </span>
                 <span className="text-slate-400 dark:text-slate-600">|</span>
                 <button
                   onClick={() => setViewMode('SINGLE')}
-                  className={`px-2.5 py-1 rounded-lg flex items-center gap-1 cursor-pointer transition-all ${
+                  className={`px-2.5 py-1 rounded-lg flex items-center gap-1 cursor-pointer transition-all whitespace-nowrap shrink-0 ${
                     viewMode === 'SINGLE'
                       ? 'bg-indigo-600 text-white'
                       : 'hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300'
@@ -539,7 +543,7 @@ export const MonsterMakerGame: React.FC<MonsterMakerGameProps> = () => {
                 </button>
                 <button
                   onClick={() => setViewMode('GRID')}
-                  className={`px-2.5 py-1 rounded-lg flex items-center gap-1 cursor-pointer transition-all ${
+                  className={`px-2.5 py-1 rounded-lg flex items-center gap-1 cursor-pointer transition-all whitespace-nowrap shrink-0 ${
                     viewMode === 'GRID'
                       ? 'bg-indigo-600 text-white'
                       : 'hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300'
@@ -551,7 +555,7 @@ export const MonsterMakerGame: React.FC<MonsterMakerGameProps> = () => {
               </div>
 
               {viewMode === 'SINGLE' && (
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 shrink-0 flex-nowrap">
                   <button
                     onClick={() => setCurrentPreviewIndex((i) => Math.max(0, i - 1))}
                     disabled={currentPreviewIndex === 0}
@@ -559,7 +563,7 @@ export const MonsterMakerGame: React.FC<MonsterMakerGameProps> = () => {
                   >
                     <ChevronLeft size={16} />
                   </button>
-                  <span className="font-mono">
+                  <span className="font-mono whitespace-nowrap">
                     {currentPreviewIndex + 1} / {sheets.length}
                   </span>
                   <button

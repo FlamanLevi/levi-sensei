@@ -44,25 +44,25 @@ export function getJapanesePartPhraseRuby(partId: BodyPartId, count: number): Re
     case 'eyes':
       return (
         <>
-          <ruby>目<rt className="text-[7.5px] font-normal text-slate-500">め</rt></ruby>が {count}つ
+          <ruby>目<rt className="font-normal">め</rt></ruby>が {count}つ
         </>
       );
     case 'ears':
       return (
         <>
-          <ruby>耳<rt className="text-[7.5px] font-normal text-slate-500">みみ</rt></ruby>が {count}つ
+          <ruby>耳<rt className="font-normal">みみ</rt></ruby>が {count}つ
         </>
       );
     case 'nose':
       return (
         <>
-          <ruby>鼻<rt className="text-[7.5px] font-normal text-slate-500">はな</rt></ruby>が {count}つ
+          <ruby>鼻<rt className="font-normal">はな</rt></ruby>が {count}つ
         </>
       );
     case 'mouth':
       return (
         <>
-          <ruby>口<rt className="text-[7.5px] font-normal text-slate-500">くち</rt></ruby>が {count}つ
+          <ruby>口<rt className="font-normal">くち</rt></ruby>が {count}つ
         </>
       );
     case 'arms':
@@ -74,7 +74,7 @@ export function getJapanesePartPhraseRuby(partId: BodyPartId, count: number): Re
       const counter = count === 1 ? '1ぽん' : count === 3 ? '3ぼん' : count === 6 || count === 8 || count === 10 ? `${count}ぽん` : `${count}ほん`;
       return (
         <>
-          <ruby>足<rt className="text-[7.5px] font-normal text-slate-500">あし</rt></ruby>が {counter}
+          <ruby>足<rt className="font-normal">あし</rt></ruby>が {counter}
         </>
       );
     }
@@ -95,25 +95,25 @@ export function getBlueprintBadgeLabelRuby(partId: BodyPartId, count: number): R
     case 'eyes':
       return (
         <>
-          <ruby>目<rt className="text-[7px] font-normal text-slate-500">め</rt></ruby> {count}つ
+          <ruby>目<rt className="font-normal">め</rt></ruby> {count}つ
         </>
       );
     case 'ears':
       return (
         <>
-          <ruby>耳<rt className="text-[7px] font-normal text-slate-500">みみ</rt></ruby> {count}つ
+          <ruby>耳<rt className="font-normal">みみ</rt></ruby> {count}つ
         </>
       );
     case 'nose':
       return (
         <>
-          <ruby>鼻<rt className="text-[7px] font-normal text-slate-500">はな</rt></ruby> {count}つ
+          <ruby>鼻<rt className="font-normal">はな</rt></ruby> {count}つ
         </>
       );
     case 'mouth':
       return (
         <>
-          <ruby>口<rt className="text-[7px] font-normal text-slate-500">くち</rt></ruby> {count}つ
+          <ruby>口<rt className="font-normal">くち</rt></ruby> {count}つ
         </>
       );
     case 'arms':
@@ -125,7 +125,7 @@ export function getBlueprintBadgeLabelRuby(partId: BodyPartId, count: number): R
       const counter = count === 1 ? '1ぽん' : count === 3 ? '3ぼん' : count === 6 || count === 8 || count === 10 ? `${count}ぽん` : `${count}ほん`;
       return (
         <>
-          <ruby>足<rt className="text-[7px] font-normal text-slate-500">あし</rt></ruby> {counter}
+          <ruby>足<rt className="font-normal">あし</rt></ruby> {counter}
         </>
       );
     }

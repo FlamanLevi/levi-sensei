@@ -12,6 +12,7 @@ import {
 } from '@/types/analytics';
 import { QuizRoomState, QuizQuestion, QuizPlayer } from '@/games/quiz/types';
 import { SchoolId, getClassSize } from '@/types/roster';
+import { ensureAnonymousAuth } from '@/services/firebase';
 import { safeSet, safeGet, safeUpdate } from '@/services/rtdbSafe';
 
 /**
@@ -517,6 +518,8 @@ export async function persistSessionAnalytics(analytics: SessionAnalytics): Prom
   if (!analytics || !analytics.schoolId || !analytics.classId) return;
 
   try {
+    await ensureAnonymousAuth();
+
     const isTestGame = 
       analytics.roomCode?.startsWith('9') || 
       analytics.classId === 'TEST' || 

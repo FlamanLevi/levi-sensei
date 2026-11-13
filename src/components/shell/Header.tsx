@@ -8,8 +8,7 @@ import { TeacherProfileSwitcher } from './TeacherProfileSwitcher';
 import { TeacherOfficeMenu } from './TeacherOfficeMenu';
 import { ActiveRoomsModal } from './ActiveRoomsModal';
 import { ClassroomRosterManagerModal } from '../teacher/ClassroomRosterManagerModal';
-import { rtdb } from '@/services/firebase';
-import { ref, onValue } from 'firebase/database';
+import { safeSubscribe } from '@/services/rtdbSafe';
 
 export const Header: React.FC = () => {
   const { isMuted, toggleMute, playPop } = useAudio();
@@ -40,20 +39,21 @@ export const Header: React.FC = () => {
   const [pinInput, setPinInput] = useState('');
   const [pinError, setPinError] = useState(false);
 
-  // Monitor active rooms count in RTDB
+  // Monitor active rooms count in RTDB only when unlocked in Teacher mode
   useEffect(() => {
-    if (userRole !== 'TEACHER') return;
-    const roomsRef = ref(rtdb, 'rooms');
-    const unsub = onValue(roomsRef, (snap) => {
-      if (snap.exists()) {
-        const val = snap.val();
-        setActiveRoomCount(val ? Object.keys(val).length : 0);
-      } else {
-        setActiveRoomCount(0);
-      }
-    }, () => setActiveRoomCount(0));
+    if (userRole !== 'TEACHER' || !isTeacherUnlocked) {
+      setActiveRoomCount(0);
+      return;
+    }
+    const unsub = safeSubscribe<Record<string, unknown>>(
+      'rooms',
+      (val) => {
+        setActiveRoomCount(val && typeof val === 'object' ? Object.keys(val).length : 0);
+      },
+      () => setActiveRoomCount(0)
+    );
     return () => unsub();
-  }, [userRole]);
+  }, [userRole, isTeacherUnlocked]);
 
   useEffect(() => {
     const handleFsChange = () => {

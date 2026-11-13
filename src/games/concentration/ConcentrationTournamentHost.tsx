@@ -58,24 +58,24 @@ export const ConcentrationTournamentHost: React.FC<ConcentrationTournamentHostPr
   return (
     <div className="w-full h-full min-h-0 flex-1 flex flex-col justify-between bg-slate-950 text-white p-3 sm:p-5 select-none overflow-hidden font-['UD_Digi_Kyokasho_NP-R','UD_Digi_Kyokasho_NK-R','BIZ_UDPGothic','Zen_Maru_Gothic',sans-serif]">
       {/* Header Bar */}
-      <div className="bg-slate-900 border-2 border-slate-800 rounded-3xl px-5 py-3 flex items-center justify-between gap-3 shrink-0 shadow-xl">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-amber-500/20 border border-amber-400 text-amber-300 flex items-center justify-center">
+      <div className="bg-slate-900 border-2 border-slate-800 rounded-3xl px-5 py-3 flex flex-nowrap items-center justify-between gap-3 shrink-0 shadow-xl overflow-x-auto no-scrollbar">
+        <div className="flex items-center gap-3 min-w-0 flex-1">
+          <div className="w-10 h-10 rounded-2xl bg-amber-500/20 border border-amber-400 text-amber-300 flex items-center justify-center shrink-0">
             <Trophy size={22} />
           </div>
-          <div>
-            <h1 className="text-xl sm:text-2xl font-black text-white flex items-center gap-2">
-              <span>{t('Classroom Memory Tournament', <>クラス<ruby>神経衰弱<rt className="text-[7px]">しんけいすいじゃく</rt></ruby>大会</>)}</span>
-              <span className="text-xs px-2.5 py-0.5 rounded-full bg-indigo-600 text-white">STREAM B SPECTATOR</span>
+          <div className="min-w-0 flex-1">
+            <h1 className="text-xl sm:text-2xl font-black text-white flex items-center gap-2 whitespace-nowrap truncate">
+              <span className="truncate">{t('Classroom Memory Tournament', <>クラス<ruby>神経衰弱<rt>しんけいすいじゃく</rt></ruby>大会</>)}</span>
+              <span className="text-xs px-2.5 py-0.5 rounded-full bg-indigo-600 text-white shrink-0">STREAM B SPECTATOR</span>
             </h1>
-            <span className="text-xs text-slate-400">
+            <span className="text-xs text-slate-400 whitespace-nowrap block">
               PIN: <strong className="font-mono text-amber-300">{roomCode || 'MM-LIVE'}</strong> • 18 Desk Pairs
             </span>
           </div>
         </div>
 
         {/* Classroom Total Progress */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 shrink-0 whitespace-nowrap">
           <div className="text-right">
             <span className="text-xs font-bold text-slate-400 block uppercase">
               {t('Class Total Matches', '全クラス成立ペア数')}

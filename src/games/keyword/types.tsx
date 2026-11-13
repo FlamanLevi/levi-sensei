@@ -49,7 +49,7 @@ export const REACTION_TIERS: Record<ReactionTier, ReactionTierInfo> = {
     labelJaRuby: (
       <>
         <ruby>
-          神速<rt className="text-[7px] font-normal">しんそく</rt>
+          神速<rt>しんそく</rt>
         </ruby>
         ・かみわざ！
       </>
@@ -67,7 +67,7 @@ export const REACTION_TIERS: Record<ReactionTier, ReactionTierInfo> = {
     labelJaRuby: (
       <>
         <ruby>
-          電光石火<rt className="text-[7px] font-normal">でんこうせっか</rt>
+          電光石火<rt>でんこうせっか</rt>
         </ruby>
         ！
       </>
@@ -85,7 +85,7 @@ export const REACTION_TIERS: Record<ReactionTier, ReactionTierInfo> = {
     labelJaRuby: (
       <>
         <ruby>
-          超<rt className="text-[7px] font-normal">ちょう</rt>
+          超<rt>ちょう</rt>
         </ruby>
         スピード！
       </>
@@ -254,7 +254,7 @@ export const BODY_POSES: BodyPose[] = [
     jaRuby: (
       <>
         <ruby>
-          頭<rt className="text-[7px] font-normal">あたま</rt>
+          頭<rt>あたま</rt>
         </ruby>
         ！
       </>
@@ -263,11 +263,11 @@ export const BODY_POSES: BodyPose[] = [
     actionJa: (
       <>
         <ruby>
-          両手<rt className="text-[8px] font-normal">りょうて</rt>
+          両手<rt>りょうて</rt>
         </ruby>
         を
         <ruby>
-          頭<rt className="text-[8px] font-normal">あたま</rt>
+          頭<rt>あたま</rt>
         </ruby>
         にのせて！
       </>
@@ -281,7 +281,7 @@ export const BODY_POSES: BodyPose[] = [
     jaRuby: (
       <>
         <ruby>
-          肩<rt className="text-[7px] font-normal">かた</rt>
+          肩<rt>かた</rt>
         </ruby>
         ！
       </>
@@ -290,11 +290,11 @@ export const BODY_POSES: BodyPose[] = [
     actionJa: (
       <>
         <ruby>
-          両手<rt className="text-[8px] font-normal">りょうて</rt>
+          両手<rt>りょうて</rt>
         </ruby>
         を
         <ruby>
-          肩<rt className="text-[8px] font-normal">かた</rt>
+          肩<rt>かた</rt>
         </ruby>
         にのせて！
       </>
@@ -308,7 +308,7 @@ export const BODY_POSES: BodyPose[] = [
     jaRuby: (
       <>
         <ruby>
-          膝<rt className="text-[7px] font-normal">ひざ</rt>
+          膝<rt>ひざ</rt>
         </ruby>
         ！
       </>
@@ -317,11 +317,11 @@ export const BODY_POSES: BodyPose[] = [
     actionJa: (
       <>
         <ruby>
-          両手<rt className="text-[8px] font-normal">りょうて</rt>
+          両手<rt>りょうて</rt>
         </ruby>
         を
         <ruby>
-          膝<rt className="text-[8px] font-normal">ひざ</rt>
+          膝<rt>ひざ</rt>
         </ruby>
         にのせて！
       </>
@@ -336,7 +336,7 @@ export const BODY_POSES: BodyPose[] = [
       <>
         お
         <ruby>
-          腹<rt className="text-[7px] font-normal">なか</rt>
+          腹<rt>なか</rt>
         </ruby>
         ！
       </>
@@ -345,11 +345,11 @@ export const BODY_POSES: BodyPose[] = [
     actionJa: (
       <>
         <ruby>
-          両手<rt className="text-[8px] font-normal">りょうて</rt>
+          両手<rt>りょうて</rt>
         </ruby>
         をお
         <ruby>
-          腹<rt className="text-[8px] font-normal">なか</rt>
+          腹<rt>なか</rt>
         </ruby>
         にのせて！
       </>
@@ -363,7 +363,7 @@ export const BODY_POSES: BodyPose[] = [
     jaRuby: (
       <>
         <ruby>
-          耳<rt className="text-[7px] font-normal">みみ</rt>
+          耳<rt>みみ</rt>
         </ruby>
         ！
       </>
@@ -372,11 +372,11 @@ export const BODY_POSES: BodyPose[] = [
     actionJa: (
       <>
         <ruby>
-          両手<rt className="text-[8px] font-normal">りょうて</rt>
+          両手<rt>りょうて</rt>
         </ruby>
         を
         <ruby>
-          耳<rt className="text-[8px] font-normal">みみ</rt>
+          耳<rt>みみ</rt>
         </ruby>
         にのせて！
       </>
@@ -390,7 +390,7 @@ export const BODY_POSES: BodyPose[] = [
     jaRuby: (
       <>
         <ruby>
-          背中<rt className="text-[7px] font-normal">せなか</rt>
+          背中<rt>せなか</rt>
         </ruby>
         ！
       </>
@@ -399,11 +399,11 @@ export const BODY_POSES: BodyPose[] = [
     actionJa: (
       <>
         <ruby>
-          両手<rt className="text-[8px] font-normal">りょうて</rt>
+          両手<rt>りょうて</rt>
         </ruby>
         を
         <ruby>
-          背中<rt className="text-[8px] font-normal">せなか</rt>
+          背中<rt>せなか</rt>
         </ruby>
         にまわして！
       </>

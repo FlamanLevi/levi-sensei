@@ -64,26 +64,26 @@ export const ThreeHintsClues: React.FC<ThreeHintsCluesProps> = ({
             }`}
           >
             {/* Top header row */}
-            <div className="flex flex-wrap items-center justify-between gap-2 mb-1 sm:mb-2">
-              <div className="flex items-center gap-1.5 sm:gap-2">
-                <span className="text-lg sm:text-xl">{clue.icon}</span>
-                <span className="text-xs sm:text-sm font-black text-indigo-700 dark:text-indigo-300 uppercase tracking-wide">
+            <div className="flex flex-nowrap overflow-x-auto no-scrollbar whitespace-nowrap items-center justify-between gap-2 mb-1 sm:mb-2">
+              <div className="flex items-center gap-1.5 sm:gap-2 min-w-0 shrink-0">
+                <span className="text-lg sm:text-xl shrink-0">{clue.icon}</span>
+                <span className="text-xs sm:text-sm font-black text-indigo-700 dark:text-indigo-300 uppercase tracking-wide shrink-0">
                   {clue.title}
                 </span>
                 {isCurrentActive && (
-                  <span className="px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-black bg-amber-400 text-amber-950 animate-pulse">
+                  <span className="px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-black bg-amber-400 text-amber-950 animate-pulse shrink-0">
                     ACTIVE
                   </span>
                 )}
               </div>
 
-              <div className="flex items-center gap-1.5 sm:gap-2">
+              <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 flex-nowrap">
                 {/* 🔄 Swap Hint Button (cycles through the pool for this stage!) */}
                 {hasMultipleHints && onSwapClue && (
                   <button
                     type="button"
                     onClick={() => onSwapClue(clue.stage)}
-                    className="px-2.5 py-1 rounded-full text-[10px] sm:text-xs font-black bg-amber-100 hover:bg-amber-200 dark:bg-amber-950/80 dark:hover:bg-amber-900 text-amber-900 dark:text-amber-200 border border-amber-300 dark:border-amber-700 flex items-center gap-1 shadow-2xs transition-transform active:scale-95 cursor-pointer"
+                    className="px-2.5 py-1 rounded-full text-[10px] sm:text-xs font-black bg-amber-100 hover:bg-amber-200 dark:bg-amber-950/80 dark:hover:bg-amber-900 text-amber-900 dark:text-amber-200 border border-amber-300 dark:border-amber-700 flex items-center gap-1 shadow-2xs transition-transform active:scale-95 cursor-pointer shrink-0"
                     title="別のヒントに切り替え (Shortcut: H key)"
                   >
                     <RefreshCw size={12} />
@@ -92,7 +92,7 @@ export const ThreeHintsClues: React.FC<ThreeHintsCluesProps> = ({
                 )}
 
                 {/* Points badge */}
-                <span className="px-2 py-0.5 sm:px-2.5 sm:py-0.5 rounded-full text-[10px] sm:text-xs font-black bg-indigo-100 dark:bg-slate-700 text-indigo-800 dark:text-indigo-200">
+                <span className="px-2 py-0.5 sm:px-2.5 sm:py-0.5 rounded-full text-[10px] sm:text-xs font-black bg-indigo-100 dark:bg-slate-700 text-indigo-800 dark:text-indigo-200 shrink-0">
                   ★ {clue.points} pts
                 </span>
 
@@ -100,7 +100,7 @@ export const ThreeHintsClues: React.FC<ThreeHintsCluesProps> = ({
                 <button
                   type="button"
                   onClick={() => onReadClue(clue.speakText || clue.enText)}
-                  className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-indigo-50 dark:bg-slate-700 hover:bg-indigo-100 text-indigo-600 dark:text-indigo-300 flex items-center justify-center shadow-xs transition-transform active:scale-90 cursor-pointer"
+                  className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-indigo-50 dark:bg-slate-700 hover:bg-indigo-100 text-indigo-600 dark:text-indigo-300 flex items-center justify-center shadow-xs transition-transform active:scale-90 cursor-pointer shrink-0"
                   title="Read clue aloud"
                 >
                   <Volume2 size={15} />

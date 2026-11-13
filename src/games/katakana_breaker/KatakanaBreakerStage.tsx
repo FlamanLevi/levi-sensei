@@ -90,7 +90,7 @@ export const KatakanaBreakerStage: React.FC<KatakanaBreakerStageProps> = ({
           </div>
         )}
 
-        <div className="relative z-10 flex flex-col items-center justify-center h-full max-h-[min(52vh,460px)]">
+        <div className="relative z-10 flex flex-col items-center justify-center h-full max-h-[min(52dvh,460px)]">
           {imageUrl ? (
             <img
               src={imageUrl}
@@ -139,8 +139,8 @@ export const KatakanaBreakerStage: React.FC<KatakanaBreakerStageProps> = ({
           {/* Rhythmic Cue Footer Banner */}
           <div className="mt-2 h-8 flex items-center justify-center">
             {isKatakanaWordActive ? (
-              <span className="text-xs sm:text-sm font-bold text-slate-400 animate-pulse">
-                [Bar 1] <ruby>聞<rt className="text-[7px]">き</rt></ruby>いてね... (Listen!)
+              <span className="text-xs sm:text-sm font-bold text-slate-600 dark:text-slate-300 animate-pulse">
+                [Bar 1] <ruby>聞<rt>き</rt></ruby>いてね... (Listen!)
               </span>
             ) : isJanakuteActive ? (
               <span className="text-xs sm:text-sm font-black text-amber-500">
@@ -154,7 +154,7 @@ export const KatakanaBreakerStage: React.FC<KatakanaBreakerStageProps> = ({
               /* Bar 2 Beat 4 Inhale Pause */
               <div className="px-4 py-1 rounded-full bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 font-black text-xs sm:text-sm flex items-center gap-1.5 animate-pulse">
                 <Wind size={15} />
-                <span>[Bar 2] <ruby>息<rt className="text-[7px]">いき</rt></ruby>をすって… (Inhale!)</span>
+                <span>[Bar 2] <ruby>息<rt>いき</rt></ruby>をすって… (Inhale!)</span>
               </div>
             ) : isChoralShout ? (
               /* Bar 3 Downbeat Choral Shout */

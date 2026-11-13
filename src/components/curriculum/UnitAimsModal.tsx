@@ -53,7 +53,7 @@ export const UnitAimsModal: React.FC<UnitAimsModalProps> = ({
       onClick={onClose}
     >
       <div
-        className="bg-white dark:bg-slate-900 w-[96vw] max-w-[1100px] h-[92vh] max-h-[860px] rounded-3xl border-3 border-indigo-400 dark:border-indigo-600 shadow-2xl overflow-hidden flex flex-col text-slate-900 dark:text-slate-100 my-auto"
+        className="bg-white dark:bg-slate-900 w-[96vw] max-w-[1100px] h-[92dvh] max-h-[860px] rounded-3xl border-3 border-indigo-400 dark:border-indigo-600 shadow-2xl overflow-hidden flex flex-col text-slate-900 dark:text-slate-100 my-auto"
         onClick={e => e.stopPropagation()}
       >
         {/* Modal Header */}

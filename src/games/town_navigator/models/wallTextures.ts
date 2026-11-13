@@ -64,32 +64,33 @@ export function getArchitecturalBumpMap(): THREE.CanvasTexture {
 }
 
 /**
- * Seamless 512px Botanical Grass & Clover Texture for Lawns, Parks, and Outer Meadow Terrain
+ * Seamless 256px Botanical Grass & Clover Texture for Lawns, Parks, and Outer Meadow Terrain
  * Replaces flat untextured green surfaces with lush multi-blade turf, clover patches, and wildflower specks.
  */
 export function getLawnGrassTexture(): THREE.CanvasTexture {
   if (cachedLawnGrassTexture) return cachedLawnGrassTexture;
   if (typeof document === 'undefined') return createFallbackTexture();
 
+  const size = 256;
   const canvas = document.createElement('canvas');
-  canvas.width = 512;
-  canvas.height = 512;
+  canvas.width = size;
+  canvas.height = size;
   const ctx = canvas.getContext('2d');
   if (!ctx) return createFallbackTexture();
 
   // Neutral-bright botanical base so material color tinting preserves vibrant greens
   ctx.fillStyle = '#cbe8a6';
-  ctx.fillRect(0, 0, 512, 512);
+  ctx.fillRect(0, 0, size, size);
 
   // Soft organic turf dapple patches (tileable via trigonometric waves)
-  const img = ctx.getImageData(0, 0, 512, 512);
+  const img = ctx.getImageData(0, 0, size, size);
   const d = img.data;
   const twoPi = Math.PI * 2;
-  for (let py = 0; py < 512; py++) {
-    const ny = (py / 512) * twoPi;
-    for (let px = 0; px < 512; px++) {
-      const nx = (px / 512) * twoPi;
-      const idx = (py * 512 + px) * 4;
+  for (let py = 0; py < size; py++) {
+    const ny = (py / size) * twoPi;
+    for (let px = 0; px < size; px++) {
+      const nx = (px / size) * twoPi;
+      const idx = (py * size + px) * 4;
       const patch =
         Math.sin(nx * 3 + ny * 2) * 9 +
         Math.cos(nx * 5 - ny * 4) * 7 +
@@ -103,7 +104,7 @@ export function getLawnGrassTexture(): THREE.CanvasTexture {
   }
   ctx.putImageData(img, 0, 0);
 
-  // Draw 4,200 individual layered grass blades & clover tufts (wrapped across 512px edges for seamless tiling)
+  // Draw 1,100 individual layered grass blades & clover tufts (wrapped across 256px edges for seamless tiling)
   const bladeColors = [
     'rgba(54, 83, 20, 0.34)',
     'rgba(77, 124, 15, 0.36)',
@@ -119,20 +120,20 @@ export function getLawnGrassTexture(): THREE.CanvasTexture {
   };
 
   ctx.lineCap = 'round';
-  for (let i = 0; i < 4200; i++) {
-    const bx = nextRand() * 512;
-    const by = nextRand() * 512;
-    const tilt = (nextRand() - 0.5) * 5.5;
-    const len = 5 + nextRand() * 7;
+  for (let i = 0; i < 1100; i++) {
+    const bx = nextRand() * size;
+    const by = nextRand() * size;
+    const tilt = (nextRand() - 0.5) * 3.0;
+    const len = 3 + nextRand() * 3.8;
     ctx.strokeStyle = bladeColors[i % bladeColors.length];
-    ctx.lineWidth = 1.1 + (i % 3) * 0.45;
+    ctx.lineWidth = 0.8 + (i % 3) * 0.3;
 
     // Draw wrapped at boundaries if near edge
-    for (const ox of [0, -512, 512]) {
-      for (const oy of [0, -512, 512]) {
+    for (const ox of [0, -size, size]) {
+      for (const oy of [0, -size, size]) {
         const x0 = bx + ox;
         const y0 = by + oy;
-        if (x0 < -16 || x0 > 528 || y0 < -16 || y0 > 528) continue;
+        if (x0 < -10 || x0 > size + 10 || y0 < -10 || y0 > size + 10) continue;
         ctx.beginPath();
         ctx.moveTo(x0, y0);
         ctx.quadraticCurveTo(x0 + tilt * 0.45, y0 - len * 0.55, x0 + tilt, y0 - len);
@@ -142,12 +143,12 @@ export function getLawnGrassTexture(): THREE.CanvasTexture {
   }
 
   // Subtle white/yellow clover & daisy micro-blossoms
-  for (let f = 0; f < 95; f++) {
-    const fx = nextRand() * 512;
-    const fy = nextRand() * 512;
+  for (let f = 0; f < 30; f++) {
+    const fx = nextRand() * size;
+    const fy = nextRand() * size;
     ctx.fillStyle = f % 3 === 0 ? 'rgba(254, 240, 138, 0.55)' : 'rgba(255, 255, 255, 0.48)';
     ctx.beginPath();
-    ctx.arc(fx, fy, 1.3 + (f % 2) * 0.6, 0, twoPi);
+    ctx.arc(fx, fy, 0.9 + (f % 2) * 0.4, 0, twoPi);
     ctx.fill();
   }
 
@@ -506,21 +507,22 @@ export function getConcretePanelTexture(): THREE.CanvasTexture {
   if (cachedConcreteTexture) return cachedConcreteTexture;
   if (typeof document === 'undefined') return createFallbackTexture();
 
+  const size = 256;
   const canvas = document.createElement('canvas');
-  canvas.width = 512;
-  canvas.height = 512;
+  canvas.width = size;
+  canvas.height = size;
   const ctx = canvas.getContext('2d');
   if (!ctx) return createFallbackTexture();
 
   ctx.fillStyle = '#e2e8f0';
-  ctx.fillRect(0, 0, 512, 512);
+  ctx.fillRect(0, 0, size, size);
 
-  const imgData = ctx.getImageData(0, 0, 512, 512);
+  const imgData = ctx.getImageData(0, 0, size, size);
   const data = imgData.data;
   for (let i = 0; i < data.length; i += 4) {
-    const px = (i / 4) % 512;
-    const py = Math.floor(i / 4 / 512);
-    const wave = Math.sin(px * 0.08 + py * 0.05) * 5;
+    const px = (i / 4) % size;
+    const py = Math.floor(i / 4 / size);
+    const wave = Math.sin(px * 0.16 + py * 0.10) * 5;
     const n = ((px * 19 + py * 47) % 15) - 7 + wave;
     data[i] = Math.min(255, Math.max(0, data[i] + n));
     data[i + 1] = Math.min(255, Math.max(0, data[i + 1] + n));
@@ -530,38 +532,38 @@ export function getConcretePanelTexture(): THREE.CanvasTexture {
 
   // Formwork panel joints
   ctx.strokeStyle = 'rgba(71, 85, 105, 0.55)';
-  ctx.lineWidth = 3;
-  ctx.strokeRect(3, 3, 506, 506);
+  ctx.lineWidth = 2;
+  ctx.strokeRect(1.5, 1.5, size - 3, size - 3);
   ctx.beginPath();
-  ctx.moveTo(256, 0);
-  ctx.lineTo(256, 512);
-  ctx.moveTo(0, 256);
-  ctx.lineTo(512, 256);
+  ctx.moveTo(size / 2, 0);
+  ctx.lineTo(size / 2, size);
+  ctx.moveTo(0, size / 2);
+  ctx.lineTo(size, size / 2);
   ctx.stroke();
 
   // Iconic Tadao Ando style P-Con tie-rod cone holes
   const pConPositions = [
-    { x: 48, y: 48 }, { x: 208, y: 48 }, { x: 48, y: 208 }, { x: 208, y: 208 },
-    { x: 304, y: 48 }, { x: 464, y: 48 }, { x: 304, y: 208 }, { x: 464, y: 208 },
-    { x: 48, y: 304 }, { x: 208, y: 304 }, { x: 48, y: 464 }, { x: 208, y: 464 },
-    { x: 304, y: 304 }, { x: 464, y: 304 }, { x: 304, y: 464 }, { x: 464, y: 464 },
+    { x: 24, y: 24 }, { x: 104, y: 24 }, { x: 24, y: 104 }, { x: 104, y: 104 },
+    { x: 152, y: 24 }, { x: 232, y: 24 }, { x: 152, y: 104 }, { x: 232, y: 104 },
+    { x: 24, y: 152 }, { x: 104, y: 152 }, { x: 24, y: 232 }, { x: 104, y: 232 },
+    { x: 152, y: 152 }, { x: 232, y: 152 }, { x: 152, y: 232 }, { x: 232, y: 232 },
   ];
 
   pConPositions.forEach((p) => {
     ctx.fillStyle = 'rgba(71, 85, 105, 0.55)';
     ctx.beginPath();
-    ctx.arc(p.x, p.y, 7, 0, Math.PI * 2);
+    ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
     ctx.fill();
 
     ctx.fillStyle = 'rgba(15, 23, 42, 0.8)';
     ctx.beginPath();
-    ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+    ctx.arc(p.x, p.y, 2.2, 0, Math.PI * 2);
     ctx.fill();
 
     ctx.strokeStyle = 'rgba(255, 255, 255, 0.65)';
-    ctx.lineWidth = 1.5;
+    ctx.lineWidth = 1;
     ctx.beginPath();
-    ctx.arc(p.x + 1, p.y + 1, 7, Math.PI * 0.8, Math.PI * 1.8);
+    ctx.arc(p.x + 0.5, p.y + 0.5, 4, Math.PI * 0.8, Math.PI * 1.8);
     ctx.stroke();
   });
 
@@ -582,20 +584,21 @@ export function getStuccoWallTexture(): THREE.CanvasTexture {
   if (cachedStuccoTexture) return cachedStuccoTexture;
   if (typeof document === 'undefined') return createFallbackTexture();
 
+  const size = 256;
   const canvas = document.createElement('canvas');
-  canvas.width = 512;
-  canvas.height = 512;
+  canvas.width = size;
+  canvas.height = size;
   const ctx = canvas.getContext('2d');
   if (!ctx) return createFallbackTexture();
 
   ctx.fillStyle = '#f8fafc';
-  ctx.fillRect(0, 0, 512, 512);
+  ctx.fillRect(0, 0, size, size);
 
-  const imgData = ctx.getImageData(0, 0, 512, 512);
+  const imgData = ctx.getImageData(0, 0, size, size);
   const data = imgData.data;
   for (let i = 0; i < data.length; i += 4) {
-    const x = (i / 4) % 512;
-    const y = Math.floor(i / 4 / 512);
+    const x = (i / 4) % size;
+    const y = Math.floor(i / 4 / size);
     const n1 = Math.sin(x * 0.16 + y * 0.12) * 5;
     const n2 = Math.cos(x * 0.38 - y * 0.28) * 4;
     const n3 = ((x * 29 + y * 53) % 13) - 6;
@@ -610,7 +613,7 @@ export function getStuccoWallTexture(): THREE.CanvasTexture {
   const texture = new THREE.CanvasTexture(canvas);
   texture.wrapS = THREE.RepeatWrapping;
   texture.wrapT = THREE.RepeatWrapping;
-  texture.repeat.set(2, 2);
+  texture.repeat.set(4, 4);
   texture.anisotropy = 8;
   texture.colorSpace = THREE.SRGBColorSpace;
   cachedStuccoTexture = texture;

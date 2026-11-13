@@ -368,7 +368,7 @@ export const QuizHostQuestion: React.FC<QuizHostQuestionProps> = ({
         return (
           <ruby className="leading-normal">
             {kanji}
-            <rt className="text-base sm:text-xl md:text-2xl font-bold text-amber-300 drop-shadow-sm select-none">
+            <rt>
               {hiragana}
             </rt>
           </ruby>
@@ -409,17 +409,17 @@ export const QuizHostQuestion: React.FC<QuizHostQuestionProps> = ({
   };
 
   return (
-    <div className="w-full max-w-[92vw] max-h-[92vh] mx-auto h-full flex flex-col justify-between p-2 sm:p-3 select-none overflow-hidden relative animate-in fade-in duration-150">
+    <div className="w-full max-w-[92vw] max-h-[92dvh] mx-auto h-full flex flex-col justify-between p-2 sm:p-3 select-none overflow-hidden relative animate-in fade-in duration-150">
       {/* 1. Top Header Bar */}
-      <div className="flex items-center justify-between pb-1.5 shrink-0">
-        <div className="flex items-center gap-2 sm:gap-3">
-          <span className="text-xs sm:text-sm font-black px-3 py-1 rounded-full bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-sm">
+      <div className="flex items-center justify-between gap-2 pb-1.5 shrink-0 flex-nowrap">
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1 overflow-x-auto no-scrollbar flex-nowrap">
+          <span className="text-xs sm:text-sm font-black px-3 py-1 rounded-full bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-sm shrink-0 whitespace-nowrap">
             Q {question.questionIndex + 1} / {totalQuestions}
           </span>
           <button
             type="button"
             onClick={() => setIsPaused(p => !p)}
-            className={`flex items-center gap-1.5 text-xs sm:text-sm font-bold px-2.5 py-1 rounded-full cursor-pointer transition-all ${
+            className={`flex items-center gap-1.5 text-xs sm:text-sm font-bold px-2.5 py-1 rounded-full cursor-pointer transition-all shrink-0 whitespace-nowrap ${
               isPaused
                 ? 'bg-amber-400 text-slate-950 font-black animate-pulse shadow-md ring-2 ring-amber-300'
                 : 'text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800'
@@ -428,35 +428,35 @@ export const QuizHostQuestion: React.FC<QuizHostQuestionProps> = ({
           >
             {isPaused ? <Pause size={14} className="fill-current" /> : <Clock size={14} className={secondsLeft <= 5 ? 'text-rose-500 animate-spin' : ''} />}
             <span className={`font-mono font-black ${secondsLeft <= 5 && !isPaused ? 'text-rose-500' : ''}`}>
-              {isPaused ? t('PAUSED [P]', <><ruby>一時<rt className="text-[7px] font-normal text-slate-900">いちじ</rt></ruby><ruby>停止<rt className="text-[7px] font-normal text-slate-900">ていし</rt></ruby> [P]</>) : `${secondsLeft}s`}
+              {isPaused ? t('PAUSED [P]', <><ruby>一時<rt>いちじ</rt></ruby><ruby>停止<rt>ていし</rt></ruby> [P]</>) : `${secondsLeft}s`}
             </span>
           </button>
         </div>
 
         {/* Counter / Score & PIN */}
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0 flex-nowrap">
           {isSolo ? (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 shrink-0 flex-nowrap">
               {soloPlayer && soloPlayer.currentStreak >= 2 && (
-                <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-400 text-slate-950 text-xs font-black shadow-sm animate-bounce">
+                <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-400 text-slate-950 text-xs font-black shadow-sm animate-bounce whitespace-nowrap">
                   <span>🔥</span>
                   <span>{soloPlayer.currentStreak}</span>
                 </div>
               )}
               {soloPlayer && (
-                <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-100 dark:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 text-xs font-black shadow-sm">
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-100 dark:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 text-xs font-black shadow-sm whitespace-nowrap">
                   <Sparkles size={13} className="text-indigo-600 dark:text-indigo-400" />
                   <span>{soloPlayer.score.toLocaleString()} pts</span>
                 </div>
               )}
-              <span className="font-mono text-xs font-black px-2.5 py-1 rounded-lg bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-200 border border-amber-300 dark:border-amber-800">
+              <span className="font-mono text-xs font-black px-2.5 py-1 rounded-lg bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-200 border border-amber-300 dark:border-amber-800 whitespace-nowrap">
                 📺 TV / Smartboard
               </span>
             </div>
           ) : (
             <>
               {totalPlayers > 0 && (
-                <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black shadow-sm transition-all ${
+                <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black shadow-sm transition-all whitespace-nowrap ${
                   allAnswered
                     ? 'bg-emerald-500 text-white animate-bounce ring-2 ring-emerald-300'
                     : 'bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300'
@@ -464,12 +464,12 @@ export const QuizHostQuestion: React.FC<QuizHostQuestionProps> = ({
                   <Users size={14} />
                   <span>
                     {allAnswered
-                      ? t('All Answered! 🎉', <><ruby>全員<rt className="text-[7px] font-normal text-white">ぜんいん</rt></ruby><ruby>回答<rt className="text-[7px] font-normal text-white">かいとう</rt></ruby><ruby>完了<rt className="text-[7px] font-normal text-white">かんりょう</rt></ruby>！🎉</>)
-                      : <>{answeredCount} / {totalPlayers} {t('Answered', <><ruby>名<rt className="text-[7px] font-normal text-blue-700 dark:text-blue-300">めい</rt></ruby> <ruby>回答<rt className="text-[7px] font-normal text-blue-700 dark:text-blue-300">かいとう</rt></ruby><ruby>済<rt className="text-[7px] font-normal text-blue-700 dark:text-blue-300">ず</rt></ruby>み</>)}</>}
+                      ? t('All Answered! 🎉', <><ruby>全員<rt>ぜんいん</rt></ruby><ruby>回答<rt>かいとう</rt></ruby><ruby>完了<rt>かんりょう</rt></ruby>！🎉</>)
+                      : <>{answeredCount} / {totalPlayers} {t('Answered', <><ruby>名<rt>めい</rt></ruby> <ruby>回答<rt>かいとう</rt></ruby><ruby>済<rt>ず</rt></ruby>み</>)}</>}
                   </span>
                 </div>
               )}
-              <span className="font-mono text-xs font-black px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
+              <span className="font-mono text-xs font-black px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 whitespace-nowrap">
                 PIN: {roomCode}
               </span>
             </>
@@ -481,10 +481,10 @@ export const QuizHostQuestion: React.FC<QuizHostQuestionProps> = ({
                   onExit();
                 }
               }}
-              className="px-2.5 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/50 dark:hover:bg-rose-900/60 text-rose-600 dark:text-rose-400 font-bold text-xs flex items-center gap-1 border border-rose-200 dark:border-rose-900 transition-colors active:scale-95 cursor-pointer"
+              className="px-2.5 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/50 dark:hover:bg-rose-900/60 text-rose-600 dark:text-rose-400 font-bold text-xs flex items-center gap-1 border border-rose-200 dark:border-rose-900 transition-colors active:scale-95 cursor-pointer shrink-0 whitespace-nowrap"
               title={t('End quiz and disband room', 'クイズを終了して解散')}
             >
-              <span>{t('✕ End', <>✕ <ruby>終了<rt className="text-[7px] font-normal text-rose-600 dark:text-rose-400">しゅうりょう</rt></ruby></>)}</span>
+              <span>{t('✕ End', <>✕ <ruby>終了<rt>しゅうりょう</rt></ruby></>)}</span>
             </button>
           )}
         </div>
@@ -503,7 +503,7 @@ export const QuizHostQuestion: React.FC<QuizHostQuestionProps> = ({
       {/* 3. Main Stage: Hero Cinema Prompt & Choices Grid */}
       <div className="flex-1 w-full min-h-0 flex flex-col justify-between my-1 overflow-hidden">
         {/* Top: Hero Prompt Area */}
-        <div className={`shrink-0 rounded-2xl sm:rounded-3xl p-3 sm:p-5 relative overflow-hidden flex items-center max-h-[50vh] min-h-[160px] sm:min-h-[200px] transition-all ${
+        <div className={`shrink-0 rounded-2xl sm:rounded-3xl p-3 sm:p-5 relative overflow-hidden flex items-center max-h-[50dvh] min-h-[160px] sm:min-h-[200px] transition-all ${
           isFutako
             ? 'bg-[#0f172a] border-4 border-sky-400/80 shadow-[0_0_25px_rgba(56,189,248,0.25)] text-white'
             : 'card-toyo-sheet text-slate-900'
@@ -601,7 +601,7 @@ export const QuizHostQuestion: React.FC<QuizHostQuestionProps> = ({
                         <Volume2 className="w-4 h-4 sm:w-5 sm:h-5" />
                       </button>
                       <span className={`text-xs font-bold ${isFutako ? 'text-sky-300' : 'text-slate-600 dark:text-slate-300'}`}>
-                        {t('Tap for audio', <><ruby>音声<rt className="text-[7px] font-normal text-slate-400">おんせい</rt></ruby><ruby>再生<rt className="text-[7px] font-normal text-slate-400">さいせい</rt></ruby></>)}
+                        {t('Tap for audio', <><ruby>音声<rt>おんせい</rt></ruby><ruby>再生<rt>さいせい</rt></ruby></>)}
                       </span>
                     </div>
                   )
@@ -675,13 +675,13 @@ export const QuizHostQuestion: React.FC<QuizHostQuestionProps> = ({
                 🤔
               </div>
               <span className="text-lg sm:text-xl font-black tracking-tight text-center">
-                {t('Think First!', <><ruby>思考<rt className="text-[8px] font-normal text-indigo-200">しこう</rt></ruby>タイム</>)}
+                {t('Think First!', <><ruby>思考<rt>しこう</rt></ruby>タイム</>)}
               </span>
               <span className="text-xs sm:text-sm font-bold text-indigo-200 mt-0.5 text-center">
-                {t('Recall the English in your head before choices appear!', <><ruby>頭<rt className="text-[8px] font-normal text-indigo-200">あたま</rt></ruby>の<ruby>中<rt className="text-[8px] font-normal text-indigo-200">なか</rt></ruby>で<ruby>英語<rt className="text-[8px] font-normal text-indigo-200">えいご</rt></ruby>を<ruby>思<rt className="text-[8px] font-normal text-indigo-200">おも</rt></ruby>い<ruby>浮<rt className="text-[8px] font-normal text-indigo-200">う</rt></ruby>かべよう！</>)}
+                {t('Recall the English in your head before choices appear!', <><ruby>頭<rt>あたま</rt></ruby>の<ruby>中<rt>なか</rt></ruby>で<ruby>英語<rt>えいご</rt></ruby>を<ruby>思<rt>おも</rt></ruby>い<ruby>浮<rt>う</rt></ruby>かべよう！</>)}
               </span>
               <div className="mt-2 px-3 py-1 rounded-full bg-white/20 border border-white/30 text-xs font-mono font-black">
-                {t(`Choices open in ${recallSecondsLeft}s`, <><ruby>残<rt className="text-[7px] font-normal text-white/60">のこ</rt></ruby>り {recallSecondsLeft} <ruby>秒<rt className="text-[7px] font-normal text-white/60">びょう</rt></ruby>でオープン</>)}
+                {t(`Choices open in ${recallSecondsLeft}s`, <><ruby>残<rt>のこ</rt></ruby>り {recallSecondsLeft} <ruby>秒<rt>びょう</rt></ruby>でオープン</>)}
               </div>
             </div>
           )}
@@ -773,7 +773,7 @@ export const QuizHostQuestion: React.FC<QuizHostQuestionProps> = ({
                   {isSelected && (
                     <div className="absolute top-2 right-2.5 sm:top-3 sm:right-3.5 px-2.5 py-0.5 rounded-full bg-white text-slate-900 font-black text-[11px] shadow-md flex items-center gap-1 shrink-0 animate-in zoom-in duration-150 z-20">
                       <CheckCircle2 size={13} className="text-emerald-600" />
-                      <span>{t('SELECTED', <><ruby>選択<rt className="text-[7px] font-normal text-slate-600">せんたく</rt></ruby><ruby>中<rt className="text-[7px] font-normal text-slate-600">ちゅう</rt></ruby></>)}</span>
+                      <span>{t('SELECTED', <><ruby>選択<rt>せんたく</rt></ruby><ruby>中<rt>ちゅう</rt></ruby></>)}</span>
                     </div>
                   )}
                 </div>

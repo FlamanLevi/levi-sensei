@@ -173,21 +173,21 @@ export const QuizHostReveal: React.FC<QuizHostRevealProps> = ({
   const hasArtwork = Boolean(correctOption?.image || question.promptImage);
 
   return (
-    <div className="w-full max-w-[92vw] max-h-[92vh] mx-auto h-full flex flex-col justify-between p-2 sm:p-3 select-none overflow-hidden relative text-slate-900 dark:text-white animate-in fade-in duration-150">
+    <div className="w-full max-w-[92vw] max-h-[92dvh] mx-auto h-full flex flex-col justify-between p-2 sm:p-3 select-none overflow-hidden relative text-slate-900 dark:text-white animate-in fade-in duration-150">
       {/* 1. Top Banner */}
-      <div className="flex items-center justify-between pb-1.5 shrink-0">
-        <div className="flex items-center gap-2">
-          <span className="text-xs sm:text-sm font-black px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 flex items-center gap-1.5 shadow-sm">
+      <div className="flex items-center justify-between gap-2 pb-1.5 shrink-0 flex-nowrap">
+        <div className="flex items-center gap-2 min-w-0 flex-1 overflow-x-auto no-scrollbar flex-nowrap">
+          <span className="text-xs sm:text-sm font-black px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 flex items-center gap-1.5 shadow-sm shrink-0 whitespace-nowrap">
             <CheckCircle2 size={15} />
-            <span>{t('Answer Revealed', <><ruby>正解<rt className="text-[7px] font-normal text-emerald-700 dark:text-emerald-300">せいかい</rt></ruby><ruby>発表<rt className="text-[7px] font-normal text-emerald-700 dark:text-emerald-300">はっぴょう</rt></ruby></>)}</span>
+            <span>{t('Answer Revealed', <><ruby>正解<rt>せいかい</rt></ruby><ruby>発表<rt>はっぴょう</rt></ruby></>)}</span>
           </span>
-          <span className="text-xs font-bold text-slate-400">
+          <span className="text-xs font-bold text-slate-400 shrink-0 whitespace-nowrap">
             Q {question.questionIndex + 1} / {totalQuestions || question.totalQuestions}
           </span>
           <button
             type="button"
             onClick={() => setIsPaused(p => !p)}
-            className={`flex items-center gap-1 text-xs font-bold px-2 py-0.5 rounded-full cursor-pointer transition-all ${
+            className={`flex items-center gap-1 text-xs font-bold px-2 py-0.5 rounded-full cursor-pointer transition-all shrink-0 whitespace-nowrap ${
               isPaused
                 ? 'bg-amber-400 text-slate-950 font-black animate-pulse shadow-xs ring-2 ring-amber-300'
                 : 'text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800'
@@ -196,12 +196,12 @@ export const QuizHostReveal: React.FC<QuizHostRevealProps> = ({
           >
             {isPaused ? <Pause size={12} className="fill-current" /> : <Clock size={12} />}
             <span className="font-mono">
-              {isPaused ? t('PAUSED [P]', <><ruby>一時<rt className="text-[7px] font-normal text-slate-900">いちじ</rt></ruby><ruby>停止<rt className="text-[7px] font-normal text-slate-900">ていし</rt></ruby> [P]</>) : `${countdown}s`}
+              {isPaused ? t('PAUSED [P]', <><ruby>一時<rt>いちじ</rt></ruby><ruby>停止<rt>ていし</rt></ruby> [P]</>) : `${countdown}s`}
             </span>
           </button>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 shrink-0 flex-nowrap">
           {onExit && (
             <button
               onClick={() => {
@@ -209,20 +209,20 @@ export const QuizHostReveal: React.FC<QuizHostRevealProps> = ({
                   onExit();
                 }
               }}
-              className="text-xs text-rose-500 hover:text-rose-600 font-bold px-2 py-1 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors"
+              className="text-xs text-rose-500 hover:text-rose-600 font-bold px-2 py-1 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors whitespace-nowrap"
             >
-              {t('✕ End', <>✕ <ruby>終了<rt className="text-[7px] font-normal text-rose-500">しゅうりょう</rt></ruby></>)}
+              {t('✕ End', <>✕ <ruby>終了<rt>しゅうりょう</rt></ruby></>)}
             </button>
           )}
 
           <button
             onClick={onNext}
-            className="px-5 py-1.5 sm:py-2 rounded-xl font-black text-xs sm:text-sm text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-md flex items-center gap-1.5 active:scale-95 transition-all cursor-pointer"
+            className="px-5 py-1.5 sm:py-2 rounded-xl font-black text-xs sm:text-sm text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-md flex items-center gap-1.5 active:scale-95 transition-all cursor-pointer whitespace-nowrap"
           >
             <span>
               {isLastQuestion
-                ? <>{t('FINAL RESULTS', <><ruby>最終<rt className="text-[7px] font-normal text-white">さいしゅう</rt></ruby><ruby>結果<rt className="text-[7px] font-normal text-white">けっか</rt></ruby>へ</>)} ({isPaused ? 'PAUSED' : `${countdown}s`})</>
-                : <>{t('NEXT', <><ruby>次<rt className="text-[7px] font-normal text-white">つぎ</rt></ruby>へ</>)} ({isPaused ? 'PAUSED' : `${countdown}s`})</>}
+                ? <>{t('FINAL RESULTS', <><ruby>最終<rt>さいしゅう</rt></ruby><ruby>結果<rt>けっか</rt></ruby>へ</>)} ({isPaused ? 'PAUSED' : `${countdown}s`})</>
+                : <>{t('NEXT', <><ruby>次<rt>つぎ</rt></ruby>へ</>)} ({isPaused ? 'PAUSED' : `${countdown}s`})</>}
             </span>
             <ArrowRight size={15} />
             <span className="hidden sm:inline font-mono opacity-75 text-[10px]">[Space]</span>
@@ -238,14 +238,14 @@ export const QuizHostReveal: React.FC<QuizHostRevealProps> = ({
               <div className="flex items-center gap-2">
                 <span className="text-2xl">🎉</span>
                 <div>
-                  <span className="text-sm font-black block">{t('CORRECT!!', <><ruby>正解<rt className="text-[8px] font-normal text-white">せいかい</rt></ruby>！その<ruby>調子<rt className="text-[8px] font-normal text-white">ちょうし</rt></ruby>！</>)}</span>
+                  <span className="text-sm font-black block">{t('CORRECT!!', <><ruby>正解<rt>せいかい</rt></ruby>！その<ruby>調子<rt>ちょうし</rt></ruby>！</>)}</span>
                   <span className="text-xs text-emerald-100 font-bold block">
                     +{soloPlayer.lastAnswer.pointsEarned.toLocaleString()} pts • {(soloPlayer.lastAnswer.timeTakenMs / 1000).toFixed(1)}s
                   </span>
                 </div>
               </div>
               <div className="text-right">
-                <span className="text-[10px] font-bold text-emerald-200 uppercase block">{t('Total Score', <><ruby>合計<rt className="text-[7px] font-normal text-emerald-200">ごうけい</rt></ruby>スコア</>)}</span>
+                <span className="text-[10px] font-bold text-emerald-200 uppercase block">{t('Total Score', <><ruby>合計<rt>ごうけい</rt></ruby>スコア</>)}</span>
                 <span className="text-lg font-black font-mono">{soloPlayer.score.toLocaleString()} pts</span>
               </div>
             </div>
@@ -254,14 +254,14 @@ export const QuizHostReveal: React.FC<QuizHostRevealProps> = ({
               <div className="flex items-center gap-2">
                 <span className="text-2xl">💪</span>
                 <div>
-                  <span className="text-sm font-black block">{t('NICE TRY! (DON\'T GIVE UP!)', <>おしい！<ruby>次<rt className="text-[8px] font-normal text-white">つぎ</rt></ruby>こそ<ruby>正解<rt className="text-[8px] font-normal text-white">せいかい</rt></ruby>しよう！</>)}</span>
+                  <span className="text-sm font-black block">{t('NICE TRY! (DON\'T GIVE UP!)', <>おしい！<ruby>次<rt>つぎ</rt></ruby>こそ<ruby>正解<rt>せいかい</rt></ruby>しよう！</>)}</span>
                   <span className="text-xs text-rose-100 font-bold block">
-                    {t('Listen to the pronunciation and repeat!', <><ruby>発音<rt className="text-[7px] font-normal text-rose-100">はつおん</rt></ruby>を<ruby>聞<rt className="text-[7px] font-normal text-rose-100">き</rt></ruby>いてしっかり<ruby>覚<rt className="text-[7px] font-normal text-rose-100">おぼ</rt></ruby>えよう！</>)}
+                    {t('Listen to the pronunciation and repeat!', <><ruby>発音<rt>はつおん</rt></ruby>を<ruby>聞<rt>き</rt></ruby>いてしっかり<ruby>覚<rt>おぼ</rt></ruby>えよう！</>)}
                   </span>
                 </div>
               </div>
               <div className="text-right">
-                <span className="text-[10px] font-bold text-rose-200 uppercase block">{t('Total Score', <><ruby>合計<rt className="text-[7px] font-normal text-rose-200">ごうけい</rt></ruby>スコア</>)}</span>
+                <span className="text-[10px] font-bold text-rose-200 uppercase block">{t('Total Score', <><ruby>合計<rt>ごうけい</rt></ruby>スコア</>)}</span>
                 <span className="text-lg font-black font-mono">{soloPlayer.score.toLocaleString()} pts</span>
               </div>
             </div>
@@ -270,12 +270,12 @@ export const QuizHostReveal: React.FC<QuizHostRevealProps> = ({
       )}
 
       {/* 3. Main Spotlight Card: Correct Answer Stage (Centered layout with zero empty voids) */}
-      <div className={`flex-1 w-full min-h-0 max-h-[52vh] flex flex-col items-center rounded-3xl p-3 sm:p-5 border-4 border-emerald-500 shadow-2xl my-1 relative overflow-hidden ${
+      <div className={`flex-1 w-full min-h-0 max-h-[52dvh] flex flex-col items-center rounded-3xl p-3 sm:p-5 border-4 border-emerald-500 shadow-2xl my-1 relative overflow-hidden ${
         hasArtwork ? 'justify-between' : 'justify-center gap-4'
       } bg-gradient-to-b from-white via-emerald-50/40 to-emerald-50/70 dark:from-slate-900 dark:via-slate-900 dark:to-emerald-950/30`}>
         <div className="absolute top-3 right-3 px-3 py-1 rounded-full bg-emerald-500 text-white text-xs font-black flex items-center gap-1.5 shadow-md z-10">
           <CheckCircle2 size={14} />
-          <span>{t('CORRECT ANSWER', <><ruby>正解<rt className="text-[7px] font-normal text-white">せいかい</rt></ruby></>)}</span>
+          <span>{t('CORRECT ANSWER', <><ruby>正解<rt>せいかい</rt></ruby></>)}</span>
         </div>
 
         {/* Card Artwork (Mounted tightly if present) */}
@@ -331,7 +331,7 @@ export const QuizHostReveal: React.FC<QuizHostRevealProps> = ({
                 {question.targetWordHiragana && question.targetWordJa && question.targetWordHiragana !== question.targetWordJa ? (
                   <ruby className="leading-normal">
                     {question.targetWordJa}
-                    <rt className="text-xs sm:text-sm font-bold text-emerald-600 dark:text-emerald-400 select-none">
+                    <rt>
                       {question.targetWordHiragana}
                     </rt>
                   </ruby>

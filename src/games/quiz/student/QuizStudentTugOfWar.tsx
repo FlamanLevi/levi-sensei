@@ -263,34 +263,34 @@ export const QuizStudentTugOfWar: React.FC<QuizStudentTugOfWarProps> = ({
   return (
     <div className="relative w-full h-full max-w-4xl mx-auto flex flex-col p-2 sm:p-4 select-none">
       {/* 1. Top Sports Day Headband Bar */}
-      <div className="flex items-center justify-between pb-2 shrink-0">
-        <div className="flex items-center gap-2">
+      <div className="flex flex-nowrap items-center justify-between gap-2 pb-2 shrink-0 overflow-x-auto no-scrollbar">
+        <div className="flex items-center gap-2 flex-nowrap shrink-0">
           {/* Team Headband (ハチマキ) badge */}
           {isRed ? (
-            <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-600 text-white font-black text-xs sm:text-sm shadow-md border-2 border-white/80">
+            <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-600 text-white font-black text-xs sm:text-sm shadow-md border-2 border-white/80 whitespace-nowrap shrink-0">
               <span>🔴</span>
-              <span><ruby>赤組<rt className="text-[7px]">あかぐみ</rt></ruby> (RED)</span>
+              <span><ruby>赤組<rt>あかぐみ</rt></ruby> (RED)</span>
             </div>
           ) : isWhite ? (
-            <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-white text-slate-900 font-black text-xs sm:text-sm shadow-md border-2 border-slate-400">
+            <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-white text-slate-900 font-black text-xs sm:text-sm shadow-md border-2 border-slate-400 whitespace-nowrap shrink-0">
               <span>⚪</span>
-              <span><ruby>白組<rt className="text-[7px]">しろぐみ</rt></ruby> (WHITE)</span>
+              <span><ruby>白組<rt>しろぐみ</rt></ruby> (WHITE)</span>
             </div>
           ) : (
-            <div className="px-3 py-1 rounded-full bg-slate-800 text-slate-200 font-black text-xs">
+            <div className="px-3 py-1 rounded-full bg-slate-800 text-slate-200 font-black text-xs whitespace-nowrap shrink-0">
               {player.nickname}
             </div>
           )}
 
           {/* Pull counter badge */}
-          <div className="flex items-center gap-1 px-3 py-1 rounded-full bg-amber-500/10 text-amber-500 dark:text-amber-400 border border-amber-500/30 font-black text-xs">
+          <div className="flex items-center gap-1 px-3 py-1 rounded-full bg-amber-500/10 text-amber-500 dark:text-amber-400 border border-amber-500/30 font-black text-xs whitespace-nowrap shrink-0">
             <span>💪</span>
             <span>{localCorrectCount} {t('PULLS!', '回引いた！')}</span>
           </div>
 
           {/* Streak Flame */}
           {localStreak >= 2 && (
-            <div className="flex items-center gap-0.5 px-2.5 py-0.5 rounded-full bg-rose-500/20 text-rose-400 font-black text-xs animate-pulse">
+            <div className="flex items-center gap-0.5 px-2.5 py-0.5 rounded-full bg-rose-500/20 text-rose-400 font-black text-xs animate-pulse whitespace-nowrap shrink-0">
               <Flame size={12} />
               <span>x{localStreak}</span>
             </div>
@@ -298,8 +298,8 @@ export const QuizStudentTugOfWar: React.FC<QuizStudentTugOfWarProps> = ({
         </div>
 
         {/* Match Timer */}
-        <div className="flex items-center gap-2">
-          <span className={`font-mono text-xs sm:text-sm font-black px-2.5 py-1 rounded-xl ${
+        <div className="flex items-center gap-2 shrink-0">
+          <span className={`font-mono text-xs sm:text-sm font-black px-2.5 py-1 rounded-xl whitespace-nowrap ${
             timeRemainingSeconds <= 10 ? 'bg-rose-600 text-white animate-pulse' : 'bg-slate-800 text-slate-300'
           }`}>
             ⏱️ {timeRemainingSeconds}s
@@ -323,7 +323,7 @@ export const QuizStudentTugOfWar: React.FC<QuizStudentTugOfWarProps> = ({
 
         {/* Target Image if available */}
         {currentQuestion.promptImage && (
-          <div className="h-32 sm:h-44 md:h-52 max-h-[40vh] w-auto aspect-square rounded-2xl overflow-hidden bg-slate-50 dark:bg-slate-800/50 p-2 mb-2 flex items-center justify-center">
+          <div className="h-32 sm:h-44 md:h-52 max-h-[40dvh] w-auto aspect-square rounded-2xl overflow-hidden bg-slate-50 dark:bg-slate-800/50 p-2 mb-2 flex items-center justify-center">
             <img
               src={currentQuestion.promptImage}
               alt={currentQuestion.targetWordEnglish}
@@ -357,7 +357,7 @@ export const QuizStudentTugOfWar: React.FC<QuizStudentTugOfWarProps> = ({
               💥 PULL!!
             </span>
             <span className="text-xl sm:text-2xl font-black mt-1">
-              <ruby>引いた！<rt className="text-xs">ひいた！</rt></ruby>
+              <ruby>引<rt>ひ</rt></ruby>いた！
             </span>
           </div>
         )}
@@ -369,7 +369,7 @@ export const QuizStudentTugOfWar: React.FC<QuizStudentTugOfWarProps> = ({
               💦
             </div>
             <h3 className="text-2xl sm:text-4xl font-black text-amber-200 tracking-tight">
-              <ruby>すべった！<rt className="text-xs">すべった！</rt></ruby>
+              <ruby>すべった<rt>すべった</rt></ruby>！
             </h3>
             <p className="text-xs sm:text-sm font-bold text-amber-400 mt-0.5">
               Slipped in the mud! Losing grip on the rope!
@@ -458,7 +458,7 @@ export const QuizStudentTugOfWar: React.FC<QuizStudentTugOfWarProps> = ({
                           seg.ruby ? (
                             <ruby key={rIdx}>
                               {seg.base}
-                              <rt className="text-[9px] font-bold">{seg.ruby}</rt>
+                              <rt className="font-bold">{seg.ruby}</rt>
                             </ruby>
                           ) : (
                             <span key={rIdx}>{seg.base}</span>
@@ -495,13 +495,13 @@ export const QuizStudentTugOfWar: React.FC<QuizStudentTugOfWarProps> = ({
             🏁
           </div>
           <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
-            <ruby>試合終了<rt className="text-xs">しあいしゅうりょう</rt></ruby>！
+            <ruby>試合終了<rt>しあいしゅうりょう</rt></ruby>！
           </h2>
           <p className="text-sm sm:text-base font-bold text-amber-300 mt-1">
             TIME'S UP! Great pulling!
           </p>
           <div className="my-4 px-6 py-3 rounded-2xl bg-slate-900 border-2 border-amber-500/50 shadow-inner">
-            <span className="text-xs text-slate-400 block"><ruby>引<rt className="text-[7px]">ひ</rt></ruby>いた<ruby>回数<rt className="text-[7px]">かいすう</rt></ruby> (Your Pulls)</span>
+            <span className="text-xs text-slate-400 block"><ruby>引<rt>ひ</rt></ruby>いた<ruby>回数<rt>かいすう</rt></ruby> (Your Pulls)</span>
             <span className="text-3xl sm:text-4xl font-black text-amber-400 font-mono">
               {roundPulls || localCorrectCount} <span className="text-lg text-white font-normal">回</span>
             </span>
@@ -512,7 +512,7 @@ export const QuizStudentTugOfWar: React.FC<QuizStudentTugOfWarProps> = ({
             )}
           </div>
           <p className="text-xs sm:text-sm font-bold text-slate-300 animate-pulse">
-            👀 <ruby>前<rt className="text-[7px]">まえ</rt></ruby>の<ruby>大画面<rt className="text-[7px]">だいがめん</rt></ruby>に<ruby>注目<rt className="text-[7px]">ちゅうもく</rt></ruby>しよう！
+            👀 <ruby>前<rt>まえ</rt></ruby>の<ruby>大画面<rt>だいがめん</rt></ruby>に<ruby>注目<rt>ちゅうもく</rt></ruby>しよう！
           </p>
         </div>
       )}

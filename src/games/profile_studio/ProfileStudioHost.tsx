@@ -234,6 +234,7 @@ export const ProfileStudioHost: React.FC<ProfileStudioHostProps> = ({ onExit, on
     playPop();
 
     try {
+      await ensureAnonymousAuth();
       const existingClaims = await fetchClassBoundNumbers(schoolId, classId);
       const currentBoundSeats = roomState?.boundSeats || {};
       const newBoundSeats: Record<number, BoundSeatInfo> = { ...currentBoundSeats };
@@ -289,6 +290,7 @@ export const ProfileStudioHost: React.FC<ProfileStudioHostProps> = ({ onExit, on
     if (!adminEditingSeat || isSavingAdminEdit) return;
     setIsSavingAdminEdit(true);
     try {
+      await ensureAnonymousAuth();
       const { seatNum } = adminEditingSeat;
       if (seatNum === 0) {
         setAdminEditingSeat({
@@ -338,6 +340,7 @@ export const ProfileStudioHost: React.FC<ProfileStudioHostProps> = ({ onExit, on
     if (isSavingAdminEdit) return;
     setIsSavingAdminEdit(true);
     try {
+      await ensureAnonymousAuth();
       if (seatNum > 0) {
         await releaseStudentNumber(schoolId, classId, seatNum);
       }
@@ -360,6 +363,7 @@ export const ProfileStudioHost: React.FC<ProfileStudioHostProps> = ({ onExit, on
     const newCode = `${prefix}${rand}`;
 
     if (roomCode) {
+      await ensureAnonymousAuth().catch(() => {});
       await safeSet(`setupRooms/${roomCode}/status`, 'FINISHED').catch(() => {});
     }
 
@@ -386,6 +390,7 @@ export const ProfileStudioHost: React.FC<ProfileStudioHostProps> = ({ onExit, on
   const handleExit = async () => {
     playPop();
     try {
+      await ensureAnonymousAuth();
       await safeSet(`setupRooms/${roomCode}/status`, 'FINISHED');
     } catch {}
     onExit();
@@ -395,6 +400,7 @@ export const ProfileStudioHost: React.FC<ProfileStudioHostProps> = ({ onExit, on
     if (!onLaunchGame) return;
     playPop();
     try {
+      await ensureAnonymousAuth();
       await safeSet(`setupRooms/${roomCode}/status`, 'FINISHED');
     } catch {}
     onLaunchGame();
@@ -407,24 +413,24 @@ export const ProfileStudioHost: React.FC<ProfileStudioHostProps> = ({ onExit, on
   return (
     <div className="fixed inset-0 w-screen h-dvh bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-white flex flex-col overflow-hidden select-none">
       {/* 1. Header Bar */}
-      <header className="h-14 sm:h-16 px-3 sm:px-6 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between shrink-0 shadow-xs z-30">
-        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+      <header className="h-14 sm:h-16 px-3 sm:px-6 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2 shrink-0 shadow-xs z-30">
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
           <button
             type="button"
             onClick={handleExit}
-            className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer"
+            className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer shrink-0"
             title={t('Back to Hub', 'メインメニューに戻る')}
           >
             <ArrowLeft size={18} />
           </button>
 
-          <div className="flex items-center gap-2 truncate">
+          <div className="flex items-center gap-2 min-w-0 flex-1">
             <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-tr from-purple-600 to-indigo-600 text-white flex items-center justify-center font-black shadow-sm shrink-0">
               <Smartphone size={18} />
             </div>
-            <div className="flex flex-col min-w-0">
+            <div className="flex flex-col min-w-0 flex-1">
               <h1 className="text-sm sm:text-base font-black tracking-tight truncate leading-tight">
-                {t('iPad Profile Studio', <><ruby>iPadセットアップ大会<rt className="text-[7px] font-normal text-slate-400">アイパッドセットアップたいかい</rt></ruby></>)}
+                {t('iPad Profile Studio', <>iPadセットアップ<ruby>大会<rt>たいかい</rt></ruby></>)}
               </h1>
               
               {/* Quick Class Switcher Dropdown */}
@@ -432,7 +438,7 @@ export const ProfileStudioHost: React.FC<ProfileStudioHostProps> = ({ onExit, on
                 <button
                   type="button"
                   onClick={() => { playPop(); setIsClassDropdownOpen(!isClassDropdownOpen); }}
-                  className="flex items-center gap-1.5 text-[10px] sm:text-[11px] font-bold text-slate-500 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors cursor-pointer truncate"
+                  className="flex items-center gap-1.5 text-[10px] sm:text-[11px] font-bold text-slate-600 dark:text-slate-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors cursor-pointer truncate"
                   title={t('Click to switch class', 'クラスを変更')}
                 >
                   <span>{schoolConfig?.shortKanji || schoolConfig?.name || '小学校'}</span>
@@ -445,7 +451,7 @@ export const ProfileStudioHost: React.FC<ProfileStudioHostProps> = ({ onExit, on
 
                 {isClassDropdownOpen && (
                   <div className="absolute left-0 mt-1 w-44 rounded-2xl bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 shadow-2xl p-1.5 z-50 animate-in fade-in zoom-in-95 duration-100">
-                    <div className="px-2 py-1 text-[9px] font-black text-slate-400 uppercase tracking-wider border-b border-slate-100 dark:border-slate-800 mb-1">
+                    <div className="px-2 py-1 text-[9px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider border-b border-slate-100 dark:border-slate-800 mb-1">
                       {t('Switch Class', 'クラス切り替え')}
                     </div>
                     <div className="grid grid-cols-2 gap-1">
@@ -472,12 +478,12 @@ export const ProfileStudioHost: React.FC<ProfileStudioHostProps> = ({ onExit, on
         </div>
 
         {/* Header Right Cluster */}
-        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 flex-nowrap whitespace-nowrap">
           {/* Seating Chart Shortcut Button in Header */}
           <button
             type="button"
             onClick={() => { playPop(); setIsSeatingChartOpen(true); }}
-            className="px-2.5 sm:px-3 py-1.5 rounded-xl bg-purple-50 dark:bg-purple-950/60 border border-purple-200 dark:border-purple-800 text-purple-700 dark:text-purple-300 hover:bg-purple-100 dark:hover:bg-purple-900/60 transition-all font-black text-xs flex items-center gap-1.5 shadow-2xs cursor-pointer"
+            className="px-2.5 sm:px-3 py-1.5 rounded-xl bg-purple-50 dark:bg-purple-950/60 border border-purple-200 dark:border-purple-800 text-purple-700 dark:text-purple-300 hover:bg-purple-100 dark:hover:bg-purple-900/60 transition-all font-black text-xs flex items-center gap-1.5 shadow-2xs cursor-pointer shrink-0"
           >
             <LayoutGrid size={15} />
             <span className="hidden sm:inline">{t('Seating Chart', '座席表')}</span>
@@ -491,7 +497,7 @@ export const ProfileStudioHost: React.FC<ProfileStudioHostProps> = ({ onExit, on
             type="button"
             onClick={handleSyncFromCloud}
             disabled={isSyncingRoster}
-            className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer"
+            className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer shrink-0"
             title={t('Sync Roster from Database', 'クラウド名簿を再同期')}
           >
             <RefreshCw size={16} className={isSyncingRoster ? 'animate-spin text-purple-500' : ''} />
@@ -500,7 +506,7 @@ export const ProfileStudioHost: React.FC<ProfileStudioHostProps> = ({ onExit, on
           <button
             type="button"
             onClick={toggleMute}
-            className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer"
+            className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer shrink-0"
             title={isMuted ? 'Unmute' : 'Mute'}
           >
             {isMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
@@ -509,7 +515,7 @@ export const ProfileStudioHost: React.FC<ProfileStudioHostProps> = ({ onExit, on
           <button
             type="button"
             onClick={toggleTheme}
-            className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer"
+            className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer shrink-0"
             title="Toggle theme"
           >
             <Sun size={16} className="hidden dark:block text-amber-400" />
@@ -521,7 +527,7 @@ export const ProfileStudioHost: React.FC<ProfileStudioHostProps> = ({ onExit, on
             <button
               type="button"
               onClick={handleLaunchGame}
-              className={`px-3 sm:px-4 py-1.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-black text-xs sm:text-sm shadow-md hover:brightness-105 active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer ${
+              className={`px-3 sm:px-4 py-1.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-black text-xs sm:text-sm shadow-md hover:brightness-105 active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer shrink-0 ${
                 isAllComplete ? 'animate-bounce' : ''
               }`}
             >
@@ -542,10 +548,10 @@ export const ProfileStudioHost: React.FC<ProfileStudioHostProps> = ({ onExit, on
                 <img
                   src={qrCodeDataUrl}
                   alt="Setup QR Code"
-                  className="h-[52vh] sm:h-[60vh] max-h-[460px] aspect-square object-contain select-none pointer-events-none rounded-2xl"
+                  className="h-[52dvh] sm:h-[60dvh] max-h-[460px] aspect-square object-contain select-none pointer-events-none rounded-2xl"
                 />
               ) : (
-                <div className="h-[52vh] sm:h-[60vh] max-h-[460px] aspect-square flex items-center justify-center text-slate-400 font-bold animate-pulse">
+                <div className="h-[52dvh] sm:h-[60dvh] max-h-[460px] aspect-square flex items-center justify-center text-slate-500 dark:text-slate-400 font-bold animate-pulse">
                   {t('Generating QR Code...', 'QRコード生成中...')}
                 </div>
               )}
@@ -553,16 +559,16 @@ export const ProfileStudioHost: React.FC<ProfileStudioHostProps> = ({ onExit, on
           </div>
 
           {/* Right: Room PIN & Quick Action */}
-          <div className="flex flex-col items-center md:items-start text-center md:text-left max-w-sm sm:max-w-md w-full gap-3 sm:gap-4">
+          <div className="flex flex-col items-center md:items-start text-center md:text-left max-w-md md:max-w-lg w-full gap-3 sm:gap-4">
             {/* Step 1 Pill */}
             <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-300 font-black text-xs shadow-2xs">
               <QrCode size={14} />
-              <span>{t('Step 1: Scan with iPad Camera', <><ruby>手順<rt className="text-[7px]">てじゅん</rt></ruby>1: iPadカメラでスキャン</>)}</span>
+              <span>{t('Step 1: Scan with iPad Camera', <><ruby>手順<rt>てじゅん</rt></ruby>1: iPadカメラでスキャン</>)}</span>
             </div>
 
             {/* Room PIN Box */}
             <div className="w-full py-3.5 px-6 rounded-3xl bg-slate-900 dark:bg-slate-950 border-4 border-amber-400 text-center shadow-2xl">
-              <span className="text-xs font-black text-slate-400 uppercase tracking-widest block mb-1">
+              <span className="text-xs font-black text-slate-300 uppercase tracking-widest block mb-1">
                 {t('Or Enter 4-Digit PIN', 'または 4桁PINコードを入力')}
               </span>
               <span className="text-6xl sm:text-7xl lg:text-8xl font-mono font-black text-amber-400 tracking-widest">
@@ -583,10 +589,10 @@ export const ProfileStudioHost: React.FC<ProfileStudioHostProps> = ({ onExit, on
               </span>
             </button>
 
-            <p className="text-xs font-bold text-slate-400 leading-relaxed">
+            <p className="text-xs font-bold text-slate-600 dark:text-slate-300 leading-relaxed">
               {t(
                 'Camera scan automatically inherits school and class. No secret word or typing required!',
-                <>カメラを<ruby>向<rt className="text-[7px]">む</rt></ruby>けるだけで<ruby>学校<rt className="text-[7px]">がっこう</rt></ruby>・クラスが<ruby>自動<rt className="text-[7px]">じどう</rt></ruby>で<ruby>設定<rt className="text-[7px]">せってい</rt></ruby>されます！</>
+                <>カメラを<ruby>向<rt>む</rt></ruby>けるだけで<ruby>学校<rt>がっこう</rt></ruby>・クラスが<ruby>自動<rt>じどう</rt></ruby>で<ruby>設定<rt>せってい</rt></ruby>されます！</>
               )}
             </p>
           </div>
@@ -600,33 +606,33 @@ export const ProfileStudioHost: React.FC<ProfileStudioHostProps> = ({ onExit, on
           onClick={() => setIsSeatingChartOpen(false)}
         >
           <div 
-            className="w-full max-w-6xl max-h-[96vh] bg-white dark:bg-slate-900 rounded-3xl border-4 border-indigo-400 dark:border-indigo-600 shadow-2xl flex flex-col overflow-hidden text-slate-900 dark:text-white"
+            className="w-full max-w-6xl max-h-[96dvh] bg-white dark:bg-slate-900 rounded-3xl border-4 border-indigo-400 dark:border-indigo-600 shadow-2xl flex flex-col overflow-hidden text-slate-900 dark:text-white"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
-            <div className="h-14 sm:h-16 px-4 sm:px-6 bg-slate-50 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between shrink-0">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-purple-600 text-white flex items-center justify-center">
+            <div className="h-14 sm:h-16 px-4 sm:px-6 bg-slate-50 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between gap-2 shrink-0">
+              <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                <div className="w-8 h-8 rounded-xl bg-purple-600 text-white flex items-center justify-center shrink-0">
                   <LayoutGrid size={18} />
                 </div>
-                <div>
-                  <h3 className="text-sm sm:text-base font-black tracking-tight leading-tight">
-                    {schoolConfig?.shortKanji || schoolConfig?.name || '学校'} {classId} {t('Seating Chart', <><ruby>座席<rt className="text-[7px]">ざせき</rt></ruby>チャート</>)}
+                <div className="min-w-0 flex-1">
+                  <h3 className="text-sm sm:text-base font-black tracking-tight leading-tight truncate">
+                    {schoolConfig?.shortKanji || schoolConfig?.name || '学校'} {classId} {t('Seating Chart', <><ruby>座席<rt>ざせき</rt></ruby>チャート</>)}
                   </h3>
-                  <p className="text-[10px] text-slate-400 font-bold">
+                  <p className="text-[10px] text-slate-600 dark:text-slate-300 font-bold truncate">
                     {t('Real-time connection & profile status', 'リアルタイム接続・名簿ひも付け状況')}
                   </p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
-                {/* Prominent PIN Display so kids can join while modal is open */}
-                <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-amber-400 text-slate-950 font-mono font-black text-xs sm:text-sm shadow-xs border-2 border-amber-300">
+              <div className="flex items-center gap-2 shrink-0 flex-nowrap whitespace-nowrap">
+                {/* Prominent PIN Display so students can join while modal is open */}
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-amber-400 text-slate-950 font-mono font-black text-xs sm:text-sm shadow-xs border-2 border-amber-300 shrink-0">
                   <span className="text-[10px] uppercase font-bold text-amber-950">PIN:</span>
                   <span className="tracking-widest text-sm sm:text-base">{roomCode}</span>
                 </div>
 
-                <span className="font-mono text-xs sm:text-sm font-black px-2.5 py-1 rounded-xl bg-purple-100 dark:bg-purple-950/80 text-purple-700 dark:text-purple-300">
+                <span className="font-mono text-xs sm:text-sm font-black px-2.5 py-1 rounded-xl bg-purple-100 dark:bg-purple-950/80 text-purple-700 dark:text-purple-300 shrink-0">
                   {claimedCount} / {targetRosterSize} ({progressPct}%)
                 </span>
 
@@ -634,7 +640,7 @@ export const ProfileStudioHost: React.FC<ProfileStudioHostProps> = ({ onExit, on
                   <button
                     type="button"
                     onClick={handleLaunchGame}
-                    className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-black text-xs shadow-md hover:brightness-105 active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer"
+                    className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-black text-xs shadow-md hover:brightness-105 active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer shrink-0"
                   >
                     <Sparkles size={14} />
                     <span>{t('Launch Game!', 'ゲーム起動！')}</span>
@@ -645,7 +651,7 @@ export const ProfileStudioHost: React.FC<ProfileStudioHostProps> = ({ onExit, on
                   type="button"
                   onClick={handleSyncFromCloud}
                   disabled={isSyncingRoster}
-                  className="p-2 rounded-xl bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors cursor-pointer"
+                  className="p-2 rounded-xl bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors cursor-pointer shrink-0"
                   title={t('Sync Roster', '再同期')}
                 >
                   <RefreshCw size={15} className={isSyncingRoster ? 'animate-spin' : ''} />
@@ -654,7 +660,7 @@ export const ProfileStudioHost: React.FC<ProfileStudioHostProps> = ({ onExit, on
                 <button
                   type="button"
                   onClick={() => setIsSeatingChartOpen(false)}
-                  className="p-2 rounded-xl bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-rose-100 hover:text-rose-600 dark:hover:bg-rose-950 dark:hover:text-rose-300 transition-colors cursor-pointer"
+                  className="p-2 rounded-xl bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-rose-100 hover:text-rose-600 dark:hover:bg-rose-950 dark:hover:text-rose-300 transition-colors cursor-pointer shrink-0"
                   title={t('Close', '閉じる')}
                 >
                   <X size={18} />
@@ -685,7 +691,7 @@ export const ProfileStudioHost: React.FC<ProfileStudioHostProps> = ({ onExit, on
                             : 'bg-gradient-to-tr from-emerald-500/15 via-teal-500/10 to-emerald-500/5 dark:from-emerald-950/70 dark:via-teal-950/50 dark:to-slate-900 border-emerald-500/80 shadow-xs cursor-pointer hover:border-purple-400 group'
                           : isTeacherSeat
                           ? 'bg-purple-50/50 dark:bg-purple-950/20 border-dashed border-purple-300 dark:border-purple-700 text-purple-600 dark:text-purple-400'
-                          : 'bg-slate-50 dark:bg-slate-800/40 border-dashed border-slate-300 dark:border-slate-700 text-slate-400'
+                          : 'bg-slate-50 dark:bg-slate-800/40 border-dashed border-slate-300 dark:border-slate-700 text-slate-500 dark:text-slate-400'
                       }`}
                       style={{ minHeight: '84px' }}
                     >
@@ -696,7 +702,7 @@ export const ProfileStudioHost: React.FC<ProfileStudioHostProps> = ({ onExit, on
                             ? 'bg-purple-600 text-white shadow-2xs'
                             : isClaimed
                             ? 'bg-emerald-600 text-white shadow-2xs'
-                            : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400'
+                            : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300'
                         }`}>
                           {isTeacherSeat ? '00 先生' : `#${seatNum}`}
                         </span>
@@ -715,7 +721,7 @@ export const ProfileStudioHost: React.FC<ProfileStudioHostProps> = ({ onExit, on
                             {t('Teacher Seat', '先生席')}
                           </span>
                         ) : (
-                          <span className="text-[10px] text-slate-400 font-bold">
+                          <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold">
                             {t('Waiting', '待機中')}
                           </span>
                         )}
@@ -747,12 +753,12 @@ export const ProfileStudioHost: React.FC<ProfileStudioHostProps> = ({ onExit, on
             </div>
 
             {/* Modal Footer */}
-            <div className="p-3 px-4 sm:px-6 bg-slate-50 dark:bg-slate-800/80 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between text-xs font-bold text-slate-500 dark:text-slate-400 shrink-0">
+            <div className="p-3 px-4 sm:px-6 bg-slate-50 dark:bg-slate-800/80 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between text-xs font-bold text-slate-600 dark:text-slate-300 shrink-0">
               <span>💡 {t('Tap any green seat to edit name, change emoji, or release seat', '緑の席をタップすると、名前修正・アイコン変更・席の解除ができます')}</span>
               <button
                 type="button"
                 onClick={() => setIsSeatingChartOpen(false)}
-                className="px-4 py-1.5 rounded-xl bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 font-black hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors cursor-pointer"
+                className="px-4 py-1.5 rounded-xl bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 font-black hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors cursor-pointer shrink-0"
               >
                 {t('Back to QR Stage', 'QRコード画面に戻る')}
               </button>
@@ -768,35 +774,35 @@ export const ProfileStudioHost: React.FC<ProfileStudioHostProps> = ({ onExit, on
           onClick={() => setAdminEditingSeat(null)}
         >
           <div 
-            className="bg-white dark:bg-slate-900 rounded-3xl p-6 max-w-sm sm:max-w-md w-full shadow-2xl border-4 border-purple-500/80 text-slate-900 dark:text-white"
+            className="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 max-w-md md:max-w-2xl w-full max-h-[92dvh] overflow-y-auto shadow-2xl border-4 border-purple-500/80 text-slate-900 dark:text-white"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
             <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-100 dark:border-slate-800">
-              <div className="flex items-center gap-3">
-                <span className="w-10 h-10 rounded-2xl bg-purple-600 text-white font-mono font-black text-lg flex items-center justify-center shadow-md">
+              <div className="flex items-center gap-3 min-w-0">
+                <span className="w-10 h-10 rounded-2xl bg-purple-600 text-white font-mono font-black text-lg flex items-center justify-center shadow-md shrink-0">
                   {adminEditingSeat.seatNum === 0 ? '00' : `#${adminEditingSeat.seatNum}`}
                 </span>
-                <div>
-                  <h3 className="text-base font-black leading-tight">
+                <div className="min-w-0">
+                  <h3 className="text-base font-black leading-tight truncate">
                     {adminEditingSeat.seatNum === 0
                       ? t('Teacher / Admin Profile', '先生・管理者プロフィール')
                       : t(`Seat #${adminEditingSeat.seatNum} Profile`, `出席番号 ${adminEditingSeat.seatNum}番`)}
                   </h3>
-                  <span className="text-xs text-slate-400 font-bold">
+                  <span className="text-xs text-slate-600 dark:text-slate-300 font-bold">
                     {schoolConfig?.shortKanji || '学校'} {classId}
                   </span>
                 </div>
               </div>
-              <span className="text-3xl select-none">{adminEditingSeat.avatar}</span>
+              <span className="text-3xl select-none shrink-0">{adminEditingSeat.avatar}</span>
             </div>
 
-            {/* Field Rows with Individual Reset Buttons */}
-            <div className="space-y-3 mb-6">
+            {/* Field Rows with Individual Reset Buttons (2-column landscape grid) */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-5">
               {/* 1. Nickname Row */}
               <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 flex items-center justify-between gap-3">
                 <div className="min-w-0 flex-1">
-                  <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 block mb-0.5">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-0.5">
                     {t('Nickname', '表示名（ニックネーム）')}
                   </span>
                   <span className="text-sm font-black text-slate-900 dark:text-white truncate block">
@@ -816,7 +822,7 @@ export const ProfileStudioHost: React.FC<ProfileStudioHostProps> = ({ onExit, on
                     <span className="text-[10px] opacity-75">({adminEditingSeat.seatNum}番)</span>
                   </button>
                 ) : (
-                  <span className="px-2 py-0.5 rounded-md bg-slate-200/60 dark:bg-slate-700 text-slate-500 dark:text-slate-400 font-bold text-[10px] shrink-0">
+                  <span className="px-2 py-0.5 rounded-md bg-slate-200/60 dark:bg-slate-700 text-slate-500 dark:text-slate-300 font-bold text-[10px] shrink-0">
                     {t('Default', '標準')}
                   </span>
                 )}
@@ -825,7 +831,7 @@ export const ProfileStudioHost: React.FC<ProfileStudioHostProps> = ({ onExit, on
               {/* 2. Short Name / Callsign Row */}
               <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 flex items-center justify-between gap-3">
                 <div className="min-w-0 flex-1">
-                  <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 block mb-0.5">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-0.5">
                     {t('Short Name / Callsign', '短縮表記（コールサイン）')}
                   </span>
                   <span className="text-sm font-mono font-black text-slate-900 dark:text-white truncate block">
@@ -845,7 +851,7 @@ export const ProfileStudioHost: React.FC<ProfileStudioHostProps> = ({ onExit, on
                     <span className="text-[10px] opacity-75">({classId}-{adminEditingSeat.seatNum})</span>
                   </button>
                 ) : (
-                  <span className="px-2 py-0.5 rounded-md bg-slate-200/60 dark:bg-slate-700 text-slate-500 dark:text-slate-400 font-bold text-[10px] shrink-0">
+                  <span className="px-2 py-0.5 rounded-md bg-slate-200/60 dark:bg-slate-700 text-slate-500 dark:text-slate-300 font-bold text-[10px] shrink-0">
                     {t('Default', '標準')}
                   </span>
                 )}
@@ -856,7 +862,7 @@ export const ProfileStudioHost: React.FC<ProfileStudioHostProps> = ({ onExit, on
                 <div className="min-w-0 flex-1 flex items-center gap-2">
                   <span className="text-2xl shrink-0">{adminEditingSeat.avatar}</span>
                   <div>
-                    <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 block mb-0.5">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-0.5">
                       {t('Avatar Emoji', 'アイコン絵文字')}
                     </span>
                     <span className="text-xs font-bold text-slate-600 dark:text-slate-300">
@@ -877,7 +883,7 @@ export const ProfileStudioHost: React.FC<ProfileStudioHostProps> = ({ onExit, on
                     <span className="text-sm">🇯🇵</span>
                   </button>
                 ) : (
-                  <span className="px-2 py-0.5 rounded-md bg-slate-200/60 dark:bg-slate-700 text-slate-500 dark:text-slate-400 font-bold text-[10px] shrink-0">
+                  <span className="px-2 py-0.5 rounded-md bg-slate-200/60 dark:bg-slate-700 text-slate-500 dark:text-slate-300 font-bold text-[10px] shrink-0">
                     {t('Default', '標準')}
                   </span>
                 )}
@@ -888,7 +894,7 @@ export const ProfileStudioHost: React.FC<ProfileStudioHostProps> = ({ onExit, on
                 <div className="min-w-0 flex-1 flex items-center gap-2">
                   <span className="text-xl shrink-0">{adminEditingSeat.secretCharm || '🔓'}</span>
                   <div>
-                    <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 block mb-0.5">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-0.5">
                       {t('Passcode Charm', '合言葉パスコード')}
                     </span>
                     <span className="text-xs font-bold text-slate-600 dark:text-slate-300">
@@ -908,7 +914,7 @@ export const ProfileStudioHost: React.FC<ProfileStudioHostProps> = ({ onExit, on
                     <span>{t('Clear', '解除')}</span>
                   </button>
                 ) : (
-                  <span className="px-2 py-0.5 rounded-md bg-slate-200/60 dark:bg-slate-700 text-slate-500 dark:text-slate-400 font-bold text-[10px] shrink-0">
+                  <span className="px-2 py-0.5 rounded-md bg-slate-200/60 dark:bg-slate-700 text-slate-500 dark:text-slate-300 font-bold text-[10px] shrink-0">
                     {t('None', 'なし')}
                   </span>
                 )}

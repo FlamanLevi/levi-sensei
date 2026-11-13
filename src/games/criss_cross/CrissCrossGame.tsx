@@ -200,15 +200,15 @@ export const CrissCrossGame: React.FC<CrissCrossGameProps> = () => {
   return (
     <div className="w-full flex-1 flex flex-col justify-between p-2 sm:p-4 select-none relative font-['UD_Digi_Kyokasho_NP-R','Zen_Maru_Gothic',sans-serif]">
       {/* 1. Header Toolbar */}
-      <div className="bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 rounded-2xl sm:rounded-3xl p-2.5 sm:p-3.5 shadow-md flex flex-wrap items-center justify-between gap-2.5 mb-2.5">
-        <div className="flex items-center gap-2">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-teal-500 to-emerald-600 text-white flex items-center justify-center text-xl shadow-md">
+      <div className="bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 rounded-2xl sm:rounded-3xl p-2.5 sm:p-3.5 shadow-md flex flex-nowrap items-center justify-between gap-2.5 mb-2.5 overflow-x-auto no-scrollbar whitespace-nowrap">
+        <div className="flex items-center gap-2 shrink-0">
+          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-teal-500 to-emerald-600 text-white flex items-center justify-center text-xl shadow-md shrink-0">
             🎯
           </div>
-          <div>
-            <h2 className="text-base sm:text-xl font-black text-slate-900 dark:text-white flex items-center gap-2">
-              <span>{t("Criss-Cross Q&A", <>クリスクロス・<ruby>全員<rt className="text-[7px]">ぜんいん</rt></ruby><ruby>着席<rt className="text-[7px]">ちゃくせき</rt></ruby>ゲーム</>)}</span>
-              <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-teal-100 text-teal-800 dark:bg-teal-950 dark:text-teal-300">
+          <div className="min-w-0">
+            <h2 className="text-base sm:text-xl font-black text-slate-900 dark:text-white flex items-center gap-2 whitespace-nowrap">
+              <span>{t("Criss-Cross Q&A", <>クリスクロス・<ruby>全員<rt>ぜんいん</rt></ruby><ruby>着席<rt>ちゃくせき</rt></ruby>ゲーム</>)}</span>
+              <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-teal-100 text-teal-800 dark:bg-teal-950 dark:text-teal-300 shrink-0">
                 Stream 🅰️ TV
               </span>
             </h2>
@@ -216,10 +216,10 @@ export const CrissCrossGame: React.FC<CrissCrossGameProps> = () => {
         </div>
 
         {/* Configuration Controls */}
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-nowrap items-center gap-1.5 shrink-0 whitespace-nowrap">
           {/* Rows */}
-          <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-1 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700">
-            <span className="text-slate-400 px-1">{t("Rows:", <><ruby>行<rt className="text-[7px]">ぎょう</rt></ruby>:</>)}</span>
+          <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-1 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700 shrink-0">
+            <span className="text-slate-600 dark:text-slate-300 px-1">{t("Rows:", <><ruby>行<rt>ぎょう</rt></ruby>:</>)}</span>
             {[4, 5, 6, 7].map((r) => (
               <button
                 key={r}
@@ -235,8 +235,8 @@ export const CrissCrossGame: React.FC<CrissCrossGameProps> = () => {
           </div>
 
           {/* Columns */}
-          <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-1 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700">
-            <span className="text-slate-400 px-1">{t("Cols:", <><ruby>列<rt className="text-[7px]">れつ</rt></ruby>:</>)}</span>
+          <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-1 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700 shrink-0">
+            <span className="text-slate-600 dark:text-slate-300 px-1">{t("Cols:", <><ruby>列<rt>れつ</rt></ruby>:</>)}</span>
             {[4, 5, 6, 7].map((c) => (
               <button
                 key={c}
@@ -252,7 +252,7 @@ export const CrissCrossGame: React.FC<CrissCrossGameProps> = () => {
           </div>
 
           {/* Walkway Aisle Layout (Paired vs Single) */}
-          <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-1 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700">
+          <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-1 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700 shrink-0">
             <button
               type="button"
               onClick={() => setAisleLayout('PAIRED')}
@@ -279,18 +279,18 @@ export const CrissCrossGame: React.FC<CrissCrossGameProps> = () => {
           <button
             type="button"
             onClick={() => setIsEditMode((prev) => !prev)}
-            className={`px-2.5 py-1 rounded-xl text-xs font-black transition-all cursor-pointer border flex items-center gap-1.5 ${
+            className={`px-2.5 py-1 rounded-xl text-xs font-black transition-all cursor-pointer border flex items-center gap-1.5 shrink-0 ${
               isEditMode
                 ? 'bg-rose-500 text-white border-rose-400 shadow-md animate-pulse ring-2 ring-rose-300'
                 : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-200'
             }`}
           >
             <span>{isEditMode ? '✅' : '✏️'}</span>
-            <span>{isEditMode ? t("Done Editing", <>設定完了</>) : t("Set Empty Desks", <><ruby>空席<rt className="text-[7px]">くうせき</rt></ruby>・<ruby>欠席<rt className="text-[7px]">けっせき</rt></ruby><ruby>設定<rt className="text-[7px]">せってい</rt></ruby></>)}</span>
+            <span>{isEditMode ? t("Done Editing", <>設定完了</>) : t("Set Empty Desks", <><ruby>空席<rt>くうせき</rt></ruby>・<ruby>欠席<rt>けっせき</rt></ruby><ruby>設定<rt>せってい</rt></ruby></>)}</span>
           </button>
 
           {/* Sweep Mode (Random Mix vs Row vs Col vs Diag) */}
-          <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-1 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700">
+          <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-1 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700 shrink-0">
             <button
               type="button"
               onClick={() => setAxisMode('RANDOM_MIX')}
@@ -298,7 +298,7 @@ export const CrissCrossGame: React.FC<CrissCrossGameProps> = () => {
                 axisMode === 'RANDOM_MIX' ? 'bg-blue-600 text-white shadow-xs' : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
               }`}
             >
-              🎲 {t("Mix", <><ruby>全種<rt className="text-[7px]">ぜんしゅ</rt></ruby></>)}
+              🎲 {t("Mix", <><ruby>全種<rt>ぜんしゅ</rt></ruby></>)}
             </button>
             <button
               type="button"
@@ -307,7 +307,7 @@ export const CrissCrossGame: React.FC<CrissCrossGameProps> = () => {
                 axisMode === 'ROW_ONLY' ? 'bg-blue-600 text-white shadow-xs' : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
               }`}
             >
-              ↔️ {t("Row", <><ruby>横列<rt className="text-[7px]">よこれつ</rt></ruby></>)}
+              ↔️ {t("Row", <><ruby>横列<rt>よこれつ</rt></ruby></>)}
             </button>
             <button
               type="button"
@@ -316,7 +316,7 @@ export const CrissCrossGame: React.FC<CrissCrossGameProps> = () => {
                 axisMode === 'COL_ONLY' ? 'bg-blue-600 text-white shadow-xs' : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
               }`}
             >
-              ↕️ {t("Column", <><ruby>縦班<rt className="text-[7px]">たてはん</rt></ruby></>)}
+              ↕️ {t("Column", <><ruby>縦班<rt>たてはん</rt></ruby></>)}
             </button>
             <button
               type="button"
@@ -325,7 +325,7 @@ export const CrissCrossGame: React.FC<CrissCrossGameProps> = () => {
                 axisMode === 'CRISS_CROSS_ONLY' ? 'bg-blue-600 text-white shadow-xs' : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
               }`}
             >
-              ✖️ {t("Diagonal", <><ruby>斜<rt className="text-[7px]">なな</rt></ruby>め</>)}
+              ✖️ {t("Diagonal", <><ruby>斜<rt>なな</rt></ruby>め</>)}
             </button>
           </div>
 
@@ -333,7 +333,7 @@ export const CrissCrossGame: React.FC<CrissCrossGameProps> = () => {
           <button
             type="button"
             onClick={resetGame}
-            className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-600 dark:text-slate-300 transition cursor-pointer"
+            className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-600 dark:text-slate-300 transition cursor-pointer shrink-0"
             title="Reset Game"
           >
             <RotateCcw size={16} />
@@ -343,20 +343,20 @@ export const CrissCrossGame: React.FC<CrissCrossGameProps> = () => {
 
       {/* Edit Mode Instruction Banner */}
       {isEditMode && (
-        <div className="w-full bg-rose-500/15 border-2 border-rose-500/50 rounded-2xl p-2.5 mb-2 flex items-center justify-between text-xs font-bold text-rose-300 animate-in fade-in">
-          <div className="flex items-center gap-2">
-            <span className="text-base">✏️</span>
+        <div className="w-full bg-rose-500/15 border-2 border-rose-500/50 rounded-2xl p-2.5 mb-2 flex flex-nowrap items-center justify-between gap-2 text-xs font-bold text-rose-200 animate-in fade-in">
+          <div className="flex items-center gap-2 min-w-0 flex-1 overflow-x-auto no-scrollbar whitespace-nowrap">
+            <span className="text-base shrink-0">✏️</span>
             <span>
               {t(
                 "Edit Mode: Tap any desk to mark it as Empty / Absent. Tapping again restores it.",
-                <>【<ruby>空席<rt className="text-[7px]">くうせき</rt></ruby><ruby>設定<rt className="text-[7px]">せってい</rt></ruby>モード】机をタップして「<ruby>空席<rt className="text-[7px]">くうせき</rt></ruby>・<ruby>欠席<rt className="text-[7px]">けっせき</rt></ruby>」にできます。<ruby>完了<rt className="text-[7px]">かんりょう</rt></ruby>したら「<ruby>設定完了<rt className="text-[7px]">せっていかんりょう</rt></ruby>」を押してください。</>
+                <>【<ruby>空席<rt>くうせき</rt></ruby><ruby>設定<rt>せってい</rt></ruby>モード】机をタップして「<ruby>空席<rt>くうせき</rt></ruby>・<ruby>欠席<rt>けっせき</rt></ruby>」にできます。<ruby>完了<rt>かんりょう</rt></ruby>したら「<ruby>設定完了<rt>せっていかんりょう</rt></ruby>」を押してください。</>
               )}
             </span>
           </div>
           <button
             type="button"
             onClick={() => setIsEditMode(false)}
-            className="px-3 py-1 rounded-lg bg-rose-600 text-white font-black cursor-pointer shadow-xs"
+            className="px-3 py-1 rounded-lg bg-rose-600 text-white font-black cursor-pointer shadow-xs shrink-0"
           >
             {t("Done", "完了")}
           </button>
@@ -373,17 +373,17 @@ export const CrissCrossGame: React.FC<CrissCrossGameProps> = () => {
               ALL CLEARED • 全員着席完了！
             </span>
             <h3 className="text-3xl sm:text-5xl font-black text-white mb-2">
-              {t("Awesome Job! Everyone is Seated!", <><ruby>素晴<rt className="text-[9px]">すばら</rt></ruby>しい！全員着席クリア！</>)}
+              {t("Awesome Job! Everyone is Seated!", <><ruby>素晴<rt>すばら</rt></ruby>しい！全員着席クリア！</>)}
             </h3>
             <p className="text-sm sm:text-base font-bold text-slate-300 mb-6">
-              {t(`Cleared in ${roundCounter} questions!`, <>{roundCounter} <ruby>問<rt className="text-[7px]">もん</rt></ruby>で<ruby>全員座<rt className="text-[7px]">ぜんいんすわ</rt></ruby>れました！</>)}
+              {t(`Cleared in ${roundCounter} questions!`, <>{roundCounter} <ruby>問<rt>もん</rt></ruby>で<ruby>全員座<rt>ぜんいんすわ</rt></ruby>れました！</>)}
             </p>
             <button
               type="button"
               onClick={resetGame}
               className="px-8 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-black text-base shadow-xl hover:scale-105 active:scale-95 transition cursor-pointer"
             >
-              🔄 {t("Play Again (All Stand)", <>もう<ruby>一度<rt className="text-[7px]">いちど</rt></ruby>あそぶ！(<ruby>全員起立<rt className="text-[7px]">ぜんいんきりつ</rt></ruby>)</>)}
+              🔄 {t("Play Again (All Stand)", <>もう<ruby>一度<rt>いちど</rt></ruby>あそぶ！(<ruby>全員起立<rt>ぜんいんきりつ</rt></ruby>)</>)}
             </button>
           </div>
         ) : (
@@ -404,7 +404,7 @@ export const CrissCrossGame: React.FC<CrissCrossGameProps> = () => {
 
         {/* Master Bottom Action Button */}
         {phase !== 'ALL_CLEARED' && (
-          <div className="w-full max-w-md mx-auto mt-2">
+          <div className="w-full max-w-xl mx-auto mt-2">
             <button
               type="button"
               onClick={handleTriggerSweep}
@@ -413,7 +413,7 @@ export const CrissCrossGame: React.FC<CrissCrossGameProps> = () => {
             >
               <Crosshair size={22} className="animate-spin-slow" />
               <span>
-                {t("SPIN / PICK NEXT LINE (Space)", <><ruby>次<rt className="text-[7px]">つぎ</rt></ruby>の<ruby>列<rt className="text-[7px]">れつ</rt></ruby>をルーレット！ [Space]</>)}
+                {t("SPIN / PICK NEXT LINE (Space)", <><ruby>次<rt>つぎ</rt></ruby>の<ruby>列<rt>れつ</rt></ruby>をルーレット！ [Space]</>)}
               </span>
             </button>
           </div>
@@ -421,30 +421,30 @@ export const CrissCrossGame: React.FC<CrissCrossGameProps> = () => {
       </div>
 
       {/* 3. Bottom Status Bar */}
-      <div className="bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 rounded-2xl p-2.5 sm:p-3 shadow-md flex items-center justify-between text-xs font-black mt-2">
-        <div className="flex items-center gap-3">
+      <div className="bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 rounded-2xl p-2.5 sm:p-3 shadow-md flex flex-nowrap items-center justify-between gap-3 text-xs font-black mt-2 overflow-x-auto no-scrollbar whitespace-nowrap">
+        <div className="flex items-center gap-3 shrink-0">
           <span className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400">
             <span>🧍</span>
-            <span>{t("Standing:", <><ruby>立<rt className="text-[7px]">た</rt></ruby>っている<ruby>児童<rt className="text-[7px]">じどう</rt></ruby>:</>)} {standingCount}人</span>
+            <span>{t("Standing:", <><ruby>立<rt>た</rt></ruby>っている<ruby>児童<rt>じどう</rt></ruby>:</>)} {standingCount}人</span>
           </span>
 
-          <span className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
+          <span className="flex items-center gap-1.5 text-slate-600 dark:text-slate-300">
             <span>🪑</span>
-            <span>{t("Seated:", <><ruby>着席済<rt className="text-[7px]">ちゃくせきず</rt></ruby>み:</>)} {seatedCount}人</span>
+            <span>{t("Seated:", <><ruby>着席済<rt>ちゃくせきず</rt></ruby>み:</>)} {seatedCount}人</span>
           </span>
 
           {emptyCount > 0 && (
             <span className="flex items-center gap-1.5 text-rose-500 dark:text-rose-400">
               <span>🈳</span>
-              <span>{t("Empty Desks:", <><ruby>空席<rt className="text-[7px]">くうせき</rt></ruby>:</>)} {emptyCount}席</span>
+              <span>{t("Empty Desks:", <><ruby>空席<rt>くうせき</rt></ruby>:</>)} {emptyCount}席</span>
             </span>
           )}
         </div>
 
-        <div className="text-[11px] text-slate-400 font-bold hidden sm:inline">
+        <div className="text-[11px] text-slate-600 dark:text-slate-300 font-bold hidden sm:inline shrink-0">
           {isEditMode
             ? t("Edit Mode Active: Click any desk to toggle empty/absent", "空席設定中: 机をクリックして空席・欠席を切替")
-            : t("Tap any desk to manually toggle standing/seated", <><ruby>座席<rt className="text-[7px]">ざせき</rt></ruby>を<ruby>直接<rt className="text-[7px]">ちょくせつ</rt></ruby>タップして<ruby>個別<rt className="text-[7px]">こべつ</rt></ruby>に<ruby>着席<rt className="text-[7px]">ちゃくせき</rt></ruby>/<ruby>起立<rt className="text-[7px]">きりつ</rt></ruby>を<ruby>変更<rt className="text-[7px]">へんこう</rt></ruby>できます</>)}
+            : t("Tap any desk to manually toggle standing/seated", <><ruby>座席<rt>ざせき</rt></ruby>を<ruby>直接<rt>ちょくせつ</rt></ruby>タップして<ruby>個別<rt>こべつ</rt></ruby>に<ruby>着席<rt>ちゃくせき</rt></ruby>/<ruby>起立<rt>きりつ</rt></ruby>を<ruby>変更<rt>へんこう</rt></ruby>できます</>)}
         </div>
       </div>
 

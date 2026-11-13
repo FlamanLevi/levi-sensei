@@ -1,3 +1,4 @@
+import { ensureAnonymousAuth } from './firebase';
 import { safeGet, safeSet, safeSubscribe, safeTransaction } from './rtdbSafe';
 
 export interface ClassVaultTierConfig {
@@ -119,6 +120,7 @@ export async function fetchClassVault(schoolId: string, classId: string): Promis
     lastDepositPoints: 0,
     lastDepositAt: Date.now()
   };
+  await ensureAnonymousAuth();
   await safeSet(path, initial).catch(() => {});
   return initial;
 }
@@ -158,6 +160,7 @@ export async function depositClassEnergy(
     return { previousTier: 1, newTier: 1, totalEnergy: 0, didTierUp: false };
   }
 
+  await ensureAnonymousAuth();
   const path = `schools/${schoolId}/classes/${classId}/classVault`;
   const energyGained = Math.max(10, Math.floor(pointsScored * 0.10));
   let previousTier = 1;

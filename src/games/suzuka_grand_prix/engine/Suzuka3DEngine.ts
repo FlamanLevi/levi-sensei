@@ -238,6 +238,7 @@ function getSmoothElevation(tNorm: number): number {
 }
 
 let cachedCornerSpeedLimits: Float32Array | null = null;
+let cachedSignedCurvatures: Float32Array | null = null;
 
 export function getSuzukaCornerSpeedLimit(progress: number): number {
   const t = ((progress % 1.0) + 1.0) % 1.0;
@@ -246,6 +247,24 @@ export function getSuzukaCornerSpeedLimit(progress: number): number {
     return cachedCornerSpeedLimits[idx];
   }
   return 180;
+}
+
+/**
+ * Normalized signed track curvature in [-1.0, +1.0]:
+ * Negative = left-hand turn (inside apex on -right / left),
+ * Positive = right-hand turn (inside apex on +right / right).
+ */
+export function getSuzukaSignedCurvature(progress: number): number {
+  const t = ((progress % 1.0) + 1.0) % 1.0;
+  if (cachedSignedCurvatures && cachedSignedCurvatures.length > 0) {
+    const len = cachedSignedCurvatures.length;
+    const rawPos = t * len;
+    const idx0 = Math.floor(rawPos) % len;
+    const idx1 = (idx0 + 1) % len;
+    const frac = rawPos - Math.floor(rawPos);
+    return cachedSignedCurvatures[idx0] * (1 - frac) + cachedSignedCurvatures[idx1] * frac;
+  }
+  return 0;
 }
 
 // Persistent texture caches (shared invariants + per-biome theme Maps)
@@ -1421,22 +1440,35 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
 
   const totalLengthMeters = cumulativeMeters;
 
-  // Curvature-driven corner speed limits
+  // Curvature-driven corner speed limits & signed cornering direction
   const rawTurnAngles = new Float32Array(N);
+  const rawSignedTurns = new Float32Array(N);
+  const _tanDelta = new THREE.Vector3();
   for (let i = 0; i < N; i++) {
     const tPrev = samples[(i - 6 + N) % N].tangent;
     const tNext = samples[(i + 6) % N].tangent;
     rawTurnAngles[i] = tPrev.angleTo(tNext);
+    _tanDelta.subVectors(tNext, tPrev);
+    rawSignedTurns[i] = _tanDelta.dot(samples[i].right);
   }
 
   const smoothTurnAngles = new Float32Array(N);
+  const smoothSignedCurvs = new Float32Array(N);
   for (let i = 0; i < N; i++) {
     let sum = 0;
     for (let k = -5; k <= 5; k++) {
       sum += rawTurnAngles[(i + k + N) % N];
     }
     smoothTurnAngles[i] = sum / 11;
+
+    let signedSum = 0;
+    for (let k = -6; k <= 6; k++) {
+      signedSum += rawSignedTurns[(i + k + N) % N];
+    }
+    const normSigned = (signedSum / 13) / 0.24;
+    smoothSignedCurvs[i] = Math.max(-1.0, Math.min(1.0, normSigned));
   }
+  cachedSignedCurvatures = smoothSignedCurvs;
 
   const cornerSpeedCaps = new Float32Array(N);
   const turnThreshold = 0.11;

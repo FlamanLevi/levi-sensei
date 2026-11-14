@@ -1305,7 +1305,10 @@ export function buildMicroKart(options = {}) {
     sparkMat.uniforms.uSparkScale.value = kScale;
 
     const isEmitting =
-      (state.isDrifting || isBoosting || state.curbRumble > 0.2 || Math.abs(state.steerInput || 0) > 0.32) &&
+      (state.isDrifting ||
+        isBoosting ||
+        state.curbRumble > 0.2 ||
+        (!state.suppressSteerSparks && Math.abs(state.steerInput || 0) > 0.32)) &&
       Math.abs(state.speed) > 0.03;
     const emitCount = isEmitting ? 6 : 0;
 

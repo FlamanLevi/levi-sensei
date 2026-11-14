@@ -14,7 +14,16 @@ import {
   formatTamaireCountCallout,
   buildTamaireSuspenseSchedule,
   computeStudentShotTrajectoryPoint,
+  resolveTeamMaxCapacity,
+  isTeamSelectionFull,
+  resolveQuestionScopedAnswer,
+  computeTugOfWarSweepsRemaining,
   GAME_MODE_STRATEGIES,
+  STANDARD_LOCKOUT_TIERS_SECONDS,
+  ALL_EIGHT_PROMPT_TYPES,
+  ACTION_SIX_PROMPT_TYPES,
+  isPromptTypeAllowedInGamePlay,
+  normalizePromptTypesForGamePlay,
   QuizQuestion,
   QuizPlayer,
 } from './quizEngine';
@@ -123,6 +132,20 @@ test('GEMINI.md §7: !isEnPrompt cheating prevention hides option images in EN_T
   assert.equal(enToJaPresentation.showOptionImage, false);
   assert.equal(enToJaPresentation.displayText, '林檎');
   assert.equal(enToJaPresentation.subText, 'りんご');
+
+  const enWordQuestion: QuizQuestion = {
+    ...sampleQuestion,
+    promptType: 'EN_WORD',
+  };
+  const enWordPresentation = resolveOptionPresentation(enWordQuestion, {
+    ...sampleQuestion.options[1],
+    ja_kanji: '',
+    ja_hiragana: 'ばなな',
+  });
+  assert.equal(enWordPresentation.isEnPrompt, true);
+  assert.equal(enWordPresentation.showOptionImage, false);
+  assert.equal(enWordPresentation.displayText, 'ばなな');
+  assert.equal(enWordPresentation.subText, undefined);
 
   const jaMeaningQuestion: QuizQuestion = {
     ...sampleQuestion,
@@ -340,5 +363,212 @@ test('Student iPad Over-the-Shoulder Shot Trajectory: SWISH passes through net w
   assert.ok(doinkLand.ny > 0.85);
 });
 
+test('Dynamic team capacity & balance guard scales cleanly to 35-student classrooms', () => {
+  // 2-team 35-student class should allow 18 per team (not capped at 10)
+  assert.equal(resolveTeamMaxCapacity(35, 2), 18);
+  // 4-team classroom keeps minimum floor of 10 per team
+  assert.equal(resolveTeamMaxCapacity(35, 4), 10);
 
+  // Team Red with 10 of 18 players while Team White has 9 should NOT be marked full
+  assert.equal(
+    isTeamSelectionFull({
+      teamCountForTeam: 10,
+      minCount: 9,
+      totalPlayers: 19,
+      teamCount: 2,
+      classSize: 35,
+    }),
+    false
+  );
+
+  // Stacking rule still locks a team >= minCount + 2 once >= 8 students have joined
+  assert.equal(
+    isTeamSelectionFull({
+      teamCountForTeam: 6,
+      minCount: 4,
+      totalPlayers: 10,
+      teamCount: 2,
+      classSize: 35,
+    }),
+    true
+  );
+
+  // At full 2-team capacity (18), team locks cleanly
+  assert.equal(
+    isTeamSelectionFull({
+      teamCountForTeam: 18,
+      minCount: 17,
+      totalPlayers: 35,
+      teamCount: 2,
+      classSize: 35,
+    }),
+    true
+  );
+});
+
+test('resolveQuestionScopedAnswer prevents previous-question lastAnswer leakage', () => {
+  const staleLast = {
+    questionIndex: 0,
+    optionId: 'opt_1',
+    isCorrect: true,
+    pointsEarned: 1000,
+    timeTakenMs: 900,
+  };
+
+  // Querying Q1 when only Q0 exists returns undefined (does not leak Q0 result)
+  assert.equal(
+    resolveQuestionScopedAnswer({
+      answers: { 0: staleLast },
+      lastAnswer: staleLast,
+      questionIndex: 1,
+    }),
+    undefined
+  );
+
+  // Untrusted legacy lastAnswer without questionIndex cannot masquerade as Q1
+  const untaggedLast = {
+    optionId: 'opt_1',
+    isCorrect: true,
+    pointsEarned: 950,
+    timeTakenMs: 1100,
+  };
+  assert.equal(
+    resolveQuestionScopedAnswer({
+      answers: {},
+      lastAnswer: untaggedLast,
+      questionIndex: 1,
+    }),
+    undefined
+  );
+
+  // Timeout answer record on Q1 is found and distinguishable by empty optionId
+  const timeoutRecord = {
+    questionIndex: 1,
+    optionId: '',
+    isCorrect: false,
+    pointsEarned: 0,
+    timeTakenMs: 15000,
+  };
+  const resolved = resolveQuestionScopedAnswer({
+    answers: { 0: staleLast, 1: timeoutRecord },
+    lastAnswer: staleLast,
+    questionIndex: 1,
+  });
+  assert.equal(resolved?.optionId, '');
+  assert.equal(resolved?.isCorrect, false);
+});
+
+test('computeTugOfWarSweepsRemaining computes pulls across center and never returns 0 before ±100', () => {
+  // Trailing Red team when White is ahead (+50) needs 150 displacement units at step 20 => 8 pulls
+  assert.equal(
+    computeTugOfWarSweepsRemaining({
+      displacement: 50,
+      sensitivity: 20,
+      activeTeamCount: 1,
+      team: 'team_red',
+    }),
+    8
+  );
+
+  // Nearly swept at -99 still needs 1 pull (not 0 from rounding down)
+  assert.equal(
+    computeTugOfWarSweepsRemaining({
+      displacement: -99,
+      sensitivity: 20,
+      activeTeamCount: 10,
+      team: 'team_red',
+    }),
+    1
+  );
+
+  // Already swept returns 0
+  assert.equal(
+    computeTugOfWarSweepsRemaining({
+      displacement: -100,
+      sensitivity: 20,
+      activeTeamCount: 10,
+      team: 'team_red',
+    }),
+    0
+  );
+  assert.equal(
+    computeTugOfWarSweepsRemaining({
+      displacement: 100,
+      sensitivity: 20,
+      activeTeamCount: 10,
+      team: 'team_white',
+    }),
+    0
+  );
+});
+
+test('Release 1 TAMAIRE strategy and 5-tier configurable lockout [2.5, 3.0, 3.5, 4.0, 5.0]', () => {
+  assert.equal(GAME_MODE_STRATEGIES.TAMAIRE.gamePlayType, 'TAMAIRE');
+  assert.equal(GAME_MODE_STRATEGIES.TAMAIRE.activeStatus, 'TAMAIRE');
+  assert.equal(GAME_MODE_STRATEGIES.TAMAIRE.requiresTwoTeams, true);
+  assert.ok(GAME_MODE_STRATEGIES.TAMAIRE.maxClientWriteHz <= 10);
+  const initialPatch = GAME_MODE_STRATEGIES.TAMAIRE.resolveInitialRoomPatch(5000, 90);
+  assert.equal(initialPatch.status, 'TAMAIRE');
+  assert.equal(initialPatch.tamaireStartTime, 5000);
+  assert.equal(initialPatch.volleyballStartTime, 5000);
+  assert.equal(initialPatch.tamaireFinished, false);
+  assert.equal(initialPatch.volleyballFinished, false);
+
+  const lockoutTiers = [2.5, 3.0, 3.5, 4.0, 5.0];
+  for (const tierSec of lockoutTiers) {
+    assert.equal(
+      resolveLockoutPenaltySeconds({
+        mode: 'GRAND_PRIX_3D',
+        mistakeCountOnQuestion: 1,
+        configuredLockoutSeconds: tierSec,
+      }).penaltySeconds,
+      tierSec
+    );
+    assert.equal(
+      resolveLockoutPenaltySeconds({
+        mode: 'TUG_OF_WAR',
+        mistakeCountOnQuestion: 1,
+        configuredLockoutSeconds: tierSec,
+      }).penaltySeconds,
+      tierSec
+    );
+    assert.equal(
+      resolveLockoutPenaltySeconds({
+        mode: 'TAMAIRE',
+        mistakeCountOnQuestion: 1,
+        configuredLockoutSeconds: tierSec,
+      }).penaltySeconds,
+      tierSec
+    );
+  }
+});
+
+test('PromptType compatibility automatically strips Kahoot-only varieties outside KAHOOT with safe fallback', () => {
+  assert.deepEqual([...STANDARD_LOCKOUT_TIERS_SECONDS], [2.5, 3.0, 3.5, 4.0, 5.0]);
+  assert.equal(ALL_EIGHT_PROMPT_TYPES.length, 8);
+  assert.equal(ACTION_SIX_PROMPT_TYPES.length, 6);
+
+  assert.equal(isPromptTypeAllowedInGamePlay('SHORT_CLOZE', 'KAHOOT'), true);
+  assert.equal(isPromptTypeAllowedInGamePlay('THREE_HINTS', 'KAHOOT'), true);
+  assert.equal(isPromptTypeAllowedInGamePlay('SHORT_CLOZE', 'GRAND_PRIX_3D'), false);
+  assert.equal(isPromptTypeAllowedInGamePlay('THREE_HINTS', 'TUG_OF_WAR'), false);
+  assert.equal(isPromptTypeAllowedInGamePlay('SHORT_CLOZE', 'TAMAIRE'), false);
+  assert.equal(isPromptTypeAllowedInGamePlay('PHONICS_MASK', 'TAMAIRE'), true);
+
+  assert.deepEqual(
+    normalizePromptTypesForGamePlay(['JA_MEANING', 'SHORT_CLOZE', 'THREE_HINTS'], 'KAHOOT'),
+    ['JA_MEANING', 'SHORT_CLOZE', 'THREE_HINTS']
+  );
+
+  for (const actionMode of ['GRAND_PRIX_3D', 'TUG_OF_WAR', 'TAMAIRE'] as const) {
+    assert.deepEqual(
+      normalizePromptTypesForGamePlay(['JA_MEANING', 'SHORT_CLOZE', 'PHONICS_MASK', 'THREE_HINTS'], actionMode),
+      ['JA_MEANING', 'PHONICS_MASK']
+    );
+    assert.deepEqual(
+      normalizePromptTypesForGamePlay(['SHORT_CLOZE', 'THREE_HINTS'], actionMode),
+      ['JA_MEANING', 'EN_TO_JA', 'IMAGE_ONLY']
+    );
+  }
+});
 

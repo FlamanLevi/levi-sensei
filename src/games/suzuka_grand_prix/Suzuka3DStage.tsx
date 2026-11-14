@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-import { detectClassroomGpuProfile } from '@/utils/classroom3d';
+import { createClassroomRenderer } from '@/utils/classroom3d';
 import {
   buildSuzuka3DTrack,
   SuzukaTrackWorld,
@@ -335,10 +335,8 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
     // Resolve biome/atmosphere theme configuration
     const theme = getTrackTheme(trackTheme);
 
-    // Hardware profile detection (zero redundant temp canvases)
-    const gpu = detectClassroomGpuProfile(null, performanceProfile === 'MOBILE');
-    const isSoftwareGl = gpu.isSoftware;
-    const isMobile = (performanceProfile ?? (gpu.isLowPower ? 'MOBILE' : 'DESKTOP_HD')) === 'MOBILE';
+    // Hardware profile detection & adaptive renderer setup (zero redundant temp canvases)
+    const isStudentView = performanceProfile === 'MOBILE' || mode === 'STUDENT_COCKPIT';
 
     // 1. Scene, Camera & Renderer
     const scene = new THREE.Scene();
@@ -349,31 +347,23 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
     const skyDome = createDynamicSkyDome(theme);
     scene.add(skyDome.mesh);
 
-    const camera = new THREE.PerspectiveCamera(
-      54,
-      container.clientWidth / Math.max(1, container.clientHeight),
-      0.1,
-      3200.0
-    );
-
-    const renderer = new THREE.WebGLRenderer({
-      antialias: !isSoftwareGl && !isMobile,
-      powerPreference: 'high-performance',
-      precision: isMobile ? 'mediump' : 'highp',
+    const {
+      renderer,
+      camera,
+      gpuProfile,
+      trackFrameRate,
+      cleanup: cleanupClassroomRenderer,
+    } = createClassroomRenderer(container, {
+      fov: 54,
+      near: 0.1,
+      far: 3200.0,
+      isStudentView,
+      enableDrs: true,
     });
-
-    const isTabletOrMobile = gpu.isMobileOrTablet;
+    const isSoftwareGl = gpuProfile.isSoftware;
 
     renderer.outputColorSpace = THREE.SRGBColorSpace;
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = theme.exposure;
-
-    let currentPixelRatio = gpu.targetPixelRatio;
-    renderer.setPixelRatio(currentPixelRatio);
-    renderer.setSize(container.clientWidth, container.clientHeight);
-
-    renderer.shadowMap.enabled = gpu.enableDynamicShadows;
-    renderer.shadowMap.type = THREE.PCFShadowMap;
 
     const domElement = renderer.domElement;
     domElement.style.display = 'block';
@@ -390,8 +380,6 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
     domElement.addEventListener('webglcontextlost', onContextLost, false);
     domElement.addEventListener('webglcontextrestored', onContextRestored, false);
 
-    container.appendChild(domElement);
-
     // Studio Environment Map (RoomEnvironment + PMREMGenerator) for metallic kart & visor reflections
     const pmremGenerator = new THREE.PMREMGenerator(renderer);
     const envTexture = pmremGenerator.fromScene(new RoomEnvironment(), 0.04).texture;
@@ -406,10 +394,10 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
 
     const dirLight = new THREE.DirectionalLight(theme.dirColorHex, theme.dirIntensity);
     dirLight.position.set(theme.sunDir[0], theme.sunDir[1], theme.sunDir[2]);
-    dirLight.castShadow = gpu.enableDynamicShadows;
-    if (gpu.enableDynamicShadows) {
-      dirLight.shadow.mapSize.width = gpu.shadowMapRes;
-      dirLight.shadow.mapSize.height = gpu.shadowMapRes;
+    dirLight.castShadow = gpuProfile.enableDynamicShadows;
+    if (gpuProfile.enableDynamicShadows) {
+      dirLight.shadow.mapSize.width = gpuProfile.shadowMapRes;
+      dirLight.shadow.mapSize.height = gpuProfile.shadowMapRes;
       dirLight.shadow.camera.near = 10;
       dirLight.shadow.camera.far = 1100;
       const d = 420;
@@ -643,8 +631,6 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
     const clockStartTime = performance.now();
     let clockLastTime = clockStartTime;
     let telemetryTimer = 0;
-    let rollingFrameMs = 16.6;
-    let resolutionCheckTimer = 0;
 
     if (!isSoftwareGl) {
       renderer.compile(scene, camera);
@@ -681,26 +667,14 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
       frameCount++;
 
       const nowMs = performance.now();
-      const rawDelta = Math.min(0.2, (nowMs - clockLastTime) / 1000);
+      const elapsedDeltaSec = (nowMs - clockLastTime) / 1000;
+      const rawDelta = Math.min(0.2, elapsedDeltaSec);
       clockLastTime = nowMs;
       const dt = Math.min(0.05, Math.max(0.001, rawDelta));
       const elapsedTime = (nowMs - clockStartTime) / 1000;
 
-      // Adaptive Dynamic Resolution Scaling for iPads & Dynabook laptops
-      if (!isSoftwareGl && rawDelta > 0 && rawDelta < 0.25) {
-        rollingFrameMs = rollingFrameMs * 0.9 + rawDelta * 1000 * 0.1;
-        resolutionCheckTimer += dt;
-        if (resolutionCheckTimer > 2.0) {
-          resolutionCheckTimer = 0;
-          if (rollingFrameMs > 19.0 && currentPixelRatio > 0.75) {
-            currentPixelRatio = Math.max(0.75, Math.round((currentPixelRatio - 0.15) * 100) / 100);
-            renderer.setPixelRatio(currentPixelRatio);
-          } else if (rollingFrameMs < 14.0 && !gpu.isLowPower && currentPixelRatio < 1.25) {
-            currentPixelRatio = Math.min(1.25, Math.round((currentPixelRatio + 0.1) * 100) / 100);
-            renderer.setPixelRatio(currentPixelRatio);
-          }
-        }
-      }
+      // Adaptive Dynamic Resolution Scaling via shared classroom3d governor
+      trackFrameRate(elapsedDeltaSec);
 
       trackWorld.setStartLights(lightsCountRef.current);
 
@@ -710,6 +684,7 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
       for (const [id, inst] of kartMap.entries()) {
         if (!currentRacers.some((r) => r.id === id)) {
           kartsRootGroup.remove(inst.kartObj.kartRoot);
+          inst.kartObj.disposeKart?.();
           kartMap.delete(id);
         }
       }
@@ -1477,43 +1452,34 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
 
     tick();
 
-    let resizeRafId = 0;
-    const resizeObserver = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        const { width, height } = entry.contentRect;
-        if (width <= 0 || height <= 0) continue;
-        cancelAnimationFrame(resizeRafId);
-        resizeRafId = requestAnimationFrame(() => {
-          if (isDisposed) return;
-          camera.aspect = width / height;
-          camera.updateProjectionMatrix();
-          renderer.setSize(width, height);
-        });
-      }
-    });
-
-    resizeObserver.observe(container);
-
     return () => {
       isDisposed = true;
       cancelAnimationFrame(frameId);
       clearTimeout(frameId);
-      cancelAnimationFrame(resizeRafId);
-      resizeObserver.disconnect();
       domElement.removeEventListener('webglcontextlost', onContextLost);
       domElement.removeEventListener('webglcontextrestored', onContextRestored);
 
-      // Dispose all track & kart geometries and non-shared materials
+      for (const inst of kartMap.values()) {
+        inst.kartObj.disposeKart?.();
+      }
+      kartMap.clear();
+
+      // Dispose all track geometries and non-shared materials/textures
       for (const group of [trackWorld.root, kartsRootGroup]) {
         group.traverse((obj) => {
           if ((obj as THREE.Mesh).isMesh || (obj as THREE.Sprite).isSprite) {
             const mesh = obj as THREE.Mesh;
-            if (mesh.geometry) mesh.geometry.dispose();
+            if (mesh.geometry && !mesh.geometry.userData?.isSharedResource) {
+              mesh.geometry.dispose();
+            }
             const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
             mats.forEach((m) => {
-              if (!m) return;
-              if ((obj as THREE.Sprite).isSprite && (m as THREE.SpriteMaterial).map) {
-                (m as THREE.SpriteMaterial).map?.dispose();
+              if (!m || m.userData?.isSharedResource) return;
+              if ((obj as THREE.Sprite).isSprite) {
+                const spMap = (m as THREE.SpriteMaterial).map;
+                if (spMap && !spMap.userData?.isSharedResource) {
+                  spMap.dispose();
+                }
               }
               m.dispose();
             });
@@ -1524,10 +1490,8 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
       skyDome.geometry.dispose();
       skyDome.material.dispose();
       envTexture.dispose();
-      if (renderer.domElement && renderer.domElement.parentElement) {
-        renderer.domElement.parentElement.removeChild(renderer.domElement);
-      }
-      renderer.dispose();
+      scene.clear();
+      cleanupClassroomRenderer();
     };
   }, [performanceProfile, mode, trackTheme, contextRestartKey]);
 

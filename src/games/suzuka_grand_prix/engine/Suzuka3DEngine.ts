@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { SUZUKA_PATH_D, SUZUKA_SECTORS, SuzukaSector } from './SuzukaPathData';
 import {
   SuzukaTrackThemeId,
@@ -47,6 +48,118 @@ export interface SuzukaSampleResult {
   sector: SuzukaSector;
 }
 
+const _bakePos = new THREE.Vector3();
+const _bakeQuat = new THREE.Quaternion();
+const _bakeEuler = new THREE.Euler();
+const _bakeScale = new THREE.Vector3(1, 1, 1);
+const _bakeColor = new THREE.Color();
+
+function composeBakeMatrix(
+  target: THREE.Matrix4,
+  pos: THREE.Vector3 | readonly [number, number, number],
+  quatOrRot?: THREE.Quaternion | readonly [number, number, number],
+  scale?: THREE.Vector3 | readonly [number, number, number]
+): THREE.Matrix4 {
+  if (pos instanceof THREE.Vector3) {
+    _bakePos.copy(pos);
+  } else {
+    _bakePos.set(pos[0], pos[1], pos[2]);
+  }
+  if (!quatOrRot) {
+    _bakeQuat.identity();
+  } else if (quatOrRot instanceof THREE.Quaternion) {
+    _bakeQuat.copy(quatOrRot);
+  } else {
+    _bakeEuler.set(quatOrRot[0], quatOrRot[1], quatOrRot[2], 'XYZ');
+    _bakeQuat.setFromEuler(_bakeEuler);
+  }
+  if (!scale) {
+    _bakeScale.set(1, 1, 1);
+  } else if (scale instanceof THREE.Vector3) {
+    _bakeScale.copy(scale);
+  } else {
+    _bakeScale.set(scale[0], scale[1], scale[2]);
+  }
+  return target.compose(_bakePos, _bakeQuat, _bakeScale);
+}
+
+interface UvRect {
+  u0: number;
+  v0: number;
+  u1: number;
+  v1: number;
+}
+
+function bakeTransformedGeo(
+  sourceGeo: THREE.BufferGeometry,
+  matrix: THREE.Matrix4,
+  options?: { colorHex?: number; keepUv?: boolean; uvRect?: UvRect }
+): THREE.BufferGeometry {
+  const g = sourceGeo.index ? sourceGeo.toNonIndexed() : sourceGeo.clone();
+  g.applyMatrix4(matrix);
+  if (!g.attributes.normal) {
+    g.computeVertexNormals();
+  }
+  const keepUv = options?.keepUv || Boolean(options?.uvRect);
+  if (!keepUv && g.attributes.uv) {
+    g.deleteAttribute('uv');
+  } else if (options?.uvRect && g.attributes.uv) {
+    const { u0, v0, u1, v1 } = options.uvRect;
+    const uvAttr = g.attributes.uv;
+    const du = u1 - u0;
+    const dv = v1 - v0;
+    for (let i = 0; i < uvAttr.count; i++) {
+      uvAttr.setXY(i, u0 + uvAttr.getX(i) * du, v0 + uvAttr.getY(i) * dv);
+    }
+    uvAttr.needsUpdate = true;
+  }
+  if (options?.colorHex !== undefined) {
+    _bakeColor.setHex(options.colorHex);
+    const count = g.attributes.position.count;
+    const colors = new Float32Array(count * 3);
+    for (let i = 0; i < count; i++) {
+      colors[i * 3] = _bakeColor.r;
+      colors[i * 3 + 1] = _bakeColor.g;
+      colors[i * 3 + 2] = _bakeColor.b;
+    }
+    g.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+  }
+  return g;
+}
+
+function createVertexEmissiveMaterial(
+  emissiveIntensity: number,
+  roughness: number,
+  metalness: number
+): THREE.MeshStandardMaterial {
+  const mat = new THREE.MeshStandardMaterial({
+    vertexColors: true,
+    roughness,
+    metalness,
+  });
+  if (emissiveIntensity > 0) {
+    mat.customProgramCacheKey = () => `suzuka-vcol-emissive`;
+    mat.onBeforeCompile = (shader) => {
+      shader.uniforms.uVColEmissive = { value: emissiveIntensity };
+      shader.fragmentShader = `uniform float uVColEmissive;\n` + shader.fragmentShader;
+      shader.fragmentShader = shader.fragmentShader.replace(
+        '#include <emissivemap_fragment>',
+        '#include <emissivemap_fragment>\n totalEmissiveRadiance += diffuseColor.rgb * uVColEmissive;'
+      );
+    };
+  }
+  return mat;
+}
+
+function mergeStaticParts(parts: THREE.BufferGeometry[]): THREE.BufferGeometry | null {
+  if (parts.length === 0) return null;
+  const merged = mergeGeometries(parts, false);
+  for (const p of parts) {
+    p.dispose();
+  }
+  return merged ?? null;
+}
+
 /**
  * Lightweight BufferGeometry merger for multi-tiered instanced trees & clouds (zero extra draw calls).
  * Computes smooth vertex normals BEFORE converting to non-indexed and optionally bakes a
@@ -91,6 +204,10 @@ function mergeSimpleGeometries(
         colors.push(vShade, vShade, vShade);
       }
     }
+    if (nonIndexed !== g) {
+      nonIndexed.dispose();
+    }
+    g.dispose();
   }
 
   const merged = new THREE.BufferGeometry();
@@ -377,81 +494,161 @@ function fillFittedText(
   ctx.fillText(text, x, y, maxWidth);
 }
 
-function createBillboardTexture(title: string, sub: string, bg: string, textCol: string): THREE.CanvasTexture {
-  const key = `v2__${title}__${sub}__${bg}__${textCol}`;
-  const existing = cachedBillboardTexs.get(key);
-  if (existing) return existing;
-
-  const canvas = document.createElement('canvas');
-  canvas.width = 1024;
-  canvas.height = 256;
-  const ctx = canvas.getContext('2d');
-  if (ctx) {
-    ctx.fillStyle = bg;
-    ctx.fillRect(0, 0, 1024, 256);
-
-    // Outer white frame + subtle inner accent border
-    ctx.strokeStyle = '#ffffff';
-    ctx.lineWidth = 10;
-    ctx.strokeRect(10, 10, 1004, 236);
-
-    ctx.strokeStyle = 'rgba(255,255,255,0.22)';
-    ctx.lineWidth = 3;
-    ctx.strokeRect(24, 24, 976, 208);
-
-    ctx.fillStyle = textCol;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    fillFittedText(ctx, title, 512, sub ? 94 : 128, 920, 74, '900');
-
-    if (sub) {
-      ctx.fillStyle = '#fde047';
-      fillFittedText(ctx, sub, 512, 184, 920, 42, '800');
-    }
-  }
-  const tex = new THREE.CanvasTexture(canvas);
-  tex.colorSpace = THREE.SRGBColorSpace;
-  tex.anisotropy = 8;
-  cachedBillboardTexs.set(key, tex);
-  return tex;
+interface QueuedBillboardSign {
+  w: number;
+  h: number;
+  d: number;
+  worldMatrix: THREE.Matrix4;
+  title: string;
+  sub: string;
+  bg: string;
+  textCol: string;
 }
 
-/**
- * Dedicated 4:3 aspect-ratio texture for trackside 150m / 100m / 50m brake marker boards
- * so numbers stay razor-sharp and properly proportioned at high speed.
- */
-function createBrakeMarkerTexture(distanceLabel: string): THREE.CanvasTexture {
-  const key = `brake_v2__${distanceLabel}`;
+function drawBillboardCard(
+  ctx: CanvasRenderingContext2D,
+  ox: number,
+  oy: number,
+  cellW: number,
+  cellH: number,
+  title: string,
+  sub: string,
+  bg: string,
+  textCol: string
+): void {
+  ctx.save();
+  ctx.translate(ox, oy);
+  ctx.scale(cellW / 1024, cellH / 256);
+
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, 1024, 256);
+
+  ctx.strokeStyle = '#ffffff';
+  ctx.lineWidth = 10;
+  ctx.strokeRect(10, 10, 1004, 236);
+
+  ctx.strokeStyle = 'rgba(255,255,255,0.22)';
+  ctx.lineWidth = 3;
+  ctx.strokeRect(24, 24, 976, 208);
+
+  ctx.fillStyle = textCol;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  fillFittedText(ctx, title, 512, sub ? 94 : 128, 920, 74, '900');
+
+  if (sub) {
+    ctx.fillStyle = '#fde047';
+    fillFittedText(ctx, sub, 512, 184, 920, 42, '800');
+  }
+  ctx.restore();
+}
+
+function createBillboardAtlasTexture(signs: QueuedBillboardSign[]): {
+  tex: THREE.CanvasTexture;
+  rects: UvRect[];
+} {
+  const cols = 2;
+  const cellW = 512;
+  const cellH = 128;
+  const rows = Math.max(1, Math.ceil(signs.length / cols));
+  const atlasW = cols * cellW;
+  const atlasH = rows * cellH;
+  const key = `atlas_v3_${rows}::` + signs.map((s) => `${s.title}|${s.sub}|${s.bg}|${s.textCol}`).join(';');
+
+  const padU = 2 / atlasW;
+  const padV = 2 / atlasH;
+  const rects: UvRect[] = signs.map((_, idx) => {
+    const col = idx % cols;
+    const row = Math.floor(idx / cols);
+    const u0 = (col * cellW) / atlasW + padU;
+    const u1 = ((col + 1) * cellW) / atlasW - padU;
+    const vTop = 1 - (row * cellH) / atlasH - padV;
+    const vBottom = 1 - ((row + 1) * cellH) / atlasH + padV;
+    return { u0, v0: vBottom, u1, v1: vTop };
+  });
+
   const existing = cachedBillboardTexs.get(key);
-  if (existing) return existing;
+  if (existing) {
+    return { tex: existing, rects };
+  }
 
   const canvas = document.createElement('canvas');
-  canvas.width = 256;
-  canvas.height = 192;
+  canvas.width = atlasW;
+  canvas.height = atlasH;
   const ctx = canvas.getContext('2d');
   if (ctx) {
     ctx.fillStyle = '#0f172a';
-    ctx.fillRect(0, 0, 256, 192);
-
-    // Top crimson racing header strip
-    ctx.fillStyle = '#ef4444';
-    ctx.fillRect(8, 8, 240, 38);
-
-    ctx.strokeStyle = '#ffffff';
-    ctx.lineWidth = 8;
-    ctx.strokeRect(6, 6, 244, 180);
-
-    ctx.fillStyle = '#ffffff';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    fillFittedText(ctx, 'BRAKE', 128, 28, 210, 22, '900');
-    fillFittedText(ctx, distanceLabel, 128, 118, 220, 76, '900');
+    ctx.fillRect(0, 0, atlasW, atlasH);
+    signs.forEach((s, idx) => {
+      const col = idx % cols;
+      const row = Math.floor(idx / cols);
+      drawBillboardCard(ctx, col * cellW, row * cellH, cellW, cellH, s.title, s.sub, s.bg, s.textCol);
+    });
   }
   const tex = new THREE.CanvasTexture(canvas);
   tex.colorSpace = THREE.SRGBColorSpace;
   tex.anisotropy = 8;
   cachedBillboardTexs.set(key, tex);
-  return tex;
+  return { tex, rects };
+}
+
+/**
+ * Unified 3-column texture atlas for 50m / 100m / 150m trackside brake marker boards (1 draw call).
+ */
+function createBrakeMarkerAtlasTexture(labels: string[]): {
+  tex: THREE.CanvasTexture;
+  rects: UvRect[];
+} {
+  const cellW = 256;
+  const cellH = 192;
+  const atlasW = labels.length * cellW;
+  const atlasH = cellH;
+  const key = `brake_atlas_v3__${labels.join('_')}`;
+
+  const padU = 2 / atlasW;
+  const padV = 2 / atlasH;
+  const rects: UvRect[] = labels.map((_, idx) => ({
+    u0: (idx * cellW) / atlasW + padU,
+    u1: ((idx + 1) * cellW) / atlasW - padU,
+    v0: padV,
+    v1: 1 - padV,
+  }));
+
+  const existing = cachedBillboardTexs.get(key);
+  if (existing) return { tex: existing, rects };
+
+  const canvas = document.createElement('canvas');
+  canvas.width = atlasW;
+  canvas.height = atlasH;
+  const ctx = canvas.getContext('2d');
+  if (ctx) {
+    labels.forEach((distanceLabel, idx) => {
+      const ox = idx * cellW;
+      ctx.save();
+      ctx.translate(ox, 0);
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(0, 0, cellW, cellH);
+
+      ctx.fillStyle = '#ef4444';
+      ctx.fillRect(8, 8, 240, 38);
+
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 8;
+      ctx.strokeRect(6, 6, 244, 180);
+
+      ctx.fillStyle = '#ffffff';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      fillFittedText(ctx, 'BRAKE', 128, 28, 210, 22, '900');
+      fillFittedText(ctx, distanceLabel, 128, 118, 220, 76, '900');
+      ctx.restore();
+    });
+  }
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.anisotropy = 8;
+  cachedBillboardTexs.set(key, tex);
+  return { tex, rects };
 }
 
 function createGrandstandSeatsTexture(): THREE.CanvasTexture {
@@ -893,11 +1090,21 @@ export function prewarmSuzukaAssets(themeId?: SuzukaTrackThemeId): void {
   getSuzukaCornerSpeedLimit(0);
 }
 
+interface StaticSceneryBuckets {
+  seatParts: THREE.BufferGeometry[];
+  concreteParts: THREE.BufferGeometry[];
+  steelParts: THREE.BufferGeometry[];
+  glassParts: THREE.BufferGeometry[];
+  paintedParts: THREE.BufferGeometry[];
+  signs: QueuedBillboardSign[];
+}
+
 /**
- * Helper to construct a complete modular Grandstand Pavilion at any track sample anchor
- * and record 3D world-space tier seating coordinates for the camera-facing cheering student sprites.
+ * Helper to construct a complete modular Grandstand Pavilion at any track sample anchor,
+ * batching static architectural geometry + fascia sign specs into shared world-space buckets
+ * and populating 3D crowd sprite tier coordinates.
  */
-function buildSpectatorGrandstand(
+function appendSpectatorGrandstandParts(
   anchorSample: SuzukaTrackSample,
   sideSign: number,
   offsetMeters: number,
@@ -907,17 +1114,16 @@ function buildSpectatorGrandstand(
   bannerTitle: string,
   bannerSub: string,
   bannerBg: string,
-  seatMat: THREE.Material,
-  concreteMat: THREE.Material,
-  steelMat: THREE.Material,
   flagColors: number[],
-  crowdPlacementsOut?: CrowdSpritePlacement[],
-  signEmissiveIntensity: number = 0
-): THREE.Group {
-  const standGroup = new THREE.Group();
-  standGroup.position.copy(anchorSample.position).addScaledVector(anchorSample.right, sideSign * offsetMeters);
-  standGroup.position.y = 0.0;
-  standGroup.quaternion.copy(anchorSample.quaternion);
+  buckets: StaticSceneryBuckets,
+  crowdPlacementsOut?: CrowdSpritePlacement[]
+): void {
+  const standPos = anchorSample.position.clone().addScaledVector(anchorSample.right, sideSign * offsetMeters);
+  standPos.y = 0.0;
+  const standQuat = anchorSample.quaternion;
+  const standMatrix = composeBakeMatrix(new THREE.Matrix4(), standPos, standQuat);
+  const localMat = new THREE.Matrix4();
+  const worldMat = new THREE.Matrix4();
 
   const towardTrackX = -sideSign;
   const awayTrackX = sideSign;
@@ -926,14 +1132,16 @@ function buildSpectatorGrandstand(
   for (let tier = 0; tier < tierCount; tier++) {
     const tierH = 1.0 + tier * 1.05;
     const tierX = towardTrackX * (3.8 - tier * 1.75);
-    const tierMesh = new THREE.Mesh(
-      new THREE.BoxGeometry(1.8, tierH, lengthZ),
-      tier % 2 === 0 ? seatMat : concreteMat
-    );
-    tierMesh.position.set(tierX, tierH * 0.5, 0);
-    tierMesh.castShadow = true;
-    tierMesh.receiveShadow = true;
-    standGroup.add(tierMesh);
+    const tierGeo = new THREE.BoxGeometry(1.8, tierH, lengthZ);
+    composeBakeMatrix(localMat, [tierX, tierH * 0.5, 0]);
+    worldMat.multiplyMatrices(standMatrix, localMat);
+
+    if (tier % 2 === 0) {
+      buckets.seatParts.push(bakeTransformedGeo(tierGeo, worldMat, { keepUv: true }));
+    } else {
+      buckets.concreteParts.push(bakeTransformedGeo(tierGeo, worldMat, { keepUv: false }));
+    }
+    tierGeo.dispose();
 
     // Populate cheering student sprite placements along each seating tier
     if (crowdPlacementsOut) {
@@ -944,7 +1152,7 @@ function buildSpectatorGrandstand(
         // Stagger odd/even tiers so every row has clear sightlines
         const zJitter = (tier % 2 === 0 ? 0.8 : -0.8) + Math.sin(slotIdx * 1.7 + tier) * 0.35;
         localVec.set(tierX + towardTrackX * 0.15, tierH, zPos + zJitter);
-        localVec.applyQuaternion(standGroup.quaternion).add(standGroup.position);
+        localVec.applyQuaternion(standQuat).add(standPos);
 
         crowdPlacementsOut.push({
           x: localVec.x,
@@ -960,67 +1168,64 @@ function buildSpectatorGrandstand(
 
   const maxTierH = 1.0 + tierCount * 1.05;
   const backX = awayTrackX * (tierCount * 1.75 - 3.6);
-  const backWall = new THREE.Mesh(new THREE.BoxGeometry(0.9, maxTierH + 1.4, lengthZ + 1.0), concreteMat);
-  backWall.position.set(backX, (maxTierH + 1.4) * 0.5, 0);
-  standGroup.add(backWall);
+  const backWallGeo = new THREE.BoxGeometry(0.9, maxTierH + 1.4, lengthZ + 1.0);
+  composeBakeMatrix(localMat, [backX, (maxTierH + 1.4) * 0.5, 0]);
+  worldMat.multiplyMatrices(standMatrix, localMat);
+  buckets.concreteParts.push(bakeTransformedGeo(backWallGeo, worldMat, { keepUv: false }));
+  backWallGeo.dispose();
 
   const roofH = maxTierH + 3.4;
   const colGeo = new THREE.CylinderGeometry(0.32, 0.38, roofH, 8);
   const colStep = Math.max(10, Math.floor(lengthZ / 4));
   for (let zCol = -lengthZ * 0.44; zCol <= lengthZ * 0.44; zCol += colStep) {
-    const col = new THREE.Mesh(colGeo, steelMat);
-    col.position.set(backX, roofH * 0.5, zCol);
-    standGroup.add(col);
+    composeBakeMatrix(localMat, [backX, roofH * 0.5, zCol]);
+    worldMat.multiplyMatrices(standMatrix, localMat);
+    buckets.steelParts.push(bakeTransformedGeo(colGeo, worldMat, { keepUv: false }));
   }
+  colGeo.dispose();
 
-  const canopyMat = new THREE.MeshStandardMaterial({
-    color: awningColorHex,
-    roughness: 0.35,
-    metalness: 0.25,
-  });
   const roofW = tierCount * 1.85 + 2.5;
-  const roofMesh = new THREE.Mesh(new THREE.BoxGeometry(roofW, 0.5, lengthZ + 3.0), canopyMat);
-  roofMesh.position.set(0, roofH, 0);
-  roofMesh.rotation.z = towardTrackX * -0.09;
-  standGroup.add(roofMesh);
+  const roofGeo = new THREE.BoxGeometry(roofW, 0.5, lengthZ + 3.0);
+  composeBakeMatrix(localMat, [0, roofH, 0], [0, 0, towardTrackX * -0.09]);
+  worldMat.multiplyMatrices(standMatrix, localMat);
+  buckets.paintedParts.push(
+    bakeTransformedGeo(roofGeo, worldMat, { colorHex: awningColorHex, keepUv: false })
+  );
+  roofGeo.dispose();
 
-  // Fascia Banner mounted cleanly atop the front canopy edge (~4.5:1 aspect ratio so text never stretches or clips)
-  const fasciaTex = createBillboardTexture(bannerTitle, bannerSub, bannerBg, '#ffffff');
+  // Fascia Banner queued for unified Billboard Atlas + single mesh merge (~4.5:1 aspect ratio)
   const signWidth = Math.min(lengthZ * 0.48, 17.6);
   const signHeight = signWidth * 0.22;
   const frontRoofEdgeY = roofH - Math.abs(roofW * 0.44) * Math.sin(0.09);
-  const fasciaMesh = new THREE.Mesh(
-    new THREE.BoxGeometry(0.32, signHeight, signWidth),
-    new THREE.MeshStandardMaterial({
-      map: fasciaTex,
-      color: 0xffffff,
-      roughness: 0.35,
-      ...(signEmissiveIntensity > 0
-        ? { emissive: 0xffffff, emissiveMap: fasciaTex, emissiveIntensity: signEmissiveIntensity }
-        : {}),
-    })
-  );
-  fasciaMesh.position.set(towardTrackX * (roofW * 0.44), frontRoofEdgeY + signHeight * 0.5 + 0.28, 0);
-  standGroup.add(fasciaMesh);
+  composeBakeMatrix(localMat, [towardTrackX * (roofW * 0.44), frontRoofEdgeY + signHeight * 0.5 + 0.28, 0]);
+  buckets.signs.push({
+    w: 0.32,
+    h: signHeight,
+    d: signWidth,
+    worldMatrix: new THREE.Matrix4().multiplyMatrices(standMatrix, localMat),
+    title: bannerTitle,
+    sub: bannerSub,
+    bg: bannerBg,
+    textCol: '#ffffff',
+  });
 
   // Rooftop Pennant Flags
   const flagPoleGeo = new THREE.CylinderGeometry(0.08, 0.08, 2.4, 6);
   const flagClothGeo = new THREE.BoxGeometry(0.95, 0.6, 0.08);
   for (let fz = -lengthZ * 0.42; fz <= lengthZ * 0.42; fz += 7.5) {
-    const pole = new THREE.Mesh(flagPoleGeo, steelMat);
-    pole.position.set(backX, roofH + 1.2, fz);
-    standGroup.add(pole);
+    composeBakeMatrix(localMat, [backX, roofH + 1.2, fz]);
+    worldMat.multiplyMatrices(standMatrix, localMat);
+    buckets.steelParts.push(bakeTransformedGeo(flagPoleGeo, worldMat, { keepUv: false }));
 
     const fCol = flagColors[Math.abs(Math.round(fz)) % flagColors.length];
-    const cloth = new THREE.Mesh(
-      flagClothGeo,
-      new THREE.MeshStandardMaterial({ color: fCol, roughness: 0.5 })
+    composeBakeMatrix(localMat, [backX + towardTrackX * 0.48, roofH + 2.0, fz]);
+    worldMat.multiplyMatrices(standMatrix, localMat);
+    buckets.paintedParts.push(
+      bakeTransformedGeo(flagClothGeo, worldMat, { colorHex: fCol, keepUv: false })
     );
-    cloth.position.set(backX + towardTrackX * 0.48, roofH + 2.0, fz);
-    standGroup.add(cloth);
   }
-
-  return standGroup;
+  flagPoleGeo.dispose();
+  flagClothGeo.dispose();
 }
 
 /**
@@ -1328,7 +1533,7 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
   checkeredPlane.rotateX(-Math.PI / 2);
   root.add(checkeredPlane);
 
-  // Painted FIA Starting Grid Brackets on the Main Straight (8 grid slots)
+  // Painted FIA Starting Grid Brackets on the Main Straight (8 grid slots -> 1 draw call)
   const gridBracketGeo = new THREE.PlaneGeometry(2.6, 0.35);
   const gridSideGeo = new THREE.PlaneGeometry(0.25, 1.8);
   const gridPaintMat = new THREE.MeshBasicMaterial({
@@ -1337,27 +1542,37 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
     polygonOffsetFactor: -2,
     polygonOffsetUnits: -2,
   });
+  const gridParts: THREE.BufferGeometry[] = [];
+  const rotXNegHalfPi = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), -Math.PI / 2);
+  const gridQuat = new THREE.Quaternion();
+  const gridMat4 = new THREE.Matrix4();
+  const gridPosVec = new THREE.Vector3();
+
   for (let g = 0; g < 8; g++) {
     const sampleIdx = (N - 4 - g * 5) % N;
     const gs = samples[sampleIdx];
     const laneX = g % 2 === 0 ? -2.1 : 2.1;
     const boxPos = gs.position.clone().addScaledVector(gs.right, laneX);
 
-    const frontLine = new THREE.Mesh(gridBracketGeo, gridPaintMat);
-    frontLine.position.copy(boxPos);
-    frontLine.position.y += 0.022;
-    frontLine.quaternion.copy(gs.quaternion);
-    frontLine.rotateX(-Math.PI / 2);
-    root.add(frontLine);
+    gridQuat.copy(gs.quaternion).multiply(rotXNegHalfPi);
+    gridPosVec.copy(boxPos);
+    gridPosVec.y += 0.022;
+    composeBakeMatrix(gridMat4, gridPosVec, gridQuat);
+    gridParts.push(bakeTransformedGeo(gridBracketGeo, gridMat4, { keepUv: false }));
 
     for (const sx of [-1.2, 1.2]) {
-      const sideLine = new THREE.Mesh(gridSideGeo, gridPaintMat);
-      sideLine.position.copy(boxPos).addScaledVector(gs.right, sx).addScaledVector(gs.tangent, -0.8);
-      sideLine.position.y += 0.022;
-      sideLine.quaternion.copy(gs.quaternion);
-      sideLine.rotateX(-Math.PI / 2);
-      root.add(sideLine);
+      gridPosVec.copy(boxPos).addScaledVector(gs.right, sx).addScaledVector(gs.tangent, -0.8);
+      gridPosVec.y += 0.022;
+      composeBakeMatrix(gridMat4, gridPosVec, gridQuat);
+      gridParts.push(bakeTransformedGeo(gridSideGeo, gridMat4, { keepUv: false }));
     }
+  }
+  gridBracketGeo.dispose();
+  gridSideGeo.dispose();
+
+  const mergedGridGeo = mergeStaticParts(gridParts);
+  if (mergedGridGeo) {
+    root.add(new THREE.Mesh(mergedGridGeo, gridPaintMat));
   }
 
   // -------------------------------------------------------------------------
@@ -1666,6 +1881,10 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
     }
   }
 
+  const bridgeConcreteParts: THREE.BufferGeometry[] = [];
+  const bridgeHazardParts: THREE.BufferGeometry[] = [];
+  const bridgeMat4 = new THREE.Matrix4();
+
   const sharedCapBeamGeo = new THREE.BoxGeometry(11.4, 0.95, 2.2);
   for (const jBent of [jBefore, jAfter]) {
     const sU = samples[((jBent % N) + N) % N];
@@ -1674,29 +1893,26 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
     const pRPos = sU.position.clone().addScaledVector(sU.right, 4.5);
 
     const mainPierGeo = new THREE.CylinderGeometry(1.05, 1.25, colH, 14);
-    const colL = new THREE.Mesh(mainPierGeo, concreteMat);
-    colL.position.set(pLPos.x, colH * 0.5, pLPos.z);
-    bridgeGroup.add(colL);
+    composeBakeMatrix(bridgeMat4, [pLPos.x, colH * 0.5, pLPos.z]);
+    bridgeConcreteParts.push(bakeTransformedGeo(mainPierGeo, bridgeMat4, { keepUv: false }));
+    composeBakeMatrix(bridgeMat4, [pRPos.x, colH * 0.5, pRPos.z]);
+    bridgeConcreteParts.push(bakeTransformedGeo(mainPierGeo, bridgeMat4, { keepUv: false }));
+    mainPierGeo.dispose();
 
-    const colR = new THREE.Mesh(mainPierGeo, concreteMat);
-    colR.position.set(pRPos.x, colH * 0.5, pRPos.z);
-    bridgeGroup.add(colR);
-
-    const mainCapBeam = new THREE.Mesh(sharedCapBeamGeo, concreteMat);
-    mainCapBeam.position.set(sU.position.x, sU.position.y - 1.2, sU.position.z);
-    mainCapBeam.quaternion.copy(sU.quaternion);
-    bridgeGroup.add(mainCapBeam);
+    composeBakeMatrix(bridgeMat4, [sU.position.x, sU.position.y - 1.2, sU.position.z], sU.quaternion);
+    bridgeConcreteParts.push(bakeTransformedGeo(sharedCapBeamGeo, bridgeMat4, { keepUv: false }));
   }
+  sharedCapBeamGeo.dispose();
 
   const sOver = samples[crossOverIdx];
   const sharedHazPlateGeo = new THREE.BoxGeometry(0.25, 0.65, 11.2);
   for (const sideSign of [-1, 1]) {
-    const hazPlate = new THREE.Mesh(sharedHazPlateGeo, hazardMat);
-    hazPlate.position.copy(sOver.position).addScaledVector(sOver.right, sideSign * 5.92);
-    hazPlate.position.y = sOver.position.y - 0.85;
-    hazPlate.quaternion.copy(sOver.quaternion);
-    bridgeGroup.add(hazPlate);
+    const hazPos = sOver.position.clone().addScaledVector(sOver.right, sideSign * 5.92);
+    hazPos.y = sOver.position.y - 0.85;
+    composeBakeMatrix(bridgeMat4, hazPos, sOver.quaternion);
+    bridgeHazardParts.push(bakeTransformedGeo(sharedHazPlateGeo, bridgeMat4, { keepUv: true }));
   }
+  sharedHazPlateGeo.dispose();
 
   const sharedViaductCapGeo = new THREE.BoxGeometry(11.0, 0.8, 1.8);
   for (let j = bStart + 24; j <= bEnd - 24; j += 26) {
@@ -1713,18 +1929,26 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
     }
 
     const vPierGeo = new THREE.CylinderGeometry(0.85, 1.05, vH, 12);
-    const vpL = new THREE.Mesh(vPierGeo, concreteMat);
-    vpL.position.set(pLPos.x, vH * 0.5, pLPos.z);
-    bridgeGroup.add(vpL);
+    composeBakeMatrix(bridgeMat4, [pLPos.x, vH * 0.5, pLPos.z]);
+    bridgeConcreteParts.push(bakeTransformedGeo(vPierGeo, bridgeMat4, { keepUv: false }));
+    composeBakeMatrix(bridgeMat4, [pRPos.x, vH * 0.5, pRPos.z]);
+    bridgeConcreteParts.push(bakeTransformedGeo(vPierGeo, bridgeMat4, { keepUv: false }));
+    vPierGeo.dispose();
 
-    const vpR = new THREE.Mesh(vPierGeo, concreteMat);
-    vpR.position.set(pRPos.x, vH * 0.5, pRPos.z);
-    bridgeGroup.add(vpR);
+    composeBakeMatrix(bridgeMat4, [vSample.position.x, vSample.position.y - 1.15, vSample.position.z], vSample.quaternion);
+    bridgeConcreteParts.push(bakeTransformedGeo(sharedViaductCapGeo, bridgeMat4, { keepUv: false }));
+  }
+  sharedViaductCapGeo.dispose();
 
-    const capBeam = new THREE.Mesh(sharedViaductCapGeo, concreteMat);
-    capBeam.position.set(vSample.position.x, vSample.position.y - 1.15, vSample.position.z);
-    capBeam.quaternion.copy(vSample.quaternion);
-    bridgeGroup.add(capBeam);
+  const mergedBridgeSubGeo = mergeStaticParts(bridgeConcreteParts);
+  if (mergedBridgeSubGeo) {
+    const bridgeSubMesh = new THREE.Mesh(mergedBridgeSubGeo, concreteMat);
+    bridgeSubMesh.receiveShadow = true;
+    bridgeGroup.add(bridgeSubMesh);
+  }
+  const mergedBridgeHazardGeo = mergeStaticParts(bridgeHazardParts);
+  if (mergedBridgeHazardGeo) {
+    bridgeGroup.add(new THREE.Mesh(mergedBridgeHazardGeo, hazardMat));
   }
 
   root.add(bridgeGroup);
@@ -1735,27 +1959,54 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
   const gantryGroup = new THREE.Group();
   gantryGroup.name = 'StartFinishGantry';
 
-  const gantryBar = new THREE.Mesh(new THREE.BoxGeometry(16.5, 0.9, 1.2), steelMat);
-  gantryBar.position.copy(startSample.position).add(new THREE.Vector3(0, 8.2, 0));
-  gantryBar.quaternion.copy(startSample.quaternion);
-  gantryGroup.add(gantryBar);
-
-  const startBannerTex = createBillboardTexture('SUZUKA GRAND PRIX', theme.gantrySubText, '#0f172a', '#f59e0b');
-  const startBannerMesh = new THREE.Mesh(
-    new THREE.BoxGeometry(11.5, 1.7, 0.35),
-    makeSignMaterial(startBannerTex)
-  );
-  startBannerMesh.position.set(0, 1.35, 0);
-  gantryBar.add(startBannerMesh);
+  const gantrySteelParts: THREE.BufferGeometry[] = [];
+  const gantryBarGeo = new THREE.BoxGeometry(16.5, 0.9, 1.2);
+  const gantryBarPos = startSample.position.clone().add(new THREE.Vector3(0, 8.2, 0));
+  composeBakeMatrix(bridgeMat4, gantryBarPos, startSample.quaternion);
+  gantrySteelParts.push(bakeTransformedGeo(gantryBarGeo, bridgeMat4, { keepUv: false }));
+  gantryBarGeo.dispose();
 
   const towerGeo = new THREE.BoxGeometry(0.8, 8.2, 0.8);
-  const towerL = new THREE.Mesh(towerGeo, steelMat);
-  towerL.position.copy(startSample.position).addScaledVector(startSample.right, -7.8).add(new THREE.Vector3(0, 4.1, 0));
-  gantryGroup.add(towerL);
+  const towerLPos = startSample.position.clone().addScaledVector(startSample.right, -7.8).add(new THREE.Vector3(0, 4.1, 0));
+  composeBakeMatrix(bridgeMat4, towerLPos);
+  gantrySteelParts.push(bakeTransformedGeo(towerGeo, bridgeMat4, { keepUv: false }));
+  const towerRPos = startSample.position.clone().addScaledVector(startSample.right, 7.8).add(new THREE.Vector3(0, 4.1, 0));
+  composeBakeMatrix(bridgeMat4, towerRPos);
+  gantrySteelParts.push(bakeTransformedGeo(towerGeo, bridgeMat4, { keepUv: false }));
+  towerGeo.dispose();
 
-  const towerR = new THREE.Mesh(towerGeo, steelMat);
-  towerR.position.copy(startSample.position).addScaledVector(startSample.right, 7.8).add(new THREE.Vector3(0, 4.1, 0));
-  gantryGroup.add(towerR);
+  const sceneryBuckets: StaticSceneryBuckets = {
+    seatParts: [],
+    concreteParts: [],
+    steelParts: [],
+    glassParts: [],
+    paintedParts: [],
+    signs: [],
+  };
+
+  const mergedGantrySteelGeo = mergeStaticParts(gantrySteelParts);
+  if (mergedGantrySteelGeo) {
+    gantryGroup.add(new THREE.Mesh(mergedGantrySteelGeo, steelMat));
+  }
+
+  const gantryHeaderGroup = new THREE.Group();
+  gantryHeaderGroup.position.copy(gantryBarPos);
+  gantryHeaderGroup.quaternion.copy(startSample.quaternion);
+  gantryGroup.add(gantryHeaderGroup);
+
+  const startBannerWorldPos = new THREE.Vector3(0, 1.35, 0)
+    .applyQuaternion(startSample.quaternion)
+    .add(gantryBarPos);
+  sceneryBuckets.signs.push({
+    w: 11.5,
+    h: 1.7,
+    d: 0.35,
+    worldMatrix: composeBakeMatrix(new THREE.Matrix4(), startBannerWorldPos, startSample.quaternion),
+    title: 'SUZUKA GRAND PRIX',
+    sub: theme.gantrySubText,
+    bg: '#0f172a',
+    textCol: '#f59e0b',
+  });
 
   const lightLamps: THREE.Mesh[] = [];
   const sharedLampGeo = new THREE.SphereGeometry(0.32, 14, 14);
@@ -1769,7 +2020,7 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
       })
     );
     lamp.position.set(-2.8 + l * 1.4, -0.1, 0.7);
-    gantryBar.add(lamp);
+    gantryHeaderGroup.add(lamp);
     lightLamps.push(lamp);
   }
 
@@ -1842,9 +2093,11 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
   });
   const flagPalette = [0xef4444, 0xf59e0b, 0x3b82f6, 0x10b981, 0xec4899];
   const crowdSpritePlacements: CrowdSpritePlacement[] = [];
+  const scLocalMat = new THREE.Matrix4();
+  const scWorldMat = new THREE.Matrix4();
 
   // A. Main Grandstand on Start/Finish Straight
-  const mainGrandstand = buildSpectatorGrandstand(
+  appendSpectatorGrandstandParts(
     straightAnchor,
     outfieldSign,
     24.0,
@@ -1854,14 +2107,10 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
     'SUZUKA CIRCUIT · 鈴鹿サーキット',
     'MEXT ELEMENTARY ENGLISH GRAND PRIX',
     '#0f172a',
-    grandstandSeatMat,
-    concreteMat,
-    steelMat,
     flagPalette,
-    crowdSpritePlacements,
-    theme.signEmissiveIntensity
+    sceneryBuckets,
+    crowdSpritePlacements
   );
-  sceneryGroup.add(mainGrandstand);
 
   for (let zOff = -38; zOff <= 38; zOff += 12) {
     const p = straightAnchor.position
@@ -1923,7 +2172,7 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
     const standPos = side === 1 ? pPlus : pMinus;
 
     if (isClearOfAllTrack(standPos.x, standPos.z, 17.5)) {
-      const stand = buildSpectatorGrandstand(
+      appendSpectatorGrandstandParts(
         sAnchor,
         side,
         st.offset,
@@ -1933,14 +2182,10 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
         st.title,
         st.sub,
         st.bg,
-        grandstandSeatMat,
-        concreteMat,
-        steelMat,
         flagPalette,
-        crowdSpritePlacements,
-        theme.signEmissiveIntensity
+        sceneryBuckets,
+        crowdSpritePlacements
       );
-      sceneryGroup.add(stand);
 
       for (let zOff = -st.len * 0.5; zOff <= st.len * 0.5; zOff += 12) {
         const ep = standPos.clone().addScaledVector(sAnchor.tangent, zOff);
@@ -2052,54 +2297,67 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
   }
 
   // C. F1 Pit Building, Rooftop Billboards, Pit-Wall Engineer Perches & Control Tower
-  const pitRoot = new THREE.Group();
-  pitRoot.position.copy(straightAnchor.position).addScaledVector(straightAnchor.right, infieldSign * 19.5);
-  pitRoot.position.y = 0.0;
-  pitRoot.quaternion.copy(straightAnchor.quaternion);
+  const pitPos = straightAnchor.position.clone().addScaledVector(straightAnchor.right, infieldSign * 19.5);
+  pitPos.y = 0.0;
+  const pitQuat = straightAnchor.quaternion;
+  const pitMatrix = composeBakeMatrix(new THREE.Matrix4(), pitPos, pitQuat);
 
   const pitTowardTrackX = -infieldSign;
   const pitLengthZ = 52;
 
-  const pitBldgMat = new THREE.MeshStandardMaterial({ color: theme.pitBuildingHex, roughness: 0.45, metalness: 0.2 });
-  const pitBldg = new THREE.Mesh(new THREE.BoxGeometry(7.2, 7.6, pitLengthZ), pitBldgMat);
-  pitBldg.position.set(0, 3.8, 0);
-  pitBldg.castShadow = true;
-  pitBldg.receiveShadow = true;
-  pitRoot.add(pitBldg);
+  const pitBldgGeo = new THREE.BoxGeometry(7.2, 7.6, pitLengthZ);
+  composeBakeMatrix(scLocalMat, [0, 3.8, 0]);
+  scWorldMat.multiplyMatrices(pitMatrix, scLocalMat);
+  sceneryBuckets.paintedParts.push(
+    bakeTransformedGeo(pitBldgGeo, scWorldMat, { colorHex: theme.pitBuildingHex, keepUv: false })
+  );
+  pitBldgGeo.dispose();
 
   // Architectural second-floor sun-visor overhang
-  const overhangMesh = new THREE.Mesh(new THREE.BoxGeometry(8.4, 0.45, pitLengthZ + 1.0), steelMat);
-  overhangMesh.position.set(pitTowardTrackX * 0.4, 7.6, 0);
-  pitRoot.add(overhangMesh);
+  const overhangGeo = new THREE.BoxGeometry(8.4, 0.45, pitLengthZ + 1.0);
+  composeBakeMatrix(scLocalMat, [pitTowardTrackX * 0.4, 7.6, 0]);
+  scWorldMat.multiplyMatrices(pitMatrix, scLocalMat);
+  sceneryBuckets.steelParts.push(bakeTransformedGeo(overhangGeo, scWorldMat, { keepUv: false }));
+  overhangGeo.dispose();
 
-  // Rooftop Sponsor Billboard atop Pit Building (~4.5:1 aspect ratio matching 1024x256 canvas)
-  const pitRoofTex = createBillboardTexture('TEAM GARAGE & PIT LANE', 'KEEP UP YOUR ENGLISH STREAK!', '#1e293b', '#38bdf8');
-  const pitRoofSign = new THREE.Mesh(
-    new THREE.BoxGeometry(0.4, 3.6, 16.5),
-    makeSignMaterial(pitRoofTex)
-  );
-  pitRoofSign.position.set(pitTowardTrackX * 2.8, 9.6, 0);
-  pitRoot.add(pitRoofSign);
+  // Rooftop Sponsor Billboard atop Pit Building (queued into unified billboard atlas)
+  const pitRoofWorldPos = new THREE.Vector3(pitTowardTrackX * 2.8, 9.6, 0)
+    .applyQuaternion(pitQuat)
+    .add(pitPos);
+  sceneryBuckets.signs.push({
+    w: 0.4,
+    h: 3.6,
+    d: 16.5,
+    worldMatrix: composeBakeMatrix(new THREE.Matrix4(), pitRoofWorldPos, pitQuat),
+    title: 'TEAM GARAGE & PIT LANE',
+    sub: 'KEEP UP YOUR ENGLISH STREAK!',
+    bg: '#1e293b',
+    textCol: '#38bdf8',
+  });
 
-  const garageDoorMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.7 });
   const teamHeaderColors = [0xdc2626, 0x2563eb, 0xf97316, 0x0d9488, 0x16a34a, 0x9333ea, 0xe11d48];
   const sharedDoorGeo = new THREE.BoxGeometry(0.18, 3.1, 5.0);
   const sharedHeaderGeo = new THREE.BoxGeometry(0.24, 0.6, 5.2);
 
   for (let g = 0; g < 7; g++) {
     const gz = -21.0 + g * 7.0;
-    const door = new THREE.Mesh(sharedDoorGeo, garageDoorMat);
-    door.position.set(pitTowardTrackX * 3.62, 1.55, gz);
-    pitRoot.add(door);
+    composeBakeMatrix(scLocalMat, [pitTowardTrackX * 3.62, 1.55, gz]);
+    scWorldMat.multiplyMatrices(pitMatrix, scLocalMat);
+    sceneryBuckets.paintedParts.push(
+      bakeTransformedGeo(sharedDoorGeo, scWorldMat, { colorHex: 0x0f172a, keepUv: false })
+    );
 
-    const headerMat = new THREE.MeshStandardMaterial({
-      color: teamHeaderColors[g % teamHeaderColors.length],
-      roughness: 0.4,
-    });
-    const header = new THREE.Mesh(sharedHeaderGeo, headerMat);
-    header.position.set(pitTowardTrackX * 3.64, 3.4, gz);
-    pitRoot.add(header);
+    composeBakeMatrix(scLocalMat, [pitTowardTrackX * 3.64, 3.4, gz]);
+    scWorldMat.multiplyMatrices(pitMatrix, scLocalMat);
+    sceneryBuckets.paintedParts.push(
+      bakeTransformedGeo(sharedHeaderGeo, scWorldMat, {
+        colorHex: teamHeaderColors[g % teamHeaderColors.length],
+        keepUv: false,
+      })
+    );
   }
+  sharedDoorGeo.dispose();
+  sharedHeaderGeo.dispose();
 
   const glassMat = new THREE.MeshStandardMaterial({
     color: theme.glassHex,
@@ -2109,29 +2367,44 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
       ? { emissive: theme.glassHex, emissiveIntensity: theme.glassEmissiveIntensity }
       : {}),
   });
-  const glassMesh = new THREE.Mesh(new THREE.BoxGeometry(0.18, 2.3, pitLengthZ - 3), glassMat);
-  glassMesh.position.set(pitTowardTrackX * 3.64, 5.6, 0);
-  pitRoot.add(glassMesh);
+  const pitGlassGeo = new THREE.BoxGeometry(0.18, 2.3, pitLengthZ - 3);
+  composeBakeMatrix(scLocalMat, [pitTowardTrackX * 3.64, 5.6, 0]);
+  scWorldMat.multiplyMatrices(pitMatrix, scLocalMat);
+  sceneryBuckets.glassParts.push(bakeTransformedGeo(pitGlassGeo, scWorldMat, { keepUv: false }));
+  pitGlassGeo.dispose();
 
-  const pitWall = new THREE.Mesh(new THREE.BoxGeometry(0.45, 1.15, pitLengthZ - 4), concreteMat);
-  pitWall.position.set(pitTowardTrackX * 6.5, 0.58, 0);
-  pitRoot.add(pitWall);
+  const pitWallGeo = new THREE.BoxGeometry(0.45, 1.15, pitLengthZ - 4);
+  composeBakeMatrix(scLocalMat, [pitTowardTrackX * 6.5, 0.58, 0]);
+  scWorldMat.multiplyMatrices(pitMatrix, scLocalMat);
+  sceneryBuckets.concreteParts.push(bakeTransformedGeo(pitWallGeo, scWorldMat, { keepUv: false }));
+  pitWallGeo.dispose();
 
   // Pit-Wall Race Engineer Telemetry Perches
   const perchBoxGeo = new THREE.BoxGeometry(1.3, 2.1, 2.8);
   const perchRoofGeo = new THREE.BoxGeometry(1.7, 0.2, 3.2);
   for (let pz = -16; pz <= 16; pz += 16) {
-    const perch = new THREE.Mesh(perchBoxGeo, steelMat);
-    perch.position.set(pitTowardTrackX * 6.1, 1.6, pz);
-    pitRoot.add(perch);
-    const pRoof = new THREE.Mesh(perchRoofGeo, new THREE.MeshStandardMaterial({ color: 0xdc2626, roughness: 0.4 }));
-    pRoof.position.set(pitTowardTrackX * 6.1, 2.75, pz);
-    pitRoot.add(pRoof);
+    composeBakeMatrix(scLocalMat, [pitTowardTrackX * 6.1, 1.6, pz]);
+    scWorldMat.multiplyMatrices(pitMatrix, scLocalMat);
+    sceneryBuckets.steelParts.push(bakeTransformedGeo(perchBoxGeo, scWorldMat, { keepUv: false }));
+
+    composeBakeMatrix(scLocalMat, [pitTowardTrackX * 6.1, 2.75, pz]);
+    scWorldMat.multiplyMatrices(pitMatrix, scLocalMat);
+    sceneryBuckets.paintedParts.push(
+      bakeTransformedGeo(perchRoofGeo, scWorldMat, { colorHex: 0xdc2626, keepUv: false })
+    );
   }
+  perchBoxGeo.dispose();
+  perchRoofGeo.dispose();
 
   // Iconic Suzuka Pagoda Race Control Tower at forward Turn-1 end of Pit Complex (z = -31.5)
-  const towerGroup = new THREE.Group();
-  towerGroup.position.set(-pitTowardTrackX * 2.2, 0, -31.5);
+  const towerMatrix = new THREE.Matrix4().multiplyMatrices(
+    pitMatrix,
+    composeBakeMatrix(scLocalMat, [-pitTowardTrackX * 2.2, 0, -31.5])
+  );
+  const towerBaseWorldPos = new THREE.Vector3(-pitTowardTrackX * 2.2, 0, -31.5)
+    .applyQuaternion(pitQuat)
+    .add(pitPos);
+
   const towerWinTex = createControlTowerWindowsTexture(theme);
   const towerWinMat = new THREE.MeshStandardMaterial({
     map: towerWinTex,
@@ -2143,30 +2416,36 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
       : {}),
   });
   const towerShaft = new THREE.Mesh(new THREE.BoxGeometry(7.6, 21.0, 7.6), towerWinMat);
-  towerShaft.position.y = 10.5;
-  towerGroup.add(towerShaft);
+  towerShaft.position.copy(towerBaseWorldPos).add(new THREE.Vector3(0, 10.5, 0));
+  towerShaft.quaternion.copy(pitQuat);
+  sceneryGroup.add(towerShaft);
 
-  const observationDeck = new THREE.Mesh(new THREE.CylinderGeometry(5.6, 4.8, 3.4, 12), glassMat);
-  observationDeck.position.y = 22.2;
-  towerGroup.add(observationDeck);
+  const obsDeckGeo = new THREE.CylinderGeometry(5.6, 4.8, 3.4, 12);
+  composeBakeMatrix(scLocalMat, [0, 22.2, 0]);
+  scWorldMat.multiplyMatrices(towerMatrix, scLocalMat);
+  sceneryBuckets.glassParts.push(bakeTransformedGeo(obsDeckGeo, scWorldMat, { keepUv: false }));
+  obsDeckGeo.dispose();
 
-  const towerCap = new THREE.Mesh(new THREE.CylinderGeometry(2.2, 5.8, 1.8, 12), pitBldgMat);
-  towerCap.position.y = 24.8;
-  towerGroup.add(towerCap);
+  const towerCapGeo = new THREE.CylinderGeometry(2.2, 5.8, 1.8, 12);
+  composeBakeMatrix(scLocalMat, [0, 24.8, 0]);
+  scWorldMat.multiplyMatrices(towerMatrix, scLocalMat);
+  sceneryBuckets.paintedParts.push(
+    bakeTransformedGeo(towerCapGeo, scWorldMat, { colorHex: theme.pitBuildingHex, keepUv: false })
+  );
+  towerCapGeo.dispose();
 
-  const antennaMast = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.25, 6.5, 8), steelMat);
-  antennaMast.position.y = 28.5;
-  towerGroup.add(antennaMast);
+  const antennaMastGeo = new THREE.CylinderGeometry(0.15, 0.25, 6.5, 8);
+  composeBakeMatrix(scLocalMat, [0, 28.5, 0]);
+  scWorldMat.multiplyMatrices(towerMatrix, scLocalMat);
+  sceneryBuckets.steelParts.push(bakeTransformedGeo(antennaMastGeo, scWorldMat, { keepUv: false }));
+  antennaMastGeo.dispose();
 
   const mastBeacon = new THREE.Mesh(
     new THREE.SphereGeometry(0.45, 10, 10),
     new THREE.MeshBasicMaterial({ color: 0xef4444 })
   );
-  mastBeacon.position.y = 31.8;
-  towerGroup.add(mastBeacon);
-
-  pitRoot.add(towerGroup);
-  sceneryGroup.add(pitRoot);
+  mastBeacon.position.copy(towerBaseWorldPos).add(new THREE.Vector3(0, 31.8, 0));
+  sceneryGroup.add(mastBeacon);
 
   for (let zOff = -28; zOff <= 40; zOff += 12) {
     const p = straightAnchor.position
@@ -2187,38 +2466,45 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
   ];
 
   const archPillarGeo = new THREE.CylinderGeometry(0.32, 0.38, 7.6, 8);
-  const archBeamGeo = new THREE.BoxGeometry(14.6, 1.55, 0.5);
+  const archMatrix = new THREE.Matrix4();
 
   for (const cp of eslCheckpoints) {
     const s = samples[Math.floor(cp.frac * N)];
-    const archGroup = new THREE.Group();
-    archGroup.position.copy(s.position);
-    archGroup.quaternion.copy(s.quaternion);
+    composeBakeMatrix(archMatrix, s.position, s.quaternion);
 
-    const pL = new THREE.Mesh(archPillarGeo, steelMat);
-    pL.position.set(-7.1, 3.8, 0);
-    archGroup.add(pL);
+    composeBakeMatrix(scLocalMat, [-7.1, 3.8, 0]);
+    scWorldMat.multiplyMatrices(archMatrix, scLocalMat);
+    sceneryBuckets.steelParts.push(bakeTransformedGeo(archPillarGeo, scWorldMat, { keepUv: false }));
 
-    const pR = new THREE.Mesh(archPillarGeo, steelMat);
-    pR.position.set(7.1, 3.8, 0);
-    archGroup.add(pR);
+    composeBakeMatrix(scLocalMat, [7.1, 3.8, 0]);
+    scWorldMat.multiplyMatrices(archMatrix, scLocalMat);
+    sceneryBuckets.steelParts.push(bakeTransformedGeo(archPillarGeo, scWorldMat, { keepUv: false }));
 
-    const bannerTex = createBillboardTexture(cp.title, cp.sub, cp.bg, '#ffffff');
-    const beam = new THREE.Mesh(
-      archBeamGeo,
-      makeSignMaterial(bannerTex)
-    );
-    beam.position.set(0, 7.4, 0);
-    archGroup.add(beam);
-
-    sceneryGroup.add(archGroup);
+    sceneryBuckets.signs.push({
+      w: 14.6,
+      h: 1.55,
+      d: 0.5,
+      worldMatrix: composeBakeMatrix(
+        new THREE.Matrix4(),
+        [s.position.x, s.position.y + 7.4, s.position.z],
+        s.quaternion
+      ),
+      title: cp.title,
+      sub: cp.sub,
+      bg: cp.bg,
+      textCol: '#ffffff',
+    });
   }
+  archPillarGeo.dispose();
 
-  // E. Corner Brake Distance Marker Boards (150m, 100m, 50m) before major braking zones
+  // E. Corner Brake Distance Marker Boards (150m, 100m, 50m -> batched to 1 draw call via 3-cell atlas!)
   const brakeCorners = [0.065, 0.335, 0.475, 0.595, 0.935];
   const markerBoardGeo = new THREE.BoxGeometry(1.6, 1.1, 0.16);
   const markerPostGeo = new THREE.CylinderGeometry(0.08, 0.08, 1.2, 6);
   const markerLabels = ['50m', '100m', '150m'];
+  const brakeAtlas = createBrakeMarkerAtlasTexture(markerLabels);
+  const brakeBoardParts: THREE.BufferGeometry[] = [];
+  const markerMatrix = new THREE.Matrix4();
 
   for (const cFrac of brakeCorners) {
     for (let m = 0; m < 3; m++) {
@@ -2228,24 +2514,23 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
       const mPos = ms.position.clone().addScaledVector(ms.right, outfieldSign * 7.4);
       if (!isClearOfAllTrack(mPos.x, mPos.z, 6.2)) continue;
 
-      const mTex = createBrakeMarkerTexture(markerLabels[m]);
-      const mGroup = new THREE.Group();
-      mGroup.position.set(mPos.x, 0, mPos.z);
-      mGroup.quaternion.copy(ms.quaternion);
+      composeBakeMatrix(markerMatrix, [mPos.x, 0, mPos.z], ms.quaternion);
 
-      const board = new THREE.Mesh(
-        markerBoardGeo,
-        makeSignMaterial(mTex, 0.4)
-      );
-      board.position.y = 1.25;
-      mGroup.add(board);
+      composeBakeMatrix(scLocalMat, [0, 1.25, 0]);
+      scWorldMat.multiplyMatrices(markerMatrix, scLocalMat);
+      brakeBoardParts.push(bakeTransformedGeo(markerBoardGeo, scWorldMat, { uvRect: brakeAtlas.rects[m] }));
 
-      const post = new THREE.Mesh(markerPostGeo, steelMat);
-      post.position.y = 0.6;
-      mGroup.add(post);
-
-      sceneryGroup.add(mGroup);
+      composeBakeMatrix(scLocalMat, [0, 0.6, 0]);
+      scWorldMat.multiplyMatrices(markerMatrix, scLocalMat);
+      sceneryBuckets.steelParts.push(bakeTransformedGeo(markerPostGeo, scWorldMat, { keepUv: false }));
     }
+  }
+  markerBoardGeo.dispose();
+  markerPostGeo.dispose();
+
+  const mergedBrakeBoardsGeo = mergeStaticParts(brakeBoardParts);
+  if (mergedBrakeBoardsGeo) {
+    sceneryGroup.add(new THREE.Mesh(mergedBrakeBoardsGeo, makeSignMaterial(brakeAtlas.tex, 0.4)));
   }
 
   // F. Iconic Suzuka Ferris Wheel (観覧車) & Motopia Amusement Park Plaza outside Casio Chicane
@@ -2254,31 +2539,37 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
   const fwPos = sChicane.position.clone().addScaledVector(sChicane.right, outfieldSign * 56.0);
   ferrisWheelRoot.position.set(fwPos.x, 0.0, fwPos.z);
   exclusionZones.push({ x: fwPos.x, z: fwPos.z, r: 32 });
+  const fwMatrix = composeBakeMatrix(new THREE.Matrix4(), [fwPos.x, 0.0, fwPos.z]);
 
-  const plazaBase = new THREE.Mesh(new THREE.CylinderGeometry(18.5, 19.5, 0.6, 24), concreteMat);
-  plazaBase.position.set(0, 0.3, 0);
-  ferrisWheelRoot.add(plazaBase);
+  const plazaBaseGeo = new THREE.CylinderGeometry(18.5, 19.5, 0.6, 24);
+  composeBakeMatrix(scLocalMat, [0, 0.3, 0]);
+  scWorldMat.multiplyMatrices(fwMatrix, scLocalMat);
+  sceneryBuckets.concreteParts.push(bakeTransformedGeo(plazaBaseGeo, scWorldMat, { keepUv: false }));
+  plazaBaseGeo.dispose();
 
   // Colorful Motopia Festival Pavilions flanking the Ferris Wheel
   const tentConeGeo = new THREE.ConeGeometry(4.2, 3.2, 8);
   const tentBodyGeo = new THREE.CylinderGeometry(3.4, 3.4, 2.8, 8);
-  const tentWallMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.6 });
   const tentRoofColors = [0xef4444, 0x3b82f6, 0xf59e0b, 0x10b981];
   for (let tIdx = 0; tIdx < 4; tIdx++) {
     const tAngle = (tIdx / 4) * Math.PI * 2 + 0.4;
     const tx = Math.cos(tAngle) * 13.5;
     const tz = Math.sin(tAngle) * 13.5;
-    const tBody = new THREE.Mesh(tentBodyGeo, tentWallMat);
-    tBody.position.set(tx, 1.7, tz);
-    ferrisWheelRoot.add(tBody);
 
-    const tRoof = new THREE.Mesh(
-      tentConeGeo,
-      new THREE.MeshStandardMaterial({ color: tentRoofColors[tIdx], roughness: 0.45 })
+    composeBakeMatrix(scLocalMat, [tx, 1.7, tz]);
+    scWorldMat.multiplyMatrices(fwMatrix, scLocalMat);
+    sceneryBuckets.paintedParts.push(
+      bakeTransformedGeo(tentBodyGeo, scWorldMat, { colorHex: 0xf8fafc, keepUv: false })
     );
-    tRoof.position.set(tx, 4.5, tz);
-    ferrisWheelRoot.add(tRoof);
+
+    composeBakeMatrix(scLocalMat, [tx, 4.5, tz]);
+    scWorldMat.multiplyMatrices(fwMatrix, scLocalMat);
+    sceneryBuckets.paintedParts.push(
+      bakeTransformedGeo(tentConeGeo, scWorldMat, { colorHex: tentRoofColors[tIdx], keepUv: false })
+    );
   }
+  tentBodyGeo.dispose();
+  tentConeGeo.dispose();
 
   const legMat = new THREE.MeshStandardMaterial({ color: theme.ferrisRimHex, roughness: 0.3, metalness: 0.6 });
   const ferrisRimMat = new THREE.MeshStandardMaterial({
@@ -2289,67 +2580,94 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
       ? { emissive: theme.ferrisRimEmissiveHex, emissiveIntensity: theme.ferrisEmissiveIntensity }
       : {}),
   });
-  function createStrut(p0: THREE.Vector3, p1: THREE.Vector3, r0: number, r1: number, mat: THREE.Material): THREE.Mesh {
-    const dir = new THREE.Vector3().subVectors(p1, p0);
-    const len = dir.length();
-    const geo = new THREE.CylinderGeometry(r1, r0, len, 8);
-    const mesh = new THREE.Mesh(geo, mat);
-    mesh.position.lerpVectors(p0, p1, 0.5);
-    mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir.normalize());
-    return mesh;
-  }
 
   const hubHeight = 34.0;
   const wheelRadius = 25.0;
   const pHubL = new THREE.Vector3(-2.0, hubHeight, 0);
   const pHubR = new THREE.Vector3(2.0, hubHeight, 0);
 
-  ferrisWheelRoot.add(createStrut(new THREE.Vector3(-5.5, 0.5, -12.5), pHubL, 0.65, 0.45, legMat));
-  ferrisWheelRoot.add(createStrut(new THREE.Vector3(-5.5, 0.5, 12.5), pHubL, 0.65, 0.45, legMat));
-  ferrisWheelRoot.add(createStrut(new THREE.Vector3(5.5, 0.5, -12.5), pHubR, 0.65, 0.45, legMat));
-  ferrisWheelRoot.add(createStrut(new THREE.Vector3(5.5, 0.5, 12.5), pHubR, 0.65, 0.45, legMat));
+  const ferrisLegParts: THREE.BufferGeometry[] = [];
+  const legMid = new THREE.Vector3();
+  const legQuat = new THREE.Quaternion();
+  const legUp = new THREE.Vector3(0, 1, 0);
+  const bakeStrutPart = (p0: THREE.Vector3, p1: THREE.Vector3, r0: number, r1: number) => {
+    const dir = new THREE.Vector3().subVectors(p1, p0);
+    const len = dir.length();
+    const strutGeo = new THREE.CylinderGeometry(r1, r0, len, 8);
+    legMid.lerpVectors(p0, p1, 0.5);
+    legQuat.setFromUnitVectors(legUp, dir.normalize());
+    composeBakeMatrix(scLocalMat, legMid, legQuat);
+    ferrisLegParts.push(bakeTransformedGeo(strutGeo, scLocalMat, { keepUv: false }));
+    strutGeo.dispose();
+  };
+
+  bakeStrutPart(new THREE.Vector3(-5.5, 0.5, -12.5), pHubL, 0.65, 0.45);
+  bakeStrutPart(new THREE.Vector3(-5.5, 0.5, 12.5), pHubL, 0.65, 0.45);
+  bakeStrutPart(new THREE.Vector3(5.5, 0.5, -12.5), pHubR, 0.65, 0.45);
+  bakeStrutPart(new THREE.Vector3(5.5, 0.5, 12.5), pHubR, 0.65, 0.45);
+
+  const mergedLegsGeo = mergeStaticParts(ferrisLegParts);
+  if (mergedLegsGeo) {
+    ferrisWheelRoot.add(new THREE.Mesh(mergedLegsGeo, legMat));
+  }
 
   const ferrisWheelRotating = new THREE.Group();
   ferrisWheelRotating.position.set(0, hubHeight, 0);
 
+  const ferrisSteelParts: THREE.BufferGeometry[] = [];
   const hubGeo = new THREE.CylinderGeometry(2.0, 2.0, 4.6, 14);
   hubGeo.rotateZ(Math.PI / 2);
-  ferrisWheelRotating.add(new THREE.Mesh(hubGeo, steelMat));
+  composeBakeMatrix(scLocalMat, [0, 0, 0]);
+  ferrisSteelParts.push(bakeTransformedGeo(hubGeo, scLocalMat, { keepUv: false }));
+  hubGeo.dispose();
 
+  const ferrisRimParts: THREE.BufferGeometry[] = [];
   const rimGeo = new THREE.TorusGeometry(wheelRadius, 0.38, 8, 28);
-  const rim1 = new THREE.Mesh(rimGeo, ferrisRimMat);
-  rim1.rotation.y = Math.PI / 2;
-  rim1.position.x = -1.3;
-  ferrisWheelRotating.add(rim1);
+  composeBakeMatrix(scLocalMat, [-1.3, 0, 0], [0, Math.PI / 2, 0]);
+  ferrisRimParts.push(bakeTransformedGeo(rimGeo, scLocalMat, { keepUv: false }));
+  composeBakeMatrix(scLocalMat, [1.3, 0, 0], [0, Math.PI / 2, 0]);
+  ferrisRimParts.push(bakeTransformedGeo(rimGeo, scLocalMat, { keepUv: false }));
+  rimGeo.dispose();
 
-  const rim2 = new THREE.Mesh(rimGeo, ferrisRimMat);
-  rim2.rotation.y = Math.PI / 2;
-  rim2.position.x = 1.3;
-  ferrisWheelRotating.add(rim2);
+  const mergedRimsGeo = mergeStaticParts(ferrisRimParts);
+  if (mergedRimsGeo) {
+    ferrisWheelRotating.add(new THREE.Mesh(mergedRimsGeo, ferrisRimMat));
+  }
 
   const gondolaColors = [0xef4444, 0x3b82f6, 0xf59e0b, 0x10b981, 0x8b5cf6, 0xec4899];
   const spokeGeo = new THREE.CylinderGeometry(0.14, 0.14, wheelRadius, 6);
   spokeGeo.translate(0, wheelRadius * 0.5, 0);
   const sharedGondolaGeo = new THREE.BoxGeometry(1.9, 2.1, 1.7);
 
+  const gondolaParts: THREE.BufferGeometry[] = [];
   for (let g = 0; g < 16; g++) {
     const angle = (g / 16) * Math.PI * 2;
-    const spoke = new THREE.Mesh(spokeGeo, steelMat);
-    spoke.rotation.x = angle;
-    ferrisWheelRotating.add(spoke);
+    composeBakeMatrix(scLocalMat, [0, 0, 0], [angle, 0, 0]);
+    ferrisSteelParts.push(bakeTransformedGeo(spokeGeo, scLocalMat, { keepUv: false }));
 
-    const gondolaColor = gondolaColors[g % gondolaColors.length];
-    const gMat = new THREE.MeshStandardMaterial({
-      color: gondolaColor,
-      roughness: 0.4,
-      metalness: 0.2,
-      ...(theme.ferrisEmissiveIntensity > 0
-        ? { emissive: gondolaColor, emissiveIntensity: theme.ferrisEmissiveIntensity * 0.65 }
-        : {}),
-    });
-    const gondola = new THREE.Mesh(sharedGondolaGeo, gMat);
-    gondola.position.set(0, Math.sin(angle) * wheelRadius, Math.cos(angle) * wheelRadius);
-    ferrisWheelRotating.add(gondola);
+    composeBakeMatrix(scLocalMat, [0, Math.sin(angle) * wheelRadius, Math.cos(angle) * wheelRadius]);
+    gondolaParts.push(
+      bakeTransformedGeo(sharedGondolaGeo, scLocalMat, {
+        colorHex: gondolaColors[g % gondolaColors.length],
+        keepUv: false,
+      })
+    );
+  }
+  const mergedGondolasGeo = mergeStaticParts(gondolaParts);
+  if (mergedGondolasGeo) {
+    ferrisWheelRotating.add(
+      new THREE.Mesh(
+        mergedGondolasGeo,
+        createVertexEmissiveMaterial(theme.ferrisEmissiveIntensity * 0.65, 0.4, 0.2)
+      )
+    );
+  }
+  spokeGeo.dispose();
+  sharedGondolaGeo.dispose();
+
+  const mergedFerrisSteelGeo = mergeStaticParts(ferrisSteelParts);
+  if (mergedFerrisSteelGeo) {
+    ferrisWheelRotating.add(new THREE.Mesh(mergedFerrisSteelGeo, steelMat));
   }
 
   ferrisWheelRoot.add(ferrisWheelRotating);
@@ -2359,26 +2677,31 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
   const mountainHorizonGroup = new THREE.Group();
   mountainHorizonGroup.name = 'Suzuka360MountainPanorama';
 
-  // Mt. Fuji centerpiece
-  const fujiGroup = new THREE.Group();
-  fujiGroup.position.set(-120, -2.0, -920);
-  const fujiBaseCone = new THREE.Mesh(
-    new THREE.ConeGeometry(420, 215, 32, 1, true),
-    new THREE.MeshStandardMaterial({ color: theme.fujiBaseHex, roughness: 0.9, metalness: 0.05 })
-  );
-  fujiBaseCone.position.y = 107;
-  fujiGroup.add(fujiBaseCone);
+  // Mt. Fuji centerpiece (base cone + snow cap merged into 1 draw call)
+  const fujiBaseGeo = new THREE.ConeGeometry(420, 215, 32, 1, true);
+  const fujiCapGeo = new THREE.ConeGeometry(168, 86, 32);
+  const mergedFujiGeo = mergeStaticParts([
+    bakeTransformedGeo(fujiBaseGeo, composeBakeMatrix(scLocalMat, [0, 107, 0]), {
+      colorHex: theme.fujiBaseHex,
+      keepUv: false,
+    }),
+    bakeTransformedGeo(fujiCapGeo, composeBakeMatrix(scLocalMat, [0, 171, 0]), {
+      colorHex: theme.fujiCapHex,
+      keepUv: false,
+    }),
+  ]);
+  fujiBaseGeo.dispose();
+  fujiCapGeo.dispose();
+  if (mergedFujiGeo) {
+    const fujiMesh = new THREE.Mesh(
+      mergedFujiGeo,
+      new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.82, metalness: 0.05 })
+    );
+    fujiMesh.position.set(-120, -2.0, -920);
+    mountainHorizonGroup.add(fujiMesh);
+  }
 
-  const fujiSnowCap = new THREE.Mesh(
-    new THREE.ConeGeometry(168, 86, 32),
-    new THREE.MeshStandardMaterial({ color: theme.fujiCapHex, roughness: 0.65, metalness: 0.05 })
-  );
-  fujiSnowCap.position.y = 171;
-  fujiGroup.add(fujiSnowCap);
-  mountainHorizonGroup.add(fujiGroup);
-
-  // 28 Overlapping Suzuka Foothills & Mountain Peaks encircling the entire horizon
-  // Built with 4 vertical height rings and a 3-zone vertex-color gradient (misty base -> forest slope -> snow/rock crest)
+  // 28 Overlapping Suzuka Foothills & Mountain Peaks encircling the entire horizon (1 InstancedMesh draw call!)
   const mtnPeakGeo = new THREE.ConeGeometry(1, 1, 16, 4);
   mtnPeakGeo.translate(0, 0.5, 0);
   const mtnPosAttr = mtnPeakGeo.getAttribute('position');
@@ -2401,31 +2724,39 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
   mtnPeakGeo.setAttribute('color', new THREE.BufferAttribute(mtnColArray, 3));
 
   const mtnColors = theme.mountainColors;
-  for (let m = 0; m < 28; m++) {
-    const angle = (m / 28) * Math.PI * 2;
+  const mtnSharedMat = new THREE.MeshStandardMaterial({
+    color: 0xffffff,
+    vertexColors: true,
+    roughness: 0.92,
+    metalness: 0.02,
+  });
+  const mtnCount = 28;
+  const mtnInstanced = new THREE.InstancedMesh(mtnPeakGeo, mtnSharedMat, mtnCount);
+  const mtnDummy = new THREE.Object3D();
+  const mtnTint = new THREE.Color();
+  for (let m = 0; m < mtnCount; m++) {
+    const angle = (m / mtnCount) * Math.PI * 2;
     const dist = 740 + ((m * 137) % 240);
     const mx = Math.cos(angle) * dist;
     const mz = Math.sin(angle) * dist - 80;
     const radiusW = 140 + ((m * 73) % 130);
     const heightY = 65 + ((m * 97) % 85);
 
-    const peakMesh = new THREE.Mesh(
-      mtnPeakGeo,
-      new THREE.MeshStandardMaterial({
-        color: mtnColors[m % mtnColors.length],
-        vertexColors: true,
-        roughness: 0.92,
-        metalness: 0.02,
-      })
-    );
-    peakMesh.position.set(mx, -2, mz);
-    peakMesh.scale.set(radiusW, heightY, radiusW * 0.9);
-    peakMesh.rotation.y = m * 0.7;
-    mountainHorizonGroup.add(peakMesh);
+    mtnDummy.position.set(mx, -2, mz);
+    mtnDummy.rotation.set(0, m * 0.7, 0);
+    mtnDummy.scale.set(radiusW, heightY, radiusW * 0.9);
+    mtnDummy.updateMatrix();
+    mtnInstanced.setMatrixAt(m, mtnDummy.matrix);
+    mtnTint.setHex(mtnColors[m % mtnColors.length]);
+    mtnInstanced.setColorAt(m, mtnTint);
   }
+  mtnInstanced.instanceMatrix.needsUpdate = true;
+  if (mtnInstanced.instanceColor) mtnInstanced.instanceColor.needsUpdate = true;
+  mtnInstanced.computeBoundingSphere();
+  mountainHorizonGroup.add(mtnInstanced);
   sceneryGroup.add(mountainHorizonGroup);
 
-  // Volumetric 3D Fluffy Sky Clouds (InstancedMesh — 36 clouds in 1 draw call!)
+  // Volumetric 3D Fluffy Sky Clouds (InstancedMesh — 34 clouds in 1 draw call!)
   const cloudPuff1 = new THREE.DodecahedronGeometry(12, 1);
   const cloudPuff2 = new THREE.DodecahedronGeometry(9.5, 1);
   cloudPuff2.translate(10.5, -1.5, 2.0);
@@ -2464,7 +2795,7 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
   sceneryGroup.add(cloudInstanced);
 
   // 5 Animated Multi-Part Hot Air Balloons over the circuit
-  const hotAirBalloons: { group: THREE.Group; baseY: number; phase: number }[] = [];
+  const hotAirBalloons: { group: THREE.Object3D; baseY: number; phase: number }[] = [];
   const balloonSpecs = [
     { x: -75, y: 52, z: 45, color1: 0xef4444, color2: 0xf59e0b, phase: 0.0 },
     { x: 115, y: 58, z: -95, color1: 0x06b6d4, color2: 0x3b82f6, phase: 1.6 },
@@ -2475,47 +2806,30 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
   const balloonEnvGeo = new THREE.SphereGeometry(7.8, 16, 14);
   const balloonSkirtGeo = new THREE.CylinderGeometry(4.4, 2.1, 4.0, 12);
   const balloonBasketGeo = new THREE.BoxGeometry(2.5, 2.1, 2.5);
-  const basketMat = new THREE.MeshStandardMaterial({ color: 0x92400e, roughness: 0.85 });
+  const balloonVertexMat = createVertexEmissiveMaterial(theme.balloonEmissiveIntensity, 0.5, 0.08);
 
   for (const bs of balloonSpecs) {
-    const bGroup = new THREE.Group();
-    bGroup.position.set(bs.x, bs.y, bs.z);
+    const bParts: THREE.BufferGeometry[] = [];
+    composeBakeMatrix(scLocalMat, [0, 6.0, 0], undefined, [1, 1.18, 1]);
+    bParts.push(bakeTransformedGeo(balloonEnvGeo, scLocalMat, { colorHex: bs.color1, keepUv: false }));
+    composeBakeMatrix(scLocalMat, [0, 0.2, 0]);
+    bParts.push(bakeTransformedGeo(balloonSkirtGeo, scLocalMat, { colorHex: bs.color2, keepUv: false }));
+    composeBakeMatrix(scLocalMat, [0, -3.8, 0]);
+    bParts.push(bakeTransformedGeo(balloonBasketGeo, scLocalMat, { colorHex: 0x92400e, keepUv: false }));
 
-    const envMat = new THREE.MeshStandardMaterial({
-      color: bs.color1,
-      roughness: 0.45,
-      metalness: 0.1,
-      ...(theme.balloonEmissiveIntensity > 0
-        ? { emissive: bs.color1, emissiveIntensity: theme.balloonEmissiveIntensity }
-        : {}),
-    });
-    const skirtMat = new THREE.MeshStandardMaterial({
-      color: bs.color2,
-      roughness: 0.5,
-      metalness: 0.1,
-      ...(theme.balloonEmissiveIntensity > 0
-        ? { emissive: bs.color2, emissiveIntensity: theme.balloonEmissiveIntensity * 0.8 }
-        : {}),
-    });
-
-    const envMesh = new THREE.Mesh(balloonEnvGeo, envMat);
-    envMesh.position.y = 6.0;
-    envMesh.scale.set(1, 1.18, 1);
-    bGroup.add(envMesh);
-
-    const skirtMesh = new THREE.Mesh(balloonSkirtGeo, skirtMat);
-    skirtMesh.position.y = 0.2;
-    bGroup.add(skirtMesh);
-
-    const basketMesh = new THREE.Mesh(balloonBasketGeo, basketMat);
-    basketMesh.position.y = -3.8;
-    bGroup.add(basketMesh);
-
-    sceneryGroup.add(bGroup);
-    hotAirBalloons.push({ group: bGroup, baseY: bs.y, phase: bs.phase });
+    const mergedBalloonGeo = mergeStaticParts(bParts);
+    if (mergedBalloonGeo) {
+      const bMesh = new THREE.Mesh(mergedBalloonGeo, balloonVertexMat);
+      bMesh.position.set(bs.x, bs.y, bs.z);
+      sceneryGroup.add(bMesh);
+      hotAirBalloons.push({ group: bMesh, baseY: bs.y, phase: bs.phase });
+    }
   }
+  balloonEnvGeo.dispose();
+  balloonSkirtGeo.dispose();
+  balloonBasketGeo.dispose();
 
-  // H. Grounded Trackside Sponsor & Vocabulary Billboards (10 around the circuit)
+  // H. Grounded Trackside Sponsor & Vocabulary Billboards (queued into unified billboard atlas)
   const billboardData = [
     { frac: 0.04, title: 'WELCOME TO SUZUKA!', sub: 'SPEAK ENGLISH & RACE FAST!', bg: '#0f172a', text: '#38bdf8' },
     { frac: 0.12, title: 'APPLE · りんご', sub: 'I LIKE SWEET RED APPLES!', bg: '#dc2626', text: '#ffffff' },
@@ -2528,8 +2842,8 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
     { frac: 0.90, title: 'SUNDAY · 日曜日', sub: 'SEE YOU ON SUNDAY!', bg: '#4338ca', text: '#ffffff' },
   ];
 
-  const sharedBbGeo = new THREE.BoxGeometry(10.0, 3.0, 0.35);
   const sharedBbLegGeo = new THREE.BoxGeometry(0.3, 1.4, 0.3);
+  const bbMatrix = new THREE.Matrix4();
 
   for (const b of billboardData) {
     const s = samples[Math.floor(b.frac * N)];
@@ -2543,21 +2857,83 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
     const end2 = bPos.clone().addScaledVector(s.right, 5.0);
     if (!isClearOfAllTrack(end1.x, end1.z, 9.5) || !isClearOfAllTrack(end2.x, end2.z, 9.5)) continue;
 
-    const bbTex = createBillboardTexture(b.title, b.sub, b.bg, b.text);
-    const bbMat = makeSignMaterial(bbTex, 0.4);
-    const bbBoard = new THREE.Mesh(sharedBbGeo, bbMat);
-    bbBoard.position.set(bPos.x, 2.8, bPos.z);
-    bbBoard.quaternion.copy(s.quaternion);
+    composeBakeMatrix(bbMatrix, [bPos.x, 2.8, bPos.z], s.quaternion);
+    sceneryBuckets.signs.push({
+      w: 10.0,
+      h: 3.0,
+      d: 0.35,
+      worldMatrix: bbMatrix.clone(),
+      title: b.title,
+      sub: b.sub,
+      bg: b.bg,
+      textCol: b.text,
+    });
 
-    const l1 = new THREE.Mesh(sharedBbLegGeo, steelMat);
-    l1.position.set(-3.6, -2.1, 0);
-    bbBoard.add(l1);
-    const l2 = new THREE.Mesh(sharedBbLegGeo, steelMat);
-    l2.position.set(3.6, -2.1, 0);
-    bbBoard.add(l2);
+    for (const lx of [-3.6, 3.6]) {
+      composeBakeMatrix(scLocalMat, [lx, -2.1, 0]);
+      scWorldMat.multiplyMatrices(bbMatrix, scLocalMat);
+      sceneryBuckets.steelParts.push(bakeTransformedGeo(sharedBbLegGeo, scWorldMat, { keepUv: false }));
+    }
 
-    sceneryGroup.add(bbBoard);
     exclusionZones.push({ x: bPos.x, z: bPos.z, r: 9.5 });
+  }
+  sharedBbLegGeo.dispose();
+
+  // Consolidate all static scenery buckets + unified billboard atlas into 6 batched world meshes!
+  if (sceneryBuckets.signs.length > 0) {
+    const signAtlas = createBillboardAtlasTexture(sceneryBuckets.signs);
+    const unitSignGeo = new THREE.BoxGeometry(1, 1, 1);
+    const signParts: THREE.BufferGeometry[] = [];
+    sceneryBuckets.signs.forEach((sign, idx) => {
+      composeBakeMatrix(scLocalMat, [0, 0, 0], undefined, [sign.w, sign.h, sign.d]);
+      scWorldMat.multiplyMatrices(sign.worldMatrix, scLocalMat);
+      signParts.push(bakeTransformedGeo(unitSignGeo, scWorldMat, { uvRect: signAtlas.rects[idx] }));
+    });
+    unitSignGeo.dispose();
+    const mergedSignsGeo = mergeStaticParts(signParts);
+    if (mergedSignsGeo) {
+      sceneryGroup.add(new THREE.Mesh(mergedSignsGeo, makeSignMaterial(signAtlas.tex, 0.38)));
+    }
+  }
+
+  const mergedSeatGeo = mergeStaticParts(sceneryBuckets.seatParts);
+  if (mergedSeatGeo) {
+    const seatMesh = new THREE.Mesh(mergedSeatGeo, grandstandSeatMat);
+    seatMesh.castShadow = true;
+    seatMesh.receiveShadow = true;
+    sceneryGroup.add(seatMesh);
+  } else {
+    grandstandSeatMat.dispose();
+  }
+
+  const mergedConcreteGeo = mergeStaticParts(sceneryBuckets.concreteParts);
+  if (mergedConcreteGeo) {
+    const staticConcreteMesh = new THREE.Mesh(mergedConcreteGeo, concreteMat);
+    staticConcreteMesh.receiveShadow = true;
+    sceneryGroup.add(staticConcreteMesh);
+  }
+
+  const mergedSteelGeo = mergeStaticParts(sceneryBuckets.steelParts);
+  if (mergedSteelGeo) {
+    sceneryGroup.add(new THREE.Mesh(mergedSteelGeo, steelMat));
+  }
+
+  const mergedGlassGeo = mergeStaticParts(sceneryBuckets.glassParts);
+  if (mergedGlassGeo) {
+    sceneryGroup.add(new THREE.Mesh(mergedGlassGeo, glassMat));
+  } else {
+    glassMat.dispose();
+  }
+
+  const mergedPaintedGeo = mergeStaticParts(sceneryBuckets.paintedParts);
+  if (mergedPaintedGeo) {
+    const staticPaintedMesh = new THREE.Mesh(
+      mergedPaintedGeo,
+      new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.48, metalness: 0.15 })
+    );
+    staticPaintedMesh.castShadow = true;
+    staticPaintedMesh.receiveShadow = true;
+    sceneryGroup.add(staticPaintedMesh);
   }
 
   // I. Batched InstancedMesh Trackside Details:

@@ -9,7 +9,7 @@ import { QuizStudentFeedback } from './QuizStudentFeedback';
 import { QuizStudentGameOver } from './QuizStudentGameOver';
 import { QuizStudentGrandPrix3D } from './QuizStudentGrandPrix3D';
 import { QuizStudentTugOfWar } from './QuizStudentTugOfWar';
-import { QuizStudentVolleyball } from './QuizStudentVolleyball';
+import { QuizStudentTamaire } from './QuizStudentTamaire';
 import { AnticipationStudentContainer } from '@/games/anticipation';
 import { Trophy, ArrowLeft, AlertCircle } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
@@ -51,7 +51,7 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
   const [answeredQuestionIndex, setAnsweredQuestionIndex] = useState<number | null>(null);
   const [joinError, setJoinError] = useState<string | null>(null);
   const [localKartThemeOverride, setLocalKartThemeOverride] = useState<string | undefined>(undefined);
-  const questionReceivedAtRef = React.useRef<number>(Date.now());
+  const questionReceivedAtRef = React.useRef<number>(getServerTime());
   const lastSeenQuestionIndexRef = React.useRef<number | null>(null);
 
   const {
@@ -81,9 +81,9 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
     };
   }, []);
 
-  // Check if player was kicked by host
+  // Check if player was kicked by host (RTDB deletes `players` key completely when the last player is kicked)
   useEffect(() => {
-    if (playerId && room && room.players && !room.players[playerId]) {
+    if (playerId && room && room.status !== 'CLOSED' && !room.players?.[playerId]) {
       setJoinError(t('You were removed by the teacher. Please join again.', '先生によって退室させられました。もう一度参加してください。'));
       try {
         localStorage.removeItem('activeQuizRoomCode');
@@ -176,20 +176,23 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
   // Reset or restore answer state when question changes.
   // Crucial: decoupled from classmate responses to avoid O(N^2) render storm!
   useEffect(() => {
+    let isActive = true;
     if (room && room.status === 'QUESTION') {
       if (lastSeenQuestionIndexRef.current !== room.currentQuestionIndex) {
-        lastSeenQuestionIndexRef.current = room.currentQuestionIndex;
-        questionReceivedAtRef.current = Date.now();
+        const targetIdx = room.currentQuestionIndex;
+        lastSeenQuestionIndexRef.current = targetIdx;
+        questionReceivedAtRef.current = getServerTime();
 
         const existingResp = playerId ? room.responses?.[playerId] : undefined;
         if (existingResp) {
           setSelectedOptionId(existingResp.answerId);
-          setAnsweredQuestionIndex(room.currentQuestionIndex);
+          setAnsweredQuestionIndex(targetIdx);
         } else if (playerId && pin) {
           safeGet<QuizResponse>(`roomResponses/${pin}/${playerId}`).then((r) => {
+            if (!isActive || lastSeenQuestionIndexRef.current !== targetIdx) return;
             if (r) {
               setSelectedOptionId(r.answerId);
-              setAnsweredQuestionIndex(room.currentQuestionIndex);
+              setAnsweredQuestionIndex(targetIdx);
             } else {
               setSelectedOptionId(null);
               setAnsweredQuestionIndex(null);
@@ -203,13 +206,16 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
     } else if (room && room.status !== 'QUESTION') {
       lastSeenQuestionIndexRef.current = null;
     }
+    return () => {
+      isActive = false;
+    };
   }, [room?.status, room?.currentQuestionIndex, playerId, pin]);
 
   // Resynchronize clock when iPad cover opens / tab becomes visible
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible') {
-        questionReceivedAtRef.current = Date.now();
+        questionReceivedAtRef.current = getServerTime();
       }
     };
     document.addEventListener('visibilitychange', handleVisibilityChange);
@@ -231,6 +237,35 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
     return list;
   }, [room?.questions]);
 
+  const cachedRosterRef = React.useRef<{ key: string; list: { id: string; nickname: string; team: 'red' | 'white' }[] }>({
+    key: '',
+    list: []
+  });
+  const tamaireStudentRoster = useMemo(() => {
+    const rawPlayers = room?.players;
+    if (!rawPlayers) {
+      if (cachedRosterRef.current.key !== '') {
+        cachedRosterRef.current = { key: '', list: [] };
+      }
+      return cachedRosterRef.current.list;
+    }
+    const entries = Object.values(rawPlayers);
+    const key = entries
+      .map((p) => `${p.id}:${p.nickname || 'Student'}:${p.teamId === 'team_white' ? 'white' : 'red'}`)
+      .sort()
+      .join('|');
+    if (key === cachedRosterRef.current.key) {
+      return cachedRosterRef.current.list;
+    }
+    const list = entries.map((p) => ({
+      id: p.id,
+      nickname: p.nickname || 'Student',
+      team: (p.teamId === 'team_white' ? 'white' : 'red') as 'red' | 'white'
+    }));
+    cachedRosterRef.current = { key, list };
+    return list;
+  }, [room?.players]);
+
   // If not joined yet or no player ID
   if (!playerId || !room) {
     if (loading && pin && playerId) {
@@ -241,7 +276,7 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
             <h2 className="text-lg font-black text-slate-900 dark:text-white mb-1">
               {t('Reconnecting...', '再接続中...')}
             </h2>
-            <p className="text-xs font-bold text-slate-400">
+            <p className="text-xs font-bold text-slate-600 dark:text-slate-400">
               {t('Rejoining quiz room...', 'クイズルームに復帰しています...')}
             </p>
           </div>
@@ -273,7 +308,7 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
       correctCount: 0,
       totalAnswered: 0,
       fastestTimeMs: 999999,
-      joinedAt: Date.now(),
+      joinedAt: 0,
       answers: {}
     }),
     ...(localKartThemeOverride ? { kartTheme: localKartThemeOverride } : {})
@@ -290,7 +325,7 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
           <h2 className="text-xl font-black text-slate-900 dark:text-white mb-2">
             {t('Room has ended', 'ルームが終了しました')}
           </h2>
-          <p className="text-xs font-bold text-slate-400 mb-6">
+          <p className="text-xs font-bold text-slate-600 dark:text-slate-400 mb-6">
             {t('The teacher has closed the quiz room. Great effort today!', '先生がクイズルームを終了しました。おつかれさまでした！')}
           </p>
           <button
@@ -304,7 +339,7 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
     );
   }
 
-  const isGameplayScreen = room.status === 'QUESTION' || room.status === 'REVEAL' || room.status === 'SPRINT_RACE' || room.status === 'GRAND_PRIX_3D' || room.status === 'TUG_OF_WAR' || room.status === 'VOLLEYBALL' || room.status === 'ANTICIPATION';
+  const isGameplayScreen = room.status === 'QUESTION' || room.status === 'REVEAL' || room.status === 'SPRINT_RACE' || room.status === 'GRAND_PRIX_3D' || room.status === 'TUG_OF_WAR' || room.status === 'TAMAIRE' || room.status === 'VOLLEYBALL' || room.status === 'ANTICIPATION';
 
   // ==========================================================================
   // [ANTIGRAVITY REFACTOR]: Unified Arcade Answer & Telemetry Adapter Callback
@@ -370,7 +405,7 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
           allPlayers={room.players || {}}
           questions={studentQuestions}
           sprintSettings={room.sprintSettings}
-          raceStartTime={room.raceStartTime || Date.now()}
+          raceStartTime={room.raceStartTime || 0}
           raceFinishGraceStartTime={room.raceFinishGraceStartTime}
           isLobby={room.status === 'LOBBY'}
           onAnswer={handleArcadeAnswer}
@@ -386,6 +421,8 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
             player={currentPlayer}
             gamePlayType={room.gamePlayType}
             sprintSettings={room.sprintSettings}
+            tugOfWarSettings={room.tugOfWarSettings}
+            tamaireSettings={room.tamaireSettings || room.volleyballSettings}
             totalQuestions={room.totalQuestions}
             totalStudents={Object.keys(room.players || {}).length}
             onLeave={handleLeave}
@@ -401,7 +438,7 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
           key={`tug-${room.tugOfWarRound || 1}-${room.tugOfWarStartTime || 'active'}`}
           player={currentPlayer}
           questions={studentQuestions}
-          raceStartTime={room.tugOfWarStartTime || room.raceStartTime || Date.now()}
+          raceStartTime={room.tugOfWarStartTime || room.raceStartTime || 0}
           tugOfWarSettings={room.tugOfWarSettings}
           tugOfWarFinished={room.tugOfWarFinished}
           onAnswer={handleArcadeAnswer}
@@ -409,18 +446,22 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
         />
       )}
 
-      {/* 2c. Volleyball / Tamaire Mode (Strategy Adapter) */}
-      {room.status === 'VOLLEYBALL' && studentQuestions.length > 0 && (
-        <QuizStudentVolleyball
-          key={`volleyball-${room.volleyballStartTime || 'active'}`}
+      {/* 2c. Undokai Bean Bag Toss (Tamaire) Mode (Strategy Adapter) */}
+      {(room.status === 'TAMAIRE' || room.status === 'VOLLEYBALL') && studentQuestions.length > 0 && (
+        <QuizStudentTamaire
+          key={`tamaire-${room.tamaireStartTime || room.volleyballStartTime || 'active'}`}
           player={currentPlayer}
           questions={studentQuestions}
-          raceStartTime={room.volleyballStartTime || room.raceStartTime || Date.now()}
+          raceStartTime={room.tamaireStartTime || room.volleyballStartTime || room.raceStartTime || 0}
+          tamaireSettings={room.tamaireSettings || room.volleyballSettings}
           volleyballSettings={room.volleyballSettings}
+          tamaireFinished={room.tamaireFinished ?? room.volleyballFinished}
           volleyballFinished={room.volleyballFinished}
+          tamaireLiveState={room.tamaireLiveState || room.volleyballLiveState}
           volleyballLiveState={room.volleyballLiveState}
-          redScore={room.volleyballLiveState?.redScore}
-          whiteScore={room.volleyballLiveState?.whiteScore}
+          redScore={(room.tamaireLiveState || room.volleyballLiveState)?.redScore}
+          whiteScore={(room.tamaireLiveState || room.volleyballLiveState)?.whiteScore}
+          studentRoster={tamaireStudentRoster}
           onAnswer={handleArcadeAnswer}
           onLeave={handleLeave}
         />
@@ -436,8 +477,8 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
         />
       )}
 
-      {/* 2d. Sprint/3D/Tug/Volleyball Loading Fallback */}
-      {(room.status === 'SPRINT_RACE' || room.status === 'GRAND_PRIX_3D' || room.status === 'TUG_OF_WAR' || room.status === 'VOLLEYBALL') && studentQuestions.length === 0 && (
+      {/* 2d. Sprint/3D/Tug/Tamaire Loading Fallback */}
+      {(room.status === 'SPRINT_RACE' || room.status === 'GRAND_PRIX_3D' || room.status === 'TUG_OF_WAR' || room.status === 'TAMAIRE' || room.status === 'VOLLEYBALL') && studentQuestions.length === 0 && (
         <div className="w-full max-w-md mx-auto p-6 text-center select-none animate-in fade-in duration-200">
           <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 shadow-2xl border-4 border-indigo-200 dark:border-indigo-900 flex flex-col items-center">
             <div className="w-20 h-20 rounded-3xl bg-gradient-to-tr from-amber-500 to-rose-600 text-white flex items-center justify-center mx-auto mb-4 shadow-xl text-3xl font-black animate-bounce">
@@ -446,7 +487,7 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
             <h2 className="text-xl font-black text-slate-900 dark:text-white mb-2">
               {t('Preparing match...', 'じゅんび中...')}
             </h2>
-            <p className="text-xs font-bold text-slate-400 animate-pulse">
+            <p className="text-xs font-bold text-slate-600 dark:text-slate-400 animate-pulse">
               {t('Loading questions. Please wait a moment...', 'もんだいを読み込んでいます。少々おまちください...')}
             </p>
           </div>
@@ -482,7 +523,7 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
             <h2 className="text-lg font-black text-slate-900 dark:text-white mb-1">
               {t('Preparing question...', 'もんだいをじゅんび中...')}
             </h2>
-            <p className="text-xs font-bold text-slate-400">
+            <p className="text-xs font-bold text-slate-600 dark:text-slate-400">
               {t('Waiting for teacher’s signal', '先生の合図をまっています')}
             </p>
           </div>
@@ -505,7 +546,7 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
             <div className="w-20 h-20 rounded-3xl bg-gradient-to-tr from-amber-400 to-orange-500 text-white flex items-center justify-center mx-auto mb-4 shadow-xl text-3xl font-black animate-pulse">
               🏆
             </div>
-            <span className="text-xs font-black uppercase tracking-widest text-slate-400 block mb-1">
+            <span className="text-xs font-black uppercase tracking-widest text-slate-600 dark:text-slate-400 block mb-1">
               {t('LEADERBOARD', 'ランキング')}
             </span>
             <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-4">
@@ -517,7 +558,7 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
                 {currentPlayer.score.toLocaleString()} pts
               </strong>
             </div>
-            <p className="text-xs font-bold text-slate-400 animate-pulse">
+            <p className="text-xs font-bold text-slate-600 dark:text-slate-400 animate-pulse">
               {t('Waiting for teacher to advance to next question...', '先生が次の問題へ進むのを待っています...')}
             </p>
           </div>
@@ -546,12 +587,14 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
       )}
 
       {/* Fallback for unrecognized status to prevent blank screen */}
-      {!['LOBBY', 'SPRINT_RACE', 'GRAND_PRIX_3D', 'TUG_OF_WAR', 'VOLLEYBALL', 'ANTICIPATION', 'QUESTION', 'REVEAL', 'LEADERBOARD', 'GAME_OVER', 'CLOSED'].includes(room.status) && (
+      {!['LOBBY', 'SPRINT_RACE', 'GRAND_PRIX_3D', 'TUG_OF_WAR', 'TAMAIRE', 'VOLLEYBALL', 'ANTICIPATION', 'QUESTION', 'REVEAL', 'LEADERBOARD', 'GAME_OVER', 'CLOSED'].includes(room.status) && (
         <QuizStudentLobby
           roomCode={room.code}
           player={currentPlayer}
           gamePlayType={room.gamePlayType}
           sprintSettings={room.sprintSettings}
+          tugOfWarSettings={room.tugOfWarSettings}
+          tamaireSettings={room.tamaireSettings || room.volleyballSettings}
           totalQuestions={room.totalQuestions}
           onLeave={handleLeave}
         />

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { QuizRoomState, QuizQuestion, QuizPlayer, TeamId, RAINBOW_TEAM_ORDER } from '../types';
+import { advanceTamaireThrowStep, TamaireThrowActionStep } from '../core/quizEngine';
 import { KART_THEME_LIST } from '@/games/suzuka_grand_prix/kartPresets';
 import { SUZUKA_CIRCUIT_LENGTH_METERS } from '@/games/suzuka_grand_prix/engine/Suzuka3DEngine';
 import { ensureAnonymousAuth } from '@/services/firebase';
@@ -37,6 +38,7 @@ interface BotSprintState {
   speedKmh: number;
   distanceMeters: number;
   lastTickMs: number;
+  tamaireStep: TamaireThrowActionStep;
 }
 
 export function useQuizBotSimulator({
@@ -47,6 +49,7 @@ export function useQuizBotSimulator({
 }: UseQuizBotSimulatorOptions) {
   const activeTimersRef = useRef<NodeJS.Timeout[]>([]);
   const lastProcessedQIndexRef = useRef<number>(-1);
+  const activeArcadeSessionKeyRef = useRef<string>('');
   const sprintIntervalsRef = useRef<Map<string, NodeJS.Timeout>>(new Map());
   const sprintStateMapRef = useRef<Map<string, BotSprintState>>(new Map());
   const roomRef = useRef<QuizRoomState | null>(room);
@@ -59,6 +62,7 @@ export function useQuizBotSimulator({
     sprintIntervalsRef.current.forEach(t => clearInterval(t));
     sprintIntervalsRef.current.clear();
     sprintStateMapRef.current.clear();
+    activeArcadeSessionKeyRef.current = '';
   }, []);
 
   // 1. Add Bots to Room (Capped at 30 bots max)
@@ -75,17 +79,20 @@ export function useQuizBotSimulator({
 
     const updates: Record<string, QuizPlayer> = {};
     const isTug = roomRef.current?.gamePlayType === 'TUG_OF_WAR';
-    const isVolleyball = roomRef.current?.gamePlayType === 'VOLLEYBALL';
-    const isTwoTeam = isTug || (isVolleyball && roomRef.current?.volleyballSettings?.gameStyle === 'TEAM_VS');
+    const isTamaire = roomRef.current?.gamePlayType === 'TAMAIRE' || roomRef.current?.gamePlayType === 'VOLLEYBALL';
+    const tamaireCfg = roomRef.current?.tamaireSettings || roomRef.current?.volleyballSettings;
+    const isTamaireVs = isTamaire && (!tamaireCfg || tamaireCfg.gameStyle !== 'COOP_RALLY');
+    const isTwoTeam = isTug || isTamaireVs;
     const activeTeams: TeamId[] = isTwoTeam
       ? ['team_red', 'team_white']
       : (roomRef.current?.activeTeams || RAINBOW_TEAM_ORDER.slice(0, roomRef.current?.teamCount || 2));
 
     const mixedSequence: BotDifficulty[] = ['chill', 'chill', 'normal', 'normal', 'fast', 'fast'];
+    const serverNow = getServerTime();
 
     for (let i = 0; i < countToAdd; i++) {
       const botIndex = existingBotCount + i;
-      const botId = `bot_${Date.now()}_${botIndex + 1}`;
+      const botId = `bot_${serverNow}_${botIndex + 1}`;
       const botName = BOT_NAMES[botIndex % BOT_NAMES.length] || `Bot ${botIndex + 1}`;
       const assignedTeam = roomRef.current?.mode === 'TEAM' 
         ? activeTeams[botIndex % activeTeams.length] 
@@ -104,7 +111,7 @@ export function useQuizBotSimulator({
         correctCount: 0,
         totalAnswered: 0,
         fastestTimeMs: 999999,
-        joinedAt: Date.now() + i * 50,
+        joinedAt: serverNow + i * 50,
         answers: {},
         sprintProgress: 0,
         speedKmh: 0,
@@ -166,7 +173,13 @@ export function useQuizBotSimulator({
       const remainingPlayers = { ...currentPlayers };
       botIds.forEach(bId => delete remainingPlayers[bId]);
       const teamScores = { ...(roomRef.current?.teamScores || {}) };
-      const activeTeams: TeamId[] = roomRef.current?.activeTeams || RAINBOW_TEAM_ORDER.slice(0, roomRef.current?.teamCount || 2);
+      const isTug = roomRef.current?.gamePlayType === 'TUG_OF_WAR';
+      const isTamaire = roomRef.current?.gamePlayType === 'TAMAIRE' || roomRef.current?.gamePlayType === 'VOLLEYBALL';
+      const tamaireCfg = roomRef.current?.tamaireSettings || roomRef.current?.volleyballSettings;
+      const isTwoTeam = isTug || (isTamaire && (!tamaireCfg || tamaireCfg.gameStyle !== 'COOP_RALLY'));
+      const activeTeams: TeamId[] = isTwoTeam
+        ? ['team_red', 'team_white']
+        : (roomRef.current?.activeTeams || RAINBOW_TEAM_ORDER.slice(0, roomRef.current?.teamCount || 2));
 
       activeTeams.forEach(tId => {
         if (!teamScores[tId]) return;
@@ -181,6 +194,9 @@ export function useQuizBotSimulator({
   // 3. Classic Quiz Automation: Simulate Bot Answers during 'QUESTION' phase
   useEffect(() => {
     if (!isHost || !roomCode || !room || room.status !== 'QUESTION') {
+      lastProcessedQIndexRef.current = -1;
+      activeTimersRef.current.forEach(t => clearTimeout(t));
+      activeTimersRef.current = [];
       return;
     }
 
@@ -189,7 +205,8 @@ export function useQuizBotSimulator({
 
     // Reset timers when advancing to a new question
     if (currentQIndex !== lastProcessedQIndexRef.current) {
-      clearAllTimers();
+      activeTimersRef.current.forEach(t => clearTimeout(t));
+      activeTimersRef.current = [];
       lastProcessedQIndexRef.current = currentQIndex;
     }
 
@@ -203,6 +220,7 @@ export function useQuizBotSimulator({
 
     const existingResponses = room.responses || {};
     const timeLimitMs = currentQuestion.timeLimitMs || 10000;
+    const recallDelayMs = Math.max(0, (room.recallDelaySeconds || 0) * 1000);
     
     // Resolve correct option ID
     let correctOptId = currentQuestion.correctOptionId;
@@ -222,22 +240,30 @@ export function useQuizBotSimulator({
 
       const botDiff = bot.botDifficulty || 'normal';
       let accuracy = 0.82;
-      let minDelay = 1600;
-      let maxDelay = Math.max(2200, Math.min(timeLimitMs - 800, 4800));
+      let rawMin = 1600;
+      let rawMax = 4800;
 
       if (botDiff === 'chill') {
         accuracy = 0.60;
-        minDelay = 3000;
-        maxDelay = Math.max(3800, Math.min(timeLimitMs - 400, 6200));
+        rawMin = 3000;
+        rawMax = 6200;
       } else if (botDiff === 'fast') {
         accuracy = 0.94;
-        minDelay = 1100;
-        maxDelay = Math.max(1500, Math.min(timeLimitMs - 1200, 2400));
+        rawMin = 1100;
+        rawMax = 2400;
       }
 
+      const maxWindow = Math.max(400, timeLimitMs - 300);
+      const minDelay = Math.min(maxWindow - 200, recallDelayMs + rawMin);
+      const maxDelay = Math.max(minDelay + 150, Math.min(maxWindow, recallDelayMs + rawMax));
       const delay = minDelay + Math.random() * (maxDelay - minDelay);
 
       const timer = setTimeout(async () => {
+        const freshRoom = roomRef.current;
+        if (!freshRoom || freshRoom.status !== 'QUESTION' || freshRoom.currentQuestionIndex !== currentQIndex) {
+          return;
+        }
+
         // Accuracy roll based on bot difficulty
         const isCorrect = Math.random() < accuracy;
         let chosenOptionId = correctOptId || allOptions[0] || '';
@@ -261,9 +287,10 @@ export function useQuizBotSimulator({
     });
 
     return () => {
-      // Keep running timers until question advances or unmounts
+      activeTimersRef.current.forEach(t => clearTimeout(t));
+      activeTimersRef.current = [];
     };
-  }, [isHost, roomCode, room?.status, room?.currentQuestionIndex, questions, clearAllTimers]);
+  }, [isHost, roomCode, room?.status, room?.currentQuestionIndex, room?.recallDelaySeconds, questions]);
 
   // ============================================================================
   // [ANTIGRAVITY REFACTOR]: Single-Tick 5 Hz Batched Spoke Bot Simulator
@@ -281,26 +308,42 @@ export function useQuizBotSimulator({
   // (~40-50 writes/sec) and writing to `rooms/${roomCode}/players/${bot.id}`,
   // which broadcast full room snapshots to all 40 connected student iPads.
   // ============================================================================
+  const currentBotCount = room?.players
+    ? Object.keys(room.players).filter(id => id.startsWith('bot_')).length
+    : 0;
+  const hasBots = currentBotCount > 0;
+
   useEffect(() => {
     if (
       !isHost ||
       !roomCode ||
       !room ||
+      !hasBots ||
       (room.status !== 'SPRINT_RACE' &&
         room.status !== 'GRAND_PRIX_3D' &&
         room.status !== 'TUG_OF_WAR' &&
+        room.status !== 'TAMAIRE' &&
         room.status !== 'VOLLEYBALL')
     ) {
       sprintIntervalsRef.current.forEach(t => clearInterval(t));
       sprintIntervalsRef.current.clear();
-      sprintStateMapRef.current.clear();
+      if (!room || (room.status !== 'SPRINT_RACE' && room.status !== 'GRAND_PRIX_3D' && room.status !== 'TUG_OF_WAR' && room.status !== 'TAMAIRE' && room.status !== 'VOLLEYBALL')) {
+        sprintStateMapRef.current.clear();
+        activeArcadeSessionKeyRef.current = '';
+      }
       return;
     }
 
     const isTug = room.status === 'TUG_OF_WAR';
-    const isVolleyball = room.status === 'VOLLEYBALL';
+    const isVolleyball = room.status === 'TAMAIRE' || room.status === 'VOLLEYBALL';
     const is3DRace = room.status === 'GRAND_PRIX_3D' || room.gamePlayType === 'GRAND_PRIX_3D';
-    const raceStartTime = (isTug ? room.tugOfWarStartTime : isVolleyball ? room.volleyballStartTime : room.raceStartTime) || getServerTime();
+    const raceStartTime = (isTug ? room.tugOfWarStartTime : isVolleyball ? (room.tamaireStartTime || room.volleyballStartTime) : room.raceStartTime) || getServerTime();
+    const sessionKey = `${roomCode}:${room.status}:${raceStartTime}:${room.tugOfWarRound || 0}`;
+    if (activeArcadeSessionKeyRef.current !== sessionKey) {
+      sprintStateMapRef.current.clear();
+      activeArcadeSessionKeyRef.current = sessionKey;
+    }
+
     const greenFlagTime = raceStartTime + (isTug || isVolleyball ? 1500 : is3DRace ? 2400 : 3600);
     const sprintSettings = room.sprintSettings;
     const isTimeTrial = sprintSettings?.sprintMode === 'TIME_TRIAL' || isTug || isVolleyball;
@@ -310,10 +353,6 @@ export function useQuizBotSimulator({
     const totalQuestions = isTimeTrial 
       ? questions.length 
       : (sprintSettings?.lapCount === -1 ? questions.length : (sprintSettings?.lapCount || questions.length));
-
-    const players = room.players || {};
-    const bots = Object.values(players).filter(p => p.id.startsWith('bot_'));
-    if (bots.length === 0) return;
 
     const now = getServerTime();
     const delayUntilGreen = Math.max(0, greenFlagTime - now);
@@ -328,8 +367,7 @@ export function useQuizBotSimulator({
       return isVolleyball ? (2200 + Math.random() * 1200) : (1800 + Math.random() * 1200);
     };
 
-    // Initialize in-memory sprint tracker + individual cadence schedule for each bot
-    bots.forEach(bot => {
+    const ensureBotTracked = (bot: QuizPlayer, nowMs: number) => {
       if (!sprintStateMapRef.current.has(bot.id)) {
         const botDiff = bot.botDifficulty || 'normal';
         sprintStateMapRef.current.set(bot.id, {
@@ -339,15 +377,21 @@ export function useQuizBotSimulator({
           maxStreak: bot.maxStreak || 0,
           correctCount: bot.correctCount || 0,
           totalAnswered: bot.totalAnswered || 0,
-          isFinished: !!bot.isFinished,
+          isFinished: isTug ? false : !!bot.isFinished,
           speedKmh: bot.speedKmh || 0,
           distanceMeters: bot.distanceMeters || 0,
-          lastTickMs: getServerTime(),
+          lastTickMs: nowMs,
+          tamaireStep: 0,
           // [ANTIGRAVITY REFACTOR]: Per-bot next answer timestamp inside the shared 5 Hz loop
-          nextAnswerDueAtMs: greenFlagTime + sampleBotIntervalMs(botDiff)
+          nextAnswerDueAtMs: Math.max(nowMs, greenFlagTime) + sampleBotIntervalMs(botDiff)
         } as BotSprintState & { nextAnswerDueAtMs: number });
       }
-    });
+    };
+
+    // Initialize in-memory sprint tracker + individual cadence schedule for current bots
+    Object.values(room.players || {})
+      .filter(p => p.id.startsWith('bot_'))
+      .forEach(bot => ensureBotTracked(bot, now));
 
     const startBatchedBotRaceLoop = () => {
       if (sprintIntervalsRef.current.has('__HOST_BATCH_TICK__')) return;
@@ -360,6 +404,7 @@ export function useQuizBotSimulator({
           (freshRoom.status !== 'SPRINT_RACE' &&
             freshRoom.status !== 'GRAND_PRIX_3D' &&
             freshRoom.status !== 'TUG_OF_WAR' &&
+            freshRoom.status !== 'TAMAIRE' &&
             freshRoom.status !== 'VOLLEYBALL')
         ) {
           clearInterval(singleHostLoop);
@@ -367,20 +412,26 @@ export function useQuizBotSimulator({
         }
 
         if (isTug || isVolleyball) {
-          const timeLimitSec = (isTug ? freshRoom.tugOfWarSettings?.timeLimitSeconds : freshRoom.volleyballSettings?.timeLimitSeconds) || 60;
+          const tamaireCfg = freshRoom.tamaireSettings || freshRoom.volleyballSettings;
+          const timeLimitSec = (isTug ? freshRoom.tugOfWarSettings?.timeLimitSeconds : tamaireCfg?.timeLimitSeconds) || 60;
           const isTimeExpired = (getServerTime() - greenFlagTime) >= (timeLimitSec * 1000);
-          if (freshRoom.tugOfWarFinished || freshRoom.volleyballFinished || isTimeExpired) {
+          const isTamaireDone = !!(freshRoom.tamaireFinished || freshRoom.volleyballFinished);
+          if (freshRoom.tugOfWarFinished || isTamaireDone || isTimeExpired) {
             clearInterval(singleHostLoop);
             return;
           }
         }
+
+        const freshBots = Object.values(freshRoom.players || {}).filter(p => p.id.startsWith('bot_'));
+        if (freshBots.length === 0) return;
 
         const nowMs = getServerTime();
         const batchedSpokeUpdates: Record<string, Partial<QuizPlayer>> = {};
         let hasDirtyBots = false;
         let allBotsFinished = true;
 
-        for (const bot of bots) {
+        for (const bot of freshBots) {
+          ensureBotTracked(bot, nowMs);
           const botState = sprintStateMapRef.current.get(bot.id) as (BotSprintState & { nextAnswerDueAtMs?: number }) | undefined;
           if (!botState || botState.isFinished) continue;
 
@@ -389,8 +440,8 @@ export function useQuizBotSimulator({
           if (nowMs < dueAt) continue;
 
           const botDiff = bot.botDifficulty || 'normal';
-          botState.nextAnswerDueAtMs = nowMs + sampleBotIntervalMs(botDiff);
-
+          const botIntervalMs = sampleBotIntervalMs(botDiff);
+          botState.nextAnswerDueAtMs = nowMs + botIntervalMs;
 
           const dtSec = Math.max(0.2, Math.min(4.0, (nowMs - botState.lastTickMs) / 1000));
           botState.lastTickMs = nowMs;
@@ -403,7 +454,24 @@ export function useQuizBotSimulator({
 
           const sprintAccuracy = botDiff === 'chill' ? 0.65 : botDiff === 'fast' ? 0.95 : 0.85;
           const isCorrect = Math.random() < sprintAccuracy;
-          if (isCorrect) {
+          if (isVolleyball) {
+            const stepResult = advanceTamaireThrowStep({
+              currentStep: botState.tamaireStep ?? 0,
+              isCorrect,
+              previousStreak: botState.streak,
+              timeTakenMs: Math.round(botIntervalMs),
+            });
+            botState.tamaireStep = stepResult.nextStep;
+            botState.streak = stepResult.newStreak;
+            if (botState.streak > botState.maxStreak) {
+              botState.maxStreak = botState.streak;
+            }
+            botState.correctCount += stepResult.bagsThrown;
+            botState.score += stepResult.pointsEarned;
+            if (stepResult.bagsThrown > 0) {
+              botState.progress += 1;
+            }
+          } else if (isCorrect) {
             botState.progress += 1;
             botState.streak += 1;
             if (botState.streak > botState.maxStreak) {
@@ -474,7 +542,7 @@ export function useQuizBotSimulator({
       sprintIntervalsRef.current.forEach(t => clearInterval(t));
       sprintIntervalsRef.current.clear();
     };
-  }, [isHost, roomCode, room?.status, room?.raceStartTime, questions.length]);
+  }, [isHost, roomCode, hasBots, room?.status, room?.raceStartTime, room?.tugOfWarStartTime, room?.tamaireStartTime, room?.volleyballStartTime, room?.tugOfWarRound, questions.length]);
 
   // Clean up when room closes or unmounts
   useEffect(() => {
@@ -483,13 +551,9 @@ export function useQuizBotSimulator({
     };
   }, [clearAllTimers]);
 
-  const botCount = room?.players 
-    ? Object.keys(room.players).filter(id => id.startsWith('bot_')).length 
-    : 0;
-
   return {
     addBots,
     clearBots,
-    botCount
+    botCount: currentBotCount
   };
 }

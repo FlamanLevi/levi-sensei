@@ -139,9 +139,21 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
     }
   }, [gamePlayType, sprintSettings?.trackTheme]);
 
-  // Keyboard shortcut: Press Space or Enter to start game
+  // Keyboard shortcut: Press Space or Enter to start game (ignore inputs/buttons/repeats)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.repeat || e.isComposing || e.ctrlKey || e.metaKey || e.altKey) return;
+      const target = e.target as HTMLElement | null;
+      if (
+        target &&
+        (target.tagName === 'INPUT' ||
+          target.tagName === 'TEXTAREA' ||
+          target.tagName === 'SELECT' ||
+          target.tagName === 'BUTTON' ||
+          target.isContentEditable)
+      ) {
+        return;
+      }
       if (e.key === 'Enter' || e.code === 'Space') {
         e.preventDefault();
         onStart();
@@ -151,14 +163,14 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [onStart]);
 
-  const isTug = gamePlayType === 'TUG_OF_WAR';
-  const activeTeams: TeamId[] = isTug
+  const isTwoTeamUndokai = gamePlayType === 'TUG_OF_WAR' || gamePlayType === 'TAMAIRE' || gamePlayType === 'VOLLEYBALL';
+  const activeTeams: TeamId[] = isTwoTeamUndokai
     ? ['team_red', 'team_white']
     : (propsActiveTeams || (teamCount === 2 ? ['team_red', 'team_white'] : RAINBOW_TEAM_ORDER.slice(0, teamCount || 2)));
   const teams: TeamId[] = activeTeams;
 
   const cycleTeam = (currentTeamId?: TeamId): TeamId => {
-    const list: TeamId[] = activeTeams.length > 0 ? activeTeams : (isTug ? ['team_red', 'team_white'] : RAINBOW_TEAM_ORDER.slice(0, 2));
+    const list: TeamId[] = activeTeams.length > 0 ? activeTeams : (isTwoTeamUndokai ? ['team_red', 'team_white'] : RAINBOW_TEAM_ORDER.slice(0, 2));
     const idx = currentTeamId ? list.indexOf(currentTeamId) : -1;
     return list[(idx + 1) % list.length];
   };
@@ -180,14 +192,18 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
               <span>{classId}</span>
             </span>
           ) : null}
-          {subject === 'MATH' ? (
-            <span className="text-xs font-black px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200 border border-emerald-300 dark:border-emerald-700 flex items-center gap-1.5 shadow-2xs shrink-0 whitespace-nowrap">
-              <span>📐</span>
-              <span>{MATH_GRADES[mathGrade || 'G1']?.badge || '小1'} 算数</span>
-              <span>•</span>
-              <span>{MATH_DOMAINS[mathDomain || 'ALL']?.nameJa || '全領域'}</span>
-            </span>
-          ) : (
+          {subject === 'MATH' ? (() => {
+            const gMeta = MATH_GRADES[mathGrade || 'G1'];
+            const dMeta = MATH_DOMAINS[mathDomain || 'ALL'];
+            return (
+              <span className="text-xs font-black px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200 border border-emerald-300 dark:border-emerald-700 flex items-center gap-1.5 shadow-2xs shrink-0 whitespace-nowrap">
+                <span>📐</span>
+                <span>{language === 'ja' ? `${gMeta?.badge || '小1'} 算数` : `${gMeta?.labelEn || 'Grade 1'} Math`}</span>
+                <span>•</span>
+                <span>{language === 'ja' ? (dMeta?.nameJa || '全領域') : (dMeta?.nameEn || 'All Domains')}</span>
+              </span>
+            );
+          })() : (
             <span className="text-xs font-black px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300 shrink-0 whitespace-nowrap">
               {grade} {vocabularyScope !== 'CUSTOM_UNITS' && unit !== 'ALL' ? `• ${unit}` : ''}
             </span>
@@ -265,7 +281,7 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
           >
             <Play size={18} fill="white" />
             <span>{t('START GAME', 'ゲーム開始')}</span>
-            <span className="text-xs opacity-80 font-mono hidden xs:inline">[Enter]</span>
+            <span className="text-xs opacity-80 font-mono hidden sm:inline">[Enter]</span>
           </button>
 
           <button
@@ -307,7 +323,7 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
                   className="w-48 h-48 sm:w-56 sm:h-56 xl:w-64 xl:h-64 max-h-[38dvh] object-contain rounded-2xl"
                 />
               ) : (
-                <div className="w-48 h-48 sm:w-56 sm:h-56 xl:w-64 xl:h-64 flex items-center justify-center bg-slate-100 rounded-2xl text-xs text-slate-400">
+                <div className="w-48 h-48 sm:w-56 sm:h-56 xl:w-64 xl:h-64 flex items-center justify-center bg-slate-100 rounded-2xl text-xs text-slate-500">
                   {t('Generating QR...', 'QRコード生成中...')}
                 </div>
               )}
@@ -320,7 +336,7 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
               <QrCode size={15} />
               <span>{t('Scan with iPad Camera', 'iPadカメラでスキャン')}</span>
             </span>
-            <span className="text-[11px] font-bold text-slate-400">
+            <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400">
               {t('Point camera to join', 'かざして即参加')}
             </span>
           </div>
@@ -336,7 +352,7 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
                 <span>{isStudentHost ? t('Connected Players:', '参加中のプレイヤー:') : t('Connected Students:', '接続中の生徒:')}</span>
                 <span className="text-blue-600 dark:text-blue-400 font-mono text-xl">{playerList.length}</span>
                 {!isStudentHost && expectedCapacity > 0 && (
-                  <span className="text-slate-400 dark:text-slate-500 font-mono text-sm font-bold">
+                  <span className="text-slate-500 dark:text-slate-400 font-mono text-sm font-bold">
                     / {expectedCapacity}
                     <span className="ml-1 text-xs font-semibold text-slate-500 dark:text-slate-400">
                       ({Math.round((playerList.length / expectedCapacity) * 100)}%)
@@ -363,7 +379,7 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
               >
                 <span className="text-lg animate-pulse">{vaultTierInfo.currentTier.badge}{vaultTierInfo.currentTier.mascotEmoji}</span>
                 <div className="flex flex-col min-w-[110px]">
-                  <div className="flex items-center justify-between text-[9px] font-black text-amber-900 dark:text-amber-200 leading-none mb-1">
+                  <div className="flex items-center justify-between text-[10px] font-black text-amber-900 dark:text-amber-200 leading-none mb-1">
                     <span>⚡ {language === 'ja' ? 'クラス団結エナジー' : 'Class Energy'}</span>
                     <span className="font-mono">{classVault.totalEnergy.toLocaleString()} pts</span>
                   </div>
@@ -374,13 +390,13 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
                     />
                   </div>
                 </div>
-                <span className="text-[9px] font-black font-mono text-amber-800 dark:text-amber-300 px-1.5 py-0.5 rounded-md bg-amber-200/60 dark:bg-amber-900/40">
+                <span className="text-[10px] font-black font-mono text-amber-800 dark:text-amber-300 px-1.5 py-0.5 rounded-md bg-amber-200/60 dark:bg-amber-900/40">
                   T{vaultTierInfo.currentTier.tier}
                 </span>
               </div>
             )}
             {playerList.length === 0 ? (
-              <span className="text-xs text-slate-400 font-medium animate-pulse shrink-0 whitespace-nowrap">
+              <span className="text-xs text-slate-500 dark:text-slate-400 font-medium animate-pulse shrink-0 whitespace-nowrap">
                 {t('Waiting for students to scan...', '生徒のスキャンを待っています...')}
               </span>
             ) : (
@@ -521,7 +537,7 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
 
                     <div className="flex-1 min-h-0 space-y-1 overflow-y-auto pr-0.5 pt-1">
                       {teamMembers.length === 0 ? (
-                        <div className="h-full flex items-center justify-center text-[11px] text-slate-400 font-bold italic py-4">
+                        <div className="h-full flex items-center justify-center text-[11px] text-slate-500 dark:text-slate-400 font-bold italic py-4">
                           {t('Waiting...', '待機中...')}
                         </div>
                       ) : (
@@ -546,17 +562,17 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
                                 </div>
                               )}
                               {(() => {
-                                const num = p.attendanceNumber || resolveRacerNumber(p);
-                                const hasNumInNick = p.nickname?.includes('番') || p.nickname?.startsWith('#');
+                                const num = typeof p.attendanceNumber === 'number' ? p.attendanceNumber : resolveRacerNumber(p);
+                                const hasNumInNick = p.nickname?.includes('番') || p.nickname?.startsWith('#') || p.nickname?.startsWith('00');
                                 return (
                                   <span className="flex items-center gap-1 truncate max-w-[145px] text-slate-800 dark:text-slate-200">
                                     {isBot && <span className="text-[10px] text-indigo-500 dark:text-indigo-400">🤖</span>}
                                     {p.avatar && !isBot && (
                                       <AvatarDisplay avatar={p.avatar} frameId={p.frame} sizeClassName="w-4 h-4 text-sm" />
                                     )}
-                                    {num > 0 && !hasNumInNick && !isBot && (
+                                    {num >= 0 && !hasNumInNick && !isBot && (
                                       <span className="px-1.5 py-0.2 rounded bg-indigo-600 text-white font-mono font-black text-[10px] shrink-0">
-                                        #{num}
+                                        #{num === 0 ? '00' : num}
                                       </span>
                                     )}
                                     <span className="truncate">{p.nickname}</span>
@@ -594,7 +610,7 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
             /* INDIVIDUAL MODE: Responsive 3-to-4 Column Grid with Dedicated Internal Scrollbar */
             <div className="flex-1 min-h-0 overflow-y-auto pr-1 pt-2">
               {playerList.length === 0 ? (
-                <div className="w-full h-full flex flex-col items-center justify-center py-10 text-slate-400 italic text-xs font-bold text-center">
+                <div className="w-full h-full flex flex-col items-center justify-center py-10 text-slate-500 dark:text-slate-400 italic text-xs font-bold text-center">
                   <span className="text-3xl mb-2">📱</span>
                   <span>{t('Scan the QR code to see your name appear here!', 'QRコードをスキャンするとここに名前が表示されます！')}</span>
                 </div>
@@ -627,13 +643,13 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
                             <AvatarDisplay avatar={p.avatar} frameId={p.frame} sizeClassName="w-5 h-5 text-base shrink-0" />
                           )}
                           {(() => {
-                            const num = p.attendanceNumber || resolveRacerNumber(p);
-                            const hasNumInNick = p.nickname?.includes('番') || p.nickname?.startsWith('#');
+                            const num = typeof p.attendanceNumber === 'number' ? p.attendanceNumber : resolveRacerNumber(p);
+                            const hasNumInNick = p.nickname?.includes('番') || p.nickname?.startsWith('#') || p.nickname?.startsWith('00');
                             return (
                               <div className="flex items-center gap-1 min-w-0 flex-1">
-                                {num > 0 && !hasNumInNick && !isBot && (
+                                {num >= 0 && !hasNumInNick && !isBot && (
                                   <span className="px-1.5 py-0.2 rounded bg-indigo-600 text-white font-mono font-black text-[10px] shrink-0 shadow-2xs">
-                                    #{num}
+                                    #{num === 0 ? '00' : num}
                                   </span>
                                 )}
                                 <span className="text-xs font-bold text-slate-800 dark:text-slate-100 truncate">{p.nickname}</span>
@@ -657,12 +673,12 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
           )}
 
           {/* Roster Bottom Status Bar */}
-          <div className="pt-2 mt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-[11px] text-slate-400 font-bold shrink-0">
+          <div className="pt-2 mt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 font-bold shrink-0">
             <span>
               {t('Teacher: Click START GAME or press [Enter] to begin', '先生用: [Enter] または [ゲーム開始] でスタート')}
             </span>
             <span className="font-mono text-indigo-600 dark:text-indigo-400">
-              {playerList.length > 0 ? `${playerList.length} Connected` : 'Lobby Open'}
+              {playerList.length > 0 ? t(`${playerList.length} Connected`, `${playerList.length} 名接続中`) : t('Lobby Open', '入室受付中')}
             </span>
           </div>
         </div>

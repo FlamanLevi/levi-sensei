@@ -1,14 +1,16 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { QuizQuestion, QuizResponse, QuizPlayer, RecallDelaySeconds, DistractorEliminationMode } from '../types';
+import { isEnglishPromptType } from '../core/quizEngine';
 import { soundEffects } from '@/services/soundEffects';
 import { getServerTime } from '@/services/rtdbSafe';
 import { useLanguage } from '@/context/LanguageContext';
 import { useAudio } from '@/context/AudioContext';
 import { useClassroom } from '@/context/ClassroomContext';
 import { speechService } from '@/services/speechService';
-import { Volume2, Clock, Users, EyeOff, Zap, Sparkles, CheckCircle2, Pause } from 'lucide-react';
+import { Volume2, Clock, Users, Pause } from 'lucide-react';
 import { useClassroomClicker } from '@/hooks/useClassroomClicker';
 import { ClassroomBlackoutShutter } from '@/components/common/ClassroomBlackoutShutter';
+import { RubyText } from '@/components/common/RubyText';
 
 interface QuizHostQuestionProps {
   roomCode: string;
@@ -22,10 +24,6 @@ interface QuizHostQuestionProps {
   onTimeExpired: () => void;
   onManualReveal: () => void;
   onExit?: () => void;
-  isSolo?: boolean;
-  soloPlayer?: QuizPlayer;
-  selectedOptionId?: string | null;
-  onSelectOption?: (optionId: string, timeTakenMs: number) => void;
   onDuckBGM?: (duck: boolean) => void;
 }
 
@@ -41,17 +39,12 @@ export const QuizHostQuestion: React.FC<QuizHostQuestionProps> = ({
   onTimeExpired,
   onManualReveal,
   onExit,
-  isSolo = false,
-  soloPlayer,
-  selectedOptionId = null,
-  onSelectOption,
   onDuckBGM
 }) => {
   const { t, language } = useLanguage();
-  const { playWordAudio } = useAudio();
+  const { playWordAudio, isMuted } = useAudio();
   const { activeSchool } = useClassroom();
   const [timeLeftMs, setTimeLeftMs] = useState<number>(question.timeLimitMs);
-  const [localSelectedId, setLocalSelectedId] = useState<string | null>(selectedOptionId || null);
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [isBlackout, setIsBlackout] = useState(false);
@@ -64,12 +57,12 @@ export const QuizHostQuestion: React.FC<QuizHostQuestionProps> = ({
   isBlackoutRef.current = isBlackout;
 
   const timerRef = useRef<number | null>(null);
-  const autoRevealTimerRef = useRef<number | null>(null);
   const expireTimerRef = useRef<number | null>(null);
   const earlyEndTimerRef = useRef<number | null>(null);
   const lastTickSecondRef = useRef<number>(-1);
   const unblurPlayedRef = useRef<boolean>(false);
-  const startTimeRef = useRef<number>(question.startTime > 0 ? question.startTime : Date.now());
+  const startTimeRef = useRef<number>(question.startTime > 0 ? question.startTime : getServerTime());
+  const pauseStartedAtRef = useRef<number | null>(null);
 
   const audioStagesTriggeredRef = useRef<Set<number>>(new Set());
   const lastAudioPlayTimeRef = useRef<number>(0);
@@ -81,10 +74,6 @@ export const QuizHostQuestion: React.FC<QuizHostQuestionProps> = ({
   onManualRevealRef.current = onManualReveal;
 
   const clearAllPendingTimers = () => {
-    if (autoRevealTimerRef.current) {
-      clearTimeout(autoRevealTimerRef.current);
-      autoRevealTimerRef.current = null;
-    }
     if (expireTimerRef.current) {
       clearTimeout(expireTimerRef.current);
       expireTimerRef.current = null;
@@ -101,9 +90,9 @@ export const QuizHostQuestion: React.FC<QuizHostQuestionProps> = ({
   // Speak prompt audio cleanly
   const playPromptAudio = useCallback(() => {
     const textToSpeak = question.targetWordEnglish;
-    if (!textToSpeak) return;
+    if (!textToSpeak || isMuted) return;
 
-    lastAudioPlayTimeRef.current = Date.now();
+    lastAudioPlayTimeRef.current = performance.now();
     setIsPlayingAudio(true);
     onDuckBGMRef.current?.(true);
 
@@ -129,15 +118,14 @@ export const QuizHostQuestion: React.FC<QuizHostQuestionProps> = ({
         }
       });
     }
-  }, [question.targetWordEnglish, question.promptSound, playWordAudio]);
+  }, [question.targetWordEnglish, question.promptSound, playWordAudio, isMuted]);
 
   const playPromptAudioRef = useRef(playPromptAudio);
   playPromptAudioRef.current = playPromptAudio;
 
   useEffect(() => {
-    setLocalSelectedId(selectedOptionId || null);
     clearAllPendingTimers();
-  }, [question.questionIndex, selectedOptionId]);
+  }, [question.questionIndex]);
 
   useEffect(() => {
     return () => {
@@ -164,6 +152,7 @@ export const QuizHostQuestion: React.FC<QuizHostQuestionProps> = ({
   useEffect(() => {
     const start = question.startTime > 0 ? question.startTime : getServerTime();
     startTimeRef.current = start;
+    pauseStartedAtRef.current = null;
     lastTickSecondRef.current = -1;
     unblurPlayedRef.current = false;
 
@@ -179,12 +168,20 @@ export const QuizHostQuestion: React.FC<QuizHostQuestionProps> = ({
 
     const interval = 50;
     timerRef.current = window.setInterval(() => {
-      if (isPausedRef.current || isBlackoutRef.current) {
-        startTimeRef.current += interval;
+      const pausedNow = isPausedRef.current || isBlackoutRef.current;
+      const now = getServerTime();
+      if (pausedNow) {
+        if (pauseStartedAtRef.current === null) {
+          pauseStartedAtRef.current = now;
+        }
         return;
       }
+      if (pauseStartedAtRef.current !== null) {
+        startTimeRef.current += Math.max(0, now - pauseStartedAtRef.current);
+        pauseStartedAtRef.current = null;
+      }
 
-      const elapsed = Math.max(0, getServerTime() - startTimeRef.current);
+      const elapsed = Math.max(0, now - startTimeRef.current);
       const remaining = Math.max(0, question.timeLimitMs - elapsed);
       const currentSecond = Math.ceil(remaining / 1000);
 
@@ -199,7 +196,7 @@ export const QuizHostQuestion: React.FC<QuizHostQuestionProps> = ({
 
       if (question.promptType === 'AUDIO_ONLY' && question.timeLimitMs > 0) {
         const ratio = remaining / question.timeLimitMs;
-        const now = Date.now();
+        const now = performance.now();
         const canRepeat = now - lastAudioPlayTimeRef.current >= 3500;
         if (ratio <= 0.50 && !audioStagesTriggeredRef.current.has(50) && canRepeat) {
           audioStagesTriggeredRef.current.add(50);
@@ -226,7 +223,7 @@ export const QuizHostQuestion: React.FC<QuizHostQuestionProps> = ({
 
   const timePct = Math.max(0, (timeLeftMs / question.timeLimitMs) * 100);
   const secondsLeft = Math.ceil(timeLeftMs / 1000);
-  const isEnPrompt = question.promptType === 'EN_TO_JA' || question.promptType === 'EN_WORD';
+  const isEnPrompt = isEnglishPromptType(question.promptType);
   const hasPromptImage = !!question.promptImage || question.promptType === 'IMAGE_ONLY';
 
   const elapsedMs = question.timeLimitMs - timeLeftMs;
@@ -273,35 +270,17 @@ export const QuizHostQuestion: React.FC<QuizHostQuestionProps> = ({
 
   const prevEliminatedCountRef = useRef<number>(0);
   useEffect(() => {
-    if (eliminatedOptionIds.size > prevEliminatedCountRef.current && !localSelectedId) {
+    if (eliminatedOptionIds.size > prevEliminatedCountRef.current) {
       soundEffects.play5050();
     }
     prevEliminatedCountRef.current = eliminatedOptionIds.size;
-  }, [eliminatedOptionIds.size, localSelectedId]);
+  }, [eliminatedOptionIds.size]);
 
   useEffect(() => {
     prevEliminatedCountRef.current = 0;
   }, [question.questionIndex]);
 
-  const handleOptionClick = (optId: string) => {
-    if (isRecallLocked || eliminatedOptionIds.has(optId) || timeLeftMs <= 0) return;
-
-    if (isSolo && onSelectOption) {
-      const now = getServerTime();
-      const timeTaken = startTimeRef.current > 0 ? Math.max(0, now - startTimeRef.current) : 0;
-      setLocalSelectedId(optId);
-      soundEffects.playTick();
-      onSelectOption(optId, timeTaken);
-
-      if (autoRevealTimerRef.current) clearTimeout(autoRevealTimerRef.current);
-      autoRevealTimerRef.current = window.setTimeout(() => {
-        clearAllPendingTimers();
-        onManualRevealRef.current();
-      }, 500);
-    }
-  };
-
-  const allAnswered = !isSolo && totalPlayers > 0 && answeredCount >= totalPlayers;
+  const allAnswered = totalPlayers > 0 && answeredCount >= totalPlayers;
   const hasTriggeredEarlyEndRef = useRef(false);
 
   useEffect(() => {
@@ -435,52 +414,26 @@ export const QuizHostQuestion: React.FC<QuizHostQuestionProps> = ({
 
         {/* Counter / Score & PIN */}
         <div className="flex items-center gap-2 sm:gap-3 shrink-0 flex-nowrap">
-          {isSolo ? (
-            <div className="flex items-center gap-2 shrink-0 flex-nowrap">
-              {soloPlayer && soloPlayer.currentStreak >= 2 && (
-                <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-400 text-slate-950 text-xs font-black shadow-sm animate-bounce whitespace-nowrap">
-                  <span>🔥</span>
-                  <span>{soloPlayer.currentStreak}</span>
-                </div>
-              )}
-              {soloPlayer && (
-                <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-100 dark:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 text-xs font-black shadow-sm whitespace-nowrap">
-                  <Sparkles size={13} className="text-indigo-600 dark:text-indigo-400" />
-                  <span>{soloPlayer.score.toLocaleString()} pts</span>
-                </div>
-              )}
-              <span className="font-mono text-xs font-black px-2.5 py-1 rounded-lg bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-200 border border-amber-300 dark:border-amber-800 whitespace-nowrap">
-                📺 TV / Smartboard
+          {totalPlayers > 0 && (
+            <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black shadow-sm transition-all whitespace-nowrap ${
+              allAnswered
+                ? 'bg-emerald-500 text-white animate-bounce ring-2 ring-emerald-300'
+                : 'bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300'
+            }`}>
+              <Users size={14} />
+              <span>
+                {allAnswered
+                  ? t('All Answered! 🎉', <><ruby>全員<rt>ぜんいん</rt></ruby><ruby>回答<rt>かいとう</rt></ruby><ruby>完了<rt>かんりょう</rt></ruby>！🎉</>)
+                  : <>{answeredCount} / {totalPlayers} {t('Answered', <><ruby>名<rt>めい</rt></ruby> <ruby>回答<rt>かいとう</rt></ruby><ruby>済<rt>ず</rt></ruby>み</>)}</>}
               </span>
             </div>
-          ) : (
-            <>
-              {totalPlayers > 0 && (
-                <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black shadow-sm transition-all whitespace-nowrap ${
-                  allAnswered
-                    ? 'bg-emerald-500 text-white animate-bounce ring-2 ring-emerald-300'
-                    : 'bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300'
-                }`}>
-                  <Users size={14} />
-                  <span>
-                    {allAnswered
-                      ? t('All Answered! 🎉', <><ruby>全員<rt>ぜんいん</rt></ruby><ruby>回答<rt>かいとう</rt></ruby><ruby>完了<rt>かんりょう</rt></ruby>！🎉</>)
-                      : <>{answeredCount} / {totalPlayers} {t('Answered', <><ruby>名<rt>めい</rt></ruby> <ruby>回答<rt>かいとう</rt></ruby><ruby>済<rt>ず</rt></ruby>み</>)}</>}
-                  </span>
-                </div>
-              )}
-              <span className="font-mono text-xs font-black px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 whitespace-nowrap">
-                PIN: {roomCode}
-              </span>
-            </>
           )}
+          <span className="font-mono text-xs font-black px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap">
+            PIN: {roomCode}
+          </span>
           {onExit && (
             <button
-              onClick={() => {
-                if (window.confirm(t('End quiz early and disband the room?\nConnected student devices will return to the game over screen.', 'クイズを強制終了してルームを解散しますか？\n参加中の生徒の端末は終了画面に移行します。'))) {
-                  onExit();
-                }
-              }}
+              onClick={onExit}
               className="px-2.5 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/50 dark:hover:bg-rose-900/60 text-rose-600 dark:text-rose-400 font-bold text-xs flex items-center gap-1 border border-rose-200 dark:border-rose-900 transition-colors active:scale-95 cursor-pointer shrink-0 whitespace-nowrap"
               title={t('End quiz and disband room', 'クイズを終了して解散')}
             >
@@ -535,7 +488,7 @@ export const QuizHostQuestion: React.FC<QuizHostQuestionProps> = ({
                           ? stageNum === 3
                             ? 'bg-amber-50 dark:bg-amber-950/60 border-amber-400 text-slate-900 dark:text-white shadow-md scale-[1.01]'
                             : 'bg-white/95 dark:bg-slate-800/95 border-indigo-400/70 text-slate-900 dark:text-white shadow-sm'
-                          : 'bg-slate-900/40 dark:bg-slate-900/60 border-slate-700/50 text-slate-400 opacity-60'
+                          : 'bg-slate-900/40 dark:bg-slate-900/60 border-slate-700/50 text-slate-200 dark:text-slate-300 opacity-75'
                       }`}
                     >
                       <div className="flex items-center justify-between mb-1">
@@ -623,8 +576,8 @@ export const QuizHostQuestion: React.FC<QuizHostQuestionProps> = ({
               </div>
 
               {/* Right Column: Card-Mounted Shrink-Wrap Artwork (Eliminates wide white wings!) */}
-              <div className="flex-1 flex items-center justify-center min-w-0">
-                <div className="h-52 sm:h-64 md:h-76 aspect-[4/3] max-w-md sm:max-w-lg mx-auto flex items-center justify-center p-2.5 sm:p-3 rounded-3xl bg-[#faf8f5] dark:bg-slate-800 border-4 border-slate-900 dark:border-slate-700 shadow-2xl">
+              <div className="flex-1 h-full min-h-0 flex items-center justify-center min-w-0">
+                <div className="h-44 sm:h-52 md:h-60 max-h-full aspect-[4/3] max-w-md sm:max-w-lg mx-auto flex items-center justify-center p-2 sm:p-2.5 rounded-3xl bg-[#faf8f5] dark:bg-slate-800 border-4 border-slate-900 dark:border-slate-700 shadow-2xl">
                   <img
                     src={question.promptImage}
                     alt={question.promptText}
@@ -698,30 +651,23 @@ export const QuizHostQuestion: React.FC<QuizHostQuestionProps> = ({
               const displayText = isEnPrompt
                 ? (opt.ja_kanji || opt.ja_hiragana || opt.english)
                 : opt.english;
+              const hasOptionRuby = isEnPrompt && Boolean(opt.ruby && opt.ruby.length > 0);
               const subText = isEnPrompt
-                ? (opt.ja_hiragana && opt.ja_kanji !== opt.ja_hiragana ? opt.ja_hiragana : undefined)
+                ? (!hasOptionRuby && opt.ja_kanji && opt.ja_hiragana && opt.ja_kanji !== opt.ja_hiragana ? opt.ja_hiragana : undefined)
                 : (question.englishReadingAid === 'WITH_KATAKANA' && opt.en_katakana ? `【${opt.en_katakana}】` : undefined);
-
-              const isSelected = isSolo && localSelectedId === opt.id;
-              const isOtherSelected = isSolo && localSelectedId !== null && localSelectedId !== opt.id;
 
               return (
                 <div
                   key={opt.id}
-                  onClick={isRecallLocked || isEliminated ? undefined : () => handleOptionClick(opt.id)}
                   style={{
                     boxShadow: isEliminated ? undefined : (isFutako ? `0 6px 0 0 ${optStyle.shadow}, 0 10px 20px -2px rgba(0,0,0,0.4)` : undefined)
                   }}
-                  className={`relative p-3 sm:p-4 rounded-2xl sm:rounded-3xl flex items-center justify-center transition-all duration-150 cursor-pointer active:translate-y-1.5 h-full min-h-0 select-none overflow-hidden ${
+                  className={`relative p-3 sm:p-4 rounded-2xl sm:rounded-3xl flex items-center justify-center transition-all duration-150 h-full min-h-0 select-none overflow-hidden ${
                     isFutako
                       ? `${optStyle.bg} ${optStyle.border} border-3 sm:border-4 ${optStyle.text || 'text-white'}`
                       : optStyle.toyoClass
                   } ${
                     isEliminated ? 'opacity-15 grayscale line-through pointer-events-none scale-95' : ''
-                  } ${
-                    isSelected ? 'ring-4 ring-white border-white scale-[1.02] shadow-2xl z-10' : ''
-                  } ${
-                    isOtherSelected ? 'opacity-40 scale-98' : ''
                   }`}
                 >
                   {/* CUD Shape-Matched Background Texture Layer */}
@@ -743,7 +689,11 @@ export const QuizHostQuestion: React.FC<QuizHostQuestionProps> = ({
                       {/* Right 60%: Large Centered Typography & Dynamic Katakana */}
                       <div className="flex-1 min-w-0 flex flex-col justify-center items-center text-center px-1">
                         <span className={`${getFontSizeClass(displayText)} font-black tracking-wide block break-words whitespace-normal drop-shadow-md`}>
-                          {displayText}
+                          {hasOptionRuby ? (
+                            <RubyText ruby={opt.ruby} kanji={opt.ja_kanji} hiragana={opt.ja_hiragana} className="font-black text-inherit" />
+                          ) : (
+                            displayText
+                          )}
                         </span>
                         {subText && (
                           <span className={`${getKatakanaSizeClass(subText, true)} ${
@@ -758,7 +708,11 @@ export const QuizHostQuestion: React.FC<QuizHostQuestionProps> = ({
                     /* Centered Layout when No Thumbnail: Full-Width Typography */
                     <div className="w-full text-center px-4 sm:px-8 z-10">
                       <span className={`${getFontSizeClass(displayText)} font-black tracking-wide block break-words whitespace-normal drop-shadow-md`}>
-                        {displayText}
+                        {hasOptionRuby ? (
+                          <RubyText ruby={opt.ruby} kanji={opt.ja_kanji} hiragana={opt.ja_hiragana} className="font-black text-inherit" />
+                        ) : (
+                          displayText
+                        )}
                       </span>
                       {subText && (
                         <span className={`${getKatakanaSizeClass(subText, false)} ${
@@ -769,13 +723,6 @@ export const QuizHostQuestion: React.FC<QuizHostQuestionProps> = ({
                       )}
                     </div>
                   )}
-
-                  {isSelected && (
-                    <div className="absolute top-2 right-2.5 sm:top-3 sm:right-3.5 px-2.5 py-0.5 rounded-full bg-white text-slate-900 font-black text-[11px] shadow-md flex items-center gap-1 shrink-0 animate-in zoom-in duration-150 z-20">
-                      <CheckCircle2 size={13} className="text-emerald-600" />
-                      <span>{t('SELECTED', <><ruby>選択<rt>せんたく</rt></ruby><ruby>中<rt>ちゅう</rt></ruby></>)}</span>
-                    </div>
-                  )}
                 </div>
               );
             })}
@@ -784,9 +731,9 @@ export const QuizHostQuestion: React.FC<QuizHostQuestionProps> = ({
       </div>
 
       {/* 4. Bottom Footer: Clean & Distraction-Free */}
-      <div className="h-6 flex items-center justify-between pt-1 shrink-0 text-slate-400">
-        <span className="text-[11px] font-bold opacity-60">
-          {isSolo ? t('Solo Warmup Mode', 'ウォームアップ') : t('Eigo Arena Live Session', 'ライブ一斉対戦')}
+      <div className="h-6 flex items-center justify-between pt-1 shrink-0 text-slate-600 dark:text-slate-400">
+        <span className="text-[11px] font-bold opacity-80">
+          {t('Eigo Arena Live Session', 'ライブ一斉対戦')}
         </span>
       </div>
 

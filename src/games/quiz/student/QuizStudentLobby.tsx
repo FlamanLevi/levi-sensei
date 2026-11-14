@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { prewarmSuzukaAssets } from '@/games/suzuka_grand_prix/engine/Suzuka3DEngine';
 import { prewarmMicroKartAssets } from '@/games/suzuka_grand_prix/engine/MicroKartBuilder.js';
-import { QuizPlayer, TEAM_PRESETS, SprintSettings, GamePlayType, PRE_GAME_GREETINGS } from '../types';
+import { QuizPlayer, TEAM_PRESETS, SprintSettings, TugOfWarSettings, TamaireSettings, GamePlayType, PRE_GAME_GREETINGS } from '../types';
 import { LogOut, Volume2, CheckCircle2, Edit3, ShoppingBag, Award, MessageSquare } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 import { soundEffects } from '@/services/soundEffects';
+import { getServerTime } from '@/services/rtdbSafe';
 import { AvatarDisplay } from '@/components/common/AvatarDisplay';
 import { getShopItemById } from '@/services/shopCatalog';
 import { EditProfileModal } from '@/components/student/EditProfileModal';
@@ -26,6 +27,8 @@ interface QuizStudentLobbyProps {
   player: QuizPlayer;
   gamePlayType?: GamePlayType;
   sprintSettings?: SprintSettings;
+  tugOfWarSettings?: TugOfWarSettings;
+  tamaireSettings?: TamaireSettings;
   totalQuestions?: number;
   totalStudents?: number;
   onLeave: () => void;
@@ -45,6 +48,8 @@ export const QuizStudentLobby: React.FC<QuizStudentLobbyProps> = ({
   player,
   gamePlayType = 'KAHOOT',
   sprintSettings,
+  tugOfWarSettings,
+  tamaireSettings,
   totalQuestions = 20,
   totalStudents,
   onLeave,
@@ -58,24 +63,26 @@ export const QuizStudentLobby: React.FC<QuizStudentLobbyProps> = ({
   const [isPassportOpen, setIsPassportOpen] = useState<boolean>(false);
   const [selectedGreeting, setSelectedGreeting] = useState<string | null>(player.greeting || null);
   const [savedProfile, setSavedProfile] = useState<StudentProfile | null>(() => getSavedStudentProfile());
+  const audioTestTimerRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (audioTestTimerRef.current !== null) {
+        clearTimeout(audioTestTimerRef.current);
+        audioTestTimerRef.current = null;
+      }
+    };
+  }, []);
 
   const isTug = gamePlayType === 'TUG_OF_WAR';
-  const isVolleyball = gamePlayType === 'VOLLEYBALL';
+  const isVolleyball = gamePlayType === 'TAMAIRE' || gamePlayType === 'VOLLEYBALL';
   const isGrandPrix3D = gamePlayType === 'GRAND_PRIX_3D';
   const isAnticipation = gamePlayType === 'ANTICIPATION';
   const isSprint = gamePlayType === 'SPRINT_RACE' || isGrandPrix3D;
   const isTimeTrial = isSprint && sprintSettings?.sprintMode === 'TIME_TRIAL';
   const targetLaps3D = sprintSettings?.targetLaps3D || 1;
-  const questionCount =
-    sprintSettings?.lapCount && sprintSettings.lapCount > 0
-      ? sprintSettings.lapCount
-      : totalQuestions || 20;
   const graceSeconds = sprintSettings?.graceCountdownSeconds || 15;
   const timeLimitSeconds = sprintSettings?.timeLimitSeconds || 60;
-  const requiredFinishers =
-    totalStudents && totalStudents > 1
-      ? Math.min(12, Math.max(1, Math.ceil(totalStudents * 0.5)))
-      : 12;
 
   useEffect(() => {
     if (gamePlayType === 'GRAND_PRIX_3D' || gamePlayType === 'SPRINT_RACE') {
@@ -99,20 +106,26 @@ export const QuizStudentLobby: React.FC<QuizStudentLobbyProps> = ({
   const handleTestAudio = () => {
     soundEffects.playReveal();
     setAudioTested(true);
-    setTimeout(() => setAudioTested(false), 2500);
+    if (audioTestTimerRef.current !== null) {
+      clearTimeout(audioTestTimerRef.current);
+    }
+    audioTestTimerRef.current = window.setTimeout(() => {
+      setAudioTested(false);
+      audioTestTimerRef.current = null;
+    }, 2500);
   };
 
   const currentProfile: StudentProfile = savedProfile || {
     schoolId: 'futakotamagawa',
     classId: '6-1',
-    attendanceNumber: player.attendanceNumber || 0,
+    attendanceNumber: typeof player.attendanceNumber === 'number' ? player.attendanceNumber : 0,
     nickname: player.nickname,
     avatar: player.avatar || '🇯🇵',
-    callsign: `${player.attendanceNumber || 1}`,
+    callsign: `${player.attendanceNumber === 0 ? '00' : (player.attendanceNumber || 1)}`,
     xp: 0,
     level: 1,
     gold: 0,
-    boundAt: Date.now(),
+    boundAt: getServerTime(),
   };
 
   const handleProfileUpdated = (newProfile: StudentProfile) => {
@@ -162,11 +175,17 @@ export const QuizStudentLobby: React.FC<QuizStudentLobbyProps> = ({
                   #{player.attendanceNumber === 0 ? (language === 'ja' ? '00 先生' : '00 Teacher') : player.attendanceNumber}
                 </span>
               )}
-              {player.title && (
-                <span className="hidden sm:inline-block text-[9px] font-black px-1.5 py-0.5 rounded bg-amber-100 dark:bg-amber-950/70 text-amber-900 dark:text-amber-300 border border-amber-300/60 truncate max-w-[110px] shrink-0">
-                  {getShopItemById(player.title)?.jaName || player.title}
-                </span>
-              )}
+              {player.title && (() => {
+                const titleItem = getShopItemById(player.title);
+                const titleLabel = titleItem
+                  ? (language === 'ja' ? titleItem.jaName : titleItem.name)
+                  : player.title;
+                return (
+                  <span className="hidden sm:inline-block text-[10px] font-black px-1.5 py-0.5 rounded bg-amber-100 dark:bg-amber-950/70 text-amber-900 dark:text-amber-300 border border-amber-300/60 truncate max-w-[110px] shrink-0">
+                    {titleLabel}
+                  </span>
+                );
+              })()}
             </div>
             <span className="text-[10px] font-bold text-purple-600 dark:text-purple-400 flex items-center gap-1 leading-none mt-0.5 whitespace-nowrap">
               <Edit3 size={10} />
@@ -255,17 +274,17 @@ export const QuizStudentLobby: React.FC<QuizStudentLobbyProps> = ({
              - Center Window (~390px): Unobstructed 3D Orbiting Kart Showcase
              - Right Wing (375px): Top = 2x4 English Greetings (zero cutoff!) + Bottom = 3-Step How to Play (zero dead whitespace!) */}
       {isSprint ? (
-        <div className="w-full flex-1 min-h-0 flex items-end justify-between gap-3 pb-2 pt-4">
-          {/* LEFT WING (375px): Dedicated 15-Kart Pit Garage */}
-          <div className="w-[360px] xl:w-[385px] shrink-0 bg-slate-950/92 backdrop-blur-md border-2 border-slate-800 rounded-3xl p-3.5 shadow-2xl pointer-events-auto flex flex-col justify-between text-left">
+        <div className="w-full flex-1 min-h-0 flex items-end justify-between gap-2 lg:gap-3 pb-2 pt-4">
+          {/* LEFT WING: Dedicated 15-Kart Pit Garage */}
+          <div className="w-[275px] lg:w-[350px] xl:w-[385px] shrink-0 bg-slate-950/92 backdrop-blur-md border-2 border-slate-800 rounded-3xl p-3 lg:p-3.5 shadow-2xl pointer-events-auto flex flex-col justify-between text-left">
             <div className="flex items-center justify-between pb-2 border-b border-slate-800">
-              <div className="flex items-center gap-1.5">
-                <span className="text-base">🏎️</span>
-                <span className="text-xs sm:text-sm font-black text-white">
+              <div className="flex items-center gap-1.5 min-w-0">
+                <span className="text-base shrink-0">🏎️</span>
+                <span className="text-xs sm:text-sm font-black text-white truncate">
                   {t('Pit Garage: Choose Kart', 'ピットガレージ: マイマシン')}
                 </span>
               </div>
-              <span className="text-[11px] font-black font-mono px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40">
+              <span className="text-[11px] font-black font-mono px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 shrink-0">
                 {language === 'ja' ? activeTheme.nameJa : activeTheme.nameEn}
               </span>
             </div>
@@ -303,7 +322,7 @@ export const QuizStudentLobby: React.FC<QuizStudentLobbyProps> = ({
                       />
                     </div>
                     {isSelected && (
-                      <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-emerald-500 text-white text-[9px] font-black flex items-center justify-center shadow-xs">
+                      <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-emerald-500 text-white text-[10px] font-black flex items-center justify-center shadow-xs">
                         ✓
                       </span>
                     )}
@@ -320,8 +339,8 @@ export const QuizStudentLobby: React.FC<QuizStudentLobbyProps> = ({
             </p>
           </div>
 
-          {/* CENTER SHOWROOM WINDOW (~390px wide): Unobstructed 3D Orbiting Kart + Bottom Nameplate Pill */}
-          <div className="flex-1 min-w-[260px] flex flex-col items-center justify-end pb-1 pointer-events-none">
+          {/* CENTER SHOWROOM WINDOW: Unobstructed 3D Orbiting Kart + Bottom Nameplate Pill */}
+          <div className="flex-1 min-w-[170px] flex flex-col items-center justify-end pb-1 pointer-events-none">
             <div className="px-4 py-2 rounded-2xl bg-slate-950/85 backdrop-blur-md border border-amber-400/50 text-center shadow-2xl">
               <div className="flex items-center justify-center gap-1.5 text-xs sm:text-sm font-black text-white">
                 <span>{activeTheme.emoji}</span>
@@ -333,11 +352,11 @@ export const QuizStudentLobby: React.FC<QuizStudentLobbyProps> = ({
             </div>
           </div>
 
-          {/* RIGHT WING (375px): Stacked [2x4 English Greetings] + [Compact 3-Step How to Play] */}
-          <div className="w-[360px] xl:w-[385px] shrink-0 flex flex-col gap-2.5 pointer-events-auto">
+          {/* RIGHT WING: Stacked [2x4 English Greetings] + [Compact 3-Step How to Play] */}
+          <div className="w-[275px] lg:w-[350px] xl:w-[385px] shrink-0 flex flex-col gap-2.5 pointer-events-auto">
             {player.teamId && TEAM_PRESETS[player.teamId] && (
               <div className="w-full p-2 rounded-2xl border flex items-center justify-center gap-2 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-slate-200 dark:border-slate-800 shadow-lg shrink-0">
-                <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider">
+                <span className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                   {t('Team:', 'チーム:')}
                 </span>
                 <span className="text-base">{TEAM_PRESETS[player.teamId].emoji}</span>
@@ -347,7 +366,7 @@ export const QuizStudentLobby: React.FC<QuizStudentLobbyProps> = ({
               </div>
             )}
 
-            {/* Top Card on Right Wing: Wrapped 2x4 English Greetings (Zero Horizontal Cutoff!) */}
+            {/* Top Card on Right Wing: Wrapped 2x4 English Greetings */}
             <div className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-2 border-slate-200 dark:border-slate-800 rounded-3xl p-3 shadow-xl text-left">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-black text-slate-700 dark:text-slate-200 flex items-center gap-1.5">
@@ -377,7 +396,7 @@ export const QuizStudentLobby: React.FC<QuizStudentLobbyProps> = ({
                     >
                       <span className="truncate">{g.text}</span>
                       {language === 'ja' && (
-                        <span className="text-[9px] font-normal opacity-75 shrink-0">
+                        <span className="text-[10px] font-normal opacity-75 shrink-0">
                           {g.jaText}
                         </span>
                       )}
@@ -387,8 +406,8 @@ export const QuizStudentLobby: React.FC<QuizStudentLobbyProps> = ({
               </div>
             </div>
 
-            {/* Bottom Card on Right Wing: Compact How to Play (Zero Dead Whitespace!) */}
-            <div className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-2 border-slate-200 dark:border-slate-800 rounded-3xl p-3.5 shadow-xl text-left flex flex-col gap-2">
+            {/* Bottom Card on Right Wing: Compact How to Play */}
+            <div className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-2 border-slate-200 dark:border-slate-800 rounded-3xl p-3 lg:p-3.5 shadow-xl text-left flex flex-col gap-2">
               <div className="flex items-center justify-between gap-2 pb-1.5 border-b border-slate-200 dark:border-slate-800">
                 <span className="inline-flex items-center gap-1.5 text-xs font-black px-2.5 py-0.5 rounded-xl bg-indigo-100 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
                   <span>{isTimeTrial ? '⏱️' : '🏎️'}</span>
@@ -398,7 +417,7 @@ export const QuizStudentLobby: React.FC<QuizStudentLobbyProps> = ({
                       : t(`3D Suzuka GP (${targetLaps3D} Lap${targetLaps3D > 1 ? 's' : ''})`, `鈴鹿GP 周回レース (${targetLaps3D}周)`)}
                   </span>
                 </span>
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider shrink-0">
                   {t('How to Play', 'あそびかた')}
                 </span>
               </div>
@@ -519,7 +538,7 @@ export const QuizStudentLobby: React.FC<QuizStudentLobbyProps> = ({
 
           {player.teamId && TEAM_PRESETS[player.teamId] && (
             <div className="w-full p-2.5 rounded-xl border text-center flex items-center justify-center gap-2 bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700">
-              <span className="text-xs font-black text-slate-400 uppercase">{t('Your Team:', 'チーム:')}</span>
+              <span className="text-xs font-black text-slate-500 dark:text-slate-400 uppercase">{t('Your Team:', 'チーム:')}</span>
               <span className="text-lg">{TEAM_PRESETS[player.teamId].emoji}</span>
               <span className={`text-sm font-black ${TEAM_PRESETS[player.teamId].text}`}>
                 {language === 'ja' ? TEAM_PRESETS[player.teamId].jaName : TEAM_PRESETS[player.teamId].name}
@@ -553,11 +572,21 @@ export const QuizStudentLobby: React.FC<QuizStudentLobbyProps> = ({
                 ) : (
                   '1. Guess the English word while the progressive sketch or connect-the-dots draws! Wrong guesses lock your pad for 2.5s.'
                 )
-              ) : isVolleyball ? (
-                t('1. Answer on your iPad in 3 steps (Scoop → Aim → Throw) to toss bean bags into your team basket!', '1. 3ステップ（①玉を拾う → ②狙う → ③投げる）で正解してお手玉をカゴへ投げ入れよう！')
-              ) : isTug ? (
-                t('1. Every correct answer pulls the rope toward your team on the big screen!', '1. 正解するとテレビのロープをグイッと引き寄せる！誤答は泥で2.5秒ストップ！')
-              ) : (
+              ) : isVolleyball ? (() => {
+                const fumbleSec = Math.max(2.5, tamaireSettings?.missLockoutSeconds ?? 2.5);
+                const fumbleLabel = Number.isInteger(fumbleSec) ? `${fumbleSec}` : fumbleSec.toFixed(1);
+                return t(
+                  `1. Answer on your iPad in 3 steps (Scoop → Aim → Throw) to toss bean bags into your team basket! (Fumbles lock for ${fumbleLabel}s)`,
+                  `1. 3ステップ（①玉を拾う → ②狙う → ③投げる）で正解してお手玉をカゴへ投げ入れよう！（お手つきは${fumbleLabel}秒ストップ）`
+                );
+              })() : isTug ? (() => {
+                const mudSec = Math.max(2.5, tugOfWarSettings?.mudLockoutSeconds ?? 2.5);
+                const mudLabel = Number.isInteger(mudSec) ? `${mudSec}` : mudSec.toFixed(1);
+                return t(
+                  `1. Every correct answer pulls the rope toward your team on the big screen! (Mistakes slip in mud for ${mudLabel}s)`,
+                  `1. 正解するとテレビのロープをグイッと引き寄せる！誤答は泥で${mudLabel}秒ストップ！`
+                );
+              })() : (
                 t('1. Look at the front TV for the question, then tap the matching shape/answer on your iPad!', '1. 前のテレビで問題を見て、手元のiPadで答えをタップしよう！')
               )}
             </p>

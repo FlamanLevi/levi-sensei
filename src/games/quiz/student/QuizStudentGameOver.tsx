@@ -17,6 +17,7 @@ import { verifyTeacherPin } from '@/context/ClassroomContext';
 import { EditProfileModal } from '@/components/student/EditProfileModal';
 import { AvatarDisplay } from '@/components/common/AvatarDisplay';
 import { getShopItemById } from '@/services/shopCatalog';
+import { SUZUKA_CIRCUIT_LENGTH_METERS } from '@/games/suzuka_grand_prix/engine/Suzuka3DEngine';
 
 interface QuizStudentGameOverProps {
   player: QuizPlayer;
@@ -76,7 +77,7 @@ export const QuizStudentGameOver: React.FC<QuizStudentGameOverProps> = ({
     ? (gamePlayType === 'SPRINT_RACE' || gamePlayType === 'GRAND_PRIX_3D')
     : (!!sprintSettings || player.sprintProgress !== undefined || player.finishTimeMs !== undefined);
   const isTugOfWar = gamePlayType === 'TUG_OF_WAR';
-  const isVolleyball = gamePlayType === 'VOLLEYBALL';
+  const isVolleyball = gamePlayType === 'TAMAIRE' || gamePlayType === 'VOLLEYBALL';
   const isTimeTrial = sprintSettings?.sprintMode === 'TIME_TRIAL';
   const isLapRace = isSprint && !isTimeTrial;
   const isDnf = !isTimeTrial ? !!player.isDnf : false;
@@ -439,7 +440,7 @@ export const QuizStudentGameOver: React.FC<QuizStudentGameOverProps> = ({
       return { icon: '⏱️', title: language === 'ja' ? 'タイムアップ (完走ならず)' : 'DNF (Time Expired)', color: 'text-rose-500' };
     }
     if (effectiveRank === 1) return { icon: '🥇', title: isSprint ? (language === 'ja' ? '第1位 (グランプリ王者)' : '1st Place! (Grand Prix Champion)') : (language === 'ja' ? '第1位 (優勝)' : '1st Place!'), color: 'text-amber-500' };
-    if (effectiveRank === 2) return { icon: '🥈', title: isSprint ? (language === 'ja' ? '第2位 (表彰台)' : '2nd Place! (Podium Finisher)') : (language === 'ja' ? '第2位 (準優勝)' : '2nd Place!'), color: 'text-slate-400' };
+    if (effectiveRank === 2) return { icon: '🥈', title: isSprint ? (language === 'ja' ? '第2位 (表彰台)' : '2nd Place! (Podium Finisher)') : (language === 'ja' ? '第2位 (準優勝)' : '2nd Place!'), color: 'text-slate-600 dark:text-slate-300' };
     if (effectiveRank === 3) return { icon: '🥉', title: isSprint ? (language === 'ja' ? '第3位 (表彰台)' : '3rd Place! (Podium Finisher)') : (language === 'ja' ? '第3位' : '3rd Place!'), color: 'text-amber-700' };
     return { 
       icon: isSprint ? '🏎️' : isTugOfWar ? '🪢' : isVolleyball ? '🧺' : '🌟', 
@@ -470,14 +471,18 @@ export const QuizStudentGameOver: React.FC<QuizStudentGameOverProps> = ({
               </div>
 
               <div className="text-left min-w-0">
-                {(player.title || savedProfile?.equipped?.title) && (
-                  <div className="mb-1">
-                    <span className="inline-block text-[10px] font-black px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950/70 text-amber-900 dark:text-amber-300 border border-amber-300/60 dark:border-amber-700/60 shadow-2xs truncate max-w-full">
-                      {getShopItemById(player.title || savedProfile?.equipped?.title || '')?.jaName || player.title || savedProfile?.equipped?.title}
-                    </span>
-                  </div>
-                )}
-                <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 block leading-tight">
+                {(player.title || savedProfile?.equipped?.title) && (() => {
+                  const titleId = player.title || savedProfile?.equipped?.title || '';
+                  const titleItem = getShopItemById(titleId);
+                  return (
+                    <div className="mb-1">
+                      <span className="inline-block text-[10px] font-black px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950/70 text-amber-900 dark:text-amber-300 border border-amber-300/60 dark:border-amber-700/60 shadow-2xs truncate max-w-full">
+                        {titleItem ? (language === 'ja' ? titleItem.jaName : titleItem.name) : titleId}
+                      </span>
+                    </div>
+                  );
+                })()}
+                <span className="text-[10px] font-black uppercase tracking-widest text-slate-600 dark:text-slate-400 block leading-tight">
                   {isSprint 
                     ? t('GRAND PRIX FINISHED!', 'グランプリ完走！') 
                     : isTugOfWar 
@@ -498,7 +503,7 @@ export const QuizStudentGameOver: React.FC<QuizStudentGameOverProps> = ({
             {/* Total Score & Rank Banner */}
             <div className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-2xl p-2.5 sm:p-3 mb-2.5 flex items-center justify-around shadow-xs">
               <div>
-                <span className="text-[10px] font-bold text-slate-400 block">
+                <span className="text-[10px] font-bold text-slate-600 dark:text-slate-400 block">
                   {t('Total Score', 'トータルスコア')}
                 </span>
                 <span className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">
@@ -509,11 +514,11 @@ export const QuizStudentGameOver: React.FC<QuizStudentGameOverProps> = ({
               <div className="h-7 w-px bg-slate-200 dark:bg-slate-700" />
 
               <div>
-                <span className="text-[10px] font-bold text-slate-400 block">
+                <span className="text-[10px] font-bold text-slate-600 dark:text-slate-400 block">
                   {t('Final Rank', '最終順位')}
                 </span>
                 <span className="text-xl sm:text-2xl font-black text-amber-500">
-                  #{effectiveRank} <span className="text-xs font-bold text-slate-400">/ {totalPlayers}</span>
+                  #{effectiveRank} <span className="text-xs font-bold text-slate-600 dark:text-slate-400">/ {totalPlayers}</span>
                 </span>
               </div>
             </div>
@@ -525,7 +530,7 @@ export const QuizStudentGameOver: React.FC<QuizStudentGameOverProps> = ({
                 <span className="text-base sm:text-lg font-black text-emerald-600 dark:text-emerald-400 block leading-tight">
                   {accuracyPct}%
                 </span>
-                <span className="text-[9px] font-bold text-slate-500 dark:text-slate-400 block leading-tight">
+                <span className="text-[10px] font-bold text-slate-600 dark:text-slate-400 block leading-tight">
                   {t('Accuracy', '正解率')} ({player.correctCount}/{displayTotalQ})
                 </span>
               </div>
@@ -535,7 +540,7 @@ export const QuizStudentGameOver: React.FC<QuizStudentGameOverProps> = ({
                 <span className="text-base sm:text-lg font-black text-amber-600 dark:text-amber-400 block leading-tight">
                   {maxStreakVal}
                 </span>
-                <span className="text-[9px] font-bold text-slate-500 dark:text-slate-400 block leading-tight">
+                <span className="text-[10px] font-bold text-slate-600 dark:text-slate-400 block leading-tight">
                   {t('Max Streak', '最高連続')}
                 </span>
               </div>
@@ -545,7 +550,7 @@ export const QuizStudentGameOver: React.FC<QuizStudentGameOverProps> = ({
                 <span className="text-base sm:text-lg font-black text-blue-600 dark:text-blue-400 block leading-tight">
                   {fastestSpeedVal}
                 </span>
-                <span className="text-[9px] font-bold text-slate-500 dark:text-slate-400 block leading-tight">
+                <span className="text-[10px] font-bold text-slate-600 dark:text-slate-400 block leading-tight">
                   {t('Fastest', '最速タイム')}
                 </span>
               </div>
@@ -555,7 +560,7 @@ export const QuizStudentGameOver: React.FC<QuizStudentGameOverProps> = ({
                 <span className="text-base sm:text-lg font-black text-purple-600 dark:text-purple-400 block leading-tight">
                   {avgSpeedVal}
                 </span>
-                <span className="text-[9px] font-bold text-slate-500 dark:text-slate-400 block leading-tight">
+                <span className="text-[10px] font-bold text-slate-600 dark:text-slate-400 block leading-tight">
                   {t('Average', '平均タイム')}
                 </span>
               </div>
@@ -573,7 +578,7 @@ export const QuizStudentGameOver: React.FC<QuizStudentGameOverProps> = ({
                       ? (() => {
                           const targetLaps = sprintSettings?.targetLaps3D || 1;
                           const lapNum = is3DRace
-                            ? Math.min(targetLaps, Math.max(1, Math.floor((player.distanceMeters || 0) / 2566.6) + 1))
+                            ? Math.min(targetLaps, Math.max(1, Math.floor((player.distanceMeters || 0) / SUZUKA_CIRCUIT_LENGTH_METERS) + 1))
                             : (player.sprintProgress || 0);
                           const maxLaps = is3DRace ? targetLaps : totalQuestions;
                           return t(`DNF (Lap ${lapNum}/${maxLaps})`, `完走ならず (${lapNum}/${maxLaps}周)`);
@@ -593,7 +598,7 @@ export const QuizStudentGameOver: React.FC<QuizStudentGameOverProps> = ({
                 {savedProfile && (
                   <span className="inline-flex items-center gap-1 text-[10px] font-black text-emerald-700 dark:text-emerald-300 bg-emerald-100/90 dark:bg-emerald-950/80 px-2 py-0.5 rounded-full">
                     <ShieldCheck size={12} />
-                    <span>{savedProfile.classId} #{savedProfile.attendanceNumber}</span>
+                    <span>{savedProfile.classId} #{savedProfile.attendanceNumber === 0 ? '00' : savedProfile.attendanceNumber}</span>
                   </span>
                 )}
               </div>
@@ -715,8 +720,8 @@ export const QuizStudentGameOver: React.FC<QuizStudentGameOverProps> = ({
                         {isTeacherSeat ? '00' : num}
                         {isTeacherSeat && <span className="text-[10px]">👨‍🏫</span>}
                       </span>
-                      {isTaken && <span className="text-[8px] leading-none">{t('Taken', '済')}</span>}
-                      {isTeacherSeat && !isTaken && <span className="text-[7px] leading-none text-purple-600 dark:text-purple-400 font-bold">{t('Teacher', '先生')}</span>}
+                      {isTaken && <span className="text-[10px] leading-none">{t('Taken', '済')}</span>}
+                      {isTeacherSeat && !isTaken && <span className="text-[10px] leading-none text-purple-600 dark:text-purple-400 font-bold">{t('Teacher', '先生')}</span>}
                     </button>
                   );
                 })}
@@ -806,7 +811,7 @@ export const QuizStudentGameOver: React.FC<QuizStudentGameOverProps> = ({
                   <Trophy size={14} className="text-amber-500" />
                   <span>{t('Top Class Standings', 'クラス上位ランキング')}</span>
                 </span>
-                <span className="text-[10px] font-bold text-slate-400">
+                <span className="text-[10px] font-bold text-slate-600 dark:text-slate-400">
                   {totalPlayers} {t('students', '人参加')}
                 </span>
               </h3>
@@ -836,7 +841,7 @@ export const QuizStudentGameOver: React.FC<QuizStudentGameOverProps> = ({
                         </span>
                       </div>
                       <span className="text-xs font-black text-amber-600 dark:text-amber-400 shrink-0">
-                        {p.score.toLocaleString()} <span className="text-[10px] font-bold text-slate-400">pts</span>
+                        {p.score.toLocaleString()} <span className="text-[10px] font-bold text-slate-600 dark:text-slate-400">pts</span>
                       </span>
                     </div>
                   );
@@ -963,7 +968,7 @@ export const QuizStudentGameOver: React.FC<QuizStudentGameOverProps> = ({
                 </button>
                 <button
                   type="submit"
-                  disabled={teacherPinInput.length < 4}
+                  disabled={teacherPinInput.length < 6}
                   className="flex-1 py-2.5 px-3 rounded-xl bg-amber-500 hover:bg-amber-600 disabled:opacity-50 text-white font-black text-xs shadow-md transition-all cursor-pointer"
                 >
                   {t('Unlock', '解除する')}

@@ -37,25 +37,30 @@ export const QuizHostLeaderboard: React.FC<QuizHostLeaderboardProps> = ({
   const isBlackoutRef = useRef(isBlackout);
   isBlackoutRef.current = isBlackout;
 
+  const onNextRef = useRef(onNext);
+  onNextRef.current = onNext;
+  const hasAdvancedRef = useRef<number>(-1);
+
   // Auto-advance countdown (5 seconds) on intermediate rounds (freezable on pause/blackout)
   useEffect(() => {
     if (isLastQuestion) return;
 
+    hasAdvancedRef.current = -1;
     setCountdown(5);
     const interval = window.setInterval(() => {
       if (isPausedRef.current || isBlackoutRef.current) return;
-      setCountdown(prev => {
-        if (prev <= 1) {
-          clearInterval(interval);
-          onNext();
-          return 0;
-        }
-        return prev - 1;
-      });
+      setCountdown(prev => Math.max(0, prev - 1));
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [questionIndex, isLastQuestion, onNext]);
+  }, [questionIndex, isLastQuestion]);
+
+  useEffect(() => {
+    if (!isLastQuestion && countdown === 0 && !isPaused && !isBlackout && hasAdvancedRef.current !== questionIndex) {
+      hasAdvancedRef.current = questionIndex;
+      onNextRef.current();
+    }
+  }, [countdown, isLastQuestion, isPaused, isBlackout, questionIndex]);
 
   // Universal Classroom Clicker (presenter remotes, arrow keys, P key pause, B key blackout)
   useClassroomClicker({
@@ -105,7 +110,7 @@ export const QuizHostLeaderboard: React.FC<QuizHostLeaderboardProps> = ({
           <h2 className="text-2xl font-black tracking-tight shrink-0 whitespace-nowrap">
             {t('Leaderboard', 'ランキング')}
           </h2>
-          <span className="text-xs font-bold text-slate-400 shrink-0 whitespace-nowrap">
+          <span className="text-xs font-bold text-slate-600 dark:text-slate-400 shrink-0 whitespace-nowrap">
             {t(`Round ${questionIndex + 1} of ${totalQuestions}`, <><ruby>第<rt>だい</rt></ruby>{questionIndex + 1}<ruby>問<rt>もん</rt></ruby> / <ruby>全<rt>ぜん</rt></ruby>{totalQuestions}<ruby>問<rt>もん</rt></ruby></>)}
           </span>
           {/* 1-tap pause toggle button */}
@@ -116,7 +121,7 @@ export const QuizHostLeaderboard: React.FC<QuizHostLeaderboardProps> = ({
               className={`flex items-center gap-1 text-xs font-bold px-2.5 py-0.5 rounded-full cursor-pointer transition-all shrink-0 whitespace-nowrap ${
                 isPaused
                   ? 'bg-amber-400 text-slate-950 font-black animate-pulse shadow-xs ring-2 ring-amber-300'
-                  : 'text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800'
+                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800'
               }`}
               title={t('Pause / Resume timer [P]', 'タイマー一時停止 / 再開 [P]')}
             >
@@ -131,12 +136,8 @@ export const QuizHostLeaderboard: React.FC<QuizHostLeaderboardProps> = ({
         <div className="flex items-center gap-2 shrink-0 flex-nowrap">
           {onExit && (
             <button
-              onClick={() => {
-                if (window.confirm(t('End quiz early and disband the room?\nConnected student devices will return to the game over screen.', 'クイズを強制終了してルームを解散しますか？\n参加中の生徒の端末は終了画面に移行します。'))) {
-                  onExit();
-                }
-              }}
-              className="px-3 py-2 rounded-2xl font-black text-xs text-rose-500 hover:text-rose-600 bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/60 border border-rose-200 dark:border-rose-900 active:scale-95 transition-all whitespace-nowrap"
+              onClick={onExit}
+              className="px-3 py-2 rounded-2xl font-black text-xs text-rose-500 hover:text-rose-600 bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/60 border border-rose-200 dark:border-rose-900 active:scale-95 transition-all whitespace-nowrap cursor-pointer"
               title={t('End quiz and disband room', 'クイズを終了して解散')}
             >
               <span>{t('✕ End', <>✕ <ruby>終了<rt>しゅうりょう</rt></ruby></>)}</span>
@@ -150,7 +151,7 @@ export const QuizHostLeaderboard: React.FC<QuizHostLeaderboardProps> = ({
             <span>
               {isLastQuestion
                 ? t('FINAL RESULTS', <><ruby>最終<rt>さいしゅう</rt></ruby><ruby>結果<rt>けっか</rt></ruby><ruby>発表<rt>はっぴょう</rt></ruby></>)
-                : <>{t('NEXT QUESTION', <><ruby>次<rt>つぎ</rt></ruby>の<ruby>問題<rt>もんだい</rt></ruby>へ</>)} ({isPaused ? 'PAUSED' : `${countdown}s`})</>}
+                : <>{t('NEXT QUESTION', <><ruby>次<rt>つぎ</rt></ruby>の<ruby>問題<rt>もんだい</rt></ruby>へ</>)} ({isPaused ? t('PAUSED', '一時停止') : `${countdown}s`})</>}
             </span>
             <ArrowRight size={16} />
             <span className="opacity-75 font-mono text-xs">[Space]</span>
@@ -188,7 +189,9 @@ export const QuizHostLeaderboard: React.FC<QuizHostLeaderboardProps> = ({
 
       {/* View 1: Team Racing Bars */}
       {gameMode === 'TEAM' && viewTab === 'TEAMS' ? (
-        <div className="flex-1 flex flex-col justify-center space-y-4 my-auto py-6">
+        <div className={`flex-1 min-h-0 overflow-y-auto flex flex-col justify-center my-auto ${
+          teamList.length >= 4 ? 'space-y-2.5 py-2' : 'space-y-4 py-4'
+        }`}>
           {teamList.map((tItem, idx) => {
             const rank = idx + 1;
             const pct = maxAvgScore > 0 ? Math.max(12, Math.round((tItem.averageScore / maxAvgScore) * 100)) : 12;
@@ -221,15 +224,15 @@ export const QuizHostLeaderboard: React.FC<QuizHostLeaderboardProps> = ({
                     <span className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white flex items-center gap-2">
                       <span>{tItem.preset.emoji}</span>
                       <span>{language === 'ja' ? tItem.preset.jaName : tItem.preset.name}</span>
-                      <span className="text-xs font-bold text-slate-400">({tItem.memberCount}{t(' players', <><ruby>人<rt>にん</rt></ruby></>)})</span>
+                      <span className="text-xs font-bold text-slate-600 dark:text-slate-400">({tItem.memberCount}{t(' students', <><ruby>人<rt>にん</rt></ruby></>)})</span>
                     </span>
                   </div>
 
                   <div className="text-right">
                     <div className="text-lg sm:text-2xl font-black text-slate-900 dark:text-white font-mono">
-                      {tItem.averageScore.toLocaleString()} <span className="text-xs font-bold text-slate-400">{t('pts / person', <>pts / <ruby>人<rt>にん</rt></ruby></>)}</span>
+                      {tItem.averageScore.toLocaleString()} <span className="text-xs font-bold text-slate-600 dark:text-slate-400">{t('pts / person', <>pts / <ruby>人<rt>にん</rt></ruby></>)}</span>
                     </div>
-                    <div className="text-[11px] font-bold text-slate-400">
+                    <div className="text-[11px] font-bold text-slate-600 dark:text-slate-400">
                       {t('Team Total:', <>チーム<ruby>合計<rt>ごうけい</rt></ruby>:</>)} {tItem.score.toLocaleString()} pts
                     </div>
                   </div>
@@ -238,13 +241,14 @@ export const QuizHostLeaderboard: React.FC<QuizHostLeaderboardProps> = ({
                 {/* Animated Racing Progress Bar */}
                 <div className="w-full bg-slate-100 dark:bg-slate-800 h-6 rounded-full overflow-hidden p-1 border border-slate-200 dark:border-slate-700 relative">
                   <div
-                    className={`h-full rounded-full transition-all duration-700 ease-out flex items-center justify-end pr-2 text-white font-black text-[10px] ${
-                      tItem.id === 'team_red' ? 'bg-gradient-to-r from-rose-500 to-red-600' :
-                      tItem.id === 'team_blue' ? 'bg-gradient-to-r from-blue-500 to-indigo-600' :
-                      tItem.id === 'team_green' ? 'bg-gradient-to-r from-emerald-500 to-teal-600' :
+                    className={`h-full rounded-full transition-all duration-700 ease-out flex items-center justify-end pr-2 font-black text-[10px] ${
+                      tItem.id === 'team_red' ? 'bg-gradient-to-r from-rose-500 to-red-600 text-white' :
+                      tItem.id === 'team_white' ? 'bg-gradient-to-r from-slate-200 to-slate-400 text-slate-900 border border-slate-300' :
+                      tItem.id === 'team_blue' ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white' :
+                      tItem.id === 'team_green' ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white' :
                       tItem.id === 'team_yellow' ? 'bg-gradient-to-r from-amber-400 to-yellow-500 text-slate-950' :
-                      tItem.id === 'team_orange' ? 'bg-gradient-to-r from-orange-500 to-amber-600' :
-                      'bg-gradient-to-r from-purple-500 to-fuchsia-600'
+                      tItem.id === 'team_orange' ? 'bg-gradient-to-r from-orange-500 to-amber-600 text-white' :
+                      'bg-gradient-to-r from-purple-500 to-fuchsia-600 text-white'
                     }`}
                     style={{ width: `${pct}%` }}
                   >
@@ -254,7 +258,7 @@ export const QuizHostLeaderboard: React.FC<QuizHostLeaderboardProps> = ({
 
                 {/* Team MVP Spotlight */}
                 {tItem.mvpNickname && (
-                  <div className="mt-2.5 flex items-center justify-between text-xs font-bold text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/60 px-3 py-1.5 rounded-xl">
+                  <div className="mt-2.5 flex items-center justify-between text-xs font-bold text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/60 px-3 py-1.5 rounded-xl">
                     <span className="flex items-center gap-1.5 text-amber-600 dark:text-amber-400 font-black">
                       <Star size={13} fill="currentColor" />
                       <span>{t('Team MVP:', 'チームMVP:')}</span>
@@ -271,10 +275,10 @@ export const QuizHostLeaderboard: React.FC<QuizHostLeaderboardProps> = ({
         </div>
       ) : (
         /* View 2: Top 5 Individual Players */
-        <div className="flex-1 flex flex-col justify-center space-y-3 my-auto py-6">
+        <div className="flex-1 min-h-0 overflow-y-auto flex flex-col justify-center space-y-2.5 my-auto py-4">
           {top5.length === 0 ? (
-            <div className="text-center text-slate-400 py-12 text-sm font-bold">
-              {t('No player scores recorded yet.', <>まだスコアが<ruby>記録<rt>きろく</rt></ruby>されていません</>)}
+            <div className="text-center text-slate-600 dark:text-slate-400 py-12 text-sm font-bold">
+              {t('No student scores recorded yet.', <>まだスコアが<ruby>記録<rt>きろく</rt></ruby>されていません</>)}
             </div>
           ) : (
             top5.map((p, idx) => {
@@ -312,14 +316,16 @@ export const QuizHostLeaderboard: React.FC<QuizHostLeaderboardProps> = ({
                       {rankIcon}
                     </div>
                     {(() => {
-                      const num = p.attendanceNumber || resolveRacerNumber(p, idx);
+                      const num = (p.attendanceNumber !== undefined && p.attendanceNumber !== null)
+                        ? p.attendanceNumber
+                        : resolveRacerNumber(p, idx);
                       const nick = p.nickname || 'Student';
                       const hasNumInNick = nick.includes('番') || nick.startsWith('#');
                       return (
                         <div className="flex items-center gap-2 min-w-0">
-                          {num > 0 && !hasNumInNick && (
+                          {num >= 0 && !hasNumInNick && (
                             <span className="px-2.5 py-0.5 rounded-lg bg-indigo-600 text-white font-mono font-black text-sm shadow-xs shrink-0">
-                              #{num}
+                              #{num === 0 ? '00' : num}
                             </span>
                           )}
                           <span className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-wide truncate">
@@ -349,7 +355,7 @@ export const QuizHostLeaderboard: React.FC<QuizHostLeaderboardProps> = ({
                       </span>
                     )}
                     <span className="font-mono text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">
-                      {p.score.toLocaleString()} <span className="text-xs font-bold text-slate-400">pts</span>
+                      {p.score.toLocaleString()} <span className="text-xs font-bold text-slate-600 dark:text-slate-400">pts</span>
                     </span>
                   </div>
                 </div>
@@ -360,7 +366,7 @@ export const QuizHostLeaderboard: React.FC<QuizHostLeaderboardProps> = ({
       )}
 
       {/* Bottom Hint */}
-      <div className="text-center pb-2 text-xs font-bold text-slate-400 shrink-0">
+      <div className="text-center pb-2 text-xs font-bold text-slate-600 dark:text-slate-400 shrink-0">
         {t('Press Space or click button above to continue', <>Space キー または <ruby>上<rt>うえ</rt></ruby>のボタンをクリックして<ruby>進<rt>すす</rt></ruby>む</>)}
       </div>
 

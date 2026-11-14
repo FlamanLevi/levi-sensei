@@ -13,6 +13,7 @@ import {
 } from '@/services/rtdbSafe';
 import { sweepStaleRooms, clearClassRoomPointers } from '@/services/roomSweeper';
 import { 
+  GameMode,
   QuizRoomState, 
   QuizQuestion, 
   QuizPlayer, 
@@ -30,6 +31,7 @@ import { computeSessionAnalytics, persistSessionAnalytics } from '@/services/ana
 import { getSavedStudentProfile } from '@/services/studentProfile';
 import { getSavedKartTheme } from '@/games/suzuka_grand_prix/kartPresets';
 import { depositClassEnergy } from '@/services/classVault';
+import { getClassSize } from '@/types/roster';
 // ============================================================================
 // [ANTIGRAVITY REFACTOR]: Import Pure Engine Throttler & Aggregators
 // ============================================================================
@@ -37,6 +39,8 @@ import {
   createRtdbWriteThrottler,
   computeTroubleWordsMap,
   reconcileTeamScores,
+  assignTeamsForNewRound,
+  isTeamSelectionFull,
   ThrottlerController
 } from './core/quizEngine';
 
@@ -57,15 +61,18 @@ interface UseQuizRoomReturn {
   startTugOfWar: () => Promise<void>;
   nextTugOfWarRound: (newWins: { team_red: number; team_white: number }, nextRoundNumber: number, baselinePulls: Record<string, number>) => Promise<void>;
   freezeTugOfWar: () => Promise<void>;
-  endTugOfWar: (awards?: any[]) => Promise<void>;
+  endTugOfWar: (awards?: any[], winningTeam?: TeamId | 'draw') => Promise<void>;
+  startTamaire: () => Promise<void>;
+  freezeTamaire: () => Promise<void>;
+  endTamaire: (awards?: any[], winningTeam?: TeamId | 'draw') => Promise<void>;
   startVolleyball: () => Promise<void>;
   freezeVolleyball: () => Promise<void>;
-  endVolleyball: (awards?: any[]) => Promise<void>;
+  endVolleyball: (awards?: any[], winningTeam?: TeamId | 'draw') => Promise<void>;
   closeRoom: () => Promise<void>;
   kickPlayer: (playerId: string) => Promise<void>;
   changePlayerTeam: (playerId: string, newTeamId: TeamId) => Promise<void>;
   toggleEyesUp: (forcedState?: boolean) => Promise<void>;
-  resetRoomForNewRound: (newQuestions: QuizQuestion[], keepSettings?: boolean, updatedSettings?: Partial<QuizHostSettings>) => Promise<boolean>;
+  resetRoomForNewRound: (newQuestions: QuizQuestion[], keepSettings?: boolean, updatedSettings?: Partial<QuizHostSettings> & { grade?: string; unit?: string }) => Promise<boolean>;
   // Student functions
   joinRoom: (code: string, nickname: string, teamId?: TeamId, attendanceNumber?: number) => Promise<{ success: boolean; playerId?: string; error?: string }>;
   updateKartTheme: (themeId: string) => Promise<void>;
@@ -187,6 +194,21 @@ function sanitizeQuestionsForPublicRoom(
   return questions.map(({ correctOptionId: _correct, distractorOptionIds: _distractors, ...rest }) => rest);
 }
 
+function isClassRecordableRoom(
+  r: Partial<QuizRoomState> | null | undefined,
+  code: string | null | undefined
+): boolean {
+  return Boolean(
+    r?.schoolId &&
+    r?.classId &&
+    r.classId !== 'TEST' &&
+    !r.isStudentHost &&
+    !r.isTestGame &&
+    r.recordRoster !== false &&
+    !(code && code.startsWith('9'))
+  );
+}
+
 export function useQuizRoom(
   initialRoomCode?: string,
   options?: { isHost?: boolean; isStudent?: boolean; playerId?: string }
@@ -296,6 +318,7 @@ export function useQuizRoom(
             data.status === 'SPRINT_RACE' ||
             data.status === 'GRAND_PRIX_3D' ||
             data.status === 'TUG_OF_WAR' ||
+            data.status === 'TAMAIRE' ||
             data.status === 'VOLLEYBALL';
 
           setRoom(prev => ({
@@ -436,10 +459,22 @@ export function useQuizRoom(
     };
   }, [roomCode, options?.isStudent, options?.playerId, is3DGrandPrix]);
 
-  // Clean up any pending throttlers or delayed closeRoom timers on unmount
+  // Clean up pending throttlers when resetting to Lobby/GameOver/Closed or unmounting
+  useEffect(() => {
+    if (!roomCode || room?.status === 'LOBBY' || room?.status === 'GAME_OVER' || room?.status === 'CLOSED') {
+      const throttlers = studentSpokeThrottlersRef.current;
+      throttlers.forEach((t) => t.dispose());
+      throttlers.clear();
+    }
+  }, [roomCode, room?.status]);
+
   useEffect(() => {
     const throttlers = studentSpokeThrottlersRef.current;
     return () => {
+      if (closeRoomTimerRef.current) {
+        clearTimeout(closeRoomTimerRef.current);
+        closeRoomTimerRef.current = null;
+      }
       throttlers.forEach((t) => t.dispose());
       throttlers.clear();
     };
@@ -494,32 +529,40 @@ export function useQuizRoom(
 
       const hostId = await ensureAnonymousAuth();
       const isTug = settings.gamePlayType === 'TUG_OF_WAR';
-      const isVolleyball = settings.gamePlayType === 'VOLLEYBALL';
-      const isVolleyballVs = isVolleyball && (!settings.volleyballSettings || settings.volleyballSettings.gameStyle === 'TEAM_VS');
-      const activeTeams: TeamId[] = (isTug || isVolleyballVs)
+      const isTamaire = settings.gamePlayType === 'TAMAIRE' || settings.gamePlayType === 'VOLLEYBALL';
+      const resolvedTamaireCfg = settings.tamaireSettings || settings.volleyballSettings;
+      const isTamaireVs = isTamaire && (!resolvedTamaireCfg || resolvedTamaireCfg.gameStyle !== 'COOP_RALLY');
+      const effectiveMode: GameMode = (isTug || isTamaireVs)
+        ? 'TEAM'
+        : (isTamaire && resolvedTamaireCfg?.gameStyle === 'COOP_RALLY')
+          ? 'INDIVIDUAL'
+          : settings.gameMode;
+      const activeTeams: TeamId[] = (isTug || isTamaireVs)
         ? ['team_red', 'team_white']
         : (settings.activeTeams && settings.activeTeams.length >= 2
           ? settings.activeTeams
           : (settings.teamCount === 2 ? ['team_red', 'team_white'] : RAINBOW_TEAM_ORDER.slice(0, settings.teamCount || 2)));
 
       const initialTeamScores: Partial<Record<TeamId, any>> = {};
-      activeTeams.forEach(tId => {
-        const preset = TEAM_PRESETS[tId];
-        if (preset) {
-          initialTeamScores[tId] = {
-            name: preset.name,
-            jaName: preset.jaName,
-            score: 0,
-            correctCount: 0,
-            memberCount: 0,
-            averageScore: 0,
-            color: preset.color,
-            emoji: preset.emoji
-          };
-        }
-      });
+      if (effectiveMode === 'TEAM') {
+        activeTeams.forEach(tId => {
+          const preset = TEAM_PRESETS[tId];
+          if (preset) {
+            initialTeamScores[tId] = {
+              name: preset.name,
+              jaName: preset.jaName,
+              score: 0,
+              correctCount: 0,
+              memberCount: 0,
+              averageScore: 0,
+              color: preset.color,
+              emoji: preset.emoji
+            };
+          }
+        });
+      }
 
-      const initialRoom: QuizRoomState = {
+      const initialRoomRaw: QuizRoomState = {
         code,
         hostId,
         createdAt: getServerTime(),
@@ -536,10 +579,10 @@ export function useQuizRoom(
         recordRoster: settings.recordRoster !== false && !settings.isStudentHost && !settings.isTestGame && settings.classId !== 'TEST' && !code.startsWith('9'),
         isStudentHost: !!settings.isStudentHost,
         isTestGame: !!settings.isTestGame || settings.classId === 'TEST' || code.startsWith('9'),
-        mode: settings.gameMode,
+        mode: effectiveMode,
         teamAssignment: settings.teamAssignment || 'AUTO_BALANCE',
-        teamCount: settings.teamCount || activeTeams.length,
-        activeTeams,
+        teamCount: effectiveMode === 'TEAM' ? (settings.teamCount || activeTeams.length) : 2,
+        activeTeams: effectiveMode === 'TEAM' ? activeTeams : [],
         deliveryStream: settings.deliveryStream,
         ipadDisplayMode: settings.ipadDisplayMode,
         awardToggles: settings.awardToggles,
@@ -555,9 +598,9 @@ export function useQuizRoom(
         recallDelaySeconds: settings.recallDelaySeconds || 0,
         eliminateDistractors: settings.distractorEliminationMode ? settings.distractorEliminationMode !== 'OFF' : !!settings.eliminateDistractors,
         distractorEliminationMode: settings.distractorEliminationMode || (settings.eliminateDistractors ? 'HALFWAY' : 'OFF'),
-        sprintSettings: settings.sprintSettings,
-        tugOfWarSettings: settings.tugOfWarSettings,
-        volleyballSettings: settings.volleyballSettings,
+        ...(settings.sprintSettings ? { sprintSettings: settings.sprintSettings } : {}),
+        ...(settings.tugOfWarSettings ? { tugOfWarSettings: settings.tugOfWarSettings } : {}),
+        ...(resolvedTamaireCfg ? { tamaireSettings: resolvedTamaireCfg, volleyballSettings: resolvedTamaireCfg } : {}),
         choiceImageMode: settings.choiceImageMode,
         englishReadingAid: settings.englishReadingAid,
         timeLimitSeconds: settings.timeLimitSeconds,
@@ -566,13 +609,16 @@ export function useQuizRoom(
         vocabularyScope: settings.vocabularyScope,
         selectedUnits: settings.selectedUnits || undefined
       };
+      const initialRoom = Object.fromEntries(
+        Object.entries(initialRoomRaw).filter(([, v]) => v !== undefined)
+      ) as QuizRoomState;
 
       await safeRemove(`roomPlayers/${code}`).catch(() => {});
       await safeRemove(`roomResponses/${code}`).catch(() => {});
       await safeSet(`rooms/${code}`, initialRoom);
       await safeSet(`hostSessions/${code}/questions`, questions);
 
-      if (settings.schoolId && settings.classId && !settings.isStudentHost) {
+      if (settings.schoolId && settings.classId && !settings.isStudentHost && !initialRoom.isTestGame && settings.classId !== 'TEST') {
         const teacherRoomSummary = {
           code,
           gamePlayType: settings.gamePlayType || 'KAHOOT',
@@ -604,15 +650,18 @@ export function useQuizRoom(
     soundEffects.playFanfare();
     await ensureAnonymousAuth();
 
+    let snap: QuizRoomState | null = null;
     let sessionAnalytics: SessionAnalytics | undefined;
     try {
-      const snap = await safeGet<QuizRoomState>(`rooms/${roomCode}`);
+      snap = await safeGet<QuizRoomState>(`rooms/${roomCode}`);
       if (snap) {
         const rawQ = await getAuthoritativeQuestions();
         const questionsList = [...rawQ].sort((a, b) => (a.questionIndex ?? 0) - (b.questionIndex ?? 0));
-        const roomDurationSec = snap.raceStartTime ? Math.round((Date.now() - snap.raceStartTime) / 1000) : 300;
+        const roomDurationSec = snap.raceStartTime ? Math.max(1, Math.round((getServerTime() - snap.raceStartTime) / 1000)) : 300;
         sessionAnalytics = computeSessionAnalytics(snap, questionsList, roomDurationSec);
-        await persistSessionAnalytics(sessionAnalytics);
+        if (isClassRecordableRoom(snap, roomCode)) {
+          await persistSessionAnalytics(sessionAnalytics);
+        }
       }
     } catch (aErr) {
       console.warn('Error computing Kahoot session analytics:', aErr);
@@ -625,17 +674,18 @@ export function useQuizRoom(
     if (awards && awards.length > 0) {
       updateData.awardedBadges = awards;
     }
-    const currentRoom = roomRef.current || room;
+    const currentRoom = snap || roomRef.current;
     if (currentRoom?.schoolId && currentRoom?.classId && !currentRoom?.isStudentHost) {
-      try {
-        const snap = await safeGet<QuizRoomState>(`rooms/${roomCode}`);
-        const totalPoints = Object.values(snap?.players || {}).reduce((sum, p) => sum + (p.score || 0), 0);
-        depositClassEnergy(currentRoom.schoolId, currentRoom.classId, totalPoints, roomCode).catch(() => {});
-      } catch {}
+      if (isClassRecordableRoom(currentRoom, roomCode)) {
+        try {
+          const totalPoints = Object.values(currentRoom?.players || {}).reduce((sum, p) => sum + (p.score || 0), 0);
+          depositClassEnergy(currentRoom.schoolId, currentRoom.classId, totalPoints, roomCode).catch(() => {});
+        } catch {}
+      }
       clearClassRoomPointers(currentRoom.schoolId, currentRoom.classId, roomCode).catch(() => {});
     }
     await safeUpdate(`rooms/${roomCode}`, updateData);
-  }, [roomCode, getAuthoritativeQuestions, room?.schoolId, room?.classId]);
+  }, [roomCode, getAuthoritativeQuestions]);
 
   // Host: Send next question (cleans responses node and local responses state)
   const nextQuestion = useCallback(async (index: number) => {
@@ -652,7 +702,8 @@ export function useQuizRoom(
     const targetQ = questions[index];
     if (!targetQ) return;
     const { correctOptionId: _stripped, ...sanitizedTargetQ } = targetQ;
-    const q: QuizQuestion = { ...sanitizedTargetQ, startTime: getServerTime() };
+    const serverNow = getServerTime();
+    const q: QuizQuestion = { ...sanitizedTargetQ, startTime: serverNow };
 
     try {
       // Clear room responses in Firebase
@@ -660,14 +711,26 @@ export function useQuizRoom(
       await safeRemove(`rooms/${roomCode}/responses`);
       
       // Update local state immediately so allAnswered doesn't evaluate true from old question
-      setRoom(prev => prev ? { ...prev, responses: {}, currentQuestionIndex: index, currentQuestion: q, status: 'QUESTION' } : null);
+      setRoom(prev => prev ? {
+        ...prev,
+        responses: {},
+        currentQuestionIndex: index,
+        currentQuestion: q,
+        status: 'QUESTION',
+        ...(index === 0 ? { raceStartTime: serverNow } : {})
+      } : null);
 
-      await safeUpdate(`rooms/${roomCode}`, {
+      const roomUpdatePayload: Record<string, any> = {
         status: 'QUESTION',
         currentQuestionIndex: index,
         currentQuestion: q,
         responses: null
-      });
+      };
+      if (index === 0) {
+        roomUpdatePayload.raceStartTime = serverNow;
+      }
+
+      await safeUpdate(`rooms/${roomCode}`, roomUpdatePayload);
     } catch (err: any) {
       console.error("Error starting question:", err);
     }
@@ -681,8 +744,9 @@ export function useQuizRoom(
 
   // Host: Reveal Answer and calculate scores
   const revealAnswer = useCallback(async () => {
-    if (!roomCode || !room || !room.currentQuestion) return;
-    if (isRevealingRef.current || room.status !== 'QUESTION') return;
+    const activeRoom = roomRef.current;
+    if (!roomCode || !activeRoom || !activeRoom.currentQuestion) return;
+    if (isRevealingRef.current || activeRoom.status !== 'QUESTION') return;
     isRevealingRef.current = true;
 
     soundEffects.playReveal();
@@ -692,12 +756,17 @@ export function useQuizRoom(
       // 350ms Wi-Fi flush buffer so student answers tapped at 0.0s arrive before grading
       await new Promise(resolve => setTimeout(resolve, 350));
 
+      const freshRoom = roomRef.current || activeRoom;
+      const currentQuestionIdx = freshRoom.currentQuestionIndex;
+      const activeQuestion = freshRoom.currentQuestion || activeRoom.currentQuestion;
+      if (!activeQuestion) return;
+
       const rawQuestions = await getAuthoritativeQuestions();
-      const targetQuestion = rawQuestions.find(q => q.questionIndex === room.currentQuestionIndex) || rawQuestions[room.currentQuestionIndex];
-      let targetId = targetQuestion?.correctOptionId || room.currentQuestion.correctOptionId || '';
-      if (!targetId && room.currentQuestion.targetWordEnglish) {
-        const matchingOption = room.currentQuestion.options.find(
-          o => o.english?.trim().toLowerCase() === room.currentQuestion?.targetWordEnglish?.trim().toLowerCase()
+      const targetQuestion = rawQuestions.find(q => q.questionIndex === currentQuestionIdx) || rawQuestions[currentQuestionIdx];
+      let targetId = targetQuestion?.correctOptionId || activeQuestion.correctOptionId || '';
+      if (!targetId && activeQuestion.targetWordEnglish) {
+        const matchingOption = activeQuestion.options.find(
+          o => o.english?.trim().toLowerCase() === activeQuestion?.targetWordEnglish?.trim().toLowerCase()
         );
         if (matchingOption) {
           targetId = matchingOption.id;
@@ -713,9 +782,9 @@ export function useQuizRoom(
       const responses = { ...legacyResponses, ...decoupledResponses };
       const players = playersRaw || {};
 
-      const teamScores = { ...room.teamScores };
-      const timeLimitMs = (room.currentQuestion.timeLimitMs && room.currentQuestion.timeLimitMs > 0)
-        ? room.currentQuestion.timeLimitMs
+      const teamScores = { ...freshRoom.teamScores };
+      const timeLimitMs = (activeQuestion.timeLimitMs && activeQuestion.timeLimitMs > 0)
+        ? activeQuestion.timeLimitMs
         : 15000;
 
       let totalAnswers = 0;
@@ -750,7 +819,7 @@ export function useQuizRoom(
             if (streak > maxStreak) maxStreak = streak;
             if (safeTimeTaken < fastestTime) fastestTime = safeTimeTaken;
 
-            const recallDelayMs = (room.recallDelaySeconds || 0) * 1000;
+            const recallDelayMs = (freshRoom.recallDelaySeconds || 0) * 1000;
             const activeWindowMs = Math.max(1000, timeLimitMs - recallDelayMs);
             const effectiveTimeTakenMs = Math.max(0, safeTimeTaken - recallDelayMs);
             const speedRatio = Math.max(0, Math.min(1, 1 - (effectiveTimeTakenMs / activeWindowMs)));
@@ -771,8 +840,8 @@ export function useQuizRoom(
             incorrectAnswers++;
           }
 
-          playerAnswers[room.currentQuestionIndex] = {
-            questionIndex: room.currentQuestionIndex,
+          playerAnswers[currentQuestionIdx] = {
+            questionIndex: currentQuestionIdx,
             optionId: resp.answerId,
             isCorrect,
             timeTakenMs: safeTimeTaken,
@@ -782,8 +851,8 @@ export function useQuizRoom(
           streak = 0;
           totalAnswered++;
           incorrectAnswers++;
-          playerAnswers[room.currentQuestionIndex] = {
-            questionIndex: room.currentQuestionIndex,
+          playerAnswers[currentQuestionIdx] = {
+            questionIndex: currentQuestionIdx,
             optionId: '',
             isCorrect: false,
             timeTakenMs: timeLimitMs,
@@ -801,19 +870,26 @@ export function useQuizRoom(
           fastestTimeMs: fastestTime,
           answers: playerAnswers,
           lastAnswer: (resp && resp.answerId) ? {
+            questionIndex: currentQuestionIdx,
             optionId: resp.answerId,
             isCorrect,
             pointsEarned,
             timeTakenMs: (typeof resp.timeTakenMs === 'number' && !isNaN(resp.timeTakenMs)) ? resp.timeTakenMs : timeLimitMs
-          } : undefined
+          } : {
+            questionIndex: currentQuestionIdx,
+            optionId: '',
+            isCorrect: false,
+            pointsEarned: 0,
+            timeTakenMs: timeLimitMs
+          }
         };
       });
 
-      if (room.mode === 'TEAM') {
-        const isTug = room.gamePlayType === 'TUG_OF_WAR';
+      if (freshRoom.mode === 'TEAM') {
+        const isTug = freshRoom.gamePlayType === 'TUG_OF_WAR';
         const teamIds: TeamId[] = isTug
           ? ['team_red', 'team_white']
-          : (room.activeTeams || (room.teamCount === 2 ? ['team_red', 'team_white'] : RAINBOW_TEAM_ORDER.slice(0, room.teamCount || 2)));
+          : (freshRoom.activeTeams || (freshRoom.teamCount === 2 ? ['team_red', 'team_white'] : RAINBOW_TEAM_ORDER.slice(0, freshRoom.teamCount || 2)));
         teamIds.forEach((tId) => {
           if (!teamScores[tId]) return;
           const teamMembers = Object.values(updatedPlayers).filter(p => p.teamId === tId);
@@ -821,7 +897,7 @@ export function useQuizRoom(
           teamScores[tId].memberCount = mCount;
 
           let cumulativeAvg = 0;
-          for (let q = 0; q <= room.currentQuestionIndex; q++) {
+          for (let q = 0; q <= currentQuestionIdx; q++) {
             const roundParticipants = teamMembers.filter(p => p.answers && p.answers[q] !== undefined);
             if (roundParticipants.length > 0) {
               const roundSum = roundParticipants.reduce((sum, p) => sum + (p.answers[q]?.pointsEarned || 0), 0);
@@ -840,13 +916,13 @@ export function useQuizRoom(
         });
       }
 
-      const troubleWords = { ...(room.troubleWords || {}) };
+      const troubleWords = { ...(freshRoom.troubleWords || {}) };
       if (totalAnswers > 0 && (incorrectAnswers / totalAnswers) >= 0.5) {
-        troubleWords[room.currentQuestion.targetWordId] = {
-          english: room.currentQuestion.isMath ? room.currentQuestion.promptText : room.currentQuestion.targetWordEnglish,
-          ja: room.currentQuestion.isMath ? (room.currentQuestion.targetWordJa || `正解: ${room.currentQuestion.targetWordEnglish}`) : room.currentQuestion.targetWordJa,
-          image: room.currentQuestion.promptImage,
-          sound: room.currentQuestion.isMath ? undefined : room.currentQuestion.promptSound,
+        troubleWords[activeQuestion.targetWordId] = {
+          english: activeQuestion.isMath ? activeQuestion.promptText : activeQuestion.targetWordEnglish,
+          ja: activeQuestion.isMath ? (activeQuestion.targetWordJa || `正解: ${activeQuestion.targetWordEnglish}`) : activeQuestion.targetWordJa,
+          image: activeQuestion.promptImage,
+          sound: activeQuestion.isMath ? undefined : activeQuestion.promptSound,
           incorrectCount: incorrectAnswers,
           totalCount: totalAnswers
         };
@@ -865,7 +941,7 @@ export function useQuizRoom(
     } finally {
       isRevealingRef.current = false;
     }
-  }, [roomCode, room]);
+  }, [roomCode, getAuthoritativeQuestions]);
 
   // Host: Show Leaderboard
   const showLeaderboard = useCallback(async () => {
@@ -884,8 +960,9 @@ export function useQuizRoom(
     try {
       await ensureAnonymousAuth();
       livePlayersRef.current = {};
-      const duration = settingsRef.current?.sprintSettings?.timeLimitSeconds || room?.sprintSettings?.timeLimitSeconds || 60;
-      const modeType = settingsRef.current?.gamePlayType || room?.gamePlayType;
+      const activeRoom = roomRef.current;
+      const duration = settingsRef.current?.sprintSettings?.timeLimitSeconds || activeRoom?.sprintSettings?.timeLimitSeconds || 60;
+      const modeType = settingsRef.current?.gamePlayType || activeRoom?.gamePlayType;
       const targetStatus: QuizRoomState['status'] =
         modeType === 'SPRINT_RACE' ? 'SPRINT_RACE' : 'GRAND_PRIX_3D';
       
@@ -902,7 +979,7 @@ export function useQuizRoom(
     } catch (err: any) {
       console.error("Error starting sprint race:", err);
     }
-  }, [roomCode, room?.sprintSettings, room?.gamePlayType]);
+  }, [roomCode]);
 
   // Host: Trigger 20s/30s grace countdown
   const triggerSprintGraceCountdown = useCallback(async () => {
@@ -1052,7 +1129,9 @@ export function useQuizRoom(
           questions: sprintQuestions
         } as QuizRoomState;
         sessionAnalytics = computeSessionAnalytics(roomForAnalytics, sprintQuestions, roomDurationSec);
-        await persistSessionAnalytics(sessionAnalytics);
+        if (isClassRecordableRoom(roomVal, roomCode)) {
+          await persistSessionAnalytics(sessionAnalytics);
+        }
       } catch (aErr) {
         console.warn('Error computing sprint session analytics:', aErr);
       }
@@ -1071,10 +1150,12 @@ export function useQuizRoom(
         updateData.awardedBadges = awards;
       }
       if (roomVal?.schoolId && roomVal?.classId && !roomVal?.isStudentHost) {
-        try {
-          const totalPoints = (playerList || []).reduce((sum, p) => sum + (p.score || 0), 0);
-          depositClassEnergy(roomVal.schoolId, roomVal.classId, totalPoints, roomCode).catch(() => {});
-        } catch {}
+        if (isClassRecordableRoom(roomVal, roomCode)) {
+          try {
+            const totalPoints = (playerList || []).reduce((sum, p) => sum + (p.score || 0), 0);
+            depositClassEnergy(roomVal.schoolId, roomVal.classId, totalPoints, roomCode).catch(() => {});
+          } catch {}
+        }
         clearClassRoomPointers(roomVal.schoolId, roomVal.classId, roomCode).catch(() => {});
       }
       await safeUpdate(`rooms/${roomCode}`, updateData);
@@ -1091,7 +1172,10 @@ export function useQuizRoom(
       await ensureAnonymousAuth();
       livePlayersRef.current = {};
       await safeRemove(`roomPlayers/${roomCode}`).catch(() => {});
-      const duration = settingsRef.current?.tugOfWarSettings?.timeLimitSeconds || room?.tugOfWarSettings?.timeLimitSeconds || 60;
+      const duration =
+        settingsRef.current?.tugOfWarSettings?.timeLimitSeconds ||
+        roomRef.current?.tugOfWarSettings?.timeLimitSeconds ||
+        60;
       soundEffects.playWhistle(0.8);
       await safeUpdate(`rooms/${roomCode}`, {
         status: 'TUG_OF_WAR',
@@ -1106,7 +1190,7 @@ export function useQuizRoom(
     } catch (err: any) {
       console.error("Error starting tug of war:", err);
     }
-  }, [roomCode, room?.tugOfWarSettings]);
+  }, [roomCode]);
 
   // Host: Start Next Tug of War Round (in multi-round series)
   const nextTugOfWarRound = useCallback(async (
@@ -1123,7 +1207,7 @@ export function useQuizRoom(
         safeGet<Record<string, QuizPlayer>>(`rooms/${roomCode}/players`),
         safeGet<Record<string, Partial<QuizPlayer>>>(`roomPlayers/${roomCode}`)
       ]);
-      const preservedPlayers = mergeLivePlayers(basePlayers || room?.players || {}, livePlayers || livePlayersRef.current || {});
+      const preservedPlayers = mergeLivePlayers(basePlayers || roomRef.current?.players || {}, livePlayers || livePlayersRef.current || {});
 
       // Ensure baselinePulls reflects the authoritative merged correctCount for every player
       const authoritativeBaselines: Record<string, number> = { ...baselinePulls };
@@ -1136,7 +1220,10 @@ export function useQuizRoom(
 
       livePlayersRef.current = {};
       await safeRemove(`roomPlayers/${roomCode}`).catch(() => {});
-      const duration = settingsRef.current?.tugOfWarSettings?.timeLimitSeconds || room?.tugOfWarSettings?.timeLimitSeconds || 60;
+      const duration =
+        settingsRef.current?.tugOfWarSettings?.timeLimitSeconds ||
+        roomRef.current?.tugOfWarSettings?.timeLimitSeconds ||
+        60;
       soundEffects.playWhistle(0.8);
       await safeUpdate(`rooms/${roomCode}`, {
         status: 'TUG_OF_WAR',
@@ -1152,7 +1239,7 @@ export function useQuizRoom(
     } catch (err: any) {
       console.error("Error starting next tug of war round:", err);
     }
-  }, [roomCode, room?.tugOfWarSettings, room?.players]);
+  }, [roomCode]);
 
   // Host: Freeze Tug of War when time expires or early sweep happens
   const freezeTugOfWar = useCallback(async () => {
@@ -1168,7 +1255,7 @@ export function useQuizRoom(
   }, [roomCode]);
 
   // Host: End Tug of War (Deduplicated via computeTroubleWordsMap & reconcileTeamScores)
-  const endTugOfWar = useCallback(async (awards?: any[]) => {
+  const endTugOfWar = useCallback(async (awards?: any[], winningTeam?: TeamId | 'draw') => {
     if (!roomCode) return;
     soundEffects.playWhistle(1.2);
     soundEffects.playFanfare();
@@ -1207,7 +1294,9 @@ export function useQuizRoom(
           questions: modeQuestions
         } as QuizRoomState;
         sessionAnalytics = computeSessionAnalytics(roomForAnalytics, modeQuestions, roomDurationSec);
-        await persistSessionAnalytics(sessionAnalytics);
+        if (isClassRecordableRoom(roomVal, roomCode)) {
+          await persistSessionAnalytics(sessionAnalytics);
+        }
       } catch (aErr) {
         console.warn('Error computing tug of war session analytics:', aErr);
       }
@@ -1217,7 +1306,8 @@ export function useQuizRoom(
         players,
         activeTeams: ['team_red', 'team_white'],
         teamScores: sanitizedTeamScores,
-        troubleWords
+        troubleWords,
+        winningTeam: winningTeam || null
       };
       if (sessionAnalytics) {
         updateData.analytics = sessionAnalytics;
@@ -1226,10 +1316,12 @@ export function useQuizRoom(
         updateData.awardedBadges = awards;
       }
       if (roomVal?.schoolId && roomVal?.classId && !roomVal?.isStudentHost) {
-        try {
-          const totalPoints = (playerList || []).reduce((sum, p) => sum + (p.score || 0), 0);
-          depositClassEnergy(roomVal.schoolId, roomVal.classId, totalPoints, roomCode).catch(() => {});
-        } catch {}
+        if (isClassRecordableRoom(roomVal, roomCode)) {
+          try {
+            const totalPoints = (playerList || []).reduce((sum, p) => sum + (p.score || 0), 0);
+            depositClassEnergy(roomVal.schoolId, roomVal.classId, totalPoints, roomCode).catch(() => {});
+          } catch {}
+        }
         clearClassRoomPointers(roomVal.schoolId, roomVal.classId, roomCode).catch(() => {});
       }
       await safeUpdate(`rooms/${roomCode}`, updateData);
@@ -1238,43 +1330,53 @@ export function useQuizRoom(
     }
   }, [roomCode]);
 
-  // Host: Start Volleyball
-  const startVolleyball = useCallback(async () => {
+  // Host: Start Tamaire (with Release 1 legacy startVolleyball alias)
+  const startTamaire = useCallback(async () => {
     if (!roomCode) return;
     const now = getServerTime();
     try {
       await ensureAnonymousAuth();
       livePlayersRef.current = {};
       await safeRemove(`roomPlayers/${roomCode}`).catch(() => {});
-      const duration = settingsRef.current?.volleyballSettings?.timeLimitSeconds || room?.volleyballSettings?.timeLimitSeconds || 60;
+      const duration =
+        settingsRef.current?.tamaireSettings?.timeLimitSeconds ||
+        settingsRef.current?.volleyballSettings?.timeLimitSeconds ||
+        roomRef.current?.tamaireSettings?.timeLimitSeconds ||
+        roomRef.current?.volleyballSettings?.timeLimitSeconds ||
+        60;
       soundEffects.playWhistle(0.8);
       await safeUpdate(`rooms/${roomCode}`, {
-        status: 'VOLLEYBALL',
+        status: 'TAMAIRE',
         raceStartTime: now,
+        tamaireStartTime: now,
         volleyballStartTime: now,
         raceDurationSeconds: duration,
+        tamaireFinished: false,
         volleyballFinished: false
       });
     } catch (err: any) {
-      console.error("Error starting volleyball:", err);
+      console.error("Error starting tamaire:", err);
     }
-  }, [roomCode, room?.volleyballSettings]);
+  }, [roomCode]);
+  const startVolleyball = startTamaire;
 
-  // Host: Freeze Volleyball
-  const freezeVolleyball = useCallback(async () => {
+  // Host: Freeze Tamaire (with Release 1 legacy freezeVolleyball alias)
+  const freezeTamaire = useCallback(async () => {
     if (!roomCode) return;
     try {
       await ensureAnonymousAuth();
       await safeUpdate(`rooms/${roomCode}`, {
+        tamaireFinished: true,
         volleyballFinished: true
       });
     } catch (err: any) {
-      console.error("Error freezing volleyball:", err);
+      console.error("Error freezing tamaire:", err);
     }
   }, [roomCode]);
+  const freezeVolleyball = freezeTamaire;
 
-  // Host: End Volleyball (Deduplicated via computeTroubleWordsMap & reconcileTeamScores)
-  const endVolleyball = useCallback(async (awards?: any[]) => {
+  // Host: End Tamaire (with Release 1 legacy endVolleyball alias)
+  const endTamaire = useCallback(async (awards?: any[], winningTeam?: TeamId | 'draw') => {
     if (!roomCode) return;
     soundEffects.playWhistle(1.2);
     soundEffects.playFanfare();
@@ -1296,7 +1398,8 @@ export function useQuizRoom(
         : (Array.isArray(roomVal?.questions) ? roomVal.questions : (roomVal?.questions ? (Object.values(roomVal.questions) as QuizQuestion[]) : []));
 
       const troubleWords = computeTroubleWordsMap(players as any, modeQuestions as any, roomVal?.troubleWords);
-      const isVs = roomVal?.volleyballSettings?.gameStyle === 'TEAM_VS';
+      const tamaireCfg = roomVal?.tamaireSettings || roomVal?.volleyballSettings;
+      const isVs = !tamaireCfg || tamaireCfg.gameStyle !== 'COOP_RALLY';
       const teamIds: TeamId[] = isVs ? ['team_red', 'team_white'] : (roomVal?.activeTeams || ['team_red', 'team_white']);
       const sanitizedTeamScores = reconcileTeamScores(
         players as any,
@@ -1304,7 +1407,9 @@ export function useQuizRoom(
         roomVal?.teamScores as any
       );
 
-      const roomDurationSec = roomVal?.raceStartTime ? Math.round((getServerTime() - roomVal.raceStartTime) / 1000) : (roomVal?.volleyballSettings?.timeLimitSeconds || 60);
+      const roomDurationSec = roomVal?.raceStartTime
+        ? Math.round((getServerTime() - roomVal.raceStartTime) / 1000)
+        : (tamaireCfg?.timeLimitSeconds || 60);
       let sessionAnalytics: SessionAnalytics | undefined;
       try {
         const roomForAnalytics: QuizRoomState = {
@@ -1315,16 +1420,19 @@ export function useQuizRoom(
           questions: modeQuestions
         } as QuizRoomState;
         sessionAnalytics = computeSessionAnalytics(roomForAnalytics, modeQuestions, roomDurationSec);
-        await persistSessionAnalytics(sessionAnalytics);
+        if (isClassRecordableRoom(roomVal, roomCode)) {
+          await persistSessionAnalytics(sessionAnalytics);
+        }
       } catch (aErr) {
-        console.warn('Error computing volleyball session analytics:', aErr);
+        console.warn('Error computing tamaire session analytics:', aErr);
       }
 
       const updateData: any = {
         status: 'GAME_OVER',
         players,
         teamScores: sanitizedTeamScores,
-        troubleWords
+        troubleWords,
+        winningTeam: winningTeam || null
       };
       if (sessionAnalytics) {
         updateData.analytics = sessionAnalytics;
@@ -1333,23 +1441,26 @@ export function useQuizRoom(
         updateData.awardedBadges = awards;
       }
       if (roomVal?.schoolId && roomVal?.classId && !roomVal?.isStudentHost) {
-        try {
-          const totalPoints = (playerList || []).reduce((sum, p) => sum + (p.score || 0), 0);
-          depositClassEnergy(roomVal.schoolId, roomVal.classId, totalPoints, roomCode).catch(() => {});
-        } catch {}
+        if (isClassRecordableRoom(roomVal, roomCode)) {
+          try {
+            const totalPoints = (playerList || []).reduce((sum, p) => sum + (p.score || 0), 0);
+            depositClassEnergy(roomVal.schoolId, roomVal.classId, totalPoints, roomCode).catch(() => {});
+          } catch {}
+        }
         clearClassRoomPointers(roomVal.schoolId, roomVal.classId, roomCode).catch(() => {});
       }
       await safeUpdate(`rooms/${roomCode}`, updateData);
     } catch (err: any) {
-      console.error("Error ending volleyball:", err);
+      console.error("Error ending tamaire:", err);
     }
   }, [roomCode]);
+  const endVolleyball = endTamaire;
 
   // Host: Reset room for a new round while keeping room code and connected players
   const resetRoomForNewRound = useCallback(async (
     newQuestions: QuizQuestion[],
     keepSettings = true,
-    updatedSettings?: Partial<QuizHostSettings>
+    updatedSettings?: Partial<QuizHostSettings> & { grade?: string; unit?: string }
   ): Promise<boolean> => {
     if (!roomCode) return false;
     setLoading(true);
@@ -1371,6 +1482,9 @@ export function useQuizRoom(
           answers: {},
           lastAnswer: undefined,
           sprintProgress: 0,
+          speedKmh: 0,
+          distanceMeters: 0,
+          inPitStop: false,
           finishTimeMs: undefined,
           finishRank: undefined,
           isFinished: false,
@@ -1380,38 +1494,56 @@ export function useQuizRoom(
 
       const resolvedGamePlayType = updatedSettings?.gamePlayType || currentRoom?.gamePlayType || settingsRef.current?.gamePlayType || 'KAHOOT';
       const isTug = resolvedGamePlayType === 'TUG_OF_WAR';
-      const isVolleyball = resolvedGamePlayType === 'VOLLEYBALL';
-      const isVolleyballVs = isVolleyball && (updatedSettings?.volleyballSettings?.gameStyle === 'TEAM_VS' || currentRoom?.volleyballSettings?.gameStyle === 'TEAM_VS');
-      const activeTeams: TeamId[] = (isTug || isVolleyballVs)
+      const isTamaire = resolvedGamePlayType === 'TAMAIRE' || resolvedGamePlayType === 'VOLLEYBALL';
+      const resolvedTamaireSettings =
+        updatedSettings?.tamaireSettings ??
+        updatedSettings?.volleyballSettings ??
+        currentRoom?.tamaireSettings ??
+        currentRoom?.volleyballSettings;
+      const isTamaireVs = isTamaire && (!resolvedTamaireSettings || resolvedTamaireSettings.gameStyle !== 'COOP_RALLY');
+      const requestedMode = updatedSettings?.gameMode || currentRoom?.mode || settingsRef.current?.gameMode || 'INDIVIDUAL';
+      const effectiveMode: GameMode = (isTug || isTamaireVs)
+        ? 'TEAM'
+        : (isTamaire && resolvedTamaireSettings?.gameStyle === 'COOP_RALLY')
+          ? 'INDIVIDUAL'
+          : requestedMode;
+
+      const resolvedTeamCount = updatedSettings?.teamCount ?? currentRoom?.teamCount ?? 2;
+      const activeTeams: TeamId[] = (isTug || isTamaireVs)
         ? ['team_red', 'team_white']
-        : (updatedSettings?.activeTeams 
-          || (updatedSettings?.teamCount ? (updatedSettings.teamCount === 2 ? ['team_red', 'team_white'] : RAINBOW_TEAM_ORDER.slice(0, updatedSettings.teamCount)) : undefined)
-          || currentRoom?.activeTeams 
-          || (currentRoom?.teamCount === 2 ? ['team_red', 'team_white'] : RAINBOW_TEAM_ORDER.slice(0, currentRoom?.teamCount || 2)));
+        : (updatedSettings?.activeTeams && updatedSettings.activeTeams.length >= 2
+          ? updatedSettings.activeTeams
+          : updatedSettings?.teamCount
+            ? (updatedSettings.teamCount === 2 ? ['team_red', 'team_white'] : RAINBOW_TEAM_ORDER.slice(0, updatedSettings.teamCount))
+            : (currentRoom?.activeTeams && currentRoom.activeTeams.length >= 2
+              ? currentRoom.activeTeams
+              : (resolvedTeamCount === 2 ? ['team_red', 'team_white'] : RAINBOW_TEAM_ORDER.slice(0, resolvedTeamCount))));
 
       const initialTeamScores: Partial<Record<TeamId, any>> = {};
-      activeTeams.forEach(tId => {
-        const preset = TEAM_PRESETS[tId];
-        if (preset) {
-          initialTeamScores[tId] = {
-            name: preset.name,
-            jaName: preset.jaName,
-            score: 0,
-            correctCount: 0,
-            memberCount: 0,
-            averageScore: 0,
-            color: preset.color,
-            emoji: preset.emoji
-          };
-        }
-      });
+      if (effectiveMode === 'TEAM') {
+        activeTeams.forEach(tId => {
+          const preset = TEAM_PRESETS[tId];
+          if (preset) {
+            initialTeamScores[tId] = {
+              name: preset.name,
+              jaName: preset.jaName,
+              score: 0,
+              correctCount: 0,
+              memberCount: 0,
+              averageScore: 0,
+              color: preset.color,
+              emoji: preset.emoji
+            };
+          }
+        });
+      }
 
-      // In Team Mode, Tug of War, or Volleyball VS, re-balance connected players evenly across active teams on reset
-      if (currentRoom?.mode === 'TEAM' || isTug || isVolleyballVs) {
-        const playerEntries = Object.entries(resetPlayers);
-        playerEntries.forEach(([_, p], idx) => {
-          if (activeTeams.length > 0) {
-            p.teamId = activeTeams[idx % activeTeams.length];
+      // Preserve existing valid team assignments (manual lobby swaps & student picks) while balancing new/invalid players
+      const memberCounts = assignTeamsForNewRound(resetPlayers, activeTeams, effectiveMode);
+      if (effectiveMode === 'TEAM') {
+        activeTeams.forEach((tId) => {
+          if (initialTeamScores[tId]) {
+            initialTeamScores[tId].memberCount = memberCounts[tId] ?? 0;
           }
         });
       }
@@ -1431,13 +1563,21 @@ export function useQuizRoom(
       await safeRemove(`roomResponses/${roomCode}`);
       await safeRemove(`rooms/${roomCode}/responses`);
 
+      const serverNow = getServerTime();
       const updates: any = {
         status: 'LOBBY',
+        updatedAt: serverNow,
+        mode: effectiveMode,
+        activeTeams: effectiveMode === 'TEAM' ? activeTeams : null,
+        teamCount: effectiveMode === 'TEAM' ? activeTeams.length : null,
+        teamAssignment: effectiveMode === 'TEAM'
+          ? (updatedSettings?.teamAssignment || currentRoom?.teamAssignment || 'AUTO_BALANCE')
+          : null,
         currentQuestionIndex: 0,
         currentQuestion: null,
         responses: null,
         players: resetPlayers,
-        teamScores: initialTeamScores,
+        teamScores: effectiveMode === 'TEAM' ? initialTeamScores : {},
         troubleWords: {},
         questions: sanitizeQuestionsForPublicRoom(newQuestions, resolvedGamePlayType),
         totalQuestions: newQuestions.length,
@@ -1446,9 +1586,16 @@ export function useQuizRoom(
         raceFinishGraceStartTime: null,
         tugOfWarStartTime: null,
         tugOfWarFinished: null,
+        tugOfWarRound: null,
+        tugOfWarRoundWins: null,
+        tugOfWarBaselinePulls: null,
+        tamaireStartTime: null,
+        tamaireFinished: null,
+        tamaireLiveState: null,
         volleyballStartTime: null,
         volleyballFinished: null,
         volleyballLiveState: null,
+        winningTeam: null,
         podiumFinishers: null,
         awardedBadges: null,
         analytics: null,
@@ -1456,11 +1603,29 @@ export function useQuizRoom(
       };
 
       if (updatedSettings) {
-        if (updatedSettings.gamePlayType) updates.gamePlayType = updatedSettings.gamePlayType;
-        if (updatedSettings.sprintSettings) updates.sprintSettings = updatedSettings.sprintSettings;
-        if (updatedSettings.tugOfWarSettings) updates.tugOfWarSettings = updatedSettings.tugOfWarSettings;
-        if (updatedSettings.volleyballSettings) updates.volleyballSettings = updatedSettings.volleyballSettings;
-        if (updatedSettings.timeLimitSeconds) updates.timeLimitSeconds = updatedSettings.timeLimitSeconds;
+        if (updatedSettings.grade !== undefined) updates.grade = updatedSettings.grade;
+        if (updatedSettings.unit !== undefined) updates.unit = updatedSettings.unit;
+        if (updatedSettings.gamePlayType) {
+          updates.gamePlayType = updatedSettings.gamePlayType;
+          if (updatedSettings.gamePlayType !== 'GRAND_PRIX_3D' && updatedSettings.gamePlayType !== 'SPRINT_RACE') {
+            updates.sprintSettings = null;
+          }
+          if (updatedSettings.gamePlayType !== 'TUG_OF_WAR') {
+            updates.tugOfWarSettings = null;
+          }
+          if (updatedSettings.gamePlayType !== 'TAMAIRE' && updatedSettings.gamePlayType !== 'VOLLEYBALL') {
+            updates.tamaireSettings = null;
+            updates.volleyballSettings = null;
+          }
+        }
+        if (updatedSettings.sprintSettings !== undefined) updates.sprintSettings = updatedSettings.sprintSettings;
+        if (updatedSettings.tugOfWarSettings !== undefined) updates.tugOfWarSettings = updatedSettings.tugOfWarSettings;
+        if (updatedSettings.tamaireSettings !== undefined || updatedSettings.volleyballSettings !== undefined) {
+          const nextTamaireCfg = updatedSettings.tamaireSettings ?? updatedSettings.volleyballSettings;
+          updates.tamaireSettings = nextTamaireCfg;
+          updates.volleyballSettings = nextTamaireCfg;
+        }
+        if (updatedSettings.timeLimitSeconds !== undefined) updates.timeLimitSeconds = updatedSettings.timeLimitSeconds;
         if (updatedSettings.recallDelaySeconds !== undefined) updates.recallDelaySeconds = updatedSettings.recallDelaySeconds;
         if (updatedSettings.distractorEliminationMode !== undefined) {
           updates.distractorEliminationMode = updatedSettings.distractorEliminationMode;
@@ -1469,28 +1634,66 @@ export function useQuizRoom(
           updates.eliminateDistractors = updatedSettings.eliminateDistractors;
           updates.distractorEliminationMode = updatedSettings.eliminateDistractors ? 'HALFWAY' : 'OFF';
         }
-        if (updatedSettings.bgm) updates.bgm = updatedSettings.bgm;
-        if (updatedSettings.vocabularyScope) updates.vocabularyScope = updatedSettings.vocabularyScope;
-        if (updatedSettings.selectedUnits) updates.selectedUnits = updatedSettings.selectedUnits;
-        if (updatedSettings.subject) updates.subject = updatedSettings.subject;
-        if (updatedSettings.mathGrade) updates.mathGrade = updatedSettings.mathGrade;
-        if (updatedSettings.mathDomain) updates.mathDomain = updatedSettings.mathDomain;
-        if (updatedSettings.mathTopicId !== undefined) updates.mathTopicId = updatedSettings.mathTopicId;
+        if (updatedSettings.deliveryStream !== undefined) updates.deliveryStream = updatedSettings.deliveryStream;
+        if (updatedSettings.ipadDisplayMode !== undefined) updates.ipadDisplayMode = updatedSettings.ipadDisplayMode;
+        if (updatedSettings.awardToggles !== undefined) updates.awardToggles = updatedSettings.awardToggles;
+        if (updatedSettings.choiceImageMode !== undefined) updates.choiceImageMode = updatedSettings.choiceImageMode;
+        if (updatedSettings.englishReadingAid !== undefined) updates.englishReadingAid = updatedSettings.englishReadingAid;
+        if (updatedSettings.schoolId !== undefined) updates.schoolId = updatedSettings.schoolId || null;
+        if (updatedSettings.classId !== undefined) updates.classId = updatedSettings.classId || null;
+        if (updatedSettings.isTestGame !== undefined) {
+          updates.isTestGame = updatedSettings.isTestGame || updatedSettings.classId === 'TEST' || roomCode.startsWith('9');
+        }
+        if (updatedSettings.recordRoster !== undefined) updates.recordRoster = updatedSettings.recordRoster;
+        if (updatedSettings.bgm !== undefined) updates.bgm = updatedSettings.bgm;
+        if (updatedSettings.vocabularyScope !== undefined) updates.vocabularyScope = updatedSettings.vocabularyScope;
+        if (updatedSettings.selectedUnits !== undefined) updates.selectedUnits = updatedSettings.selectedUnits || null;
+        if (updatedSettings.subject) {
+          updates.subject = updatedSettings.subject;
+          if (updatedSettings.subject === 'ENGLISH') {
+            updates.mathGrade = null;
+            updates.mathDomain = null;
+            updates.mathTopicId = null;
+          }
+        }
+        if (updatedSettings.mathGrade !== undefined) updates.mathGrade = updatedSettings.mathGrade;
+        if (updatedSettings.mathDomain !== undefined) updates.mathDomain = updatedSettings.mathDomain;
+        if ('mathTopicId' in updatedSettings) updates.mathTopicId = updatedSettings.mathTopicId ?? null;
       }
 
       await safeUpdate(`rooms/${roomCode}`, updates);
 
-      if (currentRoom?.schoolId && currentRoom?.classId && !currentRoom?.isStudentHost) {
+      const nextSchoolId = updatedSettings?.schoolId !== undefined
+        ? (updatedSettings.schoolId || undefined)
+        : currentRoom?.schoolId;
+      const nextClassId = updatedSettings?.classId !== undefined
+        ? (updatedSettings.classId || undefined)
+        : currentRoom?.classId;
+      const nextIsTestGame = Boolean(
+        updatedSettings?.isTestGame ?? currentRoom?.isTestGame
+      ) || nextClassId === 'TEST' || roomCode.startsWith('9');
+
+      if (
+        currentRoom?.schoolId &&
+        currentRoom?.classId &&
+        currentRoom.classId !== 'TEST' &&
+        !currentRoom?.isStudentHost &&
+        (nextSchoolId !== currentRoom.schoolId || nextClassId !== currentRoom.classId || nextIsTestGame)
+      ) {
+        clearClassRoomPointers(currentRoom.schoolId, currentRoom.classId, roomCode).catch(() => {});
+      }
+
+      if (nextSchoolId && nextClassId && nextClassId !== 'TEST' && !nextIsTestGame && !currentRoom?.isStudentHost) {
         const teacherRoomSummary = {
           code: roomCode,
           gamePlayType: resolvedGamePlayType,
-          unit: currentRoom.unit,
+          unit: updatedSettings?.unit ?? currentRoom?.unit ?? '',
           isTeacher: true,
-          updatedAt: getServerTime()
+          updatedAt: serverNow
         };
         await Promise.all([
-          safeSet(`schools/${currentRoom.schoolId}/classes/${currentRoom.classId}/analyticsSummary/teacherRoom`, teacherRoomSummary),
-          safeSet(`schools/${currentRoom.schoolId}/classes/${currentRoom.classId}/analyticsSummary/activeRoom`, teacherRoomSummary)
+          safeSet(`schools/${nextSchoolId}/classes/${nextClassId}/analyticsSummary/teacherRoom`, teacherRoomSummary),
+          safeSet(`schools/${nextSchoolId}/classes/${nextClassId}/analyticsSummary/activeRoom`, teacherRoomSummary)
         ]).catch(() => {});
       }
 
@@ -1509,7 +1712,7 @@ export function useQuizRoom(
     if (!roomCode) return;
     try {
       await ensureAnonymousAuth();
-      const currentRoom = roomRef.current || room;
+      const currentRoom = roomRef.current;
       try {
         sessionStorage.removeItem(`quiz_host_questions_${roomCode}`);
       } catch {}
@@ -1522,8 +1725,12 @@ export function useQuizRoom(
 
       await safeUpdate(`rooms/${roomCode}`, { status: 'CLOSED', updatedAt: getServerTime() });
       const codeToRemove = roomCode;
+      if (closeRoomTimerRef.current) {
+        clearTimeout(closeRoomTimerRef.current);
+      }
       // Fire delayed deletion non-blockingly so student tablets cleanly receive the CLOSED event
-      setTimeout(() => {
+      closeRoomTimerRef.current = setTimeout(() => {
+        closeRoomTimerRef.current = null;
         safeRemove(`rooms/${codeToRemove}`).catch(() => {});
       }, 2500);
       setRoom(null);
@@ -1531,27 +1738,28 @@ export function useQuizRoom(
     } catch (err) {
       console.error("Error closing room:", err);
     }
-  }, [roomCode, room?.schoolId, room?.classId]);
+  }, [roomCode]);
 
   // Host: Kick player with atomic team score recalculation
   const kickPlayer = useCallback(async (playerId: string) => {
     if (!roomCode) return;
     try {
       await ensureAnonymousAuth();
-      const playerToKick = room?.players?.[playerId];
+      const currentRoom = roomRef.current;
+      const playerToKick = currentRoom?.players?.[playerId];
       await safeRemove(`rooms/${roomCode}/players/${playerId}`);
       await safeRemove(`roomPlayers/${roomCode}/${playerId}`).catch(() => {});
 
-      if (room?.boundStudents) {
-        for (const [attNum, boundData] of Object.entries(room.boundStudents)) {
+      if (currentRoom?.boundStudents) {
+        for (const [attNum, boundData] of Object.entries(currentRoom.boundStudents)) {
           if ((boundData as any)?.playerId === playerId) {
             await safeRemove(`rooms/${roomCode}/boundStudents/${attNum}`);
           }
         }
       }
 
-      if (room?.mode === 'TEAM' && playerToKick?.teamId && room?.teamScores?.[playerToKick.teamId]) {
-        const remainingTeamMembers = Object.values(room.players || {})
+      if (currentRoom?.mode === 'TEAM' && playerToKick?.teamId && currentRoom?.teamScores?.[playerToKick.teamId]) {
+        const remainingTeamMembers = Object.values(currentRoom.players || {})
           .filter(p => p.id !== playerId && p.teamId === playerToKick.teamId);
         const mCount = remainingTeamMembers.length;
         const totalScore = remainingTeamMembers.reduce((sum, m) => sum + (m.score || 0), 0);
@@ -1572,7 +1780,7 @@ export function useQuizRoom(
     } catch (err: any) {
       console.error("Error kicking player:", err);
     }
-  }, [roomCode, room]);
+  }, [roomCode]);
 
   // Host: Change player team in lobby
   const changePlayerTeam = useCallback(async (playerId: string, newTeamId: TeamId) => {
@@ -1592,12 +1800,12 @@ export function useQuizRoom(
     if (!roomCode) return;
     try {
       await ensureAnonymousAuth();
-      const nextState = forcedState !== undefined ? forcedState : !room?.eyesUp;
+      const nextState = forcedState !== undefined ? forcedState : !roomRef.current?.eyesUp;
       await safeUpdate(`rooms/${roomCode}`, { eyesUp: nextState });
     } catch (err: any) {
       console.error("Error toggling eyes up front:", err);
     }
-  }, [roomCode, room?.eyesUp]);
+  }, [roomCode]);
 
   // Student: Join an existing room
   const joinRoom = useCallback(async (
@@ -1622,22 +1830,26 @@ export function useQuizRoom(
 
       // Purge any stale ghost player from the exact same seat/iPad reconnecting under a new anonymous UID
       const cleanNick = nickname.trim().toLowerCase();
+      const hasAtt = attendanceNumber !== undefined && attendanceNumber !== null;
       if (roomData.players) {
         for (const [otherId, otherP] of Object.entries(roomData.players)) {
           if (otherId === playerId) continue;
-          
-          // Match 1: Same attendance number (definitive reconnect from same classroom seat)
-          const isSameSeat = attendanceNumber && otherP.attendanceNumber === attendanceNumber && attendanceNumber > 0;
+
+          const otherHasAtt = otherP.attendanceNumber !== undefined && otherP.attendanceNumber !== null;
+          // Match 1: Same attendance number (including Seat 00 Teacher/Tester)
+          const isSameSeat = hasAtt && otherHasAtt && otherP.attendanceNumber === attendanceNumber;
           // Match 2: Same nickname BUT only if not a different enrolled student's seat
           const isSameNick = otherP.nickname?.trim().toLowerCase() === cleanNick;
-          const isDifferentSeat = Boolean(attendanceNumber && otherP.attendanceNumber && otherP.attendanceNumber !== attendanceNumber);
-          
+          const isDifferentSeat = hasAtt && otherHasAtt && otherP.attendanceNumber !== attendanceNumber;
+
           if (isSameSeat || (isSameNick && !isDifferentSeat)) {
             await safeRemove(`rooms/${code}/players/${otherId}`).catch(() => {});
             await safeRemove(`roomPlayers/${code}/${otherId}`).catch(() => {});
           }
         }
       }
+
+      const serverNow = getServerTime();
 
       if (existingPlayer) {
         const liveExisting = await safeGet<Partial<QuizPlayer>>(`roomPlayers/${code}/${playerId}`).catch(() => null);
@@ -1650,7 +1862,7 @@ export function useQuizRoom(
           frame: studentProfile?.equipped?.frame || existingPlayer.frame,
           title: studentProfile?.equipped?.title || existingPlayer.title,
           attendanceNumber: attendanceNumber ?? existingPlayer.attendanceNumber,
-          joinedAt: existingPlayer.joinedAt || Date.now(),
+          joinedAt: existingPlayer.joinedAt || serverNow,
           kartTheme: studentProfile?.equipped?.kartTheme || existingPlayer.kartTheme || getSavedKartTheme(),
         };
         await safeSet(playerPath, reconnectedPlayer);
@@ -1675,7 +1887,8 @@ export function useQuizRoom(
       let assignedTeam = teamId;
       if (roomData.mode === 'TEAM') {
         const isTug = roomData.gamePlayType === 'TUG_OF_WAR';
-        const isVolleyballVs = roomData.gamePlayType === 'VOLLEYBALL' && (!roomData.volleyballSettings || roomData.volleyballSettings.gameStyle === 'TEAM_VS');
+        const resolvedTamaireCfg = roomData.tamaireSettings || roomData.volleyballSettings;
+        const isVolleyballVs = (roomData.gamePlayType === 'TAMAIRE' || roomData.gamePlayType === 'VOLLEYBALL') && (!resolvedTamaireCfg || resolvedTamaireCfg.gameStyle !== 'COOP_RALLY');
         const teams: TeamId[] = (isTug || isVolleyballVs)
           ? ['team_red', 'team_white']
           : (roomData.activeTeams || (roomData.teamCount === 2 ? ['team_red', 'team_white'] : RAINBOW_TEAM_ORDER.slice(0, roomData.teamCount || 2)));
@@ -1685,7 +1898,16 @@ export function useQuizRoom(
 
         if (assignedTeam && teams.includes(assignedTeam)) {
           const chosenCount = currentPlayers.filter(p => p.teamId === assignedTeam).length;
-          const isFull = chosenCount >= 10 || (chosenCount >= minCount + 2 && currentPlayers.length >= 8);
+          const classSize = roomData.schoolId && roomData.classId && roomData.classId !== 'TEST'
+            ? getClassSize(roomData.schoolId, roomData.classId)
+            : 35;
+          const isFull = isTeamSelectionFull({
+            teamCountForTeam: chosenCount,
+            minCount,
+            totalPlayers: currentPlayers.length,
+            teamCount: teams.length,
+            classSize,
+          });
           if (isFull) {
             const minIndex = counts.indexOf(minCount);
             assignedTeam = teams[minIndex];
@@ -1711,7 +1933,7 @@ export function useQuizRoom(
         correctCount: 0,
         totalAnswered: 0,
         fastestTimeMs: 999999,
-        joinedAt: Date.now(),
+        joinedAt: serverNow,
         answers: {},
         kartTheme: studentProfile?.equipped?.kartTheme || getSavedKartTheme(),
       };
@@ -1775,7 +1997,7 @@ export function useQuizRoom(
       if (updates.callsign !== undefined) payload.callsign = updates.callsign;
       if (updates.greeting !== undefined) {
         payload.greeting = updates.greeting;
-        payload.greetingTimestamp = Date.now();
+        payload.greetingTimestamp = getServerTime();
       }
 
       await safeUpdate(`rooms/${roomCode}/players/${options.playerId}`, payload);
@@ -1787,10 +2009,11 @@ export function useQuizRoom(
 
   // Student: Submit answer
   const submitAnswer = useCallback(async (playerId: string, optionId: string, clientTimeTakenMs?: number) => {
-    if (!roomCode || !room?.currentQuestion) return;
+    const currentRoom = roomRef.current;
+    if (!roomCode || !currentRoom?.currentQuestion) return;
 
-    const timeLimit = room.currentQuestion.timeLimitMs || 15000;
-    const hostStartTime = room.currentQuestion.startTime || 0;
+    const timeLimit = currentRoom.currentQuestion.timeLimitMs || 15000;
+    const hostStartTime = currentRoom.currentQuestion.startTime || 0;
     const timeTakenMs = clientTimeTakenMs !== undefined && clientTimeTakenMs > 0
       ? Math.min(timeLimit, Math.max(100, clientTimeTakenMs))
       : (hostStartTime > 0 ? Math.min(timeLimit, Math.max(100, getServerTime() - hostStartTime)) : 1000);
@@ -1805,7 +2028,7 @@ export function useQuizRoom(
     } catch (err: any) {
       console.error("Error submitting answer:", err);
     }
-  }, [roomCode, room]);
+  }, [roomCode]);
 
   // Student: Submit Sprint / 3D Grand Prix Answer & Telemetry
   const submitSprintAnswer = useCallback(async (
@@ -1860,6 +2083,7 @@ export function useQuizRoom(
         }
         updatePayload[`answers/${questionIndex}`] = answerRecord;
         updatePayload.lastAnswer = {
+          questionIndex,
           optionId,
           isCorrect,
           pointsEarned,
@@ -1951,7 +2175,7 @@ export function useQuizRoom(
           if (currentData !== null && currentData.playerId !== playerId) {
             return undefined;
           }
-          return { playerId, nickname, score, claimedAt: Date.now() };
+          return { playerId, nickname, score, claimedAt: getServerTime() };
         }
       );
       return result.committed;
@@ -1991,6 +2215,9 @@ export function useQuizRoom(
     nextTugOfWarRound,
     freezeTugOfWar,
     endTugOfWar,
+    startTamaire,
+    freezeTamaire,
+    endTamaire,
     startVolleyball,
     freezeVolleyball,
     endVolleyball,

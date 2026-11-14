@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { QuizQuestion, IpadDisplayMode, OPTION_STYLES, TeamId, TEAM_PRESETS, RecallDelaySeconds, DistractorEliminationMode } from '../types';
+import { isEnglishPromptType } from '../core/quizEngine';
 import { soundEffects } from '@/services/soundEffects';
 import { getServerTime } from '@/services/rtdbSafe';
 import { useLanguage } from '@/context/LanguageContext';
@@ -163,8 +164,8 @@ export const QuizStudentQuestion: React.FC<QuizStudentQuestionProps> = ({
   const selectedOption = question.options.find(o => o.id === selectedId);
 
   return (
-    <div className={`w-full h-[100dvh] max-h-[100dvh] max-w-5xl mx-auto flex flex-col justify-between p-2 sm:p-3 select-none overflow-hidden student-ui animate-in fade-in duration-150 ${
-      secondsLeft <= 5 && !hasAnswered ? 'ring-4 ring-rose-500/70 inset transition-all duration-300' : ''
+    <div className={`w-full h-full max-h-full max-w-5xl mx-auto flex flex-col justify-between p-2 sm:p-3 select-none overflow-hidden student-ui animate-in fade-in duration-150 ${
+      secondsLeft <= 5 && !hasAnswered ? 'ring-4 ring-rose-500/70 ring-inset transition-all duration-300' : ''
     }`}>
       {/* Top Banner */}
       <div className="flex flex-nowrap items-center justify-between gap-2 pb-1.5 shrink-0">
@@ -192,7 +193,7 @@ export const QuizStudentQuestion: React.FC<QuizStudentQuestionProps> = ({
             size={38}
           />
 
-          <div className="flex items-center gap-1.5 text-xs font-bold text-slate-400 whitespace-nowrap shrink-0">
+          <div className="flex items-center gap-1.5 text-xs font-bold text-slate-600 dark:text-slate-400 whitespace-nowrap shrink-0">
             <Clock size={13} className={secondsLeft <= 5 ? 'text-rose-500 animate-spin' : ''} />
             <span className={`font-mono font-black text-xs ${secondsLeft <= 5 ? 'text-rose-500 font-bold animate-pulse' : 'text-slate-600 dark:text-slate-300'}`}>
               {secondsLeft}s
@@ -255,10 +256,19 @@ export const QuizStudentQuestion: React.FC<QuizStudentQuestionProps> = ({
                 </div>
               )}
               <div className="flex flex-col items-center">
-                <h3 className="text-base sm:text-lg md:text-xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
-                  {question.promptText}
-                </h3>
-                {question.promptSubtext && (
+                {!question.isMath && question.promptType === 'JA_MEANING' && (question.targetWordRuby?.length || question.targetWordJa || question.targetWordHiragana) ? (
+                  <RubyText
+                    ruby={question.targetWordRuby}
+                    kanji={question.targetWordJa || question.promptText}
+                    hiragana={question.targetWordHiragana}
+                    className="text-base sm:text-lg md:text-xl font-black text-slate-900 dark:text-white tracking-tight leading-tight"
+                  />
+                ) : (
+                  <h3 className="text-base sm:text-lg md:text-xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
+                    {question.promptText}
+                  </h3>
+                )}
+                {question.promptSubtext && !(!question.isMath && question.promptType === 'JA_MEANING' && question.targetWordRuby?.length) && (
                   <span className="text-xs font-bold text-slate-500 dark:text-slate-400 mt-0.5">
                     {question.promptSubtext}
                   </span>
@@ -297,7 +307,10 @@ export const QuizStudentQuestion: React.FC<QuizStudentQuestionProps> = ({
                 <CheckCircle2 size={16} className="text-emerald-600 dark:text-emerald-400" />
                 <span>{t("Locked in: ", "えらんだ答え: ")}</span>
                 <span>
-                  {selectedOption.symbol === 'triangle' ? '▲' : selectedOption.symbol === 'diamond' ? '◆' : selectedOption.symbol === 'circle' ? '●' : '■'} {selectedOption.english}
+                  {selectedOption.symbol === 'triangle' ? '▲' : selectedOption.symbol === 'diamond' ? '◆' : selectedOption.symbol === 'circle' ? '●' : '■'}{' '}
+                  {isEnglishPromptType(question.promptType)
+                    ? (selectedOption.ja_kanji || selectedOption.ja_hiragana || selectedOption.english)
+                    : selectedOption.english}
                 </span>
               </div>
             )}
@@ -305,7 +318,7 @@ export const QuizStudentQuestion: React.FC<QuizStudentQuestionProps> = ({
             {/* Prominent Eyes-Up Direction */}
             <div className="mt-3 px-5 py-2.5 rounded-2xl bg-amber-100 dark:bg-amber-950/60 border-2 border-amber-300 dark:border-amber-700/80 flex items-center gap-2 text-xs sm:text-sm font-black text-amber-950 dark:text-amber-200 shadow-sm animate-pulse">
               <span className="text-lg">👀</span>
-              <span>{t('Look at the front TV screen!', '前のテレビ画面を見てね！')}</span>
+              <span>{t('Look at the front TV screen!', <><ruby>前<rt>まえ</rt></ruby>のテレビ<ruby>画面<rt>がめん</rt></ruby>を<ruby>見<rt>み</rt></ruby>てね！</>)}</span>
             </div>
           </div>
         ) : (
@@ -333,13 +346,14 @@ export const QuizStudentQuestion: React.FC<QuizStudentQuestionProps> = ({
                 const style = OPTION_STYLES[idx] || OPTION_STYLES[0];
                 const isSelected = selectedId === option.id;
                 const isEliminated = eliminatedOptionIds.has(option.id);
+                const isYellowCard = option.symbol === 'circle' && !isEliminated;
 
-                const isEnPrompt = question.promptType === 'EN_TO_JA' || question.promptType === 'EN_WORD';
+                const isEnPrompt = isEnglishPromptType(question.promptType);
                 const displayText = isEnPrompt
                   ? (option.ja_kanji || option.ja_hiragana || option.english)
                   : option.english;
                 const subText = isEnPrompt
-                  ? (option.ja_hiragana && option.ja_kanji !== option.ja_hiragana ? option.ja_hiragana : undefined)
+                  ? (option.ja_hiragana && option.ja_kanji && option.ja_kanji !== option.ja_hiragana ? option.ja_hiragana : undefined)
                   : (question.englishReadingAid === 'WITH_KATAKANA' && option.en_katakana ? `【${option.en_katakana}】` : undefined);
 
                 const toyBtnClass = {
@@ -350,6 +364,8 @@ export const QuizStudentQuestion: React.FC<QuizStudentQuestionProps> = ({
                 }[option.symbol] || 'btn-toy-base';
 
                 const textureStyle = CUD_TEXTURE_STYLES[option.symbol] || {};
+                const primaryInk = isYellowCard ? 'text-slate-950' : 'text-white drop-shadow-md';
+                const secondaryInk = isYellowCard ? 'text-slate-800' : 'text-white/90';
 
                 return (
                   <button
@@ -373,7 +389,7 @@ export const QuizStudentQuestion: React.FC<QuizStudentQuestionProps> = ({
                     {/* EYES_UP Mode: Dynamically Scaled Shape Symbol (Never Sliced) */}
                     {ipadDisplayMode === 'EYES_UP' && (
                       <span
-                        className={`font-black leading-none text-white drop-shadow-md select-none text-6xl sm:text-8xl md:text-9xl`}
+                        className={`font-black leading-none select-none text-6xl sm:text-8xl md:text-9xl ${primaryInk}`}
                         style={{
                           fontSize: 'min(14dvh, 22vw, 110px)',
                           lineHeight: 1
@@ -385,7 +401,7 @@ export const QuizStudentQuestion: React.FC<QuizStudentQuestionProps> = ({
 
                     {/* MIRRORED Mode: Shape Symbol Pinned to Top-Left */}
                     {ipadDisplayMode === 'MIRRORED' && (
-                      <span className="absolute top-2 left-2.5 sm:top-3 sm:left-3.5 text-lg sm:text-2xl font-black text-white/95 drop-shadow select-none">
+                      <span className={`absolute top-2 left-2.5 sm:top-3 sm:left-3.5 text-lg sm:text-2xl font-black select-none ${isYellowCard ? 'text-slate-950' : 'text-white/95 drop-shadow'}`}>
                         {style.shapeName}
                       </span>
                     )}
@@ -411,20 +427,20 @@ export const QuizStudentQuestion: React.FC<QuizStudentQuestionProps> = ({
                         )}
 
                         <div className={`flex flex-col min-w-0 ${!isEnPrompt && option.image ? 'items-center sm:items-start text-center sm:text-left' : 'items-center text-center'}`}>
-                          {isEnPrompt ? (
+                          {isEnPrompt && (option.ruby?.length || option.ja_kanji || option.ja_hiragana) ? (
                             <RubyText
                               ruby={option.ruby}
                               kanji={option.ja_kanji}
                               hiragana={option.ja_hiragana}
-                              className="text-sm sm:text-lg md:text-xl font-black text-white drop-shadow-md leading-tight text-center"
+                              className={`text-sm sm:text-lg md:text-xl font-black leading-tight text-center ${primaryInk}`}
                             />
                           ) : (
                             <>
-                              <span className="text-sm sm:text-lg md:text-xl font-black text-white drop-shadow-md leading-tight break-words">
+                              <span className={`text-sm sm:text-lg md:text-xl font-black leading-tight break-words ${primaryInk}`}>
                                 {displayText}
                               </span>
                               {subText && (
-                                <span className="text-xs sm:text-sm font-bold text-white/90 mt-0.5 break-words">
+                                <span className={`text-xs sm:text-sm font-bold mt-0.5 break-words ${secondaryInk}`}>
                                   {subText}
                                 </span>
                               )}
@@ -452,7 +468,7 @@ export const QuizStudentQuestion: React.FC<QuizStudentQuestionProps> = ({
             {t('🤔 Thinking time... recall the English word in your mind!', <>🤔 <ruby>思考<rt>しこう</rt></ruby>タイム<ruby>中<rt>ちゅう</rt></ruby>... <ruby>頭<rt>あたま</rt></ruby>の<ruby>中<rt>なか</rt></ruby>で<ruby>英単語<rt>えいたんご</rt></ruby>を<ruby>思<rt>おも</rt></ruby>い<ruby>出<rt>だ</rt></ruby>そう！</>)}
           </p>
         ) : (
-          <p className="text-xs font-bold text-slate-400 dark:text-slate-500 animate-pulse">
+          <p className="text-xs font-bold text-slate-600 dark:text-slate-400 animate-pulse">
             {t('Tap the button for the correct color quickly!', <><ruby>正<rt>ただ</rt></ruby>しいと<ruby>思<rt>おも</rt></ruby>う<ruby>色<rt>いろ</rt></ruby>のボタンを<ruby>素早<rt>すばや</rt></ruby>くタップ！</>)}
           </p>
         )}

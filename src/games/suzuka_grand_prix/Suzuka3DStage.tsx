@@ -491,6 +491,133 @@ function createPrecipitationSystem(
   }
 }
 
+/**
+ * 1-Draw-Call GPU Celebration Fireworks System over the Main Straight & Ferris Wheel.
+ * Zero per-frame CPU particle iteration; spherical burst physics + gravity run entirely in the vertex shader.
+ */
+function createFireworksSystem(anchorPos: THREE.Vector3) {
+  const shells = [
+    { offset: [0, 32, -18], color: [1.0, 0.82, 0.22], phase: 0.0 },
+    { offset: [-24, 38, 12], color: [1.0, 0.28, 0.68], phase: 0.55 },
+    { offset: [22, 35, 16], color: [0.18, 0.92, 1.0], phase: 1.1 },
+    { offset: [-14, 42, -28], color: [0.32, 1.0, 0.52], phase: 1.65 },
+    { offset: [18, 40, -8], color: [1.0, 0.45, 0.15], phase: 2.2 },
+  ];
+  const sparksPerShell = 84;
+  const totalSparks = shells.length * sparksPerShell;
+
+  const positions = new Float32Array(totalSparks * 3);
+  const velocities = new Float32Array(totalSparks * 3);
+  const colors = new Float32Array(totalSparks * 3);
+  const phases = new Float32Array(totalSparks);
+
+  let seed = 7919;
+  const rand = () => {
+    seed = (seed * 1664525 + 1013904223) >>> 0;
+    return seed / 4294967296;
+  };
+
+  let idx = 0;
+  for (const sh of shells) {
+    const cx = anchorPos.x + sh.offset[0];
+    const cy = anchorPos.y + sh.offset[1];
+    const cz = anchorPos.z + sh.offset[2];
+    for (let s = 0; s < sparksPerShell; s++) {
+      const u = rand();
+      const v = rand();
+      const theta = u * Math.PI * 2;
+      const phi = Math.acos(2 * v - 1);
+      const speed = 10.5 + rand() * 8.5;
+
+      positions[idx * 3 + 0] = cx;
+      positions[idx * 3 + 1] = cy;
+      positions[idx * 3 + 2] = cz;
+
+      velocities[idx * 3 + 0] = Math.sin(phi) * Math.cos(theta) * speed;
+      velocities[idx * 3 + 1] = Math.cos(phi) * speed;
+      velocities[idx * 3 + 2] = Math.sin(phi) * Math.sin(theta) * speed;
+
+      const cJitter = 0.88 + rand() * 0.24;
+      colors[idx * 3 + 0] = Math.min(1, sh.color[0] * cJitter);
+      colors[idx * 3 + 1] = Math.min(1, sh.color[1] * cJitter);
+      colors[idx * 3 + 2] = Math.min(1, sh.color[2] * cJitter);
+
+      phases[idx] = sh.phase + rand() * 0.08;
+      idx++;
+    }
+  }
+
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  geo.setAttribute('aVelocity', new THREE.BufferAttribute(velocities, 3));
+  geo.setAttribute('aColor', new THREE.BufferAttribute(colors, 3));
+  geo.setAttribute('aPhase', new THREE.BufferAttribute(phases, 1));
+
+  const uniforms = {
+    uTime: { value: 0 },
+    uActive: { value: 0 },
+  };
+
+  const mat = new THREE.ShaderMaterial({
+    uniforms,
+    transparent: true,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending,
+    vertexShader: /* glsl */ `
+      attribute vec3 aVelocity;
+      attribute vec3 aColor;
+      attribute float aPhase;
+      uniform float uTime;
+      uniform float uActive;
+      varying vec3 vColor;
+      varying float vAlpha;
+
+      void main() {
+        vColor = aColor;
+        float cycle = mod(uTime + aPhase, 2.75);
+        float life = clamp(cycle / 1.95, 0.0, 1.0);
+        vec3 burstPos = position + aVelocity * (cycle * (1.0 - 0.24 * life));
+        burstPos.y -= 3.4 * cycle * cycle;
+        vec4 mvPosition = modelViewMatrix * vec4(burstPos, 1.0);
+        float dist = max(2.0, -mvPosition.z);
+        gl_PointSize = clamp((240.0 * (1.0 - life * 0.55)) / dist, 3.0, 16.0);
+        float fadeIn = smoothstep(0.0, 0.08, life);
+        float fadeOut = 1.0 - smoothstep(0.55, 1.0, life);
+        vAlpha = uActive * fadeIn * fadeOut * step(cycle, 1.95);
+        gl_Position = projectionMatrix * mvPosition;
+      }
+    `,
+    fragmentShader: /* glsl */ `
+      varying vec3 vColor;
+      varying float vAlpha;
+
+      void main() {
+        if (vAlpha <= 0.01) discard;
+        vec2 uv = gl_PointCoord - vec2(0.5);
+        float d = length(uv);
+        if (d > 0.5) discard;
+        float core = smoothstep(0.5, 0.05, d);
+        gl_FragColor = vec4(mix(vColor, vec3(1.0), core * 0.45), core * vAlpha);
+      }
+    `,
+  });
+
+  const points = new THREE.Points(geo, mat);
+  points.name = 'SuzukaFinishFireworks';
+  points.frustumCulled = false;
+  points.visible = false;
+  points.renderOrder = 195;
+
+  return {
+    mesh: points,
+    uniforms,
+    dispose: () => {
+      geo.dispose();
+      mat.dispose();
+    },
+  };
+}
+
 const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
   mode,
   cameraMode = 'DIRECTOR',
@@ -649,6 +776,11 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
     const trackWorld: SuzukaTrackWorld = buildSuzuka3DTrack(theme.id);
     scene.add(trackWorld.root);
     const totalCircuitLength = trackWorld.totalLengthMeters || SUZUKA_CIRCUIT_LENGTH_METERS;
+
+    // 1-Draw-Call GPU Celebration Fireworks over Main Straight / Start-Finish Gantry
+    const finishAnchor = trackWorld.samples[0]?.position || new THREE.Vector3(0, 0, 0);
+    const fireworksSystem = createFireworksSystem(finishAnchor);
+    scene.add(fireworksSystem.mesh);
 
     // Karts Group
     interface KartInstance {
@@ -868,15 +1000,27 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
     let telemetryTimer = 0;
     let greenFlagStartSec: number | null = null;
     let smoothedLeMansProgress = 0;
+    let currentNightFactor = 0;
+    let currentWeatherSprayMode: 'NONE' | 'RAIN' | 'SNOW' = 'NONE';
 
     const applyEvaluatedAtmosphere = (leMansProgress01: number) => {
+      const curPrecip = precipitationRef.current ?? theme.defaultPrecipitation;
       const atmo = evaluateSuzukaAtmosphere({
         biome: theme.id,
         timeOfDay: timeOfDayRef.current ?? 'NOON',
         cloudCover: cloudCoverRef.current ?? theme.defaultCloudCover,
-        precipitation: precipitationRef.current ?? theme.defaultPrecipitation,
+        precipitation: curPrecip,
         leMansProgress: leMansProgress01,
       });
+
+      currentNightFactor = atmo.nightLightFactor;
+      if (curPrecip === 'LIGHT_RAIN' || curPrecip === 'HEAVY_RAIN') {
+        currentWeatherSprayMode = 'RAIN';
+      } else if (curPrecip === 'LIGHT_SNOW' || curPrecip === 'HEAVY_SNOW' || theme.id === 'SNOW') {
+        currentWeatherSprayMode = 'SNOW';
+      } else {
+        currentWeatherSprayMode = 'NONE';
+      }
 
       skyDome.uniforms.uSunDir.value.set(atmo.sunDir[0], atmo.sunDir[1], atmo.sunDir[2]).normalize();
       skyDome.uniforms.uZenithColor.value.setHex(atmo.zenithHex);
@@ -1239,12 +1383,18 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
 
         root.quaternion.copy(evalRes.quaternion);
 
+        const cornerLimit = getSuzukaCornerSpeedLimit(normalizedProgress);
         const isBoosting = !!racer.isBoosting || racer.streak >= 3;
+        const isBraking =
+          !!racer.inPitStop || (cornerLimit < 175 && instance.speedKmh > cornerLimit * 0.82);
         if (instance.kartObj.updateKartVisuals) {
           instance.kartObj.updateKartVisuals(dt, {
             speed: instance.speedKmh / 3.6,
             steerAngle: 0,
             boostActive: isBoosting ? 1 : 0,
+            nightFactor: currentNightFactor,
+            isBraking,
+            weatherSprayMode: currentWeatherSprayMode,
             tangent: evalRes.tangent,
             normal: evalRes.normal,
             right: evalRes.right,
@@ -1258,7 +1408,7 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
           colorHex: racer.colorHex,
           progress: continuousProgress,
           speedKmh: Math.round(instance.speedKmh),
-          cornerSpeedLimit: getSuzukaCornerSpeedLimit(normalizedProgress),
+          cornerSpeedLimit: cornerLimit,
           lap: currentLap,
           distanceMeters: instance.distanceMeters,
           laneOffset: instance.laneOffset,
@@ -1763,6 +1913,21 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
         precipSystem.uniforms.uCameraPos.value.copy(camera.position);
       }
 
+      // Celebration Fireworks over Main Straight when racers finish or during the 24h Le Mans finale
+      const anyRacerFinished =
+        currentRacers.some((r) => !!r.isFinished) ||
+        (!!leaderTelem && leaderTelem.lap > Math.max(1, targetLapsRef.current || 2));
+      const leMansFinale =
+        timeOfDayRef.current === 'LE_MANS_CYCLE' && smoothedLeMansProgress > 0.88;
+      const shouldShowFireworks = isGreenFlag && (anyRacerFinished || leMansFinale);
+      fireworksSystem.mesh.visible = shouldShowFireworks;
+      if (shouldShowFireworks) {
+        fireworksSystem.uniforms.uTime.value = elapsedTime;
+        fireworksSystem.uniforms.uActive.value = 1.0;
+      } else {
+        fireworksSystem.uniforms.uActive.value = 0.0;
+      }
+
       renderer.render(scene, camera);
 
       if (isSoftwareGl) {
@@ -1810,6 +1975,7 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
       }
 
       precipSystem?.dispose();
+      fireworksSystem.dispose();
       skyDome.geometry.dispose();
       skyDome.material.dispose();
       envTexture.dispose();

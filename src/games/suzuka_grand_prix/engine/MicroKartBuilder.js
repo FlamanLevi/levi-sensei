@@ -89,6 +89,91 @@ function getSharedTailGlowTexture() {
   return _sharedTailGlowTex;
 }
 
+let _sharedHeadlightBeamTex = null;
+function getSharedHeadlightBeamTexture() {
+  if (!_sharedHeadlightBeamTex) {
+    const canvas = document.createElement('canvas');
+    canvas.width = 256;
+    canvas.height = 256;
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, 256, 256);
+
+    // Dual expanding halogen/LED beams from bottom (y=248, near nose) toward top (y=8, far down track)
+    for (const [startX, endX] of [
+      [102, 74],
+      [154, 182],
+    ]) {
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(startX - 10, 250);
+      ctx.lineTo(startX + 10, 250);
+      ctx.lineTo(endX + 58, 6);
+      ctx.lineTo(endX - 58, 6);
+      ctx.closePath();
+      ctx.clip();
+
+      const grad = ctx.createRadialGradient(startX, 248, 4, (startX + endX) * 0.5, 220, 238);
+      grad.addColorStop(0.0, 'rgba(255, 252, 235, 0.96)');
+      grad.addColorStop(0.18, 'rgba(255, 244, 200, 0.72)');
+      grad.addColorStop(0.48, 'rgba(254, 232, 165, 0.34)');
+      grad.addColorStop(0.78, 'rgba(253, 224, 140, 0.10)');
+      grad.addColorStop(1.0, 'rgba(253, 224, 140, 0.0)');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 256, 256);
+      ctx.restore();
+    }
+
+    // Soft lateral feathering so cone edges never look hard
+    const edgeMask = ctx.createLinearGradient(0, 0, 256, 0);
+    edgeMask.addColorStop(0.0, 'rgba(0,0,0,1)');
+    edgeMask.addColorStop(0.14, 'rgba(0,0,0,0)');
+    edgeMask.addColorStop(0.86, 'rgba(0,0,0,0)');
+    edgeMask.addColorStop(1.0, 'rgba(0,0,0,1)');
+    ctx.globalCompositeOperation = 'destination-out';
+    ctx.fillStyle = edgeMask;
+    ctx.fillRect(0, 0, 256, 256);
+    ctx.globalCompositeOperation = 'source-over';
+
+    _sharedHeadlightBeamTex = new THREE.CanvasTexture(canvas);
+    _sharedHeadlightBeamTex.colorSpace = THREE.SRGBColorSpace;
+    _sharedHeadlightBeamTex.userData = { isSharedResource: true };
+  }
+  return _sharedHeadlightBeamTex;
+}
+
+let _sharedTaillightBeamTex = null;
+function getSharedTaillightBeamTexture() {
+  if (!_sharedTaillightBeamTex) {
+    const canvas = document.createElement('canvas');
+    canvas.width = 256;
+    canvas.height = 256;
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, 256, 256);
+
+    // Dual ruby-red LED tail & brake light pools projecting from top (y=8, rear bumper) toward bottom (y=248, trailing asphalt)
+    for (const [startX, endX] of [
+      [92, 68],
+      [164, 188],
+    ]) {
+      ctx.save();
+      const grad = ctx.createRadialGradient(startX, 14, 3, (startX + endX) * 0.5, 42, 210);
+      grad.addColorStop(0.0, 'rgba(255, 38, 68, 0.95)');
+      grad.addColorStop(0.22, 'rgba(255, 12, 42, 0.68)');
+      grad.addColorStop(0.55, 'rgba(225, 0, 28, 0.26)');
+      grad.addColorStop(0.85, 'rgba(190, 0, 20, 0.06)');
+      grad.addColorStop(1.0, 'rgba(160, 0, 15, 0.0)');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 256, 256);
+      ctx.restore();
+    }
+
+    _sharedTaillightBeamTex = new THREE.CanvasTexture(canvas);
+    _sharedTaillightBeamTex.colorSpace = THREE.SRGBColorSpace;
+    _sharedTaillightBeamTex.userData = { isSharedResource: true };
+  }
+  return _sharedTaillightBeamTex;
+}
+
 const _numberPlateTextureCache = new Map();
 
 function safeRoundRect(ctx, x, y, w, h, r) {
@@ -231,6 +316,39 @@ function getSharedKartGeos() {
     const shadowQuad = new THREE.PlaneGeometry(0.0175, 0.0240);
     const tailGlow = new THREE.PlaneGeometry(0.0038, 0.0024);
 
+    // 3D Headlight & Taillight Lenses + Ground Projection Beams & Volumetric Light Cones
+    const headlightLens = new THREE.SphereGeometry(0.00065, 10, 8);
+    const taillightLens = new THREE.BoxGeometry(0.0020, 0.00072, 0.00048);
+    const headlightGroundBeam = new THREE.PlaneGeometry(0.042, 0.105);
+    const taillightGroundBeam = new THREE.PlaneGeometry(0.030, 0.048);
+
+    // Volumetric 3D cone with vertex-alpha fade from apex (at lamp) to open base
+    const buildVolumetricLightConeGeo = (radiusBottom, lengthZ, rCol, gCol, bCol, apexAlpha, baseAlpha) => {
+      const cone = new THREE.CylinderGeometry(0.00045, radiusBottom, lengthZ, 12, 1, true);
+      // Cylinder +Y is apex (at lamp, z=0), -Y is wide open base extending along +Z (after rotateX(-PI/2))
+      cone.translate(0, -lengthZ * 0.5, 0);
+      cone.rotateX(-Math.PI / 2);
+      const posAttr = cone.getAttribute('position');
+      const cols = new Float32Array(posAttr.count * 3);
+      for (let i = 0; i < posAttr.count; i++) {
+        const zNorm = Math.max(0, Math.min(1, posAttr.getZ(i) / lengthZ));
+        const w = apexAlpha * (1.0 - zNorm) + baseAlpha * zNorm;
+        cols[i * 3 + 0] = rCol * w;
+        cols[i * 3 + 1] = gCol * w;
+        cols[i * 3 + 2] = bCol * w;
+      }
+      cone.setAttribute('color', new THREE.BufferAttribute(cols, 3));
+      return cone;
+    };
+
+    const headlightVolCone = buildVolumetricLightConeGeo(0.0068, 0.064, 1.0, 0.95, 0.78, 0.55, 0.0);
+    const taillightVolCone = buildVolumetricLightConeGeo(0.0046, 0.032, 1.0, 0.08, 0.18, 0.62, 0.0);
+
+    // Rear tire wet mist spray / snow rooster-tail plume cone
+    const tireSprayCone = new THREE.CylinderGeometry(0.0008, 0.0044, 0.022, 10, 5, true);
+    tireSprayCone.translate(0, -0.011, 0);
+    tireSprayCone.rotateX(Math.PI / 2); // extends along -Z behind rear tire
+
     const jetGeos = { outerCone, innerCore, finA, finB, nozzleDisc };
 
     _sharedKartGeos = {
@@ -240,7 +358,11 @@ function getSharedKartGeos() {
       rearTire, rearTireShoulder, rearRim, rearHubCap,
       floorPan, noseCone, numberPlate, rearNumberPlate, sidePod, engineBlock, rearWing, pipe,
       seat, torso, helmetShell, visor, steeringWheel,
-      shadowQuad, tailGlow
+      shadowQuad, tailGlow,
+      headlightLens, taillightLens,
+      headlightGroundBeam, taillightGroundBeam,
+      headlightVolCone, taillightVolCone,
+      tireSprayCone,
     };
     Object.values(_sharedKartGeos).forEach((entry) => {
       if (entry && entry.isBufferGeometry) {
@@ -256,6 +378,8 @@ let _sharedChromeMat = null;
 let _sharedTireRubberMat = null;
 let _sharedTailGlowMat = null;
 let _sharedShadowMat = null;
+let _sharedHeadlightLensMat = null;
+let _sharedTaillightLensMat = null;
 
 function getSharedMaterials() {
   if (!_sharedCarbonMat) {
@@ -300,6 +424,22 @@ function getSharedMaterials() {
       polygonOffsetUnits: -8,
     });
     _sharedShadowMat.userData = { isSharedResource: true };
+    _sharedHeadlightLensMat = new THREE.MeshStandardMaterial({
+      color: 0xffffff,
+      emissive: 0xfff4d4,
+      emissiveIntensity: 2.6,
+      roughness: 0.08,
+      toneMapped: false,
+    });
+    _sharedHeadlightLensMat.userData = { isSharedResource: true };
+    _sharedTaillightLensMat = new THREE.MeshStandardMaterial({
+      color: 0xff0a24,
+      emissive: 0xff0820,
+      emissiveIntensity: 2.8,
+      roughness: 0.1,
+      toneMapped: false,
+    });
+    _sharedTaillightLensMat.userData = { isSharedResource: true };
   }
   return {
     carbonMat: _sharedCarbonMat,
@@ -307,12 +447,16 @@ function getSharedMaterials() {
     tireRubberMat: _sharedTireRubberMat,
     tailGlowMat: _sharedTailGlowMat,
     shadowMat: _sharedShadowMat,
+    headlightLensMat: _sharedHeadlightLensMat,
+    taillightLensMat: _sharedTaillightLensMat,
   };
 }
 
 export function prewarmMicroKartAssets() {
   getSharedShadowTexture();
   getSharedTailGlowTexture();
+  getSharedHeadlightBeamTexture();
+  getSharedTaillightBeamTexture();
   for (let n = 1; n <= 40; n++) {
     getNumberPlateTexture(n);
   }
@@ -576,6 +720,11 @@ export function buildMicroKart(options = {}) {
   // Reuses shared singleton geometry and texture
   const tailLightGlowPlanes = [];
   for (const tx of [-0.00320, 0.00320]) {
+    const tailLens = new THREE.Mesh(sharedGeos.taillightLens, sharedMats.taillightLensMat);
+    tailLens.position.set(tx, 0.00275, -0.00875);
+    tailLens.castShadow = false;
+    chassisGroup.add(tailLens);
+
     const tailGlowPlane = new THREE.Mesh(sharedGeos.tailGlow, sharedMats.tailGlowMat);
     tailGlowPlane.position.set(tx, 0.00275, -0.00906);
     tailGlowPlane.rotation.y = Math.PI;
@@ -583,6 +732,149 @@ export function buildMicroKart(options = {}) {
     tailGlowPlane.receiveShadow = false;
     chassisGroup.add(tailGlowPlane);
     tailLightGlowPlanes.push(tailGlowPlane);
+  }
+
+  // Twin Front 3D LED Headlight Lenses on Nose Fairing
+  for (const hx of [-0.0026, 0.0026]) {
+    const headLens = new THREE.Mesh(sharedGeos.headlightLens, sharedMats.headlightLensMat);
+    headLens.position.set(hx, 0.00225, 0.00875);
+    headLens.scale.set(1.15, 0.78, 0.65);
+    headLens.castShadow = false;
+    chassisGroup.add(headLens);
+  }
+
+  // Per-Kart Forward Headlight Ground Beam & Twin 3D Volumetric Cones
+  const headlightGroundMat = new THREE.MeshBasicMaterial({
+    map: getSharedHeadlightBeamTexture(),
+    transparent: true,
+    opacity: 0.25,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+    toneMapped: false,
+    polygonOffset: true,
+    polygonOffsetFactor: -5,
+    polygonOffsetUnits: -5,
+  });
+  const headlightGroundBeamMesh = new THREE.Mesh(sharedGeos.headlightGroundBeam, headlightGroundMat);
+  headlightGroundBeamMesh.rotation.x = -Math.PI / 2;
+  headlightGroundBeamMesh.position.set(0, -0.00162, 0.060);
+  headlightGroundBeamMesh.frustumCulled = false;
+  kartRoot.add(headlightGroundBeamMesh);
+
+  const headlightConeMat = new THREE.MeshBasicMaterial({
+    vertexColors: true,
+    transparent: true,
+    opacity: 0.22,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+    side: THREE.DoubleSide,
+    toneMapped: false,
+  });
+  const headlightVolCones = [];
+  for (const hx of [-0.0026, 0.0026]) {
+    const hCone = new THREE.Mesh(sharedGeos.headlightVolCone, headlightConeMat);
+    hCone.position.set(hx, 0.00225, 0.0089);
+    hCone.rotation.x = 0.068;
+    hCone.frustumCulled = false;
+    chassisGroup.add(hCone);
+    headlightVolCones.push(hCone);
+  }
+
+  // Per-Kart Rear Taillight Ruby Ground Beam & Twin 3D Volumetric Cones
+  const taillightGroundMat = new THREE.MeshBasicMaterial({
+    map: getSharedTaillightBeamTexture(),
+    transparent: true,
+    opacity: 0.35,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+    toneMapped: false,
+    polygonOffset: true,
+    polygonOffsetFactor: -5,
+    polygonOffsetUnits: -5,
+  });
+  const taillightGroundBeamMesh = new THREE.Mesh(sharedGeos.taillightGroundBeam, taillightGroundMat);
+  taillightGroundBeamMesh.rotation.x = -Math.PI / 2;
+  taillightGroundBeamMesh.position.set(0, -0.00162, -0.032);
+  taillightGroundBeamMesh.frustumCulled = false;
+  kartRoot.add(taillightGroundBeamMesh);
+
+  const taillightConeMat = new THREE.MeshBasicMaterial({
+    vertexColors: true,
+    transparent: true,
+    opacity: 0.28,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+    side: THREE.DoubleSide,
+    toneMapped: false,
+  });
+  const taillightVolCones = [];
+  for (const tx of [-0.0032, 0.0032]) {
+    const tCone = new THREE.Mesh(sharedGeos.taillightVolCone, taillightConeMat);
+    tCone.position.set(tx, 0.00275, -0.0089);
+    tCone.rotation.y = Math.PI;
+    tCone.rotation.x = -0.085;
+    tCone.frustumCulled = false;
+    chassisGroup.add(tCone);
+    taillightVolCones.push(tCone);
+  }
+
+  // Rear Tire Wet Mist Spray & Snow Powder Rooster-Tail Plumes (0 CPU particle loop overhead!)
+  const tireSprayMat = new THREE.ShaderMaterial({
+    uniforms: {
+      uTime: { value: 0.0 },
+      uIntensity: { value: 0.0 },
+      uIsSnow: { value: 0.0 },
+    },
+    transparent: true,
+    depthWrite: false,
+    side: THREE.DoubleSide,
+    vertexShader: /* glsl */ `
+      uniform float uTime;
+      uniform float uIntensity;
+      varying float vAlong;
+      varying vec2 vUv;
+      void main() {
+        vUv = uv;
+        float u = clamp(-position.z / 0.022, 0.0, 1.0);
+        vAlong = u;
+        vec3 displaced = position;
+        // Billowing upward lift & turbulent wake behind spinning rear tire
+        displaced.y += u * u * 0.0052 + abs(sin(u * 10.0 - uTime * 22.0)) * u * 0.0012;
+        displaced.x += sin(u * 14.0 - uTime * 26.0) * u * 0.0014;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(displaced, 1.0);
+      }
+    `,
+    fragmentShader: /* glsl */ `
+      uniform float uTime;
+      uniform float uIntensity;
+      uniform float uIsSnow;
+      varying float vAlong;
+      varying vec2 vUv;
+      void main() {
+        if (uIntensity <= 0.01) discard;
+        float u = clamp(vAlong, 0.0, 1.0);
+        float w1 = sin(u * 18.0 - uTime * 28.0 + vUv.x * 12.56);
+        float w2 = cos(u * 29.0 - uTime * 36.0 - vUv.x * 18.84);
+        float puff = 0.62 + 0.38 * (w1 * 0.6 + w2 * 0.4);
+        float axialFade = smoothstep(0.0, 0.14, u) * pow(1.0 - u, 1.35);
+        vec3 rainCol = vec3(0.82, 0.91, 1.0);
+        vec3 snowCol = vec3(0.97, 0.99, 1.0);
+        vec3 col = mix(rainCol, snowCol, uIsSnow);
+        float alpha = clamp(axialFade * puff * uIntensity * mix(0.52, 0.78, uIsSnow), 0.0, 0.82);
+        if (alpha < 0.015) discard;
+        gl_FragColor = vec4(col, alpha);
+      }
+    `,
+  });
+
+  const tireSprayCones = [];
+  for (const sx of [-0.0059, 0.0059]) {
+    const sprayMesh = new THREE.Mesh(sharedGeos.tireSprayCone, tireSprayMat);
+    sprayMesh.position.set(sx, 0.0008, -0.0064);
+    sprayMesh.visible = false;
+    sprayMesh.frustumCulled = false;
+    chassisGroup.add(sprayMesh);
+    tireSprayCones.push(sprayMesh);
   }
 
   // Warm flickering fire light under rear exhaust/tires when sparks emit
@@ -933,6 +1225,41 @@ export function buildMicroKart(options = {}) {
     // pulsing
     const isBoosting = state.boostActive > 0;
     const tSec = performance.now() * 0.001;
+
+    // 4B. Dynamic Headlight & Taillight Beams + Rear Tire Weather Spray / Snow Rooster-Tails
+    const nightFactor = Math.max(0.0, Math.min(1.0, state.nightFactor ?? 0.0));
+    const isBraking = Boolean(state.isBraking);
+    const headBeamOpacity = THREE.MathUtils.lerp(0.14, 0.96, nightFactor);
+    const headConeOpacity = THREE.MathUtils.lerp(0.08, 0.62, nightFactor);
+    headlightGroundMat.opacity = headBeamOpacity;
+    headlightConeMat.opacity = headConeOpacity;
+
+    const brakeFlare = isBraking ? 0.32 : 0.0;
+    const tailBeamOpacity = Math.min(1.0, THREE.MathUtils.lerp(0.24, 0.92, nightFactor) + brakeFlare);
+    const tailConeOpacity = Math.min(0.95, THREE.MathUtils.lerp(0.16, 0.68, nightFactor) + brakeFlare * 0.8);
+    taillightGroundMat.opacity = tailBeamOpacity;
+    taillightConeMat.opacity = tailConeOpacity;
+    for (const tPlane of tailLightGlowPlanes) {
+      const s = isBraking ? 1.38 : 1.0 + nightFactor * 0.25;
+      tPlane.scale.set(s, s, 1.0);
+    }
+
+    const sprayMode = state.weatherSprayMode || 'NONE';
+    const speedRatio = Math.max(0.0, Math.min(1.0, (state.speed || 0) / 38.0));
+    const showSpray = (sprayMode === 'RAIN' || sprayMode === 'SNOW') && speedRatio > 0.08;
+    for (const sMesh of tireSprayCones) {
+      sMesh.visible = showSpray;
+      if (showSpray) {
+        const sLen = 0.55 + speedRatio * 0.85;
+        const sWid = 0.65 + speedRatio * 0.55;
+        sMesh.scale.set(sWid, sWid, sLen);
+      }
+    }
+    if (showSpray) {
+      tireSprayMat.uniforms.uTime.value = tSec;
+      tireSprayMat.uniforms.uIntensity.value = speedRatio;
+      tireSprayMat.uniforms.uIsSnow.value = sprayMode === 'SNOW' ? 1.0 : 0.0;
+    }
 
     for (const pGroup of flameCones) {
       pGroup.visible = isBoosting;
@@ -1315,6 +1642,11 @@ export function buildMicroKart(options = {}) {
     helmetShell.material.dispose();
     visor.material.dispose();
     numberPlateMat.dispose();
+    headlightGroundMat.dispose();
+    headlightConeMat.dispose();
+    taillightGroundMat.dispose();
+    taillightConeMat.dispose();
+    tireSprayMat.dispose();
     for (const pGroup of flameCones) {
       if (pGroup.userData && pGroup.userData.jetMat) {
         pGroup.userData.jetMat.dispose();

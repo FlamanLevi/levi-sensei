@@ -283,6 +283,16 @@ function createHighContrastAsphaltTexture(
       ctx.fillRect(96, 0, 92, 512);
       ctx.fillRect(324, 0, 92, 512);
 
+      // Twin dark rubber braking tire-skid streaks in left & right wheel tracks
+      for (const skidX of [112, 168, 340, 396]) {
+        const skidGrad = ctx.createLinearGradient(skidX - 7, 0, skidX + 7, 0);
+        skidGrad.addColorStop(0, 'rgba(8, 10, 14, 0)');
+        skidGrad.addColorStop(0.5, 'rgba(8, 10, 14, 0.36)');
+        skidGrad.addColorStop(1, 'rgba(8, 10, 14, 0)');
+        ctx.fillStyle = skidGrad;
+        ctx.fillRect(skidX - 7, 0, 14, 512);
+      }
+
       for (let i = 0; i < 3600; i++) {
         const gx = (i * 73) % 512;
         const gy = (i * 197) % 512;
@@ -793,6 +803,97 @@ function createTurfTexture(
   grassTex.anisotropy = 8;
   cachedTurfTexs.set(theme.id, grassTex);
   return grassTex;
+}
+
+let cachedTreeContactShadowTex: THREE.CanvasTexture | null = null;
+function createTreeContactShadowTexture(): THREE.CanvasTexture {
+  if (cachedTreeContactShadowTex) return cachedTreeContactShadowTex;
+  const canvas = document.createElement('canvas');
+  canvas.width = 128;
+  canvas.height = 128;
+  const ctx = canvas.getContext('2d');
+  if (ctx) {
+    ctx.clearRect(0, 0, 128, 128);
+    const grad = ctx.createRadialGradient(64, 64, 4, 64, 64, 60);
+    grad.addColorStop(0.0, 'rgba(6, 10, 20, 0.56)');
+    grad.addColorStop(0.45, 'rgba(8, 12, 24, 0.34)');
+    grad.addColorStop(0.78, 'rgba(10, 14, 28, 0.12)');
+    grad.addColorStop(1.0, 'rgba(10, 14, 28, 0.0)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, 128, 128);
+  }
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  cachedTreeContactShadowTex = tex;
+  return tex;
+}
+
+const cachedLakeWaterTexs = new Map<SuzukaTrackThemeId, THREE.CanvasTexture>();
+function createLakeWaterTexture(
+  theme: SuzukaTrackThemeConfig = getTrackTheme(DEFAULT_TRACK_THEME_ID)
+): THREE.CanvasTexture {
+  const existing = cachedLakeWaterTexs.get(theme.id);
+  if (existing) return existing;
+
+  const canvas = document.createElement('canvas');
+  canvas.width = 256;
+  canvas.height = 256;
+  const ctx = canvas.getContext('2d');
+  if (ctx) {
+    const grad = ctx.createRadialGradient(128, 128, 12, 128, 128, 126);
+    if (theme.id === 'DESERT') {
+      // Crystal Turquoise-Emerald Desert Oasis Lagoon with warm sandy shallows
+      grad.addColorStop(0.0, '#0f766e');
+      grad.addColorStop(0.52, '#14b8a6');
+      grad.addColorStop(0.84, '#5eead4');
+      grad.addColorStop(1.0, '#fde68a');
+    } else if (theme.id === 'SNOW') {
+      // Frozen Crystalline Alpine Ice Pond with frosted snow rim
+      grad.addColorStop(0.0, '#38bdf8');
+      grad.addColorStop(0.58, '#bae6fd');
+      grad.addColorStop(0.88, '#e0f2fe');
+      grad.addColorStop(1.0, '#f8fafc');
+    } else {
+      // Shimmering Suzuka Sapphire-Azure Infield Lake
+      grad.addColorStop(0.0, '#0369a1');
+      grad.addColorStop(0.55, '#0284c7');
+      grad.addColorStop(0.86, '#38bdf8');
+      grad.addColorStop(1.0, '#bae6fd');
+    }
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, 256, 256);
+
+    if (theme.id === 'SNOW') {
+      // Subtle crystalline ice fracture lines & specular frost glints
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.52)';
+      ctx.lineWidth = 1.6;
+      const cracks = [
+        [48, 72, 134, 122, 198, 96],
+        [82, 188, 128, 128, 184, 174],
+        [64, 134, 118, 142, 152, 204],
+      ];
+      for (const c of cracks) {
+        ctx.beginPath();
+        ctx.moveTo(c[0], c[1]);
+        ctx.lineTo(c[2], c[3]);
+        ctx.lineTo(c[4], c[5]);
+        ctx.stroke();
+      }
+    } else {
+      // Soft concentric water ripple rings
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.16)';
+      ctx.lineWidth = 1.5;
+      for (const r of [38, 68, 96, 114]) {
+        ctx.beginPath();
+        ctx.arc(128, 128, r, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+    }
+  }
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  cachedLakeWaterTexs.set(theme.id, tex);
+  return tex;
 }
 
 /**
@@ -2663,19 +2764,24 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
   ferrisWheelRoot.add(ferrisWheelRotating);
   sceneryGroup.add(ferrisWheelRoot);
 
-  // G. 360° Panoramic Suzuka Mountain Range, Mt. Fuji & Volumetric 3D Sky Clouds
+  // G. 360° Panoramic Suzuka Mountain Range, Mt. Fuji / Grand Red-Rock Citadel Mesa & Volumetric 3D Sky Clouds
   const mountainHorizonGroup = new THREE.Group();
   mountainHorizonGroup.name = 'Suzuka360MountainPanorama';
+  const isDesertHorizon = theme.id === 'DESERT';
 
-  // Mt. Fuji centerpiece (base cone + snow cap merged into 1 draw call)
-  const fujiBaseGeo = new THREE.ConeGeometry(420, 215, 32, 1, true);
-  const fujiCapGeo = new THREE.ConeGeometry(168, 86, 32);
+  // Centerpiece landmark: Mt. Fuji (Temperate/Snow) OR Grand Monument Valley Citadel Mesa (Desert)
+  const fujiBaseGeo = isDesertHorizon
+    ? new THREE.CylinderGeometry(235, 430, 145, 16, 1, false)
+    : new THREE.ConeGeometry(420, 215, 32, 1, true);
+  const fujiCapGeo = isDesertHorizon
+    ? new THREE.CylinderGeometry(155, 205, 62, 14, 1, false)
+    : new THREE.ConeGeometry(168, 86, 32);
   const mergedFujiGeo = mergeStaticParts([
-    bakeTransformedGeo(fujiBaseGeo, composeBakeMatrix(scLocalMat, [0, 107, 0]), {
+    bakeTransformedGeo(fujiBaseGeo, composeBakeMatrix(scLocalMat, [0, isDesertHorizon ? 72 : 107, 0]), {
       colorHex: theme.fujiBaseHex,
       keepUv: false,
     }),
-    bakeTransformedGeo(fujiCapGeo, composeBakeMatrix(scLocalMat, [0, 171, 0]), {
+    bakeTransformedGeo(fujiCapGeo, composeBakeMatrix(scLocalMat, [0, isDesertHorizon ? 174 : 171, 0]), {
       colorHex: theme.fujiCapHex,
       keepUv: false,
     }),
@@ -2695,8 +2801,10 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
     mountainHorizonGroup.add(fujiMesh);
   }
 
-  // 28 Overlapping Suzuka Foothills & Mountain Peaks encircling the entire horizon (1 InstancedMesh draw call!)
-  const mtnPeakGeo = new THREE.ConeGeometry(1, 1, 16, 4);
+  // 28 Overlapping Suzuka Foothills / Monument Valley Flat-Topped Mesas encircling the 360° horizon (1 InstancedMesh draw call!)
+  const mtnPeakGeo = isDesertHorizon
+    ? new THREE.CylinderGeometry(0.46, 1.0, 1.0, 12, 4, false)
+    : new THREE.ConeGeometry(1, 1, 16, 4);
   mtnPeakGeo.translate(0, 0.5, 0);
   const mtnPosAttr = mtnPeakGeo.getAttribute('position');
   const mtnColArray = new Float32Array(mtnPosAttr.count * 3);
@@ -2734,7 +2842,7 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
     const mx = Math.cos(angle) * dist;
     const mz = Math.sin(angle) * dist - 80;
     const radiusW = 140 + ((m * 73) % 130);
-    const heightY = 65 + ((m * 97) % 85);
+    const heightY = isDesertHorizon ? 58 + ((m * 97) % 68) : 65 + ((m * 97) % 85);
 
     mtnDummy.position.set(mx, -2, mz);
     mtnDummy.rotation.set(0, m * 0.7, 0);
@@ -2975,12 +3083,25 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
     sceneryGroup.add(tireInstanced);
   }
 
-  // 2) Japanese Nobori Festival Racing Flags along the Track Perimeter
-  const flagBannerGeo = new THREE.BoxGeometry(0.85, 3.2, 0.08);
+  // 2) Japanese Nobori Festival Racing Flags along the Track Perimeter (with GPU wind wave shader)
+  const flagBannerGeo = new THREE.BoxGeometry(0.85, 3.2, 0.08, 5, 6, 1);
   flagBannerGeo.translate(0.45, 2.5, 0);
   const flagPoleInstGeo = new THREE.CylinderGeometry(0.06, 0.07, 4.2, 6);
   flagPoleInstGeo.translate(0, 2.1, 0);
+  const flagWindUniforms = { uFlagTime: { value: 0 } };
   const flagMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.55 });
+  flagMat.onBeforeCompile = (shader) => {
+    shader.uniforms.uFlagTime = flagWindUniforms.uFlagTime;
+    shader.vertexShader =
+      `uniform float uFlagTime;\n` +
+      shader.vertexShader.replace(
+        '#include <begin_vertex>',
+        `#include <begin_vertex>
+        float flagFlutter = clamp((position.x - 0.05) / 0.82, 0.0, 1.0);
+        float flagPhase = float(gl_InstanceID) * 1.37;
+        transformed.z += sin(uFlagTime * 5.8 - position.x * 7.2 + position.y * 1.8 + flagPhase) * 0.14 * flagFlutter;`
+      );
+  };
 
   const noboriPlacements: { x: number; z: number; rotY: number; color: THREE.Color }[] = [];
   const noboriColors = [0xef4444, 0xf59e0b, 0x06b6d4, 0x10b981, 0xec4899, 0x3b82f6];
@@ -3020,7 +3141,7 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
     sceneryGroup.add(clothInst);
   }
 
-  // 3) Tall Stadium Floodlight Towers (InstancedMesh)
+  // 3) Tall Stadium Floodlight Towers + Volumetric Night Light Cones (InstancedMesh)
   const floodPoleGeo = new THREE.CylinderGeometry(0.24, 0.38, 18.0, 8);
   floodPoleGeo.translate(0, 9.0, 0);
   const floodHeadGeo = new THREE.BoxGeometry(3.6, 1.4, 0.9);
@@ -3031,6 +3152,33 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
     emissiveIntensity: theme.floodEmissiveIntensity,
     roughness: 0.2,
   });
+
+  // Volumetric light cone angled from the 18.2m lamp head toward the track (1 draw call for all towers)
+  const floodConeGeo = new THREE.ConeGeometry(7.2, 18.2, 14, 1, true);
+  floodConeGeo.translate(0, -9.1, 0);
+  floodConeGeo.rotateX(-0.28);
+  floodConeGeo.translate(0, 18.1, 0.55);
+  const fcPos = floodConeGeo.getAttribute('position');
+  const fcColors = new Float32Array(fcPos.count * 3);
+  for (let i = 0; i < fcPos.count; i++) {
+    const vy = fcPos.getY(i);
+    // Softly fade additive brightness to 0.0 near the ground so there is no hard clipping edge
+    const intensity = Math.pow(Math.max(0, Math.min(1, (vy - 0.5) / 17.6)), 1.35);
+    fcColors[i * 3 + 0] = intensity;
+    fcColors[i * 3 + 1] = intensity;
+    fcColors[i * 3 + 2] = intensity;
+  }
+  floodConeGeo.setAttribute('color', new THREE.BufferAttribute(fcColors, 3));
+  const floodConeMat = new THREE.MeshBasicMaterial({
+    color: theme.floodGlowHex,
+    vertexColors: true,
+    transparent: true,
+    opacity: 0,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+    side: THREE.DoubleSide,
+  });
+  let floodConeInst: THREE.InstancedMesh | null = null;
 
   const floodPlacements: { x: number; z: number; rotY: number }[] = [];
   for (let i = 45; i < N; i += 85) {
@@ -3058,6 +3206,8 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
   if (floodPlacements.length > 0) {
     const floodPoleInst = new THREE.InstancedMesh(floodPoleGeo, steelMat, floodPlacements.length);
     const floodHeadInst = new THREE.InstancedMesh(floodHeadGeo, floodGlowMat, floodPlacements.length);
+    floodConeInst = new THREE.InstancedMesh(floodConeGeo, floodConeMat, floodPlacements.length);
+    floodConeInst.visible = false;
     floodPlacements.forEach((fp, idx) => {
       dummyObj.position.set(fp.x, 0, fp.z);
       dummyObj.rotation.set(0, fp.rotY, 0);
@@ -3065,13 +3215,17 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
       dummyObj.updateMatrix();
       floodPoleInst.setMatrixAt(idx, dummyObj.matrix);
       floodHeadInst.setMatrixAt(idx, dummyObj.matrix);
+      floodConeInst!.setMatrixAt(idx, dummyObj.matrix);
     });
     floodPoleInst.instanceMatrix.needsUpdate = true;
     floodHeadInst.instanceMatrix.needsUpdate = true;
+    floodConeInst.instanceMatrix.needsUpdate = true;
     floodPoleInst.computeBoundingSphere();
     floodHeadInst.computeBoundingSphere();
+    floodConeInst.computeBoundingSphere();
     sceneryGroup.add(floodPoleInst);
     sceneryGroup.add(floodHeadInst);
+    sceneryGroup.add(floodConeInst);
   }
 
   // J. Lush Multi-Tiered InstancedMesh Forest / Desert Cacti & Rock Outcrops (520+ items in 4 GPU draw calls!)
@@ -3219,6 +3373,136 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
     return rngSeed / 4294967296;
   }
 
+  interface TreePlacement {
+    x: number;
+    z: number;
+    scale: number;
+    rotY: number;
+    type: string;
+    tint: THREE.Color;
+  }
+  const placements: TreePlacement[] = [];
+
+  // K. Scenic Infield Lake / Desert Oasis Lagoon / Frozen Alpine Ice Pond
+  // Automatically locate the largest open meadow basin clear of all track segments and buildings
+  let bestLakeX = -65;
+  let bestLakeZ = 45;
+  let bestClearance = 0;
+  for (let gx = -165; gx <= 165; gx += 12) {
+    for (let gz = -145; gz <= 145; gz += 12) {
+      let minClear = Infinity;
+      for (let i = 0; i < N; i += 4) {
+        const dx = gx - samples[i].position.x;
+        const dz = gz - samples[i].position.z;
+        const d = Math.sqrt(dx * dx + dz * dz);
+        if (d < minClear) minClear = d;
+      }
+      for (const ez of exclusionZones) {
+        const dx = gx - ez.x;
+        const dz = gz - ez.z;
+        const d = Math.max(0, Math.sqrt(dx * dx + dz * dz) - ez.r);
+        if (d < minClear) minClear = d;
+      }
+      if (minClear > bestClearance) {
+        bestClearance = minClear;
+        bestLakeX = gx;
+        bestLakeZ = gz;
+      }
+    }
+  }
+
+  const lakeRadius = Math.max(20, Math.min(36, bestClearance - 14));
+  const lakeWaterTex = createLakeWaterTexture(theme);
+  const lakeWaterMat = new THREE.MeshStandardMaterial({
+    map: lakeWaterTex,
+    color: 0xffffff,
+    roughness: theme.id === 'SNOW' ? 0.08 : 0.14,
+    metalness: theme.id === 'SNOW' ? 0.32 : 0.62,
+    emissive: theme.id === 'DESERT' ? 0x0d9488 : 0x0284c7,
+    emissiveIntensity: 0.08,
+  });
+  const lakeShoreMat = new THREE.MeshStandardMaterial({
+    color: theme.id === 'DESERT' ? 0xfde68a : theme.id === 'SNOW' ? 0xe2e8f0 : 0xd6d3d1,
+    roughness: 0.9,
+    metalness: 0.02,
+  });
+
+  if (bestClearance >= 32) {
+    const lakeShoreMesh = new THREE.Mesh(new THREE.CircleGeometry(lakeRadius * 1.14, 32), lakeShoreMat);
+    lakeShoreMesh.rotation.x = -Math.PI / 2;
+    lakeShoreMesh.position.set(bestLakeX, -0.075, bestLakeZ);
+    lakeShoreMesh.scale.set(1.12, 0.94, 1);
+    sceneryGroup.add(lakeShoreMesh);
+
+    const lakeWaterMesh = new THREE.Mesh(new THREE.CircleGeometry(lakeRadius, 32), lakeWaterMat);
+    lakeWaterMesh.rotation.x = -Math.PI / 2;
+    lakeWaterMesh.position.set(bestLakeX, -0.045, bestLakeZ);
+    lakeWaterMesh.scale.set(1.12, 0.94, 1);
+    sceneryGroup.add(lakeWaterMesh);
+
+    exclusionZones.push({ x: bestLakeX, z: bestLakeZ, r: lakeRadius * 1.08 });
+
+    // Ring of 10 shoreline trees (Sakura in Temperate, Fan-Palms in Desert, Frosted Pines in Snow)
+    const shoreTreeType = theme.id === 'SNOW' ? 'pine' : 'sakura';
+    const shoreRange =
+      shoreTreeType === 'sakura' ? theme.treeFoliage.sakura : theme.treeFoliage.pine;
+    for (let st = 0; st < 10; st++) {
+      const ang = (st / 10) * Math.PI * 2 + 0.25;
+      const sx = bestLakeX + Math.cos(ang) * (lakeRadius * 1.12);
+      const sz = bestLakeZ + Math.sin(ang) * (lakeRadius * 1.12);
+      if (!isClearOfAllTrack(sx, sz, 13.0)) continue;
+      const tint = new THREE.Color().setHSL(
+        (shoreRange.hMin + nextRng() * shoreRange.hRange) % 1.0,
+        shoreRange.sMin + nextRng() * shoreRange.sRange,
+        shoreRange.lMin + nextRng() * shoreRange.lRange
+      );
+      placements.push({
+        x: sx,
+        z: sz,
+        scale: 0.95 + nextRng() * 0.35,
+        rotY: nextRng() * Math.PI * 2,
+        type: shoreTreeType,
+        tint,
+      });
+    }
+  }
+
+  // L. 3D Rolling Terrain Hills / Desert Sand Dunes / Snowdrifts (1 InstancedMesh draw call)
+  const hillGeo = new THREE.SphereGeometry(1, 14, 8, 0, Math.PI * 2, 0, Math.PI * 0.5);
+  const hillMat = new THREE.MeshStandardMaterial({
+    color: theme.turfBgHex,
+    roughness: 0.9,
+    metalness: 0.02,
+  });
+  const hillPlacements: { x: number; z: number; rx: number; ry: number; rz: number; rotY: number }[] = [];
+  for (let hAttempt = 0; hAttempt < 220 && hillPlacements.length < 24; hAttempt++) {
+    const f = nextRng();
+    const s = samples[Math.floor(f * N)];
+    const side = nextRng() > 0.5 ? 1 : -1;
+    const lat = side * (32 + nextRng() * 54);
+    const hx = s.position.x + s.right.x * lat;
+    const hz = s.position.z + s.right.z * lat;
+    if (!isClearOfAllSceneryAndTrack(hx, hz, 28.0)) continue;
+    const rx = 16 + nextRng() * 14;
+    const rz = 14 + nextRng() * 14;
+    const ry = 2.2 + nextRng() * 2.6;
+    hillPlacements.push({ x: hx, z: hz, rx, ry, rz, rotY: nextRng() * Math.PI * 2 });
+  }
+  if (hillPlacements.length > 0) {
+    const hillInst = new THREE.InstancedMesh(hillGeo, hillMat, hillPlacements.length);
+    hillPlacements.forEach((hp, idx) => {
+      dummyObj.position.set(hp.x, -0.25, hp.z);
+      dummyObj.rotation.set(0, hp.rotY, 0);
+      dummyObj.scale.set(hp.rx, hp.ry, hp.rz);
+      dummyObj.updateMatrix();
+      hillInst.setMatrixAt(idx, dummyObj.matrix);
+    });
+    hillInst.instanceMatrix.needsUpdate = true;
+    hillInst.computeBoundingSphere();
+    hillInst.receiveShadow = true;
+    sceneryGroup.add(hillInst);
+  }
+
   // Continuous 360-degree circuit coverage (0.00 to 1.00) with both near-track and forest belts!
   const treeClusters = [
     // Main Straight & First Curve framing groves (behind Pit Complex & Grandstands + Turn 1)
@@ -3235,16 +3519,6 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
     // Back Straight & 130R Pine Forest
     { start: 0.74, end: 0.94, count: 92, type: 'pine', minOffset: 14, maxOffset: 68 },
   ];
-
-  interface TreePlacement {
-    x: number;
-    z: number;
-    scale: number;
-    rotY: number;
-    type: string;
-    tint: THREE.Color;
-  }
-  const placements: TreePlacement[] = [];
 
   for (const tc of treeClusters) {
     let placed = 0;
@@ -3279,6 +3553,29 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
       exclusionZones.push({ x: tx, z: tz, r: 4.2 });
       placed++;
     }
+  }
+
+  // Contact Ground Shadows under all 520+ Trees, Saguaro Cacti & Boulders (1 InstancedMesh draw call)
+  const treeShadowGeo = new THREE.PlaneGeometry(6.8, 6.8);
+  treeShadowGeo.rotateX(-Math.PI / 2);
+  const treeShadowMat = new THREE.MeshBasicMaterial({
+    map: createTreeContactShadowTexture(),
+    transparent: true,
+    opacity: 0.55,
+    depthWrite: false,
+  });
+  if (placements.length > 0) {
+    const treeShadowInst = new THREE.InstancedMesh(treeShadowGeo, treeShadowMat, placements.length);
+    placements.forEach((p, idx) => {
+      dummyObj.position.set(p.x, -0.055, p.z);
+      dummyObj.rotation.set(0, 0, 0);
+      dummyObj.scale.setScalar(p.scale);
+      dummyObj.updateMatrix();
+      treeShadowInst.setMatrixAt(idx, dummyObj.matrix);
+    });
+    treeShadowInst.instanceMatrix.needsUpdate = true;
+    treeShadowInst.computeBoundingSphere();
+    sceneryGroup.add(treeShadowInst);
   }
 
   const pinePlacements = placements.filter((p) => p.type === 'pine');
@@ -3336,6 +3633,10 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
     roughness: 0.88,
     metalness: 0.02,
   });
+  hillMat.map = grassTex;
+  hillMat.color.setHex(0xffffff);
+  hillMat.needsUpdate = true;
+
   const grassMesh = new THREE.Mesh(new THREE.CircleGeometry(860, 64), grassMat);
   grassMesh.rotation.x = -Math.PI / 2;
   grassMesh.position.set(0, -0.1, 0);
@@ -3389,6 +3690,7 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
   function updateScenery(dt: number) {
     sceneryClock += dt;
     crowdUniforms.uTime.value = sceneryClock;
+    flagWindUniforms.uFlagTime.value = sceneryClock;
     if (ferrisWheelRotating) {
       ferrisWheelRotating.rotation.x += dt * 0.08;
     }
@@ -3402,8 +3704,13 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
   }
 
   function applyAtmosphere(atmo: EvaluatedSuzukaAtmosphere) {
-    // 1. Ground turf, trackside run-off verge, trees/cacti/rocks & mountain horizon tinting
+    // 1. Ground turf, rolling hills, lake, trackside run-off verge, trees/cacti/rocks & mountain horizon tinting
     grassMat.color.setHex(atmo.groundTintHex);
+    hillMat.color.setHex(atmo.groundTintHex);
+    lakeShoreMat.color.setHex(atmo.groundTintHex);
+    lakeWaterMat.color.setHex(atmo.groundTintHex);
+    lakeWaterMat.emissiveIntensity = 0.06 + atmo.nightLightFactor * 0.14;
+    treeShadowMat.opacity = 0.56 - atmo.nightLightFactor * 0.28;
     vergeMat.color.setHex(atmo.groundTintHex);
     pineMat.color.setHex(atmo.foliageTintHex);
     cedarMat.color.setHex(atmo.foliageTintHex);
@@ -3422,8 +3729,13 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
     redRoadMat.metalness = atmo.roadMetalness * 0.6;
     redRoadMat.emissiveIntensity = atmo.redRoadEmissiveIntensity;
 
-    // 3. Stadium floodlights, Ferris wheel, control tower, pit glass & signage
+    // 3. Stadium floodlights + volumetric cones, Ferris wheel, control tower, pit glass & signage
     floodGlowMat.emissiveIntensity = atmo.floodEmissiveIntensity;
+    if (floodConeInst) {
+      const coneOp = atmo.nightLightFactor * 0.22;
+      floodConeMat.opacity = coneOp;
+      floodConeInst.visible = coneOp > 0.01;
+    }
     ferrisRimMat.emissiveIntensity = atmo.ferrisEmissiveIntensity;
     if (ferrisGondolaMat.userData.uVColEmissive) {
       ferrisGondolaMat.userData.uVColEmissive.value = atmo.ferrisEmissiveIntensity * 0.65;

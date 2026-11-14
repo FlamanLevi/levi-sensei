@@ -194,12 +194,15 @@ export function resolveActiveArcadeStrategy(params: {
     status === 'SPRINT_RACE' ||
     status === 'GRAND_PRIX_3D' ||
     status === 'TUG_OF_WAR' ||
+    status === 'TAMAIRE' ||
     status === 'VOLLEYBALL'
   ) {
     const modeKey: GamePlayType =
       status === 'SPRINT_RACE' && gamePlayType === 'GRAND_PRIX_3D'
         ? 'GRAND_PRIX_3D'
-        : (status as GamePlayType);
+        : status === 'VOLLEYBALL' && gamePlayType === 'TAMAIRE'
+          ? 'TAMAIRE'
+          : (status as GamePlayType);
     return GAME_MODE_STRATEGIES[modeKey];
   }
   return GAME_MODE_STRATEGIES[gamePlayType || 'KAHOOT'];

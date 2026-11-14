@@ -40,7 +40,7 @@ export type PromptType =
   | 'THREE_HINTS';
 export type EnglishReadingAid = 'SPELLING_ONLY' | 'WITH_KATAKANA';
 export type DistractorEliminationMode = 'OFF' | 'HALFWAY' | 'GRADUAL';
-export type GamePlayType = 'KAHOOT' | 'SPRINT_RACE' | 'GRAND_PRIX_3D' | 'TUG_OF_WAR' | 'VOLLEYBALL';
+export type GamePlayType = 'KAHOOT' | 'SPRINT_RACE' | 'GRAND_PRIX_3D' | 'TUG_OF_WAR' | 'TAMAIRE' | 'VOLLEYBALL';
 export type QuizStatus =
   | 'LOBBY'
   | 'QUESTION'
@@ -51,6 +51,7 @@ export type QuizStatus =
   | 'SPRINT_RACE'
   | 'GRAND_PRIX_3D'
   | 'TUG_OF_WAR'
+  | 'TAMAIRE'
   | 'VOLLEYBALL';
 
 export type TeamId =
@@ -347,7 +348,7 @@ export function calculateClassicScore(params: {
 }
 
 export function calculateArcadeScore(params: {
-  mode: 'SPRINT_RACE' | 'GRAND_PRIX_3D' | 'TUG_OF_WAR' | 'VOLLEYBALL';
+  mode: 'SPRINT_RACE' | 'GRAND_PRIX_3D' | 'TUG_OF_WAR' | 'TAMAIRE' | 'VOLLEYBALL';
   isCorrect: boolean;
   newStreak: number;
   timeTakenMs: number;
@@ -732,7 +733,7 @@ export function calculateTamaireThrowResult(params: {
   const isGoldenDouble = newStreak > 0 && newStreak % 3 === 0;
   const bagsThrown: 1 | 2 = isGoldenDouble ? 2 : 1;
   const basePoints = calculateArcadeScore({
-    mode: 'VOLLEYBALL',
+    mode: 'TAMAIRE',
     isCorrect: true,
     newStreak,
     timeTakenMs,
@@ -798,7 +799,7 @@ export function advanceTamaireThrowStep(params: {
 
   const newStreak = previousStreak + 1;
   const basePoints = calculateArcadeScore({
-    mode: 'VOLLEYBALL',
+    mode: 'TAMAIRE',
     isCorrect: true,
     newStreak,
     timeTakenMs,
@@ -1284,6 +1285,27 @@ export const GAME_MODE_STRATEGIES: Record<GamePlayType, MiniGameStrategyDescript
       tugOfWarBaselinePulls: {},
     }),
   },
+  TAMAIRE: {
+    gamePlayType: 'TAMAIRE',
+    activeStatus: 'TAMAIRE',
+    labelEn: '3D Undokai Bean Bag Toss (Tamaire)',
+    labelJa: '3D 運動会 玉入れバトル',
+    greenFlagOffsetMs: 1500,
+    requiresTwoTeams: true,
+    preWarmInLobby: false,
+    studentSpokeSubscription: 'SELF_ONLY',
+    maxClientWriteHz: 8,
+    defaultLockoutSeconds: 2.5,
+    resolveInitialRoomPatch: (nowServerMs, durationSeconds) => ({
+      status: 'TAMAIRE',
+      raceStartTime: nowServerMs,
+      tamaireStartTime: nowServerMs,
+      volleyballStartTime: nowServerMs,
+      raceDurationSeconds: durationSeconds,
+      tamaireFinished: false,
+      volleyballFinished: false,
+    }),
+  },
   VOLLEYBALL: {
     gamePlayType: 'VOLLEYBALL',
     activeStatus: 'VOLLEYBALL',
@@ -1298,8 +1320,10 @@ export const GAME_MODE_STRATEGIES: Record<GamePlayType, MiniGameStrategyDescript
     resolveInitialRoomPatch: (nowServerMs, durationSeconds) => ({
       status: 'VOLLEYBALL',
       raceStartTime: nowServerMs,
+      tamaireStartTime: nowServerMs,
       volleyballStartTime: nowServerMs,
       raceDurationSeconds: durationSeconds,
+      tamaireFinished: false,
       volleyballFinished: false,
     }),
   },

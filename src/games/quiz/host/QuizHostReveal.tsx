@@ -5,7 +5,7 @@ import { soundEffects } from '@/services/soundEffects';
 import { useLanguage } from '@/context/LanguageContext';
 import { useAudio } from '@/context/AudioContext';
 import { speechService } from '@/services/speechService';
-import { Volume2, CheckCircle2, XCircle, ArrowRight, Sparkles, Flame, Pause, Clock } from 'lucide-react';
+import { Volume2, CheckCircle2, XCircle, ArrowRight, Pause, Clock } from 'lucide-react';
 import { useClassroomClicker } from '@/hooks/useClassroomClicker';
 import { ClassroomBlackoutShutter } from '@/components/common/ClassroomBlackoutShutter';
 import { RubyText } from '@/components/common/RubyText';
@@ -17,8 +17,6 @@ interface QuizHostRevealProps {
   responses?: Record<string, QuizResponse> | null;
   onNext: () => void;
   onExit?: () => void;
-  isSolo?: boolean;
-  soloPlayer?: QuizPlayer;
   onDuckBGM?: (duck: boolean) => void;
 }
 
@@ -29,11 +27,9 @@ export const QuizHostReveal: React.FC<QuizHostRevealProps> = ({
   responses,
   onNext,
   onExit,
-  isSolo = false,
-  soloPlayer,
   onDuckBGM
 }) => {
-  const { t, language } = useLanguage();
+  const { t } = useLanguage();
   const { playWordAudio, isMuted } = useAudio();
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const [countdown, setCountdown] = useState<number>(7);
@@ -90,30 +86,17 @@ export const QuizHostReveal: React.FC<QuizHostRevealProps> = ({
     }
     hasRevealedRef.current = question.questionIndex;
 
-    if (isSolo) {
-      const soloAns = resolveQuestionScopedAnswer({
-        answers: soloPlayer?.answers,
-        lastAnswer: soloPlayer?.lastAnswer,
+    const anyCorrect = Object.values(players).some((p) =>
+      resolveQuestionScopedAnswer({
+        answers: p.answers,
+        lastAnswer: p.lastAnswer,
         questionIndex: question.questionIndex,
-      });
-      if (soloAns?.isCorrect) {
-        soundEffects.playCorrect();
-      } else {
-        soundEffects.playIncorrect();
-      }
+      })?.isCorrect
+    );
+    if (anyCorrect) {
+      soundEffects.playCorrect();
     } else {
-      const anyCorrect = Object.values(players).some((p) =>
-        resolveQuestionScopedAnswer({
-          answers: p.answers,
-          lastAnswer: p.lastAnswer,
-          questionIndex: question.questionIndex,
-        })?.isCorrect
-      );
-      if (anyCorrect) {
-        soundEffects.playCorrect();
-      } else {
-        soundEffects.playIncorrect();
-      }
+      soundEffects.playIncorrect();
     }
 
     const audioTimer = setTimeout(() => {
@@ -174,9 +157,8 @@ export const QuizHostReveal: React.FC<QuizHostRevealProps> = ({
       }
     });
   } else {
-    // Robust fallback: Tally directly from active players or soloPlayer
-    const activePlayerList = isSolo && soloPlayer ? [soloPlayer] : Object.values(players);
-    activePlayerList.forEach(p => {
+    // Robust fallback: Tally directly from active players
+    Object.values(players).forEach(p => {
       const scoped = resolveQuestionScopedAnswer({
         answers: p.answers,
         lastAnswer: p.lastAnswer,
@@ -188,14 +170,6 @@ export const QuizHostReveal: React.FC<QuizHostRevealProps> = ({
       }
     });
   }
-
-  const soloScopedAnswer = isSolo && soloPlayer
-    ? resolveQuestionScopedAnswer({
-        answers: soloPlayer.answers,
-        lastAnswer: soloPlayer.lastAnswer,
-        questionIndex: question.questionIndex,
-      })
-    : undefined;
 
   const totalResponses = Object.values(optionVotes).reduce((sum, v) => sum + v, 0);
   const correctOption = question.options.find(o => o.id === question.correctOptionId);
@@ -257,46 +231,7 @@ export const QuizHostReveal: React.FC<QuizHostRevealProps> = ({
         </div>
       </div>
 
-      {/* 2. Solo Feedback Toast if in Solo Mode */}
-      {isSolo && soloPlayer?.lastAnswer && (
-        <div className="shrink-0 mb-1">
-          {soloPlayer.lastAnswer.isCorrect ? (
-            <div className="bg-emerald-600 text-white rounded-2xl px-4 py-2 flex items-center justify-between shadow-md">
-              <div className="flex items-center gap-2">
-                <span className="text-2xl">🎉</span>
-                <div>
-                  <span className="text-sm font-black block">{t('CORRECT!!', <><ruby>正解<rt>せいかい</rt></ruby>！その<ruby>調子<rt>ちょうし</rt></ruby>！</>)}</span>
-                  <span className="text-xs text-emerald-100 font-bold block">
-                    +{soloPlayer.lastAnswer.pointsEarned.toLocaleString()} pts • {(soloPlayer.lastAnswer.timeTakenMs / 1000).toFixed(1)}s
-                  </span>
-                </div>
-              </div>
-              <div className="text-right">
-                <span className="text-[10px] font-bold text-emerald-200 uppercase block">{t('Total Score', <><ruby>合計<rt>ごうけい</rt></ruby>スコア</>)}</span>
-                <span className="text-lg font-black font-mono">{soloPlayer.score.toLocaleString()} pts</span>
-              </div>
-            </div>
-          ) : (
-            <div className="bg-rose-600 text-white rounded-2xl px-4 py-2 flex items-center justify-between shadow-md">
-              <div className="flex items-center gap-2">
-                <span className="text-2xl">💪</span>
-                <div>
-                  <span className="text-sm font-black block">{t('NICE TRY! (DON\'T GIVE UP!)', <>おしい！<ruby>次<rt>つぎ</rt></ruby>こそ<ruby>正解<rt>せいかい</rt></ruby>しよう！</>)}</span>
-                  <span className="text-xs text-rose-100 font-bold block">
-                    {t('Listen to the pronunciation and repeat!', <><ruby>発音<rt>はつおん</rt></ruby>を<ruby>聞<rt>き</rt></ruby>いてしっかり<ruby>覚<rt>おぼ</rt></ruby>えよう！</>)}
-                  </span>
-                </div>
-              </div>
-              <div className="text-right">
-                <span className="text-[10px] font-bold text-rose-200 uppercase block">{t('Total Score', <><ruby>合計<rt>ごうけい</rt></ruby>スコア</>)}</span>
-                <span className="text-lg font-black font-mono">{soloPlayer.score.toLocaleString()} pts</span>
-              </div>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* 3. Main Spotlight Card: Correct Answer Stage (Centered layout with zero empty voids) */}
+      {/* 2. Main Spotlight Card: Correct Answer Stage (Centered layout with zero empty voids) */}
       <div className={`flex-1 w-full min-h-0 max-h-[52dvh] flex flex-col items-center rounded-3xl p-3 sm:p-5 border-4 border-emerald-500 shadow-2xl my-1 relative overflow-hidden ${
         hasArtwork ? 'justify-between' : 'justify-center gap-4'
       } bg-gradient-to-b from-white via-emerald-50/40 to-emerald-50/70 dark:from-slate-900 dark:via-slate-900 dark:to-emerald-950/30`}>
@@ -429,13 +364,6 @@ export const QuizHostReveal: React.FC<QuizHostRevealProps> = ({
                   {symbolChar}
                 </div>
                 <div className="flex items-center gap-1">
-                  {isSolo && soloScopedAnswer?.optionId === opt.id && (
-                    <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-black ${
-                      isCorrect ? 'bg-emerald-600 text-white' : 'bg-rose-600 text-white'
-                    }`}>
-                      {isCorrect ? '✓' : '✕'}
-                    </span>
-                  )}
                   {isCorrect ? (
                     <CheckCircle2 className="text-emerald-500" size={17} />
                   ) : (

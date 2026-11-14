@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { prewarmSuzukaAssets } from '@/games/suzuka_grand_prix/engine/Suzuka3DEngine';
 import { prewarmMicroKartAssets } from '@/games/suzuka_grand_prix/engine/MicroKartBuilder.js';
-import { QuizPlayer, TEAM_PRESETS, SprintSettings, GamePlayType, PRE_GAME_GREETINGS } from '../types';
+import { QuizPlayer, TEAM_PRESETS, SprintSettings, TugOfWarSettings, TamaireSettings, GamePlayType, PRE_GAME_GREETINGS } from '../types';
 import { LogOut, Volume2, CheckCircle2, Edit3, ShoppingBag, Award, MessageSquare } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 import { soundEffects } from '@/services/soundEffects';
@@ -27,6 +27,8 @@ interface QuizStudentLobbyProps {
   player: QuizPlayer;
   gamePlayType?: GamePlayType;
   sprintSettings?: SprintSettings;
+  tugOfWarSettings?: TugOfWarSettings;
+  tamaireSettings?: TamaireSettings;
   totalQuestions?: number;
   totalStudents?: number;
   onLeave: () => void;
@@ -46,6 +48,8 @@ export const QuizStudentLobby: React.FC<QuizStudentLobbyProps> = ({
   player,
   gamePlayType = 'KAHOOT',
   sprintSettings,
+  tugOfWarSettings,
+  tamaireSettings,
   totalQuestions = 20,
   totalStudents,
   onLeave,
@@ -71,7 +75,7 @@ export const QuizStudentLobby: React.FC<QuizStudentLobbyProps> = ({
   }, []);
 
   const isTug = gamePlayType === 'TUG_OF_WAR';
-  const isVolleyball = gamePlayType === 'VOLLEYBALL';
+  const isVolleyball = gamePlayType === 'TAMAIRE' || gamePlayType === 'VOLLEYBALL';
   const isGrandPrix3D = gamePlayType === 'GRAND_PRIX_3D';
   const isAnticipation = gamePlayType === 'ANTICIPATION';
   const isSprint = gamePlayType === 'SPRINT_RACE' || isGrandPrix3D;
@@ -568,11 +572,21 @@ export const QuizStudentLobby: React.FC<QuizStudentLobbyProps> = ({
                 ) : (
                   '1. Guess the English word while the progressive sketch or connect-the-dots draws! Wrong guesses lock your pad for 2.5s.'
                 )
-              ) : isVolleyball ? (
-                t('1. Answer on your iPad in 3 steps (Scoop → Aim → Throw) to toss bean bags into your team basket!', '1. 3ステップ（①玉を拾う → ②狙う → ③投げる）で正解してお手玉をカゴへ投げ入れよう！')
-              ) : isTug ? (
-                t('1. Every correct answer pulls the rope toward your team on the big screen!', '1. 正解するとテレビのロープをグイッと引き寄せる！誤答は泥で2.5秒ストップ！')
-              ) : (
+              ) : isVolleyball ? (() => {
+                const fumbleSec = Math.max(2.5, tamaireSettings?.missLockoutSeconds ?? 2.5);
+                const fumbleLabel = Number.isInteger(fumbleSec) ? `${fumbleSec}` : fumbleSec.toFixed(1);
+                return t(
+                  `1. Answer on your iPad in 3 steps (Scoop → Aim → Throw) to toss bean bags into your team basket! (Fumbles lock for ${fumbleLabel}s)`,
+                  `1. 3ステップ（①玉を拾う → ②狙う → ③投げる）で正解してお手玉をカゴへ投げ入れよう！（お手つきは${fumbleLabel}秒ストップ）`
+                );
+              })() : isTug ? (() => {
+                const mudSec = Math.max(2.5, tugOfWarSettings?.mudLockoutSeconds ?? 2.5);
+                const mudLabel = Number.isInteger(mudSec) ? `${mudSec}` : mudSec.toFixed(1);
+                return t(
+                  `1. Every correct answer pulls the rope toward your team on the big screen! (Mistakes slip in mud for ${mudLabel}s)`,
+                  `1. 正解するとテレビのロープをグイッと引き寄せる！誤答は泥で${mudLabel}秒ストップ！`
+                );
+              })() : (
                 t('1. Look at the front TV for the question, then tap the matching shape/answer on your iPad!', '1. 前のテレビで問題を見て、手元のiPadで答えをタップしよう！')
               )}
             </p>

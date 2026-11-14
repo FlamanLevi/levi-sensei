@@ -497,6 +497,43 @@ test('computeTugOfWarSweepsRemaining computes pulls across center and never retu
   );
 });
 
+test('Release 1 TAMAIRE strategy and 5-tier configurable lockout [2.5, 3.0, 3.5, 4.0, 5.0]', () => {
+  assert.equal(GAME_MODE_STRATEGIES.TAMAIRE.gamePlayType, 'TAMAIRE');
+  assert.equal(GAME_MODE_STRATEGIES.TAMAIRE.activeStatus, 'TAMAIRE');
+  assert.equal(GAME_MODE_STRATEGIES.TAMAIRE.requiresTwoTeams, true);
+  assert.ok(GAME_MODE_STRATEGIES.TAMAIRE.maxClientWriteHz <= 10);
+  const initialPatch = GAME_MODE_STRATEGIES.TAMAIRE.resolveInitialRoomPatch(5000, 90);
+  assert.equal(initialPatch.status, 'TAMAIRE');
+  assert.equal(initialPatch.tamaireStartTime, 5000);
+  assert.equal(initialPatch.volleyballStartTime, 5000);
+  assert.equal(initialPatch.tamaireFinished, false);
+  assert.equal(initialPatch.volleyballFinished, false);
 
-
-
+  const lockoutTiers = [2.5, 3.0, 3.5, 4.0, 5.0];
+  for (const tierSec of lockoutTiers) {
+    assert.equal(
+      resolveLockoutPenaltySeconds({
+        mode: 'GRAND_PRIX_3D',
+        mistakeCountOnQuestion: 1,
+        configuredLockoutSeconds: tierSec,
+      }).penaltySeconds,
+      tierSec
+    );
+    assert.equal(
+      resolveLockoutPenaltySeconds({
+        mode: 'TUG_OF_WAR',
+        mistakeCountOnQuestion: 1,
+        configuredLockoutSeconds: tierSec,
+      }).penaltySeconds,
+      tierSec
+    );
+    assert.equal(
+      resolveLockoutPenaltySeconds({
+        mode: 'TAMAIRE',
+        mistakeCountOnQuestion: 1,
+        configuredLockoutSeconds: tierSec,
+      }).penaltySeconds,
+      tierSec
+    );
+  }
+});

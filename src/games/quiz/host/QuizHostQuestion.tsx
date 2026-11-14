@@ -7,7 +7,7 @@ import { useLanguage } from '@/context/LanguageContext';
 import { useAudio } from '@/context/AudioContext';
 import { useClassroom } from '@/context/ClassroomContext';
 import { speechService } from '@/services/speechService';
-import { Volume2, Clock, Users, EyeOff, Zap, Sparkles, CheckCircle2, Pause } from 'lucide-react';
+import { Volume2, Clock, Users, Pause } from 'lucide-react';
 import { useClassroomClicker } from '@/hooks/useClassroomClicker';
 import { ClassroomBlackoutShutter } from '@/components/common/ClassroomBlackoutShutter';
 import { RubyText } from '@/components/common/RubyText';
@@ -24,10 +24,6 @@ interface QuizHostQuestionProps {
   onTimeExpired: () => void;
   onManualReveal: () => void;
   onExit?: () => void;
-  isSolo?: boolean;
-  soloPlayer?: QuizPlayer;
-  selectedOptionId?: string | null;
-  onSelectOption?: (optionId: string, timeTakenMs: number) => void;
   onDuckBGM?: (duck: boolean) => void;
 }
 
@@ -43,17 +39,12 @@ export const QuizHostQuestion: React.FC<QuizHostQuestionProps> = ({
   onTimeExpired,
   onManualReveal,
   onExit,
-  isSolo = false,
-  soloPlayer,
-  selectedOptionId = null,
-  onSelectOption,
   onDuckBGM
 }) => {
   const { t, language } = useLanguage();
   const { playWordAudio, isMuted } = useAudio();
   const { activeSchool } = useClassroom();
   const [timeLeftMs, setTimeLeftMs] = useState<number>(question.timeLimitMs);
-  const [localSelectedId, setLocalSelectedId] = useState<string | null>(selectedOptionId || null);
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [isBlackout, setIsBlackout] = useState(false);
@@ -66,7 +57,6 @@ export const QuizHostQuestion: React.FC<QuizHostQuestionProps> = ({
   isBlackoutRef.current = isBlackout;
 
   const timerRef = useRef<number | null>(null);
-  const autoRevealTimerRef = useRef<number | null>(null);
   const expireTimerRef = useRef<number | null>(null);
   const earlyEndTimerRef = useRef<number | null>(null);
   const lastTickSecondRef = useRef<number>(-1);
@@ -84,10 +74,6 @@ export const QuizHostQuestion: React.FC<QuizHostQuestionProps> = ({
   onManualRevealRef.current = onManualReveal;
 
   const clearAllPendingTimers = () => {
-    if (autoRevealTimerRef.current) {
-      clearTimeout(autoRevealTimerRef.current);
-      autoRevealTimerRef.current = null;
-    }
     if (expireTimerRef.current) {
       clearTimeout(expireTimerRef.current);
       expireTimerRef.current = null;
@@ -138,9 +124,8 @@ export const QuizHostQuestion: React.FC<QuizHostQuestionProps> = ({
   playPromptAudioRef.current = playPromptAudio;
 
   useEffect(() => {
-    setLocalSelectedId(selectedOptionId || null);
     clearAllPendingTimers();
-  }, [question.questionIndex, selectedOptionId]);
+  }, [question.questionIndex]);
 
   useEffect(() => {
     return () => {
@@ -285,35 +270,17 @@ export const QuizHostQuestion: React.FC<QuizHostQuestionProps> = ({
 
   const prevEliminatedCountRef = useRef<number>(0);
   useEffect(() => {
-    if (eliminatedOptionIds.size > prevEliminatedCountRef.current && !localSelectedId) {
+    if (eliminatedOptionIds.size > prevEliminatedCountRef.current) {
       soundEffects.play5050();
     }
     prevEliminatedCountRef.current = eliminatedOptionIds.size;
-  }, [eliminatedOptionIds.size, localSelectedId]);
+  }, [eliminatedOptionIds.size]);
 
   useEffect(() => {
     prevEliminatedCountRef.current = 0;
   }, [question.questionIndex]);
 
-  const handleOptionClick = (optId: string) => {
-    if (isRecallLocked || eliminatedOptionIds.has(optId) || timeLeftMs <= 0) return;
-
-    if (isSolo && onSelectOption) {
-      const now = getServerTime();
-      const timeTaken = startTimeRef.current > 0 ? Math.max(0, now - startTimeRef.current) : 0;
-      setLocalSelectedId(optId);
-      soundEffects.playTick();
-      onSelectOption(optId, timeTaken);
-
-      if (autoRevealTimerRef.current) clearTimeout(autoRevealTimerRef.current);
-      autoRevealTimerRef.current = window.setTimeout(() => {
-        clearAllPendingTimers();
-        onManualRevealRef.current();
-      }, 500);
-    }
-  };
-
-  const allAnswered = !isSolo && totalPlayers > 0 && answeredCount >= totalPlayers;
+  const allAnswered = totalPlayers > 0 && answeredCount >= totalPlayers;
   const hasTriggeredEarlyEndRef = useRef(false);
 
   useEffect(() => {
@@ -447,45 +414,23 @@ export const QuizHostQuestion: React.FC<QuizHostQuestionProps> = ({
 
         {/* Counter / Score & PIN */}
         <div className="flex items-center gap-2 sm:gap-3 shrink-0 flex-nowrap">
-          {isSolo ? (
-            <div className="flex items-center gap-2 shrink-0 flex-nowrap">
-              {soloPlayer && soloPlayer.currentStreak >= 2 && (
-                <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-400 text-slate-950 text-xs font-black shadow-sm animate-bounce whitespace-nowrap">
-                  <span>🔥</span>
-                  <span>{soloPlayer.currentStreak}</span>
-                </div>
-              )}
-              {soloPlayer && (
-                <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-100 dark:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 text-xs font-black shadow-sm whitespace-nowrap">
-                  <Sparkles size={13} className="text-indigo-600 dark:text-indigo-400" />
-                  <span>{soloPlayer.score.toLocaleString()} pts</span>
-                </div>
-              )}
-              <span className="font-mono text-xs font-black px-2.5 py-1 rounded-lg bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-200 border border-amber-300 dark:border-amber-800 whitespace-nowrap">
-                {t('📺 TV / Smartboard', '📺 テレビ・電子黒板')}
+          {totalPlayers > 0 && (
+            <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black shadow-sm transition-all whitespace-nowrap ${
+              allAnswered
+                ? 'bg-emerald-500 text-white animate-bounce ring-2 ring-emerald-300'
+                : 'bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300'
+            }`}>
+              <Users size={14} />
+              <span>
+                {allAnswered
+                  ? t('All Answered! 🎉', <><ruby>全員<rt>ぜんいん</rt></ruby><ruby>回答<rt>かいとう</rt></ruby><ruby>完了<rt>かんりょう</rt></ruby>！🎉</>)
+                  : <>{answeredCount} / {totalPlayers} {t('Answered', <><ruby>名<rt>めい</rt></ruby> <ruby>回答<rt>かいとう</rt></ruby><ruby>済<rt>ず</rt></ruby>み</>)}</>}
               </span>
             </div>
-          ) : (
-            <>
-              {totalPlayers > 0 && (
-                <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black shadow-sm transition-all whitespace-nowrap ${
-                  allAnswered
-                    ? 'bg-emerald-500 text-white animate-bounce ring-2 ring-emerald-300'
-                    : 'bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300'
-                }`}>
-                  <Users size={14} />
-                  <span>
-                    {allAnswered
-                      ? t('All Answered! 🎉', <><ruby>全員<rt>ぜんいん</rt></ruby><ruby>回答<rt>かいとう</rt></ruby><ruby>完了<rt>かんりょう</rt></ruby>！🎉</>)
-                      : <>{answeredCount} / {totalPlayers} {t('Answered', <><ruby>名<rt>めい</rt></ruby> <ruby>回答<rt>かいとう</rt></ruby><ruby>済<rt>ず</rt></ruby>み</>)}</>}
-                  </span>
-                </div>
-              )}
-              <span className="font-mono text-xs font-black px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap">
-                PIN: {roomCode}
-              </span>
-            </>
           )}
+          <span className="font-mono text-xs font-black px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap">
+            PIN: {roomCode}
+          </span>
           {onExit && (
             <button
               onClick={onExit}
@@ -711,26 +656,18 @@ export const QuizHostQuestion: React.FC<QuizHostQuestionProps> = ({
                 ? (!hasOptionRuby && opt.ja_kanji && opt.ja_hiragana && opt.ja_kanji !== opt.ja_hiragana ? opt.ja_hiragana : undefined)
                 : (question.englishReadingAid === 'WITH_KATAKANA' && opt.en_katakana ? `【${opt.en_katakana}】` : undefined);
 
-              const isSelected = isSolo && localSelectedId === opt.id;
-              const isOtherSelected = isSolo && localSelectedId !== null && localSelectedId !== opt.id;
-
               return (
                 <div
                   key={opt.id}
-                  onClick={isRecallLocked || isEliminated ? undefined : () => handleOptionClick(opt.id)}
                   style={{
                     boxShadow: isEliminated ? undefined : (isFutako ? `0 6px 0 0 ${optStyle.shadow}, 0 10px 20px -2px rgba(0,0,0,0.4)` : undefined)
                   }}
-                  className={`relative p-3 sm:p-4 rounded-2xl sm:rounded-3xl flex items-center justify-center transition-all duration-150 cursor-pointer active:translate-y-1.5 h-full min-h-0 select-none overflow-hidden ${
+                  className={`relative p-3 sm:p-4 rounded-2xl sm:rounded-3xl flex items-center justify-center transition-all duration-150 h-full min-h-0 select-none overflow-hidden ${
                     isFutako
                       ? `${optStyle.bg} ${optStyle.border} border-3 sm:border-4 ${optStyle.text || 'text-white'}`
                       : optStyle.toyoClass
                   } ${
                     isEliminated ? 'opacity-15 grayscale line-through pointer-events-none scale-95' : ''
-                  } ${
-                    isSelected ? 'ring-4 ring-white border-white scale-[1.02] shadow-2xl z-10' : ''
-                  } ${
-                    isOtherSelected ? 'opacity-40 scale-98' : ''
                   }`}
                 >
                   {/* CUD Shape-Matched Background Texture Layer */}
@@ -786,13 +723,6 @@ export const QuizHostQuestion: React.FC<QuizHostQuestionProps> = ({
                       )}
                     </div>
                   )}
-
-                  {isSelected && (
-                    <div className="absolute top-2 right-2.5 sm:top-3 sm:right-3.5 px-2.5 py-0.5 rounded-full bg-white text-slate-900 font-black text-[11px] shadow-md flex items-center gap-1 shrink-0 animate-in zoom-in duration-150 z-20">
-                      <CheckCircle2 size={13} className="text-emerald-600" />
-                      <span>{t('SELECTED', <><ruby>選択<rt>せんたく</rt></ruby><ruby>中<rt>ちゅう</rt></ruby></>)}</span>
-                    </div>
-                  )}
                 </div>
               );
             })}
@@ -803,7 +733,7 @@ export const QuizHostQuestion: React.FC<QuizHostQuestionProps> = ({
       {/* 4. Bottom Footer: Clean & Distraction-Free */}
       <div className="h-6 flex items-center justify-between pt-1 shrink-0 text-slate-600 dark:text-slate-400">
         <span className="text-[11px] font-bold opacity-80">
-          {isSolo ? t('Solo Warmup Mode', 'ウォームアップ') : t('Eigo Arena Live Session', 'ライブ一斉対戦')}
+          {t('Eigo Arena Live Session', 'ライブ一斉対戦')}
         </span>
       </div>
 

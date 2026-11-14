@@ -6,7 +6,6 @@ import {
   QuizScope,
   QuizSubject,
   PromptType, 
-  DeliveryStream, 
   IpadDisplayMode,
   AwardCategoryToggles,
   GameMode,
@@ -17,7 +16,7 @@ import {
   SprintSettings,
   TugOfWarSettings,
   TugOfWarMatchFormat,
-  VolleyballSettings,
+  TamaireSettings,
   DistractorEliminationMode,
   TeamId,
   TEAM_PRESETS,
@@ -43,7 +42,6 @@ import {
   Image as ImageIcon,
   Calculator, 
   BookOpen, 
-  Tablet, 
   Tv, 
   Eye, 
   Layers, 
@@ -131,9 +129,6 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
   const gradeDigit = activeGrade.replace('ES_G', '');
   const availableClassesForGrade = (SCHOOL_CONFIGS[activeSchool]?.classes || []).filter(c => c.startsWith(`${classGradeTab}-`));
 
-  const [deliveryStream, setDeliveryStream] = useState<DeliveryStream>(
-    () => initialSettings?.deliveryStream || 'STREAM_B_MULTIPLAYER'
-  );
   const [gamePlayType, setGamePlayType] = useState<GamePlayType>(
     () => initialSettings?.gamePlayType || 'KAHOOT'
   );
@@ -244,10 +239,10 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
 
   // Undokai Bean Bag Toss (Tamaire) state
   const [volleyballTimeLimit, setVolleyballTimeLimit] = useState<number>(
-    () => initialSettings?.volleyballSettings?.timeLimitSeconds ?? 60
+    () => (initialSettings?.tamaireSettings ?? initialSettings?.volleyballSettings)?.timeLimitSeconds ?? 60
   );
   const [tamaireMysteryCount, setTamaireMysteryCount] = useState<boolean>(
-    () => initialSettings?.volleyballSettings?.hideScoreUntilEnd ?? true
+    () => (initialSettings?.tamaireSettings ?? initialSettings?.volleyballSettings)?.hideScoreUntilEnd ?? true
   );
 
   // Question mechanics & hint toggles (Mutually exclusive: Gradual default ON, Recall delay default OFF)
@@ -355,6 +350,8 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
 
   const handleLaunch = () => {
     const is3DRace = gamePlayType === 'GRAND_PRIX_3D';
+    const isTamaire = gamePlayType === 'TAMAIRE' || gamePlayType === 'VOLLEYBALL';
+    const canonicalGamePlayType: GamePlayType = isTamaire ? 'TAMAIRE' : gamePlayType;
     const sprintSettings: SprintSettings | undefined = is3DRace ? {
       sprintMode,
       lapCount: targetLaps3D || 1,
@@ -378,7 +375,7 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
       matchFormat: tugOfWarMatchFormat
     } : undefined;
 
-    const volleyballSettings: VolleyballSettings | undefined = gamePlayType === 'VOLLEYBALL' ? {
+    const tamaireConfig: TamaireSettings | undefined = isTamaire ? {
       timeLimitSeconds: volleyballTimeLimit,
       gameStyle: 'TEAM_VS',
       targetRallies: 100,
@@ -386,7 +383,7 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
       hideScoreUntilEnd: tamaireMysteryCount,
     } : undefined;
 
-    const actualQCount = (gamePlayType === 'GRAND_PRIX_3D' || gamePlayType === 'TUG_OF_WAR' || gamePlayType === 'VOLLEYBALL')
+    const actualQCount = (is3DRace || gamePlayType === 'TUG_OF_WAR' || isTamaire)
       ? (subject === 'MATH' ? 60 : Math.min(60, Math.max(wordsInPool.length, 30)))
       : (subject === 'MATH'
           ? (questionCount === -1 ? 40 : questionCount)
@@ -398,12 +395,12 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
       mathDomain: subject === 'MATH' ? mathDomain : undefined,
       mathTopicId: (subject === 'MATH' && selectedMathTopic) ? selectedMathTopic : undefined,
       questionCount: actualQCount,
-      timeLimitSeconds: is3DRace ? sprintTimeLimitSeconds : (gamePlayType === 'TUG_OF_WAR' ? tugOfWarTimeLimit : (gamePlayType === 'VOLLEYBALL' ? volleyballTimeLimit : timeLimitSeconds)),
-      gameMode: (gamePlayType === 'TUG_OF_WAR' || gamePlayType === 'VOLLEYBALL') ? 'TEAM' : gameMode,
-      teamAssignment: (gameMode === 'TEAM' || gamePlayType === 'TUG_OF_WAR' || gamePlayType === 'VOLLEYBALL') ? teamAssignment : undefined,
-      teamCount: (gamePlayType === 'TUG_OF_WAR' || gamePlayType === 'VOLLEYBALL') ? 2 : (gameMode === 'TEAM' ? teamCount : undefined),
-      activeTeams: (gamePlayType === 'TUG_OF_WAR' || gamePlayType === 'VOLLEYBALL') ? ['team_red', 'team_white'] : (gameMode === 'TEAM' ? activeTeams : undefined),
-      deliveryStream: (is3DRace || gamePlayType === 'TUG_OF_WAR' || gamePlayType === 'VOLLEYBALL') ? 'STREAM_B_MULTIPLAYER' : deliveryStream,
+      timeLimitSeconds: is3DRace ? sprintTimeLimitSeconds : (gamePlayType === 'TUG_OF_WAR' ? tugOfWarTimeLimit : (isTamaire ? volleyballTimeLimit : timeLimitSeconds)),
+      gameMode: (gamePlayType === 'TUG_OF_WAR' || isTamaire) ? 'TEAM' : gameMode,
+      teamAssignment: (gameMode === 'TEAM' || gamePlayType === 'TUG_OF_WAR' || isTamaire) ? teamAssignment : undefined,
+      teamCount: (gamePlayType === 'TUG_OF_WAR' || isTamaire) ? 2 : (gameMode === 'TEAM' ? teamCount : undefined),
+      activeTeams: (gamePlayType === 'TUG_OF_WAR' || isTamaire) ? ['team_red', 'team_white'] : (gameMode === 'TEAM' ? activeTeams : undefined),
+      deliveryStream: 'STREAM_B_MULTIPLAYER',
       ipadDisplayMode,
       promptTypes: subject === 'MATH' ? ['JA_MEANING'] : promptTypes,
       awardToggles,
@@ -412,13 +409,14 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
       recordRoster: isStudentHost || selectedClassId === 'TEST' || !recordRoster ? false : recordRoster,
       isStudentHost: !!isStudentHost,
       isTestGame: selectedClassId === 'TEST' || !recordRoster,
-      gamePlayType,
+      gamePlayType: canonicalGamePlayType,
       recallDelaySeconds: subject === 'MATH' ? 0 : recallDelaySeconds,
       eliminateDistractors: distractorEliminationMode !== 'OFF',
       distractorEliminationMode,
       sprintSettings,
       tugOfWarSettings,
-      volleyballSettings,
+      tamaireSettings: tamaireConfig,
+      volleyballSettings: tamaireConfig,
       bgm,
       vocabularyScope: subject === 'MATH' ? undefined : selectedScope,
       selectedUnits: subject !== 'MATH' && selectedScope === 'CURRENT'
@@ -431,16 +429,14 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
   };
 
   let nextSetupStep = 1;
-  const playModeStep = !isStudentHost ? nextSetupStep++ : 0;
-  const gameStyleStep = deliveryStream === 'STREAM_B_MULTIPLAYER' ? nextSetupStep++ : 0;
+  const gameStyleStep = nextSetupStep++;
   const battleFormatStep =
-    deliveryStream === 'STREAM_B_MULTIPLAYER' &&
     gamePlayType !== 'TUG_OF_WAR' &&
+    gamePlayType !== 'TAMAIRE' &&
     gamePlayType !== 'VOLLEYBALL'
       ? nextSetupStep++
       : 0;
-  const ipadDisplayStep =
-    gamePlayType === 'KAHOOT' && deliveryStream === 'STREAM_B_MULTIPLAYER' ? nextSetupStep++ : 0;
+  const ipadDisplayStep = gamePlayType === 'KAHOOT' ? nextSetupStep++ : 0;
   const questionCountStep = gamePlayType === 'KAHOOT' ? nextSetupStep++ : 0;
   const timeLimitStep = gamePlayType === 'KAHOOT' ? nextSetupStep++ : 0;
   const mechanicsStep = gamePlayType === 'KAHOOT' ? nextSetupStep++ : 0;
@@ -1104,32 +1100,107 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
         </div>
         )}
 
-        {/* Delivery Mode (Stream A Front-Screen vs Stream B iPad Multiplayer) */}
-        {!isStudentHost && (
-          <div>
-            <label className="text-xs font-black text-slate-600 dark:text-slate-400 uppercase tracking-wider block mb-2">
-              {t(`${playModeStep}. Classroom Play Mode`, `${playModeStep}. プレイ形式`)}
-            </label>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {/* Game Style / Format */}
+        <div>
+          <label className="text-xs font-black text-slate-600 dark:text-slate-400 uppercase tracking-wider block mb-2.5">
+            {t(`${gameStyleStep}. Game Style`, `${gameStyleStep}. ゲーム形式`)}
+          </label>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 items-start">
+            {/* Column 1: Turn-Based / Synchronized */}
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-1.5 px-1">
+                <span className="text-xs">⏱️</span>
+                <span className="text-[11px] font-black uppercase tracking-wider text-blue-600 dark:text-blue-400">
+                  {t('Turn-Based / Synchronized', 'ターン制・一斉シンクロ')}
+                </span>
+              </div>
               <button
                 type="button"
-                onClick={() => setDeliveryStream('STREAM_B_MULTIPLAYER')}
-                className={`p-4 rounded-2xl border-2 text-left transition-all flex items-start gap-3.5 ${
-                  deliveryStream === 'STREAM_B_MULTIPLAYER'
-                    ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/40 text-blue-950 dark:text-blue-100 shadow-md ring-2 ring-blue-400/30'
+                onClick={() => setGamePlayType('KAHOOT')}
+                className={`p-3.5 rounded-2xl border-2 text-left transition-all flex items-start gap-3 w-full ${
+                  gamePlayType === 'KAHOOT'
+                    ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/40 text-blue-950 dark:text-blue-100 shadow-sm ring-1 ring-blue-400/30'
                     : 'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'
                 }`}
               >
-                <div className={`p-2.5 rounded-xl ${deliveryStream === 'STREAM_B_MULTIPLAYER' ? 'bg-blue-500 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'}`}>
-                  <Tablet size={22} />
+                <div className={`p-2 rounded-xl shrink-0 ${gamePlayType === 'KAHOOT' ? 'bg-blue-500 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'}`}>
+                  <Tv size={20} />
                 </div>
                 <div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-black block">{t('Live iPad Multiplayer (Stream 🅱️)', 'iPad対戦モード (Stream 🅱️)')}</span>
-                    <span className="text-[10px] font-black px-1.5 py-0.5 rounded bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300">{t('Default', '定番')}</span>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-xs font-black block">{t('Live Arena (Kahoot Style)', '一斉対戦 (Kahootスタイル)')}</span>
+                    <span className="text-[10px] font-black px-1.5 py-0.5 rounded bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300">{t('Standard', '定番')}</span>
                   </div>
-                  <span className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed block mt-1">
-                    {t('Students join with 4-digit PIN on 1:1 school iPads. Live podium & real-time sync.', '1人1台のiPadから4桁PINで参加。リアルタイム表彰台と連動。')}
+                  <span className="text-[11px] text-slate-500 dark:text-slate-400 leading-tight block mt-0.5">
+                    {t('Everyone answers each question together. TV reveals questions; iPads submit.', '全員同時に1問ずつ回答。TVで問題発表、iPadで解答するシンクロ型。')}
+                  </span>
+                </div>
+              </button>
+            </div>
+
+            {/* Column 2: Grand Prix Racing (3D Suzuka Grand Prix) */}
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-1.5 px-1">
+                <span className="text-xs">🏎️</span>
+                <span className="text-[11px] font-black uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
+                  {t('Grand Prix Racing', 'F1 グランプリレース')}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setGamePlayType('GRAND_PRIX_3D')}
+                className={`p-3.5 rounded-2xl border-2 text-left transition-all flex items-start gap-3 w-full ${
+                  gamePlayType === 'GRAND_PRIX_3D'
+                    ? 'border-emerald-500 bg-emerald-50/80 dark:bg-emerald-950/40 text-emerald-950 dark:text-emerald-100 shadow-sm ring-1 ring-emerald-400/30'
+                    : 'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'
+                }`}
+              >
+                <div className={`p-2 rounded-xl shrink-0 ${gamePlayType === 'GRAND_PRIX_3D' ? 'bg-emerald-600 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'}`}>
+                  <Flag size={20} />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-xs font-black block">{t('3D Suzuka Grand Prix', '3D 鈴鹿グランプリ')}</span>
+                    <span className="text-[10px] font-black px-1.5 py-0.5 rounded bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300">{t('🏎️ 3D Circuit', '🏎️ 3Dコース')}</span>
+                  </div>
+                  <span className="text-[11px] text-slate-500 dark:text-slate-400 leading-tight block mt-0.5">
+                    {t('Full 3D figure-8 circuit! Build throttle speed with streaks & race on TV + iPads.', '本格3D立体交差サーキット！連続正解で加速し、TVとiPadでリアルタイム3Dレース。')}
+                  </span>
+                </div>
+              </button>
+            </div>
+
+            {/* Column 3: Sports Day / Undokai (Tug of War on top, Tamaire below) */}
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-1.5 px-1">
+                <span className="text-xs">🚩</span>
+                <span className="text-[11px] font-black uppercase tracking-wider text-amber-600 dark:text-amber-400">
+                  {t('Sports Day / Undokai', '運動会・スポーツバトル')}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setGamePlayType('TUG_OF_WAR');
+                  setGameMode('TEAM');
+                  setSelectedTeams(['team_red', 'team_white']);
+                }}
+                className={`p-3.5 rounded-2xl border-2 text-left transition-all flex items-start gap-3 w-full ${
+                  gamePlayType === 'TUG_OF_WAR'
+                    ? 'border-amber-500 bg-amber-50/80 dark:bg-amber-950/40 text-amber-950 dark:text-amber-100 shadow-sm ring-1 ring-amber-400/30'
+                    : 'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'
+                }`}
+              >
+                <div className={`p-2 rounded-xl shrink-0 ${gamePlayType === 'TUG_OF_WAR' ? 'bg-amber-500 text-slate-950' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'}`}>
+                  <Award size={20} />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-xs font-black block">{t('Tug of War (綱引き)', '運動会 綱引きバトル')}</span>
+                    <span className="text-[10px] font-black px-1.5 py-0.5 rounded bg-amber-100 dark:bg-amber-900 text-amber-800 dark:text-amber-300">{t('Undokai 🚩', '運動会 🚩')}</span>
+                  </div>
+                  <span className="text-[11px] text-slate-500 dark:text-slate-400 leading-tight block mt-0.5">
+                    {t('Red vs White Undokai clash! Correct pulls rope; wrong answers slip in mud!', '紅組 vs 白組！正解でロープを引き寄せ、誤答は泥ですべる！')}
                   </span>
                 </div>
               </button>
@@ -1137,170 +1208,37 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
               <button
                 type="button"
                 onClick={() => {
-                  setDeliveryStream('STREAM_A_FRONT_SCREEN');
-                  setGamePlayType('KAHOOT');
-                  setGameMode('INDIVIDUAL');
+                  setGamePlayType('TAMAIRE');
+                  setGameMode('TEAM');
+                  setSelectedTeams(['team_red', 'team_white']);
                 }}
-                className={`p-4 rounded-2xl border-2 text-left transition-all flex items-start gap-3.5 ${
-                  deliveryStream === 'STREAM_A_FRONT_SCREEN'
-                    ? 'border-amber-500 bg-amber-50/80 dark:bg-amber-950/40 text-amber-950 dark:text-amber-100 shadow-md ring-2 ring-amber-400/30'
+                className={`p-3.5 rounded-2xl border-2 text-left transition-all flex items-start gap-3 w-full ${
+                  (gamePlayType === 'TAMAIRE' || gamePlayType === 'VOLLEYBALL')
+                    ? 'border-indigo-500 bg-indigo-50/80 dark:bg-indigo-950/40 text-indigo-950 dark:text-indigo-100 shadow-sm ring-1 ring-indigo-400/30'
                     : 'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'
                 }`}
               >
-                <div className={`p-2.5 rounded-xl ${deliveryStream === 'STREAM_A_FRONT_SCREEN' ? 'bg-amber-500 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'}`}>
-                  <Tv size={22} />
+                <div className={`p-2 rounded-xl shrink-0 ${(gamePlayType === 'TAMAIRE' || gamePlayType === 'VOLLEYBALL') ? 'bg-indigo-600 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'}`}>
+                  <Sparkles size={20} />
                 </div>
                 <div>
-                  <span className="text-sm font-black block">{t('Front-Screen Warmup (Stream 🅰️)', 'テレビ画面ウォームアップ (Stream 🅰️)')}</span>
-                  <span className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed block mt-1">
-                    {t('Zero student iPads needed! Fast 5-minute whole-class choral drill using TV & Spacebar.', '児童のiPad不要！テレビとスペースキーで全員で声を出す5分間ドリル。')}
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-xs font-black block">
+                      {t('Bean Bag Toss (玉入れ)', '運動会 玉入れバトル')}
+                    </span>
+                    <span className="text-[10px] font-black px-1.5 py-0.5 rounded bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300">{t('Undokai 🔴⚪', '運動会 🔴⚪')}</span>
+                  </div>
+                  <span className="text-[11px] text-slate-500 dark:text-slate-400 leading-tight block mt-0.5">
+                    {t('Red vs White Undokai Bean Bag Toss! Rapid-fire throws + dramatic counting ceremony!', '紅組 vs 白組の運動会玉入れ！連続正解でカゴへ投げ入れ、最後はドキドキ玉かぞえ！')}
                   </span>
                 </div>
               </button>
             </div>
           </div>
-        )}
-
-        {/* Game Style / Format (Only in Multiplayer) */}
-        {deliveryStream === 'STREAM_B_MULTIPLAYER' && (
-          <div>
-            <label className="text-xs font-black text-slate-600 dark:text-slate-400 uppercase tracking-wider block mb-2.5">
-              {t(`${gameStyleStep}. Game Style`, `${gameStyleStep}. ゲーム形式`)}
-            </label>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 items-start">
-              {/* Column 1: Turn-Based / Synchronized */}
-              <div className="flex flex-col gap-2">
-                <div className="flex items-center gap-1.5 px-1">
-                  <span className="text-xs">⏱️</span>
-                  <span className="text-[11px] font-black uppercase tracking-wider text-blue-600 dark:text-blue-400">
-                    {t('Turn-Based / Synchronized', 'ターン制・一斉シンクロ')}
-                  </span>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setGamePlayType('KAHOOT')}
-                  className={`p-3.5 rounded-2xl border-2 text-left transition-all flex items-start gap-3 w-full ${
-                    gamePlayType === 'KAHOOT'
-                      ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/40 text-blue-950 dark:text-blue-100 shadow-sm ring-1 ring-blue-400/30'
-                      : 'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'
-                  }`}
-                >
-                  <div className={`p-2 rounded-xl shrink-0 ${gamePlayType === 'KAHOOT' ? 'bg-blue-500 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'}`}>
-                    <Tv size={20} />
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-xs font-black block">{t('Live Arena (Kahoot Style)', '一斉対戦 (Kahootスタイル)')}</span>
-                      <span className="text-[10px] font-black px-1.5 py-0.5 rounded bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300">{t('Standard', '定番')}</span>
-                    </div>
-                    <span className="text-[11px] text-slate-500 dark:text-slate-400 leading-tight block mt-0.5">
-                      {t('Everyone answers each question together. TV reveals questions; iPads submit.', '全員同時に1問ずつ回答。TVで問題発表、iPadで解答するシンクロ型。')}
-                    </span>
-                  </div>
-                </button>
-              </div>
-
-              {/* Column 2: Grand Prix Racing (3D Suzuka Grand Prix) */}
-              <div className="flex flex-col gap-2">
-                <div className="flex items-center gap-1.5 px-1">
-                  <span className="text-xs">🏎️</span>
-                  <span className="text-[11px] font-black uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
-                    {t('Grand Prix Racing', 'F1 グランプリレース')}
-                  </span>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setGamePlayType('GRAND_PRIX_3D')}
-                  className={`p-3.5 rounded-2xl border-2 text-left transition-all flex items-start gap-3 w-full ${
-                    gamePlayType === 'GRAND_PRIX_3D'
-                      ? 'border-emerald-500 bg-emerald-50/80 dark:bg-emerald-950/40 text-emerald-950 dark:text-emerald-100 shadow-sm ring-1 ring-emerald-400/30'
-                      : 'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'
-                  }`}
-                >
-                  <div className={`p-2 rounded-xl shrink-0 ${gamePlayType === 'GRAND_PRIX_3D' ? 'bg-emerald-600 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'}`}>
-                    <Flag size={20} />
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-xs font-black block">{t('3D Suzuka Grand Prix', '3D 鈴鹿グランプリ')}</span>
-                      <span className="text-[10px] font-black px-1.5 py-0.5 rounded bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300">{t('🏎️ 3D Circuit', '🏎️ 3Dコース')}</span>
-                    </div>
-                    <span className="text-[11px] text-slate-500 dark:text-slate-400 leading-tight block mt-0.5">
-                      {t('Full 3D figure-8 circuit! Build throttle speed with streaks & race on TV + iPads.', '本格3D立体交差サーキット！連続正解で加速し、TVとiPadでリアルタイム3Dレース。')}
-                    </span>
-                  </div>
-                </button>
-              </div>
-
-              {/* Column 3: Sports Day / Undokai (Tug of War on top, Volleyball Rally below) */}
-              <div className="flex flex-col gap-2">
-                <div className="flex items-center gap-1.5 px-1">
-                  <span className="text-xs">🚩</span>
-                  <span className="text-[11px] font-black uppercase tracking-wider text-amber-600 dark:text-amber-400">
-                    {t('Sports Day / Undokai', '運動会・スポーツバトル')}
-                  </span>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setGamePlayType('TUG_OF_WAR');
-                    setGameMode('TEAM');
-                    setSelectedTeams(['team_red', 'team_white']);
-                  }}
-                  className={`p-3.5 rounded-2xl border-2 text-left transition-all flex items-start gap-3 w-full ${
-                    gamePlayType === 'TUG_OF_WAR'
-                      ? 'border-amber-500 bg-amber-50/80 dark:bg-amber-950/40 text-amber-950 dark:text-amber-100 shadow-sm ring-1 ring-amber-400/30'
-                      : 'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'
-                  }`}
-                >
-                  <div className={`p-2 rounded-xl shrink-0 ${gamePlayType === 'TUG_OF_WAR' ? 'bg-amber-500 text-slate-950' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'}`}>
-                    <Award size={20} />
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-xs font-black block">{t('Tug of War (綱引き)', '運動会 綱引きバトル')}</span>
-                      <span className="text-[10px] font-black px-1.5 py-0.5 rounded bg-amber-100 dark:bg-amber-900 text-amber-800 dark:text-amber-300">{t('Undokai 🚩', '運動会 🚩')}</span>
-                    </div>
-                    <span className="text-[11px] text-slate-500 dark:text-slate-400 leading-tight block mt-0.5">
-                      {t('Red vs White Undokai clash! Correct pulls rope; wrong answers slip in mud!', '紅組 vs 白組！正解でロープを引き寄せ、誤答は泥ですべる！')}
-                    </span>
-                  </div>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    setGamePlayType('VOLLEYBALL');
-                    setGameMode('TEAM');
-                    setSelectedTeams(['team_red', 'team_white']);
-                  }}
-                  className={`p-3.5 rounded-2xl border-2 text-left transition-all flex items-start gap-3 w-full ${
-                    gamePlayType === 'VOLLEYBALL'
-                      ? 'border-indigo-500 bg-indigo-50/80 dark:bg-indigo-950/40 text-indigo-950 dark:text-indigo-100 shadow-sm ring-1 ring-indigo-400/30'
-                      : 'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'
-                  }`}
-                >
-                  <div className={`p-2 rounded-xl shrink-0 ${gamePlayType === 'VOLLEYBALL' ? 'bg-indigo-600 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'}`}>
-                    <Sparkles size={20} />
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-xs font-black block">{/* [ANTIGRAVITY REFACTOR]: Replaced Volleyball with Undokai Bean Bag Toss (Tamaire / 玉入れ) */}
-                      {t('Bean Bag Toss (玉入れ)', '運動会 玉入れバトル')}</span>
-                      <span className="text-[10px] font-black px-1.5 py-0.5 rounded bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300">{t('Undokai 🔴⚪', '運動会 🔴⚪')}</span>
-                    </div>
-                    <span className="text-[11px] text-slate-500 dark:text-slate-400 leading-tight block mt-0.5">
-                      {t('Red vs White Undokai Bean Bag Toss! Rapid-fire throws + dramatic counting ceremony!', '紅組 vs 白組の運動会玉入れ！連続正解でカゴへ投げ入れ、最後はドキドキ玉かぞえ！')}
-                    </span>
-                  </div>
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+        </div>
 
         {/* Battle Format (Individual vs Team Battle) */}
-        {deliveryStream === 'STREAM_B_MULTIPLAYER' && gamePlayType !== 'TUG_OF_WAR' && gamePlayType !== 'VOLLEYBALL' && (
+        {gamePlayType !== 'TUG_OF_WAR' && gamePlayType !== 'TAMAIRE' && gamePlayType !== 'VOLLEYBALL' && (
           <div>
             <label className="text-xs font-black text-slate-600 dark:text-slate-400 uppercase tracking-wider block mb-2">
               {t(`${battleFormatStep}. Battle Format`, `${battleFormatStep}. 対戦形式`)}
@@ -1458,7 +1396,7 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
         )}
 
         {/* 4a. 3D Suzuka Grand Prix Configuration */}
-        {deliveryStream === 'STREAM_B_MULTIPLAYER' && gamePlayType === 'GRAND_PRIX_3D' && (
+        {gamePlayType === 'GRAND_PRIX_3D' && (
           <div className="p-4 rounded-3xl bg-gradient-to-br from-emerald-50/85 to-teal-50/85 dark:from-emerald-950/30 dark:to-teal-950/30 border-2 border-emerald-300 dark:border-emerald-900/60 space-y-4 animate-in fade-in duration-150">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -1736,7 +1674,7 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
 
 
         {/* 4b. Tug of War Configuration */}
-        {deliveryStream === 'STREAM_B_MULTIPLAYER' && gamePlayType === 'TUG_OF_WAR' && (
+        {gamePlayType === 'TUG_OF_WAR' && (
           <div className="p-4 rounded-3xl bg-gradient-to-br from-amber-50/90 to-rose-50/90 dark:from-amber-950/30 dark:to-rose-950/30 border-2 border-amber-300 dark:border-amber-900/60 space-y-4 animate-in fade-in duration-150">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -1819,7 +1757,7 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
         )}
 
         {/* 4c. Undokai Bean Bag Toss (Tamaire) Configuration */}
-        {deliveryStream === 'STREAM_B_MULTIPLAYER' && gamePlayType === 'VOLLEYBALL' && (
+        {(gamePlayType === 'TAMAIRE' || gamePlayType === 'VOLLEYBALL') && (
           <div className="p-4 rounded-3xl bg-gradient-to-br from-indigo-50/90 to-purple-50/90 dark:from-indigo-950/30 dark:to-purple-950/30 border-2 border-indigo-300 dark:border-indigo-900/60 space-y-4 animate-in fade-in duration-150">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -1909,47 +1847,45 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
         {/* 5. Classic Kahoot Settings (Only when Kahoot style) */}
         {gamePlayType === 'KAHOOT' && (
           <>
-            {/* iPad Display Mode (Only shown if Multiplayer is selected) */}
-            {deliveryStream === 'STREAM_B_MULTIPLAYER' && (
-              <div>
-                <label className="text-xs font-black text-slate-600 dark:text-slate-400 uppercase tracking-wider block mb-2">
-                  {t(`${ipadDisplayStep}. Student iPad Display`, `${ipadDisplayStep}. 児童の画面表示`)}
-                </label>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setIpadDisplayMode('EYES_UP')}
-                    className={`p-3.5 rounded-2xl border-2 text-left transition-all flex items-center gap-3 ${
-                      ipadDisplayMode === 'EYES_UP'
-                        ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/40 text-blue-950 dark:text-blue-100 shadow-sm ring-1 ring-blue-400/30'
-                        : 'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'
-                    }`}
-                  >
-                    <Eye className={ipadDisplayMode === 'EYES_UP' ? 'text-blue-600 dark:text-blue-400' : 'text-slate-500 dark:text-slate-400'} size={20} />
-                    <div>
-                      <span className="text-xs font-black block">{t('Eyes-Up (Shapes Only: ▲ ◆ ● ■)', '前を向く！マークのみ (▲ ◆ ● ■)')}</span>
-                      <span className="text-[11px] text-slate-600 dark:text-slate-400">{t('Forces students to look up at the classroom TV for questions.', '問題文はテレビの大画面に注目させ、iPadは回答ボタンのみ表示。')}</span>
-                    </div>
-                  </button>
+            {/* iPad Display Mode */}
+            <div>
+              <label className="text-xs font-black text-slate-600 dark:text-slate-400 uppercase tracking-wider block mb-2">
+                {t(`${ipadDisplayStep}. Student iPad Display`, `${ipadDisplayStep}. 児童の画面表示`)}
+              </label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => setIpadDisplayMode('EYES_UP')}
+                  className={`p-3.5 rounded-2xl border-2 text-left transition-all flex items-center gap-3 ${
+                    ipadDisplayMode === 'EYES_UP'
+                      ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/40 text-blue-950 dark:text-blue-100 shadow-sm ring-1 ring-blue-400/30'
+                      : 'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'
+                  }`}
+                >
+                  <Eye className={ipadDisplayMode === 'EYES_UP' ? 'text-blue-600 dark:text-blue-400' : 'text-slate-500 dark:text-slate-400'} size={20} />
+                  <div>
+                    <span className="text-xs font-black block">{t('Eyes-Up (Shapes Only: ▲ ◆ ● ■)', '前を向く！マークのみ (▲ ◆ ● ■)')}</span>
+                    <span className="text-[11px] text-slate-600 dark:text-slate-400">{t('Forces students to look up at the classroom TV for questions.', '問題文はテレビの大画面に注目させ、iPadは回答ボタンのみ表示。')}</span>
+                  </div>
+                </button>
 
-                  <button
-                    type="button"
-                    onClick={() => setIpadDisplayMode('MIRRORED')}
-                    className={`p-3.5 rounded-2xl border-2 text-left transition-all flex items-center gap-3 ${
-                      ipadDisplayMode === 'MIRRORED'
-                        ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/40 text-blue-950 dark:text-blue-100 shadow-sm ring-1 ring-blue-400/30'
-                        : 'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'
-                    }`}
-                  >
-                    <Layers className={ipadDisplayMode === 'MIRRORED' ? 'text-blue-600 dark:text-blue-400' : 'text-slate-500 dark:text-slate-400'} size={20} />
-                    <div>
-                      <span className="text-xs font-black block">{t('Mirrored (Full Cards on iPads)', '手元表示 (イラスト・文字)')}</span>
-                      <span className="text-[11px] text-slate-600 dark:text-slate-400">{t('Shows English words & illustrations directly on iPads.', '手元のiPadにも英語とイラストを直接表示。')}</span>
-                    </div>
-                  </button>
-                </div>
+                <button
+                  type="button"
+                  onClick={() => setIpadDisplayMode('MIRRORED')}
+                  className={`p-3.5 rounded-2xl border-2 text-left transition-all flex items-center gap-3 ${
+                    ipadDisplayMode === 'MIRRORED'
+                      ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/40 text-blue-950 dark:text-blue-100 shadow-sm ring-1 ring-blue-400/30'
+                      : 'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'
+                  }`}
+                >
+                  <Layers className={ipadDisplayMode === 'MIRRORED' ? 'text-blue-600 dark:text-blue-400' : 'text-slate-500 dark:text-slate-400'} size={20} />
+                  <div>
+                    <span className="text-xs font-black block">{t('Mirrored (Full Cards on iPads)', '手元表示 (イラスト・文字)')}</span>
+                    <span className="text-[11px] text-slate-600 dark:text-slate-400">{t('Shows English words & illustrations directly on iPads.', '手元のiPadにも英語とイラストを直接表示。')}</span>
+                  </div>
+                </button>
               </div>
-            )}
+            </div>
 
             {/* Question Count & Time Limit */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -2727,9 +2663,9 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
         >
           <Play size={16} fill="white" />
           <span>
-            {deliveryStream === 'STREAM_B_MULTIPLAYER' && gamePlayType === 'GRAND_PRIX_3D' 
+            {gamePlayType === 'GRAND_PRIX_3D' 
               ? t('START GRAND PRIX ROOM', 'グランプリ部屋を作成') 
-              : (deliveryStream === 'STREAM_B_MULTIPLAYER' ? t('CREATE ROOM', '部屋を作成') : t('START WARMUP', 'クイズ開始'))}
+              : t('CREATE ROOM', '部屋を作成')}
           </span>
         </button>
       </div>

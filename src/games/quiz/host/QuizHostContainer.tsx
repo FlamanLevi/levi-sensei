@@ -7,13 +7,9 @@ import {
   QuizQuestion, 
   QuizRoomState, 
   ClassroomAward, 
-  DeliveryStream, 
   PodiumFinisher, 
   QuizPlayer, 
-  QuizResponse,
-  TeamId,
-  RAINBOW_TEAM_ORDER,
-  TEAM_PRESETS
+  TeamId
 } from '../types';
 import { generateQuizQuestions } from '../questionGenerator';
 import { generateMathQuestions } from '../mathGenerator';
@@ -32,7 +28,7 @@ import { QuizHostLeaderboard } from './QuizHostLeaderboard';
 import { QuizHostGameOver } from './QuizHostGameOver';
 import { QuizHostGrandPrix3D } from './QuizHostGrandPrix3D';
 import { QuizHostTugOfWar } from './QuizHostTugOfWar';
-import { QuizHostVolleyball } from './QuizHostVolleyball';
+import { QuizHostTamaire } from './QuizHostTamaire';
 import { useQuizBotSimulator } from '../hooks/useQuizBotSimulator';
 import { isValidTrackThemeId, resolveTrackThemeId } from '@/games/suzuka_grand_prix/trackThemes';
 
@@ -43,9 +39,9 @@ interface QuizHostContainerProps {
   isStudentHost?: boolean;
 }
 
-import { computeTroubleWordsMap, calculateClassicScore, GAME_MODE_STRATEGIES } from '../core/quizEngine';
+import { computeTroubleWordsMap } from '../core/quizEngine';
 
-export type HostStep = 'SETUP' | 'LOBBY' | 'QUESTION' | 'REVEAL' | 'LEADERBOARD' | 'GAME_OVER' | 'SPRINT_RACE' | 'GRAND_PRIX_3D' | 'TUG_OF_WAR' | 'VOLLEYBALL';
+export type HostStep = 'SETUP' | 'LOBBY' | 'QUESTION' | 'REVEAL' | 'LEADERBOARD' | 'GAME_OVER' | 'SPRINT_RACE' | 'GRAND_PRIX_3D' | 'TUG_OF_WAR' | 'TAMAIRE' | 'VOLLEYBALL';
 
 // ============================================================================
 // [ANTIGRAVITY REFACTOR]: Shared Trouble Word Calculation
@@ -54,7 +50,7 @@ export type HostStep = 'SETUP' | 'LOBBY' | 'QUESTION' | 'REVEAL' | 'LEADERBOARD'
 // delegation to `computeTroubleWordsMap` in `../core/quizEngine`.
 // WHY:
 // Eliminates 4x copy-pasted trouble-word aggregation logic across
-// `QuizHostContainer.tsx`, `endSprintRace`, `endTugOfWar`, and `endVolleyball`.
+// `QuizHostContainer.tsx`, `endSprintRace`, `endTugOfWar`, and `endTamaire`.
 // ============================================================================
 const computeTroubleWordIds = (
   players: Record<string, QuizPlayer>,
@@ -84,46 +80,8 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
   const [settings, setSettings] = useState<QuizHostSettings | null>(null);
   const preRematchSettingsRef = useRef<QuizHostSettings | null>(null);
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
-  const [localQuestionIndex, setLocalQuestionIndex] = useState<number>(0);
   const [roomCode, setRoomCode] = useState<string | null>(null);
   const [calculatedAwards, setCalculatedAwards] = useState<ClassroomAward[]>([]);
-
-  // Stream A (Front-Screen TV Solo / Warmup Mode) state
-  const isStreamA = settings?.deliveryStream === 'STREAM_A_FRONT_SCREEN' || !roomCode;
-
-  const createInitialSoloPlayer = useCallback((): QuizPlayer => ({
-    id: 'stream_a_player',
-    nickname: 'Player',
-    score: 0,
-    currentStreak: 0,
-    maxStreak: 0,
-    correctCount: 0,
-    totalAnswered: 0,
-    fastestTimeMs: 999999,
-    joinedAt: getServerTime(),
-    answers: {}
-  }), []);
-
-  const [soloPlayer, setSoloPlayer] = useState<QuizPlayer>(() => createInitialSoloPlayer());
-  const [soloSelectedOptionId, setSoloSelectedOptionId] = useState<string | null>(null);
-  const [soloSelectedTimeTakenMs, setSoloSelectedTimeTakenMs] = useState<number | null>(null);
-  const [soloResponses, setSoloResponses] = useState<Record<string, QuizResponse>>({});
-  const [soloTroubleWords, setSoloTroubleWords] = useState<Record<string, { english: string; ja: string; image?: string; sound?: string; incorrectCount: number; totalCount: number }>>({});
-  const isSoloRevealingRef = useRef<boolean>(false);
-  const soloSelectionRef = useRef<{ optionId: string; timeTakenMs: number } | null>(null);
-
-  const handleSoloSelectOption = useCallback((optionId: string, timeTakenMs: number) => {
-    soloSelectionRef.current = { optionId, timeTakenMs };
-    setSoloSelectedOptionId(optionId);
-    setSoloSelectedTimeTakenMs(timeTakenMs);
-    setSoloResponses({
-      ['stream_a_player']: {
-        answerId: optionId,
-        timeTakenMs,
-        submittedAt: getServerTime()
-      }
-    });
-  }, []);
 
   const {
     room,
@@ -140,9 +98,9 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
     nextTugOfWarRound,
     freezeTugOfWar,
     endTugOfWar,
-    startVolleyball,
-    freezeVolleyball,
-    endVolleyball,
+    startTamaire,
+    freezeTamaire,
+    endTamaire,
     closeRoom,
     kickPlayer,
     changePlayerTeam,
@@ -160,7 +118,7 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
   });
 
   // BGM playback during active game phases
-  const isBgmPlaying = (step === 'QUESTION' || step === 'SPRINT_RACE' || step === 'GRAND_PRIX_3D' || step === 'TUG_OF_WAR' || step === 'VOLLEYBALL' || step === 'REVEAL' || step === 'LEADERBOARD') && !!settings?.bgm && settings.bgm !== 'none';
+  const isBgmPlaying = (step === 'QUESTION' || step === 'SPRINT_RACE' || step === 'GRAND_PRIX_3D' || step === 'TUG_OF_WAR' || step === 'TAMAIRE' || step === 'VOLLEYBALL' || step === 'REVEAL' || step === 'LEADERBOARD') && !!settings?.bgm && settings.bgm !== 'none';
   const { isMuted: isBgmMuted, toggleMute: toggleBgmMute, currentTrackTitle, hasTrack, duckBGM, speedUpBGM, setBgmPlaybackRate, playbackRate: bgmPlaybackRate, nextTrack } = useBGM(settings?.bgm, isBgmPlaying);
 
   const handleReleaseBoundNumber = useCallback(async (attendanceNumber: number) => {
@@ -198,19 +156,19 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
     []
   );
 
-  // Sync step with Firebase room status if in Stream B (and not actively editing settings in lobby)
+  // Sync step with Firebase room status (when not actively editing settings in lobby)
   useEffect(() => {
-    if (settings?.deliveryStream === 'STREAM_B_MULTIPLAYER' && room && !isEditingLobby) {
+    if (room && !isEditingLobby) {
       if (room.status === 'LOBBY') setStep('LOBBY');
       else if (room.status === 'QUESTION') setStep('QUESTION');
       else if (room.status === 'SPRINT_RACE' || room.status === 'GRAND_PRIX_3D') setStep('GRAND_PRIX_3D');
       else if (room.status === 'TUG_OF_WAR') setStep('TUG_OF_WAR');
-      else if (room.status === 'VOLLEYBALL') setStep('VOLLEYBALL');
+      else if (room.status === 'TAMAIRE' || room.status === 'VOLLEYBALL') setStep('TAMAIRE');
       else if (room.status === 'REVEAL') setStep('REVEAL');
       else if (room.status === 'LEADERBOARD') setStep('LEADERBOARD');
       else if (room.status === 'GAME_OVER') setStep('GAME_OVER');
     }
-  }, [room?.status, settings?.deliveryStream, isEditingLobby]);
+  }, [room?.status, isEditingLobby]);
 
   // Start or Update game setup
   const handleStartSetup = useCallback(async (rawSettings: QuizHostSettings) => {
@@ -223,7 +181,7 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
     if (newSettings.subject === 'MATH') {
       const mathGrade = (newSettings.mathGrade as MathGrade) || 'G1';
       const mathDomain = (newSettings.mathDomain as MathDomain) || 'ALL';
-      const count = (newSettings.gamePlayType === 'GRAND_PRIX_3D' || newSettings.gamePlayType === 'TUG_OF_WAR' || newSettings.gamePlayType === 'VOLLEYBALL')
+      const count = (newSettings.gamePlayType === 'GRAND_PRIX_3D' || newSettings.gamePlayType === 'TUG_OF_WAR' || newSettings.gamePlayType === 'TAMAIRE' || newSettings.gamePlayType === 'VOLLEYBALL')
         ? 60
         : (newSettings.questionCount === -1 ? 40 : newSettings.questionCount);
       generated = generateMathQuestions({
@@ -250,59 +208,40 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
       timed[0] = { ...timed[0], startTime: getServerTime() };
     }
     setQuestions(timed);
-    setLocalQuestionIndex(0);
 
     // Scenario A: Updating existing room from Lobby without disbanding or kicking students
     if (isEditingLobby && roomCode) {
       setIsEditingLobby(false);
-      if (newSettings.deliveryStream === 'STREAM_B_MULTIPLAYER') {
-        const success = await resetRoomForNewRound(timed, true, { ...newSettings, grade: activeGrade, unit: activeUnit });
-        if (success) {
-          setStep('LOBBY');
-        } else {
-          alert(t('Failed to update room settings.', '設定の更新に失敗しました。') as string);
-        }
-        return;
-      }
-      // Switched from multiplayer lobby to Stream A Front-Screen solo: cleanly disband room before starting solo
-      clearBots();
-      await closeRoom();
-      setRoomCode(null);
-    }
-
-    // Scenario B: Creating a fresh room
-    if (newSettings.deliveryStream === 'STREAM_B_MULTIPLAYER') {
-      const isTest = Boolean(newSettings.isTestGame || newSettings.classId === 'TEST' || !newSettings.recordRoster);
-      const pin = await generateUniqueRoomPin({
-        isStudentHost,
-        isTestGame: isTest,
-        grade: activeGrade,
-        classId: isTest ? 'TEST' : newSettings.classId
-      });
-      setRoomCode(pin);
-      const success = await createRoom(pin, activeGrade, activeUnit, {
-        ...newSettings,
-        isTestGame: isTest,
-        classId: isTest ? 'TEST' : newSettings.classId,
-        recordRoster: isTest ? false : newSettings.recordRoster
-      }, timed);
+      const success = await resetRoomForNewRound(timed, true, { ...newSettings, grade: activeGrade, unit: activeUnit });
       if (success) {
         setStep('LOBBY');
       } else {
-        alert(t('Failed to create room. Please check your connection.', 'ルームの作成に失敗しました。接続を確認してください。') as string);
+        alert(t('Failed to update room settings.', '設定の更新に失敗しました。') as string);
       }
-    } else {
-      isSoloRevealingRef.current = false;
-      soloSelectionRef.current = null;
-      setRoomCode(null);
-      setSoloPlayer(createInitialSoloPlayer());
-      setSoloSelectedOptionId(null);
-      setSoloSelectedTimeTakenMs(null);
-      setSoloResponses({});
-      setSoloTroubleWords({});
-      setStep('QUESTION');
+      return;
     }
-  }, [filteredWords, gradeWords, activeGrade, activeUnit, createRoom, createInitialSoloPlayer, isEditingLobby, roomCode, resetRoomForNewRound, clearBots, closeRoom, room?.sprintSettings?.trackTheme, settings?.sprintSettings?.trackTheme, settings?.sprintSettings?.trackThemeSelection, resolveSettingsForRound, isStudentHost, t]);
+
+    // Scenario B: Creating a fresh room
+    const isTest = Boolean(newSettings.isTestGame || newSettings.classId === 'TEST' || !newSettings.recordRoster);
+    const pin = await generateUniqueRoomPin({
+      isStudentHost,
+      isTestGame: isTest,
+      grade: activeGrade,
+      classId: isTest ? 'TEST' : newSettings.classId
+    });
+    setRoomCode(pin);
+    const success = await createRoom(pin, activeGrade, activeUnit, {
+      ...newSettings,
+      isTestGame: isTest,
+      classId: isTest ? 'TEST' : newSettings.classId,
+      recordRoster: isTest ? false : newSettings.recordRoster
+    }, timed);
+    if (success) {
+      setStep('LOBBY');
+    } else {
+      alert(t('Failed to create room. Please check your connection.', 'ルームの作成に失敗しました。接続を確認してください。') as string);
+    }
+  }, [filteredWords, gradeWords, activeGrade, activeUnit, createRoom, isEditingLobby, roomCode, resetRoomForNewRound, room?.sprintSettings?.trackTheme, settings?.sprintSettings?.trackTheme, settings?.sprintSettings?.trackThemeSelection, resolveSettingsForRound, isStudentHost, t]);
 
   // Trigger in-lobby settings edit
   const handleEditSettingsFromLobby = useCallback(() => {
@@ -320,169 +259,35 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
     }
   }, [isEditingLobby, roomCode, onExit]);
 
-  // Advance from Lobby to first question or Sprint Race or 3D Grand Prix or Tug of War
+  // Advance from Lobby to first question or Sprint Race or 3D Grand Prix or Tug of War or Tamaire
   const handleStartFromLobby = useCallback(async () => {
-    isSoloRevealingRef.current = false;
-    soloSelectionRef.current = null;
-    if (settings?.deliveryStream === 'STREAM_B_MULTIPLAYER') {
-      if (settings?.gamePlayType === 'SPRINT_RACE' || settings?.gamePlayType === 'GRAND_PRIX_3D') {
-        setStep(settings.gamePlayType);
-        await startSprintRace();
-      } else if (settings?.gamePlayType === 'TUG_OF_WAR') {
-        setStep('TUG_OF_WAR');
-        await startTugOfWar();
-      } else if (settings?.gamePlayType === 'VOLLEYBALL') {
-        setStep('VOLLEYBALL');
-        await startVolleyball();
-      } else {
-        await startGame();
-      }
+    if (settings?.gamePlayType === 'SPRINT_RACE' || settings?.gamePlayType === 'GRAND_PRIX_3D') {
+      setStep(settings.gamePlayType);
+      await startSprintRace();
+    } else if (settings?.gamePlayType === 'TUG_OF_WAR') {
+      setStep('TUG_OF_WAR');
+      await startTugOfWar();
+    } else if (settings?.gamePlayType === 'TAMAIRE' || settings?.gamePlayType === 'VOLLEYBALL') {
+      setStep('TAMAIRE');
+      await startTamaire();
     } else {
-      setQuestions(prev => {
-        const updated = [...prev];
-        if (updated[0]) {
-          updated[0] = { ...updated[0], startTime: getServerTime() };
-        }
-        return updated;
-      });
-      setLocalQuestionIndex(0);
-      setSoloPlayer(createInitialSoloPlayer());
-      setSoloSelectedOptionId(null);
-      setSoloSelectedTimeTakenMs(null);
-      setSoloResponses({});
-      setSoloTroubleWords({});
-      setStep('QUESTION');
+      await startGame();
     }
-  }, [settings?.deliveryStream, settings?.gamePlayType, startSprintRace, startTugOfWar, startVolleyball, startGame, createInitialSoloPlayer]);
+  }, [settings?.gamePlayType, startSprintRace, startTugOfWar, startTamaire, startGame]);
 
   // Question expired or manually revealed
   const handleRevealAnswer = useCallback(async () => {
-    if (settings?.deliveryStream === 'STREAM_B_MULTIPLAYER') {
-      await revealAnswer();
-    } else {
-      if (isSoloRevealingRef.current || step !== 'QUESTION') return;
-      isSoloRevealingRef.current = true;
-
-      // Stream A: Evaluate answer and update soloPlayer stats
-      const q = questions[localQuestionIndex];
-      if (q) {
-        const chosenOptionId = soloSelectedOptionId || soloSelectionRef.current?.optionId || null;
-        const chosenTime = soloSelectedTimeTakenMs || soloSelectionRef.current?.timeTakenMs || null;
-        const isAnswered = !!chosenOptionId;
-        const isCorrect = isAnswered && chosenOptionId === q.correctOptionId;
-        const timeLimitMs = q.timeLimitMs || 15000;
-        const recallDelaySeconds = settings?.recallDelaySeconds || 0;
-        const safeTimeTaken = chosenTime
-          ? Math.min(timeLimitMs, Math.max(100, chosenTime))
-          : timeLimitMs;
-
-        let pointsEarned = 0;
-        let newStreak = 0;
-        let newMaxStreak = soloPlayer.maxStreak || 0;
-        let newCorrectCount = soloPlayer.correctCount || 0;
-        let newFastestTime = soloPlayer.fastestTimeMs || 999999;
-
-        if (isCorrect) {
-          newCorrectCount++;
-          newStreak = (soloPlayer.currentStreak || 0) + 1;
-          if (newStreak > newMaxStreak) newMaxStreak = newStreak;
-          if (safeTimeTaken < newFastestTime) newFastestTime = safeTimeTaken;
-
-          pointsEarned = calculateClassicScore({
-            isCorrect: true,
-            timeTakenMs: safeTimeTaken,
-            timeLimitMs,
-            recallDelaySeconds,
-            newStreak,
-          });
-        } else {
-          newStreak = 0;
-          setSoloTroubleWords(prev => ({
-            ...prev,
-            [q.targetWordId]: {
-              english: q.isMath ? q.promptText : q.targetWordEnglish,
-              ja: q.isMath ? (q.targetWordJa || `正解: ${q.targetWordEnglish}`) : q.targetWordJa,
-              image: q.promptImage,
-              sound: q.isMath ? undefined : q.promptSound,
-              incorrectCount: (prev[q.targetWordId]?.incorrectCount || 0) + 1,
-              totalCount: (prev[q.targetWordId]?.totalCount || 0) + 1
-            }
-          }));
-        }
-
-        const updatedAnswers = {
-          ...soloPlayer.answers,
-          [localQuestionIndex]: {
-            questionIndex: localQuestionIndex,
-            optionId: chosenOptionId || '',
-            isCorrect,
-            timeTakenMs: safeTimeTaken,
-            pointsEarned
-          }
-        };
-
-        const updatedPlayer: QuizPlayer = {
-          ...soloPlayer,
-          score: soloPlayer.score + pointsEarned,
-          currentStreak: newStreak,
-          maxStreak: newMaxStreak,
-          correctCount: newCorrectCount,
-          totalAnswered: (soloPlayer.totalAnswered || 0) + 1,
-          fastestTimeMs: newFastestTime,
-          answers: updatedAnswers,
-          lastAnswer: {
-            questionIndex: localQuestionIndex,
-            optionId: chosenOptionId || '',
-            isCorrect,
-            pointsEarned,
-            timeTakenMs: safeTimeTaken
-          }
-        };
-        setSoloPlayer(updatedPlayer);
-      }
-      setStep('REVEAL');
-    }
-  }, [step, settings?.deliveryStream, settings?.recallDelaySeconds, revealAnswer, questions, localQuestionIndex, soloSelectedOptionId, soloSelectedTimeTakenMs, soloPlayer]);
+    await revealAnswer();
+  }, [revealAnswer]);
 
   // Next after Reveal
   const handleNextFromReveal = useCallback(async () => {
-    isSoloRevealingRef.current = false;
-    soloSelectionRef.current = null;
-    if (settings?.deliveryStream === 'STREAM_B_MULTIPLAYER') {
-      await showLeaderboard();
-    } else {
-      if (localQuestionIndex + 1 >= questions.length) {
-        if (settings) {
-          const awards = calculateClassroomAwards(
-            { [soloPlayer.id]: soloPlayer },
-            questions,
-            settings.awardToggles,
-            Object.keys(soloTroubleWords)
-          );
-          setCalculatedAwards(awards);
-        }
-        setStep('GAME_OVER');
-      } else {
-        const nextIdx = localQuestionIndex + 1;
-        setQuestions(prev => {
-          const updated = [...prev];
-          if (updated[nextIdx]) {
-            updated[nextIdx] = { ...updated[nextIdx], startTime: getServerTime() };
-          }
-          return updated;
-        });
-        setSoloSelectedOptionId(null);
-        setSoloSelectedTimeTakenMs(null);
-        setSoloResponses({});
-        setLocalQuestionIndex(nextIdx);
-        setStep('QUESTION');
-      }
-    }
-  }, [settings, showLeaderboard, localQuestionIndex, questions, soloPlayer, soloTroubleWords]);
+    await showLeaderboard();
+  }, [showLeaderboard]);
 
   // Next from Leaderboard
   const handleNextFromLeaderboard = useCallback(async () => {
-    const nextIdx = (room ? room.currentQuestionIndex : localQuestionIndex) + 1;
+    const nextIdx = (room ? room.currentQuestionIndex : 0) + 1;
     const totalQ = questions.length;
 
     if (nextIdx >= totalQ) {
@@ -498,28 +303,12 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
         setCalculatedAwards(finalAwards);
       }
 
-      if (settings?.deliveryStream === 'STREAM_B_MULTIPLAYER') {
-        await endGame(finalAwards);
-        setStep('GAME_OVER');
-      } else {
-        setStep('GAME_OVER');
-      }
+      await endGame(finalAwards);
+      setStep('GAME_OVER');
     } else {
-      if (settings?.deliveryStream === 'STREAM_B_MULTIPLAYER') {
-        await nextQuestion(nextIdx);
-      } else {
-        setQuestions(prev => {
-          const updated = [...prev];
-          if (updated[nextIdx]) {
-            updated[nextIdx] = { ...updated[nextIdx], startTime: getServerTime() };
-          }
-          return updated;
-        });
-        setLocalQuestionIndex(nextIdx);
-        setStep('QUESTION');
-      }
+      await nextQuestion(nextIdx);
     }
-  }, [room, localQuestionIndex, questions, settings, endGame, nextQuestion]);
+  }, [room, questions, settings, endGame, nextQuestion]);
 
   // Finish Sprint Race
   const handleFinishSprintRace = useCallback(async (podium: PodiumFinisher[]) => {
@@ -550,7 +339,7 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
     if (nextRoundSettings.subject === 'MATH') {
       const mathGrade = (nextRoundSettings.mathGrade as MathGrade) || 'G1';
       const mathDomain = (nextRoundSettings.mathDomain as MathDomain) || 'ALL';
-      const count = (nextRoundSettings.gamePlayType === 'GRAND_PRIX_3D' || nextRoundSettings.gamePlayType === 'TUG_OF_WAR' || nextRoundSettings.gamePlayType === 'VOLLEYBALL')
+      const count = (nextRoundSettings.gamePlayType === 'GRAND_PRIX_3D' || nextRoundSettings.gamePlayType === 'TUG_OF_WAR' || nextRoundSettings.gamePlayType === 'TAMAIRE' || nextRoundSettings.gamePlayType === 'VOLLEYBALL')
         ? 60
         : (nextRoundSettings.questionCount === -1 ? 40 : nextRoundSettings.questionCount);
       generated = generateMathQuestions({
@@ -577,36 +366,24 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
       timed[0] = { ...timed[0], startTime: getServerTime() };
     }
     setQuestions(timed);
-    setLocalQuestionIndex(0);
 
     nextTrack();
 
-    if (nextRoundSettings.deliveryStream === 'STREAM_B_MULTIPLAYER' && roomCode) {
+    if (roomCode) {
       const success = await resetRoomForNewRound(timed, true, nextRoundSettings);
       if (success) {
         setStep('LOBBY');
       } else {
         alert(t('Failed to initialize replay.', '再戦の初期化に失敗しました。') as string);
       }
-    } else {
-      isSoloRevealingRef.current = false;
-      soloSelectionRef.current = null;
-      setSoloPlayer(createInitialSoloPlayer());
-      setSoloSelectedOptionId(null);
-      setSoloSelectedTimeTakenMs(null);
-      setSoloResponses({});
-      setSoloTroubleWords({});
-      setStep('QUESTION');
     }
-  }, [settings, room?.sprintSettings?.trackTheme, resolveSettingsForRound, wordPool, activeGrade, gradeWords, roomCode, resetRoomForNewRound, createInitialSoloPlayer, nextTrack, t]);
+  }, [settings, room?.sprintSettings?.trackTheme, resolveSettingsForRound, wordPool, activeGrade, gradeWords, roomCode, resetRoomForNewRound, nextTrack, t]);
 
   // Trouble Words Rematch
   const handleTroubleWordsRematch = useCallback(async () => {
     const baseSettings = preRematchSettingsRef.current || settings;
     if (!baseSettings) return;
-    const troubleSource = (baseSettings.deliveryStream === 'STREAM_B_MULTIPLAYER' && room?.troubleWords)
-      ? room.troubleWords
-      : soloTroubleWords;
+    const troubleSource = room?.troubleWords || {};
 
     const troubleEntries = Object.entries(troubleSource);
     if (troubleEntries.length === 0) {
@@ -622,6 +399,7 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
       baseSettings.gamePlayType === 'GRAND_PRIX_3D' ||
       baseSettings.gamePlayType === 'SPRINT_RACE' ||
       baseSettings.gamePlayType === 'TUG_OF_WAR' ||
+      baseSettings.gamePlayType === 'TAMAIRE' ||
       baseSettings.gamePlayType === 'VOLLEYBALL';
 
     // Handle Math Mode Rematch: generate fresh procedural numbers for the missed topics!
@@ -661,24 +439,14 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
           );
           setSettings(rematchSettings);
           setQuestions(rematchQuestions);
-          setLocalQuestionIndex(0);
           nextTrack();
-          if (rematchSettings.deliveryStream === 'STREAM_B_MULTIPLAYER' && roomCode) {
+          if (roomCode) {
             const success = await resetRoomForNewRound(rematchQuestions, true, rematchSettings);
             if (success) {
               setStep('LOBBY');
             } else {
               alert(t('Failed to initialize rematch.', 'リマッチの初期化に失敗しました。') as string);
             }
-          } else {
-            isSoloRevealingRef.current = false;
-            soloSelectionRef.current = null;
-            setSoloPlayer(createInitialSoloPlayer());
-            setSoloSelectedOptionId(null);
-            setSoloSelectedTimeTakenMs(null);
-            setSoloResponses({});
-            setSoloTroubleWords({});
-            setStep('QUESTION');
           }
           return;
         }
@@ -742,28 +510,18 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
     };
     setSettings(finalRematchSettings);
     setQuestions(timed);
-    setLocalQuestionIndex(0);
 
     nextTrack();
 
-    if (finalRematchSettings.deliveryStream === 'STREAM_B_MULTIPLAYER' && roomCode) {
+    if (roomCode) {
       const success = await resetRoomForNewRound(timed, true, finalRematchSettings);
       if (success) {
         setStep('LOBBY');
       } else {
         alert(t('Failed to initialize rematch.', 'リマッチの初期化に失敗しました。') as string);
       }
-    } else {
-      isSoloRevealingRef.current = false;
-      soloSelectionRef.current = null;
-      setSoloPlayer(createInitialSoloPlayer());
-      setSoloSelectedOptionId(null);
-      setSoloSelectedTimeTakenMs(null);
-      setSoloResponses({});
-      setSoloTroubleWords({});
-      setStep('QUESTION');
     }
-  }, [settings, room?.troubleWords, room?.sprintSettings?.trackTheme, resolveSettingsForRound, soloTroubleWords, questions, wordPool, gradeWords, activeGrade, roomCode, resetRoomForNewRound, createInitialSoloPlayer, nextTrack, t]);
+  }, [settings, room?.troubleWords, room?.sprintSettings?.trackTheme, resolveSettingsForRound, questions, wordPool, gradeWords, activeGrade, roomCode, resetRoomForNewRound, nextTrack, t]);
 
   // Change settings flow from Game Over
   const handlePlayAgainChange = useCallback(() => {
@@ -807,17 +565,13 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
     }
   }, [onRegisterExit]);
 
-  const currentQIndex = settings?.deliveryStream === 'STREAM_B_MULTIPLAYER' && room
-    ? room.currentQuestionIndex
-    : localQuestionIndex;
+  const currentQIndex = room ? room.currentQuestionIndex : 0;
 
-  const currentQuestion = (settings?.deliveryStream === 'STREAM_B_MULTIPLAYER' && room?.currentQuestion)
-    ? room.currentQuestion
-    : (questions[currentQIndex] || questions[0]);
+  const currentQuestion = room?.currentQuestion || questions[currentQIndex] || questions[0];
 
   return (
     <div className={`w-full flex-1 flex flex-col items-center relative ${
-      step === 'LOBBY' || step === 'QUESTION' || step === 'REVEAL' || step === 'LEADERBOARD' || step === 'SPRINT_RACE' || step === 'GRAND_PRIX_3D' || step === 'TUG_OF_WAR' || step === 'VOLLEYBALL'
+      step === 'LOBBY' || step === 'QUESTION' || step === 'REVEAL' || step === 'LEADERBOARD' || step === 'SPRINT_RACE' || step === 'GRAND_PRIX_3D' || step === 'TUG_OF_WAR' || step === 'TAMAIRE' || step === 'VOLLEYBALL'
         ? 'h-[calc(100dvh-3.75rem)] max-h-[calc(100dvh-3.75rem)] justify-between p-0 overflow-hidden'
         : 'justify-start py-2 sm:py-4'
     }`}>
@@ -936,18 +690,18 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
         />
       )}
 
-      {step === 'VOLLEYBALL' && (
-        <QuizHostVolleyball
-          key={`volleyball-host-${room?.volleyballStartTime || 'active'}`}
-          roomCode={roomCode || 'VOLLEY'}
+      {(step === 'TAMAIRE' || step === 'VOLLEYBALL') && (
+        <QuizHostTamaire
+          key={`tamaire-host-${room?.tamaireStartTime || room?.volleyballStartTime || 'active'}`}
+          roomCode={roomCode || 'TAMAIRE'}
           questions={questions}
           players={room?.players || {}}
-          raceStartTime={room?.volleyballStartTime || room?.raceStartTime || getServerTime()}
-          volleyballSettings={room?.volleyballSettings || settings?.volleyballSettings}
+          raceStartTime={room?.tamaireStartTime || room?.volleyballStartTime || room?.raceStartTime || getServerTime()}
+          tamaireSettings={room?.tamaireSettings || room?.volleyballSettings || settings?.tamaireSettings || settings?.volleyballSettings}
           eyesUp={room?.eyesUp}
           onToggleEyesUp={toggleEyesUp}
-          onFreezeVolleyball={freezeVolleyball}
-          onFinishVolleyball={async (winner) => {
+          onFreezeTamaire={freezeTamaire}
+          onFinishTamaire={async (winner) => {
             let finalAwards: ClassroomAward[] = [];
             if (settings) {
               const troubleIds = computeTroubleWordIds(room?.players || {}, questions, room?.troubleWords);
@@ -959,7 +713,7 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
               );
               setCalculatedAwards(finalAwards);
             }
-            await endVolleyball(finalAwards, winner);
+            await endTamaire(finalAwards, winner);
             setStep('GAME_OVER');
           }}
           onExit={handleExit}
@@ -972,21 +726,17 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
 
       {step === 'QUESTION' && currentQuestion && (
         <QuizHostQuestion
-          roomCode={roomCode || 'WARMUP'}
+          roomCode={roomCode || ''}
           question={currentQuestion}
           totalQuestions={questions.length}
-          players={isStreamA ? { [soloPlayer.id]: soloPlayer } : (room?.players || {})}
-          responses={isStreamA ? soloResponses : (room?.responses || {})}
+          players={room?.players || {}}
+          responses={room?.responses || {}}
           recallDelaySeconds={room?.recallDelaySeconds || settings?.recallDelaySeconds}
           eliminateDistractors={room?.eliminateDistractors ?? settings?.eliminateDistractors}
           distractorEliminationMode={room?.distractorEliminationMode ?? settings?.distractorEliminationMode}
           onTimeExpired={handleRevealAnswer}
           onManualReveal={handleRevealAnswer}
           onExit={handleExit}
-          isSolo={isStreamA}
-          soloPlayer={isStreamA ? soloPlayer : undefined}
-          selectedOptionId={isStreamA ? soloSelectedOptionId : null}
-          onSelectOption={handleSoloSelectOption}
           onDuckBGM={duckBGM}
         />
       )}
@@ -995,19 +745,17 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
         <QuizHostReveal
           question={currentQuestion}
           totalQuestions={questions.length}
-          players={isStreamA ? { [soloPlayer.id]: soloPlayer } : (room?.players || {})}
-          responses={isStreamA ? soloResponses : (room?.responses || {})}
+          players={room?.players || {}}
+          responses={room?.responses || {}}
           onNext={handleNextFromReveal}
           onExit={handleExit}
-          isSolo={isStreamA}
-          soloPlayer={isStreamA ? soloPlayer : undefined}
           onDuckBGM={duckBGM}
         />
       )}
 
       {step === 'LEADERBOARD' && (
         <QuizHostLeaderboard
-          players={isStreamA ? { [soloPlayer.id]: soloPlayer } : (room?.players || {})}
+          players={room?.players || {}}
           gameMode={room?.mode || settings?.gameMode}
           teamScores={room?.teamScores}
           questionIndex={currentQIndex}
@@ -1019,9 +767,9 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
 
       {step === 'GAME_OVER' && (
         <QuizHostGameOver
-          players={isStreamA ? { [soloPlayer.id]: soloPlayer } : (room?.players || {})}
+          players={room?.players || {}}
           awards={room?.awardedBadges || calculatedAwards}
-          troubleWords={isStreamA ? soloTroubleWords : (room?.troubleWords || {})}
+          troubleWords={room?.troubleWords || {}}
           questions={questions}
           schoolId={room?.schoolId}
           classId={room?.classId}
@@ -1039,14 +787,12 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
           sprintSettings={room?.sprintSettings || settings?.sprintSettings}
           podiumFinishers={room?.podiumFinishers}
           onDuckBGM={duckBGM}
-          isSolo={isStreamA}
-          soloPlayer={isStreamA ? soloPlayer : undefined}
           analytics={room?.analytics}
         />
       )}
 
       {/* Floating Attention Lock / "Eyes Up Front" Pill for Classroom Host (hidden in Lobby, Sprint, 3D Grand Prix, Tug of War & Tamaire where it is in the header) */}
-      {roomCode && step !== 'SETUP' && step !== 'LOBBY' && step !== 'SPRINT_RACE' && step !== 'GRAND_PRIX_3D' && step !== 'TUG_OF_WAR' && step !== 'VOLLEYBALL' && (
+      {roomCode && step !== 'SETUP' && step !== 'LOBBY' && step !== 'SPRINT_RACE' && step !== 'GRAND_PRIX_3D' && step !== 'TUG_OF_WAR' && step !== 'TAMAIRE' && step !== 'VOLLEYBALL' && (
         <button
           type="button"
           onClick={() => toggleEyesUp()}
@@ -1063,7 +809,7 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
       )}
 
       {/* Floating High-Energy BGM Control Pill for Classroom Host (hidden in Sprint, 3D Grand Prix, Tug of War, Tamaire & Game Over screens) */}
-      {hasTrack && step !== 'SETUP' && step !== 'GAME_OVER' && step !== 'SPRINT_RACE' && step !== 'GRAND_PRIX_3D' && step !== 'TUG_OF_WAR' && step !== 'VOLLEYBALL' && (
+      {hasTrack && step !== 'SETUP' && step !== 'GAME_OVER' && step !== 'SPRINT_RACE' && step !== 'GRAND_PRIX_3D' && step !== 'TUG_OF_WAR' && step !== 'TAMAIRE' && step !== 'VOLLEYBALL' && (
         <div className="fixed bottom-4 right-4 z-50 flex items-center gap-2 bg-slate-900 dark:bg-slate-800 text-white px-3.5 py-2 rounded-2xl shadow-2xl border border-slate-700/80 animate-in fade-in slide-in-from-bottom-2 print:hidden">
           <Music size={15} className={`text-indigo-400 ${!isBgmMuted && isBgmPlaying ? 'animate-bounce' : ''}`} />
           <span className="text-xs font-bold max-w-[130px] truncate">

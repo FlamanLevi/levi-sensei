@@ -280,7 +280,7 @@ export const QuizStudentJoin: React.FC<QuizStudentJoinProps> = ({
                       <div className="grid grid-cols-2 gap-2 mb-2">
                         {(() => {
                           const isTug = roomInfo.gamePlayType === 'TUG_OF_WAR';
-                          const isVolleyball = roomInfo.gamePlayType === 'VOLLEYBALL';
+                          const isVolleyball = roomInfo.gamePlayType === 'TAMAIRE' || roomInfo.gamePlayType === 'VOLLEYBALL';
                           const activeTeams: TeamId[] = (isTug || isVolleyball)
                             ? ['team_red', 'team_white']
                             : (roomInfo.activeTeams || (roomInfo.teamCount === 2 ? ['team_red', 'team_white'] : RAINBOW_TEAM_ORDER.slice(0, roomInfo.teamCount || 2)));

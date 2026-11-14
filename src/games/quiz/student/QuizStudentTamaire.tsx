@@ -48,7 +48,7 @@ import {
   buildTamaireSuspenseSchedule,
   TamaireSuspenseFrame,
 } from '../core/quizEngine';
-import { OPTION_STYLES } from '../types';
+import { OPTION_STYLES, TamaireSettings, VolleyballSettings } from '../types';
 import {
   Tamaire3DStage,
   VolleyballAnswerEvent,
@@ -61,13 +61,7 @@ import { useLanguage } from '@/context/LanguageContext';
 import { useAudio } from '@/context/AudioContext';
 import { RubyText } from '@/components/common/RubyText';
 
-export interface TamaireSettings {
-  timeLimitSeconds: number;
-  gameStyle: 'COOP_RALLY' | 'TEAM_VS';
-  targetRallies?: number;
-  missLockoutSeconds?: number;
-  hideScoreUntilEnd?: boolean;
-}
+export type { TamaireSettings, VolleyballSettings };
 
 class StudentThrowAudioEngine {
   private ctx: AudioContext | null = null;
@@ -207,8 +201,11 @@ export interface QuizStudentTamaireProps {
   player: QuizPlayer;
   questions: QuizQuestion[];
   raceStartTime: number;
+  tamaireSettings?: TamaireSettings;
   volleyballSettings?: TamaireSettings;
+  tamaireFinished?: boolean;
   volleyballFinished?: boolean;
+  tamaireLiveState?: any;
   volleyballLiveState?: any;
   redScore?: number;
   whiteScore?: number;
@@ -243,8 +240,11 @@ export const QuizStudentTamaire: React.FC<QuizStudentTamaireProps> = ({
   player,
   questions,
   raceStartTime,
+  tamaireSettings,
   volleyballSettings,
+  tamaireFinished = false,
   volleyballFinished = false,
+  tamaireLiveState,
   volleyballLiveState,
   redScore = 0,
   whiteScore = 0,
@@ -255,7 +255,10 @@ export const QuizStudentTamaire: React.FC<QuizStudentTamaireProps> = ({
 }) => {
   const { t, language } = useLanguage();
   const { playWordAudio, isMuted } = useAudio();
-  const timeLimitSeconds = volleyballSettings?.timeLimitSeconds || 60;
+  const effectiveSettings = tamaireSettings || volleyballSettings;
+  const effectiveFinished = Boolean(tamaireFinished || volleyballFinished);
+  const effectiveLiveState = tamaireLiveState || volleyballLiveState;
+  const timeLimitSeconds = effectiveSettings?.timeLimitSeconds || 60;
   const matchStartTime = raceStartTime + 1500;
 
   const [localScore, setLocalScore] = useState<number>(() => player.score || 0);
@@ -303,7 +306,7 @@ export const QuizStudentTamaire: React.FC<QuizStudentTamaireProps> = ({
   const [eliminatedOptionIds, setEliminatedOptionIds] = useState<Set<string>>(new Set());
   const [mistakeCountOnQuestion, setMistakeCountOnQuestion] = useState<number>(0);
 
-  // 2.5s Fumbled Bean Bag Lockout Penalty State
+  // >= 2.5s Fumbled Bean Bag Lockout Penalty State
   const [penaltySecondsLeft, setPenaltySecondsLeft] = useState<number>(0);
   const penaltyEndTimeRef = useRef<number>(0);
   const questionStartTimeRef = useRef<number>(Date.now());
@@ -332,7 +335,7 @@ export const QuizStudentTamaire: React.FC<QuizStudentTamaireProps> = ({
     0,
     Math.ceil((timeLimitSeconds * 1000 - elapsedSinceStart) / 1000)
   );
-  const isMatchFinished = timeRemainingSeconds <= 0 || Boolean(volleyballFinished);
+  const isMatchFinished = timeRemainingSeconds <= 0 || effectiveFinished;
   const isGoldenShotArmed = actionStep === 2 && (localStreak + 1) % 6 === 0;
 
   const expiredNotifiedRef = useRef<boolean>(false);
@@ -345,8 +348,8 @@ export const QuizStudentTamaire: React.FC<QuizStudentTamaireProps> = ({
     }
   }, [timeRemainingSeconds, onTimeExpired]);
 
-  const effectiveRedScore = redScore || volleyballLiveState?.redScore || 0;
-  const effectiveWhiteScore = whiteScore || volleyballLiveState?.whiteScore || 0;
+  const effectiveRedScore = redScore || effectiveLiveState?.redScore || 0;
+  const effectiveWhiteScore = whiteScore || effectiveLiveState?.whiteScore || 0;
 
   const latestScoresRef = useRef({ red: effectiveRedScore, white: effectiveWhiteScore });
   latestScoresRef.current = {
@@ -605,9 +608,9 @@ export const QuizStudentTamaire: React.FC<QuizStudentTamaireProps> = ({
       setEliminatedOptionIds((prev) => new Set(prev).add(optionId));
 
       const lockoutInfo = resolveLockoutPenaltySeconds({
-        mode: 'VOLLEYBALL',
+        mode: 'TAMAIRE',
         mistakeCountOnQuestion: nextMistakes,
-        configuredLockoutSeconds: volleyballSettings?.missLockoutSeconds,
+        configuredLockoutSeconds: effectiveSettings?.missLockoutSeconds,
       });
 
       const penaltyEnd = Date.now() + Math.round(lockoutInfo.penaltySeconds * 1000);

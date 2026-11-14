@@ -23,15 +23,12 @@ import {
   Volume2, 
   RotateCcw, 
   Home, 
-  Sparkles, 
   AlertCircle, 
   BookOpen, 
   Star, 
   Users,
   Flag,
-  Clock,
-  Flame,
-  CheckCircle2
+  Clock
 } from 'lucide-react';
 
 import { useLanguage } from '@/context/LanguageContext';
@@ -119,8 +116,6 @@ interface QuizHostGameOverProps {
   gamePlayType?: GamePlayType;
   sprintSettings?: SprintSettings;
   podiumFinishers?: PodiumFinisher[];
-  isSolo?: boolean;
-  soloPlayer?: QuizPlayer;
   onDuckBGM?: (duck: boolean) => void;
   analytics?: SessionAnalytics;
 }
@@ -146,8 +141,6 @@ export const QuizHostGameOver: React.FC<QuizHostGameOverProps> = ({
   gamePlayType,
   sprintSettings,
   podiumFinishers,
-  isSolo = false,
-  soloPlayer,
   onDuckBGM,
   analytics
 }) => {
@@ -241,7 +234,7 @@ export const QuizHostGameOver: React.FC<QuizHostGameOverProps> = ({
       mode: gameMode,
       grade: classId && /^\d+-\d+$/.test(classId) ? `Grade ${classId.charAt(0)}` : 'Elementary',
       unit: 'Curriculum Unit',
-      deliveryStream: isSolo ? 'STREAM_A_FRONT_SCREEN' : 'STREAM_B_MULTIPLAYER',
+      deliveryStream: 'STREAM_B_MULTIPLAYER',
       ipadDisplayMode: 'MIRRORED',
       totalQuestions: questions.length,
       currentQuestionIndex: questions.length,
@@ -251,60 +244,18 @@ export const QuizHostGameOver: React.FC<QuizHostGameOverProps> = ({
       boundStudents
     };
     return computeSessionAnalytics(roomState, questions, 180);
-  }, [analytics, players, questions, schoolId, classId, gamePlayType, gameMode, isSolo, teamScores, boundStudents]);
+  }, [analytics, players, questions, schoolId, classId, gamePlayType, gameMode, teamScores, boundStudents]);
 
   const sortedPlayers = Object.values(players).sort((a, b) => b.score - a.score);
   const winner = sortedPlayers[0];
   const second = sortedPlayers[1];
   const third = sortedPlayers[2];
 
-  const isSoloWarmup = isSolo || sortedPlayers.length === 0 || (sortedPlayers.length === 1 && sortedPlayers[0]?.id === 'stream_a_player');
-  const targetSolo = soloPlayer || (sortedPlayers.find(p => p.id === 'stream_a_player') || sortedPlayers[0]);
-  const soloScore = targetSolo?.score || 0;
-  const soloCorrect = targetSolo?.correctCount || 0;
-  const soloTotal = questions.length || targetSolo?.totalAnswered || 1;
-  const soloAccuracy = soloTotal > 0 ? Math.round((soloCorrect / soloTotal) * 100) : 0;
-  const soloStreak = targetSolo?.maxStreak || 0;
-  const soloFastestSec = (targetSolo?.fastestTimeMs && targetSolo.fastestTimeMs < 999999)
-    ? `${(targetSolo.fastestTimeMs / 1000).toFixed(1)}s`
-    : '—';
-
-  // Performance cheer & grade
-  let performanceTitle = t('GREAT EFFORT! 👏', 'ナイスチャレンジ！👏');
-  let performanceDesc = isMathRound
-    ? t('Great job practicing today! Keep it up!', 'クラス全員で集中して算数の練習ができました！')
-    : t('Great job practicing today! Keep it up!', 'クラス全員で元気よく英語の練習ができました！');
-  let performanceBadge = '👍 GOOD';
-  let badgeColor = 'bg-amber-100 text-amber-800 border-amber-300';
-
-  if (soloAccuracy === 100) {
-    performanceTitle = t('PERFECT SCORE! 🏆', '満点達成！パーフェクト！🏆');
-    performanceDesc = isMathRound
-      ? t('Flawless mastery! Every single question answered correctly!', '全問正解！素晴らしい計算力です！完璧に解けていますね。')
-      : t('Flawless mastery! Every single question answered correctly!', '全問正解！素晴らしい英語力です！完璧に覚えていますね。');
-    performanceBadge = '🌟 PERFECT MASTER';
-    badgeColor = 'bg-amber-400 text-slate-950 font-black shadow-lg shadow-amber-400/30';
-  } else if (soloAccuracy >= 80) {
-    performanceTitle = t('EXCELLENT WORK! 🌟', 'たいへんよくできました！🌟');
-    performanceDesc = isMathRound
-      ? t('Outstanding performance! High accuracy across the board.', 'すばらしい正解率！ほとんどの問題をマスターしています。')
-      : t('Outstanding performance! High accuracy across the board.', 'すばらしい正解率！ほとんどの単語をマスターしています。');
-    performanceBadge = '🎉 EXCELLENT';
-    badgeColor = 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-200 border-emerald-300';
-  } else if (soloAccuracy >= 60) {
-    performanceTitle = t('GREAT EFFORT! 👏', 'よくがんばりました！👏');
-    performanceDesc = isMathRound
-      ? t('Good practice today! Review the tricky questions to score even higher.', 'しっかり練習できました！苦手な問題を復習してさらにレベルアップしよう。')
-      : t('Good practice today! Review the tricky words to score even higher.', 'しっかり練習できました！苦手な単語を復習してさらにレベルアップしよう。');
-    performanceBadge = '👍 GOOD EFFORT';
-    badgeColor = 'bg-blue-100 dark:bg-blue-950/60 text-blue-800 dark:text-blue-200 border-blue-300';
-  }
-
   // Team rankings
   const isTug = gamePlayType === 'TUG_OF_WAR';
-  const isVolleyball = gamePlayType === 'VOLLEYBALL';
+  const isTamaire = gamePlayType === 'TAMAIRE' || gamePlayType === 'VOLLEYBALL';
   let displayTeamKeys: TeamId[];
-  if (isTug || isVolleyball) {
+  if (isTug || isTamaire) {
     displayTeamKeys = ['team_red', 'team_white'];
   } else {
     const activeTeamKeys = (Object.keys(TEAM_PRESETS) as TeamId[]).filter((tId) => {
@@ -332,7 +283,7 @@ export const QuizHostGameOver: React.FC<QuizHostGameOverProps> = ({
       ...data
     };
   }).sort((a, b) => {
-    if ((isTug || isVolleyball) && winningTeam && winningTeam !== 'draw') {
+    if ((isTug || isTamaire) && winningTeam && winningTeam !== 'draw') {
       if (a.id === winningTeam && b.id !== winningTeam) return -1;
       if (b.id === winningTeam && a.id !== winningTeam) return 1;
     }
@@ -341,7 +292,7 @@ export const QuizHostGameOver: React.FC<QuizHostGameOverProps> = ({
       const bWins = b.id === 'team_red' ? (tugOfWarRoundWins.team_red || 0) : b.id === 'team_white' ? (tugOfWarRoundWins.team_white || 0) : 0;
       if (bWins !== aWins) return bWins - aWins;
     }
-    if (isVolleyball && b.correctCount !== a.correctCount) {
+    if (isTamaire && b.correctCount !== a.correctCount) {
       return b.correctCount - a.correctCount;
     }
     return b.averageScore - a.averageScore || b.score - a.score;
@@ -352,7 +303,7 @@ export const QuizHostGameOver: React.FC<QuizHostGameOverProps> = ({
   const teamThird = sortedTeams.length > 2 ? sortedTeams[2] : undefined;
   const teamFourth = sortedTeams.length > 3 ? sortedTeams[3] : undefined;
   const winnerTeamLabel = teamWinner ? (language === 'ja' ? teamWinner.preset.jaName : teamWinner.preset.name) : (language === 'ja' ? '赤組' : 'Red Team');
-  const isUndokaiDraw = (isTug || isVolleyball) && winningTeam === 'draw';
+  const isUndokaiDraw = (isTug || isTamaire) && winningTeam === 'draw';
 
   const isSprint = gamePlayType === 'SPRINT_RACE' || gamePlayType === 'GRAND_PRIX_3D' || !!sprintSettings || (podiumFinishers && podiumFinishers.length > 0);
   const isTimeTrial = sprintSettings?.sprintMode === 'TIME_TRIAL';
@@ -491,14 +442,14 @@ export const QuizHostGameOver: React.FC<QuizHostGameOverProps> = ({
       <div className="flex items-center justify-between gap-2 pb-4 border-b border-slate-200 dark:border-slate-800 shrink-0 print:hidden flex-nowrap">
         <div className="flex items-center gap-3 min-w-0 flex-1">
           <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-amber-400 to-orange-500 flex items-center justify-center shadow-lg text-white font-black text-xl shrink-0">
-            {isSprint ? '🏎️' : isVolleyball ? '🧺' : isTug ? '🚩' : '🏆'}
+            {isSprint ? '🏎️' : isTamaire ? '🧺' : isTug ? '🚩' : '🏆'}
           </div>
           <div className="min-w-0 flex-1">
             <h2 className="text-xl sm:text-2xl font-black tracking-tight flex items-center gap-2 truncate">
               <span className="truncate">
                 {isSprint
                   ? (isTimeTrial ? t('F1 Time Trial Results', 'タイムアタック 結果発表！') : t('F1 Grand Prix Podium', 'グランプリ 最終結果発表！'))
-                  : isVolleyball
+                  : isTamaire
                     ? t('Bean Bag Toss (Tamaire) Results', '運動会 玉入れ合戦 結果発表！')
                     : isTug
                       ? t('Tug of War Results', '綱引きバトル 結果発表！')
@@ -521,17 +472,15 @@ export const QuizHostGameOver: React.FC<QuizHostGameOverProps> = ({
                   ? (isUndokaiDraw
                       ? t('Tug of War ended in an even draw! Incredible effort by both teams.', 'つなひき対決終了！両チーム譲らぬ大接戦の引き分けでした！')
                       : t(`Tug of War battle finished! Congratulations to the victorious ${winnerTeamLabel}!`, `つなひき対決終了！見事勝利を収めたのは ${winnerTeamLabel}！ 両チーム素晴らしい力闘でした。`))
-                : isVolleyball
+                : isTamaire
                   ? (isUndokaiDraw
                       ? t('Bean Bag Toss (Tamaire) ended in a tie! Fantastic throwing by both Red and White teams!', '玉入れ合戦終了！赤組も白組も同点引き分けの大接戦でした！')
                       : t(`Bean Bag Toss (Tamaire) finished! Congratulations to ${winnerTeamLabel}!`, `玉入れ合戦終了！勝利したのは ${winnerTeamLabel}！ 赤組も白組も最後までたくさんのお手玉を投げ入れました！`))
                 : gameMode === 'TEAM'
                   ? t(`The winning team is ${winnerTeamLabel}! Fantastic teamwork by all teams.`, `優勝チームは ${winnerTeamLabel}！ 全チーム素晴らしい団結力でした。`)
-                  : isSoloWarmup
-                    ? `${t('Total Score: ', '合計スコア: ')}${soloScore.toLocaleString()} pts · ${t('Accuracy: ', '正解率: ')}${soloAccuracy}% 🎉`
-                    : sortedPlayers.length > 0
-                      ? t('Congratulations to all students! Great effort today.', '児童のみなさんお疲れ様でした！みんなよくがんばりました。')
-                      : t('Front-Screen Warmup finished! Great choral repetition drill.', 'ウォームアップ終了！元気よく発音練習ができました。')}
+                  : sortedPlayers.length > 0
+                    ? t('Congratulations to all students! Great effort today.', '児童のみなさんお疲れ様でした！みんなよくがんばりました。')
+                    : t('Quiz session completed.', 'クイズセッションが終了しました。')}
             </p>
           </div>
         </div>
@@ -583,10 +532,10 @@ export const QuizHostGameOver: React.FC<QuizHostGameOverProps> = ({
           <button
             onClick={onPlayAgainSame || onPlayAgain}
             className="px-3.5 py-2.5 rounded-2xl font-black text-xs text-white bg-blue-600 hover:bg-blue-500 shadow-md active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer shrink-0 whitespace-nowrap"
-            title={isSoloWarmup ? t("Play again with current settings", "同じ設定でスコアをリセットしてもう一度プレイ") : t("Play again with current settings, keeping same room PIN", "同じ部屋PINのまま、スコアをリセットして再戦")}
+            title={t("Play again with current settings, keeping same room PIN", "同じ部屋PINのまま、スコアをリセットして再戦")}
           >
             <RotateCcw size={15} />
-            <span>{isSoloWarmup ? t("Play Again", "もう一度プレイ") : t("Play Again (Keep PIN)", "もう一度 (設定維持)")}</span>
+            <span>{t("Play Again (Keep PIN)", "もう一度 (設定維持)")}</span>
           </button>
 
           {onPlayAgainChange && (
@@ -644,80 +593,21 @@ export const QuizHostGameOver: React.FC<QuizHostGameOverProps> = ({
         </div>
       ) : (
         <>
-          {/* Warmup Solo / Class Celebration (Stream A) */}
-      {isSoloWarmup && (
-        <div className="my-6 p-6 sm:p-8 rounded-3xl bg-gradient-to-tr from-amber-50/80 via-white to-orange-50/80 dark:from-slate-900 dark:via-slate-900/90 dark:to-slate-800 border-4 border-amber-300 dark:border-amber-500/40 text-center max-w-4xl mx-auto shadow-2xl animate-in zoom-in-95 duration-300">
-          <div className="text-6xl mb-3 animate-bounce">🎉</div>
-          <span className="text-xs font-black uppercase tracking-widest text-amber-600 dark:text-amber-400 block mb-1">
-            {t('FRONT-SCREEN WARMUP COMPLETE', 'ウォームアップ完了')}
-          </span>
-          <h2 className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white mb-2">
-            {performanceTitle}
-          </h2>
-          <p className="text-sm font-bold text-slate-600 dark:text-slate-300 leading-relaxed mb-6 max-w-xl mx-auto">
-            {performanceDesc}
-          </p>
-
-          {/* 4 Solo Metric Cards */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 my-4 text-left">
-            <div className="p-4 rounded-2xl bg-white dark:bg-slate-800/80 border-2 border-amber-300 dark:border-amber-500/30 shadow-md">
-              <div className="flex items-center justify-between text-amber-500 mb-1">
-                <span className="text-[11px] font-black uppercase tracking-wider text-slate-600 dark:text-slate-400">{t('SCORE', 'スコア')}</span>
-                <Trophy size={18} />
-              </div>
-              <div className="text-2xl sm:text-3xl font-black font-mono text-slate-900 dark:text-white">
-                {soloScore.toLocaleString()}
-              </div>
-              <span className="text-[10px] font-bold text-slate-600 dark:text-slate-400 block mt-0.5">{t('points earned', '獲得スコア')}</span>
+          {/* Compact empty-session fallback when no students joined or scored */}
+          {sortedPlayers.length === 0 && !isTug && !isTamaire && (
+            <div className="my-4 p-5 rounded-3xl bg-slate-50 dark:bg-slate-900/80 border-2 border-slate-200 dark:border-slate-800 text-center max-w-3xl mx-auto shadow-md">
+              <div className="text-4xl mb-2">🏁</div>
+              <h3 className="text-lg font-black text-slate-900 dark:text-white mb-1">
+                {t('No student scores recorded this round', 'このラウンドの児童スコア記録はありません')}
+              </h3>
+              <p className="text-xs font-bold text-slate-600 dark:text-slate-400">
+                {t('Review vocabulary below or click Play Again (Keep PIN) to start another round.', '下の振り返りカードを確認するか、「もう一度 (設定維持)」で次のラウンドを始められます。')}
+              </p>
             </div>
-
-            <div className="p-4 rounded-2xl bg-white dark:bg-slate-800/80 border-2 border-emerald-300 dark:border-emerald-500/30 shadow-md">
-              <div className="flex items-center justify-between text-emerald-500 mb-1">
-                <span className="text-[11px] font-black uppercase tracking-wider text-slate-600 dark:text-slate-400">{t('ACCURACY', '正解率')}</span>
-                <CheckCircle2 size={18} />
-              </div>
-              <div className="text-2xl sm:text-3xl font-black font-mono text-slate-900 dark:text-white">
-                {soloAccuracy}%
-              </div>
-              <span className="text-[10px] font-bold text-slate-600 dark:text-slate-400 block mt-0.5">{soloCorrect} / {soloTotal} {t('correct', '問正解')}</span>
-            </div>
-
-            <div className="p-4 rounded-2xl bg-white dark:bg-slate-800/80 border-2 border-orange-300 dark:border-orange-500/30 shadow-md">
-              <div className="flex items-center justify-between text-orange-500 mb-1">
-                <span className="text-[11px] font-black uppercase tracking-wider text-slate-600 dark:text-slate-400">{t('MAX STREAK', '最高連続')}</span>
-                <Flame size={18} />
-              </div>
-              <div className="text-2xl sm:text-3xl font-black font-mono text-slate-900 dark:text-white">
-                {soloStreak}
-              </div>
-              <span className="text-[10px] font-bold text-slate-600 dark:text-slate-400 block mt-0.5">{t('in a row', '連続正解')}</span>
-            </div>
-
-            <div className="p-4 rounded-2xl bg-white dark:bg-slate-800/80 border-2 border-indigo-300 dark:border-indigo-500/30 shadow-md">
-              <div className="flex items-center justify-between text-indigo-500 mb-1">
-                <span className="text-[11px] font-black uppercase tracking-wider text-slate-600 dark:text-slate-400">{t('FASTEST', '最速タイム')}</span>
-                <Clock size={18} />
-              </div>
-              <div className="text-2xl sm:text-3xl font-black font-mono text-slate-900 dark:text-white">
-                {soloFastestSec}
-              </div>
-              <span className="text-[10px] font-bold text-slate-600 dark:text-slate-400 block mt-0.5">{t('best speed', '最速正解')}</span>
-            </div>
-          </div>
-
-          <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
-            <span className={`px-4 py-1.5 rounded-full border text-xs font-black shadow-sm ${badgeColor}`}>
-              {performanceBadge}
-            </span>
-            <span className="px-4 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-black border border-slate-200 dark:border-slate-700">
-              {questions.length} {t('questions practiced', '問 練習完了')}
-            </span>
-          </div>
-        </div>
-      )}
+          )}
 
       {/* 1A. TEAM MODE PODIUM */}
-      {gameMode === 'TEAM' && sortedPlayers.length > 0 && !isSprint && !isSoloWarmup && (
+      {gameMode === 'TEAM' && sortedPlayers.length > 0 && !isSprint && (
         <div className="py-6 flex flex-col items-center">
           {isUndokaiDraw && teamWinner && teamSecond ? (
             <div className="flex flex-col items-center mb-6">
@@ -731,7 +621,7 @@ export const QuizHostGameOver: React.FC<QuizHostGameOverProps> = ({
                       {tiedTeam.preset.emoji} {language === 'ja' ? tiedTeam.preset.jaName : tiedTeam.preset.name}
                     </span>
                     <span className="text-xs sm:text-sm font-black text-slate-600 dark:text-slate-300 mb-2 font-mono">
-                      {isVolleyball
+                      {isTamaire
                         ? `${tiedTeam.correctCount} ${t('bags', '個')}`
                         : isTug && tugOfWarRoundWins
                         ? `${tugOfWarRoundWins[tiedTeam.id === 'team_red' ? 'team_red' : 'team_white'] || 0} ${t('wins', '勝')}`
@@ -755,7 +645,7 @@ export const QuizHostGameOver: React.FC<QuizHostGameOverProps> = ({
                     {teamSecond.preset.emoji} {language === 'ja' ? teamSecond.preset.jaName : teamSecond.preset.name}
                   </span>
                   <span className="text-xs font-black text-slate-500 dark:text-slate-400 mb-2">
-                    {isVolleyball
+                    {isTamaire
                       ? `${teamSecond.correctCount} ${t('bags', '個')}`
                       : isTug && tugOfWarRoundWins
                       ? `${tugOfWarRoundWins[teamSecond.id === 'team_red' ? 'team_red' : 'team_white'] || 0} ${t('wins', '勝')}`
@@ -778,7 +668,7 @@ export const QuizHostGameOver: React.FC<QuizHostGameOverProps> = ({
                     {teamWinner.preset.emoji} {language === 'ja' ? teamWinner.preset.jaName : teamWinner.preset.name} {t('WINNER!', '優勝！')}
                   </span>
                   <span className="text-xs sm:text-sm font-black text-slate-700 dark:text-slate-200 mb-2 font-mono">
-                    {isVolleyball
+                    {isTamaire
                       ? `${teamWinner.correctCount} ${t('bags', '個')}`
                       : isTug && tugOfWarRoundWins
                       ? `${tugOfWarRoundWins[teamWinner.id === 'team_red' ? 'team_red' : 'team_white'] || 0} ${t('wins', '勝')}`
@@ -799,7 +689,7 @@ export const QuizHostGameOver: React.FC<QuizHostGameOverProps> = ({
                     {teamThird.preset.emoji} {language === 'ja' ? teamThird.preset.jaName : teamThird.preset.name}
                   </span>
                   <span className="text-xs font-black text-slate-600 dark:text-slate-400 mb-2">
-                    {isVolleyball
+                    {isTamaire
                       ? `${teamThird.correctCount} ${t('bags', '個')}`
                       : isTug && tugOfWarRoundWins
                       ? `${tugOfWarRoundWins[teamThird.id === 'team_red' ? 'team_red' : 'team_white'] || 0} ${t('wins', '勝')}`
@@ -819,7 +709,7 @@ export const QuizHostGameOver: React.FC<QuizHostGameOverProps> = ({
                     {teamFourth.preset.emoji} {language === 'ja' ? teamFourth.preset.jaName : teamFourth.preset.name}
                   </span>
                   <span className="text-[11px] font-bold text-slate-600 dark:text-slate-400 mb-2">
-                    {isVolleyball
+                    {isTamaire
                       ? `${teamFourth.correctCount} ${t('bags', '個')}`
                       : isTug && tugOfWarRoundWins
                       ? `${tugOfWarRoundWins[teamFourth.id === 'team_red' ? 'team_red' : 'team_white'] || 0} ${t('wins', '勝')}`
@@ -929,7 +819,7 @@ export const QuizHostGameOver: React.FC<QuizHostGameOverProps> = ({
                             <span className={`font-mono font-black text-sm block ${
                               isDarkCard ? 'text-amber-400' : 'text-amber-700 dark:text-amber-400'
                             }`}>
-                              {member.correctCount || 0} {isTug ? t('pulls', '回') : isVolleyball ? t('throws', '回') : t('correct', '問正解')}
+                              {member.correctCount || 0} {isTug ? t('pulls', '回') : isTamaire ? t('throws', '回') : t('correct', '問正解')}
                             </span>
                             <span className={`text-[10px] font-mono block ${
                               isDarkCard ? 'text-slate-300' : 'text-slate-600 dark:text-slate-400'
@@ -961,7 +851,7 @@ export const QuizHostGameOver: React.FC<QuizHostGameOverProps> = ({
                 <Award className="text-amber-400" size={20} />
                 <h3 className="text-lg font-black tracking-tight flex items-center gap-2">
                   <span>
-                    {(isTug || isVolleyball)
+                    {(isTug || isTamaire)
                       ? t('Sports Day Special Honors', '運動会 特別賞 (マルチ指標表彰)')
                       : t('Team Battle Special Honors', 'チーム対抗 特別賞 (マルチ指標表彰)')}
                   </span>
@@ -1101,7 +991,7 @@ export const QuizHostGameOver: React.FC<QuizHostGameOverProps> = ({
                     <p className="text-[11px] text-slate-300 mb-2">
                       {isTug
                         ? t('Most total pulls attempted without quitting!', '最後まで挑み続けた不屈の闘志！')
-                        : isVolleyball
+                        : isTamaire
                         ? t('Most total throws attempted without quitting!', '最後まで挑み続けた不屈の闘志！')
                         : t('Most total answers attempted without quitting!', '最後まで挑み続けた不屈の闘志！')}
                     </p>
@@ -1113,7 +1003,7 @@ export const QuizHostGameOver: React.FC<QuizHostGameOverProps> = ({
                             {renderPlayerIdentity(p, 'sm', language)}
                           </span>
                           <span className="font-mono font-black text-emerald-300 text-[11px]">
-                            💪 {p.totalAnswered} {isTug ? t('pulls', '回挑戦') : isVolleyball ? t('throws', '回挑戦') : t('answers', '回挑戦')}
+                            💪 {p.totalAnswered} {isTug ? t('pulls', '回挑戦') : isTamaire ? t('throws', '回挑戦') : t('answers', '回挑戦')}
                           </span>
                         </div>
                       ))}
@@ -1127,7 +1017,7 @@ export const QuizHostGameOver: React.FC<QuizHostGameOverProps> = ({
       )}
 
       {/* 1B. INDIVIDUAL MODE PODIUM */}
-      {gameMode === 'INDIVIDUAL' && sortedPlayers.length > 0 && !isSprint && !isSoloWarmup && (
+      {gameMode === 'INDIVIDUAL' && sortedPlayers.length > 0 && !isSprint && (
         <div className="py-8 flex justify-center items-end gap-3 sm:gap-6 shrink-0">
           {second && (
             <div className="flex flex-col items-center animate-in slide-in-from-bottom duration-500 delay-150">
@@ -1195,7 +1085,7 @@ export const QuizHostGameOver: React.FC<QuizHostGameOverProps> = ({
       )}
 
       {/* 1C. F1 GRAND PRIX SPRINT PODIUM */}
-      {isSprint && sortedPlayers.length > 0 && !isSoloWarmup && (
+      {isSprint && sortedPlayers.length > 0 && (
         <div className="py-6 flex flex-col items-center">
           {p1 && (
             <div className="flex justify-center items-end gap-2 sm:gap-5 shrink-0 mb-8 pt-2">
@@ -1578,12 +1468,8 @@ export const QuizHostGameOver: React.FC<QuizHostGameOverProps> = ({
                   <AlertCircle size={18} />
                   <span>
                     {isMathRound
-                      ? (isSoloWarmup
-                          ? t("Start Rematch with Trouble Questions", <>この<ruby>苦手<rt>にがて</rt></ruby><ruby>問題<rt>もんだい</rt></ruby>で<ruby>即座<rt>そくざ</rt></ruby>に<ruby>再戦<rt>さいせん</rt></ruby>スタート！</>)
-                          : t("Start 1-Click Fast Rematch with Trouble Questions (Keep PIN)", <>この<ruby>苦手<rt>にがて</rt></ruby><ruby>問題<rt>もんだい</rt></ruby>で<ruby>即座<rt>そくざ</rt></ruby>に<ruby>再戦<rt>さいせん</rt></ruby>スタート！ (<ruby>部屋<rt>へや</rt></ruby>PIN<ruby>維持<rt>いじ</rt></ruby>)</>))
-                      : (isSoloWarmup
-                          ? t("Start Rematch with Trouble Words", <>この<ruby>苦手<rt>にがて</rt></ruby><ruby>単語<rt>たんご</rt></ruby>で<ruby>即座<rt>そくざ</rt></ruby>に<ruby>再戦<rt>さいせん</rt></ruby>スタート！</>)
-                          : t("Start 1-Click Fast Rematch with Trouble Words (Keep PIN)", <>この<ruby>苦手<rt>にがて</rt></ruby><ruby>単語<rt>たんご</rt></ruby>で<ruby>即座<rt>そくざ</rt></ruby>に<ruby>再戦<rt>さいせん</rt></ruby>スタート！ (<ruby>部屋<rt>へや</rt></ruby>PIN<ruby>維持<rt>いじ</rt></ruby>)</>))}
+                      ? t("Start 1-Click Fast Rematch with Trouble Questions (Keep PIN)", <>この<ruby>苦手<rt>にがて</rt></ruby><ruby>問題<rt>もんだい</rt></ruby>で<ruby>即座<rt>そくざ</rt></ruby>に<ruby>再戦<rt>さいせん</rt></ruby>スタート！ (<ruby>部屋<rt>へや</rt></ruby>PIN<ruby>維持<rt>いじ</rt></ruby>)</>)
+                      : t("Start 1-Click Fast Rematch with Trouble Words (Keep PIN)", <>この<ruby>苦手<rt>にがて</rt></ruby><ruby>単語<rt>たんご</rt></ruby>で<ruby>即座<rt>そくざ</rt></ruby>に<ruby>再戦<rt>さいせん</rt></ruby>スタート！ (<ruby>部屋<rt>へや</rt></ruby>PIN<ruby>維持<rt>いじ</rt></ruby>)</>)}
                   </span>
                 </button>
               </div>

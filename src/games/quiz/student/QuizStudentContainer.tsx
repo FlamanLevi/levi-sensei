@@ -9,7 +9,7 @@ import { QuizStudentFeedback } from './QuizStudentFeedback';
 import { QuizStudentGameOver } from './QuizStudentGameOver';
 import { QuizStudentGrandPrix3D } from './QuizStudentGrandPrix3D';
 import { QuizStudentTugOfWar } from './QuizStudentTugOfWar';
-import { QuizStudentVolleyball } from './QuizStudentVolleyball';
+import { QuizStudentTamaire } from './QuizStudentTamaire';
 import { AnticipationStudentContainer } from '@/games/anticipation';
 import { Trophy, ArrowLeft, AlertCircle } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
@@ -339,7 +339,7 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
     );
   }
 
-  const isGameplayScreen = room.status === 'QUESTION' || room.status === 'REVEAL' || room.status === 'SPRINT_RACE' || room.status === 'GRAND_PRIX_3D' || room.status === 'TUG_OF_WAR' || room.status === 'VOLLEYBALL' || room.status === 'ANTICIPATION';
+  const isGameplayScreen = room.status === 'QUESTION' || room.status === 'REVEAL' || room.status === 'SPRINT_RACE' || room.status === 'GRAND_PRIX_3D' || room.status === 'TUG_OF_WAR' || room.status === 'TAMAIRE' || room.status === 'VOLLEYBALL' || room.status === 'ANTICIPATION';
 
   // ==========================================================================
   // [ANTIGRAVITY REFACTOR]: Unified Arcade Answer & Telemetry Adapter Callback
@@ -421,6 +421,8 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
             player={currentPlayer}
             gamePlayType={room.gamePlayType}
             sprintSettings={room.sprintSettings}
+            tugOfWarSettings={room.tugOfWarSettings}
+            tamaireSettings={room.tamaireSettings || room.volleyballSettings}
             totalQuestions={room.totalQuestions}
             totalStudents={Object.keys(room.players || {}).length}
             onLeave={handleLeave}
@@ -444,18 +446,21 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
         />
       )}
 
-      {/* 2c. Volleyball / Tamaire Mode (Strategy Adapter) */}
-      {room.status === 'VOLLEYBALL' && studentQuestions.length > 0 && (
-        <QuizStudentVolleyball
-          key={`volleyball-${room.volleyballStartTime || 'active'}`}
+      {/* 2c. Undokai Bean Bag Toss (Tamaire) Mode (Strategy Adapter) */}
+      {(room.status === 'TAMAIRE' || room.status === 'VOLLEYBALL') && studentQuestions.length > 0 && (
+        <QuizStudentTamaire
+          key={`tamaire-${room.tamaireStartTime || room.volleyballStartTime || 'active'}`}
           player={currentPlayer}
           questions={studentQuestions}
-          raceStartTime={room.volleyballStartTime || room.raceStartTime || 0}
+          raceStartTime={room.tamaireStartTime || room.volleyballStartTime || room.raceStartTime || 0}
+          tamaireSettings={room.tamaireSettings || room.volleyballSettings}
           volleyballSettings={room.volleyballSettings}
+          tamaireFinished={room.tamaireFinished ?? room.volleyballFinished}
           volleyballFinished={room.volleyballFinished}
+          tamaireLiveState={room.tamaireLiveState || room.volleyballLiveState}
           volleyballLiveState={room.volleyballLiveState}
-          redScore={room.volleyballLiveState?.redScore}
-          whiteScore={room.volleyballLiveState?.whiteScore}
+          redScore={(room.tamaireLiveState || room.volleyballLiveState)?.redScore}
+          whiteScore={(room.tamaireLiveState || room.volleyballLiveState)?.whiteScore}
           studentRoster={tamaireStudentRoster}
           onAnswer={handleArcadeAnswer}
           onLeave={handleLeave}
@@ -472,8 +477,8 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
         />
       )}
 
-      {/* 2d. Sprint/3D/Tug/Volleyball Loading Fallback */}
-      {(room.status === 'SPRINT_RACE' || room.status === 'GRAND_PRIX_3D' || room.status === 'TUG_OF_WAR' || room.status === 'VOLLEYBALL') && studentQuestions.length === 0 && (
+      {/* 2d. Sprint/3D/Tug/Tamaire Loading Fallback */}
+      {(room.status === 'SPRINT_RACE' || room.status === 'GRAND_PRIX_3D' || room.status === 'TUG_OF_WAR' || room.status === 'TAMAIRE' || room.status === 'VOLLEYBALL') && studentQuestions.length === 0 && (
         <div className="w-full max-w-md mx-auto p-6 text-center select-none animate-in fade-in duration-200">
           <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 shadow-2xl border-4 border-indigo-200 dark:border-indigo-900 flex flex-col items-center">
             <div className="w-20 h-20 rounded-3xl bg-gradient-to-tr from-amber-500 to-rose-600 text-white flex items-center justify-center mx-auto mb-4 shadow-xl text-3xl font-black animate-bounce">
@@ -582,12 +587,14 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
       )}
 
       {/* Fallback for unrecognized status to prevent blank screen */}
-      {!['LOBBY', 'SPRINT_RACE', 'GRAND_PRIX_3D', 'TUG_OF_WAR', 'VOLLEYBALL', 'ANTICIPATION', 'QUESTION', 'REVEAL', 'LEADERBOARD', 'GAME_OVER', 'CLOSED'].includes(room.status) && (
+      {!['LOBBY', 'SPRINT_RACE', 'GRAND_PRIX_3D', 'TUG_OF_WAR', 'TAMAIRE', 'VOLLEYBALL', 'ANTICIPATION', 'QUESTION', 'REVEAL', 'LEADERBOARD', 'GAME_OVER', 'CLOSED'].includes(room.status) && (
         <QuizStudentLobby
           roomCode={room.code}
           player={currentPlayer}
           gamePlayType={room.gamePlayType}
           sprintSettings={room.sprintSettings}
+          tugOfWarSettings={room.tugOfWarSettings}
+          tamaireSettings={room.tamaireSettings || room.volleyballSettings}
           totalQuestions={room.totalQuestions}
           onLeave={handleLeave}
         />

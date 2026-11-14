@@ -79,9 +79,10 @@ export function useQuizBotSimulator({
 
     const updates: Record<string, QuizPlayer> = {};
     const isTug = roomRef.current?.gamePlayType === 'TUG_OF_WAR';
-    const isVolleyball = roomRef.current?.gamePlayType === 'VOLLEYBALL';
-    const isVolleyballVs = isVolleyball && (!roomRef.current?.volleyballSettings || roomRef.current.volleyballSettings.gameStyle === 'TEAM_VS');
-    const isTwoTeam = isTug || isVolleyballVs;
+    const isTamaire = roomRef.current?.gamePlayType === 'TAMAIRE' || roomRef.current?.gamePlayType === 'VOLLEYBALL';
+    const tamaireCfg = roomRef.current?.tamaireSettings || roomRef.current?.volleyballSettings;
+    const isTamaireVs = isTamaire && (!tamaireCfg || tamaireCfg.gameStyle !== 'COOP_RALLY');
+    const isTwoTeam = isTug || isTamaireVs;
     const activeTeams: TeamId[] = isTwoTeam
       ? ['team_red', 'team_white']
       : (roomRef.current?.activeTeams || RAINBOW_TEAM_ORDER.slice(0, roomRef.current?.teamCount || 2));
@@ -173,8 +174,9 @@ export function useQuizBotSimulator({
       botIds.forEach(bId => delete remainingPlayers[bId]);
       const teamScores = { ...(roomRef.current?.teamScores || {}) };
       const isTug = roomRef.current?.gamePlayType === 'TUG_OF_WAR';
-      const isVolleyball = roomRef.current?.gamePlayType === 'VOLLEYBALL';
-      const isTwoTeam = isTug || (isVolleyball && (!roomRef.current?.volleyballSettings || roomRef.current.volleyballSettings.gameStyle === 'TEAM_VS'));
+      const isTamaire = roomRef.current?.gamePlayType === 'TAMAIRE' || roomRef.current?.gamePlayType === 'VOLLEYBALL';
+      const tamaireCfg = roomRef.current?.tamaireSettings || roomRef.current?.volleyballSettings;
+      const isTwoTeam = isTug || (isTamaire && (!tamaireCfg || tamaireCfg.gameStyle !== 'COOP_RALLY'));
       const activeTeams: TeamId[] = isTwoTeam
         ? ['team_red', 'team_white']
         : (roomRef.current?.activeTeams || RAINBOW_TEAM_ORDER.slice(0, roomRef.current?.teamCount || 2));
@@ -320,11 +322,12 @@ export function useQuizBotSimulator({
       (room.status !== 'SPRINT_RACE' &&
         room.status !== 'GRAND_PRIX_3D' &&
         room.status !== 'TUG_OF_WAR' &&
+        room.status !== 'TAMAIRE' &&
         room.status !== 'VOLLEYBALL')
     ) {
       sprintIntervalsRef.current.forEach(t => clearInterval(t));
       sprintIntervalsRef.current.clear();
-      if (!room || (room.status !== 'SPRINT_RACE' && room.status !== 'GRAND_PRIX_3D' && room.status !== 'TUG_OF_WAR' && room.status !== 'VOLLEYBALL')) {
+      if (!room || (room.status !== 'SPRINT_RACE' && room.status !== 'GRAND_PRIX_3D' && room.status !== 'TUG_OF_WAR' && room.status !== 'TAMAIRE' && room.status !== 'VOLLEYBALL')) {
         sprintStateMapRef.current.clear();
         activeArcadeSessionKeyRef.current = '';
       }
@@ -332,9 +335,9 @@ export function useQuizBotSimulator({
     }
 
     const isTug = room.status === 'TUG_OF_WAR';
-    const isVolleyball = room.status === 'VOLLEYBALL';
+    const isVolleyball = room.status === 'TAMAIRE' || room.status === 'VOLLEYBALL';
     const is3DRace = room.status === 'GRAND_PRIX_3D' || room.gamePlayType === 'GRAND_PRIX_3D';
-    const raceStartTime = (isTug ? room.tugOfWarStartTime : isVolleyball ? room.volleyballStartTime : room.raceStartTime) || getServerTime();
+    const raceStartTime = (isTug ? room.tugOfWarStartTime : isVolleyball ? (room.tamaireStartTime || room.volleyballStartTime) : room.raceStartTime) || getServerTime();
     const sessionKey = `${roomCode}:${room.status}:${raceStartTime}:${room.tugOfWarRound || 0}`;
     if (activeArcadeSessionKeyRef.current !== sessionKey) {
       sprintStateMapRef.current.clear();
@@ -401,6 +404,7 @@ export function useQuizBotSimulator({
           (freshRoom.status !== 'SPRINT_RACE' &&
             freshRoom.status !== 'GRAND_PRIX_3D' &&
             freshRoom.status !== 'TUG_OF_WAR' &&
+            freshRoom.status !== 'TAMAIRE' &&
             freshRoom.status !== 'VOLLEYBALL')
         ) {
           clearInterval(singleHostLoop);
@@ -408,9 +412,11 @@ export function useQuizBotSimulator({
         }
 
         if (isTug || isVolleyball) {
-          const timeLimitSec = (isTug ? freshRoom.tugOfWarSettings?.timeLimitSeconds : freshRoom.volleyballSettings?.timeLimitSeconds) || 60;
+          const tamaireCfg = freshRoom.tamaireSettings || freshRoom.volleyballSettings;
+          const timeLimitSec = (isTug ? freshRoom.tugOfWarSettings?.timeLimitSeconds : tamaireCfg?.timeLimitSeconds) || 60;
           const isTimeExpired = (getServerTime() - greenFlagTime) >= (timeLimitSec * 1000);
-          if (freshRoom.tugOfWarFinished || freshRoom.volleyballFinished || isTimeExpired) {
+          const isTamaireDone = !!(freshRoom.tamaireFinished || freshRoom.volleyballFinished);
+          if (freshRoom.tugOfWarFinished || isTamaireDone || isTimeExpired) {
             clearInterval(singleHostLoop);
             return;
           }
@@ -536,7 +542,7 @@ export function useQuizBotSimulator({
       sprintIntervalsRef.current.forEach(t => clearInterval(t));
       sprintIntervalsRef.current.clear();
     };
-  }, [isHost, roomCode, hasBots, room?.status, room?.raceStartTime, room?.tugOfWarStartTime, room?.volleyballStartTime, room?.tugOfWarRound, questions.length]);
+  }, [isHost, roomCode, hasBots, room?.status, room?.raceStartTime, room?.tugOfWarStartTime, room?.tamaireStartTime, room?.volleyballStartTime, room?.tugOfWarRound, questions.length]);
 
   // Clean up when room closes or unmounts
   useEffect(() => {

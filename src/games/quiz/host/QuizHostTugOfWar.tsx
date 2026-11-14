@@ -661,7 +661,11 @@ export const QuizHostTugOfWar: React.FC<QuizHostTugOfWarProps> = ({
           <div className="flex items-center gap-2 text-slate-400">
             <span>{t('🚩 Undokai English Tug-of-War', '🚩 運動会 英語綱引きバトル')}</span>
             <span>•</span>
-            <span>{t('Correct answers pull the rope! Mistakes trigger a 2.5s mud slip lockout!', '正解するとロープを引き寄せる！ まちがえると泥で2.5秒ストップ！')}</span>
+            <span>{(() => {
+              const mudSec = Math.max(2.5, tugOfWarSettings?.mudLockoutSeconds ?? 2.5);
+              const mudLabel = Number.isInteger(mudSec) ? `${mudSec}` : mudSec.toFixed(1);
+              return t(`Correct answers pull the rope! Mistakes trigger a ${mudLabel}s mud slip lockout!`, `正解するとロープを引き寄せる！ まちがえると泥で${mudLabel}秒ストップ！`);
+            })()}</span>
           </div>
 
           <div className="flex items-center gap-3 text-slate-400 text-[11px] font-bold">

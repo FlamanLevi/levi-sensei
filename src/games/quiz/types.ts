@@ -41,11 +41,11 @@ export type TeamId =
 
 export type IpadDisplayMode = 'EYES_UP' | 'MIRRORED';
 
-export type DeliveryStream = 'STREAM_B_MULTIPLAYER' | 'STREAM_A_FRONT_SCREEN';
+export type DeliveryStream = 'STREAM_B_MULTIPLAYER';
 
-export type QuizStatus = 'LOBBY' | 'QUESTION' | 'REVEAL' | 'LEADERBOARD' | 'GAME_OVER' | 'CLOSED' | 'SPRINT_RACE' | 'GRAND_PRIX_3D' | 'TUG_OF_WAR' | 'VOLLEYBALL' | 'ANTICIPATION';
+export type QuizStatus = 'LOBBY' | 'QUESTION' | 'REVEAL' | 'LEADERBOARD' | 'GAME_OVER' | 'CLOSED' | 'SPRINT_RACE' | 'GRAND_PRIX_3D' | 'TUG_OF_WAR' | 'TAMAIRE' | 'VOLLEYBALL' | 'ANTICIPATION';
 
-export type GamePlayType = 'KAHOOT' | 'SPRINT_RACE' | 'GRAND_PRIX_3D' | 'TUG_OF_WAR' | 'VOLLEYBALL' | 'ANTICIPATION';
+export type GamePlayType = 'KAHOOT' | 'SPRINT_RACE' | 'GRAND_PRIX_3D' | 'TUG_OF_WAR' | 'TAMAIRE' | 'VOLLEYBALL' | 'ANTICIPATION';
 
 export type RecallDelaySeconds = 0 | 3 | 5;
 
@@ -55,7 +55,7 @@ export type SprintModeType = 'LAP_RACE' | 'TIME_TRIAL';
 
 export interface SprintSettings {
   sprintMode: SprintModeType; // 'LAP_RACE' (First to finish N questions/laps) | 'TIME_TRIAL' (Most questions/distance in X seconds)
-  lapCount: number; // 20, 30, 40, 60, -1 (endurance grand prix laps)
+  lapCount?: number; // Deprecated legacy 2D lap count; optional for Release 1 backwards compatibility
   timeLimitSeconds: number; // 30, 60, 90, 120, 180
   graceCountdownSeconds: number; // 15, 20, 25, 30
   targetLaps3D?: number; // 1, 2, 3, 5 (for GRAND_PRIX_3D circuit laps)
@@ -64,22 +64,18 @@ export interface SprintSettings {
   wrongSpeedLossRatio?: number; // 0, 0.25, 0.33 (default 1/3), 0.5, 0.75, 1.0
   // ==========================================================================
   // [ANTIGRAVITY REFACTOR]: Enforced GEMINI.md §7 Mandatory >= 2.5s Lockout Floor
-  // WHAT CHANGED: Updated wrongLockoutSeconds documentation and runtime clamping
-  // in `resolveLockoutPenaltySeconds` / `QuizStudentGrandPrix3D`.
-  // WHY: Previously documented as `0, 0.5, 1.0 (default 1s)`, which violated
-  // GEMINI.md §7 ("In competitive speed games, incorrect choices MUST incur at
-  // least a 2.5s Pit Stop lockout penalty so guessing is mathematically slower
-  // than reading"). Runtime now clamps `Math.max(2.5, wrongLockoutSeconds ?? 2.5)`.
+  // Standardized 5-tier lockout options: 2.5s, 3.0s, 3.5s, 4.0s, 5.0s
+  // Runtime clamps `Math.max(2.5, wrongLockoutSeconds ?? 2.5)`.
   // ==========================================================================
-  wrongLockoutSeconds?: number; // Minimum 2.5s floor enforced at runtime (2.5, 3.5, 5.0)
+  wrongLockoutSeconds?: number; // Minimum 2.5s floor enforced at runtime (2.5, 3.0, 3.5, 4.0, 5.0)
 }
 
 export type TugOfWarMatchFormat = 'SINGLE' | 'BEST_OF_3' | 'BEST_OF_5' | 'BEST_OF_7';
 
 export interface TugOfWarSettings {
   timeLimitSeconds: number; // 30, 60, 90, 120, 180
-  pullSensitivity: number;  // 15, 20, 25 (multiplier on normalized lead)
-  mudLockoutSeconds: number; // 2.5
+  pullSensitivity: number;  // 15, 20, 25 (Slow / Standard / Intense multiplier on normalized lead)
+  mudLockoutSeconds?: number; // >= 2.5s (2.5, 3.0, 3.5, 4.0, 5.0)
   matchFormat?: TugOfWarMatchFormat;
 }
 
@@ -103,12 +99,15 @@ export interface VolleyballLiveState {
 }
 
 export interface VolleyballSettings {
-  timeLimitSeconds: number; // 60, 90, 120, 180
-  gameStyle: VolleyballGameStyle; // 'COOP_RALLY' (All-class cooperation) | 'TEAM_VS' (Red vs White battle)
-  targetRallies?: number; // 30, 50, or 100
-  missLockoutSeconds?: number; // 2.0s
+  timeLimitSeconds: number; // 30, 60, 90, 120, 180
+  gameStyle?: VolleyballGameStyle; // Deprecated Release 1 field (defaults to TEAM_VS)
+  targetRallies?: number; // Deprecated legacy coop field
+  missLockoutSeconds?: number; // >= 2.5s (2.5, 3.0, 3.5, 4.0, 5.0)
   hideScoreUntilEnd?: boolean; // Mystery count until whistle
 }
+
+export type TamaireSettings = VolleyballSettings;
+export type TamaireLiveState = VolleyballLiveState;
 
 export interface PodiumFinisher {
   playerId: string;
@@ -334,6 +333,10 @@ export interface QuizRoomState {
   volleyballStartTime?: number;
   volleyballFinished?: boolean;
   volleyballLiveState?: VolleyballLiveState;
+  tamaireSettings?: TamaireSettings;
+  tamaireStartTime?: number;
+  tamaireFinished?: boolean;
+  tamaireLiveState?: TamaireLiveState;
   winningTeam?: TeamId | 'draw';
   questions?: QuizQuestion[];
   raceStartTime?: number;
@@ -379,6 +382,7 @@ export interface QuizHostSettings {
   sprintSettings?: SprintSettings;
   tugOfWarSettings?: TugOfWarSettings;
   volleyballSettings?: VolleyballSettings;
+  tamaireSettings?: TamaireSettings;
   bgm?: string;
   customWordPool?: VocabularyItem[];
   vocabularyScope?: QuizScope;

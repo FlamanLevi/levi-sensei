@@ -77,7 +77,7 @@ export const QuizStudentGameOver: React.FC<QuizStudentGameOverProps> = ({
     ? (gamePlayType === 'SPRINT_RACE' || gamePlayType === 'GRAND_PRIX_3D')
     : (!!sprintSettings || player.sprintProgress !== undefined || player.finishTimeMs !== undefined);
   const isTugOfWar = gamePlayType === 'TUG_OF_WAR';
-  const isVolleyball = gamePlayType === 'VOLLEYBALL';
+  const isVolleyball = gamePlayType === 'TAMAIRE' || gamePlayType === 'VOLLEYBALL';
   const isTimeTrial = sprintSettings?.sprintMode === 'TIME_TRIAL';
   const isLapRace = isSprint && !isTimeTrial;
   const isDnf = !isTimeTrial ? !!player.isDnf : false;

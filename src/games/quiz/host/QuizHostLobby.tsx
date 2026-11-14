@@ -163,7 +163,7 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [onStart]);
 
-  const isTwoTeamUndokai = gamePlayType === 'TUG_OF_WAR' || gamePlayType === 'VOLLEYBALL';
+  const isTwoTeamUndokai = gamePlayType === 'TUG_OF_WAR' || gamePlayType === 'TAMAIRE' || gamePlayType === 'VOLLEYBALL';
   const activeTeams: TeamId[] = isTwoTeamUndokai
     ? ['team_red', 'team_white']
     : (propsActiveTeams || (teamCount === 2 ? ['team_red', 'team_white'] : RAINBOW_TEAM_ORDER.slice(0, teamCount || 2)));

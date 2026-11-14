@@ -62,6 +62,9 @@ interface UseQuizRoomReturn {
   nextTugOfWarRound: (newWins: { team_red: number; team_white: number }, nextRoundNumber: number, baselinePulls: Record<string, number>) => Promise<void>;
   freezeTugOfWar: () => Promise<void>;
   endTugOfWar: (awards?: any[], winningTeam?: TeamId | 'draw') => Promise<void>;
+  startTamaire: () => Promise<void>;
+  freezeTamaire: () => Promise<void>;
+  endTamaire: (awards?: any[], winningTeam?: TeamId | 'draw') => Promise<void>;
   startVolleyball: () => Promise<void>;
   freezeVolleyball: () => Promise<void>;
   endVolleyball: (awards?: any[], winningTeam?: TeamId | 'draw') => Promise<void>;
@@ -315,6 +318,7 @@ export function useQuizRoom(
             data.status === 'SPRINT_RACE' ||
             data.status === 'GRAND_PRIX_3D' ||
             data.status === 'TUG_OF_WAR' ||
+            data.status === 'TAMAIRE' ||
             data.status === 'VOLLEYBALL';
 
           setRoom(prev => ({
@@ -525,14 +529,15 @@ export function useQuizRoom(
 
       const hostId = await ensureAnonymousAuth();
       const isTug = settings.gamePlayType === 'TUG_OF_WAR';
-      const isVolleyball = settings.gamePlayType === 'VOLLEYBALL';
-      const isVolleyballVs = isVolleyball && (!settings.volleyballSettings || settings.volleyballSettings.gameStyle === 'TEAM_VS');
-      const effectiveMode: GameMode = (isTug || isVolleyballVs)
+      const isTamaire = settings.gamePlayType === 'TAMAIRE' || settings.gamePlayType === 'VOLLEYBALL';
+      const resolvedTamaireCfg = settings.tamaireSettings || settings.volleyballSettings;
+      const isTamaireVs = isTamaire && (!resolvedTamaireCfg || resolvedTamaireCfg.gameStyle !== 'COOP_RALLY');
+      const effectiveMode: GameMode = (isTug || isTamaireVs)
         ? 'TEAM'
-        : (isVolleyball && settings.volleyballSettings?.gameStyle === 'COOP_RALLY')
+        : (isTamaire && resolvedTamaireCfg?.gameStyle === 'COOP_RALLY')
           ? 'INDIVIDUAL'
           : settings.gameMode;
-      const activeTeams: TeamId[] = (isTug || isVolleyballVs)
+      const activeTeams: TeamId[] = (isTug || isTamaireVs)
         ? ['team_red', 'team_white']
         : (settings.activeTeams && settings.activeTeams.length >= 2
           ? settings.activeTeams
@@ -557,7 +562,7 @@ export function useQuizRoom(
         });
       }
 
-      const initialRoom: QuizRoomState = {
+      const initialRoomRaw: QuizRoomState = {
         code,
         hostId,
         createdAt: getServerTime(),
@@ -593,9 +598,9 @@ export function useQuizRoom(
         recallDelaySeconds: settings.recallDelaySeconds || 0,
         eliminateDistractors: settings.distractorEliminationMode ? settings.distractorEliminationMode !== 'OFF' : !!settings.eliminateDistractors,
         distractorEliminationMode: settings.distractorEliminationMode || (settings.eliminateDistractors ? 'HALFWAY' : 'OFF'),
-        sprintSettings: settings.sprintSettings,
-        tugOfWarSettings: settings.tugOfWarSettings,
-        volleyballSettings: settings.volleyballSettings,
+        ...(settings.sprintSettings ? { sprintSettings: settings.sprintSettings } : {}),
+        ...(settings.tugOfWarSettings ? { tugOfWarSettings: settings.tugOfWarSettings } : {}),
+        ...(resolvedTamaireCfg ? { tamaireSettings: resolvedTamaireCfg, volleyballSettings: resolvedTamaireCfg } : {}),
         choiceImageMode: settings.choiceImageMode,
         englishReadingAid: settings.englishReadingAid,
         timeLimitSeconds: settings.timeLimitSeconds,
@@ -604,6 +609,9 @@ export function useQuizRoom(
         vocabularyScope: settings.vocabularyScope,
         selectedUnits: settings.selectedUnits || undefined
       };
+      const initialRoom = Object.fromEntries(
+        Object.entries(initialRoomRaw).filter(([, v]) => v !== undefined)
+      ) as QuizRoomState;
 
       await safeRemove(`roomPlayers/${code}`).catch(() => {});
       await safeRemove(`roomResponses/${code}`).catch(() => {});
@@ -1322,8 +1330,8 @@ export function useQuizRoom(
     }
   }, [roomCode]);
 
-  // Host: Start Volleyball
-  const startVolleyball = useCallback(async () => {
+  // Host: Start Tamaire (with Release 1 legacy startVolleyball alias)
+  const startTamaire = useCallback(async () => {
     if (!roomCode) return;
     const now = getServerTime();
     try {
@@ -1331,37 +1339,44 @@ export function useQuizRoom(
       livePlayersRef.current = {};
       await safeRemove(`roomPlayers/${roomCode}`).catch(() => {});
       const duration =
+        settingsRef.current?.tamaireSettings?.timeLimitSeconds ||
         settingsRef.current?.volleyballSettings?.timeLimitSeconds ||
+        roomRef.current?.tamaireSettings?.timeLimitSeconds ||
         roomRef.current?.volleyballSettings?.timeLimitSeconds ||
         60;
       soundEffects.playWhistle(0.8);
       await safeUpdate(`rooms/${roomCode}`, {
-        status: 'VOLLEYBALL',
+        status: 'TAMAIRE',
         raceStartTime: now,
+        tamaireStartTime: now,
         volleyballStartTime: now,
         raceDurationSeconds: duration,
+        tamaireFinished: false,
         volleyballFinished: false
       });
     } catch (err: any) {
-      console.error("Error starting volleyball:", err);
+      console.error("Error starting tamaire:", err);
     }
   }, [roomCode]);
+  const startVolleyball = startTamaire;
 
-  // Host: Freeze Volleyball
-  const freezeVolleyball = useCallback(async () => {
+  // Host: Freeze Tamaire (with Release 1 legacy freezeVolleyball alias)
+  const freezeTamaire = useCallback(async () => {
     if (!roomCode) return;
     try {
       await ensureAnonymousAuth();
       await safeUpdate(`rooms/${roomCode}`, {
+        tamaireFinished: true,
         volleyballFinished: true
       });
     } catch (err: any) {
-      console.error("Error freezing volleyball:", err);
+      console.error("Error freezing tamaire:", err);
     }
   }, [roomCode]);
+  const freezeVolleyball = freezeTamaire;
 
-  // Host: End Volleyball (Deduplicated via computeTroubleWordsMap & reconcileTeamScores)
-  const endVolleyball = useCallback(async (awards?: any[], winningTeam?: TeamId | 'draw') => {
+  // Host: End Tamaire (with Release 1 legacy endVolleyball alias)
+  const endTamaire = useCallback(async (awards?: any[], winningTeam?: TeamId | 'draw') => {
     if (!roomCode) return;
     soundEffects.playWhistle(1.2);
     soundEffects.playFanfare();
@@ -1383,7 +1398,8 @@ export function useQuizRoom(
         : (Array.isArray(roomVal?.questions) ? roomVal.questions : (roomVal?.questions ? (Object.values(roomVal.questions) as QuizQuestion[]) : []));
 
       const troubleWords = computeTroubleWordsMap(players as any, modeQuestions as any, roomVal?.troubleWords);
-      const isVs = roomVal?.volleyballSettings?.gameStyle === 'TEAM_VS';
+      const tamaireCfg = roomVal?.tamaireSettings || roomVal?.volleyballSettings;
+      const isVs = !tamaireCfg || tamaireCfg.gameStyle !== 'COOP_RALLY';
       const teamIds: TeamId[] = isVs ? ['team_red', 'team_white'] : (roomVal?.activeTeams || ['team_red', 'team_white']);
       const sanitizedTeamScores = reconcileTeamScores(
         players as any,
@@ -1391,7 +1407,9 @@ export function useQuizRoom(
         roomVal?.teamScores as any
       );
 
-      const roomDurationSec = roomVal?.raceStartTime ? Math.round((getServerTime() - roomVal.raceStartTime) / 1000) : (roomVal?.volleyballSettings?.timeLimitSeconds || 60);
+      const roomDurationSec = roomVal?.raceStartTime
+        ? Math.round((getServerTime() - roomVal.raceStartTime) / 1000)
+        : (tamaireCfg?.timeLimitSeconds || 60);
       let sessionAnalytics: SessionAnalytics | undefined;
       try {
         const roomForAnalytics: QuizRoomState = {
@@ -1406,7 +1424,7 @@ export function useQuizRoom(
           await persistSessionAnalytics(sessionAnalytics);
         }
       } catch (aErr) {
-        console.warn('Error computing volleyball session analytics:', aErr);
+        console.warn('Error computing tamaire session analytics:', aErr);
       }
 
       const updateData: any = {
@@ -1433,9 +1451,10 @@ export function useQuizRoom(
       }
       await safeUpdate(`rooms/${roomCode}`, updateData);
     } catch (err: any) {
-      console.error("Error ending volleyball:", err);
+      console.error("Error ending tamaire:", err);
     }
   }, [roomCode]);
+  const endVolleyball = endTamaire;
 
   // Host: Reset room for a new round while keeping room code and connected players
   const resetRoomForNewRound = useCallback(async (
@@ -1475,18 +1494,22 @@ export function useQuizRoom(
 
       const resolvedGamePlayType = updatedSettings?.gamePlayType || currentRoom?.gamePlayType || settingsRef.current?.gamePlayType || 'KAHOOT';
       const isTug = resolvedGamePlayType === 'TUG_OF_WAR';
-      const isVolleyball = resolvedGamePlayType === 'VOLLEYBALL';
-      const resolvedVolleyballSettings = updatedSettings?.volleyballSettings ?? currentRoom?.volleyballSettings;
-      const isVolleyballVs = isVolleyball && (!resolvedVolleyballSettings || resolvedVolleyballSettings.gameStyle === 'TEAM_VS');
+      const isTamaire = resolvedGamePlayType === 'TAMAIRE' || resolvedGamePlayType === 'VOLLEYBALL';
+      const resolvedTamaireSettings =
+        updatedSettings?.tamaireSettings ??
+        updatedSettings?.volleyballSettings ??
+        currentRoom?.tamaireSettings ??
+        currentRoom?.volleyballSettings;
+      const isTamaireVs = isTamaire && (!resolvedTamaireSettings || resolvedTamaireSettings.gameStyle !== 'COOP_RALLY');
       const requestedMode = updatedSettings?.gameMode || currentRoom?.mode || settingsRef.current?.gameMode || 'INDIVIDUAL';
-      const effectiveMode: GameMode = (isTug || isVolleyballVs)
+      const effectiveMode: GameMode = (isTug || isTamaireVs)
         ? 'TEAM'
-        : (isVolleyball && resolvedVolleyballSettings?.gameStyle === 'COOP_RALLY')
+        : (isTamaire && resolvedTamaireSettings?.gameStyle === 'COOP_RALLY')
           ? 'INDIVIDUAL'
           : requestedMode;
 
       const resolvedTeamCount = updatedSettings?.teamCount ?? currentRoom?.teamCount ?? 2;
-      const activeTeams: TeamId[] = (isTug || isVolleyballVs)
+      const activeTeams: TeamId[] = (isTug || isTamaireVs)
         ? ['team_red', 'team_white']
         : (updatedSettings?.activeTeams && updatedSettings.activeTeams.length >= 2
           ? updatedSettings.activeTeams
@@ -1566,6 +1589,9 @@ export function useQuizRoom(
         tugOfWarRound: null,
         tugOfWarRoundWins: null,
         tugOfWarBaselinePulls: null,
+        tamaireStartTime: null,
+        tamaireFinished: null,
+        tamaireLiveState: null,
         volleyballStartTime: null,
         volleyballFinished: null,
         volleyballLiveState: null,
@@ -1587,13 +1613,18 @@ export function useQuizRoom(
           if (updatedSettings.gamePlayType !== 'TUG_OF_WAR') {
             updates.tugOfWarSettings = null;
           }
-          if (updatedSettings.gamePlayType !== 'VOLLEYBALL') {
+          if (updatedSettings.gamePlayType !== 'TAMAIRE' && updatedSettings.gamePlayType !== 'VOLLEYBALL') {
+            updates.tamaireSettings = null;
             updates.volleyballSettings = null;
           }
         }
         if (updatedSettings.sprintSettings !== undefined) updates.sprintSettings = updatedSettings.sprintSettings;
         if (updatedSettings.tugOfWarSettings !== undefined) updates.tugOfWarSettings = updatedSettings.tugOfWarSettings;
-        if (updatedSettings.volleyballSettings !== undefined) updates.volleyballSettings = updatedSettings.volleyballSettings;
+        if (updatedSettings.tamaireSettings !== undefined || updatedSettings.volleyballSettings !== undefined) {
+          const nextTamaireCfg = updatedSettings.tamaireSettings ?? updatedSettings.volleyballSettings;
+          updates.tamaireSettings = nextTamaireCfg;
+          updates.volleyballSettings = nextTamaireCfg;
+        }
         if (updatedSettings.timeLimitSeconds !== undefined) updates.timeLimitSeconds = updatedSettings.timeLimitSeconds;
         if (updatedSettings.recallDelaySeconds !== undefined) updates.recallDelaySeconds = updatedSettings.recallDelaySeconds;
         if (updatedSettings.distractorEliminationMode !== undefined) {
@@ -1856,7 +1887,8 @@ export function useQuizRoom(
       let assignedTeam = teamId;
       if (roomData.mode === 'TEAM') {
         const isTug = roomData.gamePlayType === 'TUG_OF_WAR';
-        const isVolleyballVs = roomData.gamePlayType === 'VOLLEYBALL' && (!roomData.volleyballSettings || roomData.volleyballSettings.gameStyle === 'TEAM_VS');
+        const resolvedTamaireCfg = roomData.tamaireSettings || roomData.volleyballSettings;
+        const isVolleyballVs = (roomData.gamePlayType === 'TAMAIRE' || roomData.gamePlayType === 'VOLLEYBALL') && (!resolvedTamaireCfg || resolvedTamaireCfg.gameStyle === 'TEAM_VS');
         const teams: TeamId[] = (isTug || isVolleyballVs)
           ? ['team_red', 'team_white']
           : (roomData.activeTeams || (roomData.teamCount === 2 ? ['team_red', 'team_white'] : RAINBOW_TEAM_ORDER.slice(0, roomData.teamCount || 2)));
@@ -2183,6 +2215,9 @@ export function useQuizRoom(
     nextTugOfWarRound,
     freezeTugOfWar,
     endTugOfWar,
+    startTamaire,
+    freezeTamaire,
+    endTamaire,
     startVolleyball,
     freezeVolleyball,
     endVolleyball,

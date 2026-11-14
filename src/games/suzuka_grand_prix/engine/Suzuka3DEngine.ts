@@ -1498,16 +1498,14 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
   vergeGeo.setAttribute('uv', new THREE.Float32BufferAttribute(vergeUvs, 2));
   vergeGeo.setIndex(vergeIndices);
   vergeGeo.computeVertexNormals();
-  const vergeMesh = new THREE.Mesh(
-    vergeGeo,
-    new THREE.MeshStandardMaterial({
-      map: createRunoffVergeTexture(theme),
-      color: 0xffffff,
-      roughness: 0.85,
-      metalness: 0.02,
-      side: THREE.DoubleSide,
-    })
-  );
+  const vergeMat = new THREE.MeshStandardMaterial({
+    map: createRunoffVergeTexture(theme),
+    color: 0xffffff,
+    roughness: 0.85,
+    metalness: 0.02,
+    side: THREE.DoubleSide,
+  });
+  const vergeMesh = new THREE.Mesh(vergeGeo, vergeMat);
   vergeMesh.receiveShadow = true;
   root.add(vergeMesh);
 
@@ -2684,11 +2682,15 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
   ]);
   fujiBaseGeo.dispose();
   fujiCapGeo.dispose();
+  let fujiMat: THREE.MeshStandardMaterial | null = null;
   if (mergedFujiGeo) {
-    const fujiMesh = new THREE.Mesh(
-      mergedFujiGeo,
-      new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.82, metalness: 0.05 })
-    );
+    fujiMat = new THREE.MeshStandardMaterial({
+      color: 0xffffff,
+      vertexColors: true,
+      roughness: 0.82,
+      metalness: 0.05,
+    });
+    const fujiMesh = new THREE.Mesh(mergedFujiGeo, fujiMat);
     fujiMesh.position.set(-120, -2.0, -920);
     mountainHorizonGroup.add(fujiMesh);
   }
@@ -3400,6 +3402,19 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
   }
 
   function applyAtmosphere(atmo: EvaluatedSuzukaAtmosphere) {
+    // 1. Ground turf, trackside run-off verge, trees/cacti/rocks & mountain horizon tinting
+    grassMat.color.setHex(atmo.groundTintHex);
+    vergeMat.color.setHex(atmo.groundTintHex);
+    pineMat.color.setHex(atmo.foliageTintHex);
+    cedarMat.color.setHex(atmo.foliageTintHex);
+    sakuraMat.color.setHex(atmo.foliageTintHex);
+    mtnSharedMat.color.setHex(atmo.groundTintHex);
+    if (fujiMat) {
+      fujiMat.color.setHex(atmo.groundTintHex);
+    }
+    kerbMat.color.setHex(atmo.trackTintHex);
+
+    // 2. Road asphalt wet/snow sheen & floodlit night emissive glow
     roadMat.roughness = atmo.roadRoughness;
     roadMat.metalness = atmo.roadMetalness;
     roadMat.emissiveIntensity = atmo.roadEmissiveIntensity;
@@ -3407,6 +3422,7 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
     redRoadMat.metalness = atmo.roadMetalness * 0.6;
     redRoadMat.emissiveIntensity = atmo.redRoadEmissiveIntensity;
 
+    // 3. Stadium floodlights, Ferris wheel, control tower, pit glass & signage
     floodGlowMat.emissiveIntensity = atmo.floodEmissiveIntensity;
     ferrisRimMat.emissiveIntensity = atmo.ferrisEmissiveIntensity;
     if (ferrisGondolaMat.userData.uVColEmissive) {

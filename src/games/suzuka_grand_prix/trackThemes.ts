@@ -762,6 +762,10 @@ export interface EvaluatedSuzukaAtmosphere {
   exposure: number;
   envIntensity: number;
 
+  groundTintHex: number;
+  foliageTintHex: number;
+  trackTintHex: number;
+
   nightLightFactor: number;
   floodEmissiveIntensity: number;
   signEmissiveIntensity: number;
@@ -794,6 +798,9 @@ interface TimeKeyframe {
   dirIntensity: number;
   exposure: number;
   envIntensity: number;
+  groundTintHex: number;
+  foliageTintHex: number;
+  trackTintHex: number;
   starIntensity: number;
   nightLightFactor: number;
   cloudMeshHex: number;
@@ -801,28 +808,31 @@ interface TimeKeyframe {
 }
 
 const LE_MANS_KEYFRAMES: TimeKeyframe[] = [
-  // 0.00 — Sunrise (Golden-rose eastern horizon)
+  // 0.00 — Sunrise (Golden-rose eastern horizon, warm dawn shadows on ground)
   {
     t: 0.0,
     sunDir: [480, 95, 180],
     zenithHex: 0x1e3a6e,
     midSkyHex: 0xd96b52,
     horizonHex: 0xffd285,
-    fogHex: 0xf0a878,
+    fogHex: 0xd88b68,
     sunColorHex: 0xffb35c,
     cloudShadowHex: 0x8f6478,
     cloudLitHex: 0xffe4b5,
     hemiSkyHex: 0xfed7aa,
-    hemiGroundMul: 0.72,
-    hemiIntensity: 0.76,
-    dirColorHex: 0xffc478,
-    dirIntensity: 1.26,
-    exposure: 1.05,
-    envIntensity: 0.82,
+    hemiGroundMul: 0.58,
+    hemiIntensity: 0.62,
+    dirColorHex: 0xffb86c,
+    dirIntensity: 1.08,
+    exposure: 0.98,
+    envIntensity: 0.68,
+    groundTintHex: 0xd8a888,
+    foliageTintHex: 0xe2b898,
+    trackTintHex: 0xf5dcb8,
     starIntensity: 0.14,
     nightLightFactor: 0.35,
     cloudMeshHex: 0xffedd5,
-    crowdBrightness: 0.92,
+    crowdBrightness: 0.88,
   },
   // 0.22 — Morning (Fresh climbing sun)
   {
@@ -842,6 +852,9 @@ const LE_MANS_KEYFRAMES: TimeKeyframe[] = [
     dirIntensity: 1.34,
     exposure: 1.10,
     envIntensity: 0.96,
+    groundTintHex: 0xf8fafc,
+    foliageTintHex: 0xf8fafc,
+    trackTintHex: 0xffffff,
     starIntensity: 0.0,
     nightLightFactor: 0.0,
     cloudMeshHex: 0xffffff,
@@ -865,6 +878,9 @@ const LE_MANS_KEYFRAMES: TimeKeyframe[] = [
     dirIntensity: 1.40,
     exposure: 1.12,
     envIntensity: 1.0,
+    groundTintHex: 0xffffff,
+    foliageTintHex: 0xffffff,
+    trackTintHex: 0xffffff,
     starIntensity: 0.0,
     nightLightFactor: 0.0,
     cloudMeshHex: 0xffffff,
@@ -882,62 +898,71 @@ const LE_MANS_KEYFRAMES: TimeKeyframe[] = [
     cloudShadowHex: 0xb8b2c4,
     cloudLitHex: 0xfff3d6,
     hemiSkyHex: 0xffedd5,
-    hemiGroundMul: 0.90,
-    hemiIntensity: 0.80,
-    dirColorHex: 0xffe0a8,
-    dirIntensity: 1.38,
-    exposure: 1.09,
-    envIntensity: 0.92,
+    hemiGroundMul: 0.84,
+    hemiIntensity: 0.74,
+    dirColorHex: 0xffd28a,
+    dirIntensity: 1.28,
+    exposure: 1.05,
+    envIntensity: 0.85,
+    groundTintHex: 0xf2d2a8,
+    foliageTintHex: 0xf5d8b0,
+    trackTintHex: 0xffe8c8,
     starIntensity: 0.0,
     nightLightFactor: 0.12,
     cloudMeshHex: 0xfff7ed,
-    crowdBrightness: 0.98,
+    crowdBrightness: 0.95,
   },
-  // 0.82 — Crimson Sunset (Golden hour -> twilight)
+  // 0.82 — Crimson Sunset (Deep golden-crimson twilight on terrain)
   {
     t: 0.82,
-    sunDir: [-280, 130, -500],
-    zenithHex: 0x3b2a5c,
-    midSkyHex: 0xc85a48,
-    horizonHex: 0xffcb77,
-    fogHex: 0xe9966b,
-    sunColorHex: 0xffae42,
-    cloudShadowHex: 0x9c627a,
-    cloudLitHex: 0xffe0a3,
-    hemiSkyHex: 0xfed7aa,
-    hemiGroundMul: 0.68,
-    hemiIntensity: 0.82,
-    dirColorHex: 0xffbb66,
-    dirIntensity: 1.42,
-    exposure: 1.06,
-    envIntensity: 0.80,
-    starIntensity: 0.18,
-    nightLightFactor: 0.58,
-    cloudMeshHex: 0xffedd5,
-    crowdBrightness: 0.94,
+    sunDir: [-280, 110, -500],
+    zenithHex: 0x241742,
+    midSkyHex: 0xb84a3e,
+    horizonHex: 0xffb35c,
+    fogHex: 0x9e5448,
+    sunColorHex: 0xff9e38,
+    cloudShadowHex: 0x703f58,
+    cloudLitHex: 0xffd08a,
+    hemiSkyHex: 0xfca572,
+    hemiGroundMul: 0.45,
+    hemiIntensity: 0.54,
+    dirColorHex: 0xff9e44,
+    dirIntensity: 1.05,
+    exposure: 0.94,
+    envIntensity: 0.52,
+    groundTintHex: 0xb87b64,
+    foliageTintHex: 0xc48870,
+    trackTintHex: 0xebc29e,
+    starIntensity: 0.25,
+    nightLightFactor: 0.62,
+    cloudMeshHex: 0xfdba8c,
+    crowdBrightness: 0.84,
   },
-  // 1.00 — Starry Midnight (Full floodlights & stars at finish line)
+  // 1.00 — Starry Midnight (Deep indigo moonlit ground & trees + glowing floodlit track)
   {
     t: 1.0,
     sunDir: [-160, 290, -480],
-    zenithHex: 0x050c24,
-    midSkyHex: 0x0f2252,
-    horizonHex: 0x24447d,
-    fogHex: 0x10224e,
+    zenithHex: 0x030714,
+    midSkyHex: 0x081538,
+    horizonHex: 0x122652,
+    fogHex: 0x071128,
     sunColorHex: 0xdbeafe,
-    cloudShadowHex: 0x182b57,
-    cloudLitHex: 0x4b6fb0,
-    hemiSkyHex: 0x7dd3fc,
-    hemiGroundMul: 0.45,
-    hemiIntensity: 1.05,
-    dirColorHex: 0xe0f2fe,
-    dirIntensity: 1.22,
-    exposure: 1.18,
-    envIntensity: 0.56,
-    starIntensity: 0.95,
+    cloudShadowHex: 0x0c1836,
+    cloudLitHex: 0x2b467a,
+    hemiSkyHex: 0x3b6cb8,
+    hemiGroundMul: 0.18,
+    hemiIntensity: 0.36,
+    dirColorHex: 0x7dd3fc,
+    dirIntensity: 0.48,
+    exposure: 0.86,
+    envIntensity: 0.22,
+    groundTintHex: 0x2d446e,
+    foliageTintHex: 0x385282,
+    trackTintHex: 0x7a96c2,
+    starIntensity: 0.98,
     nightLightFactor: 1.0,
-    cloudMeshHex: 0x475569,
-    crowdBrightness: 0.86,
+    cloudMeshHex: 0x1e293b,
+    crowdBrightness: 0.72,
   },
 ];
 
@@ -1055,6 +1080,9 @@ export function evaluateSuzukaAtmosphere(params: {
   let dirIntensity = lerpNumber(a.dirIntensity, b.dirIntensity, localT);
   const exposure = lerpNumber(a.exposure, b.exposure, localT);
   const envIntensity = lerpNumber(a.envIntensity, b.envIntensity, localT);
+  let groundTintHex = lerpHexColor(a.groundTintHex, b.groundTintHex, localT);
+  let foliageTintHex = lerpHexColor(a.foliageTintHex, b.foliageTintHex, localT);
+  const trackTintHex = lerpHexColor(a.trackTintHex, b.trackTintHex, localT);
   let starIntensity = lerpNumber(a.starIntensity, b.starIntensity, localT);
   const nightLightFactor = lerpNumber(a.nightLightFactor, b.nightLightFactor, localT);
   const cloudMeshHex = lerpHexColor(a.cloudMeshHex, b.cloudMeshHex, localT);
@@ -1077,7 +1105,9 @@ export function evaluateSuzukaAtmosphere(params: {
     fogHex = lerpHexColor(fogHex, overcastSlate, overcastFactor * 0.45);
     cloudShadowHex = scaleHexColor(cloudShadowHex, 1.0 - overcastFactor * 0.16);
     dirIntensity *= 1.0 - overcastFactor * 0.28;
-    hemiIntensity *= 1.0 + overcastFactor * 0.12;
+    hemiIntensity *= 1.0 + overcastFactor * 0.08;
+    groundTintHex = scaleHexColor(groundTintHex, 1.0 - overcastFactor * 0.12);
+    foliageTintHex = scaleHexColor(foliageTintHex, 1.0 - overcastFactor * 0.10);
     starIntensity *= 1.0 - overcastFactor * 0.85;
   }
 
@@ -1092,15 +1122,15 @@ export function evaluateSuzukaAtmosphere(params: {
     roadMetalness = 0.06;
   }
 
-  // Night & twilight emissive lighting ramp
-  const floodEmissiveIntensity = lerpNumber(1.25, 3.25, nightLightFactor);
-  const signEmissiveIntensity = lerpNumber(0.0, 0.65, nightLightFactor);
-  const ferrisEmissiveIntensity = lerpNumber(0.0, 0.82, nightLightFactor);
-  const towerWindowEmissiveIntensity = lerpNumber(0.05, 0.95, nightLightFactor);
-  const glassEmissiveIntensity = lerpNumber(0.0, 0.48, nightLightFactor);
-  const balloonEmissiveIntensity = lerpNumber(0.0, 0.55, nightLightFactor);
-  const roadEmissiveIntensity = lerpNumber(0.0, 0.22, nightLightFactor);
-  const redRoadEmissiveIntensity = lerpNumber(0.0, 0.38, nightLightFactor);
+  // Night & twilight emissive lighting ramp (keeps the track & stadium glowing brightly against dark terrain)
+  const floodEmissiveIntensity = lerpNumber(1.25, 4.2, nightLightFactor);
+  const signEmissiveIntensity = lerpNumber(0.0, 0.95, nightLightFactor);
+  const ferrisEmissiveIntensity = lerpNumber(0.0, 1.15, nightLightFactor);
+  const towerWindowEmissiveIntensity = lerpNumber(0.05, 1.25, nightLightFactor);
+  const glassEmissiveIntensity = lerpNumber(0.0, 0.72, nightLightFactor);
+  const balloonEmissiveIntensity = lerpNumber(0.0, 0.78, nightLightFactor);
+  const roadEmissiveIntensity = lerpNumber(0.0, 0.52, nightLightFactor);
+  const redRoadEmissiveIntensity = lerpNumber(0.0, 0.68, nightLightFactor);
 
   return {
     sceneBackgroundHex: fogHex,
@@ -1123,6 +1153,10 @@ export function evaluateSuzukaAtmosphere(params: {
     dirIntensity,
     exposure,
     envIntensity,
+
+    groundTintHex,
+    foliageTintHex,
+    trackTintHex,
 
     nightLightFactor,
     floodEmissiveIntensity,

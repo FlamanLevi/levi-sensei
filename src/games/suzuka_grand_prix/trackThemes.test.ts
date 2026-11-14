@@ -135,6 +135,14 @@ test('24 Hours of Le Mans dynamic lighting progresses smoothly from Sunrise to N
   assert.ok(midnight.ferrisEmissiveIntensity > 0.7);
   assert.ok(midnight.towerWindowEmissiveIntensity > 0.8);
 
+  // Ground & foliage tint darken at Sunset and Midnight so snow/sand/grass don't glow like noon
+  assert.ok(noon.groundTintHex > 0xf0f0f0);
+  assert.ok(sunset.groundTintHex < noon.groundTintHex);
+  assert.ok(midnight.groundTintHex < sunset.groundTintHex);
+  assert.ok(midnight.hemiIntensity < noon.hemiIntensity);
+  assert.ok(midnight.dirIntensity < noon.dirIntensity);
+  assert.ok(midnight.envIntensity < 0.35);
+
   // Phase badges match progression
   assert.equal(getLeMansPhaseBadge(0.0).labelEn, 'Sunrise');
   assert.equal(getLeMansPhaseBadge(0.45).labelEn, 'High Noon');

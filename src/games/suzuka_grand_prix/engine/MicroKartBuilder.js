@@ -63,6 +63,7 @@ function getSharedShadowTexture() {
     }
     _sharedShadowTex = new THREE.CanvasTexture(shadowCanvas);
     _sharedShadowTex.colorSpace = THREE.SRGBColorSpace;
+    _sharedShadowTex.userData = { isSharedResource: true };
   }
   return _sharedShadowTex;
 }
@@ -83,6 +84,7 @@ function getSharedTailGlowTexture() {
     tgCtx.fillRect(0, 0, 128, 128);
     _sharedTailGlowTex = new THREE.CanvasTexture(tailGlowCanvas);
     _sharedTailGlowTex.colorSpace = THREE.SRGBColorSpace;
+    _sharedTailGlowTex.userData = { isSharedResource: true };
   }
   return _sharedTailGlowTex;
 }
@@ -158,6 +160,7 @@ export function getNumberPlateTexture(racerNumber = 87) {
   texture.colorSpace = THREE.SRGBColorSpace;
   texture.anisotropy = 4;
   texture.generateMipmaps = true;
+  texture.userData = { isSharedResource: true };
   _numberPlateTextureCache.set(numStr, texture);
   return texture;
 }
@@ -239,6 +242,11 @@ function getSharedKartGeos() {
       seat, torso, helmetShell, visor, steeringWheel,
       shadowQuad, tailGlow
     };
+    Object.values(_sharedKartGeos).forEach((entry) => {
+      if (entry && entry.isBufferGeometry) {
+        entry.userData = { ...(entry.userData || {}), isSharedResource: true };
+      }
+    });
   }
   return _sharedKartGeos;
 }
@@ -256,16 +264,19 @@ function getSharedMaterials() {
       roughness: 0.42,
       metalness: 0.45,
     });
+    _sharedCarbonMat.userData = { isSharedResource: true };
     _sharedChromeMat = new THREE.MeshStandardMaterial({
       color: 0xdce4f0,
       roughness: 0.15,
       metalness: 0.92,
     });
+    _sharedChromeMat.userData = { isSharedResource: true };
     _sharedTireRubberMat = new THREE.MeshStandardMaterial({
       color: 0x121419,
       roughness: 0.82,
       metalness: 0.05,
     });
+    _sharedTireRubberMat.userData = { isSharedResource: true };
     _sharedTailGlowMat = new THREE.MeshBasicMaterial({
       map: getSharedTailGlowTexture(),
       transparent: true,
@@ -278,6 +289,7 @@ function getSharedMaterials() {
       polygonOffsetFactor: -4,
       polygonOffsetUnits: -4,
     });
+    _sharedTailGlowMat.userData = { isSharedResource: true };
     _sharedShadowMat = new THREE.MeshBasicMaterial({
       map: getSharedShadowTexture(),
       transparent: true,
@@ -287,6 +299,7 @@ function getSharedMaterials() {
       polygonOffsetFactor: -8,
       polygonOffsetUnits: -8,
     });
+    _sharedShadowMat.userData = { isSharedResource: true };
   }
   return {
     carbonMat: _sharedCarbonMat,
@@ -1294,6 +1307,47 @@ export function buildMicroKart(options = {}) {
     }
   }
 
+  function disposeKart() {
+    redFairingMat.dispose();
+    whiteStripeMat.dispose();
+    goldRimMat.dispose();
+    suitMat.dispose();
+    helmetShell.material.dispose();
+    visor.material.dispose();
+    numberPlateMat.dispose();
+    for (const pGroup of flameCones) {
+      if (pGroup.userData && pGroup.userData.jetMat) {
+        pGroup.userData.jetMat.dispose();
+      }
+    }
+    sparkGeo.dispose();
+    sparkMat.dispose();
+    if (labelSprite) {
+      kartRoot.remove(labelSprite);
+      if (labelSprite.material.map && !labelSprite.material.map.userData?.isSharedResource) {
+        labelSprite.material.map.dispose();
+      }
+      labelSprite.material.dispose();
+      labelSprite = null;
+    }
+    if (attachedGlbScene) {
+      attachedGlbScene.traverse((child) => {
+        if (child.isMesh) {
+          if (child.geometry && !child.geometry.userData?.isSharedResource) {
+            child.geometry.dispose();
+          }
+          const mats = Array.isArray(child.material) ? child.material : [child.material];
+          mats.forEach((m) => {
+            if (!m || m.userData?.isSharedResource) return;
+            if (m.map && !m.map.userData?.isSharedResource) m.map.dispose();
+            m.dispose();
+          });
+        }
+      });
+      attachedGlbScene = null;
+    }
+  }
+
   return {
     kartRoot,
     chassisGroup,
@@ -1307,5 +1361,6 @@ export function buildMicroKart(options = {}) {
     setLabel,
     setLabelVisible,
     updateColors,
+    disposeKart,
   };
 }

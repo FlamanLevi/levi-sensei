@@ -39,14 +39,14 @@
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import * as THREE from 'three';
-import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
+import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { TeamId } from '../types';
 import {
   formatTamaireCountCallout,
   buildTamaireSuspenseSchedule,
   TamaireSuspenseFrame,
 } from '../core/quizEngine';
-import { detectClassroomGpuProfile } from '@/utils/classroom3d';
+import { createClassroomRenderer } from '@/utils/classroom3d';
 import { soundEffects } from '@/services/soundEffects';
 
 export interface VolleyballPhaseChangeEvent {
@@ -132,13 +132,60 @@ export interface Tamaire3DStageProps {
   onPointScored?: (team: 'red' | 'white') => void;
 }
 
-// ----------------------------------------------------------------------------
-function afterDraw(cb: FrameRequestCallback): number {
-  return requestAnimationFrame(cb);
+const _tmpBakePos = new THREE.Vector3();
+const _tmpBakeQuat = new THREE.Quaternion();
+const _tmpBakeEuler = new THREE.Euler();
+const _tmpBakeScale = new THREE.Vector3();
+const _tmpBakeMat = new THREE.Matrix4();
+const _tmpBakeColor = new THREE.Color();
+
+interface BakePartOptions {
+  color?: number;
+  pos?: [number, number, number];
+  rot?: [number, number, number];
+  scale?: [number, number, number];
+  keepUv?: boolean;
+}
+
+function bakePartGeo(sourceGeo: THREE.BufferGeometry, opts: BakePartOptions = {}): THREE.BufferGeometry {
+  const g = sourceGeo.index ? sourceGeo.toNonIndexed() : sourceGeo.clone();
+  sourceGeo.dispose();
+
+  _tmpBakePos.set(...(opts.pos ?? [0, 0, 0]));
+  _tmpBakeEuler.set(...(opts.rot ?? [0, 0, 0]), 'XYZ');
+  _tmpBakeQuat.setFromEuler(_tmpBakeEuler);
+  _tmpBakeScale.set(...(opts.scale ?? [1, 1, 1]));
+  _tmpBakeMat.compose(_tmpBakePos, _tmpBakeQuat, _tmpBakeScale);
+  g.applyMatrix4(_tmpBakeMat);
+
+  if (!g.attributes.normal) {
+    g.computeVertexNormals();
+  }
+  if (!opts.keepUv && g.attributes.uv) {
+    g.deleteAttribute('uv');
+  }
+  if (opts.color !== undefined) {
+    _tmpBakeColor.setHex(opts.color);
+    const vCount = g.attributes.position.count;
+    const cols = new Float32Array(vCount * 3);
+    for (let i = 0; i < vCount; i++) {
+      cols[i * 3] = _tmpBakeColor.r;
+      cols[i * 3 + 1] = _tmpBakeColor.g;
+      cols[i * 3 + 2] = _tmpBakeColor.b;
+    }
+    g.setAttribute('color', new THREE.BufferAttribute(cols, 3));
+  }
+  return g;
+}
+
+function mergeBakedGeos(parts: THREE.BufferGeometry[]): THREE.BufferGeometry {
+  const merged = mergeGeometries(parts, false);
+  parts.forEach((p) => p.dispose());
+  return merged || new THREE.BufferGeometry();
 }
 
 // ----------------------------------------------------------------------------
-// 2. Nintendo Wii Sports Satin Rim-Lighting & Hemisphere Boost Shader
+// 2. Nintendo Wii Sports Satin Rim-Lighting & Hemisphere Boost Shader + Instanced Atlas
 // ----------------------------------------------------------------------------
 function injectWiiSatinRimShader(material: THREE.Material, rimStrength = 0.3, topBoost = 0.12) {
   if (!material || (material.userData && material.userData.wiiRimInjected)) return material;
@@ -160,6 +207,43 @@ function injectWiiSatinRimShader(material: THREE.Material, rimStrength = 0.3, to
       #include <opaque_fragment>
       `
     );
+  };
+  material.needsUpdate = true;
+  return material;
+}
+
+function applyInstancedAtlasMaterial(
+  material: THREE.Material,
+  useWiiRim = true,
+  rimStrength = 0.3,
+  topBoost = 0.12
+) {
+  material.userData = material.userData || {};
+  material.userData.wiiRimInjected = useWiiRim;
+  const key = `wii_tamaire_atlas_${useWiiRim ? `${rimStrength.toFixed(2)}_${topBoost.toFixed(2)}` : 'flat'}`;
+  (material as any).customProgramCacheKey = () => key;
+
+  material.onBeforeCompile = (shader) => {
+    shader.vertexShader = shader.vertexShader
+      .replace('#include <uv_pars_vertex>', '#include <uv_pars_vertex>\nattribute vec4 aAtlasRect;')
+      .replace(
+        '#include <uv_vertex>',
+        '#include <uv_vertex>\n#ifdef USE_MAP\n  vMapUv = aAtlasRect.xy + vMapUv * aAtlasRect.zw;\n#endif'
+      );
+    if (useWiiRim) {
+      shader.fragmentShader = shader.fragmentShader.replace(
+        '#include <opaque_fragment>',
+        `
+        vec3 wiiViewDir = normalize( vViewPosition );
+        vec3 wiiNormal = normalize( vNormal );
+        float wiiRim = pow( 1.0 - max( dot( wiiNormal, wiiViewDir ), 0.0 ), 2.5 ) * ${rimStrength.toFixed(3)};
+        float wiiHemiTop = clamp( wiiNormal.y * 0.5 + 0.5, 0.0, 1.0 ) * ${topBoost.toFixed(3)};
+        vec3 wiiRimTint = vec3( 1.0, 0.985, 0.93 );
+        outgoingLight += wiiRimTint * wiiRim + diffuseColor.rgb * wiiHemiTop;
+        #include <opaque_fragment>
+        `
+      );
+    }
   };
   material.needsUpdate = true;
   return material;
@@ -194,6 +278,7 @@ function createDoubleRingShadowTexture(): THREE.CanvasTexture | null {
 
   const tex = new THREE.CanvasTexture(canvas);
   tex.colorSpace = THREE.SRGBColorSpace;
+  tex.userData = { isSharedResource: true };
   cachedShadowTex = tex;
   return tex;
 }
@@ -331,11 +416,13 @@ function createSchoolyardSandMaps(): {
   diffuseMap.wrapS = THREE.RepeatWrapping;
   diffuseMap.wrapT = THREE.RepeatWrapping;
   diffuseMap.repeat.set(6, 6);
+  diffuseMap.userData = { isSharedResource: true };
 
   const bumpMap = new THREE.CanvasTexture(bumpCanvas);
   bumpMap.wrapS = THREE.RepeatWrapping;
   bumpMap.wrapT = THREE.RepeatWrapping;
   bumpMap.repeat.set(6, 6);
+  bumpMap.userData = { isSharedResource: true };
 
   cachedSandMaps = { diffuseMap, bumpMap };
   return cachedSandMaps;
@@ -373,6 +460,7 @@ function createLushGrassTexture(): THREE.CanvasTexture | null {
   tex.wrapS = THREE.RepeatWrapping;
   tex.wrapT = THREE.RepeatWrapping;
   tex.repeat.set(16, 16);
+  tex.userData = { isSharedResource: true };
   cachedGrassTex = tex;
   return tex;
 }
@@ -443,6 +531,7 @@ function createSchoolFacadeTexture(): THREE.CanvasTexture | null {
 
   const tex = new THREE.CanvasTexture(canvas);
   tex.colorSpace = THREE.SRGBColorSpace;
+  tex.userData = { isSharedResource: true };
   cachedSchoolFacadeTex = tex;
   return tex;
 }
@@ -474,6 +563,7 @@ function createKohakuMakuTexture(): THREE.CanvasTexture | null {
   tex.colorSpace = THREE.SRGBColorSpace;
   tex.wrapS = THREE.RepeatWrapping;
   tex.wrapT = THREE.ClampToEdgeWrapping;
+  tex.userData = { isSharedResource: true };
   cachedKohakuTex = tex;
   return tex;
 }
@@ -544,41 +634,12 @@ function createUndokaiBannerTexture(schoolName = '二子玉川小'): THREE.Canva
 }
 
 /**
- * Generates vertical celebration banners (懸垂幕) hanging on the school building facade.
- */
-function createVerticalSchoolBannerTexture(text: string, bg: string, fg: string): THREE.CanvasTexture | null {
-  if (typeof document === 'undefined') return null;
-  const canvas = document.createElement('canvas');
-  canvas.width = 128;
-  canvas.height = 512;
-  const ctx = canvas.getContext('2d');
-  if (!ctx) return null;
-
-  ctx.fillStyle = bg;
-  ctx.fillRect(0, 0, 128, 512);
-  ctx.strokeStyle = '#f59e0b';
-  ctx.lineWidth = 8;
-  ctx.strokeRect(4, 4, 120, 504);
-
-  ctx.fillStyle = fg;
-  ctx.font = '900 54px sans-serif';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  const chars = text.split('');
-  const step = 440 / Math.max(1, chars.length);
-  chars.forEach((ch, idx) => {
-    ctx.fillText(ch, 64, 52 + idx * step);
-  });
-
-  const tex = new THREE.CanvasTexture(canvas);
-  tex.colorSpace = THREE.SRGBColorSpace;
-  return tex;
-}
-
-/**
  * Generates the woven cotton & white-stitched texture for Japanese Otedama (お手玉) bean bags.
  */
+const cachedBeanBagTexs: Record<string, THREE.CanvasTexture> = {};
 function createStitchedBeanBagTexture(baseHex: string, stitchHex: string, isGold = false): THREE.CanvasTexture | null {
+  const key = `${baseHex}_${stitchHex}_${isGold ? 'g' : 's'}`;
+  if (cachedBeanBagTexs[key]) return cachedBeanBagTexs[key];
   if (typeof document === 'undefined') return null;
   const canvas = document.createElement('canvas');
   canvas.width = 128;
@@ -611,24 +672,32 @@ function createStitchedBeanBagTexture(baseHex: string, stitchHex: string, isGold
 
   const tex = new THREE.CanvasTexture(canvas);
   tex.colorSpace = THREE.SRGBColorSpace;
+  tex.userData = { isSharedResource: true };
+  cachedBeanBagTexs[key] = tex;
   return tex;
 }
 
 // ----------------------------------------------------------------------------
-// 4. Composite 3D Builders: Basket Poles, Articulated Mii Throwers, Tents & School
+// 4. Pooled Texture Atlases, Callout Pool & Batched/Instanced 3D Builders
 // ----------------------------------------------------------------------------
 interface BasketAssembly {
   root: THREE.Group;
   swayPivot: THREE.Group; // Pivots from base for realistic spring bending!
   rimCenterWorld: THREE.Vector3;
   innerBagsGroup: THREE.Group;
-  innerBagMeshes: THREE.Mesh[];
+  innerBagsInst: THREE.InstancedMesh;
+  innerBagBaseTransforms: Array<{
+    pos: [number, number, number];
+    rot: [number, number, number];
+    matrix: THREE.Matrix4;
+  }>;
+  innerBagsNeedReset: boolean;
   moundMesh: THREE.Mesh; // Sculpted inner bean-bag mound core so fullness reads clearly from 30ft away
   rimPulseRing: THREE.Mesh; // Glowing shockwave ring on the metal hoop when a bag scores
-  levelRings: THREE.Mesh[]; // 25%, 50%, 75%, 90% fullness gauge rings around the net cone
+  levelRingsInst: THREE.InstancedMesh; // 4 fullness gauge rings around the net cone
   netMesh: THREE.Mesh;
   linerMesh: THREE.Mesh;
-  hoopMesh: THREE.Mesh;
+  hoopY: number;
   springAngleX: number;
   springAngleZ: number;
   springVelX: number;
@@ -652,24 +721,456 @@ export function computeAdaptiveBasketFillRatio(score: number, teamPlayersCount =
   return Math.min(0.92, raw * 0.94);
 }
 
-interface ThrowerAvatar {
+const THROWER_SKIN_TONES = [0xffe9d6, 0xffdfc4, 0xf6cfa9, 0xfff1e0, 0xf3c69f] as const;
+const THROWER_HAIR_COLORS = [0x18130f, 0x2c1b10, 0x0f172a, 0x422614, 0x231912] as const;
+
+let cachedFaceAtlasTex: THREE.CanvasTexture | null = null;
+function getFaceAtlasTexture(): THREE.CanvasTexture | null {
+  if (cachedFaceAtlasTex) return cachedFaceAtlasTex;
+  if (typeof document === 'undefined') return null;
+
+  const cellPx = 128;
+  const cols = 5;
+  const rows = 5;
+  const canvas = document.createElement('canvas');
+  canvas.width = cellPx * cols;
+  canvas.height = cellPx * rows;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return null;
+
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < cols; col++) {
+      const skinHex = THROWER_SKIN_TONES[col];
+      const hexStr = `#${skinHex.toString(16).padStart(6, '0')}`;
+      ctx.save();
+      ctx.translate(col * cellPx, row * cellPx);
+      ctx.scale(0.5, 0.5); // Reuse 256x256 facial geometry cleanly inside 128x128 cell
+
+      ctx.fillStyle = hexStr;
+      ctx.fillRect(0, 0, 256, 256);
+
+      // Rosy Undokai cheeks
+      ctx.fillStyle = 'rgba(251, 113, 133, 0.55)';
+      ctx.beginPath();
+      ctx.ellipse(76, 152, 22, 13, 0, 0, Math.PI * 2);
+      ctx.ellipse(180, 152, 22, 13, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Expressive Eyebrows
+      ctx.strokeStyle = '#1e1b18';
+      ctx.lineWidth = 7;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(68, 92);
+      ctx.quadraticCurveTo(88, 82, 104, 92);
+      ctx.moveTo(152, 92);
+      ctx.quadraticCurveTo(168, 82, 188, 92);
+      ctx.stroke();
+
+      if (row === 4) {
+        // Joyful squinting > < arc eyes!
+        ctx.strokeStyle = '#0f172a';
+        ctx.lineWidth = 8;
+        ctx.beginPath();
+        ctx.arc(88, 122, 16, Math.PI * 1.1, Math.PI * 1.9);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(168, 122, 16, Math.PI * 1.1, Math.PI * 1.9);
+        ctx.stroke();
+      } else {
+        const drawEye = (ex: number, ey: number) => {
+          ctx.fillStyle = '#ffffff';
+          ctx.beginPath();
+          ctx.ellipse(ex, ey, 17, 21, 0, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.fillStyle = '#1c1917';
+          ctx.beginPath();
+          ctx.ellipse(ex, ey + 1, 13, 17, 0, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.fillStyle = '#ffffff';
+          ctx.beginPath();
+          ctx.arc(ex - 5, ey - 6, 5.5, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.beginPath();
+          ctx.arc(ex + 5, ey + 6, 2.8, 0, Math.PI * 2);
+          ctx.fill();
+        };
+        drawEye(88, 120);
+        drawEye(168, 120);
+      }
+
+      // Cute Nose button
+      ctx.fillStyle = 'rgba(180, 110, 75, 0.45)';
+      ctx.beginPath();
+      ctx.arc(128, 142, 4.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Energetic Open Smile
+      ctx.fillStyle = '#9f1239';
+      ctx.beginPath();
+      ctx.arc(128, 164, 20, 0.08, Math.PI - 0.08, false);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.fillStyle = '#fb7185';
+      ctx.beginPath();
+      ctx.arc(128, 174, 11, Math.PI, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(113, 164, 30, 5);
+      ctx.restore();
+    }
+  }
+
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.userData = { isSharedResource: true };
+  cachedFaceAtlasTex = tex;
+  return tex;
+}
+
+function getFaceAtlasRect(skinIdx: number, exprIdx: number): [number, number, number, number] {
+  const cell = 128;
+  const pad = 3;
+  const w = 640;
+  const h = 640;
+  const c = skinIdx % 5;
+  const r = exprIdx % 5;
+  return [
+    (c * cell + pad) / w,
+    1 - ((r + 1) * cell - pad) / h,
+    (cell - 2 * pad) / w,
+    (cell - 2 * pad) / h
+  ];
+}
+
+let cachedBibAtlasTex: THREE.CanvasTexture | null = null;
+function getZekkenBibAtlasTexture(): THREE.CanvasTexture | null {
+  if (cachedBibAtlasTex) return cachedBibAtlasTex;
+  if (typeof document === 'undefined') return null;
+
+  const cellPx = 128;
+  const cols = 8;
+  const rows = 5;
+  const canvas = document.createElement('canvas');
+  canvas.width = cellPx * cols; // 1024
+  canvas.height = cellPx * rows; // 640
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return null;
+
+  for (let slot = 0; slot < 40; slot++) {
+    const team: 'red' | 'white' = slot < 20 ? 'red' : 'white';
+    const num = (slot % 20) + 1;
+    const col = slot % cols;
+    const row = Math.floor(slot / cols);
+    ctx.save();
+    ctx.translate(col * cellPx, row * cellPx);
+
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, 128, 128);
+
+    ctx.strokeStyle = team === 'red' ? '#e11d48' : '#2563eb';
+    ctx.lineWidth = 10;
+    ctx.strokeRect(5, 5, 118, 118);
+
+    ctx.fillStyle = team === 'red' ? '#be123c' : '#1e3a8a';
+    ctx.font = '900 28px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+    ctx.fillText(team === 'red' ? '赤組' : '白組', 64, 14);
+
+    ctx.fillStyle = '#0f172a';
+    ctx.font = '900 58px sans-serif';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(String(num).padStart(2, '0'), 64, 78);
+    ctx.restore();
+  }
+
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.userData = { isSharedResource: true };
+  cachedBibAtlasTex = tex;
+  return tex;
+}
+
+function getZekkenAtlasRect(team: 'red' | 'white', bibNumZeroBased: number): [number, number, number, number] {
+  const cell = 128;
+  const pad = 2;
+  const w = 1024;
+  const h = 640;
+  const slot = (team === 'red' ? 0 : 20) + (bibNumZeroBased % 20);
+  const col = slot % 8;
+  const row = Math.floor(slot / 8);
+  return [
+    (col * cell + pad) / w,
+    1 - ((row + 1) * cell - pad) / h,
+    (cell - 2 * pad) / w,
+    (cell - 2 * pad) / h
+  ];
+}
+
+let cachedBeanBagAtlasTex: THREE.CanvasTexture | null = null;
+function getBeanBagAtlasTexture(): THREE.CanvasTexture | null {
+  if (cachedBeanBagAtlasTex) return cachedBeanBagAtlasTex;
+  if (typeof document === 'undefined') return null;
+
+  const cellPx = 128;
+  const canvas = document.createElement('canvas');
+  canvas.width = cellPx * 3; // 384: red | white | gold
+  canvas.height = cellPx;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return null;
+
+  const variants: Array<{ baseHex: string; stitchHex: string; isGold: boolean }> = [
+    { baseHex: '#e11d48', stitchHex: '#fecdd3', isGold: false },
+    { baseHex: '#f8fafc', stitchHex: '#94a3b8', isGold: false },
+    { baseHex: '#f59e0b', stitchHex: '#fef08a', isGold: true }
+  ];
+
+  variants.forEach((v, idx) => {
+    ctx.save();
+    ctx.translate(idx * cellPx, 0);
+    ctx.fillStyle = v.baseHex;
+    ctx.fillRect(0, 0, 128, 128);
+
+    if (v.isGold) {
+      const shine = ctx.createRadialGradient(54, 48, 8, 64, 64, 72);
+      shine.addColorStop(0, 'rgba(254, 249, 195, 0.72)');
+      shine.addColorStop(1, 'rgba(245, 158, 11, 0)');
+      ctx.fillStyle = shine;
+      ctx.fillRect(0, 0, 128, 128);
+    }
+
+    ctx.strokeStyle = v.isGold ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.08)';
+    ctx.lineWidth = 1;
+    for (let i = 0; i < 128; i += 4) {
+      ctx.beginPath();
+      ctx.moveTo(i, 0);
+      ctx.lineTo(i, 128);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(0, i);
+      ctx.lineTo(128, i);
+      ctx.stroke();
+    }
+
+    ctx.strokeStyle = v.stitchHex;
+    ctx.lineWidth = 3;
+    ctx.setLineDash([6, 4]);
+    ctx.strokeRect(8, 8, 112, 112);
+    ctx.restore();
+  });
+
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.userData = { isSharedResource: true };
+  cachedBeanBagAtlasTex = tex;
+  return tex;
+}
+
+function getBeanBagAtlasRect(variant: 'red' | 'white' | 'gold'): [number, number, number, number] {
+  const col = variant === 'red' ? 0 : variant === 'white' ? 1 : 2;
+  const pad = 2;
+  return [(col * 128 + pad) / 384, pad / 128, (128 - 2 * pad) / 384, (128 - 2 * pad) / 128];
+}
+
+let cachedDualVertBannerTex: THREE.CanvasTexture | null = null;
+function createDualVerticalBannerTexture(): THREE.CanvasTexture | null {
+  if (cachedDualVertBannerTex) return cachedDualVertBannerTex;
+  if (typeof document === 'undefined') return null;
+
+  const canvas = document.createElement('canvas');
+  canvas.width = 256;
+  canvas.height = 512;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return null;
+
+  const drawPanel = (ox: number, text: string, bg: string, fg: string) => {
+    ctx.save();
+    ctx.translate(ox, 0);
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, 128, 512);
+    ctx.strokeStyle = '#f59e0b';
+    ctx.lineWidth = 8;
+    ctx.strokeRect(4, 4, 120, 504);
+
+    ctx.fillStyle = fg;
+    ctx.font = '900 54px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    const chars = text.split('');
+    const step = 440 / Math.max(1, chars.length);
+    chars.forEach((ch, idx) => {
+      ctx.fillText(ch, 64, 52 + idx * step);
+    });
+    ctx.restore();
+  };
+
+  drawPanel(0, '祝大運動会', '#e11d48', '#ffffff');
+  drawPanel(128, '一致団結！', '#1e3a8a', '#fef08a');
+
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.userData = { isSharedResource: true };
+  cachedDualVertBannerTex = tex;
+  return tex;
+}
+
+interface CalloutSlot {
+  sprite: THREE.Sprite;
+  canvas: HTMLCanvasElement;
+  ctx: CanvasRenderingContext2D | null;
+  tex: THREE.CanvasTexture;
+  mat: THREE.SpriteMaterial;
+  ownerId: string | null;
+  lastKey: string;
+  timer: number;
+}
+
+function createCalloutSpritePool(scene: THREE.Scene, maxSlots = 4) {
+  const slots: CalloutSlot[] = [];
+  for (let i = 0; i < maxSlots; i++) {
+    const canvas = document.createElement('canvas');
+    canvas.width = 420;
+    canvas.height = 96;
+    const ctx = canvas.getContext('2d');
+    const tex = new THREE.CanvasTexture(canvas);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: false });
+    const sprite = new THREE.Sprite(mat);
+    sprite.scale.set(1.65, 0.39, 1);
+    sprite.visible = false;
+    sprite.renderOrder = 25;
+    scene.add(sprite);
+    slots.push({ sprite, canvas, ctx, tex, mat, ownerId: null, lastKey: '', timer: 0 });
+  }
+
+  const trigger = (
+    ownerId: string,
+    nickname: string,
+    team: 'red' | 'white',
+    duration: number,
+    isGold = false,
+    isMiss = false
+  ) => {
+    let slot =
+      slots.find((s) => s.ownerId === ownerId) ||
+      slots.find((s) => !s.sprite.visible || s.timer <= 0) ||
+      slots.reduce((lowest, cur) => (cur.timer < lowest.timer ? cur : lowest), slots[0]);
+
+    const shortName = nickname.length > 10 ? `${nickname.slice(0, 9)}…` : nickname;
+    const key = `${shortName}|${team}|${isGold ? 1 : 0}|${isMiss ? 1 : 0}`;
+    if (slot.lastKey !== key && slot.ctx) {
+      const ctx = slot.ctx;
+      ctx.clearRect(0, 0, 420, 96);
+      ctx.fillStyle = isMiss
+        ? '#be123c'
+        : isGold
+          ? '#f59e0b'
+          : team === 'red'
+            ? '#e11d48'
+            : '#0f172a';
+      ctx.beginPath();
+      ctx.roundRect(12, 12, 396, 72, 36);
+      ctx.fill();
+
+      ctx.strokeStyle = isMiss ? '#fbbf24' : isGold ? '#fef08a' : '#ffffff';
+      ctx.lineWidth = 6;
+      ctx.stroke();
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '900 32px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      const label = isMiss
+        ? `💥 ${shortName} DOINK!`
+        : `${shortName} ${isGold ? '🔥+2!' : '🎯+1!'}`;
+      ctx.fillText(label, 210, 48);
+      slot.tex.needsUpdate = true;
+      slot.lastKey = key;
+    }
+
+    slot.ownerId = ownerId;
+    slot.timer = duration;
+    slot.sprite.visible = true;
+  };
+
+  const hideAll = () => {
+    for (const s of slots) {
+      s.timer = 0;
+      s.sprite.visible = false;
+      s.ownerId = null;
+    }
+  };
+
+  const update = (dt: number, getAvatarPos: (ownerId: string) => THREE.Vector3 | null) => {
+    for (const s of slots) {
+      if (s.timer <= 0 || !s.ownerId) {
+        s.sprite.visible = false;
+        continue;
+      }
+      s.timer = Math.max(0, s.timer - dt);
+      if (s.timer <= 0) {
+        s.sprite.visible = false;
+        s.ownerId = null;
+        continue;
+      }
+      const base = getAvatarPos(s.ownerId);
+      if (!base) {
+        s.sprite.visible = false;
+        continue;
+      }
+      const liftY = 1.55 + Math.max(0, 1.2 - s.timer) * 0.32;
+      s.sprite.position.set(base.x, base.y + liftY, base.z);
+    }
+  };
+
+  const dispose = () => {
+    for (const s of slots) {
+      scene.remove(s.sprite);
+      s.tex.dispose();
+      s.mat.dispose();
+    }
+  };
+
+  return { trigger, hideAll, update, dispose };
+}
+
+interface ThrowerAvatarRig {
   id: string;
   nickname: string;
-  root: THREE.Group;
-  bodyPivot: THREE.Group;
-  headGroup: THREE.Group;
-  hairTailGroup: THREE.Group | null;
-  armL: THREE.Group;
-  armR: THREE.Group;
-  legL: THREE.Group;
-  legR: THREE.Group;
-  heldBag: THREE.Mesh;
-  shadow: THREE.Mesh;
-  calloutSprite: THREE.Sprite;
-  missCalloutSprite: THREE.Sprite;
-  calloutTimer: number;
   team: 'red' | 'white';
-  ringTier: 0 | 1; // 0 = inner chalk ring, 1 = outer ring (for 9..20 players per team)
+  root: THREE.Object3D;
+  shadowAnchor: THREE.Object3D;
+  bodyPivot: THREE.Object3D;
+  headGroup: THREE.Object3D;
+  hairTailGroup: THREE.Object3D | null;
+  armL: THREE.Object3D;
+  armR: THREE.Object3D;
+  legL: THREE.Object3D;
+  legR: THREE.Object3D;
+  kneeLAnchor: THREE.Object3D;
+  kneeRAnchor: THREE.Object3D;
+  earLAnchor: THREE.Object3D;
+  earRAnchor: THREE.Object3D;
+  heldBagAnchor: THREE.Object3D;
+  hairTuftAnchors: THREE.Object3D[];
+  hairTieAnchors: THREE.Object3D[];
+  heldBagVisible: boolean;
+  bibIndex: number;
+  skinIndex: number;
+  exprIndex: number;
+  hairColor: THREE.Color;
+  skinColor: THREE.Color;
+  hairStyle: number; // 0..4
+  usesCap: boolean;
+  capColor: THREE.Color;
+  hairTieColor: THREE.Color;
+  ringTier: 0 | 1;
   baseAngle: number;
   radius: number;
   centerX: number;
@@ -678,206 +1179,7 @@ interface ThrowerAvatar {
   heightScale: number;
 }
 
-/**
- * Generates a high-contrast Japanese PE Zekken (ゼッケン) chest/back bib texture with team kanji & 2-digit number.
- */
-function createZekkenBibTexture(team: 'red' | 'white', num: number): THREE.CanvasTexture | null {
-  if (typeof document === 'undefined') return null;
-  const canvas = document.createElement('canvas');
-  canvas.width = 128;
-  canvas.height = 128;
-  const ctx = canvas.getContext('2d');
-  if (!ctx) return null;
-
-  ctx.fillStyle = '#ffffff';
-  ctx.fillRect(0, 0, 128, 128);
-
-  ctx.strokeStyle = team === 'red' ? '#e11d48' : '#2563eb';
-  ctx.lineWidth = 10;
-  ctx.strokeRect(5, 5, 118, 118);
-
-  ctx.fillStyle = team === 'red' ? '#be123c' : '#1e3a8a';
-  ctx.font = '900 28px sans-serif';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'top';
-  ctx.fillText(team === 'red' ? '赤組' : '白組', 64, 14);
-
-  ctx.fillStyle = '#0f172a';
-  ctx.font = '900 58px sans-serif';
-  ctx.textBaseline = 'middle';
-  const numStr = String((num % 40) + 1).padStart(2, '0');
-  ctx.fillText(numStr, 64, 78);
-
-  const tex = new THREE.CanvasTexture(canvas);
-  tex.colorSpace = THREE.SRGBColorSpace;
-  return tex;
-}
-
-/**
- * Generates an expressive Nintendo Mii / Chibi-Anime face texture mapped onto the front of the head sphere.
- */
-const cachedFaceTextures: Record<string, THREE.CanvasTexture> = {};
-function createExpressiveMiiFaceTexture(skinHex: number, exprVariant: number): THREE.CanvasTexture | null {
-  const key = `${skinHex.toString(16)}_${exprVariant}`;
-  if (cachedFaceTextures[key]) return cachedFaceTextures[key];
-  if (typeof document === 'undefined') return null;
-
-  const canvas = document.createElement('canvas');
-  canvas.width = 256;
-  canvas.height = 256;
-  const ctx = canvas.getContext('2d');
-  if (!ctx) return null;
-
-  const hexStr = `#${skinHex.toString(16).padStart(6, '0')}`;
-  ctx.fillStyle = hexStr;
-  ctx.fillRect(0, 0, 256, 256);
-
-  // Rosy Undokai cheeks
-  ctx.fillStyle = 'rgba(251, 113, 133, 0.55)';
-  ctx.beginPath();
-  ctx.ellipse(76, 152, 22, 13, 0, 0, Math.PI * 2);
-  ctx.ellipse(180, 152, 22, 13, 0, 0, Math.PI * 2);
-  ctx.fill();
-
-  // Expressive Eyebrows
-  ctx.strokeStyle = '#1e1b18';
-  ctx.lineWidth = 7;
-  ctx.lineCap = 'round';
-  ctx.beginPath();
-  ctx.moveTo(68, 92);
-  ctx.quadraticCurveTo(88, 82, 104, 92);
-  ctx.moveTo(152, 92);
-  ctx.quadraticCurveTo(168, 82, 188, 92);
-  ctx.stroke();
-
-  // Large Shiny Anime / Mii Eyes (or happy curved eyes on variant 3)
-  if (exprVariant % 5 === 4) {
-    // Joyful squinting > < arc eyes!
-    ctx.strokeStyle = '#0f172a';
-    ctx.lineWidth = 8;
-    ctx.beginPath();
-    ctx.arc(88, 122, 16, Math.PI * 1.1, Math.PI * 1.9);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.arc(168, 122, 16, Math.PI * 1.1, Math.PI * 1.9);
-    ctx.stroke();
-  } else {
-    const drawEye = (ex: number, ey: number) => {
-      // White sclera outer rim
-      ctx.fillStyle = '#ffffff';
-      ctx.beginPath();
-      ctx.ellipse(ex, ey, 17, 21, 0, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Dark espresso iris
-      ctx.fillStyle = '#1c1917';
-      ctx.beginPath();
-      ctx.ellipse(ex, ey + 1, 13, 17, 0, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Large top-left catchlight sparkle
-      ctx.fillStyle = '#ffffff';
-      ctx.beginPath();
-      ctx.arc(ex - 5, ey - 6, 5.5, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Secondary bottom-right catchlight
-      ctx.beginPath();
-      ctx.arc(ex + 5, ey + 6, 2.8, 0, Math.PI * 2);
-      ctx.fill();
-    };
-    drawEye(88, 120);
-    drawEye(168, 120);
-  }
-
-  // Cute Nose button
-  ctx.fillStyle = 'rgba(180, 110, 75, 0.45)';
-  ctx.beginPath();
-  ctx.arc(128, 142, 4.5, 0, Math.PI * 2);
-  ctx.fill();
-
-  // Energetic Open Smile ("いくぞー！" / Cheering mouth)
-  ctx.fillStyle = '#9f1239';
-  ctx.beginPath();
-  ctx.arc(128, 164, 20, 0.08, Math.PI - 0.08, false);
-  ctx.closePath();
-  ctx.fill();
-
-  // Pink tongue highlight inside mouth
-  ctx.fillStyle = '#fb7185';
-  ctx.beginPath();
-  ctx.arc(128, 174, 11, Math.PI, Math.PI * 2);
-  ctx.fill();
-
-  // Upper teeth line
-  ctx.fillStyle = '#ffffff';
-  ctx.fillRect(113, 164, 30, 5);
-
-  const tex = new THREE.CanvasTexture(canvas);
-  tex.colorSpace = THREE.SRGBColorSpace;
-  cachedFaceTextures[key] = tex;
-  return tex;
-}
-
-/**
- * Generates a floating 3D callout badge above a student's head when they throw a bean bag!
- */
-function createStudentCalloutSprite(
-  nickname: string,
-  team: 'red' | 'white',
-  isGold = false,
-  isMiss = false
-): THREE.Sprite {
-  const canvas = document.createElement('canvas');
-  canvas.width = 420;
-  canvas.height = 96;
-  const ctx = canvas.getContext('2d');
-  if (ctx) {
-    ctx.fillStyle = isMiss
-      ? '#be123c'
-      : isGold
-        ? '#f59e0b'
-        : team === 'red'
-          ? '#e11d48'
-          : '#0f172a';
-    ctx.beginPath();
-    ctx.roundRect(12, 12, 396, 72, 36);
-    ctx.fill();
-
-    ctx.strokeStyle = isMiss ? '#fbbf24' : isGold ? '#fef08a' : '#ffffff';
-    ctx.lineWidth = 6;
-    ctx.stroke();
-
-    ctx.fillStyle = '#ffffff';
-    ctx.font = '900 32px sans-serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    const shortName = nickname.length > 10 ? `${nickname.slice(0, 9)}…` : nickname;
-    const label = isMiss
-      ? `💥 ${shortName} DOINK!`
-      : `${shortName} ${isGold ? '🔥+2!' : '🎯+1!'}`;
-    ctx.fillText(label, 210, 48);
-  }
-  const tex = new THREE.CanvasTexture(canvas);
-  tex.colorSpace = THREE.SRGBColorSpace;
-  const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: false });
-  const sprite = new THREE.Sprite(mat);
-  sprite.scale.set(1.65, 0.39, 1);
-  sprite.position.set(0, 1.58, 0);
-  sprite.visible = false;
-  sprite.renderOrder = 25;
-  return sprite;
-}
-
-/**
- * Builds an expressive Chibi-Mii Japanese Elementary Student Thrower with:
- * - 5 distinct hairstyles (Twin Pigtails, High Ponytail, Spiky Shonen, Bob Cut, Sporty Crop)
- * - Authentic Japanese Undokai Kohaku-bo (紅白帽 reversible PE cap) or knotted Hachimaki headband
- * - Canvas-mapped expressive Mii face (shiny eyes, eyebrows, rosy cheeks, open smile) + 3D ears
- * - Tapered Taisofuku gym shirt with numbered Zekken (ゼッケン) bibs on chest & back
- * - Articulated arms, legs, knee-high socks, Uwabaki sneakers, and floating name callout sprite!
- */
-function buildArticulatedThrower(
+function createThrowerRig(
   team: 'red' | 'white',
   index: number,
   studentId: string,
@@ -886,339 +1188,134 @@ function buildArticulatedThrower(
   radius: number,
   angle: number,
   ringTier: 0 | 1,
-  redBagMat: THREE.Material,
-  whiteBagMat: THREE.Material,
-  shadowTex: THREE.Texture | null
-): ThrowerAvatar {
-  const root = new THREE.Group();
+  bibIndex: number
+): ThrowerAvatarRig {
+  const root = new THREE.Object3D();
   const x = centerX + Math.cos(angle) * radius;
   const z = Math.sin(angle) * radius;
   root.position.set(x, 0, z);
-
-  // Slight natural height variation among elementary school classmates
   const heightScale = 0.92 + ((index * 17) % 10) * 0.018;
   root.scale.setScalar(heightScale);
 
-  // Double-ring contact shadow on the sand
-  const shadowMat = new THREE.MeshBasicMaterial({
-    map: shadowTex || undefined,
-    color: shadowTex ? 0xffffff : 0x261a0e,
-    transparent: true,
-    opacity: shadowTex ? 0.85 : 0.35,
-    depthWrite: false
-  });
-  const shadow = new THREE.Mesh(new THREE.PlaneGeometry(0.92, 0.92), shadowMat);
-  shadow.rotation.x = -Math.PI / 2;
-  shadow.position.y = 0.015;
-  root.add(shadow);
+  const shadowAnchor = new THREE.Object3D();
+  shadowAnchor.position.y = 0.015;
+  shadowAnchor.rotation.x = -Math.PI / 2;
+  root.add(shadowAnchor);
 
-  const bodyPivot = new THREE.Group();
-  // Camera-aware 3/4 facing: blend angle toward basket with angle toward front TV camera (+Z)
-  // so foreground students never turn their backs 100% to the classroom TV!
+  const bodyPivot = new THREE.Object3D();
   const angleToBasket = Math.atan2(centerX - x, 0 - z);
   const sinCam = Math.sin(angleToBasket);
-  const cosCam = Math.cos(angleToBasket) * 0.45 + 0.55; // Bias forward (+Z) so faces are visible!
+  const cosCam = Math.cos(angleToBasket) * 0.45 + 0.55;
   bodyPivot.rotation.y = Math.atan2(sinCam, cosCam);
   root.add(bodyPivot);
 
-  const skinTones = [0xffe9d6, 0xffdfc4, 0xf6cfa9, 0xfff1e0, 0xf3c69f];
-  const hairColors = [0x18130f, 0x2c1b10, 0x0f172a, 0x422614, 0x231912];
-  const skinHex = skinTones[index % skinTones.length];
-  const hairHex = hairColors[(index * 3) % hairColors.length];
-
-  const skinMat = injectWiiSatinRimShader(
-    new THREE.MeshStandardMaterial({ color: skinHex, roughness: 0.42 })
-  );
-  const hairMat = injectWiiSatinRimShader(
-    new THREE.MeshStandardMaterial({ color: hairHex, roughness: 0.58 })
-  );
-  const shirtMat = injectWiiSatinRimShader(
-    new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.48 })
-  );
-  const collarTrimMat = injectWiiSatinRimShader(
-    new THREE.MeshStandardMaterial({ color: team === 'red' ? 0xe11d48 : 0x2563eb, roughness: 0.45 })
-  );
-  const shortsMat = injectWiiSatinRimShader(
-    new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.6 })
-  );
-  const shoeMat = injectWiiSatinRimShader(
-    new THREE.MeshStandardMaterial({ color: team === 'red' ? 0xe11d48 : 0x2563eb, roughness: 0.42 })
-  );
-  const soleMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.7 });
-
-  // 1. Articulated Legs + Rounded Knees + High White Socks + Uwabaki Sneakers
-  const buildLeg = (lx: number) => {
-    const legGroup = new THREE.Group();
+  const makeLegRig = (lx: number) => {
+    const legGroup = new THREE.Object3D();
     legGroup.position.set(lx, 0.38, 0);
-
-    const shortsLeg = new THREE.Mesh(new THREE.CylinderGeometry(0.095, 0.086, 0.16, 12), shortsMat);
-    shortsLeg.position.y = -0.06;
-    legGroup.add(shortsLeg);
-
-    const knee = new THREE.Mesh(new THREE.SphereGeometry(0.064, 10, 8), skinMat);
-    knee.position.y = -0.15;
-    legGroup.add(knee);
-
-    const sock = new THREE.Mesh(new THREE.CylinderGeometry(0.066, 0.058, 0.14, 10), shirtMat);
-    sock.position.y = -0.24;
-    legGroup.add(sock);
-
-    // Sock team stripe
-    const sockStripe = new THREE.Mesh(new THREE.TorusGeometry(0.064, 0.01, 6, 14), collarTrimMat);
-    sockStripe.rotation.x = Math.PI / 2;
-    sockStripe.position.y = -0.19;
-    legGroup.add(sockStripe);
-
-    // Rounded sneaker body + white rubber sole
-    const shoeUpper = new THREE.Mesh(new THREE.SphereGeometry(0.075, 10, 8), shoeMat);
-    shoeUpper.scale.set(0.95, 0.65, 1.45);
-    shoeUpper.position.set(0, -0.32, 0.03);
-    shoeUpper.castShadow = true;
-    legGroup.add(shoeUpper);
-
-    const shoeSole = new THREE.Mesh(new THREE.CylinderGeometry(0.072, 0.075, 0.032, 10), soleMat);
-    shoeSole.scale.set(0.95, 1, 1.45);
-    shoeSole.position.set(0, -0.35, 0.03);
-    legGroup.add(shoeSole);
-
-    return legGroup;
+    const kneeAnchor = new THREE.Object3D();
+    kneeAnchor.position.set(0, -0.15, 0);
+    kneeAnchor.scale.setScalar(0.064);
+    legGroup.add(kneeAnchor);
+    return { legGroup, kneeAnchor };
   };
-  const legL = buildLeg(-0.115);
-  const legR = buildLeg(0.115);
+  const { legGroup: legL, kneeAnchor: kneeLAnchor } = makeLegRig(-0.115);
+  const { legGroup: legR, kneeAnchor: kneeRAnchor } = makeLegRig(0.115);
   bodyPivot.add(legL, legR);
 
-  // 2. Sculpted Tapered Torso (Taisofuku Gym Shirt + Shorts Hip Pelvis + Numbered Zekken Bibs)
-  const pelvis = new THREE.Mesh(new THREE.SphereGeometry(0.21, 12, 10), shortsMat);
-  pelvis.scale.set(1.02, 0.62, 0.88);
-  pelvis.position.y = 0.37;
-  bodyPivot.add(pelvis);
+  const armL = new THREE.Object3D();
+  armL.position.set(-0.25, 0.74, 0);
+  const armR = new THREE.Object3D();
+  armR.position.set(0.25, 0.74, 0);
+  bodyPivot.add(armL, armR);
 
-  const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.185, 0.215, 0.44, 16), shirtMat);
-  torso.scale.set(1.06, 1, 0.86);
-  torso.position.y = 0.58;
-  torso.castShadow = true;
-  bodyPivot.add(torso);
+  const heldBagAnchor = new THREE.Object3D();
+  heldBagAnchor.position.set(0, -0.35, 0.06);
+  heldBagAnchor.scale.set(1.22, 0.75, 1.0);
+  armR.add(heldBagAnchor);
 
-  // Puffed shoulder caps
-  [-0.21, 0.21].forEach((sx) => {
-    const sh = new THREE.Mesh(new THREE.SphereGeometry(0.088, 10, 8), shirtMat);
-    sh.position.set(sx, 0.74, 0);
-    bodyPivot.add(sh);
-  });
-
-  // Red/Navy Ringer Collar
-  const collar = new THREE.Mesh(new THREE.TorusGeometry(0.138, 0.03, 8, 18), collarTrimMat);
-  collar.rotation.x = Math.PI / 2;
-  collar.position.y = 0.79;
-  bodyPivot.add(collar);
-
-  // Numbered Zekken Bibs on BOTH Front and Back so student numbers read from every angle!
-  const bibTex = createZekkenBibTexture(team, index);
-  const bibMat = new THREE.MeshStandardMaterial({
-    map: bibTex || undefined,
-    color: 0xffffff,
-    roughness: 0.55
-  });
-  const frontBib = new THREE.Mesh(new THREE.PlaneGeometry(0.24, 0.24), bibMat);
-  frontBib.position.set(0, 0.58, 0.188);
-  bodyPivot.add(frontBib);
-
-  const backBib = new THREE.Mesh(new THREE.PlaneGeometry(0.24, 0.24), bibMat);
-  backBib.rotation.y = Math.PI;
-  backBib.position.set(0, 0.58, -0.188);
-  bodyPivot.add(backBib);
-
-  // 3. Expressive Chibi-Mii Head Group + 5 Hairstyles + Kohaku-bo Cap / Hachimaki
-  const headGroup = new THREE.Group();
+  const headGroup = new THREE.Object3D();
   headGroup.position.y = 1.03;
   bodyPivot.add(headGroup);
 
-  const faceTex = createExpressiveMiiFaceTexture(skinHex, index);
-  const headMat = injectWiiSatinRimShader(
-    new THREE.MeshStandardMaterial({
-      map: faceTex || undefined,
-      color: faceTex ? 0xffffff : skinHex,
-      roughness: 0.4
-    })
-  );
-  // Rotate sphere -90 deg on Y so UV center (u=0.5) faces +Z forward!
-  const headGeo = new THREE.SphereGeometry(0.245, 22, 18);
-  headGeo.rotateY(-Math.PI / 2);
-  const head = new THREE.Mesh(headGeo, headMat);
-  head.scale.set(1.04, 0.98, 1.0);
-  head.castShadow = true;
-  headGroup.add(head);
+  const earLAnchor = new THREE.Object3D();
+  earLAnchor.position.set(-0.245, -0.01, 0);
+  earLAnchor.scale.set(0.052 * 0.55, 0.052, 0.052 * 0.75);
+  const earRAnchor = new THREE.Object3D();
+  earRAnchor.position.set(0.245, -0.01, 0);
+  earRAnchor.scale.set(0.052 * 0.55, 0.052, 0.052 * 0.75);
+  headGroup.add(earLAnchor, earRAnchor);
 
-  // Cute 3D Side Ears (耳)
-  [-0.245, 0.245].forEach((ex) => {
-    const ear = new THREE.Mesh(new THREE.SphereGeometry(0.052, 8, 8), skinMat);
-    ear.scale.set(0.55, 1.0, 0.75);
-    ear.position.set(ex, -0.01, 0);
-    headGroup.add(ear);
-  });
-
-  // Base Hair Back-Cap & Sculpted Front Bangs (前髪)
-  const hairBack = new THREE.Mesh(
-    new THREE.SphereGeometry(0.256, 16, 12, 0, Math.PI * 2, 0, Math.PI * 0.56),
-    hairMat
-  );
-  hairBack.rotation.x = -0.28;
-  headGroup.add(hairBack);
-
-  // Sculpted Anime Front Fringe Bangs across forehead
-  for (let b = -2; b <= 2; b++) {
-    const bang = new THREE.Mesh(new THREE.ConeGeometry(0.048, 0.13, 6), hairMat);
-    bang.position.set(b * 0.058, 0.13, 0.215 - Math.abs(b) * 0.018);
-    bang.rotation.x = Math.PI - 0.35;
-    bang.rotation.z = b * -0.12;
-    headGroup.add(bang);
-  }
-
-  // 5 Distinct Student Hairstyles (Twin Pigtails, Ponytail, Spiky Shonen, Bob Cut, Sporty Crop)
-  let hairTailGroup: THREE.Group | null = null;
   const hairStyle = index % 5;
-  const hairTieMat = new THREE.MeshStandardMaterial({
-    color: team === 'red' ? 0xf43f5e : 0x38bdf8,
-    roughness: 0.35
-  });
+  let hairTailGroup: THREE.Object3D | null = null;
+  const hairTuftAnchors: THREE.Object3D[] = [];
+  const hairTieAnchors: THREE.Object3D[] = [];
 
   if (hairStyle === 0) {
-    // Style 0: Twin Pigtails (ツインテール) with hair-tie beads!
-    hairTailGroup = new THREE.Group();
+    hairTailGroup = new THREE.Object3D();
     headGroup.add(hairTailGroup);
     [-1, 1].forEach((side) => {
-      const tie = new THREE.Mesh(new THREE.SphereGeometry(0.045, 8, 8), hairTieMat);
+      const tie = new THREE.Object3D();
       tie.position.set(side * 0.25, 0.05, -0.06);
+      tie.scale.setScalar(0.045);
       hairTailGroup!.add(tie);
+      hairTieAnchors.push(tie);
 
-      const tail = new THREE.Mesh(new THREE.ConeGeometry(0.085, 0.28, 10), hairMat);
+      const tail = new THREE.Object3D();
       tail.position.set(side * 0.32, -0.05, -0.08);
-      tail.rotation.z = side * 2.45;
-      tail.rotation.x = 0.2;
+      tail.rotation.set(0.2, 0, side * 2.45);
+      tail.scale.set(0.085, 0.28, 0.085);
       hairTailGroup!.add(tail);
+      hairTuftAnchors.push(tail);
     });
   } else if (hairStyle === 1) {
-    // Style 1: Energetic High Ponytail (ポニーテール)
-    hairTailGroup = new THREE.Group();
+    hairTailGroup = new THREE.Object3D();
     hairTailGroup.position.set(0, 0.12, -0.24);
     headGroup.add(hairTailGroup);
 
-    const tie = new THREE.Mesh(new THREE.TorusGeometry(0.045, 0.018, 6, 12), hairTieMat);
+    const tie = new THREE.Object3D();
+    tie.scale.set(0.05, 0.05, 0.036);
     hairTailGroup.add(tie);
+    hairTieAnchors.push(tie);
 
-    const tail = new THREE.Mesh(new THREE.ConeGeometry(0.095, 0.32, 10), hairMat);
+    const tail = new THREE.Object3D();
     tail.position.set(0, -0.06, -0.12);
     tail.rotation.x = -2.1;
+    tail.scale.set(0.095, 0.32, 0.095);
     hairTailGroup.add(tail);
+    hairTuftAnchors.push(tail);
   } else if (hairStyle === 2) {
-    // Style 2: Spiky Shonen Hair Tufts (ツンツン髪)
     [
       [-0.14, 0.22, -0.08, 0.45],
       [0.14, 0.22, -0.08, -0.45],
       [0, 0.26, -0.14, 0]
     ].forEach(([sx, sy, sz, rz]) => {
-      const spike = new THREE.Mesh(new THREE.ConeGeometry(0.065, 0.16, 6), hairMat);
+      const spike = new THREE.Object3D();
       spike.position.set(sx, sy, sz);
-      spike.rotation.z = rz;
-      spike.rotation.x = -0.35;
+      spike.rotation.set(-0.35, 0, rz);
+      spike.scale.set(0.065, 0.16, 0.065);
       headGroup.add(spike);
+      hairTuftAnchors.push(spike);
     });
   } else if (hairStyle === 3) {
-    // Style 3: Classic Japanese Elementary Bob-Cut Side Locks (おかっぱ)
     [-0.22, 0.22].forEach((bx) => {
-      const sideLock = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.065, 0.22, 8), hairMat);
-      sideLock.position.set(bx, -0.03, 0.04);
-      sideLock.rotation.z = bx > 0 ? -0.15 : 0.15;
-      headGroup.add(sideLock);
+      const lock = new THREE.Object3D();
+      lock.position.set(bx, -0.03, 0.04);
+      lock.rotation.z = bx > 0 ? -0.15 : 0.15;
+      lock.scale.set(0.062, 0.22, 0.062);
+      headGroup.add(lock);
+      hairTuftAnchors.push(lock);
     });
   }
 
-  // Headgear: Alternate between iconic Japanese PE Kohaku-bo Cap (紅白帽) & Hachimaki Headband (鉢巻)
-  const capMat = injectWiiSatinRimShader(
-    new THREE.MeshStandardMaterial({
-      color: team === 'red' ? 0xe11d48 : 0xf8fafc,
-      roughness: 0.42
-    })
-  );
-
-  if (index % 2 === 0) {
-    // Authentic Japanese Elementary Kohaku-bo PE Cap (紅白帽) with front visor brim & white chin strap!
-    const dome = new THREE.Mesh(
-      new THREE.SphereGeometry(0.258, 18, 12, 0, Math.PI * 2, 0, Math.PI * 0.48),
-      capMat
-    );
-    dome.position.y = 0.02;
-    dome.rotation.x = -0.12;
-    headGroup.add(dome);
-
-    const visor = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.24, 0.024, 16, 1, false, -0.9, 1.8), capMat);
-    visor.position.set(0, 0.11, 0.12);
-    visor.rotation.x = 0.22;
-    headGroup.add(visor);
-  } else {
-    // Traditional Undokai Hachimaki Headband (鉢巻) with back knot & fluttering tails!
-    const band = new THREE.Mesh(new THREE.TorusGeometry(0.246, 0.035, 10, 24), capMat);
-    band.rotation.x = Math.PI / 2 - 0.12;
-    band.position.y = 0.08;
-    headGroup.add(band);
-
-    const knot = new THREE.Mesh(new THREE.SphereGeometry(0.052, 8, 8), capMat);
-    knot.position.set(0, 0.1, -0.25);
-    headGroup.add(knot);
-
-    const tailL = new THREE.Mesh(new THREE.BoxGeometry(0.044, 0.18, 0.016), capMat);
-    tailL.position.set(-0.045, 0.02, -0.27);
-    tailL.rotation.z = 0.28;
-    const tailR = tailL.clone();
-    tailR.position.x = 0.045;
-    tailR.rotation.z = -0.28;
-    headGroup.add(tailL, tailR);
-  }
-
-  // 4. Articulated Arms + Puffed Sleeves + Held Bean Bag in Right Hand
-  const buildArm = (ax: number) => {
-    const armGroup = new THREE.Group();
-    armGroup.position.set(ax, 0.74, 0);
-
-    const sleeve = new THREE.Mesh(new THREE.CylinderGeometry(0.074, 0.068, 0.15, 10), shirtMat);
-    sleeve.position.y = -0.05;
-    armGroup.add(sleeve);
-
-    const sleeveTrim = new THREE.Mesh(new THREE.TorusGeometry(0.068, 0.012, 6, 14), collarTrimMat);
-    sleeveTrim.rotation.x = Math.PI / 2;
-    sleeveTrim.position.y = -0.12;
-    armGroup.add(sleeveTrim);
-
-    const forearm = new THREE.Mesh(new THREE.CylinderGeometry(0.052, 0.048, 0.21, 10), skinMat);
-    forearm.position.y = -0.19;
-    armGroup.add(forearm);
-
-    const hand = new THREE.Mesh(new THREE.SphereGeometry(0.064, 10, 10), skinMat);
-    hand.position.y = -0.31;
-    armGroup.add(hand);
-
-    return armGroup;
-  };
-  const armL = buildArm(-0.25);
-  const armR = buildArm(0.25);
-  bodyPivot.add(armL, armR);
-
-  // Bean bag held in right hand ready to toss
-  const heldBagGeo = new THREE.SphereGeometry(0.115, 10, 8);
-  heldBagGeo.scale(1.22, 0.75, 1.0);
-  const heldBag = new THREE.Mesh(heldBagGeo, team === 'red' ? redBagMat : whiteBagMat);
-  heldBag.position.set(0, -0.35, 0.06);
-  armR.add(heldBag);
-
-  // Floating 3D Student Name Callout Sprites (Score Swish vs. Rim Doink!)
-  const calloutSprite = createStudentCalloutSprite(nickname, team, false, false);
-  const missCalloutSprite = createStudentCalloutSprite(nickname, team, false, true);
-  root.add(calloutSprite, missCalloutSprite);
+  const skinIndex = index % THROWER_SKIN_TONES.length;
+  const hairHex = THROWER_HAIR_COLORS[(index * 3) % THROWER_HAIR_COLORS.length];
 
   return {
     id: studentId,
     nickname,
+    team,
     root,
+    shadowAnchor,
     bodyPivot,
     headGroup,
     hairTailGroup,
@@ -1226,12 +1323,23 @@ function buildArticulatedThrower(
     armR,
     legL,
     legR,
-    heldBag,
-    shadow,
-    calloutSprite,
-    missCalloutSprite,
-    calloutTimer: 0,
-    team,
+    kneeLAnchor,
+    kneeRAnchor,
+    earLAnchor,
+    earRAnchor,
+    heldBagAnchor,
+    hairTuftAnchors,
+    hairTieAnchors,
+    heldBagVisible: true,
+    bibIndex,
+    skinIndex,
+    exprIndex: index % 5,
+    hairColor: new THREE.Color(hairHex),
+    skinColor: new THREE.Color(THROWER_SKIN_TONES[skinIndex]),
+    hairStyle,
+    usesCap: index % 2 === 0,
+    capColor: new THREE.Color(team === 'red' ? 0xe11d48 : 0xf8fafc),
+    hairTieColor: new THREE.Color(team === 'red' ? 0xf43f5e : 0x38bdf8),
     ringTier,
     baseAngle: angle,
     radius,
@@ -1242,14 +1350,416 @@ function buildArticulatedThrower(
   };
 }
 
+function createThrowerBatchPool(
+  scene: THREE.Scene,
+  shadowTex: THREE.Texture | null,
+  bagAtlasTex: THREE.Texture | null,
+  enableShadows: boolean
+) {
+  const MAX_STUDENTS = 40;
+  const MAX_TEAM = 40;
+  const whiteColor = new THREE.Color(0xffffff);
+  const ownedGeos: THREE.BufferGeometry[] = [];
+  const ownedMats: THREE.Material[] = [];
+  const ownedInsts: THREE.InstancedMesh[] = [];
+
+  const registerInst = (inst: THREE.InstancedMesh, capacity: number, initColor = false) => {
+    inst.frustumCulled = false;
+    inst.count = 0;
+    if (initColor) {
+      for (let i = 0; i < capacity; i++) inst.setColorAt(i, whiteColor);
+      if (inst.instanceColor) inst.instanceColor.needsUpdate = true;
+    }
+    scene.add(inst);
+    ownedInsts.push(inst);
+    return inst;
+  };
+
+  // 1. Contact shadows (40 max)
+  const shadowGeo = new THREE.PlaneGeometry(0.92, 0.92);
+  ownedGeos.push(shadowGeo);
+  const shadowMat = new THREE.MeshBasicMaterial({
+    map: shadowTex || undefined,
+    color: shadowTex ? 0xffffff : 0x261a0e,
+    transparent: true,
+    opacity: shadowTex ? 0.85 : 0.35,
+    depthWrite: false
+  });
+  ownedMats.push(shadowMat);
+  const shadowInst = registerInst(new THREE.InstancedMesh(shadowGeo, shadowMat, MAX_STUDENTS), MAX_STUDENTS);
+
+  // 2. Red & White Torso (pelvis + gym shirt + shoulder caps + collar)
+  const buildTorsoGeo = (teamColor: number) => {
+    const g = mergeBakedGeos([
+      bakePartGeo(new THREE.SphereGeometry(0.21, 12, 10), { color: 0x1e293b, pos: [0, 0.37, 0], scale: [1.02, 0.62, 0.88] }),
+      bakePartGeo(new THREE.CylinderGeometry(0.185, 0.215, 0.44, 16), { color: 0xffffff, pos: [0, 0.58, 0], scale: [1.06, 1, 0.86] }),
+      bakePartGeo(new THREE.SphereGeometry(0.088, 10, 8), { color: 0xffffff, pos: [-0.21, 0.74, 0] }),
+      bakePartGeo(new THREE.SphereGeometry(0.088, 10, 8), { color: 0xffffff, pos: [0.21, 0.74, 0] }),
+      bakePartGeo(new THREE.TorusGeometry(0.138, 0.03, 8, 18), { color: teamColor, pos: [0, 0.79, 0], rot: [Math.PI / 2, 0, 0] })
+    ]);
+    ownedGeos.push(g);
+    return g;
+  };
+  const vertexRimMat = injectWiiSatinRimShader(
+    new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.48 })
+  );
+  ownedMats.push(vertexRimMat);
+  const torsoRedInst = registerInst(new THREE.InstancedMesh(buildTorsoGeo(0xe11d48), vertexRimMat, MAX_TEAM), MAX_TEAM);
+  torsoRedInst.castShadow = enableShadows;
+  const torsoWhiteInst = registerInst(new THREE.InstancedMesh(buildTorsoGeo(0x2563eb), vertexRimMat, MAX_TEAM), MAX_TEAM);
+  torsoWhiteInst.castShadow = enableShadows;
+
+  // 3. Zekken Bibs (Front + Back merged with atlas UV)
+  const bibTex = getZekkenBibAtlasTexture();
+  const bibGeo = mergeBakedGeos([
+    bakePartGeo(new THREE.PlaneGeometry(0.24, 0.24), { pos: [0, 0.58, 0.188], keepUv: true }),
+    bakePartGeo(new THREE.PlaneGeometry(0.24, 0.24), { pos: [0, 0.58, -0.188], rot: [0, Math.PI, 0], keepUv: true })
+  ]);
+  const bibAtlasData = new Float32Array(MAX_STUDENTS * 4);
+  const bibAtlasAttr = new THREE.InstancedBufferAttribute(bibAtlasData, 4);
+  bibGeo.setAttribute('aAtlasRect', bibAtlasAttr);
+  ownedGeos.push(bibGeo);
+  const bibMat = applyInstancedAtlasMaterial(
+    new THREE.MeshStandardMaterial({ map: bibTex || undefined, color: 0xffffff, roughness: 0.55 }),
+    false
+  );
+  ownedMats.push(bibMat);
+  const bibInst = registerInst(new THREE.InstancedMesh(bibGeo, bibMat, MAX_STUDENTS), MAX_STUDENTS);
+
+  // 4. Red & White Legs (shorts + sock + sock stripe + sneaker upper + sole) — 2 legs * 40
+  const buildLegGeo = (teamColor: number) => {
+    const g = mergeBakedGeos([
+      bakePartGeo(new THREE.CylinderGeometry(0.095, 0.086, 0.16, 12), { color: 0x1e293b, pos: [0, -0.06, 0] }),
+      bakePartGeo(new THREE.CylinderGeometry(0.066, 0.058, 0.14, 10), { color: 0xffffff, pos: [0, -0.24, 0] }),
+      bakePartGeo(new THREE.TorusGeometry(0.064, 0.01, 6, 14), { color: teamColor, pos: [0, -0.19, 0], rot: [Math.PI / 2, 0, 0] }),
+      bakePartGeo(new THREE.SphereGeometry(0.075, 10, 8), { color: teamColor, pos: [0, -0.32, 0.03], scale: [0.95, 0.65, 1.45] }),
+      bakePartGeo(new THREE.CylinderGeometry(0.072, 0.075, 0.032, 10), { color: 0xf8fafc, pos: [0, -0.35, 0.03], scale: [0.95, 1, 1.45] })
+    ]);
+    ownedGeos.push(g);
+    return g;
+  };
+  const legRedInst = registerInst(new THREE.InstancedMesh(buildLegGeo(0xe11d48), vertexRimMat, MAX_TEAM * 2), MAX_TEAM * 2);
+  legRedInst.castShadow = enableShadows;
+  const legWhiteInst = registerInst(new THREE.InstancedMesh(buildLegGeo(0x2563eb), vertexRimMat, MAX_TEAM * 2), MAX_TEAM * 2);
+  legWhiteInst.castShadow = enableShadows;
+
+  // 5. Shared Skin Spheres (80 knees + 80 ears = 160 max)
+  const skinMat = injectWiiSatinRimShader(new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.42 }));
+  ownedMats.push(skinMat);
+  const skinSphereGeo = new THREE.SphereGeometry(1, 8, 8);
+  ownedGeos.push(skinSphereGeo);
+  const skinSphereInst = registerInst(new THREE.InstancedMesh(skinSphereGeo, skinMat, MAX_STUDENTS * 4), MAX_STUDENTS * 4, true);
+
+  // 6. Arm Sleeves (Red / White) + Forearm+Hand Skin
+  const buildSleeveGeo = (teamColor: number) => {
+    const g = mergeBakedGeos([
+      bakePartGeo(new THREE.CylinderGeometry(0.074, 0.068, 0.15, 10), { color: 0xffffff, pos: [0, -0.05, 0] }),
+      bakePartGeo(new THREE.TorusGeometry(0.068, 0.012, 6, 14), { color: teamColor, pos: [0, -0.12, 0], rot: [Math.PI / 2, 0, 0] })
+    ]);
+    ownedGeos.push(g);
+    return g;
+  };
+  const sleeveRedInst = registerInst(new THREE.InstancedMesh(buildSleeveGeo(0xe11d48), vertexRimMat, MAX_TEAM * 2), MAX_TEAM * 2);
+  const sleeveWhiteInst = registerInst(new THREE.InstancedMesh(buildSleeveGeo(0x2563eb), vertexRimMat, MAX_TEAM * 2), MAX_TEAM * 2);
+
+  const armSkinGeo = mergeBakedGeos([
+    bakePartGeo(new THREE.CylinderGeometry(0.052, 0.048, 0.21, 10), { pos: [0, -0.19, 0] }),
+    bakePartGeo(new THREE.SphereGeometry(0.064, 10, 10), { pos: [0, -0.31, 0] })
+  ]);
+  ownedGeos.push(armSkinGeo);
+  const armSkinInst = registerInst(new THREE.InstancedMesh(armSkinGeo, skinMat, MAX_STUDENTS * 2), MAX_STUDENTS * 2, true);
+
+  // 7. Held Bean Bags (Red + White sharing bagAtlasTex)
+  const heldBagGeo = new THREE.SphereGeometry(0.115, 10, 8);
+  const heldBagAtlasData = new Float32Array(MAX_STUDENTS * 4);
+  const heldBagAtlasAttr = new THREE.InstancedBufferAttribute(heldBagAtlasData, 4);
+  heldBagGeo.setAttribute('aAtlasRect', heldBagAtlasAttr);
+  ownedGeos.push(heldBagGeo);
+  const bagAtlasMat = applyInstancedAtlasMaterial(
+    new THREE.MeshStandardMaterial({ map: bagAtlasTex || undefined, color: 0xffffff, roughness: 0.6 }),
+    true
+  );
+  ownedMats.push(bagAtlasMat);
+  const heldBagInst = registerInst(new THREE.InstancedMesh(heldBagGeo, bagAtlasMat, MAX_STUDENTS), MAX_STUDENTS);
+
+  // 8. Mii Heads (Face Atlas)
+  const faceAtlasTex = getFaceAtlasTexture();
+  const headGeo = new THREE.SphereGeometry(0.245, 22, 18);
+  headGeo.rotateY(-Math.PI / 2);
+  headGeo.scale(1.04, 0.98, 1.0);
+  const headAtlasData = new Float32Array(MAX_STUDENTS * 4);
+  const headAtlasAttr = new THREE.InstancedBufferAttribute(headAtlasData, 4);
+  headGeo.setAttribute('aAtlasRect', headAtlasAttr);
+  ownedGeos.push(headGeo);
+  const headMat = applyInstancedAtlasMaterial(
+    new THREE.MeshStandardMaterial({ map: faceAtlasTex || undefined, color: 0xffffff, roughness: 0.4 }),
+    true
+  );
+  ownedMats.push(headMat);
+  const headInst = registerInst(new THREE.InstancedMesh(headGeo, headMat, MAX_STUDENTS), MAX_STUDENTS);
+  headInst.castShadow = enableShadows;
+
+  // 9. Hair Base (Back cap + 5 fringe bangs)
+  const hairBaseParts: THREE.BufferGeometry[] = [
+    bakePartGeo(new THREE.SphereGeometry(0.256, 16, 12, 0, Math.PI * 2, 0, Math.PI * 0.56), { rot: [-0.28, 0, 0] })
+  ];
+  for (let b = -2; b <= 2; b++) {
+    hairBaseParts.push(
+      bakePartGeo(new THREE.ConeGeometry(0.048, 0.13, 6), {
+        pos: [b * 0.058, 0.13, 0.215 - Math.abs(b) * 0.018],
+        rot: [Math.PI - 0.35, 0, b * -0.12]
+      })
+    );
+  }
+  const hairBaseGeo = mergeBakedGeos(hairBaseParts);
+  ownedGeos.push(hairBaseGeo);
+  const hairMat = injectWiiSatinRimShader(new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.58 }));
+  ownedMats.push(hairMat);
+  const hairBaseInst = registerInst(new THREE.InstancedMesh(hairBaseGeo, hairMat, MAX_STUDENTS), MAX_STUDENTS, true);
+
+  // 10. Unified Hair Tufts (pigtails, ponytails, shonen spikes, bob locks — max 3 per student = 120)
+  const hairTuftGeo = new THREE.ConeGeometry(1, 1, 8);
+  ownedGeos.push(hairTuftGeo);
+  const hairTuftInst = registerInst(new THREE.InstancedMesh(hairTuftGeo, hairMat, MAX_STUDENTS * 3), MAX_STUDENTS * 3, true);
+
+  // 11. Hair Ties (max 2 per student = 80)
+  const hairTieGeo = new THREE.SphereGeometry(1, 8, 8);
+  ownedGeos.push(hairTieGeo);
+  const hairTieMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.35 });
+  ownedMats.push(hairTieMat);
+  const hairTieInst = registerInst(new THREE.InstancedMesh(hairTieGeo, hairTieMat, MAX_STUDENTS * 2), MAX_STUDENTS * 2, true);
+
+  // 12. Headgear: Kohaku-bo Cap & Hachimaki Headband
+  const capGeo = mergeBakedGeos([
+    bakePartGeo(new THREE.SphereGeometry(0.258, 18, 12, 0, Math.PI * 2, 0, Math.PI * 0.48), { pos: [0, 0.02, 0], rot: [-0.12, 0, 0] }),
+    bakePartGeo(new THREE.CylinderGeometry(0.24, 0.24, 0.024, 16, 1, false, -0.9, 1.8), { pos: [0, 0.11, 0.12], rot: [0.22, 0, 0] })
+  ]);
+  ownedGeos.push(capGeo);
+  const capMat = injectWiiSatinRimShader(new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.42 }));
+  ownedMats.push(capMat);
+  const capInst = registerInst(new THREE.InstancedMesh(capGeo, capMat, MAX_STUDENTS), MAX_STUDENTS, true);
+
+  const hachimakiGeo = mergeBakedGeos([
+    bakePartGeo(new THREE.TorusGeometry(0.246, 0.035, 10, 24), { pos: [0, 0.08, 0], rot: [Math.PI / 2 - 0.12, 0, 0] }),
+    bakePartGeo(new THREE.SphereGeometry(0.052, 8, 8), { pos: [0, 0.1, -0.25] }),
+    bakePartGeo(new THREE.BoxGeometry(0.044, 0.18, 0.016), { pos: [-0.045, 0.02, -0.27], rot: [0, 0, 0.28] }),
+    bakePartGeo(new THREE.BoxGeometry(0.044, 0.18, 0.016), { pos: [0.045, 0.02, -0.27], rot: [0, 0, -0.28] })
+  ]);
+  ownedGeos.push(hachimakiGeo);
+  const hachimakiInst = registerInst(new THREE.InstancedMesh(hachimakiGeo, capMat, MAX_STUDENTS), MAX_STUDENTS, true);
+
+  const redBagRect = getBeanBagAtlasRect('red');
+  const whiteBagRect = getBeanBagAtlasRect('white');
+  const writeRect = (arr: Float32Array, idx: number, r: [number, number, number, number]) => {
+    const o = idx * 4;
+    arr[o] = r[0];
+    arr[o + 1] = r[1];
+    arr[o + 2] = r[2];
+    arr[o + 3] = r[3];
+  };
+
+  let appearanceDirty = true;
+  const markDirty = () => {
+    appearanceDirty = true;
+  };
+
+  const sync = (
+    rigs: ThrowerAvatarRig[],
+    firstPersonHero: ThrowerAvatarRig | undefined
+  ) => {
+    const count = Math.min(MAX_STUDENTS, rigs.length);
+    let redBodyC = 0;
+    let whiteBodyC = 0;
+    let redLegC = 0;
+    let whiteLegC = 0;
+    let skinSphereC = 0;
+    let armSkinC = 0;
+    let redSleeveC = 0;
+    let whiteSleeveC = 0;
+    let heldBagC = 0;
+    let headC = 0;
+    let hairBaseC = 0;
+    let hairTuftC = 0;
+    let hairTieC = 0;
+    let capC = 0;
+    let hachiC = 0;
+
+    for (let i = 0; i < count; i++) {
+      const rig = rigs[i];
+      rig.root.updateMatrixWorld(true);
+      const isFpsHero = firstPersonHero === rig;
+
+      shadowInst.setMatrixAt(i, rig.shadowAnchor.matrixWorld);
+
+      if (rig.team === 'red') {
+        torsoRedInst.setMatrixAt(redBodyC++, rig.bodyPivot.matrixWorld);
+        legRedInst.setMatrixAt(redLegC++, rig.legL.matrixWorld);
+        legRedInst.setMatrixAt(redLegC++, rig.legR.matrixWorld);
+        sleeveRedInst.setMatrixAt(redSleeveC++, rig.armL.matrixWorld);
+        sleeveRedInst.setMatrixAt(redSleeveC++, rig.armR.matrixWorld);
+      } else {
+        torsoWhiteInst.setMatrixAt(whiteBodyC++, rig.bodyPivot.matrixWorld);
+        legWhiteInst.setMatrixAt(whiteLegC++, rig.legL.matrixWorld);
+        legWhiteInst.setMatrixAt(whiteLegC++, rig.legR.matrixWorld);
+        sleeveWhiteInst.setMatrixAt(whiteSleeveC++, rig.armL.matrixWorld);
+        sleeveWhiteInst.setMatrixAt(whiteSleeveC++, rig.armR.matrixWorld);
+      }
+
+      bibInst.setMatrixAt(i, rig.bodyPivot.matrixWorld);
+      if (appearanceDirty) {
+        writeRect(bibAtlasData, i, getZekkenAtlasRect(rig.team, rig.bibIndex));
+      }
+
+      skinSphereInst.setMatrixAt(skinSphereC, rig.kneeLAnchor.matrixWorld);
+      skinSphereInst.setColorAt(skinSphereC, rig.skinColor);
+      skinSphereC++;
+      skinSphereInst.setMatrixAt(skinSphereC, rig.kneeRAnchor.matrixWorld);
+      skinSphereInst.setColorAt(skinSphereC, rig.skinColor);
+      skinSphereC++;
+
+      armSkinInst.setMatrixAt(armSkinC, rig.armL.matrixWorld);
+      if (appearanceDirty) armSkinInst.setColorAt(armSkinC, rig.skinColor);
+      armSkinC++;
+      armSkinInst.setMatrixAt(armSkinC, rig.armR.matrixWorld);
+      if (appearanceDirty) armSkinInst.setColorAt(armSkinC, rig.skinColor);
+      armSkinC++;
+
+      if (rig.heldBagVisible) {
+        heldBagInst.setMatrixAt(heldBagC, rig.heldBagAnchor.matrixWorld);
+        writeRect(heldBagAtlasData, heldBagC, rig.team === 'red' ? redBagRect : whiteBagRect);
+        heldBagC++;
+      }
+
+      if (!isFpsHero) {
+        headInst.setMatrixAt(headC, rig.headGroup.matrixWorld);
+        writeRect(headAtlasData, headC, getFaceAtlasRect(rig.skinIndex, rig.exprIndex));
+        headC++;
+
+        skinSphereInst.setMatrixAt(skinSphereC, rig.earLAnchor.matrixWorld);
+        skinSphereInst.setColorAt(skinSphereC, rig.skinColor);
+        skinSphereC++;
+        skinSphereInst.setMatrixAt(skinSphereC, rig.earRAnchor.matrixWorld);
+        skinSphereInst.setColorAt(skinSphereC, rig.skinColor);
+        skinSphereC++;
+
+        hairBaseInst.setMatrixAt(hairBaseC, rig.headGroup.matrixWorld);
+        hairBaseInst.setColorAt(hairBaseC, rig.hairColor);
+        hairBaseC++;
+
+        for (let t = 0; t < rig.hairTuftAnchors.length; t++) {
+          hairTuftInst.setMatrixAt(hairTuftC, rig.hairTuftAnchors[t].matrixWorld);
+          hairTuftInst.setColorAt(hairTuftC, rig.hairColor);
+          hairTuftC++;
+        }
+        for (let t = 0; t < rig.hairTieAnchors.length; t++) {
+          hairTieInst.setMatrixAt(hairTieC, rig.hairTieAnchors[t].matrixWorld);
+          hairTieInst.setColorAt(hairTieC, rig.hairTieColor);
+          hairTieC++;
+        }
+
+        if (rig.usesCap) {
+          capInst.setMatrixAt(capC, rig.headGroup.matrixWorld);
+          capInst.setColorAt(capC, rig.capColor);
+          capC++;
+        } else {
+          hachimakiInst.setMatrixAt(hachiC, rig.headGroup.matrixWorld);
+          hachimakiInst.setColorAt(hachiC, rig.capColor);
+          hachiC++;
+        }
+      }
+    }
+
+    shadowInst.count = count;
+    shadowInst.instanceMatrix.needsUpdate = true;
+
+    torsoRedInst.count = redBodyC;
+    torsoRedInst.instanceMatrix.needsUpdate = true;
+    torsoWhiteInst.count = whiteBodyC;
+    torsoWhiteInst.instanceMatrix.needsUpdate = true;
+
+    bibInst.count = count;
+    bibInst.instanceMatrix.needsUpdate = true;
+    if (appearanceDirty) bibAtlasAttr.needsUpdate = true;
+
+    legRedInst.count = redLegC;
+    legRedInst.instanceMatrix.needsUpdate = true;
+    legWhiteInst.count = whiteLegC;
+    legWhiteInst.instanceMatrix.needsUpdate = true;
+
+    skinSphereInst.count = skinSphereC;
+    skinSphereInst.instanceMatrix.needsUpdate = true;
+    if (skinSphereInst.instanceColor) skinSphereInst.instanceColor.needsUpdate = true;
+
+    sleeveRedInst.count = redSleeveC;
+    sleeveRedInst.instanceMatrix.needsUpdate = true;
+    sleeveWhiteInst.count = whiteSleeveC;
+    sleeveWhiteInst.instanceMatrix.needsUpdate = true;
+
+    armSkinInst.count = armSkinC;
+    armSkinInst.instanceMatrix.needsUpdate = true;
+    if (appearanceDirty && armSkinInst.instanceColor) armSkinInst.instanceColor.needsUpdate = true;
+
+    heldBagInst.count = heldBagC;
+    heldBagInst.visible = heldBagC > 0;
+    heldBagInst.instanceMatrix.needsUpdate = true;
+    heldBagAtlasAttr.needsUpdate = true;
+
+    headInst.count = headC;
+    headInst.instanceMatrix.needsUpdate = true;
+    headAtlasAttr.needsUpdate = true;
+
+    hairBaseInst.count = hairBaseC;
+    hairBaseInst.instanceMatrix.needsUpdate = true;
+    if (hairBaseInst.instanceColor) hairBaseInst.instanceColor.needsUpdate = true;
+
+    hairTuftInst.count = hairTuftC;
+    hairTuftInst.visible = hairTuftC > 0;
+    hairTuftInst.instanceMatrix.needsUpdate = true;
+    if (hairTuftInst.instanceColor) hairTuftInst.instanceColor.needsUpdate = true;
+
+    hairTieInst.count = hairTieC;
+    hairTieInst.visible = hairTieC > 0;
+    hairTieInst.instanceMatrix.needsUpdate = true;
+    if (hairTieInst.instanceColor) hairTieInst.instanceColor.needsUpdate = true;
+
+    capInst.count = capC;
+    capInst.visible = capC > 0;
+    capInst.instanceMatrix.needsUpdate = true;
+    if (capInst.instanceColor) capInst.instanceColor.needsUpdate = true;
+
+    hachimakiInst.count = hachiC;
+    hachimakiInst.visible = hachiC > 0;
+    hachimakiInst.instanceMatrix.needsUpdate = true;
+    if (hachimakiInst.instanceColor) hachimakiInst.instanceColor.needsUpdate = true;
+
+    appearanceDirty = false;
+  };
+
+  const dispose = () => {
+    ownedInsts.forEach((inst) => {
+      scene.remove(inst);
+      inst.dispose();
+    });
+    ownedGeos.forEach((g) => g.dispose());
+    ownedMats.forEach((m) => m.dispose());
+  };
+
+  return { sync, markDirty, dispose, bagAtlasMat };
+}
+
 interface FlyingBeanBag {
-  mesh: THREE.Mesh;
-  trailMesh: THREE.Mesh;
   active: boolean;
   team: 'red' | 'white';
   isGolden: boolean;
   isNearMiss: boolean; // True if this bag clanks off the rim & bounces onto the sand!
   hasBounced: boolean;
+  pos: THREE.Vector3;
+  rot: THREE.Euler;
+  scaleMult: number;
+  trailPos: THREE.Vector3;
+  trailTarget: THREE.Vector3;
+  trailColor: THREE.Color;
+  showTrail: boolean;
   startPos: THREE.Vector3;
   midPos: THREE.Vector3;
   targetPos: THREE.Vector3;
@@ -1260,7 +1770,10 @@ interface FlyingBeanBag {
 }
 
 interface BurstParticle {
-  mesh: THREE.Mesh;
+  pos: THREE.Vector3;
+  scale: number;
+  rotY: number;
+  color: THREE.Color;
   vel: THREE.Vector3;
   life: number;
   maxLife: number;
@@ -1268,39 +1781,21 @@ interface BurstParticle {
 }
 
 /**
- * Builds an 8+ part tall Japanese Tamaire Basket Pole (玉入れカゴ) with a spring-hinged pole,
- * woven diamond net, red-white spiral pole wrap, weighted steel legs, and 45 inner stackable bags.
+ * Builds a tall Japanese Tamaire Basket Pole (玉入れカゴ) with a spring-hinged pole,
+ * woven diamond net, red-white spiral pole wrap (merged into 1 hardware mesh),
+ * 4 fullness gauge rings (1 InstancedMesh), and 64 inner stackable bags (1 InstancedMesh).
  */
 function buildTamaireBasketPole(
   team: 'red' | 'white',
   xPos: number,
-  redBagMat: THREE.Material,
-  whiteBagMat: THREE.Material
+  bagMat: THREE.Material,
+  bagAtlasMat: THREE.Material,
+  enableShadows: boolean
 ): BasketAssembly {
   const root = new THREE.Group();
   root.position.set(xPos, 0, 0);
 
-  // 1. Heavy Weighted Base Plate & 4 Stabilizer Feet (does not sway)
-  const basePlate = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.68, 0.78, 0.12, 24),
-    injectWiiSatinRimShader(new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.42, metalness: 0.65 }))
-  );
-  basePlate.position.y = 0.06;
-  basePlate.castShadow = true;
-  basePlate.receiveShadow = true;
-  root.add(basePlate);
-
-  const strutMat = new THREE.MeshStandardMaterial({ color: 0x475569, roughness: 0.4, metalness: 0.7 });
-  for (let i = 0; i < 4; i++) {
-    const angle = (i * Math.PI) / 2 + Math.PI / 4;
-    const leg = new THREE.Mesh(new THREE.BoxGeometry(0.95, 0.08, 0.1), strutMat);
-    leg.position.set(Math.cos(angle) * 0.42, 0.08, Math.sin(angle) * 0.42);
-    leg.rotation.y = -angle;
-    leg.castShadow = true;
-    root.add(leg);
-  }
-
-  // 2. Sway Pivot Group (hinged at y=0.12 so the entire 4.3m pole bends with spring physics!)
+  // Sway Pivot Group (hinged at y=0.12 so the entire 4.3m pole bends with spring physics!)
   const swayPivot = new THREE.Group();
   swayPivot.position.y = 0.12;
   root.add(swayPivot);
@@ -1308,71 +1803,75 @@ function buildTamaireBasketPole(
   const poleHeight = 4.25;
   const stripeCount = 9;
   const segH = poleHeight / stripeCount;
-  const redPoleMat = injectWiiSatinRimShader(new THREE.MeshStandardMaterial({ color: 0xe11d48, roughness: 0.35 }));
-  const whitePoleMat = injectWiiSatinRimShader(new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.35 }));
-  const brassMat = new THREE.MeshStandardMaterial({ color: 0xf59e0b, roughness: 0.25, metalness: 0.82 });
-
-  for (let i = 0; i < stripeCount; i++) {
-    const seg = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.068, 0.078, segH, 16),
-      i % 2 === 0 ? whitePoleMat : redPoleMat
-    );
-    seg.position.y = segH * i + segH * 0.5;
-    seg.castShadow = true;
-    swayPivot.add(seg);
-  }
-
-  // Brass collar joints
-  [1.4, 2.8, poleHeight - 0.1].forEach((cy) => {
-    const collar = new THREE.Mesh(new THREE.TorusGeometry(0.082, 0.02, 10, 20), brassMat);
-    collar.rotation.x = Math.PI / 2;
-    collar.position.y = cy;
-    swayPivot.add(collar);
-  });
-
-  // 3. Top Metal Rim Hoop (玉入れリング)
   const rimY = poleHeight + 0.12;
-  const hoopMat = injectWiiSatinRimShader(
-    new THREE.MeshStandardMaterial({
-      color: team === 'red' ? 0xf43f5e : 0xf8fafc,
-      roughness: 0.25,
-      metalness: 0.45
-    })
-  );
-  const hoopMesh = new THREE.Mesh(new THREE.TorusGeometry(0.74, 0.052, 16, 36), hoopMat);
-  hoopMesh.rotation.x = Math.PI / 2;
-  hoopMesh.position.y = rimY;
-  hoopMesh.castShadow = true;
-  swayPivot.add(hoopMesh);
-
-  // 4. Support Spokes under the Basket Rim
-  for (let i = 0; i < 4; i++) {
-    const angle = (i * Math.PI) / 2;
-    const spoke = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.018, 0.85, 8), brassMat);
-    spoke.position.set(Math.cos(angle) * 0.36, rimY - 0.38, Math.sin(angle) * 0.36);
-    spoke.rotation.z = Math.cos(angle) * -0.78;
-    spoke.rotation.x = Math.sin(angle) * 0.78;
-    swayPivot.add(spoke);
-  }
-
-  // 5. Woven Mesh Net Cone (網カゴ) + Translucent Liner + 4 Fullness Gauge Rings
   const netHeight = 0.98;
   const netTopRadius = 0.72;
   const netBottomRadius = 0.34;
   const netCenterY = rimY - netHeight * 0.5;
 
-  const netGeo = new THREE.CylinderGeometry(netTopRadius, netBottomRadius, netHeight, 22, 8, true);
-  const netMat = new THREE.MeshStandardMaterial({
-    color: team === 'red' ? 0xffedd5 : 0xe2e8f0,
-    roughness: 0.7,
-    wireframe: true,
-    side: THREE.DoubleSide
+  // 1. Merge 9 pole stripes + 3 collars + top rim hoop + 4 spokes + net bottom disc into 1 draw call!
+  const hwParts: THREE.BufferGeometry[] = [];
+  for (let i = 0; i < stripeCount; i++) {
+    hwParts.push(
+      bakePartGeo(new THREE.CylinderGeometry(0.068, 0.078, segH, 16), {
+        color: i % 2 === 0 ? 0xf8fafc : 0xe11d48,
+        pos: [0, segH * i + segH * 0.5, 0]
+      })
+    );
+  }
+  [1.4, 2.8, poleHeight - 0.1].forEach((cy) => {
+    hwParts.push(
+      bakePartGeo(new THREE.TorusGeometry(0.082, 0.02, 10, 20), {
+        color: 0xf59e0b,
+        pos: [0, cy, 0],
+        rot: [Math.PI / 2, 0, 0]
+      })
+    );
   });
-  const netMesh = new THREE.Mesh(netGeo, netMat);
+  hwParts.push(
+    bakePartGeo(new THREE.TorusGeometry(0.74, 0.052, 16, 36), {
+      color: team === 'red' ? 0xf43f5e : 0xf8fafc,
+      pos: [0, rimY, 0],
+      rot: [Math.PI / 2, 0, 0]
+    })
+  );
+  for (let i = 0; i < 4; i++) {
+    const angle = (i * Math.PI) / 2;
+    hwParts.push(
+      bakePartGeo(new THREE.CylinderGeometry(0.018, 0.018, 0.85, 8), {
+        color: 0xf59e0b,
+        pos: [Math.cos(angle) * 0.36, rimY - 0.38, Math.sin(angle) * 0.36],
+        rot: [Math.sin(angle) * 0.78, 0, Math.cos(angle) * -0.78]
+      })
+    );
+  }
+  hwParts.push(
+    bakePartGeo(new THREE.CylinderGeometry(netBottomRadius, 0.26, 0.08, 16), {
+      color: team === 'red' ? 0xe11d48 : 0x475569,
+      pos: [0, rimY - netHeight, 0]
+    })
+  );
+
+  const hwMesh = new THREE.Mesh(
+    mergeBakedGeos(hwParts),
+    injectWiiSatinRimShader(new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.35, metalness: 0.22 }))
+  );
+  hwMesh.castShadow = enableShadows;
+  swayPivot.add(hwMesh);
+
+  // 2. Woven Mesh Net Cone & Translucent Liner
+  const netMesh = new THREE.Mesh(
+    new THREE.CylinderGeometry(netTopRadius, netBottomRadius, netHeight, 22, 8, true),
+    new THREE.MeshStandardMaterial({
+      color: team === 'red' ? 0xffedd5 : 0xe2e8f0,
+      roughness: 0.7,
+      wireframe: true,
+      side: THREE.DoubleSide
+    })
+  );
   netMesh.position.y = netCenterY;
   swayPivot.add(netMesh);
 
-  // Subtle translucent inner liner so stacked bags read clearly from across the classroom
   const linerMesh = new THREE.Mesh(
     new THREE.CylinderGeometry(netTopRadius - 0.02, netBottomRadius - 0.01, netHeight - 0.02, 22, 1, true),
     new THREE.MeshBasicMaterial({
@@ -1386,28 +1885,28 @@ function buildTamaireBasketPole(
   linerMesh.position.y = netCenterY;
   swayPivot.add(linerMesh);
 
-  // 4 Horizontal Fullness Gauge Rings woven around the net (25%, 50%, 75%, 90%)
-  // Lights up progressively as the basket fills so students see exact progress even in Mystery Mode!
-  const levelRings: THREE.Mesh[] = [];
-  const ringThresholds = [0.22, 0.46, 0.7, 0.88];
-  ringThresholds.forEach((t) => {
-    const rAtHeight = netBottomRadius + (netTopRadius - netBottomRadius) * t;
+  // 3. 4 Horizontal Fullness Gauge Rings merged into 1 InstancedMesh
+  const ringGeo = new THREE.TorusGeometry(1.0, 0.022, 8, 28);
+  const ringMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.8 });
+  const levelRingsInst = new THREE.InstancedMesh(ringGeo, ringMat, 4);
+  levelRingsInst.frustumCulled = false;
+  const dummyRing = new THREE.Object3D();
+  const baseRingColor = new THREE.Color(team === 'red' ? 0xfda4af : 0x93c5fd).multiplyScalar(0.35);
+  [0.22, 0.46, 0.7, 0.88].forEach((t, r) => {
+    const rAtHeight = netBottomRadius + (netTopRadius - netBottomRadius) * t + 0.012;
     const yAtHeight = rimY - netHeight + t * netHeight;
-    const lRing = new THREE.Mesh(
-      new THREE.TorusGeometry(rAtHeight + 0.012, 0.014, 8, 28),
-      new THREE.MeshBasicMaterial({
-        color: team === 'red' ? 0xfda4af : 0x93c5fd,
-        transparent: true,
-        opacity: 0.22
-      })
-    );
-    lRing.rotation.x = Math.PI / 2;
-    lRing.position.y = yAtHeight;
-    swayPivot.add(lRing);
-    levelRings.push(lRing);
+    dummyRing.position.set(0, yAtHeight, 0);
+    dummyRing.rotation.set(Math.PI / 2, 0, 0);
+    dummyRing.scale.set(rAtHeight, rAtHeight, 0.55);
+    dummyRing.updateMatrix();
+    levelRingsInst.setMatrixAt(r, dummyRing.matrix);
+    levelRingsInst.setColorAt(r, baseRingColor);
   });
+  levelRingsInst.instanceMatrix.needsUpdate = true;
+  if (levelRingsInst.instanceColor) levelRingsInst.instanceColor.needsUpdate = true;
+  swayPivot.add(levelRingsInst);
 
-  // Glowing Rim Shockwave Ring (flashes & expands whenever a bean bag lands in the basket!)
+  // 4. Glowing Rim Shockwave Ring
   const rimPulseRing = new THREE.Mesh(
     new THREE.TorusGeometry(0.76, 0.036, 12, 36),
     new THREE.MeshBasicMaterial({
@@ -1419,86 +1918,87 @@ function buildTamaireBasketPole(
   );
   rimPulseRing.rotation.x = Math.PI / 2;
   rimPulseRing.position.y = rimY + 0.03;
+  rimPulseRing.visible = false;
   swayPivot.add(rimPulseRing);
 
-  // Net Bottom Gather Ring & Tassel
-  const bottomDisc = new THREE.Mesh(
-    new THREE.CylinderGeometry(netBottomRadius, 0.26, 0.08, 16),
-    new THREE.MeshStandardMaterial({ color: team === 'red' ? 0xe11d48 : 0x475569, roughness: 0.6 })
-  );
-  bottomDisc.position.y = rimY - netHeight;
-  swayPivot.add(bottomDisc);
-
-  // 6. Adaptive Non-Overflowing Inner Bean Bag Volume (Compacted Mound Core + 64 Surface Bean Bags)
+  // 5. Adaptive Non-Overflowing Inner Bean Bag Volume (Mound Core + 64 Surface Bags in 1 InstancedMesh)
   const innerBagsGroup = new THREE.Group();
-  // Anchored at the bottom of the net cone (rimY - netHeight + 0.04)
   const netFloorY = rimY - netHeight + 0.05;
   innerBagsGroup.position.y = netFloorY;
   swayPivot.add(innerBagsGroup);
 
-  const bagMat = team === 'red' ? redBagMat : whiteBagMat;
-
-  // 6a. Sculpted Inner Mound Core (fills the frustum interior smoothly as fillRatio rises 0 -> 0.92)
   const moundGeo = new THREE.CylinderGeometry(0.58, netBottomRadius * 0.85, 0.78, 18, 4);
-  // Dome the top vertices of the mound so it looks like a natural heap of bean bags
   const mPos = moundGeo.attributes.position;
   for (let i = 0; i < mPos.count; i++) {
     const vy = mPos.getY(i);
-    const vx = mPos.getX(i);
-    const vz = mPos.getZ(i);
     if (vy > 0.3) {
-      const distFromCenter = Math.hypot(vx, vz);
-      const domeOffset = Math.max(0, 0.58 - distFromCenter) * 0.22;
-      mPos.setY(i, vy + domeOffset);
+      const distFromCenter = Math.hypot(mPos.getX(i), mPos.getZ(i));
+      mPos.setY(i, vy + Math.max(0, 0.58 - distFromCenter) * 0.22);
     }
   }
   moundGeo.computeVertexNormals();
-  // Shift geometry so its bottom sits at y = 0 inside innerBagsGroup
   moundGeo.translate(0, 0.39, 0);
-
   const moundMesh = new THREE.Mesh(moundGeo, bagMat);
   moundMesh.visible = false;
   moundMesh.scale.set(0.6, 0.01, 0.6);
   innerBagsGroup.add(moundMesh);
 
-  // 6b. 64 Individual Stitched Bean Bags arranged in 8 frustum-fitted tiers inside the net
-  // Strictly bounded below rimY (max height = 0.84m inside the 0.98m net) so it NEVER overflows!
-  const innerBagMeshes: THREE.Mesh[] = [];
-  const bagGeo = new THREE.SphereGeometry(0.132, 12, 10);
-  bagGeo.scale(1.24, 0.76, 1.06);
-
   const totalSlots = 64;
   const bagsPerLayer = 8;
+  const bagGeo = new THREE.SphereGeometry(0.132, 12, 10);
+  bagGeo.scale(1.24, 0.76, 1.06);
+  const innerRect = getBeanBagAtlasRect(team);
+  const innerAtlasArr = new Float32Array(totalSlots * 4);
   for (let i = 0; i < totalSlots; i++) {
-    const layer = Math.floor(i / bagsPerLayer); // 0..7
-    const idxInLayer = i % bagsPerLayer;
-    const layerNorm = layer / 7; // 0.0 at bottom -> 1.0 at 88% of net height (never crosses rim!)
-    const maxRadiusAtLayer = netBottomRadius * 0.72 + (netTopRadius * 0.78 - netBottomRadius * 0.72) * layerNorm;
+    innerAtlasArr[i * 4] = innerRect[0];
+    innerAtlasArr[i * 4 + 1] = innerRect[1];
+    innerAtlasArr[i * 4 + 2] = innerRect[2];
+    innerAtlasArr[i * 4 + 3] = innerRect[3];
+  }
+  bagGeo.setAttribute('aAtlasRect', new THREE.InstancedBufferAttribute(innerAtlasArr, 4));
+  const innerBagsInst = new THREE.InstancedMesh(bagGeo, bagAtlasMat, totalSlots);
+  innerBagsInst.frustumCulled = false;
+  innerBagsInst.count = 0;
+  innerBagsInst.visible = false;
 
+  const innerBagBaseTransforms: BasketAssembly['innerBagBaseTransforms'] = [];
+  const dummyBag = new THREE.Object3D();
+  for (let i = 0; i < totalSlots; i++) {
+    const layer = Math.floor(i / bagsPerLayer);
+    const idxInLayer = i % bagsPerLayer;
+    const layerNorm = layer / 7;
+    const maxRadiusAtLayer = netBottomRadius * 0.72 + (netTopRadius * 0.78 - netBottomRadius * 0.72) * layerNorm;
     const ringRadius = idxInLayer === 0 ? 0 : maxRadiusAtLayer * (idxInLayer % 2 === 0 ? 0.92 : 0.62);
     const angle = (idxInLayer / (bagsPerLayer - 1)) * Math.PI * 2 + layer * 0.78;
     const yPos = 0.06 + layerNorm * 0.74 + (idxInLayer === 0 ? 0.04 : 0);
 
-    const bMesh = new THREE.Mesh(bagGeo, bagMat);
-    bMesh.position.set(Math.cos(angle) * ringRadius, yPos, Math.sin(angle) * ringRadius);
-    bMesh.rotation.set(Math.sin(i * 1.7) * 0.45, i * 1.1, Math.cos(i * 1.3) * 0.4);
-    bMesh.visible = false;
-    innerBagsGroup.add(bMesh);
-    innerBagMeshes.push(bMesh);
+    const pos: [number, number, number] = [Math.cos(angle) * ringRadius, yPos, Math.sin(angle) * ringRadius];
+    const rot: [number, number, number] = [Math.sin(i * 1.7) * 0.45, i * 1.1, Math.cos(i * 1.3) * 0.4];
+    dummyBag.position.set(...pos);
+    dummyBag.rotation.set(...rot);
+    dummyBag.scale.set(1, 1, 1);
+    dummyBag.updateMatrix();
+    const matrix = dummyBag.matrix.clone();
+    innerBagsInst.setMatrixAt(i, matrix);
+    innerBagBaseTransforms.push({ pos, rot, matrix });
   }
+  innerBagsInst.instanceMatrix.needsUpdate = true;
+  innerBagsGroup.add(innerBagsInst);
 
   return {
     root,
     swayPivot,
     rimCenterWorld: new THREE.Vector3(xPos, rimY + 0.12, 0),
     innerBagsGroup,
-    innerBagMeshes,
+    innerBagsInst,
+    innerBagBaseTransforms,
+    innerBagsNeedReset: false,
     moundMesh,
     rimPulseRing,
-    levelRings,
+    levelRingsInst,
     netMesh,
     linerMesh,
-    hoopMesh,
+    hoopY: rimY,
     springAngleX: 0,
     springAngleZ: 0,
     springVelX: 0,
@@ -1508,260 +2008,262 @@ function buildTamaireBasketPole(
   };
 }
 
-/**
- * Builds the 3-Story Japanese Elementary School Building (校舎) with clock tower,
- * entrance portico (昇降口), rooftop fence, and celebratory Undokai vertical banners.
- */
-function buildJapaneseSchoolBuilding(schoolName: string): THREE.Group {
-  const group = new THREE.Group();
-  group.position.set(0, 0, -22);
-
-  const facadeTex = createSchoolFacadeTexture();
-  const wallMat = new THREE.MeshStandardMaterial({
-    map: facadeTex || undefined,
-    color: 0xffffff,
-    roughness: 0.75
-  });
-  const concreteMat = new THREE.MeshStandardMaterial({ color: 0xe5dec9, roughness: 0.8 });
-  const roofTrimMat = new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.5, metalness: 0.3 });
-
-  // Main 3-story classroom block
-  const mainBlock = new THREE.Mesh(new THREE.BoxGeometry(30, 8.8, 5.5), wallMat);
-  mainBlock.position.y = 4.4;
-  mainBlock.receiveShadow = true;
-  mainBlock.castShadow = true;
-  group.add(mainBlock);
-
-  // Rooftop overhang & safety parapet
-  const roofSlab = new THREE.Mesh(new THREE.BoxGeometry(30.8, 0.45, 6.2), concreteMat);
-  roofSlab.position.y = 9.0;
-  group.add(roofSlab);
-
-  // Rooftop wire safety fence (屋上フェンス)
-  const fenceGeo = new THREE.BoxGeometry(30.2, 1.1, 0.08);
-  const fenceMat = new THREE.MeshBasicMaterial({ color: 0x64748b, wireframe: true });
-  const roofFence = new THREE.Mesh(fenceGeo, fenceMat);
-  roofFence.position.set(0, 9.75, 2.75);
-  group.add(roofFence);
-
-  // Central Clock Tower Penthouse (時計台)
-  const tower = new THREE.Mesh(new THREE.BoxGeometry(4.6, 3.2, 4.2), concreteMat);
-  tower.position.set(0, 10.2, 0.4);
-  group.add(tower);
-
-  const towerRoof = new THREE.Mesh(new THREE.ConeGeometry(3.6, 1.4, 4), roofTrimMat);
-  towerRoof.rotation.y = Math.PI / 4;
-  towerRoof.position.set(0, 12.5, 0.4);
-  group.add(towerRoof);
-
-  // School Clock Face (学校の時計)
-  const clockRim = new THREE.Mesh(
-    new THREE.CylinderGeometry(1.05, 1.05, 0.18, 24),
-    new THREE.MeshStandardMaterial({ color: 0xf59e0b, metalness: 0.7, roughness: 0.25 })
-  );
-  clockRim.rotation.x = Math.PI / 2;
-  clockRim.position.set(0, 10.35, 2.52);
-  group.add(clockRim);
-
-  const clockFace = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.92, 0.92, 0.2, 24),
-    new THREE.MeshBasicMaterial({ color: 0xffffff })
-  );
-  clockFace.rotation.x = Math.PI / 2;
-  clockFace.position.set(0, 10.35, 2.54);
-  group.add(clockFace);
-
-  // Clock hands (10:10 sunny morning Undokai!)
-  const handMat = new THREE.MeshBasicMaterial({ color: 0x0f172a });
-  const hourHand = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.52, 0.05), handMat);
-  hourHand.position.set(-0.16, 10.5, 2.66);
-  hourHand.rotation.z = 0.65;
-  const minHand = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.74, 0.05), handMat);
-  minHand.position.set(0.22, 10.55, 2.66);
-  minHand.rotation.z = -0.65;
-  group.add(hourHand, minHand);
-
-  // Ground Floor Entrance Portico (昇降口)
-  const portico = new THREE.Mesh(new THREE.BoxGeometry(5.6, 2.8, 2.4), concreteMat);
-  portico.position.set(0, 1.4, 3.6);
-  group.add(portico);
-
-  // Vertical Celebratory Banners (懸垂幕: "祝 大運動会" & "全力投球 赤白")
-  const leftBannerTex = createVerticalSchoolBannerTexture('祝大運動会', '#e11d48', '#ffffff');
-  if (leftBannerTex) {
-    const leftBanner = new THREE.Mesh(
-      new THREE.PlaneGeometry(1.35, 6.2),
-      new THREE.MeshBasicMaterial({ map: leftBannerTex })
-    );
-    leftBanner.position.set(-3.2, 5.2, 2.82);
-    group.add(leftBanner);
-  }
-
-  const rightBannerTex = createVerticalSchoolBannerTexture('一致団結！', '#1e3a8a', '#fef08a');
-  if (rightBannerTex) {
-    const rightBanner = new THREE.Mesh(
-      new THREE.PlaneGeometry(1.35, 6.2),
-      new THREE.MeshBasicMaterial({ map: rightBannerTex })
-    );
-    rightBanner.position.set(3.2, 5.2, 2.82);
-    group.add(rightBanner);
-  }
-
-  return group;
+interface SpectatorAnimData {
+  baseX: number;
+  baseY: number;
+  baseZ: number;
+  rotY: number;
+  capColor: number;
+  pomColor: number;
 }
 
 /**
- * Builds a pitched Japanese Undokai White Campaign Tent (運動会テント / 本部テント)
- * with steel legs, Kohaku-maku red/white striped curtains, tables, and cheering student spectators.
+ * Builds all static schoolyard arena scenery merged by material into minimal draw calls
+ * (School building, banners, tents, spectator InstancedMeshes, trees, mountains, clouds, bunting,
+ * pebbles, chalk lines, running track lanes, basket bases).
  */
-function buildUndokaiTent(
-  xPos: number,
-  zPos: number,
-  rotY: number,
-  teamTheme: 'red' | 'white' | 'honbu',
-  kohakuTex: THREE.Texture | null
-): { group: THREE.Group; spectators: THREE.Group[] } {
-  const group = new THREE.Group();
-  group.position.set(xPos, 0, zPos);
-  group.rotation.y = rotY;
+function buildUndokaiArenaEnvironment(
+  scene: THREE.Scene,
+  schoolName: string,
+  kohakuTex: THREE.Texture | null,
+  enableShadows: boolean
+) {
+  const matteParts: THREE.BufferGeometry[] = [];
+  const metalParts: THREE.BufferGeometry[] = [];
+  const paintedParts: THREE.BufferGeometry[] = [];
+  const kohakuParts: THREE.BufferGeometry[] = [];
+  const trackChalkParts: THREE.BufferGeometry[] = [];
+  const zoneDiscParts: THREE.BufferGeometry[] = [];
 
-  const canvasMat = new THREE.MeshStandardMaterial({
-    color: 0xf8fafc,
-    roughness: 0.65,
-    side: THREE.DoubleSide
-  });
-  const legMat = new THREE.MeshStandardMaterial({ color: 0x94a3b8, metalness: 0.6, roughness: 0.35 });
-
-  // Peaked 4-sided canvas roof
-  const roof = new THREE.Mesh(new THREE.ConeGeometry(3.4, 1.35, 4), canvasMat);
-  roof.rotation.y = Math.PI / 4;
-  roof.scale.set(1.35, 1, 0.85);
-  roof.position.y = 3.25;
-  roof.castShadow = true;
-  group.add(roof);
-
-  // Colored roof valance trim
-  const trimColor = teamTheme === 'red' ? 0xe11d48 : teamTheme === 'white' ? 0x3b82f6 : 0xf59e0b;
-  const valance = new THREE.Mesh(
-    new THREE.BoxGeometry(6.4, 0.24, 4.1),
-    new THREE.MeshStandardMaterial({ color: trimColor, roughness: 0.5 })
-  );
-  valance.position.y = 2.52;
-  group.add(valance);
-
-  // 4 Steel Pipe Corner Legs
-  [
-    [-2.9, -1.85],
-    [2.9, -1.85],
-    [-2.9, 1.85],
-    [2.9, 1.85]
-  ].forEach(([lx, lz]) => {
-    const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 2.5, 8), legMat);
-    leg.position.set(lx, 1.25, lz);
-    group.add(leg);
-  });
-
-  // Back Kohaku-maku (紅白幕) curtain
-  if (kohakuTex) {
-    const curtain = new THREE.Mesh(
-      new THREE.PlaneGeometry(5.8, 1.6),
-      new THREE.MeshStandardMaterial({ map: kohakuTex, side: THREE.DoubleSide, roughness: 0.7 })
+  // 1. Pebbles (64) & Back curb
+  for (let i = 0; i < 64; i++) {
+    const px = (((i * 73) % 100) / 100 - 0.5) * 16;
+    const pz = (((i * 41) % 100) / 100 - 0.5) * 9;
+    matteParts.push(
+      bakePartGeo(new THREE.DodecahedronGeometry(0.038, 0), {
+        color: i % 2 === 0 ? 0x785532 : 0xd6b588,
+        pos: [px, 0.015, pz],
+        rot: [0, i * 1.1, 0],
+        scale: [1.2, 0.45, 0.9]
+      })
     );
-    curtain.position.set(0, 1.1, -1.82);
-    group.add(curtain);
+  }
+  matteParts.push(
+    bakePartGeo(new THREE.BoxGeometry(56, 0.16, 0.28), { color: 0xcbd5e1, pos: [0, 0.08, -12.4] })
+  );
+
+  // 2. Running Track Lines & Chalk Circles
+  for (let lane = 0; lane <= 4; lane++) {
+    trackChalkParts.push(
+      bakePartGeo(new THREE.PlaneGeometry(56, 0.07), {
+        pos: [0, 0.018, -6.3 - lane * 1.35],
+        rot: [-Math.PI / 2, 0, 0],
+        keepUv: true
+      })
+    );
+  }
+  trackChalkParts.push(
+    bakePartGeo(new THREE.PlaneGeometry(0.11, 14), { pos: [0, 0.025, 0], rot: [-Math.PI / 2, 0, 0], keepUv: true })
+  );
+  [
+    [-3.1, 0xe11d48],
+    [3.1, 0x3b82f6]
+  ].forEach(([cx, col]) => {
+    trackChalkParts.push(
+      bakePartGeo(new THREE.RingGeometry(2.15, 2.28, 48), { pos: [cx, 0.028, 0], rot: [-Math.PI / 2, 0, 0], keepUv: true }),
+      bakePartGeo(new THREE.RingGeometry(0.95, 1.04, 36), { pos: [cx, 0.028, 0], rot: [-Math.PI / 2, 0, 0], keepUv: true })
+    );
+    zoneDiscParts.push(
+      bakePartGeo(new THREE.CircleGeometry(2.15, 40), {
+        color: col,
+        pos: [cx, 0.022, 0],
+        rot: [-Math.PI / 2, 0, 0]
+      })
+    );
+  });
+
+  // 3. School Building (z = -22)
+  const sz = -22;
+  const facadeTex = createSchoolFacadeTexture();
+  const mainBlock = new THREE.Mesh(
+    new THREE.BoxGeometry(30, 8.8, 5.5),
+    new THREE.MeshStandardMaterial({ map: facadeTex || undefined, color: 0xffffff, roughness: 0.75 })
+  );
+  mainBlock.position.set(0, 4.4, sz);
+  mainBlock.receiveShadow = enableShadows;
+  mainBlock.castShadow = enableShadows;
+  scene.add(mainBlock);
+
+  matteParts.push(
+    bakePartGeo(new THREE.BoxGeometry(30.8, 0.45, 6.2), { color: 0xe5dec9, pos: [0, 9.0, sz] }),
+    bakePartGeo(new THREE.BoxGeometry(4.6, 3.2, 4.2), { color: 0xe5dec9, pos: [0, 10.2, sz + 0.4] }),
+    bakePartGeo(new THREE.ConeGeometry(3.6, 1.4, 4), { color: 0x334155, pos: [0, 12.5, sz + 0.4], rot: [0, Math.PI / 4, 0] }),
+    bakePartGeo(new THREE.BoxGeometry(5.6, 2.8, 2.4), { color: 0xe5dec9, pos: [0, 1.4, sz + 3.6] })
+  );
+  // Rooftop safety railing bars
+  metalParts.push(bakePartGeo(new THREE.BoxGeometry(30.2, 0.08, 0.08), { color: 0x64748b, pos: [0, 10.25, sz + 2.75] }));
+  for (let rx = -14.5; rx <= 14.5; rx += 2.9) {
+    metalParts.push(bakePartGeo(new THREE.BoxGeometry(0.06, 1.0, 0.06), { color: 0x64748b, pos: [rx, 9.75, sz + 2.75] }));
+  }
+  metalParts.push(
+    bakePartGeo(new THREE.CylinderGeometry(1.05, 1.05, 0.18, 24), { color: 0xf59e0b, pos: [0, 10.35, sz + 2.52], rot: [Math.PI / 2, 0, 0] })
+  );
+
+  // Clock face + hands merged with vertexColors
+  const clockGeo = mergeBakedGeos([
+    bakePartGeo(new THREE.CylinderGeometry(0.92, 0.92, 0.2, 24), { color: 0xffffff, pos: [0, 10.35, sz + 2.54], rot: [Math.PI / 2, 0, 0] }),
+    bakePartGeo(new THREE.BoxGeometry(0.1, 0.52, 0.05), { color: 0x0f172a, pos: [-0.16, 10.5, sz + 2.66], rot: [0, 0, 0.65] }),
+    bakePartGeo(new THREE.BoxGeometry(0.08, 0.74, 0.05), { color: 0x0f172a, pos: [0.22, 10.55, sz + 2.66], rot: [0, 0, -0.65] })
+  ]);
+  scene.add(new THREE.Mesh(clockGeo, new THREE.MeshBasicMaterial({ vertexColors: true })));
+
+  // Dual vertical celebration banners merged into 1 draw call
+  const dualVertTex = createDualVerticalBannerTexture();
+  if (dualVertTex) {
+    const remapPlaneHalf = (px: number, uStart: number, uEnd: number) => {
+      const g = new THREE.PlaneGeometry(1.35, 6.2);
+      const uv = g.attributes.uv as THREE.BufferAttribute;
+      for (let i = 0; i < uv.count; i++) {
+        uv.setX(i, uStart + uv.getX(i) * (uEnd - uStart));
+      }
+      return bakePartGeo(g, { pos: [px, 5.2, sz + 2.82], keepUv: true });
+    };
+    scene.add(
+      new THREE.Mesh(
+        mergeBakedGeos([remapPlaneHalf(-3.2, 0.02, 0.48), remapPlaneHalf(3.2, 0.52, 0.98)]),
+        new THREE.MeshBasicMaterial({ map: dualVertTex })
+      )
+    );
   }
 
-  // If Honbu tent, add judge's table with Kohaku-maku & Gold Winners Cup!
-  if (teamTheme === 'honbu') {
-    const table = new THREE.Mesh(
-      new THREE.BoxGeometry(3.4, 0.78, 1.1),
-      new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.5 })
+  // 4. Undokai Stadium Wall Banner & Frame (z = -6.2)
+  const bannerTex = createUndokaiBannerTexture(schoolName);
+  const undokaiBannerMat = new THREE.MeshBasicMaterial({ map: bannerTex || undefined });
+  matteParts.push(
+    bakePartGeo(new THREE.BoxGeometry(5.6, 1.55, 0.18), { color: 0x1e293b, pos: [0, 1.55, -6.2] }),
+    bakePartGeo(new THREE.CylinderGeometry(0.06, 0.06, 2.4, 10), { color: 0x78350f, pos: [-2.4, 1.2, -6.25] }),
+    bakePartGeo(new THREE.CylinderGeometry(0.06, 0.06, 2.4, 10), { color: 0x78350f, pos: [2.4, 1.2, -6.25] })
+  );
+  const undokaiBannerMesh = new THREE.Mesh(new THREE.PlaneGeometry(5.4, 1.35), undokaiBannerMat);
+  undokaiBannerMesh.position.set(0, 1.55, -6.1);
+  scene.add(undokaiBannerMesh);
+
+  // 5. PA Megaphone Speaker Poles
+  [-6.8, 6.8].forEach((px) => {
+    metalParts.push(bakePartGeo(new THREE.CylinderGeometry(0.05, 0.07, 5.2, 10), { color: 0x94a3b8, pos: [px, 2.6, -7.2] }));
+    [-1, 1].forEach((dir) => {
+      matteParts.push(
+        bakePartGeo(new THREE.ConeGeometry(0.24, 0.42, 12, 1, true), {
+          color: 0xf8fafc,
+          pos: [px + dir * 0.22, 5.0, -7.2],
+          rot: [0, 0, dir * (Math.PI / 2 - 0.25)]
+        })
+      );
+    });
+  });
+
+  // 6. Both Weighted Basket Bases & Feet (merged into static metal)
+  [-3.1, 3.1].forEach((bx) => {
+    metalParts.push(bakePartGeo(new THREE.CylinderGeometry(0.68, 0.78, 0.12, 24), { color: 0x334155, pos: [bx, 0.06, 0] }));
+    for (let i = 0; i < 4; i++) {
+      const ang = (i * Math.PI) / 2 + Math.PI / 4;
+      metalParts.push(
+        bakePartGeo(new THREE.BoxGeometry(0.95, 0.08, 0.1), {
+          color: 0x475569,
+          pos: [bx + Math.cos(ang) * 0.42, 0.08, Math.sin(ang) * 0.42],
+          rot: [0, -ang, 0]
+        })
+      );
+    }
+  });
+
+  // 7. Undokai Tents + Spectators Data Collection
+  const spectatorData: SpectatorAnimData[] = [];
+  const addTentToBatches = (xPos: number, zPos: number, rotY: number, theme: 'red' | 'white' | 'honbu') => {
+    const cosY = Math.cos(rotY);
+    const sinY = Math.sin(rotY);
+    const toWorld = (lx: number, ly: number, lz: number): [number, number, number] => [
+      xPos + lx * cosY + lz * sinY,
+      ly,
+      zPos - lx * sinY + lz * cosY
+    ];
+
+    paintedParts.push(
+      bakePartGeo(new THREE.ConeGeometry(3.4, 1.35, 4), {
+        color: 0xf8fafc,
+        pos: toWorld(0, 3.25, 0),
+        rot: [0, rotY + Math.PI / 4, 0],
+        scale: [1.35, 1, 0.85]
+      }),
+      bakePartGeo(new THREE.BoxGeometry(6.4, 0.24, 4.1), {
+        color: theme === 'red' ? 0xe11d48 : theme === 'white' ? 0x3b82f6 : 0xf59e0b,
+        pos: toWorld(0, 2.52, 0),
+        rot: [0, rotY, 0]
+      })
     );
-    table.position.set(0, 0.39, 0.4);
-    group.add(table);
+
+    [
+      [-2.9, -1.85],
+      [2.9, -1.85],
+      [-2.9, 1.85],
+      [2.9, 1.85]
+    ].forEach(([lx, lz]) => {
+      metalParts.push(
+        bakePartGeo(new THREE.CylinderGeometry(0.04, 0.04, 2.5, 8), {
+          color: 0x94a3b8,
+          pos: toWorld(lx, 1.25, lz)
+        })
+      );
+    });
 
     if (kohakuTex) {
-      const frontSkirt = new THREE.Mesh(
-        new THREE.PlaneGeometry(3.42, 0.76),
-        new THREE.MeshStandardMaterial({ map: kohakuTex })
+      kohakuParts.push(
+        bakePartGeo(new THREE.PlaneGeometry(5.8, 1.6), {
+          pos: toWorld(0, 1.1, -1.82),
+          rot: [0, rotY, 0],
+          keepUv: true
+        })
       );
-      frontSkirt.position.set(0, 0.39, 0.96);
-      group.add(frontSkirt);
     }
 
-    // Gold Trophy Cup (優勝カップ)
-    const goldMat = new THREE.MeshStandardMaterial({ color: 0xfbbf24, metalness: 0.85, roughness: 0.2 });
-    const cup = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.1, 0.48, 12), goldMat);
-    cup.position.set(0, 1.02, 0.4);
-    group.add(cup);
-  }
+    if (theme === 'honbu') {
+      paintedParts.push(bakePartGeo(new THREE.BoxGeometry(3.4, 0.78, 1.1), { color: 0xffffff, pos: toWorld(0, 0.39, 0.4), rot: [0, rotY, 0] }));
+      if (kohakuTex) {
+        kohakuParts.push(bakePartGeo(new THREE.PlaneGeometry(3.42, 0.76), { pos: toWorld(0, 0.39, 0.96), rot: [0, rotY, 0], keepUv: true }));
+      }
+      metalParts.push(bakePartGeo(new THREE.CylinderGeometry(0.22, 0.1, 0.48, 12), { color: 0xfbbf24, pos: toWorld(0, 1.02, 0.4) }));
+    }
 
-  // Cheering Spectator Children waving Red/White Pom-Poms under the tent!
-  const spectators: THREE.Group[] = [];
-  const count = teamTheme === 'honbu' ? 3 : 6;
-  for (let i = 0; i < count; i++) {
-    const spec = new THREE.Group();
-    const sx = -2.1 + (i / Math.max(1, count - 1)) * 4.2;
-    const sz = teamTheme === 'honbu' ? -0.45 : 0.2 + (i % 2) * 0.55;
-    spec.position.set(sx, 0, sz);
+    const count = theme === 'honbu' ? 3 : 6;
+    for (let i = 0; i < count; i++) {
+      const sx = -2.1 + (i / Math.max(1, count - 1)) * 4.2;
+      const szLocal = theme === 'honbu' ? -0.45 : 0.2 + (i % 2) * 0.55;
+      const [wx, , wz] = toWorld(sx, 0, szLocal);
+      spectatorData.push({
+        baseX: wx,
+        baseY: 0,
+        baseZ: wz,
+        rotY,
+        capColor: theme === 'red' ? 0xe11d48 : theme === 'white' ? 0xf8fafc : i % 2 === 0 ? 0xe11d48 : 0x3b82f6,
+        pomColor: theme === 'red' ? 0xf43f5e : theme === 'white' ? 0xfef08a : 0xf59e0b
+      });
+    }
+  };
+  addTentToBatches(-8.8, -4.2, 0.32, 'red');
+  addTentToBatches(8.8, -4.2, -0.32, 'white');
+  addTentToBatches(0, -10.2, 0, 'honbu');
 
-    const torso = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.16, 0.18, 0.52, 8),
-      new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.6 })
-    );
-    torso.position.y = 0.42;
-    spec.add(torso);
-
-    const head = new THREE.Mesh(
-      new THREE.SphereGeometry(0.17, 10, 10),
-      new THREE.MeshStandardMaterial({ color: 0xffdfc4, roughness: 0.5 })
-    );
-    head.position.y = 0.82;
-    spec.add(head);
-
-    const capColor =
-      teamTheme === 'red' ? 0xe11d48 : teamTheme === 'white' ? 0xf8fafc : i % 2 === 0 ? 0xe11d48 : 0x3b82f6;
-    const cap = new THREE.Mesh(
-      new THREE.SphereGeometry(0.18, 10, 8, 0, Math.PI * 2, 0, Math.PI * 0.55),
-      new THREE.MeshStandardMaterial({ color: capColor, roughness: 0.5 })
-    );
-    cap.position.y = 0.84;
-    spec.add(cap);
-
-    // Pom-poms held high!
-    const pomMat = new THREE.MeshStandardMaterial({
-      color: teamTheme === 'red' ? 0xf43f5e : teamTheme === 'white' ? 0xfef08a : 0xf59e0b,
-      roughness: 0.4
-    });
-    const pomL = new THREE.Mesh(new THREE.DodecahedronGeometry(0.11, 0), pomMat);
-    pomL.position.set(-0.24, 0.95, 0.1);
-    const pomR = pomL.clone();
-    pomR.position.x = 0.24;
-    spec.add(pomL, pomR);
-
-    group.add(spec);
-    spectators.push(spec);
-  }
-
-  return { group, spectators };
-}
-
-/**
- * Builds stylized Japanese Cherry Blossom (桜) & Zelkova (ケヤキ) perimeter trees.
- */
-function buildSchoolyardTree(x: number, z: number, scale: number, isSakura: boolean): THREE.Group {
-  const tree = new THREE.Group();
-  tree.position.set(x, 0, z);
-  tree.scale.setScalar(scale);
-
-  const trunkMat = new THREE.MeshStandardMaterial({ color: 0x5c4033, roughness: 0.88 });
-  const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.36, 2.2, 10), trunkMat);
-  trunk.position.y = 1.1;
-  trunk.castShadow = true;
-  tree.add(trunk);
-
-  const leafColors = isSakura ? [0xfbcfe8, 0xf9a8d4, 0xfce7f3] : [0x22c55e, 0x16a34a, 0x4ade80];
-
+  // 8. Trees & Mountains
+  const treePlacements: [number, number, number, boolean][] = [
+    [-14.5, -9.5, 1.15, true],
+    [-11.5, -13.5, 1.3, false],
+    [-6.2, -14.8, 1.1, true],
+    [6.2, -14.8, 1.15, true],
+    [11.5, -13.5, 1.25, false],
+    [14.5, -9.5, 1.1, true],
+    [-16.5, -3.5, 1.2, false],
+    [16.5, -3.5, 1.2, false]
+  ];
   const puffs = [
     [0, 2.8, 0, 1.35],
     [-0.85, 2.35, 0.4, 1.05],
@@ -1769,24 +2271,215 @@ function buildSchoolyardTree(x: number, z: number, scale: number, isSakura: bool
     [0.2, 2.5, 0.8, 0.98],
     [-0.3, 2.55, -0.75, 1.0]
   ];
-  puffs.forEach(([px, py, pz, pr], idx) => {
-    const mat = injectWiiSatinRimShader(
-      new THREE.MeshStandardMaterial({
-        color: leafColors[idx % leafColors.length],
-        roughness: 0.72
-      }),
-      0.22,
-      0.15
+  treePlacements.forEach(([tx, tz, ts, isSakura]) => {
+    matteParts.push(
+      bakePartGeo(new THREE.CylinderGeometry(0.22 * ts, 0.36 * ts, 2.2 * ts, 10), {
+        color: 0x5c4033,
+        pos: [tx, 1.1 * ts, tz]
+      })
     );
-    const puff = new THREE.Mesh(new THREE.DodecahedronGeometry(pr, 1), mat);
-    puff.position.set(px, py, pz);
-    puff.castShadow = true;
-    puff.receiveShadow = true;
-    tree.add(puff);
+    const leafColors = isSakura ? [0xfbcfe8, 0xf9a8d4, 0xfce7f3] : [0x22c55e, 0x16a34a, 0x4ade80];
+    puffs.forEach(([px, py, pz, pr], idx) => {
+      matteParts.push(
+        bakePartGeo(new THREE.DodecahedronGeometry(pr * ts, 1), {
+          color: leafColors[idx % leafColors.length],
+          pos: [tx + px * ts, py * ts, tz + pz * ts]
+        })
+      );
+    });
   });
 
-  return tree;
+  for (let i = 0; i < 9; i++) {
+    const mx = -48 + i * 12;
+    const mh = 12 + (i % 3) * 5;
+    matteParts.push(
+      bakePartGeo(new THREE.ConeGeometry(14, mh, 7), {
+        color: 0x3b7a57,
+        pos: [mx, mh * 0.45 - 1, -48 - (i % 2) * 6],
+        scale: [1.6, 1, 0.7]
+      })
+    );
+  }
+
+  // 9. Bunting Flags (78)
+  const flagPalette = [0xe11d48, 0xf8fafc, 0xf59e0b, 0x3b82f6, 0x10b981, 0xa855f7];
+  const pushBunting = (zStart: number, zEnd: number, yPeak: number) => {
+    const count = 26;
+    for (let i = 0; i < count; i++) {
+      const t = i / (count - 1);
+      const x = -11.5 + t * 23;
+      const z = zStart + t * (zEnd - zStart);
+      const y = yPeak - Math.sin(t * Math.PI) * 0.72;
+      paintedParts.push(
+        bakePartGeo(new THREE.ConeGeometry(0.19, 0.38, 3), {
+          color: flagPalette[i % flagPalette.length],
+          pos: [x, y, z],
+          rot: [Math.PI, 0, 0]
+        })
+      );
+    }
+  };
+  pushBunting(-4.5, -4.5, 5.25);
+  pushBunting(-2.2, 1.2, 5.45);
+  pushBunting(1.2, -2.2, 5.45);
+
+  // Add merged static scene meshes (only 6 draw calls total for all props!)
+  const trackChalkMesh = new THREE.Mesh(
+    mergeBakedGeos(trackChalkParts),
+    new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.85 })
+  );
+  scene.add(trackChalkMesh);
+
+  const zoneDiscMesh = new THREE.Mesh(
+    mergeBakedGeos(zoneDiscParts),
+    new THREE.MeshBasicMaterial({ vertexColors: true, transparent: true, opacity: 0.08, depthWrite: false })
+  );
+  scene.add(zoneDiscMesh);
+
+  const matteMesh = new THREE.Mesh(
+    mergeBakedGeos(matteParts),
+    new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.88 })
+  );
+  matteMesh.receiveShadow = enableShadows;
+  scene.add(matteMesh);
+
+  const metalMesh = new THREE.Mesh(
+    mergeBakedGeos(metalParts),
+    new THREE.MeshStandardMaterial({ vertexColors: true, metalness: 0.62, roughness: 0.34 })
+  );
+  metalMesh.castShadow = enableShadows;
+  metalMesh.receiveShadow = enableShadows;
+  scene.add(metalMesh);
+
+  const paintedMesh = new THREE.Mesh(
+    mergeBakedGeos(paintedParts),
+    new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.55, side: THREE.DoubleSide })
+  );
+  paintedMesh.castShadow = enableShadows;
+  scene.add(paintedMesh);
+
+  if (kohakuParts.length > 0 && kohakuTex) {
+    scene.add(
+      new THREE.Mesh(
+        mergeBakedGeos(kohakuParts),
+        new THREE.MeshStandardMaterial({ map: kohakuTex, side: THREE.DoubleSide, roughness: 0.7 })
+      )
+    );
+  }
+
+  // 10. Volumetric Cloud Puffs in 1 InstancedMesh (36 instances)
+  const cloudsGroup = new THREE.Group();
+  scene.add(cloudsGroup);
+  const cloudsInst = new THREE.InstancedMesh(
+    new THREE.SphereGeometry(1, 12, 10),
+    new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.9 }),
+    36
+  );
+  const cDummy = new THREE.Object3D();
+  let cIdx = 0;
+  for (let i = 0; i < 12; i++) {
+    const ang = (i / 12) * Math.PI * 1.4 - Math.PI * 0.7;
+    const gx = Math.sin(ang) * 42;
+    const gy = 13 + (i % 3) * 2.5;
+    const gz = -Math.cos(ang) * 34 - 8;
+    for (let j = 0; j < 3; j++) {
+      const r = 2.4 - j * 0.4;
+      cDummy.position.set(gx + (j - 1) * 1.9, gy + (j % 2) * 0.5, gz);
+      cDummy.scale.set(1.4 * r, 0.85 * r, 0.9 * r);
+      cDummy.updateMatrix();
+      cloudsInst.setMatrixAt(cIdx++, cDummy.matrix);
+    }
+  }
+  cloudsInst.instanceMatrix.needsUpdate = true;
+  cloudsGroup.add(cloudsInst);
+
+  // 11. 15 Cheering Tent Spectators in 3 InstancedMeshes (body+head, cap, poms)
+  const specCount = spectatorData.length;
+  const specBodyGeo = mergeBakedGeos([
+    bakePartGeo(new THREE.CylinderGeometry(0.16, 0.18, 0.52, 8), { color: 0xffffff, pos: [0, 0.42, 0] }),
+    bakePartGeo(new THREE.SphereGeometry(0.17, 10, 10), { color: 0xffdfc4, pos: [0, 0.82, 0] })
+  ]);
+  const specBodyInst = new THREE.InstancedMesh(
+    specBodyGeo,
+    new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.58 }),
+    specCount
+  );
+  specBodyInst.frustumCulled = false;
+
+  const specCapGeo = new THREE.SphereGeometry(0.18, 10, 8, 0, Math.PI * 2, 0, Math.PI * 0.55);
+  specCapGeo.translate(0, 0.84, 0);
+  const specCapInst = new THREE.InstancedMesh(
+    specCapGeo,
+    new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.5 }),
+    specCount
+  );
+  specCapInst.frustumCulled = false;
+
+  const specPomInst = new THREE.InstancedMesh(
+    new THREE.DodecahedronGeometry(0.11, 0),
+    new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.4 }),
+    specCount * 2
+  );
+  specPomInst.frustumCulled = false;
+
+  const sDummy = new THREE.Object3D();
+  const sColor = new THREE.Color();
+  spectatorData.forEach((sp, i) => {
+    sDummy.position.set(sp.baseX, sp.baseY, sp.baseZ);
+    sDummy.rotation.set(0, sp.rotY, 0);
+    sDummy.scale.set(1, 1, 1);
+    sDummy.updateMatrix();
+    specBodyInst.setMatrixAt(i, sDummy.matrix);
+    specCapInst.setMatrixAt(i, sDummy.matrix);
+    sColor.setHex(sp.capColor);
+    specCapInst.setColorAt(i, sColor);
+
+    const cosR = Math.cos(sp.rotY);
+    const sinR = Math.sin(sp.rotY);
+    sColor.setHex(sp.pomColor);
+    [-0.24, 0.24].forEach((lx, pSide) => {
+      sDummy.position.set(sp.baseX + lx * cosR + 0.1 * sinR, 0.95, sp.baseZ - lx * sinR + 0.1 * cosR);
+      sDummy.updateMatrix();
+      specPomInst.setMatrixAt(i * 2 + pSide, sDummy.matrix);
+      specPomInst.setColorAt(i * 2 + pSide, sColor);
+    });
+  });
+  specBodyInst.instanceMatrix.needsUpdate = true;
+  specCapInst.instanceMatrix.needsUpdate = true;
+  if (specCapInst.instanceColor) specCapInst.instanceColor.needsUpdate = true;
+  specPomInst.instanceMatrix.needsUpdate = true;
+  if (specPomInst.instanceColor) specPomInst.instanceColor.needsUpdate = true;
+  scene.add(specBodyInst, specCapInst, specPomInst);
+
+  const animateSpectators = (elapsed: number) => {
+    const pomMatrix = new THREE.Matrix4();
+    const pomPos = new THREE.Vector3();
+    for (let i = 0; i < specCount; i++) {
+      const sp = spectatorData[i];
+      const hopY = Math.abs(Math.sin(elapsed * 6.8 + i * 0.7)) * 0.14;
+      const yaw = sp.rotY + Math.sin(elapsed * 3.2 + i) * 0.2;
+      sDummy.position.set(sp.baseX, hopY, sp.baseZ);
+      sDummy.rotation.set(0, yaw, 0);
+      sDummy.updateMatrix();
+      specBodyInst.setMatrixAt(i, sDummy.matrix);
+      specCapInst.setMatrixAt(i, sDummy.matrix);
+
+      const cosY = Math.cos(yaw);
+      const sinY = Math.sin(yaw);
+      [-0.24, 0.24].forEach((lx, pSide) => {
+        pomPos.set(sp.baseX + lx * cosY + 0.1 * sinY, 0.95 + hopY, sp.baseZ - lx * sinY + 0.1 * cosY);
+        pomMatrix.makeTranslation(pomPos.x, pomPos.y, pomPos.z);
+        specPomInst.setMatrixAt(i * 2 + pSide, pomMatrix);
+      });
+    }
+    specBodyInst.instanceMatrix.needsUpdate = true;
+    specCapInst.instanceMatrix.needsUpdate = true;
+    specPomInst.instanceMatrix.needsUpdate = true;
+  };
+
+  return { cloudsGroup, cloudsInst, animateSpectators, undokaiBannerMat };
 }
+
 
 // ----------------------------------------------------------------------------
 // 4B. Zero-Asset WebAudio Undōkai Suspense Sound Synthesizer (Taiko, Hyōshigi, Whistle)
@@ -1966,6 +2659,7 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
   const [ceremonySfxEnabled, setCeremonySfxEnabled] = useState(!isStudentChase);
   const [directorCamPreset, setDirectorCamPreset] = useState<'WIDE' | 'ORBIT' | 'BASKETS'>('WIDE');
   const [latestThrowBanner, setLatestThrowBanner] = useState<VolleyballAnswerEvent | null>(null);
+  const [contextRestartKey, setContextRestartKey] = useState(0);
 
   const ceremonyFrameRef = useRef<TamaireSuspenseFrame | null>(null);
   const countBeatPulseRef = useRef<number>(0);
@@ -1973,6 +2667,7 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
   ceremonySfxEnabledRef.current = ceremonySfxEnabled && !isStudentChase;
   const directorCamPresetRef = useRef<'WIDE' | 'ORBIT' | 'BASKETS'>('WIDE');
   directorCamPresetRef.current = directorCamPreset;
+  const undokaiBannerMatRef = useRef<THREE.MeshBasicMaterial | null>(null);
 
   const stateRef = useRef({
     redScore,
@@ -1983,6 +2678,7 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
     whiteThrowRate,
     redPlayersCount,
     whitePlayersCount,
+    studentRoster,
     schoolName,
     hideScoreUntilEnd,
     cameraMode,
@@ -2000,6 +2696,7 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
     whiteThrowRate,
     redPlayersCount,
     whitePlayersCount,
+    studentRoster,
     schoolName,
     hideScoreUntilEnd,
     cameraMode,
@@ -2087,21 +2784,21 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
         enqueueThrowsRef.current('white', Math.min(4, whiteDelta), whiteDelta >= 2, scorerPlayerId, false);
       }
     }
-  }, [
-    redScore,
-    whiteScore,
-    matchEnded,
-    winner,
-    redThrowRate,
-    whiteThrowRate,
-    redPlayersCount,
-    whitePlayersCount,
-    answerEvents,
-    schoolName,
-    hideScoreUntilEnd,
-    cameraMode,
-    focusPlayer
-  ]);
+  }, [redScore, whiteScore, matchEnded, answerEvents]);
+
+  // Reactively refresh the Undokai Stadium Wall Banner if activeSchool switches after mount
+  useEffect(() => {
+    const mat = undokaiBannerMatRef.current;
+    if (!mat) return;
+    const nextTex = createUndokaiBannerTexture(schoolName);
+    if (!nextTex) return;
+    const prevTex = mat.map;
+    mat.map = nextTex;
+    mat.needsUpdate = true;
+    if (prevTex && !prevTex.userData?.isSharedResource) {
+      prevTex.dispose();
+    }
+  }, [schoolName]);
 
   // Dynamically rebuild the 3D student avatars only when structural roster identity, team counts, or focusPlayer change!
   const rosterKey = useMemo(
@@ -2189,36 +2886,39 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
     };
   }, [matchEnded, ceremonyReplayNonce]);
 
-  // Three.js Scene Initialization & Render Loop
+  // Three.js Scene Initialization & Render Loop (Budgeted < 60 draw calls, classroom3d compliant)
   useEffect(() => {
     const container = mountRef.current;
     if (!container) return;
 
-    let width = container.clientWidth || 960;
-    let height = container.clientHeight || 540;
+    let isDisposed = false;
 
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x38bdf8);
     scene.fog = new THREE.FogExp2(0xbae6fd, 0.0045);
 
-    const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 260);
-    camera.position.set(0, 4.4, 12.2);
-    camera.lookAt(0, 2.25, -0.5);
-
-    const isStudentView = cameraMode === 'STUDENT_CHASE';
-    const renderer = new THREE.WebGLRenderer({
-      antialias: !isStudentView,
-      alpha: false,
-      powerPreference: isStudentView ? 'low-power' : 'high-performance'
+    const isStudentView = stateRef.current.cameraMode === 'STUDENT_CHASE';
+    const classroom3d = createClassroomRenderer(container, {
+      fov: 40,
+      near: 0.1,
+      far: 260,
+      isStudentView,
+      cameraPosition: [0, 4.4, 12.2],
+      cameraLookAt: [0, 2.25, -0.5],
+      alpha: false
     });
-    const gpu = detectClassroomGpuProfile(renderer.getContext(), isStudentView);
-    renderer.setPixelRatio(gpu.targetPixelRatio);
-    renderer.setSize(width, height);
-    renderer.shadowMap.enabled = gpu.enableDynamicShadows;
-    renderer.shadowMap.type = THREE.PCFShadowMap;
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    const { renderer, camera, gpuProfile, trackFrameRate, cleanup: cleanupRenderer } = classroom3d;
     renderer.toneMappingExposure = 0.92;
-    container.appendChild(renderer.domElement);
+
+    const onContextLost = (e: Event) => {
+      e.preventDefault();
+      console.warn('[Tamaire3DStage] WebGL context lost; waiting for restoration.');
+    };
+    const onContextRestored = () => {
+      setContextRestartKey((k) => k + 1);
+    };
+    renderer.domElement.addEventListener('webglcontextlost', onContextLost, false);
+    renderer.domElement.addEventListener('webglcontextrestored', onContextRestored, false);
 
     // Crisp Japanese Autumn Undokai Sky Dome (deep azure zenith -> warm horizon)
     const skyCanvas = document.createElement('canvas');
@@ -2251,9 +2951,9 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
 
     const sunLight = new THREE.DirectionalLight(0xfff7ed, 1.85);
     sunLight.position.set(14, 24, 15);
-    sunLight.castShadow = gpu.enableDynamicShadows;
-    if (gpu.enableDynamicShadows) {
-      sunLight.shadow.mapSize.set(gpu.shadowMapRes, gpu.shadowMapRes);
+    sunLight.castShadow = gpuProfile.enableDynamicShadows;
+    if (gpuProfile.enableDynamicShadows) {
+      sunLight.shadow.mapSize.set(gpuProfile.shadowMapRes, gpuProfile.shadowMapRes);
       sunLight.shadow.camera.near = 2;
       sunLight.shadow.camera.far = 65;
       const d = 16;
@@ -2270,20 +2970,19 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
     scene.add(fillLight);
 
     // ------------------------------------------------------------------------
-    // B. Realistic Multi-Layered Playfield: Masado Sand, Track & Grass Berm
+    // B. Sculpted Masado Sand Field, Track, Grass & Merged Arena Environment
     // ------------------------------------------------------------------------
     const sandMaps = createSchoolyardSandMaps();
     const shadowTex = createDoubleRingShadowTexture();
     const kohakuTex = createKohakuMakuTexture();
+    const grassTex = createLushGrassTexture();
 
-    // 1. Sculpted Masado Sand Field (真砂土グラウンド) with micro-undulations & bump relief
     const sandGeo = new THREE.PlaneGeometry(24, 16, 56, 40);
     sandGeo.rotateX(-Math.PI / 2);
     const posAttr = sandGeo.attributes.position;
     for (let i = 0; i < posAttr.count; i++) {
       const vx = posAttr.getX(i);
       const vz = posAttr.getZ(i);
-      // Natural schoolyard crown & foot-traffic trenches around the two poles
       const dRed = Math.hypot(vx + 3.1, vz);
       const dWhite = Math.hypot(vx - 3.1, vz);
       const ringRipple =
@@ -2295,265 +2994,70 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
     }
     sandGeo.computeVertexNormals();
 
-    const sandMat = new THREE.MeshStandardMaterial({
-      map: sandMaps?.diffuseMap,
-      bumpMap: sandMaps?.bumpMap,
-      bumpScale: 0.085,
-      color: 0xffffff,
-      roughness: 0.95,
-      metalness: 0.01
-    });
-    const sandMesh = new THREE.Mesh(sandGeo, sandMat);
-    sandMesh.receiveShadow = true;
+    const sandMesh = new THREE.Mesh(
+      sandGeo,
+      new THREE.MeshStandardMaterial({
+        map: sandMaps?.diffuseMap,
+        bumpMap: sandMaps?.bumpMap,
+        bumpScale: 0.085,
+        color: 0xffffff,
+        roughness: 0.95,
+        metalness: 0.01
+      })
+    );
+    sandMesh.receiveShadow = gpuProfile.enableDynamicShadows;
     scene.add(sandMesh);
 
-    // Scatter 3D micro-pebbles & dirt clods on the sand for authentic ground relief
-    const pebbleGeo = new THREE.DodecahedronGeometry(0.038, 0);
-    const pebbleDarkMat = new THREE.MeshStandardMaterial({ color: 0x785532, roughness: 0.95 });
-    const pebbleLightMat = new THREE.MeshStandardMaterial({ color: 0xd6b588, roughness: 0.9 });
-    for (let i = 0; i < 64; i++) {
-      const px = (((i * 73) % 100) / 100 - 0.5) * 16;
-      const pz = (((i * 41) % 100) / 100 - 0.5) * 9;
-      const peb = new THREE.Mesh(pebbleGeo, i % 2 === 0 ? pebbleDarkMat : pebbleLightMat);
-      peb.position.set(px, 0.015, pz);
-      peb.scale.set(1.2, 0.45, 0.9);
-      peb.rotation.y = i * 1.1;
-      scene.add(peb);
-    }
-
-    // 2. Surrounding Terracotta 4-Lane Running Track (陸上トラック) behind & around the sand
-    const trackGroup = new THREE.Group();
-    scene.add(trackGroup);
-
-    const trackMat = new THREE.MeshStandardMaterial({
-      color: 0xc2593f, // Authentic terracotta urethane/cinder track
-      roughness: 0.82,
-      bumpMap: sandMaps?.bumpMap,
-      bumpScale: 0.02
-    });
-    const backTrack = new THREE.Mesh(new THREE.PlaneGeometry(56, 6.5), trackMat);
+    const backTrack = new THREE.Mesh(
+      new THREE.PlaneGeometry(56, 6.5),
+      new THREE.MeshStandardMaterial({
+        color: 0xc2593f,
+        roughness: 0.82,
+        bumpMap: sandMaps?.bumpMap,
+        bumpScale: 0.02
+      })
+    );
     backTrack.rotation.x = -Math.PI / 2;
     backTrack.position.set(0, 0.01, -9.2);
-    backTrack.receiveShadow = true;
-    trackGroup.add(backTrack);
+    backTrack.receiveShadow = gpuProfile.enableDynamicShadows;
+    scene.add(backTrack);
 
-    // Crisp White Running Track Lane Markings (4 lanes)
-    const laneLineMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.82 });
-    for (let lane = 0; lane <= 4; lane++) {
-      const lz = -6.3 - lane * 1.35;
-      const line = new THREE.Mesh(new THREE.PlaneGeometry(56, 0.07), laneLineMat);
-      line.rotation.x = -Math.PI / 2;
-      line.position.set(0, 0.018, lz);
-      trackGroup.add(line);
-    }
-
-    // Stepped Concrete Field Curb (校庭の縁石) separating sand & track from outer grass
-    const curbMat = new THREE.MeshStandardMaterial({ color: 0xcbd5e1, roughness: 0.75 });
-    const backCurb = new THREE.Mesh(new THREE.BoxGeometry(56, 0.16, 0.28), curbMat);
-    backCurb.position.set(0, 0.08, -12.4);
-    backCurb.receiveShadow = true;
-    scene.add(backCurb);
-
-    // 3. Outer Lush Grass Berm (芝生エリア)
-    const grassTex = createLushGrassTexture();
-    const grassMat = new THREE.MeshStandardMaterial({
-      map: grassTex || undefined,
-      color: 0xffffff,
-      roughness: 0.88
-    });
-    const outerGrass = new THREE.Mesh(new THREE.PlaneGeometry(140, 120), grassMat);
+    const outerGrass = new THREE.Mesh(
+      new THREE.PlaneGeometry(140, 120),
+      new THREE.MeshStandardMaterial({
+        map: grassTex || undefined,
+        color: 0xffffff,
+        roughness: 0.88
+      })
+    );
     outerGrass.rotation.x = -Math.PI / 2;
     outerGrass.position.set(0, -0.02, -18);
-    outerGrass.receiveShadow = true;
+    outerGrass.receiveShadow = gpuProfile.enableDynamicShadows;
     scene.add(outerGrass);
 
-    // 4. Lime-Chalk (石灰ライン) Throwing Circles & Center Division Line
-    const chalkMat = new THREE.MeshBasicMaterial({
-      color: 0xffffff,
-      transparent: true,
-      opacity: 0.88
-    });
-
-    const centerChalk = new THREE.Mesh(new THREE.PlaneGeometry(0.11, 14), chalkMat);
-    centerChalk.rotation.x = -Math.PI / 2;
-    centerChalk.position.set(0, 0.025, 0);
-    scene.add(centerChalk);
-
-    const createThrowingCircleMarkings = (cx: number, teamColorHex: number) => {
-      // Outer throwing line ring
-      const outerRing = new THREE.Mesh(new THREE.RingGeometry(2.15, 2.28, 48), chalkMat);
-      outerRing.rotation.x = -Math.PI / 2;
-      outerRing.position.set(cx, 0.028, 0);
-      scene.add(outerRing);
-
-      // Inner pole safety circle
-      const innerRing = new THREE.Mesh(new THREE.RingGeometry(0.95, 1.04, 36), chalkMat);
-      innerRing.rotation.x = -Math.PI / 2;
-      innerRing.position.set(cx, 0.028, 0);
-      scene.add(innerRing);
-
-      // Subtle team-tinted compacted clay zone inside the circle
-      const zoneDisc = new THREE.Mesh(
-        new THREE.CircleGeometry(2.15, 40),
-        new THREE.MeshBasicMaterial({
-          color: teamColorHex,
-          transparent: true,
-          opacity: 0.08,
-          depthWrite: false
-        })
-      );
-      zoneDisc.rotation.x = -Math.PI / 2;
-      zoneDisc.position.set(cx, 0.022, 0);
-      scene.add(zoneDisc);
-    };
-    createThrowingCircleMarkings(-3.1, 0xe11d48);
-    createThrowingCircleMarkings(3.1, 0x3b82f6);
+    // Merged Static Arena (School Building, Banners, Tents, Spectators, Trees, Mountains, Clouds, Bunting)
+    const arenaEnv = buildUndokaiArenaEnvironment(
+      scene,
+      stateRef.current.schoolName,
+      kohakuTex,
+      gpuProfile.enableDynamicShadows
+    );
+    undokaiBannerMatRef.current = arenaEnv.undokaiBannerMat;
 
     // ------------------------------------------------------------------------
-    // C. Authentic Japanese Schoolyard Surroundings (校舎・本部テント・桜並木・万国旗)
+    // C. Instanced Thrower Pool, Callout Pool, Basket Poles & Ground Bags
     // ------------------------------------------------------------------------
-    const schoolBuilding = buildJapaneseSchoolBuilding(stateRef.current.schoolName);
-    scene.add(schoolBuilding);
+    const bagAtlasTex = getBeanBagAtlasTexture();
+    const throwerPool = createThrowerBatchPool(
+      scene,
+      shadowTex,
+      bagAtlasTex,
+      gpuProfile.enableDynamicShadows
+    );
+    const calloutPool = createCalloutSpritePool(scene, 4);
 
-    const wallGroup = new THREE.Group();
-    wallGroup.position.set(0, 0, -6.2);
-    scene.add(wallGroup);
-
-    const bannerTex = createUndokaiBannerTexture(stateRef.current.schoolName);
-    if (bannerTex) {
-      const boardFrame = new THREE.Mesh(
-        new THREE.BoxGeometry(5.6, 1.55, 0.18),
-        new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.5 })
-      );
-      boardFrame.position.set(0, 1.55, 0);
-      boardFrame.castShadow = true;
-      wallGroup.add(boardFrame);
-
-      const bannerMesh = new THREE.Mesh(
-        new THREE.PlaneGeometry(5.4, 1.35),
-        new THREE.MeshBasicMaterial({ map: bannerTex })
-      );
-      bannerMesh.position.set(0, 1.55, 0.1);
-      wallGroup.add(bannerMesh);
-
-      [-2.4, 2.4].forEach((lx) => {
-        const post = new THREE.Mesh(
-          new THREE.CylinderGeometry(0.06, 0.06, 2.4, 10),
-          new THREE.MeshStandardMaterial({ color: 0x78350f, roughness: 0.8 })
-        );
-        post.position.set(lx, 1.2, -0.05);
-        post.castShadow = true;
-        wallGroup.add(post);
-      });
-    }
-
-    // PA Megaphone Speaker Poles (校庭の放送スピーカー)
-    [-6.8, 6.8].forEach((px) => {
-      const pole = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.05, 0.07, 5.2, 10),
-        new THREE.MeshStandardMaterial({ color: 0x94a3b8, metalness: 0.6, roughness: 0.35 })
-      );
-      pole.position.set(px, 2.6, -7.2);
-      pole.castShadow = true;
-      scene.add(pole);
-
-      [-1, 1].forEach((dir) => {
-        const horn = new THREE.Mesh(
-          new THREE.ConeGeometry(0.24, 0.42, 12, 1, true),
-          new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.3, side: THREE.DoubleSide })
-        );
-        horn.rotation.z = dir * (Math.PI / 2 - 0.25);
-        horn.position.set(px + dir * 0.22, 5.0, -7.2);
-        scene.add(horn);
-      });
-    });
-
-    // 3. Pitched White Campaign Tents (本部テント & 赤組/白組 応援テント) + Animated Spectators
-    const allSpectators: THREE.Group[] = [];
-    const leftRedTent = buildUndokaiTent(-8.8, -4.2, 0.32, 'red', kohakuTex);
-    const rightWhiteTent = buildUndokaiTent(8.8, -4.2, -0.32, 'white', kohakuTex);
-    const centerHonbuTent = buildUndokaiTent(0, -10.2, 0, 'honbu', kohakuTex);
-    scene.add(leftRedTent.group, rightWhiteTent.group, centerHonbuTent.group);
-    allSpectators.push(...leftRedTent.spectators, ...rightWhiteTent.spectators, ...centerHonbuTent.spectators);
-
-    // 4. Perimeter Sakura (Cherry Blossom) & Zelkova Trees + Distant Mountain Ridges
-    const treePlacements: [number, number, number, boolean][] = [
-      [-14.5, -9.5, 1.15, true],
-      [-11.5, -13.5, 1.3, false],
-      [-6.2, -14.8, 1.1, true],
-      [6.2, -14.8, 1.15, true],
-      [11.5, -13.5, 1.25, false],
-      [14.5, -9.5, 1.1, true],
-      [-16.5, -3.5, 1.2, false],
-      [16.5, -3.5, 1.2, false]
-    ];
-    treePlacements.forEach(([tx, tz, ts, isSakura]) => {
-      scene.add(buildSchoolyardTree(tx, tz, ts, isSakura));
-    });
-
-    const mountainMat = new THREE.MeshStandardMaterial({ color: 0x3b7a57, roughness: 0.95 });
-    for (let i = 0; i < 9; i++) {
-      const mx = -48 + i * 12;
-      const mh = 12 + (i % 3) * 5;
-      const mtn = new THREE.Mesh(new THREE.ConeGeometry(14, mh, 7), mountainMat);
-      mtn.position.set(mx, mh * 0.45 - 1, -48 - (i % 2) * 6);
-      mtn.scale.set(1.6, 1, 0.7);
-      scene.add(mtn);
-    }
-
-    const cloudsGroup = new THREE.Group();
-    scene.add(cloudsGroup);
-    const cloudMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.9 });
-    for (let i = 0; i < 12; i++) {
-      const cluster = new THREE.Group();
-      const angle = (i / 12) * Math.PI * 1.4 - Math.PI * 0.7;
-      cluster.position.set(Math.sin(angle) * 42, 13 + (i % 3) * 2.5, -Math.cos(angle) * 34 - 8);
-      for (let j = 0; j < 3; j++) {
-        const puff = new THREE.Mesh(new THREE.SphereGeometry(2.4 - j * 0.4, 12, 10), cloudMat);
-        puff.position.set((j - 1) * 1.9, (j % 2) * 0.5, 0);
-        puff.scale.set(1.4, 0.85, 0.9);
-        cluster.add(puff);
-      }
-      cloudsGroup.add(cluster);
-    }
-
-    // 5. Overhead Bankokuki (万国旗 — Festive Undokai Bunting Flag Strings)
-    const buntingGroup = new THREE.Group();
-    scene.add(buntingGroup);
-    const flagPalette = [0xe11d48, 0xf8fafc, 0xf59e0b, 0x3b82f6, 0x10b981, 0xa855f7];
-    const buildBuntingLine = (zStart: number, zEnd: number, yPeak: number) => {
-      const count = 26;
-      for (let i = 0; i < count; i++) {
-        const t = i / (count - 1);
-        const x = -11.5 + t * 23;
-        const z = zStart + t * (zEnd - zStart);
-        const sag = Math.sin(t * Math.PI) * 0.72;
-        const y = yPeak - sag;
-
-        const flagGeo = new THREE.ConeGeometry(0.19, 0.38, 3);
-        flagGeo.rotateX(Math.PI);
-        const flagMesh = new THREE.Mesh(
-          flagGeo,
-          new THREE.MeshStandardMaterial({
-            color: flagPalette[i % flagPalette.length],
-            roughness: 0.5,
-            side: THREE.DoubleSide
-          })
-        );
-        flagMesh.position.set(x, y, z);
-        buntingGroup.add(flagMesh);
-      }
-    };
-    buildBuntingLine(-4.5, -4.5, 5.25);
-    buildBuntingLine(-2.2, 1.2, 5.45);
-    buildBuntingLine(1.2, -2.2, 5.45);
-
-    // ------------------------------------------------------------------------
-    // D. Textured Bean Bag Materials, Basket Poles & Scattered Ground Bags
-    // ------------------------------------------------------------------------
     const redBagTex = createStitchedBeanBagTexture('#e11d48', '#fecdd3', false);
     const whiteBagTex = createStitchedBeanBagTexture('#f8fafc', '#94a3b8', false);
-    const goldBagTex = createStitchedBeanBagTexture('#f59e0b', '#fef08a', true);
 
     const redBagMat = injectWiiSatinRimShader(
       new THREE.MeshStandardMaterial({ map: redBagTex || undefined, color: 0xffffff, roughness: 0.65 })
@@ -2561,42 +3065,64 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
     const whiteBagMat = injectWiiSatinRimShader(
       new THREE.MeshStandardMaterial({ map: whiteBagTex || undefined, color: 0xffffff, roughness: 0.55 })
     );
-    const goldBagMat = new THREE.MeshStandardMaterial({
-      map: goldBagTex || undefined,
-      color: 0xfbbf24,
-      emissive: 0xd97706,
-      emissiveIntensity: 0.35,
-      roughness: 0.25,
-      metalness: 0.75
-    });
 
-    const redBasket = buildTamaireBasketPole('red', -3.1, redBagMat, whiteBagMat);
-    const whiteBasket = buildTamaireBasketPole('white', 3.1, redBagMat, whiteBagMat);
+    const redBasket = buildTamaireBasketPole(
+      'red',
+      -3.1,
+      redBagMat,
+      throwerPool.bagAtlasMat,
+      gpuProfile.enableDynamicShadows
+    );
+    const whiteBasket = buildTamaireBasketPole(
+      'white',
+      3.1,
+      whiteBagMat,
+      throwerPool.bagAtlasMat,
+      gpuProfile.enableDynamicShadows
+    );
     scene.add(redBasket.root, whiteBasket.root);
 
-    // Litter the sand around both poles with 36 realistic fallen bean bags (落ちたお手玉)!
+    const redBagRect = getBeanBagAtlasRect('red');
+    const whiteBagRect = getBeanBagAtlasRect('white');
+    const goldBagRect = getBeanBagAtlasRect('gold');
+    const writeAtlasRect = (arr: Float32Array, idx: number, r: [number, number, number, number]) => {
+      const o = idx * 4;
+      arr[o] = r[0];
+      arr[o + 1] = r[1];
+      arr[o + 2] = r[2];
+      arr[o + 3] = r[3];
+    };
+
+    // 36 Littered Ground Bean Bags batched into 1 InstancedMesh!
     const groundBagGeo = new THREE.SphereGeometry(0.115, 10, 8);
     groundBagGeo.scale(1.25, 0.68, 1.05);
-    const groundBags: THREE.Mesh[] = [];
+    const groundBagAtlasData = new Float32Array(36 * 4);
+    for (let i = 0; i < 36; i++) {
+      writeAtlasRect(groundBagAtlasData, i, i < 18 ? redBagRect : whiteBagRect);
+    }
+    groundBagGeo.setAttribute('aAtlasRect', new THREE.InstancedBufferAttribute(groundBagAtlasData, 4));
+    const groundBagsInst = new THREE.InstancedMesh(groundBagGeo, throwerPool.bagAtlasMat, 36);
+    groundBagsInst.frustumCulled = false;
+    groundBagsInst.castShadow = gpuProfile.enableDynamicShadows;
+    const _dummyMatObj = new THREE.Object3D();
     for (let i = 0; i < 36; i++) {
       const isRed = i < 18;
       const cx = isRed ? -3.1 : 3.1;
       const angle = (i * 1.93) % (Math.PI * 2);
       const dist = 0.75 + ((i * 0.41) % 1.65);
-      const gb = new THREE.Mesh(groundBagGeo, isRed ? redBagMat : whiteBagMat);
-      gb.position.set(cx + Math.cos(angle) * dist, 0.055, Math.sin(angle) * dist);
-      gb.rotation.set(0.15, angle, 0.1);
-      gb.castShadow = true;
-      scene.add(gb);
-      groundBags.push(gb);
+      _dummyMatObj.position.set(cx + Math.cos(angle) * dist, 0.055, Math.sin(angle) * dist);
+      _dummyMatObj.rotation.set(0.15, angle, 0.1);
+      _dummyMatObj.scale.set(1, 1, 1);
+      _dummyMatObj.updateMatrix();
+      groundBagsInst.setMatrixAt(i, _dummyMatObj.matrix);
     }
+    groundBagsInst.instanceMatrix.needsUpdate = true;
+    scene.add(groundBagsInst);
 
     // ------------------------------------------------------------------------
-    // E. Dynamic 1-to-40 Student Thrower Roster (Concentric Inner & Outer Rings!)
+    // D. Dynamic 1-to-40 Student Thrower Roster (Zero-Allocation Rig State)
     // ------------------------------------------------------------------------
-    const throwersGroup = new THREE.Group();
-    scene.add(throwersGroup);
-    let throwers: ThrowerAvatar[] = [];
+    let throwers: ThrowerAvatarRig[] = [];
 
     const defaultRedNames = [
       'Kenji 🐼', 'Hana 🐰', 'Ren 🐯', 'Yui 🐨', 'Sora 🦁',
@@ -2611,48 +3137,15 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
       'Ayaka 🌻', 'Shun 🎯', 'Nana 🍀', 'Takumi 🛡️', 'Chihiro 🐚'
     ];
 
-    const sharedMaterials = new Set<THREE.Material>([redBagMat, whiteBagMat, goldBagMat]);
-    const sharedTextures = new Set<THREE.Texture | null>([
-      shadowTex,
-      redBagTex,
-      whiteBagTex,
-      goldBagTex,
-    ]);
-
-    const disposeAvatarTree = (obj: THREE.Object3D) => {
-      const faceTexSet = new Set<THREE.Texture>(Object.values(cachedFaceTextures));
-      obj.traverse((child) => {
-        const mesh = child as THREE.Mesh;
-        if (mesh.geometry) {
-          mesh.geometry.dispose();
-        }
-        if (mesh.material) {
-          const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
-          mats.forEach((m: any) => {
-            if (!m || sharedMaterials.has(m)) return;
-            if (m.map && !sharedTextures.has(m.map) && !faceTexSet.has(m.map)) {
-              m.map.dispose();
-            }
-            m.dispose();
-          });
-        }
-      });
-    };
-
     const rebuildThrowerAvatars = () => {
-      // Clear previous avatars and release their GPU textures/geometries cleanly
-      while (throwersGroup.children.length > 0) {
-        const child = throwersGroup.children[0];
-        throwersGroup.remove(child);
-        disposeAvatarTree(child);
-      }
       throwers = [];
 
       const redList: TamaireStudentRosterItem[] = [];
       const whiteList: TamaireStudentRosterItem[] = [];
+      const currentRoster = stateRef.current.studentRoster;
 
-      if (studentRoster && studentRoster.length > 0) {
-        studentRoster.forEach((s) => {
+      if (currentRoster && currentRoster.length > 0) {
+        currentRoster.forEach((s) => {
           if (s.team === 'red' && redList.length < 20) redList.push(s);
           else if (s.team === 'white' && whiteList.length < 20) whiteList.push(s);
         });
@@ -2678,7 +3171,6 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
       const fPlayer = stateRef.current.focusPlayer;
       const isChaseMode = stateRef.current.cameraMode === 'STUDENT_CHASE';
 
-      // Ensure the focused student is placed at index 0 (#01 Zekken bib) on their team!
       const ensureFocusFirst = (list: TamaireStudentRosterItem[], team: 'red' | 'white') => {
         if (!fPlayer || fPlayer.team !== team) return list;
         const existingIdx = list.findIndex(
@@ -2716,13 +3208,9 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
           let radius = isOuter ? 2.48 : total <= 5 ? 1.92 : 1.84;
 
           if (isFocusedTeamInChase && idx === 0) {
-            // Place the student's own 3D avatar at the south-center front of their team's chalk circle (angle = +PI/2, z = +1.85)
-            // directly in front of the 3rd-person Chase Camera looking north (-Z) up at the 4.3m basket pole!
             angle = Math.PI * 0.5;
             radius = 1.85;
           } else if (isFocusedTeamInChase) {
-            // Spread all other teammates (inner and outer rings) around the left, back, and right flanks (0.82*PI .. 2.18*PI)
-            // so nobody ever stands between the Chase Camera and the student's own #01 avatar!
             const peerIdx = isOuter ? idxInTier : idxInTier - 1;
             const peerCount = Math.max(1, isOuter ? countInTier : countInTier - 1);
             const arcSpan = Math.PI * 1.36;
@@ -2733,7 +3221,7 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
             angle = (idxInTier / Math.max(1, countInTier)) * Math.PI * 2 + tierAngleOffset;
           }
 
-          const avatar = buildArticulatedThrower(
+          const avatar = createThrowerRig(
             team,
             idx === 0 && isFocusedTeamInChase ? 0 : idx + offsetIdx,
             student.id,
@@ -2742,41 +3230,38 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
             radius,
             angle,
             ringTier,
-            redBagMat,
-            whiteBagMat,
-            shadowTex
+            idx
           );
-          throwersGroup.add(avatar.root);
           throwers.push(avatar);
         });
       };
 
       spawnTeamRing(redList, 'red', -3.1, 0);
       spawnTeamRing(whiteList, 'white', 3.1, 20);
+      throwerPool.markDirty();
     };
 
     rebuildRosterRef.current = rebuildThrowerAvatars;
     rebuildThrowerAvatars();
 
     // ------------------------------------------------------------------------
-    // E2. 3D Parabolic Aiming Guide Arc, Target Sand Bean Bag (Step 1 Scoop) & 3D Counted Tally Piles
+    // E. Instanced Aim Dots, Target Sand Bag & Instanced Tally Piles (120)
     // ------------------------------------------------------------------------
-    const aimArcGroup = new THREE.Group();
-    scene.add(aimArcGroup);
+    const whiteColor = new THREE.Color(0xffffff);
     const aimDotGeo = new THREE.SphereGeometry(0.052, 10, 8);
-    const aimDots: THREE.Mesh[] = [];
-    for (let i = 0; i < 14; i++) {
-      const dotMat = new THREE.MeshBasicMaterial({
-        color: 0xffffff,
-        transparent: true,
-        opacity: 0.75 - (i / 14) * 0.45
-      });
-      const dot = new THREE.Mesh(aimDotGeo, dotMat);
-      aimArcGroup.add(dot);
-      aimDots.push(dot);
-    }
+    const aimDotMat = new THREE.MeshBasicMaterial({
+      color: 0xffffff,
+      transparent: true,
+      opacity: 0.78
+    });
+    const aimDotsInst = new THREE.InstancedMesh(aimDotGeo, aimDotMat, 14);
+    aimDotsInst.frustumCulled = false;
+    aimDotsInst.visible = false;
+    aimDotsInst.count = 0;
+    for (let i = 0; i < 14; i++) aimDotsInst.setColorAt(i, whiteColor);
+    if (aimDotsInst.instanceColor) aimDotsInst.instanceColor.needsUpdate = true;
+    scene.add(aimDotsInst);
 
-    // 3D Target Sand Bean Bag with Pulsing Pickup Ring for Step 1 (① 玉を拾う • SCOOP BAG FROM SAND)
     const targetSandBagGroup = new THREE.Group();
     targetSandBagGroup.visible = false;
     scene.add(targetSandBagGroup);
@@ -2784,7 +3269,7 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
     targetSandBagGeo.scale(1.26, 0.72, 1.06);
     const targetSandBagMesh = new THREE.Mesh(targetSandBagGeo, redBagMat);
     targetSandBagMesh.position.y = 0.06;
-    targetSandBagMesh.castShadow = true;
+    targetSandBagMesh.castShadow = gpuProfile.enableDynamicShadows;
     targetSandBagGroup.add(targetSandBagMesh);
 
     const targetSandRingMat = new THREE.MeshBasicMaterial({
@@ -2801,70 +3286,44 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
     targetSandRingMesh.position.y = 0.025;
     targetSandBagGroup.add(targetSandRingMesh);
 
-    // Neat 3D Counted Bean Bag Tally Stacks in front of each pole (z = +0.95..+1.55) during the Counting Ceremony!
-    const buildCountedTallyPile = (cx: number, mat: THREE.Material) => {
-      const group = new THREE.Group();
-      scene.add(group);
-      const meshes: THREE.Mesh[] = [];
-      const tallyBagGeo = new THREE.SphereGeometry(0.125, 10, 8);
-      tallyBagGeo.scale(1.24, 0.72, 1.05);
-      for (let i = 0; i < 60; i++) {
-        const col = i % 5; // rows of 5 bags across
-        const row = Math.floor(i / 5) % 3;
-        const layer = Math.floor(i / 15);
-        const m = new THREE.Mesh(tallyBagGeo, mat);
-        m.position.set(
-          cx + (col - 2) * 0.28 + (layer % 2) * 0.06,
-          0.08 + layer * 0.14,
-          1.05 + row * 0.26
-        );
-        m.rotation.set(0.1, i * 0.7, 0.08);
-        m.castShadow = true;
-        m.visible = false;
-        group.add(m);
-        meshes.push(m);
-      }
-      return meshes;
-    };
-    const redCountedPileMeshes = buildCountedTallyPile(-3.1, redBagMat);
-    const whiteCountedPileMeshes = buildCountedTallyPile(3.1, whiteBagMat);
+    // 120 Counted Tally Bags batched into 1 InstancedMesh (60 Red + 60 White)!
+    const MAX_TALLY_TOTAL = 120;
+    const tallyBagGeo = new THREE.SphereGeometry(0.125, 10, 8);
+    tallyBagGeo.scale(1.24, 0.72, 1.05);
+    const tallyAtlasData = new Float32Array(MAX_TALLY_TOTAL * 4);
+    for (let i = 0; i < MAX_TALLY_TOTAL; i++) {
+      writeAtlasRect(tallyAtlasData, i, redBagRect);
+    }
+    const tallyAtlasAttr = new THREE.InstancedBufferAttribute(tallyAtlasData, 4);
+    tallyBagGeo.setAttribute('aAtlasRect', tallyAtlasAttr);
+    const tallyBagsInst = new THREE.InstancedMesh(tallyBagGeo, throwerPool.bagAtlasMat, MAX_TALLY_TOTAL);
+    tallyBagsInst.frustumCulled = false;
+    tallyBagsInst.visible = false;
+    tallyBagsInst.count = 0;
+    tallyBagsInst.castShadow = gpuProfile.enableDynamicShadows;
+    scene.add(tallyBagsInst);
+    let prevTallyRed = -1;
+    let prevTallyWhite = -1;
 
     // ------------------------------------------------------------------------
-    // F. Pooled Parabolic Flying Bean Bags (with Trails & Rim-Bounce Near-Misses!)
+    // F. Instanced Flying Bean Bags (36), Trails (36), Stars (96) & Dust (64)
     // ------------------------------------------------------------------------
+    const MAX_FLYING_BAGS = 36;
     const flyingBags: FlyingBeanBag[] = [];
-    const flyingBagGeo = new THREE.SphereGeometry(0.135, 12, 10);
-    flyingBagGeo.scale(1.22, 0.75, 1.02);
-
-    const trailGeo = new THREE.ConeGeometry(0.085, 0.65, 8);
-    trailGeo.rotateX(Math.PI / 2);
-
-    for (let i = 0; i < 36; i++) {
-      const mesh = new THREE.Mesh(flyingBagGeo, redBagMat);
-      mesh.castShadow = true;
-      mesh.visible = false;
-      scene.add(mesh);
-
-      const trailMesh = new THREE.Mesh(
-        trailGeo,
-        new THREE.MeshBasicMaterial({
-          color: 0xffffff,
-          transparent: true,
-          opacity: 0.38,
-          depthWrite: false
-        })
-      );
-      trailMesh.visible = false;
-      scene.add(trailMesh);
-
+    for (let i = 0; i < MAX_FLYING_BAGS; i++) {
       flyingBags.push({
-        mesh,
-        trailMesh,
         active: false,
         team: 'red',
         isGolden: false,
         isNearMiss: false,
         hasBounced: false,
+        pos: new THREE.Vector3(),
+        rot: new THREE.Euler(),
+        scaleMult: 1,
+        trailPos: new THREE.Vector3(),
+        trailTarget: new THREE.Vector3(),
+        trailColor: new THREE.Color(0xffffff),
+        showTrail: false,
         startPos: new THREE.Vector3(),
         midPos: new THREE.Vector3(),
         targetPos: new THREE.Vector3(),
@@ -2875,50 +3334,106 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
       });
     }
 
-    // Star Burst + Sand Dust Puff Particles (砂煙 & スターエフェクト)
-    const particles: BurstParticle[] = [];
+    const flyingBagGeo = new THREE.SphereGeometry(0.135, 12, 10);
+    flyingBagGeo.scale(1.22, 0.75, 1.02);
+    const flyingBagAtlasData = new Float32Array(MAX_FLYING_BAGS * 4);
+    for (let i = 0; i < MAX_FLYING_BAGS; i++) {
+      writeAtlasRect(flyingBagAtlasData, i, redBagRect);
+    }
+    const flyingBagAtlasAttr = new THREE.InstancedBufferAttribute(flyingBagAtlasData, 4);
+    flyingBagGeo.setAttribute('aAtlasRect', flyingBagAtlasAttr);
+    const flyingBagsInst = new THREE.InstancedMesh(flyingBagGeo, throwerPool.bagAtlasMat, MAX_FLYING_BAGS);
+    flyingBagsInst.frustumCulled = false;
+    flyingBagsInst.visible = false;
+    flyingBagsInst.count = 0;
+    flyingBagsInst.castShadow = gpuProfile.enableDynamicShadows;
+    scene.add(flyingBagsInst);
+
+    const trailGeo = new THREE.ConeGeometry(0.085, 0.65, 8);
+    trailGeo.rotateX(Math.PI / 2);
+    const trailMat = new THREE.MeshBasicMaterial({
+      color: 0xffffff,
+      transparent: true,
+      opacity: 0.38,
+      depthWrite: false
+    });
+    const trailsInst = new THREE.InstancedMesh(trailGeo, trailMat, MAX_FLYING_BAGS);
+    trailsInst.frustumCulled = false;
+    trailsInst.visible = false;
+    trailsInst.count = 0;
+    for (let i = 0; i < MAX_FLYING_BAGS; i++) trailsInst.setColorAt(i, whiteColor);
+    if (trailsInst.instanceColor) trailsInst.instanceColor.needsUpdate = true;
+    scene.add(trailsInst);
+
+    // Pre-allocated Star & Dust Particle InstancedMesh Pools
+    const MAX_STARS = 96;
+    const MAX_DUST = 64;
+    const starParticles: BurstParticle[] = Array.from({ length: MAX_STARS }, () => ({
+      pos: new THREE.Vector3(),
+      scale: 1,
+      rotY: 0,
+      color: new THREE.Color(0xfbbf24),
+      vel: new THREE.Vector3(),
+      life: 0,
+      maxLife: 0.58,
+      isDust: false
+    }));
+    const dustParticles: BurstParticle[] = Array.from({ length: MAX_DUST }, () => ({
+      pos: new THREE.Vector3(),
+      scale: 1,
+      rotY: 0,
+      color: new THREE.Color(0xe7d3b0),
+      vel: new THREE.Vector3(),
+      life: 0,
+      maxLife: 0.42,
+      isDust: true
+    }));
+
     const starGeo = new THREE.OctahedronGeometry(0.085, 0);
+    const starMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+    const starInst = new THREE.InstancedMesh(starGeo, starMat, MAX_STARS);
+    starInst.frustumCulled = false;
+    starInst.visible = false;
+    starInst.count = 0;
+    for (let i = 0; i < MAX_STARS; i++) starInst.setColorAt(i, whiteColor);
+    if (starInst.instanceColor) starInst.instanceColor.needsUpdate = true;
+    scene.add(starInst);
+
     const dustGeo = new THREE.SphereGeometry(0.11, 8, 8);
-    const starGoldMat = new THREE.MeshBasicMaterial({ color: 0xfbbf24 });
-    const starRedMat = new THREE.MeshBasicMaterial({ color: 0xfb7185 });
-    const starWhiteMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8 });
-    const sandDustMat = new THREE.MeshBasicMaterial({
+    const dustMat = new THREE.MeshBasicMaterial({
       color: 0xe7d3b0,
       transparent: true,
       opacity: 0.65
     });
+    const dustInst = new THREE.InstancedMesh(dustGeo, dustMat, MAX_DUST);
+    dustInst.frustumCulled = false;
+    dustInst.visible = false;
+    dustInst.count = 0;
+    scene.add(dustInst);
 
     const spawnParticles = (origin: THREE.Vector3, team: 'red' | 'white', isGolden: boolean, isDust: boolean) => {
       const count = isDust ? 4 : isGolden ? 10 : 6;
+      const pool = isDust ? dustParticles : starParticles;
+      const starHex = isGolden ? 0xfbbf24 : team === 'red' ? 0xfb7185 : 0x38bdf8;
       for (let i = 0; i < count; i++) {
-        let p = particles.find((item) => item.life <= 0);
-        const mat = isDust
-          ? sandDustMat
-          : isGolden
-          ? starGoldMat
-          : team === 'red'
-          ? starRedMat
-          : starWhiteMat;
-        if (!p) {
-          const mesh = new THREE.Mesh(isDust ? dustGeo : starGeo, mat);
-          scene.add(mesh);
-          p = { mesh, vel: new THREE.Vector3(), life: 0, maxLife: 0.55, isDust };
-          particles.push(p);
+        let slot = pool.find((item) => item.life <= 0);
+        if (!slot) {
+          slot = pool.reduce((oldest, cur) => (cur.life < oldest.life ? cur : oldest), pool[0]);
         }
-        p.isDust = isDust;
-        p.mesh.geometry = isDust ? dustGeo : starGeo;
-        p.mesh.material = mat;
-        p.mesh.position.copy(origin);
+        slot.isDust = isDust;
+        slot.pos.copy(origin);
+        slot.color.setHex(isDust ? 0xe7d3b0 : starHex);
+        slot.rotY = Math.random() * Math.PI * 2;
         const angle = (i / count) * Math.PI * 2 + Math.random() * 0.5;
         const speed = isDust ? 0.6 + Math.random() * 0.8 : 1.5 + Math.random() * 1.9;
-        p.vel.set(
+        slot.vel.set(
           Math.cos(angle) * speed,
           isDust ? 0.7 + Math.random() * 0.8 : 1.8 + Math.random() * 2.2,
           Math.sin(angle) * speed
         );
-        p.maxLife = isDust ? 0.42 : 0.58;
-        p.life = p.maxLife;
-        p.mesh.visible = true;
+        slot.maxLife = isDust ? 0.42 : 0.58;
+        slot.life = slot.maxLife;
+        slot.scale = isDust ? 1.35 : 1.0;
       }
     };
 
@@ -2949,9 +3464,9 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
           ) || teamThrowers[0];
         if (actor) {
           const isFumble = stepAction === 'FUMBLED_SAND' || stepAction === 'DROPPED_BAG';
-          actor.calloutTimer = 1.05;
-          actor.calloutSprite.visible = !isFumble;
-          actor.missCalloutSprite.visible = isFumble;
+          if (isFumble) {
+            calloutPool.trigger(actor.id, actor.nickname, actor.team, 1.05, false, true);
+          }
           spawnParticles(
             new THREE.Vector3(
               actor.root.position.x + 0.18,
@@ -2966,8 +3481,6 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
         return;
       }
 
-      // When a specific student throws in STUDENT_CHASE mode (or when isMissThrow is true),
-      // spawn the exact requested bag(s) without an extra random decoy from their own hand!
       const totalToSpawn =
         ended || isMissThrow || (isChaseMode && Boolean(playerId)) ? count : count + 1;
 
@@ -2977,7 +3490,6 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
         const slot = flyingBags.find((b) => !b.active);
         if (!slot) break;
 
-        // Match specific student if playerId provided, otherwise pick an active teammate
         const matchedStudent =
           c === 0 && playerId
             ? teamThrowers.find(
@@ -2991,15 +3503,17 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
         if (thrower && !ended) {
           thrower.throwTimer = 0.48;
           if (c === 0 && isMissThrow) {
-            thrower.calloutTimer = 1.25;
-            thrower.calloutSprite.visible = false;
-            thrower.missCalloutSprite.visible = true;
+            calloutPool.trigger(thrower.id, thrower.nickname, thrower.team, 1.25, false, true);
           } else if (!isNearMiss && c === 0) {
-            thrower.calloutTimer = 1.15;
-            thrower.missCalloutSprite.visible = false;
-            thrower.calloutSprite.visible = true;
+            calloutPool.trigger(
+              thrower.id,
+              thrower.nickname,
+              thrower.team,
+              1.15,
+              isGolden,
+              false
+            );
           }
-          // Kick up sand dust puff at the thrower's sneakers!
           spawnParticles(
             new THREE.Vector3(thrower.root.position.x, 0.08, thrower.root.position.z),
             team,
@@ -3014,14 +3528,12 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
         slot.isNearMiss = isNearMiss;
         slot.hasBounced = false;
         slot.progress = 0;
-        slot.duration = ended ? 0.52 : isMissThrow ? 0.52 : 0.64 + (c * 0.08);
+        slot.duration = ended ? 0.52 : isMissThrow ? 0.52 : 0.64 + c * 0.08;
+        slot.scaleMult = ended ? 1.32 : slot.isGolden ? 1.38 : 1.08;
+        slot.rot.set(0, 0, 0);
+        slot.showTrail = true;
 
-        slot.mesh.material = slot.isGolden ? goldBagMat : team === 'red' ? redBagMat : whiteBagMat;
-        const scaleMult = ended ? 1.32 : slot.isGolden ? 1.38 : 1.08;
-        slot.mesh.scale.set(1.22 * scaleMult, 0.75 * scaleMult, 1.02 * scaleMult);
-
-        const trailMat = slot.trailMesh.material as THREE.MeshBasicMaterial;
-        trailMat.color.setHex(
+        slot.trailColor.setHex(
           isMissThrow
             ? 0xfb7185
             : slot.isGolden
@@ -3036,8 +3548,6 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
         const startZ = thrower ? thrower.root.position.z : 1.85;
 
         if (ended) {
-          // Post-Whistle Counting Ceremony: Counted bean bag pops out of the front of the 3D basket
-          // (y = 4.35 -> yPeak = 4.92) and lands on the front tally stack on the sand!
           const curStep = ceremonyFrameRef.current?.stepIndex || 0;
           const col = curStep % 5;
           const row = Math.floor(curStep / 5) % 3;
@@ -3053,7 +3563,6 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
             0.68
           );
         } else if (isNearMiss) {
-          // Rim-Doink throw aims directly at the front-left metal hoop lip to clank and ricochet off!
           slot.startPos.set(startX, 1.15, startZ);
           const rimAngle = isMissThrow ? Math.PI * 0.82 : Math.random() * Math.PI * 2;
           slot.targetPos.set(
@@ -3072,7 +3581,6 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
             Math.sin(rimAngle) * 2.15
           );
         } else {
-          // Clean Swish parabolic arc straight into the 3D basket mouth!
           slot.startPos.set(startX, 1.15, startZ);
           const spread = matchedStudent ? (c - (count - 1) * 0.5) * 0.22 : (Math.random() - 0.5) * 0.44;
           slot.targetPos.set(
@@ -3087,25 +3595,38 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
           );
         }
 
-        slot.mesh.position.copy(slot.startPos);
-        slot.mesh.visible = true;
-        slot.trailMesh.position.copy(slot.startPos);
-        slot.trailMesh.visible = true;
+        slot.pos.copy(slot.startPos);
+        slot.trailPos.copy(slot.startPos);
+        slot.trailTarget.copy(slot.startPos);
       }
     };
 
     enqueueThrowsRef.current = spawnThrow;
 
     // ------------------------------------------------------------------------
-    // G. Main Animation Tick (Spring Physics, Thrower Rigging, Dynamic Camera)
+    // G. Main Animation Tick (Zero Per-Frame Allocations, DRS, Instanced Sync)
     // ------------------------------------------------------------------------
     let animId = 0;
     let prevTime = performance.now();
     let ambientThrowAccumulator = 0;
     const prevPos = new THREE.Vector3();
+    const _tmpQuat = new THREE.Quaternion();
+    const _tmpStepQuat = new THREE.Quaternion();
+    const _tmpColor = new THREE.Color();
+    const _tmpBagObj = new THREE.Object3D();
+    const _tmpScaleVec = new THREE.Vector3();
+    const _tmpMat4 = new THREE.Matrix4();
+    const _redDimRingCol = new THREE.Color(0xfda4af).multiplyScalar(0.32);
+    const _whiteDimRingCol = new THREE.Color(0x93c5fd).multiplyScalar(0.32);
+    const _ringColorPalette = [
+      new THREE.Color(0xf43f5e),
+      new THREE.Color(0x38bdf8),
+      new THREE.Color(0xfbbf24)
+    ];
 
     const tick = (now: number) => {
-      animId = afterDraw(tick);
+      if (isDisposed) return;
+      animId = requestAnimationFrame(tick);
       const dt = Math.min(0.05, Math.max(0.001, (now - prevTime) / 1000));
       prevTime = now;
       const elapsed = now * 0.001;
@@ -3114,7 +3635,6 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
         redScore: rScore,
         whiteScore: wScore,
         matchEnded: ended,
-        winner: win,
         redThrowRate: rRate = 0,
         whiteThrowRate: wRate = 0,
         cameraMode: camMode = 'DIRECTOR',
@@ -3139,71 +3659,111 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
             ) || throwers.find((t) => t.team === focusTeam)
           : undefined;
 
-      // Update 3D Target Sand Bean Bag (Step 0: Scoop) & 3D Dotted Parabolic Aiming Guide Arc (Step 1/2)
+      // Update 3D Target Sand Bean Bag & Instanced Parabolic Aiming Guide Arc
       if (camMode === 'STUDENT_CHASE' && !ended) {
         const fCenterX = focusTeam === 'white' ? 3.1 : -3.1;
         const avatarX = focusAvatar ? focusAvatar.root.position.x : fCenterX;
         const avatarZ = focusAvatar ? focusAvatar.root.position.z : 1.85;
 
         if (actionStep === 0) {
-          // Step 0 (① 玉を拾う • SCOOP): Highlight the bean bag on the sand right in front of the student's feet!
           targetSandBagGroup.visible = true;
           targetSandBagGroup.position.set(avatarX + 0.16, 0, avatarZ - 0.36);
           targetSandBagMesh.material = focusTeam === 'red' ? redBagMat : whiteBagMat;
           const ringPulse = 1 + Math.sin(elapsed * 7.5) * 0.14;
           targetSandRingMesh.scale.set(ringPulse, ringPulse, 1);
           targetSandRingMat.opacity = 0.65 + Math.sin(elapsed * 7.5) * 0.25;
-          aimArcGroup.visible = false;
+          aimDotsInst.visible = false;
         } else {
-          // Step 1 (② カゴを狙う • AIM) shows a 6-dot low preview arc; Step 2 (③ 投げる • THROW!) locks all 14 dots into the rim!
           targetSandBagGroup.visible = false;
-          aimArcGroup.visible = true;
+          const visibleDotCount = actionStep === 2 ? 14 : 6;
+          aimDotsInst.count = visibleDotCount;
+          aimDotsInst.visible = true;
+
           const handX = avatarX + 0.22;
           const handY = actionStep === 2 ? 1.18 : 1.02;
           const handZ = avatarZ;
           const rimX = fCenterX;
-          const rimY = 4.32;
+          const rimY = focusTeam === 'white' ? whiteBasket.rimCenterWorld.y - 0.15 : redBasket.rimCenterWorld.y - 0.15;
           const rimZ = 0;
           const midX = (handX + rimX) * 0.5;
           const midY = 5.42;
           const midZ = (handZ + rimZ) * 0.5;
-          const visibleDotCount = actionStep === 2 ? aimDots.length : 6;
+          _tmpColor.setHex(goldenNext ? 0xfbbf24 : focusTeam === 'red' ? 0xfda4af : 0xbae6fd);
 
-          for (let i = 0; i < aimDots.length; i++) {
-            const dot = aimDots[i];
-            dot.visible = i < visibleDotCount;
-            if (!dot.visible) continue;
-            const t = ((i + (elapsed * 3.2) % 1) / aimDots.length);
+          for (let i = 0; i < visibleDotCount; i++) {
+            const t = (i + ((elapsed * 3.2) % 1)) / 14;
             const invT = 1 - t;
-            dot.position.set(
+            const dotScale =
+              (goldenNext ? 1.28 : actionStep === 2 ? 0.96 : 0.72) *
+              (0.7 + Math.sin(t * Math.PI) * 0.45);
+            _dummyMatObj.position.set(
               invT * invT * handX + 2 * invT * t * midX + t * t * rimX,
               invT * invT * handY + 2 * invT * t * midY + t * t * rimY,
               invT * invT * handZ + 2 * invT * t * midZ + t * t * rimZ
             );
-            const dotMat = dot.material as THREE.MeshBasicMaterial;
-            dotMat.color.setHex(goldenNext ? 0xfbbf24 : focusTeam === 'red' ? 0xfda4af : 0xbae6fd);
-            dotMat.opacity =
-              Math.sin(t * Math.PI) * (actionStep === 2 ? (goldenNext ? 0.94 : 0.72) : 0.38);
-            const s = (goldenNext ? 1.28 : actionStep === 2 ? 0.96 : 0.72) * (0.7 + Math.sin(t * Math.PI) * 0.45);
-            dot.scale.setScalar(s);
+            _dummyMatObj.rotation.set(0, 0, 0);
+            _dummyMatObj.scale.setScalar(dotScale);
+            _dummyMatObj.updateMatrix();
+            aimDotsInst.setMatrixAt(i, _dummyMatObj.matrix);
+            aimDotsInst.setColorAt(i, _tmpColor);
           }
+          aimDotsInst.instanceMatrix.needsUpdate = true;
+          if (aimDotsInst.instanceColor) aimDotsInst.instanceColor.needsUpdate = true;
         }
       } else {
         targetSandBagGroup.visible = false;
-        aimArcGroup.visible = false;
+        aimDotsInst.visible = false;
       }
 
-      // Update 3D Counted Bean Bag Tally Piles in front of each pole during the Counting Ceremony
+      // Update Instanced 3D Counted Bean Bag Tally Piles (only when counts change!)
       const showRedCounted = ended && cFrame ? Math.min(60, cFrame.countedRed) : 0;
       const showWhiteCounted = ended && cFrame ? Math.min(60, cFrame.countedWhite) : 0;
-      for (let i = 0; i < 60; i++) {
-        redCountedPileMeshes[i].visible = ended && i < showRedCounted;
-        whiteCountedPileMeshes[i].visible = ended && i < showWhiteCounted;
+      if (showRedCounted !== prevTallyRed || showWhiteCounted !== prevTallyWhite) {
+        prevTallyRed = showRedCounted;
+        prevTallyWhite = showWhiteCounted;
+        let tallyIdx = 0;
+
+        for (let i = 0; i < showRedCounted; i++) {
+          const col = i % 5;
+          const row = Math.floor(i / 5) % 3;
+          const layer = Math.floor(i / 15);
+          _dummyMatObj.position.set(
+            -3.1 + (col - 2) * 0.28 + (layer % 2) * 0.06,
+            0.08 + layer * 0.14,
+            1.05 + row * 0.26
+          );
+          _dummyMatObj.rotation.set(0.1, i * 0.7, 0.08);
+          _dummyMatObj.scale.set(1, 1, 1);
+          _dummyMatObj.updateMatrix();
+          tallyBagsInst.setMatrixAt(tallyIdx, _dummyMatObj.matrix);
+          writeAtlasRect(tallyAtlasData, tallyIdx, redBagRect);
+          tallyIdx++;
+        }
+
+        for (let i = 0; i < showWhiteCounted; i++) {
+          const col = i % 5;
+          const row = Math.floor(i / 5) % 3;
+          const layer = Math.floor(i / 15);
+          _dummyMatObj.position.set(
+            3.1 + (col - 2) * 0.28 + (layer % 2) * 0.06,
+            0.08 + layer * 0.14,
+            1.05 + row * 0.26
+          );
+          _dummyMatObj.rotation.set(0.1, i * 0.7, 0.08);
+          _dummyMatObj.scale.set(1, 1, 1);
+          _dummyMatObj.updateMatrix();
+          tallyBagsInst.setMatrixAt(tallyIdx, _dummyMatObj.matrix);
+          writeAtlasRect(tallyAtlasData, tallyIdx, whiteBagRect);
+          tallyIdx++;
+        }
+
+        tallyBagsInst.count = tallyIdx;
+        tallyBagsInst.visible = tallyIdx > 0;
+        tallyBagsInst.instanceMatrix.needsUpdate = true;
+        tallyAtlasAttr.needsUpdate = true;
       }
 
-      // 1. Dynamic Camera Choreography:
-      //    - STUDENT_CHASE (iPad 3rd-Person Over-the-Shoulder or 1st-Person POV — kept BOTH during active play AND during the Bean Bag Tallying ceremony!)
-      //    - DIRECTOR (Main Screen TV Broadcast Camera)
+      // 1. Dynamic Camera Choreography
       if (camMode === 'STUDENT_CHASE') {
         const isFirstPerson = viewPerspective === 'FIRST_PERSON';
         const targetFov = isFirstPerson ? 68 : 65;
@@ -3216,8 +3776,6 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
         const avatarZ = focusAvatar ? focusAvatar.root.position.z : ended ? 2.18 : 1.85;
 
         if (!ended) {
-          // Active 3-Step Gameplay on Student iPad:
-          // Smoothly adjusts look height across Step 0 (Scoop from sand) -> Step 1 (Aim up) -> Step 2 (Shot ready!)
           const activeTeamBag = flyingBags.find((b) => b.active && b.team === focusTeam);
           const followPulse = activeTeamBag
             ? Math.sin(Math.min(1, activeTeamBag.progress) * Math.PI)
@@ -3237,10 +3795,6 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
           camera.position.z += (targetCamZ - camera.position.z) * Math.min(1, dt * 8);
           camera.lookAt(fCenterX, stepLookY + followPulse * 0.62, 0);
         } else {
-          // Post-Whistle Bean Bag Tallying (玉かぞえ) on Student iPad:
-          // Keep the student's personal 3rd-Person (behind their sitting #01 avatar in Taiiku-zuwari)
-          // or 1st-Person (seated ground-level POV) looking up at their own team's 3D basket draining
-          // and the 3D counted bean bags stacking up on the sand right in front of them!
           const isRattle = cFrame?.stage === 'CLIFFHANGER_RATTLE';
           const shakeX = isRattle ? Math.sin(elapsed * 34) * 0.035 : Math.sin(elapsed * 0.45) * 0.08;
           const shakeY = isRattle ? Math.cos(elapsed * 29) * 0.025 : 0;
@@ -3256,9 +3810,6 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
           camera.lookAt(fCenterX, lookY, 0);
         }
       } else if (ended && cFrame) {
-        // Main Screen TV Broadcast Camera during Post-Whistle Counting Ceremony:
-        // Wide framing of BOTH 3D wire-mesh baskets, the 3D counted tally piles on the sand,
-        // AND both teams sitting in Taiiku-zuwari (体育座り)!
         if (camera.fov !== 42) {
           camera.fov = 42;
           camera.updateProjectionMatrix();
@@ -3353,10 +3904,9 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
         }
       }
 
-      // 3. Update Adaptive Non-Overflowing Basket Fill, Net Squash-and-Stretch & Cliffhanger Rattle
+      // 3. Update Adaptive Non-Overflowing Basket Fill, Net Squash & Instanced Inner Bags/Gauge Rings
       const updateBasketState = (basket: BasketAssembly, score: number, phase: number, isRed: boolean) => {
         const isCliffhanger = ended && cFrame?.stage === 'CLIFFHANGER_RATTLE';
-        // During the counting ceremony, visually drain the basket bag-by-bag so students watch it empty!
         const visualBagCount =
           ended && cFrame
             ? isRed
@@ -3364,23 +3914,20 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
               : cFrame.remainingWhiteVisual
             : score;
 
-        // Compute adaptive fill ratio in [0, 0.92] so the basket fills steadily and NEVER overflows!
         const targetFill = computeAdaptiveBasketFillRatio(visualBagCount, 20);
         basket.displayFillRatio += (targetFill - basket.displayFillRatio) * Math.min(1, dt * 6.5);
         const fillRatio = basket.displayFillRatio;
 
-        // During CLIFFHANGER_RATTLE, violently jiggle the net & pole as both baskets are checked!
         if (isCliffhanger) {
           basket.hitSquash = 0.55 + Math.sin(elapsed * 38 + phase) * 0.35;
           basket.springVelX += Math.sin(elapsed * 44 + phase) * 1.45 * dt * 15;
           basket.springVelZ += Math.cos(elapsed * 39 + phase) * 1.45 * dt * 15;
         } else {
-          // Decay the per-hit squash-and-stretch impulse
           basket.hitSquash = Math.max(0, basket.hitSquash - dt * 3.8);
         }
         const squashWave = Math.sin(basket.hitSquash * Math.PI);
 
-        // 3a. Update Sculpted Inner Mound Core (rises smoothly inside the net cone, capped below rim!)
+        // 3a. Mound Core
         if (visualBagCount <= 0 && fillRatio < 0.01) {
           basket.moundMesh.visible = false;
         } else {
@@ -3390,22 +3937,38 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
           basket.moundMesh.scale.set(radialFit, heightFit, radialFit);
         }
 
-        // 3b. Reveal & Jostle Individual Stitched Surface Bean Bags proportionally to fillRatio
+        // 3b. Reveal & Jostle Instanced Inner Bean Bags
         const visibleBags =
           visualBagCount <= 12
             ? visualBagCount
             : Math.min(
-                basket.innerBagMeshes.length,
+                basket.innerBagBaseTransforms.length,
                 Math.round(12 + ((fillRatio - computeAdaptiveBasketFillRatio(12, 20)) / 0.7) * 52)
               );
 
-        for (let i = 0; i < basket.innerBagMeshes.length; i++) {
-          const bMesh = basket.innerBagMeshes[i];
-          bMesh.visible = i < visibleBags;
-          if (bMesh.visible && squashWave > 0.01) {
-            // Top bags jostle when a new bag lands or pops out of the basket!
-            bMesh.rotation.z = Math.cos(i * 1.3 + elapsed * 18) * (0.35 + squashWave * 0.25);
+        basket.innerBagsInst.count = visibleBags;
+        basket.innerBagsInst.visible = visibleBags > 0;
+        if (visibleBags > 0 && squashWave > 0.01) {
+          for (let i = 0; i < visibleBags; i++) {
+            const base = basket.innerBagBaseTransforms[i];
+            _tmpBagObj.position.set(base.pos[0], base.pos[1], base.pos[2]);
+            _tmpBagObj.rotation.set(
+              base.rot[0],
+              base.rot[1],
+              Math.cos(i * 1.3 + elapsed * 18) * (0.35 + squashWave * 0.25)
+            );
+            _tmpBagObj.scale.set(1, 1, 1);
+            _tmpBagObj.updateMatrix();
+            basket.innerBagsInst.setMatrixAt(i, _tmpBagObj.matrix);
           }
+          basket.innerBagsInst.instanceMatrix.needsUpdate = true;
+          basket.innerBagsNeedReset = true;
+        } else if (basket.innerBagsNeedReset) {
+          for (let i = 0; i < basket.innerBagBaseTransforms.length; i++) {
+            basket.innerBagsInst.setMatrixAt(i, basket.innerBagBaseTransforms[i].matrix);
+          }
+          basket.innerBagsInst.instanceMatrix.needsUpdate = true;
+          basket.innerBagsNeedReset = false;
         }
 
         // 3c. Net Belly Bulge + Hit Squash-and-Stretch Gulp
@@ -3414,26 +3977,31 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
         basket.netMesh.scale.set(bellyBulge, netSagY, bellyBulge);
         basket.linerMesh.scale.set(bellyBulge * 0.98, netSagY, bellyBulge * 0.98);
 
-        // 3d. Illuminate the 4 Fullness Gauge Rings (25%, 50%, 75%, 90%) as fillRatio climbs
+        // 3d. Illuminate the 4 Fullness Gauge Rings (InstancedMesh)
         const ringThresholds = [0.2, 0.42, 0.65, 0.82];
-        for (let r = 0; r < basket.levelRings.length; r++) {
-          const ringMat = basket.levelRings[r].material as THREE.MeshBasicMaterial;
+        const dimColor = isRed ? _redDimRingCol : _whiteDimRingCol;
+        for (let r = 0; r < 4; r++) {
           const reached = fillRatio >= ringThresholds[r] || isCliffhanger;
-          ringMat.opacity = reached ? 0.85 : 0.16;
-          if (reached) {
-            ringMat.color.setHex(
-              isCliffhanger ? 0xfbbf24 : r === 3 ? 0xfbbf24 : isRed ? 0xf43f5e : 0x38bdf8
-            );
-          }
+          const col = reached
+            ? isCliffhanger || r === 3
+              ? _ringColorPalette[2]
+              : isRed
+                ? _ringColorPalette[0]
+                : _ringColorPalette[1]
+            : dimColor;
+          basket.levelRingsInst.setColorAt(r, col);
         }
+        if (basket.levelRingsInst.instanceColor) basket.levelRingsInst.instanceColor.needsUpdate = true;
 
-        // 3e. Rim Shockwave Ring Expansion & Fade on Score / Ejection
+        // 3e. Rim Shockwave Ring Expansion & Visibility
         const pulseMat = basket.rimPulseRing.material as THREE.MeshBasicMaterial;
         if (basket.hitSquash > 0.01) {
+          basket.rimPulseRing.visible = true;
           const pScale = 1 + (1 - basket.hitSquash) * 0.48;
           basket.rimPulseRing.scale.set(pScale, pScale, 1);
           pulseMat.opacity = basket.hitSquash * 0.9;
         } else {
+          basket.rimPulseRing.visible = false;
           pulseMat.opacity = 0;
         }
 
@@ -3456,128 +4024,174 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
       updateBasketState(redBasket, rScore, 0, true);
       updateBasketState(whiteBasket, wScore, 1.8, false);
 
-      // 4. Update Flying Bean Bags (Quadratic Bezier + Rim-Bounce Physics + Motion Trails)
+      // 4. Update & Batch Flying Bean Bags (InstancedMesh)
+      let activeFlyingC = 0;
+      let activeTrailC = 0;
       for (let i = 0; i < flyingBags.length; i++) {
         const bag = flyingBags[i];
         if (!bag.active) continue;
 
-        prevPos.copy(bag.mesh.position);
+        prevPos.copy(bag.pos);
 
         if (bag.hasBounced) {
-          // Free-fall bounce after clanking off the metal rim!
           bag.bounceVel.y -= 9.8 * dt;
-          bag.mesh.position.addScaledVector(bag.bounceVel, dt);
-          bag.mesh.rotateOnAxis(bag.spinAxis, dt * 14);
-          bag.trailMesh.visible = false;
+          bag.pos.addScaledVector(bag.bounceVel, dt);
+          _tmpQuat.setFromEuler(bag.rot);
+          _tmpStepQuat.setFromAxisAngle(bag.spinAxis, dt * 14);
+          _tmpQuat.multiply(_tmpStepQuat);
+          bag.rot.setFromQuaternion(_tmpQuat);
+          bag.showTrail = false;
 
-          if (bag.mesh.position.y <= 0.08) {
+          if (bag.pos.y <= 0.08) {
             bag.active = false;
-            bag.mesh.visible = false;
-            spawnParticles(bag.mesh.position, bag.team, false, true); // Sand puff on landing!
-          }
-          continue;
-        }
-
-        bag.progress += dt / bag.duration;
-        if (bag.progress >= 1) {
-          const basket = bag.team === 'red' ? redBasket : whiteBasket;
-          if (bag.isNearMiss && !ended) {
-            // Clanked off the metal hoop! Impart spring impulse to pole and bounce off!
-            bag.hasBounced = true;
-            basket.springVelX += (Math.random() - 0.5) * 0.55;
-            basket.springVelZ += (Math.random() - 0.5) * 0.55;
-            spawnParticles(bag.targetPos, bag.team, false, false);
+            spawnParticles(bag.pos, bag.team, false, true);
             continue;
           }
-
-          // Scored inside the basket (or landed on the front tally stack during ceremony)!
-          bag.active = false;
-          bag.mesh.visible = false;
-          bag.trailMesh.visible = false;
-          if (!ended) {
-            const impulse = bag.isGolden ? 0.65 : 0.32;
-            basket.springVelX += (Math.random() - 0.5) * impulse;
-            basket.springVelZ += (Math.random() - 0.5) * impulse;
-            basket.hitSquash = bag.isGolden ? 1.0 : 0.78;
-            const pulseMat = basket.rimPulseRing.material as THREE.MeshBasicMaterial;
-            pulseMat.color.setHex(
-              bag.isGolden ? 0xfbbf24 : bag.team === 'red' ? 0xfb7185 : 0x38bdf8
-            );
-            spawnParticles(bag.targetPos, bag.team, bag.isGolden, false);
-          } else {
-            // During post-whistle counting ejection, pulse the net & burst stars when counted bags pop!
-            basket.hitSquash = bag.isGolden ? 0.92 : 0.62;
-            basket.springVelX += (Math.random() - 0.5) * (bag.isGolden ? 0.45 : 0.25);
-            const pulseMat = basket.rimPulseRing.material as THREE.MeshBasicMaterial;
-            pulseMat.color.setHex(
-              bag.isGolden ? 0xfbbf24 : bag.team === 'red' ? 0xfb7185 : 0x38bdf8
-            );
-            spawnParticles(bag.targetPos, bag.team, bag.isGolden, true);
-            if (bag.isGolden) {
-              spawnParticles(basket.rimCenterWorld, bag.team, true, false);
+        } else {
+          bag.progress += dt / bag.duration;
+          if (bag.progress >= 1) {
+            const basket = bag.team === 'red' ? redBasket : whiteBasket;
+            if (bag.isNearMiss && !ended) {
+              bag.hasBounced = true;
+              basket.springVelX += (Math.random() - 0.5) * 0.55;
+              basket.springVelZ += (Math.random() - 0.5) * 0.55;
+              spawnParticles(bag.targetPos, bag.team, false, false);
+            } else {
+              bag.active = false;
+              bag.showTrail = false;
+              if (!ended) {
+                const impulse = bag.isGolden ? 0.65 : 0.32;
+                basket.springVelX += (Math.random() - 0.5) * impulse;
+                basket.springVelZ += (Math.random() - 0.5) * impulse;
+                basket.hitSquash = bag.isGolden ? 1.0 : 0.78;
+                const pulseMat = basket.rimPulseRing.material as THREE.MeshBasicMaterial;
+                pulseMat.color.setHex(
+                  bag.isGolden ? 0xfbbf24 : bag.team === 'red' ? 0xfb7185 : 0x38bdf8
+                );
+                spawnParticles(bag.targetPos, bag.team, bag.isGolden, false);
+              } else {
+                basket.hitSquash = bag.isGolden ? 0.92 : 0.62;
+                basket.springVelX += (Math.random() - 0.5) * (bag.isGolden ? 0.45 : 0.25);
+                const pulseMat = basket.rimPulseRing.material as THREE.MeshBasicMaterial;
+                pulseMat.color.setHex(
+                  bag.isGolden ? 0xfbbf24 : bag.team === 'red' ? 0xfb7185 : 0x38bdf8
+                );
+                spawnParticles(bag.targetPos, bag.team, bag.isGolden, true);
+                if (bag.isGolden) {
+                  spawnParticles(basket.rimCenterWorld, bag.team, true, false);
+                }
+              }
+              continue;
             }
+          } else {
+            const t = bag.progress;
+            const invT = 1 - t;
+            bag.pos.x = invT * invT * bag.startPos.x + 2 * invT * t * bag.midPos.x + t * t * bag.targetPos.x;
+            bag.pos.y = invT * invT * bag.startPos.y + 2 * invT * t * bag.midPos.y + t * t * bag.targetPos.y;
+            bag.pos.z = invT * invT * bag.startPos.z + 2 * invT * t * bag.midPos.z + t * t * bag.targetPos.z;
+
+            _tmpQuat.setFromEuler(bag.rot);
+            _tmpStepQuat.setFromAxisAngle(bag.spinAxis, dt * 11);
+            _tmpQuat.multiply(_tmpStepQuat);
+            bag.rot.setFromQuaternion(_tmpQuat);
+
+            bag.trailPos.lerpVectors(prevPos, bag.pos, 0.3);
+            bag.trailTarget.copy(prevPos);
           }
-          continue;
         }
 
-        const t = bag.progress;
-        const invT = 1 - t;
-        bag.mesh.position.x =
-          invT * invT * bag.startPos.x + 2 * invT * t * bag.midPos.x + t * t * bag.targetPos.x;
-        bag.mesh.position.y =
-          invT * invT * bag.startPos.y + 2 * invT * t * bag.midPos.y + t * t * bag.targetPos.y;
-        bag.mesh.position.z =
-          invT * invT * bag.startPos.z + 2 * invT * t * bag.midPos.z + t * t * bag.targetPos.z;
+        _tmpQuat.setFromEuler(bag.rot);
+        _tmpScaleVec.set(1.22 * bag.scaleMult, 0.75 * bag.scaleMult, 1.02 * bag.scaleMult);
+        _tmpMat4.compose(bag.pos, _tmpQuat, _tmpScaleVec);
+        flyingBagsInst.setMatrixAt(activeFlyingC, _tmpMat4);
+        writeAtlasRect(
+          flyingBagAtlasData,
+          activeFlyingC,
+          bag.isGolden ? goldBagRect : bag.team === 'red' ? redBagRect : whiteBagRect
+        );
+        activeFlyingC++;
 
-        bag.mesh.rotateOnAxis(bag.spinAxis, dt * 11);
-
-        // Orient motion ribbon trail behind the flying bag
-        bag.trailMesh.position.lerpVectors(prevPos, bag.mesh.position, 0.3);
-        bag.trailMesh.lookAt(prevPos);
+        if (bag.showTrail) {
+          _dummyMatObj.position.copy(bag.trailPos);
+          _dummyMatObj.scale.set(1, 1, 1);
+          _dummyMatObj.lookAt(bag.trailTarget);
+          _dummyMatObj.updateMatrix();
+          trailsInst.setMatrixAt(activeTrailC, _dummyMatObj.matrix);
+          trailsInst.setColorAt(activeTrailC, bag.trailColor);
+          activeTrailC++;
+        }
+      }
+      flyingBagsInst.count = activeFlyingC;
+      flyingBagsInst.visible = activeFlyingC > 0;
+      if (activeFlyingC > 0) {
+        flyingBagsInst.instanceMatrix.needsUpdate = true;
+        flyingBagAtlasAttr.needsUpdate = true;
+      }
+      trailsInst.count = activeTrailC;
+      trailsInst.visible = activeTrailC > 0;
+      if (activeTrailC > 0) {
+        trailsInst.instanceMatrix.needsUpdate = true;
+        if (trailsInst.instanceColor) trailsInst.instanceColor.needsUpdate = true;
       }
 
-      // 5. Update Star & Sand Dust Particles
-      for (let i = 0; i < particles.length; i++) {
-        const p = particles[i];
+      // 5. Update Star & Sand Dust Instanced Particles
+      let activeStarC = 0;
+      for (let i = 0; i < MAX_STARS; i++) {
+        const p = starParticles[i];
         if (p.life <= 0) continue;
         p.life -= dt;
-        if (p.life <= 0) {
-          p.mesh.visible = false;
-          continue;
-        }
-        p.vel.y -= (p.isDust ? 1.8 : 5.2) * dt;
-        p.mesh.position.addScaledVector(p.vel, dt);
-        const s = (p.life / p.maxLife) * (p.isDust ? 1.35 : 1.0);
-        p.mesh.scale.setScalar(s);
-        p.mesh.rotation.y += dt * 7;
+        if (p.life <= 0) continue;
+        p.vel.y -= 5.2 * dt;
+        p.pos.addScaledVector(p.vel, dt);
+        p.rotY += dt * 7;
+        const s = (p.life / p.maxLife) * p.scale;
+        _dummyMatObj.position.copy(p.pos);
+        _dummyMatObj.rotation.set(0, p.rotY, 0);
+        _dummyMatObj.scale.setScalar(s);
+        _dummyMatObj.updateMatrix();
+        starInst.setMatrixAt(activeStarC, _dummyMatObj.matrix);
+        starInst.setColorAt(activeStarC, p.color);
+        activeStarC++;
+      }
+      starInst.count = activeStarC;
+      starInst.visible = activeStarC > 0;
+      if (activeStarC > 0) {
+        starInst.instanceMatrix.needsUpdate = true;
+        if (starInst.instanceColor) starInst.instanceColor.needsUpdate = true;
       }
 
-      // 6. Animate Articulated Student Throwers (Scooping, Jumping, Taiiku-Zuwari Sitting/Clapping Count, & Climax)
+      let activeDustC = 0;
+      for (let i = 0; i < MAX_DUST; i++) {
+        const p = dustParticles[i];
+        if (p.life <= 0) continue;
+        p.life -= dt;
+        if (p.life <= 0) continue;
+        p.vel.y -= 1.8 * dt;
+        p.pos.addScaledVector(p.vel, dt);
+        p.rotY += dt * 7;
+        const s = (p.life / p.maxLife) * p.scale;
+        _dummyMatObj.position.copy(p.pos);
+        _dummyMatObj.rotation.set(0, p.rotY, 0);
+        _dummyMatObj.scale.setScalar(s);
+        _dummyMatObj.updateMatrix();
+        dustInst.setMatrixAt(activeDustC, _dummyMatObj.matrix);
+        activeDustC++;
+      }
+      dustInst.count = activeDustC;
+      dustInst.visible = activeDustC > 0;
+      if (activeDustC > 0) {
+        dustInst.instanceMatrix.needsUpdate = true;
+      }
+
+      // 6. Animate Articulated Student Thrower Rigs (Zero Object Creation)
       for (let i = 0; i < throwers.length; i++) {
         const avatar = throwers[i];
-
-        // Animate floating student name callout badge when they score or rim-doink
-        if (avatar.calloutTimer > 0) {
-          avatar.calloutTimer = Math.max(0, avatar.calloutTimer - dt);
-          const liftY = 1.55 + (1.2 - avatar.calloutTimer) * 0.32;
-          avatar.calloutSprite.position.y = liftY;
-          avatar.missCalloutSprite.position.y = liftY;
-          if (avatar.calloutTimer <= 0) {
-            avatar.calloutSprite.visible = false;
-            avatar.missCalloutSprite.visible = false;
-          }
-        }
-
         const isFocusedHero = camMode === 'STUDENT_CHASE' && focusAvatar === avatar;
-        avatar.headGroup.visible = !(isFocusedHero && viewPerspective === 'FIRST_PERSON');
 
         if (ended) {
-          avatar.heldBag.visible = false;
-          avatar.calloutSprite.visible = false;
-          avatar.missCalloutSprite.visible = false;
+          avatar.heldBagVisible = false;
           const stage = cFrame?.stage || 'VICTORY_FANFARE';
 
-          // Move students neatly onto the outer chalk circle looking up at the basket during the ceremony
           const sitRadius = avatar.ringTier === 1 ? 2.65 : 2.18;
           const sitAngle = isFocusedHero ? Math.PI * 0.5 : avatar.baseAngle;
           const sitX = avatar.centerX + Math.cos(sitAngle) * sitRadius;
@@ -3595,22 +4209,17 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
           }
 
           if (stage === 'WHISTLE_EYES_UP' || stage === 'RHYTHMIC_CHANT' || stage === 'TENSION_SLOWDOWN') {
-            // Authentic Japanese Undokai Taiiku-Zuwari (体育座り / Sitting Attention Circle) + Synchronized Clapping!
-            // Makes it 100% visually unmistakable that throwing has ended and the class is counting the bags!
             const clapBounce = countBeatWave * 0.06;
             avatar.bodyPivot.position.y = -0.22 + clapBounce;
             avatar.bodyPivot.rotation.x = -0.08;
             avatar.headGroup.rotation.x = -0.38 - countBeatWave * 0.12;
-            // Knees bent in sitting posture
             avatar.legL.rotation.x = -1.25;
             avatar.legR.rotation.x = -1.25;
-            // Hands clap together in front of chest on each count beat!
             avatar.armL.rotation.x = -1.15 - countBeatWave * 0.35;
             avatar.armR.rotation.x = -1.15 - countBeatWave * 0.35;
             avatar.armL.rotation.z = 0.25 - countBeatWave * 0.22;
             avatar.armR.rotation.z = -0.25 + countBeatWave * 0.22;
           } else if (stage === 'CLIFFHANGER_RATTLE') {
-            // Drumroll freeze! Students lean forward from their sitting circle, hands clasped in suspense!
             const tremble = Math.sin(elapsed * 32 + i) * 0.025;
             avatar.bodyPivot.position.y = -0.18 + Math.abs(tremble);
             avatar.bodyPivot.rotation.x = 0.12;
@@ -3620,7 +4229,6 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
             avatar.armL.rotation.x = -1.55 + tremble * 2;
             avatar.armR.rotation.x = -1.55 - tremble * 2;
           } else {
-            // CLIMAX_REVEAL & VICTORY_FANFARE: Winning team leaps up from the circle in glory!
             avatar.armL.rotation.z = 0;
             avatar.armR.rotation.z = 0;
             const isWin =
@@ -3643,7 +4251,7 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
               }
             } else {
               avatar.bodyPivot.position.y = -0.18;
-              avatar.bodyPivot.rotation.x = 0.22; // Sitting & clapping for the winners
+              avatar.bodyPivot.rotation.x = 0.22;
               avatar.legL.rotation.x = -1.2;
               avatar.legR.rotation.x = -1.2;
               avatar.armL.rotation.x = -0.95 + Math.sin(elapsed * 10 + i) * 0.2;
@@ -3656,7 +4264,6 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
         avatar.armL.rotation.z = 0;
         avatar.armR.rotation.z = 0;
 
-        // Active Undokai Tamaire Scurrying & Throwing Cycle
         const patrolSpan = isFocusedHero ? 0.035 : avatar.ringTier === 1 ? 0.16 : 0.22;
         const patrolAngle = avatar.baseAngle + Math.sin(elapsed * 1.45 + avatar.pickupPhase) * patrolSpan;
         const px = avatar.centerX + Math.cos(patrolAngle) * avatar.radius;
@@ -3664,11 +4271,8 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
         avatar.root.position.set(px, 0, pz);
 
         if (isFocusedHero) {
-          // In STUDENT_CHASE mode, orient the student's own 3D avatar toward their team's 3D basket (-Z)
-          // with a slight over-the-shoulder angle so their #01 back Zekken bib and right throwing arm read clearly!
           avatar.bodyPivot.rotation.y = Math.PI - 0.18;
         } else {
-          // Camera-aware 3/4 yaw: blend facing the basket pole with facing the front TV (+Z)
           const angleToBasket = Math.atan2(avatar.centerX - px, 0 - pz);
           const sinCam = Math.sin(angleToBasket);
           const cosCam = Math.cos(angleToBasket) * 0.45 + 0.55;
@@ -3676,7 +4280,6 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
         }
 
         if (avatar.throwTimer > 0) {
-          // Jumping overhead throw motion!
           avatar.throwTimer = Math.max(0, avatar.throwTimer - dt);
           const prog = 1 - avatar.throwTimer / 0.48;
           const jumpArc = Math.sin(prog * Math.PI);
@@ -3684,16 +4287,14 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
           avatar.bodyPivot.rotation.x = -0.18 * jumpArc;
           avatar.armL.rotation.x = -2.6 * jumpArc;
           avatar.armR.rotation.x = -2.85 * jumpArc;
-          avatar.heldBag.visible = prog < 0.35;
+          avatar.heldBagVisible = prog < 0.35;
           avatar.headGroup.rotation.x = -0.35;
           if (avatar.hairTailGroup) {
             avatar.hairTailGroup.rotation.x = -jumpArc * 0.55;
           }
         } else if (isFocusedHero) {
-          // 3-Step Physical Throw Cycle Posture for the Student's Own 3D Avatar (#01):
           const bob = Math.abs(Math.sin(elapsed * 4.5)) * 0.04;
           if (actionStep === 0) {
-            // Step 0 (① 玉を拾う • SCOOP): Crouched low reaching down toward the glowing bean bag on the sand!
             const reach = Math.sin(elapsed * 5.2) * 0.06;
             avatar.bodyPivot.position.y = -0.15;
             avatar.bodyPivot.rotation.x = 0.46;
@@ -3701,34 +4302,30 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
             avatar.armR.rotation.x = -1.15 - reach * 2;
             avatar.legL.rotation.x = -0.55;
             avatar.legR.rotation.x = -0.55;
-            avatar.heldBag.visible = false;
+            avatar.heldBagVisible = false;
             avatar.headGroup.rotation.x = 0.24;
           } else if (actionStep === 1) {
-            // Step 1 (② カゴを狙う • AIM): Standing upright holding the bean bag in hand, looking up to lock onto the net!
             avatar.bodyPivot.position.y = bob;
             avatar.bodyPivot.rotation.x = -0.03;
             avatar.armL.rotation.x = -0.65 - bob;
             avatar.armR.rotation.x = -1.22 - bob * 1.2;
             avatar.legL.rotation.x = 0;
             avatar.legR.rotation.x = 0;
-            avatar.heldBag.visible = true;
+            avatar.heldBagVisible = true;
             avatar.headGroup.rotation.x = -0.24;
           } else {
-            // Step 2 (③ カゴへ投げる • SINK THE SHOT!): Coiled in overhead throwing stance with glowing 3D trajectory arc!
             avatar.bodyPivot.position.y = bob * 1.3;
             avatar.bodyPivot.rotation.x = -0.09;
             avatar.armL.rotation.x = -1.35 - bob * 1.5;
             avatar.armR.rotation.x = -1.85 - bob * 1.8;
             avatar.legL.rotation.x = 0;
             avatar.legR.rotation.x = 0;
-            avatar.heldBag.visible = true;
+            avatar.heldBagVisible = true;
             avatar.headGroup.rotation.x = -0.34;
           }
         } else {
-          // Alternating between crouching down to scoop a bean bag from the sand & aiming up!
           const cycle = Math.sin(elapsed * 4.2 + avatar.pickupPhase);
           if (cycle < -0.35) {
-            // Squatting down to pick up a fallen bean bag from the sand
             const crouch = (-cycle - 0.35) / 0.65;
             avatar.bodyPivot.position.y = -crouch * 0.14;
             avatar.bodyPivot.rotation.x = crouch * 0.45;
@@ -3736,10 +4333,9 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
             avatar.armR.rotation.x = -crouch * 1.1;
             avatar.legL.rotation.x = -crouch * 0.5;
             avatar.legR.rotation.x = -crouch * 0.5;
-            avatar.heldBag.visible = true;
+            avatar.heldBagVisible = true;
             avatar.headGroup.rotation.x = 0.18;
           } else {
-            // Looking up at the basket aiming the bean bag
             const bob = Math.abs(Math.sin(elapsed * 6.5 + avatar.pickupPhase)) * 0.06;
             avatar.bodyPivot.position.y = bob;
             avatar.bodyPivot.rotation.x = -0.06;
@@ -3747,7 +4343,7 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
             avatar.armR.rotation.x = -1.45 - bob * 2;
             avatar.legL.rotation.x = Math.sin(elapsed * 6.5 + i) * 0.22;
             avatar.legR.rotation.x = -Math.sin(elapsed * 6.5 + i) * 0.22;
-            avatar.heldBag.visible = true;
+            avatar.heldBagVisible = true;
             avatar.headGroup.rotation.x = -0.26;
             if (avatar.hairTailGroup) {
               avatar.hairTailGroup.rotation.x = Math.sin(elapsed * 6.5 + i) * 0.18;
@@ -3756,42 +4352,68 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
         }
       }
 
-      // 7. Animate Cheering Tent Spectators & Clouds
-      for (let i = 0; i < allSpectators.length; i++) {
-        allSpectators[i].position.y = Math.abs(Math.sin(elapsed * 6.8 + i * 0.7)) * 0.14;
-        allSpectators[i].rotation.y = Math.sin(elapsed * 3.2 + i) * 0.2;
-      }
-      cloudsGroup.rotation.y = Math.sin(elapsed * 0.04) * 0.06;
+      const firstPersonHero =
+        camMode === 'STUDENT_CHASE' && viewPerspective === 'FIRST_PERSON' ? focusAvatar : undefined;
+      throwerPool.sync(throwers, firstPersonHero);
 
+      // Update floating callout sprites (hide during end-of-match counting ceremony)
+      if (ended) {
+        calloutPool.hideAll();
+      } else {
+        calloutPool.update(dt, (ownerId) => {
+          const match = throwers.find((t) => t.id === ownerId);
+          return match ? match.root.position : null;
+        });
+      }
+
+      // 7. Animate Cheering Tent Spectators & Clouds + DRS Frame Tracking
+      arenaEnv.animateSpectators(elapsed);
+      arenaEnv.cloudsGroup.rotation.y = Math.sin(elapsed * 0.04) * 0.06;
+
+      trackFrameRate(dt);
       renderer.render(scene, camera);
     };
 
-    animId = afterDraw(tick);
-
-    const handleResize = () => {
-      if (!container) return;
-      width = container.clientWidth || 960;
-      height = container.clientHeight || 540;
-      camera.aspect = width / height;
-      camera.updateProjectionMatrix();
-      renderer.setSize(width, height);
-    };
-    window.addEventListener('resize', handleResize);
-    const resizeObserver =
-      typeof ResizeObserver !== 'undefined' ? new ResizeObserver(handleResize) : null;
-    resizeObserver?.observe(container);
+    animId = requestAnimationFrame(tick);
 
     return () => {
-      window.removeEventListener('resize', handleResize);
-      resizeObserver?.disconnect();
+      isDisposed = true;
       cancelAnimationFrame(animId);
+      renderer.domElement.removeEventListener('webglcontextlost', onContextLost);
+      renderer.domElement.removeEventListener('webglcontextrestored', onContextRestored);
       enqueueThrowsRef.current = null;
-      renderer.dispose();
-      if (renderer.domElement && renderer.domElement.parentNode === container) {
-        container.removeChild(renderer.domElement);
-      }
+      rebuildRosterRef.current = null;
+      undokaiBannerMatRef.current = null;
+
+      calloutPool.dispose();
+      throwerPool.dispose();
+
+      scene.traverse((obj) => {
+        if ((obj as THREE.InstancedMesh).isInstancedMesh) {
+          (obj as THREE.InstancedMesh).dispose();
+        }
+        if ((obj as THREE.Mesh).isMesh) {
+          const mesh = obj as THREE.Mesh;
+          if (mesh.geometry) mesh.geometry.dispose();
+          const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+          mats.forEach((m) => {
+            if (!m) return;
+            const stdMat = m as THREE.MeshStandardMaterial;
+            if (stdMat.map && !stdMat.map.userData?.isSharedResource) {
+              stdMat.map.dispose();
+            }
+            if (stdMat.bumpMap && !stdMat.bumpMap.userData?.isSharedResource) {
+              stdMat.bumpMap.dispose();
+            }
+            m.dispose();
+          });
+        }
+      });
+
+      scene.clear();
+      cleanupRenderer();
     };
-  }, []);
+  }, [contextRestartKey]);
 
   const currentStage = activeSuspenseFrame?.stage || (ceremonyComplete ? 'VICTORY_FANFARE' : null);
   const currentCallout =

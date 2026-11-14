@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { detectClassroomGpuProfile } from '@/utils/classroom3d';
+import { createClassroomRenderer } from '@/utils/classroom3d';
 import { TeamId } from '../types';
 import { MiiEmotionFX } from './vfx';
 
@@ -214,6 +214,8 @@ export const TugOfWar3DStage: React.FC<TugOfWar3DStageProps> = ({
 }) => {
   const mountRef = useRef<HTMLDivElement>(null);
   const [loaded, setLoaded] = useState(false);
+  const [contextRestartKey, setContextRestartKey] = useState(0);
+  const bannerMatRef = useRef<THREE.MeshBasicMaterial | null>(null);
 
   // References for live animation loop
   const stateRef = useRef({
@@ -240,43 +242,52 @@ export const TugOfWar3DStage: React.FC<TugOfWar3DStageProps> = ({
     };
   }, [displacement, matchEnded, winner, redPullRate, whitePullRate, redPlayersCount, whitePlayersCount, schoolName]);
 
+  // Reactively refresh the 3D stadium wall banner if activeSchool switches after mount
+  useEffect(() => {
+    const mat = bannerMatRef.current;
+    if (!mat) return;
+    const nextTex = createSchoolBannerTexture(schoolName);
+    if (!nextTex) return;
+    const prevTex = mat.map;
+    mat.map = nextTex;
+    mat.needsUpdate = true;
+    if (prevTex) prevTex.dispose();
+  }, [schoolName]);
+
   useEffect(() => {
     const container = mountRef.current;
     if (!container) return;
 
     let isDisposed = false;
-    let width = container.clientWidth || 1024;
-    let height = container.clientHeight || 600;
 
-    // 1. Scene & Camera Setup
+    // 1. Scene Setup
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x87ceeb); // Daytime blue sky fallback
 
     // Procedural Facial Rig & Emotion VFX Manager (from Argon Tennis)
     const emotionFX = new MiiEmotionFX(scene);
 
-    const camera = new THREE.PerspectiveCamera(38, width / height, 0.1, 400);
-    // Elevated 3/4 broadcast sideline view
-    camera.position.set(0, 4.8, 12.0);
-    camera.lookAt(0, 1.15, 0);
-
-    // 2. Renderer & GPU Profiler (Zero shadow pass on iPads & Dynabook laptops)
-    const renderer = new THREE.WebGLRenderer({
-      antialias: true,
+    // 2. Centralized Classroom Renderer & Camera (GEMINI.md §5 compliant)
+    const classroom3d = createClassroomRenderer(container, {
+      fov: 38,
+      near: 0.1,
+      far: 400,
+      cameraPosition: [0, 4.8, 12.0],
+      cameraLookAt: [0, 1.15, 0],
       alpha: true,
-      powerPreference: 'high-performance',
-      precision: 'highp'
     });
-    const gpu = detectClassroomGpuProfile(renderer.getContext());
-    const isTabletOrMobile = gpu.isMobileOrTablet;
-
-    renderer.setPixelRatio(gpu.targetPixelRatio);
-    renderer.setSize(width, height);
-    renderer.shadowMap.enabled = gpu.enableDynamicShadows;
-    renderer.shadowMap.type = THREE.PCFShadowMap;
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    const { renderer, camera, gpuProfile: gpu, trackFrameRate, cleanup: cleanupRenderer } = classroom3d;
     renderer.toneMappingExposure = 1.15;
-    container.appendChild(renderer.domElement);
+
+    const onContextLost = (e: Event) => {
+      e.preventDefault();
+      console.warn('[TugOfWar3DStage] WebGL context lost; waiting for restoration.');
+    };
+    const onContextRestored = () => {
+      setContextRestartKey((k) => k + 1);
+    };
+    renderer.domElement.addEventListener('webglcontextlost', onContextLost, false);
+    renderer.domElement.addEventListener('webglcontextrestored', onContextRestored, false);
 
     // 3. Lighting (Hemisphere + Sun with calibrated shadow bias)
     const hemiLight = new THREE.HemisphereLight(0xa6dcff, 0x55a224, 1.25);
@@ -313,6 +324,10 @@ export const TugOfWar3DStage: React.FC<TugOfWar3DStageProps> = ({
     const skyDome = new THREE.Mesh(skyGeo, skyMat);
     scene.add(skyDome);
     texLoader.load('/assets/textures/court/tns_sky_a.png', (tex) => {
+      if (isDisposed) {
+        tex.dispose();
+        return;
+      }
       tex.colorSpace = THREE.SRGBColorSpace;
       tex.wrapS = THREE.RepeatWrapping;
       tex.wrapT = THREE.ClampToEdgeWrapping;
@@ -337,6 +352,10 @@ export const TugOfWar3DStage: React.FC<TugOfWar3DStageProps> = ({
       mesh.visible = false;
       scene.add(mesh);
       texLoader.load(url, (tex) => {
+        if (isDisposed) {
+          tex.dispose();
+          return;
+        }
         tex.colorSpace = THREE.SRGBColorSpace;
         tex.wrapS = THREE.RepeatWrapping;
         tex.wrapT = THREE.ClampToEdgeWrapping;
@@ -363,6 +382,10 @@ export const TugOfWar3DStage: React.FC<TugOfWar3DStageProps> = ({
     horizonRing.visible = false;
     scene.add(horizonRing);
     texLoader.load('/assets/textures/court/tns_BG_c1.png', (tex) => {
+      if (isDisposed) {
+        tex.dispose();
+        return;
+      }
       tex.colorSpace = THREE.SRGBColorSpace;
       tex.wrapS = THREE.RepeatWrapping;
       tex.wrapT = THREE.ClampToEdgeWrapping;
@@ -415,7 +438,7 @@ export const TugOfWar3DStage: React.FC<TugOfWar3DStageProps> = ({
       const poleMat = new THREE.MeshStandardMaterial({ color: 0xcd853f, roughness: 0.7 });
       const poleMesh = new THREE.Mesh(poleGeo, poleMat);
       poleMesh.position.set(x, 1.1, -4.8);
-      poleMesh.castShadow = true;
+      poleMesh.castShadow = gpu.enableDynamicShadows;
       fieldMarkingsGroup.add(poleMesh);
 
       // Flag pennant
@@ -448,8 +471,8 @@ export const TugOfWar3DStage: React.FC<TugOfWar3DStageProps> = ({
       metalness: 0.04
     });
     const ropeMesh = new THREE.Mesh(ropeGeo, ropeMat);
-    ropeMesh.castShadow = true;
-    ropeMesh.receiveShadow = true;
+    ropeMesh.castShadow = gpu.enableDynamicShadows;
+    ropeMesh.receiveShadow = gpu.enableDynamicShadows;
     scene.add(ropeMesh);
 
     // Center Ribbon Marker (Undokai Japanese Red-and-White Flag / Streamer)
@@ -506,7 +529,24 @@ export const TugOfWar3DStage: React.FC<TugOfWar3DStageProps> = ({
       gltfLoader.loadAsync('/assets/models/mii_crowd.glb'),
       gltfLoader.loadAsync('/assets/models/mii_player.glb')
     ]).then(([stadiumGltf, crowdGltf, miiGltf]) => {
-      if (isDisposed) return;
+      if (isDisposed) {
+        [stadiumGltf.scene, crowdGltf.scene, miiGltf.scene].forEach((rootObj) => {
+          rootObj.traverse((obj) => {
+            if ((obj as THREE.Mesh).isMesh) {
+              const mesh = obj as THREE.Mesh;
+              mesh.geometry?.dispose();
+              const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+              mats.forEach((m) => {
+                if (!m) return;
+                const stdMat = m as THREE.MeshStandardMaterial;
+                if (stdMat.map) stdMat.map.dispose();
+                m.dispose();
+              });
+            }
+          });
+        });
+        return;
+      }
       // A. Prepare Stadium Court & Completely Hide the "Argon Tennis" Banner
       const stadium = stadiumGltf.scene;
       const maxAniso = renderer.capabilities.getMaxAnisotropy ? renderer.capabilities.getMaxAnisotropy() : 8;
@@ -549,12 +589,12 @@ export const TugOfWar3DStage: React.FC<TugOfWar3DStageProps> = ({
             mesh.receiveShadow = false;
             mesh.renderOrder = 1;
           } else if (/Tree/i.test(mesh.name)) {
-            mesh.castShadow = true;
-            mesh.receiveShadow = true;
+            mesh.castShadow = gpu.enableDynamicShadows;
+            mesh.receiveShadow = gpu.enableDynamicShadows;
           } else {
-            mesh.receiveShadow = true;
+            mesh.receiveShadow = gpu.enableDynamicShadows;
             if (/Wall|Bleacher|Canopy|Pillar|Umpire|Bench|Clubhouse|StadiumCourt/i.test(mesh.name)) {
-              mesh.castShadow = true;
+              mesh.castShadow = gpu.enableDynamicShadows;
             }
           }
         }
@@ -570,6 +610,7 @@ export const TugOfWar3DStage: React.FC<TugOfWar3DStageProps> = ({
           side: THREE.FrontSide,
           transparent: true
         });
+        bannerMatRef.current = bannerMat;
         const bannerMesh = new THREE.Mesh(bannerGeo, bannerMat);
         bannerMesh.position.set(0, 1.25, -0.46);
         scene.add(bannerMesh);
@@ -581,7 +622,7 @@ export const TugOfWar3DStage: React.FC<TugOfWar3DStageProps> = ({
       crowd.traverse((obj) => {
         if ((obj as THREE.Mesh).isMesh) {
           obj.castShadow = false;
-          obj.receiveShadow = true;
+          obj.receiveShadow = gpu.enableDynamicShadows;
         }
       });
       crowdScene = crowd;
@@ -648,8 +689,8 @@ export const TugOfWar3DStage: React.FC<TugOfWar3DStageProps> = ({
         root.traverse((obj) => {
           if ((obj as THREE.Mesh).isMesh) {
             const mesh = obj as THREE.Mesh;
-            mesh.castShadow = true;
-            mesh.receiveShadow = true;
+            mesh.castShadow = gpu.enableDynamicShadows;
+            mesh.receiveShadow = gpu.enableDynamicShadows;
 
             // Clone materials so each puller has independent colors
             if (Array.isArray(mesh.material)) {
@@ -749,10 +790,15 @@ export const TugOfWar3DStage: React.FC<TugOfWar3DStageProps> = ({
       }
 
       setLoaded(true);
+    }).catch((err) => {
+      console.warn('[TugOfWar3DStage] Asset load error:', err);
+      if (!isDisposed) {
+        setLoaded(true);
+      }
     });
 
     // 8. Animation & Render Loop
-    let animationFrameId: number;
+    let animationFrameId = 0;
     let lastFrameTime = performance.now();
     const startTimeMs = lastFrameTime;
     let lastRopeUpdateMs = 0;
@@ -762,6 +808,7 @@ export const TugOfWar3DStage: React.FC<TugOfWar3DStageProps> = ({
     let prevDisp = 0;
 
     const animate = () => {
+      if (isDisposed) return;
       animationFrameId = requestAnimationFrame(animate);
       const nowMs = performance.now();
       const delta = Math.min((nowMs - lastFrameTime) / 1000, 0.08);
@@ -1010,29 +1057,20 @@ export const TugOfWar3DStage: React.FC<TugOfWar3DStageProps> = ({
 
       // Update Procedural Emotion Face Rigs, Sweat Drops & Emote Particles
       emotionFX.update(delta);
+      trackFrameRate(delta);
 
       renderer.render(scene, camera);
     };
 
     animationFrameId = requestAnimationFrame(animate);
 
-    // Resize Handler
-    const handleResize = () => {
-      if (!container) return;
-      const w = container.clientWidth || 1024;
-      const h = container.clientHeight || 600;
-      camera.aspect = w / h;
-      camera.updateProjectionMatrix();
-      renderer.setSize(w, h);
-    };
-    const resizeObserver = new ResizeObserver(handleResize);
-    resizeObserver.observe(container);
-
     // Cleanup on unmount
     return () => {
       isDisposed = true;
       cancelAnimationFrame(animationFrameId);
-      resizeObserver.disconnect();
+      renderer.domElement.removeEventListener('webglcontextlost', onContextLost);
+      renderer.domElement.removeEventListener('webglcontextrestored', onContextRestored);
+      bannerMatRef.current = null;
       emotionFX.dispose();
 
       scene.traverse((obj) => {
@@ -1051,13 +1089,10 @@ export const TugOfWar3DStage: React.FC<TugOfWar3DStageProps> = ({
         }
       });
 
-      if (renderer.domElement && renderer.domElement.parentNode) {
-        renderer.domElement.parentNode.removeChild(renderer.domElement);
-      }
-      renderer.dispose();
       scene.clear();
+      cleanupRenderer();
     };
-  }, []);
+  }, [contextRestartKey]);
 
   return (
     <div className="relative w-full h-full min-h-[400px] overflow-hidden select-none bg-slate-950">

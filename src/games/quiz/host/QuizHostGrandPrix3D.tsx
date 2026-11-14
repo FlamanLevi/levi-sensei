@@ -22,19 +22,6 @@ import {
   Sparkles,
 } from 'lucide-react';
 
-const RACER_COLOR_PALETTE = [
-  0xef4444, // Red
-  0x3b82f6, // Blue
-  0x10b981, // Emerald
-  0xf59e0b, // Amber
-  0xa855f7, // Purple
-  0xec4899, // Pink
-  0x06b6d4, // Cyan
-  0xf97316, // Orange
-  0x84cc16, // Lime
-  0x6366f1, // Indigo
-];
-
 const TEAM_HEX_MAP: Record<TeamId, number> = {
   team_red: 0xef4444,
   team_white: 0xf8fafc,
@@ -107,6 +94,11 @@ export const QuizHostGrandPrix3D: React.FC<QuizHostGrandPrix3DProps> = ({
 
   const graceTriggeredRef = useRef<boolean>(false);
   const finishTriggeredRef = useRef<boolean>(false);
+
+  useEffect(() => {
+    graceTriggeredRef.current = false;
+    finishTriggeredRef.current = false;
+  }, [raceStartTime]);
 
   const elapsedSinceStart = Math.max(0, nowTime - raceStartTime);
   const lightsCount = isLobby ? 0 : (elapsedSinceStart >= 2400 ? 6 : Math.max(0, Math.floor(elapsedSinceStart / 400)));
@@ -360,10 +352,10 @@ export const QuizHostGrandPrix3D: React.FC<QuizHostGrandPrix3DProps> = ({
                 type="button"
                 onClick={() => onAddBots(5)}
                 className="px-2.5 py-1.5 rounded-xl bg-indigo-950/80 hover:bg-indigo-900 border border-indigo-700/80 text-indigo-300 font-bold text-xs flex items-center gap-1 cursor-pointer transition-all active:scale-95 whitespace-nowrap"
-                title="Add 5 AI Bot Racers"
+                title={t('Add 5 AI Bot Racers', 'AIレーサーを5台追加') as string}
               >
                 <Users size={13} />
-                <span>+5 Bots</span>
+                <span>{t('+5 Bots', '+5 ボット')}</span>
               </button>
             )}
 
@@ -424,15 +416,15 @@ export const QuizHostGrandPrix3D: React.FC<QuizHostGrandPrix3DProps> = ({
             <div className="flex items-center flex-nowrap overflow-x-auto no-scrollbar max-w-full gap-1 p-1 rounded-xl bg-slate-950/88 backdrop-blur-md border border-slate-800 pointer-events-auto shadow-xl text-xs font-black">
               <span className="text-amber-400 px-2 flex items-center gap-1 shrink-0 whitespace-nowrap">
                 <Tv size={12} />
-                <span>TV CAM:</span>
+                <span>{t('TV CAM:', 'TVカメラ:')}</span>
               </span>
               {([
-                { mode: 'DIRECTOR', label: '🎬 AI Director' },
-                { mode: 'BATTLE', label: '⚔️ Battle Cam' },
-                { mode: 'LEADER', label: '🏎️ Leader' },
-                { mode: 'DRONE', label: '🚁 Pack Heli' },
-                { mode: 'ISOMETRIC', label: '🗺️ Overhead' },
-              ] as { mode: CameraViewMode; label: string }[]).map(({ mode, label }) => (
+                { mode: 'DIRECTOR', labelEn: '🎬 AI Director', labelJa: '🎬 AI自動カメラ' },
+                { mode: 'BATTLE', labelEn: '⚔️ Battle Cam', labelJa: '⚔️ バトル' },
+                { mode: 'LEADER', labelEn: '🏎️ Leader', labelJa: '🏎️ 先頭追跡' },
+                { mode: 'DRONE', labelEn: '🚁 Pack Heli', labelJa: '🚁 空撮ヘリ' },
+                { mode: 'ISOMETRIC', labelEn: '🗺️ Overhead', labelJa: '🗺️ 上空マップ' },
+              ] as { mode: CameraViewMode; labelEn: string; labelJa: string }[]).map(({ mode, labelEn, labelJa }) => (
                 <button
                   key={mode}
                   type="button"
@@ -443,7 +435,7 @@ export const QuizHostGrandPrix3D: React.FC<QuizHostGrandPrix3DProps> = ({
                       : 'text-slate-400 hover:text-white'
                   }`}
                 >
-                  {label}
+                  {language === 'ja' ? labelJa : labelEn}
                 </button>
               ))}
 
@@ -470,31 +462,31 @@ export const QuizHostGrandPrix3D: React.FC<QuizHostGrandPrix3DProps> = ({
                 }`}
               >
                 <option value="" disabled className="bg-slate-900 text-slate-400">
-                  📹 Landmark Cams...
+                  {language === 'ja' ? '📹 コース定点カメラ...' : '📹 Landmark Cams...'}
                 </option>
                 <option value="MAIN_STRAIGHT" className="bg-slate-900 text-white">
-                  🏁 Main Straight & Grandstand
+                  {language === 'ja' ? '🏁 メインストレート & 観客席' : '🏁 Main Straight & Grandstand'}
                 </option>
                 <option value="S_CURVES" className="bg-slate-900 text-white">
-                  🐍 S-Curves (Esses)
+                  {language === 'ja' ? '🐍 S字カーブ' : '🐍 S-Curves (Esses)'}
                 </option>
                 <option value="DEGNER" className="bg-slate-900 text-white">
-                  🌉 Degner Underpass
+                  {language === 'ja' ? '🌉 デグナー下立体交差' : '🌉 Degner Underpass'}
                 </option>
                 <option value="HAIRPIN" className="bg-slate-900 text-white">
-                  🔄 180° Hairpin
+                  {language === 'ja' ? '🔄 180° ヘアピン' : '🔄 180° Hairpin'}
                 </option>
                 <option value="SPOON" className="bg-slate-900 text-white">
-                  🥄 Spoon Curve
+                  {language === 'ja' ? '🥄 スプーンカーブ' : '🥄 Spoon Curve'}
                 </option>
                 <option value="BRIDGE" className="bg-slate-900 text-white">
-                  🌉 Overpass Bridge
+                  {language === 'ja' ? '🌉 立体交差ブリッジ' : '🌉 Overpass Bridge'}
                 </option>
                 <option value="130R" className="bg-slate-900 text-white">
-                  💨 130R High-Speed
+                  {language === 'ja' ? '💨 130R 高速コーナー' : '💨 130R High-Speed'}
                 </option>
                 <option value="CHICANE" className="bg-slate-900 text-white">
-                  🎡 Casio Chicane & Ferris Wheel
+                  {language === 'ja' ? '🎡 シケイン & 大観覧車' : '🎡 Casio Chicane & Ferris Wheel'}
                 </option>
               </select>
 
@@ -508,7 +500,7 @@ export const QuizHostGrandPrix3D: React.FC<QuizHostGrandPrix3DProps> = ({
                     ? 'bg-emerald-600 text-white shadow-xs'
                     : 'bg-slate-800 text-slate-300 hover:text-white'
                 }`}
-                title={performanceProfile === 'MOBILE' ? 'Smooth 60 FPS iPad/TV Mode (Active)' : 'HD 3D Mode (Active)'}
+                title={performanceProfile === 'MOBILE' ? t('Smooth 60 FPS iPad/TV Mode (Active)', '滑らか60FPS軽量モード（有効）') as string : t('HD 3D Mode (Active)', '高画質3Dモード（有効）') as string}
               >
                 <span>{performanceProfile === 'MOBILE' ? '⚡ 60 FPS' : '💎 HD'}</span>
               </button>
@@ -531,7 +523,7 @@ export const QuizHostGrandPrix3D: React.FC<QuizHostGrandPrix3DProps> = ({
                 ))}
               </div>
               <span className="text-xs font-black text-white">
-                {lightsCount === 6 ? '🟢 GREEN FLAG' : 'START PROCEDURE'}
+                {lightsCount === 6 ? t('🟢 GREEN FLAG', '🟢 スタート！') : t('START PROCEDURE', 'スタート準備')}
               </span>
             </div>
           </div>
@@ -557,9 +549,9 @@ export const QuizHostGrandPrix3D: React.FC<QuizHostGrandPrix3DProps> = ({
             <div className="flex items-center justify-between pb-1.5 border-b border-slate-800 mb-2 text-xs font-black">
               <span className="text-amber-400 flex items-center gap-1.5">
                 <Trophy size={13} />
-                <span>LIVE STANDINGS</span>
+                <span>{t('LIVE STANDINGS', 'リアルタイム順位')}</span>
               </span>
-              <span className="text-slate-400 text-[11px]">{playerList.length} Racers</span>
+              <span className="text-slate-400 text-[11px]">{playerList.length} {t('Racers', '台')}</span>
             </div>
 
             <div className="space-y-1 max-h-64 overflow-hidden">

@@ -362,8 +362,6 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
       precision: isMobile ? 'mediump' : 'highp',
     });
 
-    const isTabletOrMobile = gpu.isMobileOrTablet;
-
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = theme.exposure;
@@ -695,8 +693,8 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
           if (rollingFrameMs > 19.0 && currentPixelRatio > 0.75) {
             currentPixelRatio = Math.max(0.75, Math.round((currentPixelRatio - 0.15) * 100) / 100);
             renderer.setPixelRatio(currentPixelRatio);
-          } else if (rollingFrameMs < 14.0 && !gpu.isLowPower && currentPixelRatio < 1.25) {
-            currentPixelRatio = Math.min(1.25, Math.round((currentPixelRatio + 0.1) * 100) / 100);
+          } else if (rollingFrameMs < 14.0 && !gpu.isLowPower && currentPixelRatio < gpu.targetPixelRatio) {
+            currentPixelRatio = Math.min(gpu.targetPixelRatio, Math.round((currentPixelRatio + 0.1) * 100) / 100);
             renderer.setPixelRatio(currentPixelRatio);
           }
         }
@@ -710,6 +708,7 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
       for (const [id, inst] of kartMap.entries()) {
         if (!currentRacers.some((r) => r.id === id)) {
           kartsRootGroup.remove(inst.kartObj.kartRoot);
+          inst.kartObj.disposeKart?.();
           kartMap.delete(id);
         }
       }
@@ -1503,17 +1502,27 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
       domElement.removeEventListener('webglcontextlost', onContextLost);
       domElement.removeEventListener('webglcontextrestored', onContextRestored);
 
-      // Dispose all track & kart geometries and non-shared materials
+      for (const inst of kartMap.values()) {
+        inst.kartObj.disposeKart?.();
+      }
+      kartMap.clear();
+
+      // Dispose all track geometries and non-shared materials/textures
       for (const group of [trackWorld.root, kartsRootGroup]) {
         group.traverse((obj) => {
           if ((obj as THREE.Mesh).isMesh || (obj as THREE.Sprite).isSprite) {
             const mesh = obj as THREE.Mesh;
-            if (mesh.geometry) mesh.geometry.dispose();
+            if (mesh.geometry && !mesh.geometry.userData?.isSharedResource) {
+              mesh.geometry.dispose();
+            }
             const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
             mats.forEach((m) => {
-              if (!m) return;
-              if ((obj as THREE.Sprite).isSprite && (m as THREE.SpriteMaterial).map) {
-                (m as THREE.SpriteMaterial).map?.dispose();
+              if (!m || m.userData?.isSharedResource) return;
+              if ((obj as THREE.Sprite).isSprite) {
+                const spMap = (m as THREE.SpriteMaterial).map;
+                if (spMap && !spMap.userData?.isSharedResource) {
+                  spMap.dispose();
+                }
               }
               m.dispose();
             });
@@ -1524,6 +1533,7 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
       skyDome.geometry.dispose();
       skyDome.material.dispose();
       envTexture.dispose();
+      scene.clear();
       if (renderer.domElement && renderer.domElement.parentElement) {
         renderer.domElement.parentElement.removeChild(renderer.domElement);
       }

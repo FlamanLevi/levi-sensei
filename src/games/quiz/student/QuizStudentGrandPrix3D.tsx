@@ -8,20 +8,7 @@ import { suzukaAudio } from '@/games/suzuka_grand_prix/services/suzukaAudio';
 import { soundEffects } from '@/services/soundEffects';
 import { getServerTime } from '@/services/rtdbSafe';
 import { useLanguage } from '@/context/LanguageContext';
-import { Flag, Clock, Trophy, LogOut, CheckCircle2, Flame, Sparkles, AlertTriangle } from 'lucide-react';
-
-const RACER_COLOR_PALETTE = [
-  0xef4444, // Red
-  0x3b82f6, // Blue
-  0x10b981, // Emerald
-  0xf59e0b, // Amber
-  0xa855f7, // Purple
-  0xec4899, // Pink
-  0x06b6d4, // Cyan
-  0xf97316, // Orange
-  0x84cc16, // Lime
-  0x6366f1, // Indigo
-];
+import { Flag, Clock, Trophy, LogOut, Flame, Sparkles, AlertTriangle } from 'lucide-react';
 
 const TEAM_HEX_MAP: Record<TeamId, number> = {
   team_red: 0xef4444,
@@ -72,7 +59,6 @@ export const QuizStudentGrandPrix3D: React.FC<QuizStudentGrandPrix3DProps> = ({
   const { t } = useLanguage();
   const isTimeTrial = sprintSettings?.sprintMode === 'TIME_TRIAL';
   const targetLaps = sprintSettings?.targetLaps3D || 1;
-  const timeLimitSeconds = sprintSettings?.timeLimitSeconds || 90;
   const graceSeconds = sprintSettings?.graceCountdownSeconds || 15;
   const wrongSpeedLossRatio = sprintSettings?.wrongSpeedLossRatio ?? 0.33;
   // ==========================================================================
@@ -134,6 +120,10 @@ export const QuizStudentGrandPrix3D: React.FC<QuizStudentGrandPrix3DProps> = ({
   const questionStartTimeRef = useRef<number>(Date.now());
   const prevLapRef = useRef<number>(1);
   const hasSubmittedFinishRef = useRef<boolean>(!!player.isFinished);
+  const pitStopTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const prevRaceStartRef = useRef<number>(raceStartTime);
+  // Track wrong attempts per question index so retries preserve mistake diagnostics
+  const questionMissCountsRef = useRef<Record<number, number>>({});
 
   const elapsedSinceStart = Math.max(0, nowTime - raceStartTime);
   const lightsCount = isLobby ? 0 : (elapsedSinceStart >= 2400 ? 6 : Math.max(0, Math.floor(elapsedSinceStart / 400)));
@@ -148,6 +138,10 @@ export const QuizStudentGrandPrix3D: React.FC<QuizStudentGrandPrix3DProps> = ({
   useEffect(() => {
     return () => {
       suzukaAudio.stopAll();
+      if (pitStopTimerRef.current) {
+        clearTimeout(pitStopTimerRef.current);
+        pitStopTimerRef.current = null;
+      }
     };
   }, []);
 
@@ -165,6 +159,60 @@ export const QuizStudentGrandPrix3D: React.FC<QuizStudentGrandPrix3DProps> = ({
     prevLightsRef.current = lightsCount;
   }, [lightsCount, isLobby]);
 
+  // Reset per-race refs/local state cleanly when a new raceStartTime arrives
+  useEffect(() => {
+    if (raceStartTime !== prevRaceStartRef.current) {
+      prevRaceStartRef.current = raceStartTime;
+      if (!isLobby && !player.isFinished) {
+        hasSubmittedFinishRef.current = false;
+        prevLapRef.current = 1;
+        prevLightsRef.current = 0;
+        studentProgressRef.current = 0;
+        studentDistanceRef.current = 0;
+        studentMomentumRef.current = 0;
+        questionMissCountsRef.current = {};
+        if (pitStopTimerRef.current) {
+          clearTimeout(pitStopTimerRef.current);
+          pitStopTimerRef.current = null;
+        }
+        setLocalIsFinished(false);
+        setLocalFinishTimeMs(undefined);
+        setStudentInPitStop(false);
+        setStudentBoosting(false);
+        setStudentSpeed(0);
+      }
+    }
+  }, [raceStartTime, isLobby, player.isFinished]);
+
+  const latestStateRef = useRef({
+    questionIdx,
+    localScore,
+    localStreak,
+    localMaxStreak,
+    localCorrectCount,
+    localTotalAnswered,
+    localFastestTimeMs,
+    localIsFinished,
+    localFinishTimeMs,
+    studentSpeed,
+    studentBoosting,
+    studentInPitStop,
+  });
+  latestStateRef.current = {
+    questionIdx,
+    localScore,
+    localStreak,
+    localMaxStreak,
+    localCorrectCount,
+    localTotalAnswered,
+    localFastestTimeMs,
+    localIsFinished,
+    localFinishTimeMs,
+    studentSpeed,
+    studentBoosting,
+    studentInPitStop,
+  };
+
   // 20 Hz Local Physics & Red Speed-Zone Braking Loop
   useEffect(() => {
     if (!raceActive) return;
@@ -174,12 +222,13 @@ export const QuizStudentGrandPrix3D: React.FC<QuizStudentGrandPrix3DProps> = ({
       const now = performance.now();
       const dt = Math.min(0.1, (now - lastTick) / 1000);
       lastTick = now;
+      const st = latestStateRef.current;
 
       setStudentSpeed((prevSpeed) => {
         const lapFrac = ((studentProgressRef.current % 1) + 1) % 1;
         const cornerCap = getSuzukaCornerSpeedLimit(lapFrac);
 
-        if (localIsFinished) {
+        if (st.localIsFinished) {
           // Finished: Enter automatic high-speed Victory Lap cruise control (respects corner speed limits)
           const victoryTarget = Math.min(175, cornerCap);
           let nextSpeed = prevSpeed;
@@ -223,7 +272,7 @@ export const QuizStudentGrandPrix3D: React.FC<QuizStudentGrandPrix3DProps> = ({
           studentMomentumRef.current = nextSpeed;
         }
 
-        if (nextSpeed < 145 && studentBoosting && localStreak < 3) {
+        if (nextSpeed < 145 && st.studentBoosting && st.localStreak < 3) {
           setStudentBoosting(false);
         }
 
@@ -234,7 +283,7 @@ export const QuizStudentGrandPrix3D: React.FC<QuizStudentGrandPrix3DProps> = ({
           (lapFrac >= 0.50 && lapFrac <= 0.52) ||
           (lapFrac >= 0.94 && lapFrac <= 0.97);
 
-        suzukaAudio.updateEngineTelemetry(nextSpeed, nextSpeed >= 145 || studentBoosting, {
+        suzukaAudio.updateEngineTelemetry(nextSpeed, nextSpeed >= 145 || st.studentBoosting, {
           isDrifting: nextSpeed > 65 && inCornerZone,
           onCurb: nextSpeed > 55 && onKerbApex,
         });
@@ -243,35 +292,7 @@ export const QuizStudentGrandPrix3D: React.FC<QuizStudentGrandPrix3DProps> = ({
     }, 50);
 
     return () => clearInterval(physicsInterval);
-  }, [raceActive, studentBoosting, localStreak]);
-
-  // Periodic telemetry sync (every 1.2s while moving) so TV and classmates see smooth coasting & lap progress
-  const latestStateRef = useRef({
-    questionIdx,
-    localScore,
-    localStreak,
-    localMaxStreak,
-    localCorrectCount,
-    localTotalAnswered,
-    localFastestTimeMs,
-    localIsFinished,
-    localFinishTimeMs,
-    studentSpeed,
-    studentInPitStop,
-  });
-  latestStateRef.current = {
-    questionIdx,
-    localScore,
-    localStreak,
-    localMaxStreak,
-    localCorrectCount,
-    localTotalAnswered,
-    localFastestTimeMs,
-    localIsFinished,
-    localFinishTimeMs,
-    studentSpeed,
-    studentInPitStop,
-  };
+  }, [raceActive]);
 
   const onAnswerRef = useRef(onAnswer);
   onAnswerRef.current = onAnswer;
@@ -419,9 +440,6 @@ export const QuizStudentGrandPrix3D: React.FC<QuizStudentGrandPrix3DProps> = ({
     Math.max(1, Math.floor(studentProgressRef.current) + 1)
   );
 
-  // Track wrong attempts per question index so retries preserve mistake diagnostics
-  const questionMissCountsRef = useRef<Record<number, number>>({});
-
   const handleStudentAnswer = (isCorrect: boolean, optionId: string) => {
     const timeTakenMs = Math.max(100, Date.now() - questionStartTimeRef.current);
     questionStartTimeRef.current = Date.now();
@@ -504,7 +522,9 @@ export const QuizStudentGrandPrix3D: React.FC<QuizStudentGrandPrix3DProps> = ({
 
       if (wrongLockoutSeconds > 0) {
         setStudentInPitStop(true);
-        setTimeout(() => {
+        if (pitStopTimerRef.current) clearTimeout(pitStopTimerRef.current);
+        pitStopTimerRef.current = setTimeout(() => {
+          pitStopTimerRef.current = null;
           setStudentInPitStop(false);
         }, wrongLockoutSeconds * 1000);
       }
@@ -550,7 +570,7 @@ export const QuizStudentGrandPrix3D: React.FC<QuizStudentGrandPrix3DProps> = ({
       soundEffects.playCheckeredFlag();
 
       const st = latestStateRef.current;
-      onAnswer(
+      onAnswerRef.current(
         st.questionIdx,
         '',
         false,
@@ -572,7 +592,7 @@ export const QuizStudentGrandPrix3D: React.FC<QuizStudentGrandPrix3DProps> = ({
         }
       );
     }
-  }, [raceFinishGraceStartTime, graceRemainingSeconds]);
+  }, [raceFinishGraceStartTime, graceRemainingSeconds, greenFlagTime]);
 
   const currentCornerSpeedLimit =
     liveTelemetry.find((r) => r.id === player.id)?.cornerSpeedLimit ??
@@ -731,7 +751,7 @@ export const QuizStudentGrandPrix3D: React.FC<QuizStudentGrandPrix3DProps> = ({
                   ) : studentSpeed >= 150 ? (
                     <span className="text-rose-400 font-black animate-bounce flex items-center gap-1 shrink-0">
                       <Flame size={10} />
-                      <span>MAX NITRO!</span>
+                      <span>{t('MAX NITRO!', '最高速ニトロ!')}</span>
                     </span>
                   ) : (
                     <span className="text-slate-400 font-medium shrink-0">

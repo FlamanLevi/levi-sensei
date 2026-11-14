@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { QuizQuestion, QuizPlayer, TeamId, TEAM_PRESETS, TugOfWarSettings, TugOfWarMatchFormat } from '../types';
+import { computeTugOfWarSweepsRemaining } from '../core/quizEngine';
 import { soundEffects } from '@/services/soundEffects';
 import { getServerTime } from '@/services/rtdbSafe';
 import { useLanguage } from '@/context/LanguageContext';
@@ -133,8 +134,18 @@ export const QuizHostTugOfWar: React.FC<QuizHostTugOfWarProps> = ({
 
   // Lead amount in pulls
   const leadPulls = Math.abs(Math.round((whiteAvg - redAvg) * Math.max(redActiveCount, whiteActiveCount)));
-  const remainingToRedWin = Math.max(0, Math.round((100 - Math.abs(Math.min(0, displacement))) / (sensitivity / redActiveCount)));
-  const remainingToWhiteWin = Math.max(0, Math.round((100 - Math.max(0, displacement)) / (sensitivity / whiteActiveCount)));
+  const remainingToRedWin = computeTugOfWarSweepsRemaining({
+    displacement,
+    sensitivity,
+    activeTeamCount: redActiveCount,
+    team: 'team_red',
+  });
+  const remainingToWhiteWin = computeTugOfWarSweepsRemaining({
+    displacement,
+    sensitivity,
+    activeTeamCount: whiteActiveCount,
+    team: 'team_white',
+  });
 
   // Determine winner if limit reached or time expired
   const [matchEnded, setMatchEnded] = useState<boolean>(false);
@@ -149,6 +160,18 @@ export const QuizHostTugOfWar: React.FC<QuizHostTugOfWarProps> = ({
     whiteAvg: number;
   } | null>(null);
   const finishTriggeredRef = useRef<boolean>(false);
+  const isAdvancingRoundRef = useRef<boolean>(false);
+
+  useEffect(() => {
+    finishTriggeredRef.current = false;
+    isAdvancingRoundRef.current = false;
+    whistlePlayedRef.current = false;
+    prevLeadRef.current = 'EVEN';
+    lastWarnedSecRef.current = -1;
+    setMatchEnded(false);
+    setRoundWinner(null);
+    setFrozenStats(null);
+  }, [currentRound, raceStartTime]);
 
   const nextRedWins = roundWinner === 'team_red' ? currentRedWins + 1 : currentRedWins;
   const nextWhiteWins = roundWinner === 'team_white' ? currentWhiteWins + 1 : currentWhiteWins;
@@ -178,16 +201,22 @@ export const QuizHostTugOfWar: React.FC<QuizHostTugOfWarProps> = ({
     onFreezeTugOfWar?.();
   };
 
-  const handleStartNextRound = () => {
-    const nextBaseline: Record<string, number> = {};
-    playerList.forEach(p => {
-      nextBaseline[p.id] = p.correctCount || 0;
-    });
-    onNextRound?.(
-      { team_red: nextRedWins, team_white: nextWhiteWins },
-      currentRound + 1,
-      nextBaseline
-    );
+  const handleStartNextRound = async () => {
+    if (isAdvancingRoundRef.current) return;
+    isAdvancingRoundRef.current = true;
+    try {
+      const nextBaseline: Record<string, number> = {};
+      playerList.forEach(p => {
+        nextBaseline[p.id] = p.correctCount || 0;
+      });
+      await onNextRound?.(
+        { team_red: nextRedWins, team_white: nextWhiteWins },
+        currentRound + 1,
+        nextBaseline
+      );
+    } finally {
+      isAdvancingRoundRef.current = false;
+    }
   };
 
   // Sound effects on lead change or heave-ho cadence
@@ -268,15 +297,21 @@ export const QuizHostTugOfWar: React.FC<QuizHostTugOfWarProps> = ({
     }
   }, [displacement, timeRemainingMs, matchActive, matchEnded]);
 
+  const advanceAction = () => {
+    if (isMatchDecided) {
+      onFinishTugOfWar(matchWinner);
+    } else {
+      void handleStartNextRound();
+    }
+  };
+  const advanceHandlerRef = useRef(advanceAction);
+  advanceHandlerRef.current = advanceAction;
+
   // Clicker support
   useClassroomClicker({
     onNext: () => {
       if (matchEnded) {
-        if (isMatchDecided) {
-          onFinishTugOfWar(matchWinner);
-        } else {
-          handleStartNextRound();
-        }
+        advanceHandlerRef.current();
       }
     },
     onPrevious: onExit
@@ -286,18 +321,26 @@ export const QuizHostTugOfWar: React.FC<QuizHostTugOfWarProps> = ({
   useEffect(() => {
     if (!matchEnded) return;
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.repeat || e.isComposing || e.ctrlKey || e.metaKey || e.altKey) return;
+      const target = e.target as HTMLElement | null;
+      if (
+        target &&
+        (target.tagName === 'INPUT' ||
+          target.tagName === 'TEXTAREA' ||
+          target.tagName === 'SELECT' ||
+          target.tagName === 'BUTTON' ||
+          target.isContentEditable)
+      ) {
+        return;
+      }
       if (e.code === 'Space' || e.code === 'Enter') {
         e.preventDefault();
-        if (isMatchDecided) {
-          onFinishTugOfWar(matchWinner);
-        } else {
-          handleStartNextRound();
-        }
+        advanceHandlerRef.current();
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [matchEnded, isMatchDecided, matchWinner, currentRound, nextRedWins, nextWhiteWins, playerList]);
+  }, [matchEnded]);
 
   // Calculate visual positions: Center is 50%, displacement translates from 8% to 92%
   const ribbonPositionPercent = 50 + (displacement * 0.42);
@@ -337,7 +380,7 @@ export const QuizHostTugOfWar: React.FC<QuizHostTugOfWarProps> = ({
                   ? 'bg-amber-400 text-slate-950 border-amber-300 ring-2 ring-amber-400/50 animate-pulse'
                   : 'bg-slate-800/80 hover:bg-slate-700 text-amber-300 border-amber-500/30'
               }`}
-              title={eyesUp ? 'Attention Lock ON (注目解除)' : 'Lock Attention: Eyes Up Front (全員注目！)'}
+              title={(eyesUp ? t('Attention Lock ON (Click to Unlock)', '注目ロック中（クリックで解除）') : t('Lock Attention: Eyes Up Front', '全員注目（前を見てね！）')) as string}
             >
               <span className="text-sm">👀</span>
               <span className="hidden md:inline">{eyesUp ? t('Eyes Up ON', '注目ロック中') : t('Eyes Up', '全員注目')}</span>
@@ -351,10 +394,10 @@ export const QuizHostTugOfWar: React.FC<QuizHostTugOfWarProps> = ({
           <div className="flex items-center gap-1.5 sm:gap-2 px-3 py-1 rounded-2xl bg-rose-950/50 border border-rose-800/80 shrink-0 whitespace-nowrap">
             <span className="w-3.5 h-3.5 rounded-full bg-rose-500 shadow-lg shadow-rose-500/50" />
             <span className="text-base sm:text-lg font-black text-rose-400 tracking-wide">
-              <ruby>赤組<rt>あかぐみ</rt></ruby>
+              {t('Red Team', <ruby>赤組<rt>あかぐみ</rt></ruby>)}
             </span>
             {targetWins > 1 && (
-              <div className="flex items-center gap-1 ml-1" title={`${currentRedWins} / ${targetWins} 勝`}>
+              <div className="flex items-center gap-1 ml-1" title={`${currentRedWins} / ${targetWins} ${language === 'ja' ? '勝' : 'wins'}`}>
                 {Array.from({ length: targetWins }).map((_, i) => (
                   <span
                     key={i}
@@ -386,7 +429,7 @@ export const QuizHostTugOfWar: React.FC<QuizHostTugOfWarProps> = ({
           {/* White Team Badge & Series Wins */}
           <div className="flex items-center gap-1.5 sm:gap-2 px-3 py-1 rounded-2xl bg-slate-900 border border-slate-700 shrink-0 whitespace-nowrap">
             {targetWins > 1 && (
-              <div className="flex items-center gap-1 mr-1" title={`${currentWhiteWins} / ${targetWins} 勝`}>
+              <div className="flex items-center gap-1 mr-1" title={`${currentWhiteWins} / ${targetWins} ${language === 'ja' ? '勝' : 'wins'}`}>
                 {Array.from({ length: targetWins }).map((_, i) => (
                   <span
                     key={i}
@@ -400,7 +443,7 @@ export const QuizHostTugOfWar: React.FC<QuizHostTugOfWarProps> = ({
               </div>
             )}
             <span className="text-base sm:text-lg font-black text-slate-100 tracking-wide">
-              <ruby>白組<rt>しろぐみ</rt></ruby>
+              {t('White Team', <ruby>白組<rt>しろぐみ</rt></ruby>)}
             </span>
             <span className="w-3.5 h-3.5 rounded-full bg-white shadow-lg shadow-white/50" />
           </div>
@@ -440,7 +483,7 @@ export const QuizHostTugOfWar: React.FC<QuizHostTugOfWarProps> = ({
                 if (isMatchDecided) {
                   onFinishTugOfWar(matchWinner);
                 } else {
-                  handleStartNextRound();
+                  void handleStartNextRound();
                 }
               }}
               className="px-4 py-2 sm:px-5 sm:py-2 rounded-xl text-xs sm:text-sm font-black bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-slate-950 shadow-xl shadow-amber-500/30 transition animate-bounce cursor-pointer whitespace-nowrap"
@@ -512,15 +555,15 @@ export const QuizHostTugOfWar: React.FC<QuizHostTugOfWarProps> = ({
                 <div>
                   <div className="text-xs sm:text-sm font-black text-rose-400 flex items-center gap-1">
                     <span>🔴</span>
-                    <ruby>赤組<rt>あかぐみ</rt></ruby> PULLS
+                    {t('RED PULLS', <><ruby>赤組<rt>あかぐみ</rt></ruby> 引き数</>)}
                   </div>
                   <div className="text-[10px] sm:text-[11px] text-slate-400 font-bold flex items-center gap-2">
                     <span>⚡ {redPullRate} p/m</span>
                     <span>•</span>
-                    <span>{redPlayers.length}人</span>
+                    <span>{redPlayers.length}{t(' students', '人')}</span>
                     {matchFormat !== 'SINGLE' && (
                       <span className="text-rose-300 font-bold">
-                        (通算: {redTotalCorrect})
+                        ({t('Total', '通算')}: {redTotalCorrect})
                       </span>
                     )}
                   </div>
@@ -533,14 +576,20 @@ export const QuizHostTugOfWar: React.FC<QuizHostTugOfWarProps> = ({
                 <div className="text-[10px] sm:text-xs font-black text-amber-300 flex items-center gap-1.5 mb-1">
                   {displacement < -8 ? (
                     <span className="text-rose-400 animate-pulse">
-                      🔴 <ruby>赤組<rt>あかぐみ</rt></ruby> リード中！ (+{leadPulls}回) あと{remainingToRedWin}回で一本勝ち
+                      {t(
+                        `🔴 RED LEADS! (+${leadPulls} pulls · ${remainingToRedWin} to Sweep)`,
+                        <>🔴 <ruby>赤組<rt>あかぐみ</rt></ruby> リード中！ (+{leadPulls}回) あと{remainingToRedWin}回で一本勝ち</>
+                      )}
                     </span>
                   ) : displacement > 8 ? (
                     <span className="text-slate-100 animate-pulse">
-                      ⚪ <ruby>白組<rt>しろぐみ</rt></ruby> リード中！ (+{leadPulls}回) あと{remainingToWhiteWin}回で一本勝ち
+                      {t(
+                        `⚪ WHITE LEADS! (+${leadPulls} pulls · ${remainingToWhiteWin} to Sweep)`,
+                        <>⚪ <ruby>白組<rt>しろぐみ</rt></ruby> リード中！ (+{leadPulls}回) あと{remainingToWhiteWin}回で一本勝ち</>
+                      )}
                     </span>
                   ) : (
-                    <span>⚖️ 互角！ DEAD CENTER (50/50)</span>
+                    <span>{t('⚖️ EVEN MATCH! DEAD CENTER (50/50)', '⚖️ 互角！ DEAD CENTER (50/50)')}</span>
                   )}
                 </div>
 
@@ -585,16 +634,16 @@ export const QuizHostTugOfWar: React.FC<QuizHostTugOfWarProps> = ({
               <div className="flex items-center gap-2 sm:gap-3 shrink-0 text-right">
                 <div>
                   <div className="text-xs sm:text-sm font-black text-slate-200 flex items-center justify-end gap-1">
-                    <ruby>白組<rt>しろぐみ</rt></ruby> PULLS
+                    {t('WHITE PULLS', <><ruby>白組<rt>しろぐみ</rt></ruby> 引き数</>)}
                     <span>⚪</span>
                   </div>
                   <div className="text-[10px] sm:text-[11px] text-slate-400 font-bold flex items-center justify-end gap-2">
                     {matchFormat !== 'SINGLE' && (
                       <span className="text-slate-300 font-bold">
-                        (通算: {whiteTotalCorrect})
+                        ({t('Total', '通算')}: {whiteTotalCorrect})
                       </span>
                     )}
-                    <span>{whitePlayers.length}人</span>
+                    <span>{whitePlayers.length}{t(' students', '人')}</span>
                     <span>•</span>
                     <span>⚡ {whitePullRate} p/m</span>
                   </div>
@@ -610,14 +659,24 @@ export const QuizHostTugOfWar: React.FC<QuizHostTugOfWarProps> = ({
         {/* Bottom Sports Day Prompt Strip (Zero overlap with floating pills) */}
         <div className="w-full bg-slate-950/95 border-t border-slate-800 px-6 py-2 z-30 flex justify-between items-center text-xs">
           <div className="flex items-center gap-2 text-slate-400">
-            <span>🚩 運動会 英語綱引きバトル</span>
+            <span>{t('🚩 Undokai English Tug-of-War', '🚩 運動会 英語綱引きバトル')}</span>
             <span>•</span>
-            <span>正解するとロープを引き寄せる！ まちがえると泥で2.5秒ストップ！</span>
+            <span>{t('Correct answers pull the rope! Mistakes trigger a 2.5s mud slip lockout!', '正解するとロープを引き寄せる！ まちがえると泥で2.5秒ストップ！')}</span>
           </div>
 
           <div className="flex items-center gap-3 text-slate-400 text-[11px] font-bold">
-            <span>🔴 赤組: {redRoundCorrect}回{matchFormat !== 'SINGLE' ? ` (通算: ${redTotalCorrect}回)` : ''}</span>
-            <span>⚪ 白組: {whiteRoundCorrect}回{matchFormat !== 'SINGLE' ? ` (通算: ${whiteTotalCorrect}回)` : ''}</span>
+            <span>
+              {t(
+                `🔴 Red: ${redRoundCorrect} pulls${matchFormat !== 'SINGLE' ? ` (Total: ${redTotalCorrect})` : ''}`,
+                `🔴 赤組: ${redRoundCorrect}回${matchFormat !== 'SINGLE' ? ` (通算: ${redTotalCorrect}回)` : ''}`
+              )}
+            </span>
+            <span>
+              {t(
+                `⚪ White: ${whiteRoundCorrect} pulls${matchFormat !== 'SINGLE' ? ` (Total: ${whiteTotalCorrect})` : ''}`,
+                `⚪ 白組: ${whiteRoundCorrect}回${matchFormat !== 'SINGLE' ? ` (通算: ${whiteTotalCorrect}回)` : ''}`
+              )}
+            </span>
           </div>
         </div>
       </div>
@@ -634,18 +693,23 @@ export const QuizHostTugOfWar: React.FC<QuizHostTugOfWarProps> = ({
 
               <span className="text-xs sm:text-sm font-black px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 uppercase tracking-widest mb-2">
                 {isMatchDecided
-                  ? (winReason === 'IPPON' ? t('Clean Sweep Victory! (一本勝ち)', '一本勝ち！完全優勝！') : t('Match Decided! (優勝決定)', '試合終了！優勝決定！'))
-                  : (winReason === 'IPPON' ? t(`Round ${currentRound} Swept! (一本勝ち)`, `第${currentRound}回戦 一本勝ち！`) : t(`Round ${currentRound} Complete!`, `第${currentRound}回戦 終了！`))}
+                  ? (winReason === 'IPPON' ? t('Clean Sweep Victory! (Ippon)', '一本勝ち！完全優勝！') : t('Match Decided!', '試合終了！優勝決定！'))
+                  : (winReason === 'IPPON' ? t(`Round ${currentRound} Swept! (Ippon)`, `第${currentRound}回戦 一本勝ち！`) : t(`Round ${currentRound} Complete!`, `第${currentRound}回戦 終了！`))}
               </span>
 
               {/* Winner Announcement Banner */}
               {roundWinner === 'team_red' && (
                 <div className="my-2">
                   <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-rose-500 tracking-tight">
-                    <ruby>赤組<rt>あかぐみ</rt></ruby>の{isMatchDecided && matchFormat !== 'SINGLE' ? '完全優勝' : '勝利'}！
+                    {t(
+                      isMatchDecided && matchFormat !== 'SINGLE' ? 'RED WINS THE MATCH!' : 'RED TEAM WINS!',
+                      <><ruby>赤組<rt>あかぐみ</rt></ruby>の{isMatchDecided && matchFormat !== 'SINGLE' ? '完全優勝' : '勝利'}！</>
+                    )}
                   </h2>
                   <p className="text-sm sm:text-base font-bold text-rose-300 mt-1">
-                    🔴 {isMatchDecided && matchFormat !== 'SINGLE' ? 'RED TEAM WINS THE MATCH!' : `RED TEAM TAKES ROUND ${currentRound}!`}
+                    {language === 'ja'
+                      ? (isMatchDecided && matchFormat !== 'SINGLE' ? '🔴 RED TEAM WINS THE MATCH!' : `🔴 RED TEAM TAKES ROUND ${currentRound}!`)
+                      : `🔴 Round ${currentRound} Victory!`}
                   </p>
                 </div>
               )}
@@ -653,10 +717,15 @@ export const QuizHostTugOfWar: React.FC<QuizHostTugOfWarProps> = ({
               {roundWinner === 'team_white' && (
                 <div className="my-2">
                   <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-100 tracking-tight">
-                    <ruby>白組<rt>しろぐみ</rt></ruby>の{isMatchDecided && matchFormat !== 'SINGLE' ? '完全優勝' : '勝利'}！
+                    {t(
+                      isMatchDecided && matchFormat !== 'SINGLE' ? 'WHITE WINS THE MATCH!' : 'WHITE TEAM WINS!',
+                      <><ruby>白組<rt>しろぐみ</rt></ruby>の{isMatchDecided && matchFormat !== 'SINGLE' ? '完全優勝' : '勝利'}！</>
+                    )}
                   </h2>
                   <p className="text-sm sm:text-base font-bold text-slate-300 mt-1">
-                    ⚪ {isMatchDecided && matchFormat !== 'SINGLE' ? 'WHITE TEAM WINS THE MATCH!' : `WHITE TEAM TAKES ROUND ${currentRound}!`}
+                    {language === 'ja'
+                      ? (isMatchDecided && matchFormat !== 'SINGLE' ? '⚪ WHITE TEAM WINS THE MATCH!' : `⚪ WHITE TEAM TAKES ROUND ${currentRound}!`)
+                      : `⚪ Round ${currentRound} Victory!`}
                   </p>
                 </div>
               )}
@@ -664,10 +733,10 @@ export const QuizHostTugOfWar: React.FC<QuizHostTugOfWarProps> = ({
               {roundWinner === 'draw' && (
                 <div className="my-2">
                   <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-amber-400 tracking-tight">
-                    <ruby>引き分け<rt>ひきわけ</rt></ruby>！
+                    {t('DRAW GAME!', <><ruby>引き分け<rt>ひきわけ</rt></ruby>！</>)}
                   </h2>
                   <p className="text-sm sm:text-base font-bold text-amber-200 mt-1">
-                    ⚖️ {isMatchDecided ? "IT'S A TIE!" : `ROUND ${currentRound} IS A DRAW!`}
+                    ⚖️ {isMatchDecided ? t("IT'S A TIE!", '同点引き分け！') : t(`ROUND ${currentRound} IS A DRAW!`, `第${currentRound}回戦 引き分け！`)}
                   </p>
                 </div>
               )}
@@ -679,8 +748,8 @@ export const QuizHostTugOfWar: React.FC<QuizHostTugOfWarProps> = ({
               {matchFormat !== 'SINGLE' && (
                 <div className="w-full p-3 rounded-2xl bg-slate-950/80 border border-amber-500/30 flex items-center justify-around">
                   <div className="flex flex-col items-center">
-                    <span className="text-xs font-bold text-rose-400">🔴 赤組</span>
-                    <span className="text-2xl font-black text-rose-400">{nextRedWins} 勝</span>
+                    <span className="text-xs font-bold text-rose-400">{t('🔴 Red Team', '🔴 赤組')}</span>
+                    <span className="text-2xl font-black text-rose-400">{nextRedWins} {t('Wins', '勝')}</span>
                     <div className="flex gap-1 mt-1">
                       {Array.from({ length: targetWins }).map((_, i) => (
                         <span key={i} className={`w-2.5 h-2.5 rounded-full ${i < nextRedWins ? 'bg-rose-500 shadow-sm shadow-rose-500' : 'border border-rose-500/40 bg-slate-900'}`} />
@@ -691,8 +760,8 @@ export const QuizHostTugOfWar: React.FC<QuizHostTugOfWarProps> = ({
                     {t('vs', '対')}
                   </div>
                   <div className="flex flex-col items-center">
-                    <span className="text-xs font-bold text-slate-200">⚪ 白組</span>
-                    <span className="text-2xl font-black text-slate-100">{nextWhiteWins} 勝</span>
+                    <span className="text-xs font-bold text-slate-200">{t('⚪ White Team', '⚪ 白組')}</span>
+                    <span className="text-2xl font-black text-slate-100">{nextWhiteWins} {t('Wins', '勝')}</span>
                     <div className="flex gap-1 mt-1">
                       {Array.from({ length: targetWins }).map((_, i) => (
                         <span key={i} className={`w-2.5 h-2.5 rounded-full ${i < nextWhiteWins ? 'bg-white shadow-sm shadow-white' : 'border border-slate-500 bg-slate-900'}`} />
@@ -705,14 +774,14 @@ export const QuizHostTugOfWar: React.FC<QuizHostTugOfWarProps> = ({
               {/* Match Stats summary */}
               <div className="w-full grid grid-cols-2 gap-3 p-3 rounded-2xl bg-slate-950/60 border border-slate-800 text-xs sm:text-sm">
                 <div className="text-left border-r border-slate-800 pr-2">
-                  <span className="font-black text-rose-400 block">🔴 <ruby>赤組<rt>あかぐみ</rt></ruby></span>
+                  <span className="font-black text-rose-400 block">{t('🔴 Red Team', <>🔴 <ruby>赤組<rt>あかぐみ</rt></ruby></>)}</span>
                   <span className="text-slate-300 block">{t('Round Pulls', 'この回の引き数')}: <strong>{frozenStats?.redRound ?? redRoundCorrect}</strong></span>
                   {matchFormat !== 'SINGLE' && (
                     <span className="text-slate-400 text-[11px] block">{t('Total pulls', '通算引き数')}: {frozenStats?.redTotal ?? redTotalCorrect}</span>
                   )}
                 </div>
                 <div className="text-right pl-2">
-                  <span className="font-black text-slate-200 block">⚪ <ruby>白組<rt>しろぐみ</rt></ruby></span>
+                  <span className="font-black text-slate-200 block">{t('⚪ White Team', <>⚪ <ruby>白組<rt>しろぐみ</rt></ruby></>)}</span>
                   <span className="text-slate-300 block">{t('Round Pulls', 'この回の引き数')}: <strong>{frozenStats?.whiteRound ?? whiteRoundCorrect}</strong></span>
                   {matchFormat !== 'SINGLE' && (
                     <span className="text-slate-400 text-[11px] block">{t('Total pulls', '通算引き数')}: {frozenStats?.whiteTotal ?? whiteTotalCorrect}</span>
@@ -731,7 +800,7 @@ export const QuizHostTugOfWar: React.FC<QuizHostTugOfWarProps> = ({
               ) : (
                 <div className="w-full flex flex-col gap-2">
                   <button
-                    onClick={handleStartNextRound}
+                    onClick={() => void handleStartNextRound()}
                     className="w-full py-3 sm:py-4 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-slate-950 text-base sm:text-lg font-black shadow-xl shadow-amber-500/20 transition active:scale-95 cursor-pointer"
                   >
                     {t(`Start Round ${currentRound + 1} →`, `第${currentRound + 1}回戦を始める →`)}

@@ -141,29 +141,88 @@ export const QuizHostVolleyball: React.FC<QuizHostVolleyballProps> = ({
     [whitePlayers, manualBonusWhite]
   );
 
-  // Broadcast live team bag totals at <= 5 Hz so student iPads have synchronized scores for Tama-kazoe
+  // Single 8 Hz (125ms) Coalesced Tamaire State Broadcaster uniting live scores & 3D phase metadata
+  const liveBroadcastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const lastLiveBroadcastAtRef = useRef<number>(0);
+  const latestScoresRef = useRef({ redScore, whiteScore, matchEnded });
+  latestScoresRef.current = { redScore, whiteScore, matchEnded };
+  const latestPhaseMetaRef = useRef<{
+    phase: string;
+    activeTeam: string;
+    servingTeam: string;
+    lastHitterName: string | null;
+    lastHitType: string | null;
+    phaseStartTime: number;
+    phaseDurationMs: number;
+  }>({
+    phase: 'SERVE',
+    activeTeam: 'all',
+    servingTeam: 'team_red',
+    lastHitterName: null,
+    lastHitType: null,
+    phaseStartTime: matchStartTime,
+    phaseDurationMs: timeLimitSeconds * 1000,
+  });
+
+  useEffect(() => {
+    return () => {
+      if (liveBroadcastTimerRef.current) {
+        clearTimeout(liveBroadcastTimerRef.current);
+        liveBroadcastTimerRef.current = null;
+      }
+    };
+  }, []);
+
+  const scheduleLiveStateBroadcast = useCallback(
+    (immediate = false) => {
+      if (!roomCode) return;
+
+      const flush = () => {
+        if (liveBroadcastTimerRef.current) {
+          clearTimeout(liveBroadcastTimerRef.current);
+          liveBroadcastTimerRef.current = null;
+        }
+        const scores = latestScoresRef.current;
+        const meta = latestPhaseMetaRef.current;
+        const totalBags = scores.redScore + scores.whiteScore;
+        lastLiveBroadcastAtRef.current = Date.now();
+        ensureAnonymousAuth()
+          .then(() =>
+            safeUpdate(`rooms/${roomCode}/volleyballLiveState`, {
+              phase: scores.matchEnded ? 'BALL_DROPPED' : meta.phase,
+              activeTeam: meta.activeTeam,
+              servingTeam: meta.servingTeam,
+              currentRally: totalBags,
+              highestRally: totalBags,
+              redScore: scores.redScore,
+              whiteScore: scores.whiteScore,
+              lastHitterName: meta.lastHitterName,
+              lastHitType: meta.lastHitType,
+              phaseStartTime: meta.phaseStartTime,
+              phaseDurationMs: meta.phaseDurationMs,
+              updatedAt: getServerTime(),
+            })
+          )
+          .catch(() => {});
+      };
+
+      const elapsed = Date.now() - lastLiveBroadcastAtRef.current;
+      if (immediate || elapsed >= 125) {
+        flush();
+      } else if (!liveBroadcastTimerRef.current) {
+        liveBroadcastTimerRef.current = setTimeout(flush, Math.max(15, 125 - elapsed));
+      }
+    },
+    [roomCode]
+  );
+
+  // Broadcast live team bag totals at <= 8 Hz so student iPads have synchronized scores for Tama-kazoe
   useEffect(() => {
     if (!roomCode) return;
-    const timer = setTimeout(() => {
-      ensureAnonymousAuth()
-        .then(() =>
-          safeUpdate(`rooms/${roomCode}/volleyballLiveState`, {
-            phase: matchEnded ? 'BALL_DROPPED' : 'SERVE',
-            activeTeam: 'all',
-            servingTeam: 'team_red',
-            currentRally: redScore + whiteScore,
-            highestRally: redScore + whiteScore,
-            redScore,
-            whiteScore,
-            phaseStartTime: matchStartTime,
-            phaseDurationMs: timeLimitSeconds * 1000,
-            updatedAt: getServerTime(),
-          })
-        )
-        .catch(() => {});
-    }, matchEnded ? 0 : 200);
-    return () => clearTimeout(timer);
-  }, [roomCode, redScore, whiteScore, matchEnded, matchStartTime, timeLimitSeconds]);
+    latestPhaseMetaRef.current.phaseStartTime = matchStartTime;
+    latestPhaseMetaRef.current.phaseDurationMs = timeLimitSeconds * 1000;
+    scheduleLiveStateBroadcast(matchEnded);
+  }, [roomCode, redScore, whiteScore, matchEnded, matchStartTime, timeLimitSeconds, scheduleLiveStateBroadcast]);
 
   useEffect(() => {
     if (initialMountRef.current) {
@@ -185,7 +244,7 @@ export const QuizHostVolleyball: React.FC<QuizHostVolleyballProps> = ({
       if (current > prev) {
         const delta = current - prev;
         const team: 'red' | 'white' = p.teamId === 'team_white' ? 'white' : 'red';
-        const isGoldenDouble = delta >= 2 || (p.currentStreak !== undefined && p.currentStreak > 0 && p.currentStreak % 3 === 0);
+        const isGoldenDouble = delta >= 2 || (p.currentStreak !== undefined && p.currentStreak > 0 && p.currentStreak % 6 === 0);
         newEvents.push({
           id: eventCounterRef.current++,
           playerId: p.id,
@@ -237,60 +296,21 @@ export const QuizHostVolleyball: React.FC<QuizHostVolleyballProps> = ({
   // ==========================================================================
   // [ANTIGRAVITY REFACTOR]: 8 Hz Coalesced Tamaire State Broadcast
   // ==========================================================================
-  const phaseBroadcastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const lastPhaseBroadcastAtRef = useRef<number>(0);
-  const pendingPhasePayloadRef = useRef<Record<string, any> | null>(null);
-
-  useEffect(() => {
-    return () => {
-      if (phaseBroadcastTimerRef.current) {
-        clearTimeout(phaseBroadcastTimerRef.current);
-        phaseBroadcastTimerRef.current = null;
-      }
-    };
-  }, []);
-
   const handlePhaseChange = useCallback(
     (evt: VolleyballPhaseChangeEvent) => {
       if (!roomCode) return;
-      const nowServer = getServerTime();
-      pendingPhasePayloadRef.current = {
+      latestPhaseMetaRef.current = {
         phase: evt.phase,
-        activeTeam: evt.activeTeam,
-        servingTeam: evt.servingTeam,
-        currentRally: evt.currentRally,
-        highestRally: Math.max(highestRally, evt.currentRally),
-        redScore: evt.redScore,
-        whiteScore: evt.whiteScore,
+        activeTeam: evt.activeTeam || 'all',
+        servingTeam: evt.servingTeam || 'team_red',
         lastHitterName: evt.lastHitterName || null,
         lastHitType: evt.lastHitType || null,
-        phaseStartTime: nowServer,
+        phaseStartTime: getServerTime(),
         phaseDurationMs: evt.phaseDurationMs,
-        updatedAt: nowServer,
       };
-
-      const flushPhaseWrite = () => {
-        if (phaseBroadcastTimerRef.current) {
-          clearTimeout(phaseBroadcastTimerRef.current);
-          phaseBroadcastTimerRef.current = null;
-        }
-        const payload = pendingPhasePayloadRef.current;
-        if (!payload) return;
-        pendingPhasePayloadRef.current = null;
-        lastPhaseBroadcastAtRef.current = Date.now();
-        ensureAnonymousAuth()
-          .then(() => safeUpdate(`rooms/${roomCode}/volleyballLiveState`, payload))
-          .catch(() => {});
-      };
-
-      const elapsed = Date.now() - lastPhaseBroadcastAtRef.current;
-      if (evt.phase === 'BALL_DROPPED' || elapsed >= 125) {
-        flushPhaseWrite();
-      } else if (!phaseBroadcastTimerRef.current) {
-        phaseBroadcastTimerRef.current = setTimeout(flushPhaseWrite, Math.max(15, 125 - elapsed));
-      }
+      scheduleLiveStateBroadcast(evt.phase === 'BALL_DROPPED');
     },
-    [roomCode, highestRally]
+    [roomCode, scheduleLiveStateBroadcast]
   );
 
   const handleFreezeAndEnd = (win: 'team_red' | 'team_white' | 'draw') => {
@@ -417,7 +437,7 @@ export const QuizHostVolleyball: React.FC<QuizHostVolleyballProps> = ({
               </span>
             </div>
             <span className="text-xs font-black text-amber-400 uppercase tracking-widest px-1">
-              玉入れ VS
+              {t('TAMAIRE VS', '玉入れ VS')}
             </span>
             <div className="flex items-center gap-2">
               <span className="text-2xl font-black font-mono text-slate-900 px-2.5 py-0.5 rounded-xl bg-white shadow-md">

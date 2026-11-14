@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { QuizQuestion, QuizOption, OPTION_STYLES } from '@/games/quiz/types';
+import { isEnglishPromptType } from '@/games/quiz/core/quizEngine';
 import { soundEffects } from '@/services/soundEffects';
 import { suzukaAudio } from './services/suzukaAudio';
 import { useLanguage } from '@/context/LanguageContext';
@@ -11,7 +12,6 @@ import {
   Volume2,
   Sparkles,
   AlertTriangle,
-  BookOpen,
   Zap,
   CheckCircle2,
 } from 'lucide-react';
@@ -47,43 +47,70 @@ export const SuzukaStudentDeck: React.FC<SuzukaStudentDeckProps> = ({
   wrongLockoutSeconds = 2.5,
   wrongSpeedLossRatio = 0.33,
   scaffoldingLevel: propScaffolding,
-  onChangeScaffoldingLevel,
+  onChangeScaffoldingLevel: _onChangeScaffoldingLevel,
   autoSpeak = true,
   onAnswer,
   disabled = false,
   hideTelemetryHeader = false,
 }) => {
   const { t } = useLanguage();
-  const { playWordAudio, speakText } = useAudio();
+  const { playWordAudio, speakText, isMuted } = useAudio();
 
-  const [internalScaffolding, setInternalScaffolding] = useState<'FULL' | 'PHONICS' | 'CHALLENGE'>('FULL');
+  const defaultScaffolding: 'FULL' | 'PHONICS' =
+    question.englishReadingAid === 'WITH_KATAKANA' ? 'FULL' : 'PHONICS';
+  const [internalScaffolding, setInternalScaffolding] = useState<'FULL' | 'PHONICS' | 'CHALLENGE'>(
+    defaultScaffolding
+  );
   const scaffoldingLevel = propScaffolding ?? internalScaffolding;
 
-  const handleCycleScaffolding = () => {
-    const next =
-      scaffoldingLevel === 'FULL'
-        ? 'PHONICS'
-        : scaffoldingLevel === 'PHONICS'
-        ? 'CHALLENGE'
-        : 'FULL';
-    setInternalScaffolding(next);
-    onChangeScaffoldingLevel?.(next);
-  };
+  useEffect(() => {
+    if (propScaffolding === undefined) {
+      setInternalScaffolding(question.englishReadingAid === 'WITH_KATAKANA' ? 'FULL' : 'PHONICS');
+    }
+  }, [question.englishReadingAid, propScaffolding]);
 
   const [feedback, setFeedback] = useState<{ optionId: string; isCorrect: boolean } | null>(null);
   const [lastWrongOption, setLastWrongOption] = useState<QuizOption | null>(null);
   const [isAnswering, setIsAnswering] = useState<boolean>(false);
   const [penaltySecondsLeft, setPenaltySecondsLeft] = useState<number>(0);
+  const penaltyEndTimeRef = useRef<number>(0);
   const [eliminatedOptionIds, setEliminatedOptionIds] = useState<Set<string>>(new Set());
-  const [isImageZoomed, setIsImageZoomed] = useState<boolean>(false);
   const [activeTouchId, setActiveTouchId] = useState<string | null>(null);
+  const correctTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const wrongTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const lastAutoPlayedQuestionKeyRef = useRef<string>('');
 
-  // Reset eliminated options and zoom state whenever question changes
+  // Enforce mandatory >= 2.5s Pit Stop floor even if caller passes 0 or < 2.5
+  const effectiveLockoutSeconds = Math.max(2.5, wrongLockoutSeconds || 2.5);
+
   useEffect(() => {
+    return () => {
+      if (correctTimerRef.current) clearTimeout(correctTimerRef.current);
+      if (wrongTimerRef.current) clearTimeout(wrongTimerRef.current);
+    };
+  }, []);
+
+  // Reset eliminated options, feedback, and pending timers whenever question changes
+  useEffect(() => {
+    if (correctTimerRef.current) {
+      clearTimeout(correctTimerRef.current);
+      correctTimerRef.current = null;
+    }
+    if (wrongTimerRef.current) {
+      clearTimeout(wrongTimerRef.current);
+      wrongTimerRef.current = null;
+    }
+    setFeedback(null);
+    setIsAnswering(false);
     setEliminatedOptionIds(new Set());
     setLastWrongOption(null);
-    setIsImageZoomed(false);
-  }, [questionNumber, question.targetWordId]);
+
+    const questionAudioKey = `${questionNumber}:${question.targetWordId}`;
+    if (question.promptType === 'AUDIO_ONLY' && !isMuted && lastAutoPlayedQuestionKeyRef.current !== questionAudioKey) {
+      lastAutoPlayedQuestionKeyRef.current = questionAudioKey;
+      playWordAudio(question.promptSound, question.targetWordEnglish);
+    }
+  }, [questionNumber, question.targetWordId, question.promptType, question.promptSound, question.targetWordEnglish, playWordAudio, isMuted]);
 
   // Cap sound volume to subtle whisper while playing on student iPad deck
   useEffect(() => {
@@ -93,20 +120,20 @@ export const SuzukaStudentDeck: React.FC<SuzukaStudentDeckProps> = ({
     };
   }, []);
 
-  // Countdown timer for answer lockout penalty
+  // Wall-clock lockout countdown interval (stable boolean dep avoids 100ms interval churn)
+  const isPenaltyTimerActive = penaltySecondsLeft > 0;
   useEffect(() => {
-    if (penaltySecondsLeft <= 0) return;
+    if (!isPenaltyTimerActive) return;
     const timer = setInterval(() => {
-      setPenaltySecondsLeft((prev) => {
-        if (prev <= 0.1) {
-          clearInterval(timer);
-          return 0;
-        }
-        return parseFloat((prev - 0.1).toFixed(1));
-      });
+      const remainingMs = penaltyEndTimeRef.current - Date.now();
+      const remainingSec = Math.max(0, remainingMs / 1000);
+      setPenaltySecondsLeft(parseFloat(remainingSec.toFixed(1)));
+      if (remainingMs <= 0) {
+        clearInterval(timer);
+      }
     }, 100);
     return () => clearInterval(timer);
-  }, [penaltySecondsLeft]);
+  }, [isPenaltyTimerActive]);
 
   const handleSelectOption = (optionId: string) => {
     if (disabled || isAnswering || penaltySecondsLeft > 0 || eliminatedOptionIds.has(optionId)) return;
@@ -116,7 +143,7 @@ export const SuzukaStudentDeck: React.FC<SuzukaStudentDeckProps> = ({
     const isCorrect =
       optionId === question.correctOptionId ||
       (!question.correctOptionId &&
-        chosenOpt?.english?.toLowerCase() === question.targetWordEnglish?.toLowerCase());
+        chosenOpt?.english?.trim().toLowerCase() === question.targetWordEnglish?.trim().toLowerCase());
 
     setFeedback({ optionId, isCorrect });
 
@@ -124,10 +151,12 @@ export const SuzukaStudentDeck: React.FC<SuzukaStudentDeckProps> = ({
       soundEffects.playCorrect();
       suzukaAudio.playBoostSputter();
       // Speak target English word aloud to reinforce auditory acquisition on every correct answer
-      if (!question.isMath && autoSpeak && question.targetWordEnglish) {
+      if (!question.isMath && autoSpeak && !isMuted && question.targetWordEnglish) {
         speakText(question.targetWordEnglish);
       }
-      setTimeout(() => {
+      if (correctTimerRef.current) clearTimeout(correctTimerRef.current);
+      correctTimerRef.current = setTimeout(() => {
+        correctTimerRef.current = null;
         onAnswer(true, optionId);
         setFeedback(null);
         setIsAnswering(false);
@@ -143,29 +172,53 @@ export const SuzukaStudentDeck: React.FC<SuzukaStudentDeckProps> = ({
       });
       onAnswer(false, optionId);
 
-      if (wrongLockoutSeconds > 0) {
-        setPenaltySecondsLeft(wrongLockoutSeconds);
+      if (effectiveLockoutSeconds > 0) {
+        penaltyEndTimeRef.current = Date.now() + Math.round(effectiveLockoutSeconds * 1000);
+        setPenaltySecondsLeft(effectiveLockoutSeconds);
       }
-      setTimeout(() => {
+      if (wrongTimerRef.current) clearTimeout(wrongTimerRef.current);
+      wrongTimerRef.current = setTimeout(() => {
+        wrongTimerRef.current = null;
         setFeedback(null);
         setIsAnswering(false);
-      }, Math.min(350, Math.max(180, wrongLockoutSeconds * 450)));
+      }, Math.min(350, Math.max(180, effectiveLockoutSeconds * 450)));
     }
   };
 
-  // Keyboard support (1-4 keys for Dynabook laptops & iPad hardware keyboards)
+  // Stable keyboard handler ref (never re-binds on every render; ignores modifiers/inputs/repeat)
+  const keyStateRef = useRef({
+    disabled,
+    isAnswering,
+    penaltySecondsLeft,
+    options: question.options,
+    handleSelectOption,
+  });
+  keyStateRef.current = {
+    disabled,
+    isAnswering,
+    penaltySecondsLeft,
+    options: question.options,
+    handleSelectOption,
+  };
+
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
-      if (disabled || isAnswering || penaltySecondsLeft > 0) return;
+      if (e.repeat || e.isComposing || e.ctrlKey || e.metaKey || e.altKey) return;
+      const target = e.target as HTMLElement | null;
+      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT' || target.isContentEditable)) {
+        return;
+      }
+      const st = keyStateRef.current;
+      if (st.disabled || st.isAnswering || st.penaltySecondsLeft > 0) return;
       const idx = ['1', '2', '3', '4'].indexOf(e.key);
-      if (idx !== -1 && question.options[idx]) {
+      if (idx !== -1 && st.options[idx]) {
         e.preventDefault();
-        handleSelectOption(question.options[idx].id);
+        st.handleSelectOption(st.options[idx].id);
       }
     };
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  });
+  }, []);
 
   // Throttle fill percentage (0 to 180 km/h)
   const throttlePct = Math.min(100, Math.max(0, (speedKmh / 180) * 100));
@@ -182,7 +235,12 @@ export const SuzukaStudentDeck: React.FC<SuzukaStudentDeckProps> = ({
   }
 
   const targetOnsetHint = (question.targetWordEnglish || '').slice(0, 2);
-  const hasChoiceImages = question.options.some((o) => !!o.image);
+  const isEnPromptType = isEnglishPromptType(question.promptType);
+  const hasChoiceImages =
+    !isEnPromptType &&
+    !question.promptImage &&
+    question.promptType !== 'IMAGE_ONLY' &&
+    question.options.some((o) => !!o.image);
   const hasPromptHero = Boolean(question.promptImage && !hasChoiceImages);
 
   return (
@@ -346,8 +404,15 @@ export const SuzukaStudentDeck: React.FC<SuzukaStudentDeckProps> = ({
                   const isFeedbackCorrect = isSelected && feedback?.isCorrect;
                   const isFeedbackWrong = isSelected && !feedback?.isCorrect;
                   const isEliminated = eliminatedOptionIds.has(option.id);
-                  const isEnToJa = question.promptType === 'EN_TO_JA';
+                  const isEnToJa = isEnglishPromptType(question.promptType);
                   const isLockoutActive = penaltySecondsLeft > 0;
+                  const isDarkText =
+                    style.color === 'yellow' &&
+                    !isFeedbackCorrect &&
+                    !isFeedbackWrong &&
+                    !isEliminated;
+                  const textColor = isDarkText ? 'text-slate-950' : 'text-white';
+                  const subTextColor = isDarkText ? 'text-slate-800' : 'text-white/90';
 
                   let btnBg = style.bg;
                   if (isFeedbackCorrect) btnBg = 'bg-emerald-500 border-b-4 border-emerald-700';
@@ -376,7 +441,11 @@ export const SuzukaStudentDeck: React.FC<SuzukaStudentDeckProps> = ({
                     option.phonicsChunks &&
                     option.phonicsChunks.length > 1;
 
-                  const showKatakana = !isEnToJa && scaffoldingLevel === 'FULL' && option.en_katakana;
+                  const showKatakana =
+                    !isEnToJa &&
+                    !question.isMath &&
+                    scaffoldingLevel === 'FULL' &&
+                    option.en_katakana;
 
                   return (
                     <button
@@ -384,7 +453,7 @@ export const SuzukaStudentDeck: React.FC<SuzukaStudentDeckProps> = ({
                       type="button"
                       disabled={disabled || isAnswering || isLockoutActive || isEliminated}
                       onClick={() => handleSelectOption(option.id)}
-                      className={`w-full h-full rounded-xl sm:rounded-2xl font-black text-white flex items-center justify-center p-1.5 sm:p-2 shadow-md active:scale-[0.98] transition-transform cursor-pointer relative overflow-hidden border-2 touch-manipulation border-white/20 ${btnBg} ${
+                      className={`w-full h-full rounded-xl sm:rounded-2xl font-black ${textColor} flex items-center justify-center p-1.5 sm:p-2 shadow-md active:scale-[0.98] transition-transform cursor-pointer relative overflow-hidden border-2 touch-manipulation border-white/20 ${btnBg} ${
                         isEliminated
                           ? 'opacity-25 grayscale cursor-not-allowed scale-95 border border-dashed border-rose-500/40'
                           : isLockoutActive
@@ -398,10 +467,10 @@ export const SuzukaStudentDeck: React.FC<SuzukaStudentDeckProps> = ({
                         <div className="flex-1 min-w-0 flex flex-col items-center text-center justify-center">
                           {subReading ? (
                             <div className="flex flex-col items-center text-center w-full">
-                              <span className={`w-full text-white leading-tight ${fontSizeClass} truncate`}>
+                              <span className={`w-full ${textColor} leading-tight ${fontSizeClass} truncate`}>
                                 {mainText}
                               </span>
-                              <span className="text-[11px] sm:text-xs md:text-sm font-semibold text-white/90 mt-0.5 leading-none truncate">
+                              <span className={`text-[11px] sm:text-xs md:text-sm font-semibold ${subTextColor} mt-0.5 leading-none truncate`}>
                                 {subReading}
                               </span>
                             </div>
@@ -410,35 +479,37 @@ export const SuzukaStudentDeck: React.FC<SuzukaStudentDeckProps> = ({
                               ruby={option.ruby}
                               kanji={option.ja_kanji}
                               hiragana={option.ja_hiragana}
-                              className={`${fontSizeClass} font-black text-white text-center leading-tight`}
+                              className={`${fontSizeClass} font-black ${textColor} text-center leading-tight`}
                             />
                           ) : showPhonicsChunks ? (
-                            <span className={`w-full text-white leading-tight ${fontSizeClass} truncate`}>
+                            <span className={`w-full ${textColor} leading-tight ${fontSizeClass} truncate`}>
                               {option.phonicsChunks!.map((chunk, cIdx) => (
                                 <React.Fragment key={cIdx}>
                                   <span
                                     className={
                                       cIdx === 0
-                                        ? 'text-yellow-200 underline decoration-yellow-300/60 decoration-2 underline-offset-4'
-                                        : 'text-white'
+                                        ? isDarkText
+                                          ? 'text-indigo-900 underline decoration-indigo-700/60 decoration-2 underline-offset-4'
+                                          : 'text-yellow-200 underline decoration-yellow-300/60 decoration-2 underline-offset-4'
+                                        : textColor
                                     }
                                   >
                                     {chunk}
                                   </span>
                                   {cIdx < option.phonicsChunks!.length - 1 && (
-                                    <span className="text-white/55 mx-0.5 font-normal">·</span>
+                                    <span className={`${isDarkText ? 'text-slate-700/70' : 'text-white/55'} mx-0.5 font-normal`}>·</span>
                                   )}
                                 </React.Fragment>
                               ))}
                             </span>
                           ) : (
-                            <span className={`w-full text-white leading-tight break-words ${fontSizeClass} truncate`}>
+                            <span className={`w-full ${textColor} leading-tight break-words ${fontSizeClass} truncate`}>
                               {text}
                             </span>
                           )}
 
                           {showKatakana && (
-                            <span className="text-[10px] sm:text-xs text-white/90 font-bold mt-0.5 leading-none truncate">
+                            <span className={`text-[10px] sm:text-xs ${subTextColor} font-bold mt-0.5 leading-none truncate`}>
                               [{option.en_katakana}]
                             </span>
                           )}
@@ -547,7 +618,7 @@ export const SuzukaStudentDeck: React.FC<SuzukaStudentDeckProps> = ({
             {/* Helper to format ESL text */}
             {(() => {
               const formatOpt = (opt: any) => {
-                const isEnToJa = question.promptType === 'EN_TO_JA';
+                const isEnToJa = isEnglishPromptType(question.promptType);
                 const raw = isEnToJa
                   ? opt.ja_kanji || opt.ja_hiragana || opt.english
                   : opt.english || opt.text || '';
@@ -566,7 +637,11 @@ export const SuzukaStudentDeck: React.FC<SuzukaStudentDeckProps> = ({
                   scaffoldingLevel !== 'CHALLENGE' &&
                   opt.phonicsChunks &&
                   opt.phonicsChunks.length > 1;
-                const showKatakana = !isEnToJa && scaffoldingLevel === 'FULL' && opt.en_katakana;
+                const showKatakana =
+                  !isEnToJa &&
+                  !question.isMath &&
+                  scaffoldingLevel === 'FULL' &&
+                  opt.en_katakana;
                 return { raw, mainText, subReading, fontSizeClass, showPhonicsChunks, showKatakana, isEnToJa };
               };
 
@@ -605,7 +680,15 @@ export const SuzukaStudentDeck: React.FC<SuzukaStudentDeckProps> = ({
                       <span className={`w-full leading-tight ${info.fontSizeClass} truncate text-center ${textColor}`}>
                         {opt.phonicsChunks!.map((chunk: string, cIdx: number) => (
                           <React.Fragment key={cIdx}>
-                            <span className={cIdx === 0 ? 'text-yellow-200 underline decoration-yellow-300/60 decoration-2 underline-offset-4' : ''}>
+                            <span
+                              className={
+                                cIdx === 0
+                                  ? isDarkText
+                                    ? 'text-indigo-900 underline decoration-indigo-700/60 decoration-2 underline-offset-4'
+                                    : 'text-yellow-200 underline decoration-yellow-300/60 decoration-2 underline-offset-4'
+                                  : ''
+                              }
+                            >
                               {chunk}
                             </span>
                             {cIdx < opt.phonicsChunks!.length - 1 && (
@@ -656,6 +739,8 @@ export const SuzukaStudentDeck: React.FC<SuzukaStudentDeckProps> = ({
                 const isSCorrect = isSSelected && feedback?.isCorrect;
                 const isSWrong = isSSelected && !feedback?.isCorrect;
                 const isSEliminated = eliminatedOptionIds.has(sOpt.id);
+                const isSYellowTextDark =
+                  isYellowTheme && !isSCorrect && !isSWrong && !isSEliminated;
                 let sBg = sStyle.bg;
                 if (isSCorrect) sBg = 'bg-emerald-500';
                 if (isSWrong) sBg = 'bg-rose-700 animate-shake';
@@ -703,7 +788,7 @@ export const SuzukaStudentDeck: React.FC<SuzukaStudentDeckProps> = ({
                       onMouseUp={() => setActiveTouchId(null)}
                       className={`col-start-2 row-start-1 rounded-none flex items-center justify-center px-2 py-1 relative border-t-2 border-l-2 border-b-2 border-r-0 border-t-white/20 border-l-slate-950 border-b-slate-950 active:scale-[0.98] transition-all cursor-pointer touch-manipulation overflow-hidden ${sBg} ${isSPressed ? 'scale-[0.98] brightness-110' : ''}`}
                     >
-                      {renderTextContent(sOpt, isYellowTheme)}
+                      {renderTextContent(sOpt, isSYellowTextDark)}
                     </button>
 
                     {/* Primary Bottom Text Bar (Middle column, Row 2) */}
@@ -817,8 +902,15 @@ export const SuzukaStudentDeck: React.FC<SuzukaStudentDeckProps> = ({
               const isFeedbackCorrect = isSelected && feedback?.isCorrect;
               const isFeedbackWrong = isSelected && !feedback?.isCorrect;
               const isEliminated = eliminatedOptionIds.has(option.id);
-              const isEnToJa = question.promptType === 'EN_TO_JA';
+              const isEnToJa = isEnglishPromptType(question.promptType);
               const isLockoutActive = penaltySecondsLeft > 0;
+              const isDarkText =
+                style.color === 'yellow' &&
+                !isFeedbackCorrect &&
+                !isFeedbackWrong &&
+                !isEliminated;
+              const textColor = isDarkText ? 'text-slate-950' : 'text-white';
+              const subTextColor = isDarkText ? 'text-slate-800' : 'text-white/90';
 
               let btnBg = style.bg;
               if (isFeedbackCorrect) btnBg = 'bg-emerald-500 border-b-4 border-emerald-700';
@@ -848,7 +940,11 @@ export const SuzukaStudentDeck: React.FC<SuzukaStudentDeckProps> = ({
                 option.phonicsChunks &&
                 option.phonicsChunks.length > 1;
 
-              const showKatakana = !isEnToJa && scaffoldingLevel === 'FULL' && option.en_katakana;
+              const showKatakana =
+                !isEnToJa &&
+                !question.isMath &&
+                scaffoldingLevel === 'FULL' &&
+                option.en_katakana;
 
               return (
                 <button
@@ -856,7 +952,7 @@ export const SuzukaStudentDeck: React.FC<SuzukaStudentDeckProps> = ({
                   type="button"
                   disabled={disabled || isAnswering || isLockoutActive || isEliminated}
                   onClick={() => handleSelectOption(option.id)}
-                  className={`w-full h-11 sm:h-12 md:h-13 min-h-[42px] max-h-[54px] rounded-xl sm:rounded-2xl font-black text-white flex items-center justify-center p-1.5 sm:p-2 shadow-md active:scale-[0.98] transition-transform cursor-pointer relative overflow-hidden border-2 touch-manipulation border-white/20 ${btnBg} ${
+                  className={`w-full min-h-[54px] h-full rounded-xl sm:rounded-2xl font-black ${textColor} flex items-center justify-center p-1.5 sm:p-2 shadow-md active:scale-[0.98] transition-transform cursor-pointer relative overflow-hidden border-2 touch-manipulation border-white/20 ${btnBg} ${
                     isEliminated
                       ? 'opacity-25 grayscale cursor-not-allowed scale-95 border border-dashed border-rose-500/40'
                       : isLockoutActive
@@ -867,8 +963,14 @@ export const SuzukaStudentDeck: React.FC<SuzukaStudentDeckProps> = ({
                   }`}
                 >
                   {/* Subtle corner shortcut pill (doesn't push or constrain center text) */}
-                  <div className="absolute top-2 left-2.5 z-10 pointer-events-none opacity-50 flex items-center gap-1">
-                    <span className="text-[10px] sm:text-xs font-mono font-black text-white/80 bg-black/35 px-1.5 py-0.5 rounded-md border border-white/10">
+                  <div className="absolute top-2 left-2.5 z-10 pointer-events-none opacity-65 flex items-center gap-1">
+                    <span
+                      className={`text-[10px] sm:text-xs font-mono font-black px-1.5 py-0.5 rounded-md border ${
+                        isDarkText
+                          ? 'text-slate-950 bg-black/15 border-black/15'
+                          : 'text-white/80 bg-black/35 border-white/10'
+                      }`}
+                    >
                       {idx + 1}
                     </span>
                   </div>
@@ -878,10 +980,10 @@ export const SuzukaStudentDeck: React.FC<SuzukaStudentDeckProps> = ({
                     <div className="flex-1 min-w-0 flex flex-col items-center text-center justify-center">
                       {subReading ? (
                         <div className="flex flex-col items-center text-center w-full">
-                          <span className={`w-full text-white leading-tight ${fontSizeClass} truncate`}>
+                          <span className={`w-full ${textColor} leading-tight ${fontSizeClass} truncate`}>
                             {mainText}
                           </span>
-                          <span className="text-[11px] sm:text-xs md:text-sm font-semibold text-white/90 mt-0.5 leading-none truncate">
+                          <span className={`text-[11px] sm:text-xs md:text-sm font-semibold ${subTextColor} mt-0.5 leading-none truncate`}>
                             {subReading}
                           </span>
                         </div>
@@ -890,35 +992,37 @@ export const SuzukaStudentDeck: React.FC<SuzukaStudentDeckProps> = ({
                           ruby={option.ruby}
                           kanji={option.ja_kanji}
                           hiragana={option.ja_hiragana}
-                          className={`${fontSizeClass} font-black text-white text-center leading-tight`}
+                          className={`${fontSizeClass} font-black ${textColor} text-center leading-tight`}
                         />
                       ) : showPhonicsChunks ? (
-                        <span className={`w-full text-white leading-tight ${fontSizeClass} truncate`}>
+                        <span className={`w-full ${textColor} leading-tight ${fontSizeClass} truncate`}>
                           {option.phonicsChunks!.map((chunk, cIdx) => (
                             <React.Fragment key={cIdx}>
                               <span
                                 className={
                                   cIdx === 0
-                                    ? 'text-yellow-200 underline decoration-yellow-300/60 decoration-2 underline-offset-4'
-                                    : 'text-white'
+                                    ? isDarkText
+                                      ? 'text-indigo-900 underline decoration-indigo-700/60 decoration-2 underline-offset-4'
+                                      : 'text-yellow-200 underline decoration-yellow-300/60 decoration-2 underline-offset-4'
+                                    : textColor
                                 }
                               >
                                 {chunk}
                               </span>
                               {cIdx < option.phonicsChunks!.length - 1 && (
-                                <span className="text-white/55 mx-0.5 font-normal">·</span>
+                                <span className={`${isDarkText ? 'text-slate-700/70' : 'text-white/55'} mx-0.5 font-normal`}>·</span>
                               )}
                             </React.Fragment>
                           ))}
                         </span>
                       ) : (
-                        <span className={`w-full text-white leading-tight break-words ${fontSizeClass} truncate`}>
+                        <span className={`w-full ${textColor} leading-tight break-words ${fontSizeClass} truncate`}>
                           {text}
                         </span>
                       )}
 
                       {showKatakana && (
-                        <span className="text-[10px] sm:text-xs text-white/90 font-bold mt-0.5 leading-none truncate">
+                        <span className={`text-[10px] sm:text-xs ${subTextColor} font-bold mt-0.5 leading-none truncate`}>
                           [{option.en_katakana}]
                         </span>
                       )}

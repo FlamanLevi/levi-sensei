@@ -3,7 +3,16 @@ import { SchoolId } from '@/types/roster';
 import { VocabularyScope } from '@/context/VocabularyContext';
 import { SessionAnalytics } from '@/types/analytics';
 import { MathGrade, MathDomain } from './mathTypes';
-import type { SuzukaTrackThemeId, SuzukaTrackThemeSelection } from '@/games/suzuka_grand_prix/trackThemes';
+import type {
+  SuzukaTrackThemeId,
+  SuzukaTrackThemeSelection,
+  SuzukaTimeOfDayId,
+  SuzukaTimeOfDaySelection,
+  SuzukaCloudCoverId,
+  SuzukaCloudCoverSelection,
+  SuzukaPrecipitationId,
+  SuzukaPrecipitationSelection,
+} from '@/games/suzuka_grand_prix/trackThemes';
 import type { AnticipationRoomState } from '@/games/anticipation/types';
 
 export type QuizSubject = 'ENGLISH' | 'MATH';
@@ -59,8 +68,14 @@ export interface SprintSettings {
   timeLimitSeconds: number; // 30, 60, 90, 120, 180
   graceCountdownSeconds: number; // 15, 20, 25, 30
   targetLaps3D?: number; // 1, 2, 3, 5 (for GRAND_PRIX_3D circuit laps)
-  trackThemeSelection?: SuzukaTrackThemeSelection; // Teacher choice: 'RANDOM' or concrete theme ID
+  trackThemeSelection?: SuzukaTrackThemeSelection; // Teacher choice: 'RANDOM' or concrete biome ID
   trackTheme?: SuzukaTrackThemeId; // Resolved concrete biome ID shared across TV & all student iPads
+  timeOfDaySelection?: SuzukaTimeOfDaySelection; // Teacher choice: 'RANDOM', 'LE_MANS_CYCLE', or fixed time of day
+  timeOfDay?: SuzukaTimeOfDayId; // Resolved time of day shared across TV & all student iPads
+  cloudCoverSelection?: SuzukaCloudCoverSelection; // Teacher choice: 'RANDOM' or concrete cloud cover
+  cloudCover?: SuzukaCloudCoverId; // Resolved cloud cover shared across TV & all student iPads
+  precipitationSelection?: SuzukaPrecipitationSelection; // Teacher choice: 'RANDOM' or concrete precipitation
+  precipitation?: SuzukaPrecipitationId; // Resolved precipitation shared across TV & all student iPads
   wrongSpeedLossRatio?: number; // 0, 0.25, 0.33 (default 1/3), 0.5, 0.75, 1.0
   // ==========================================================================
   // [ANTIGRAVITY REFACTOR]: Enforced GEMINI.md §7 Mandatory >= 2.5s Lockout Floor

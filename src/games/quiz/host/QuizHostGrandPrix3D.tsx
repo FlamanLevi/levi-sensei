@@ -3,7 +3,7 @@ import { QuizQuestion, QuizPlayer, TeamId, TEAM_PRESETS, PodiumFinisher, SprintS
 import { Suzuka3DStage, RacerState, RacerTelemetry, CameraViewMode, LANE_DRIVING, LANE_PASSING } from '@/games/suzuka_grand_prix/Suzuka3DStage';
 import { SUZUKA_CIRCUIT_LENGTH_METERS } from '@/games/suzuka_grand_prix/engine/Suzuka3DEngine';
 import { getKartTheme, KART_THEME_LIST, resolveRacerNumber } from '@/games/suzuka_grand_prix/kartPresets';
-import { getTrackTheme } from '@/games/suzuka_grand_prix/trackThemes';
+import { getTrackTheme, TIME_OF_DAY_LIST, PRECIPITATION_LIST } from '@/games/suzuka_grand_prix/trackThemes';
 import { suzukaAudio } from '@/games/suzuka_grand_prix/services/suzukaAudio';
 import { soundEffects } from '@/services/soundEffects';
 import { getServerTime } from '@/services/rtdbSafe';
@@ -318,10 +318,25 @@ export const QuizHostGrandPrix3D: React.FC<QuizHostGrandPrix3DProps> = ({
               </span>
               {(() => {
                 const trackTheme = getTrackTheme(sprintSettings?.trackTheme);
+                const todItem = TIME_OF_DAY_LIST.find((x) => x.id === (sprintSettings?.timeOfDay || 'LE_MANS_CYCLE'));
+                const precipItem = PRECIPITATION_LIST.find((x) => x.id === (sprintSettings?.precipitation || trackTheme.defaultPrecipitation));
                 return (
                   <span className={`px-2.5 py-0.5 rounded-full border font-black text-xs flex items-center gap-1 whitespace-nowrap shrink-0 ${trackTheme.badgeClass}`}>
                     <span>{trackTheme.emoji}</span>
                     <span>{t(trackTheme.shortEn, trackTheme.shortJa)}</span>
+                    {todItem && (
+                      <>
+                        <span className="opacity-50">·</span>
+                        <span>{todItem.emoji}</span>
+                        <span>{t(todItem.shortEn, todItem.shortJa)}</span>
+                      </>
+                    )}
+                    {precipItem && precipItem.id !== 'NONE' && (
+                      <>
+                        <span className="opacity-50">·</span>
+                        <span>{precipItem.emoji}</span>
+                      </>
+                    )}
                   </span>
                 );
               })()}
@@ -537,6 +552,11 @@ export const QuizHostGrandPrix3D: React.FC<QuizHostGrandPrix3DProps> = ({
           racers={racers3D}
           lightsCount={lightsCount}
           trackTheme={sprintSettings?.trackTheme}
+          timeOfDay={sprintSettings?.timeOfDay}
+          cloudCover={sprintSettings?.cloudCover}
+          precipitation={sprintSettings?.precipitation}
+          targetLaps={targetLaps}
+          timeTrialLimitSeconds={isTimeTrial ? timeLimitSeconds : undefined}
           hideSectorBadge={isLobby}
           performanceProfile={performanceProfile}
           onTelemetryUpdate={setLiveTelemetry}

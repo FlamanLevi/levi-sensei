@@ -9,7 +9,7 @@ import QRCode from 'qrcode';
 import { prewarmSuzukaAssets } from '@/games/suzuka_grand_prix/engine/Suzuka3DEngine';
 import { prewarmMicroKartAssets } from '@/games/suzuka_grand_prix/engine/MicroKartBuilder.js';
 import { resolveRacerNumber } from '@/games/suzuka_grand_prix/kartPresets';
-import { getTrackTheme } from '@/games/suzuka_grand_prix/trackThemes';
+import { getTrackTheme, TIME_OF_DAY_LIST, PRECIPITATION_LIST } from '@/games/suzuka_grand_prix/trackThemes';
 import { BotDifficulty } from '../hooks/useQuizBotSimulator';
 import { AvatarDisplay } from '@/components/common/AvatarDisplay';
 import { ClassVaultState, subscribeClassVault, getNextTierTarget } from '@/services/classVault';
@@ -229,10 +229,25 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
           </span>
           {gamePlayType === 'GRAND_PRIX_3D' && (() => {
             const trackTheme = getTrackTheme(sprintSettings?.trackTheme);
+            const todItem = TIME_OF_DAY_LIST.find((x) => x.id === (sprintSettings?.timeOfDay || 'LE_MANS_CYCLE'));
+            const precipItem = PRECIPITATION_LIST.find((x) => x.id === (sprintSettings?.precipitation || trackTheme.defaultPrecipitation));
             return (
-              <span className="text-xs font-black px-3 py-1 rounded-full bg-slate-900 dark:bg-slate-800 text-amber-300 border border-amber-400/40 shrink-0 whitespace-nowrap flex items-center gap-1">
+              <span className="text-xs font-black px-3 py-1 rounded-full bg-slate-900 dark:bg-slate-800 text-amber-300 border border-amber-400/40 shrink-0 whitespace-nowrap flex items-center gap-1.5">
                 <span>{trackTheme.emoji}</span>
                 <span>{language === 'ja' ? trackTheme.shortJa : trackTheme.shortEn}</span>
+                {todItem && (
+                  <>
+                    <span className="opacity-50">·</span>
+                    <span>{todItem.emoji}</span>
+                    <span>{language === 'ja' ? todItem.shortJa : todItem.shortEn}</span>
+                  </>
+                )}
+                {precipItem && precipItem.id !== 'NONE' && (
+                  <>
+                    <span className="opacity-50">·</span>
+                    <span>{precipItem.emoji}</span>
+                  </>
+                )}
                 {sprintSettings?.trackThemeSelection === 'RANDOM' && (
                   <span className="text-[10px] opacity-80">🎲</span>
                 )}

@@ -1,7 +1,16 @@
 import React from 'react';
 import { Clock, Flag, Timer } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
-import { SuzukaTrackThemeSelection, TRACK_THEME_LIST } from '@/games/suzuka_grand_prix/trackThemes';
+import {
+  SuzukaTrackThemeSelection,
+  SuzukaTimeOfDaySelection,
+  SuzukaCloudCoverSelection,
+  SuzukaPrecipitationSelection,
+  TRACK_THEME_LIST,
+  TIME_OF_DAY_LIST,
+  CLOUD_COVER_LIST,
+  PRECIPITATION_LIST,
+} from '@/games/suzuka_grand_prix/trackThemes';
 import { STANDARD_LOCKOUT_TIERS_SECONDS } from '../../core/quizEngine';
 import { SprintModeType } from '../../types';
 
@@ -20,6 +29,12 @@ interface GrandPrixRulesCardProps {
   onSelectWrongLockoutSeconds: (sec: number) => void;
   trackThemeSelection: SuzukaTrackThemeSelection;
   onSelectTrackThemeSelection: (selection: SuzukaTrackThemeSelection) => void;
+  timeOfDaySelection: SuzukaTimeOfDaySelection;
+  onSelectTimeOfDaySelection: (selection: SuzukaTimeOfDaySelection) => void;
+  cloudCoverSelection: SuzukaCloudCoverSelection;
+  onSelectCloudCoverSelection: (selection: SuzukaCloudCoverSelection) => void;
+  precipitationSelection: SuzukaPrecipitationSelection;
+  onSelectPrecipitationSelection: (selection: SuzukaPrecipitationSelection) => void;
 }
 
 export const GrandPrixRulesCard: React.FC<GrandPrixRulesCardProps> = ({
@@ -37,6 +52,12 @@ export const GrandPrixRulesCard: React.FC<GrandPrixRulesCardProps> = ({
   onSelectWrongLockoutSeconds,
   trackThemeSelection,
   onSelectTrackThemeSelection,
+  timeOfDaySelection,
+  onSelectTimeOfDaySelection,
+  cloudCoverSelection,
+  onSelectCloudCoverSelection,
+  precipitationSelection,
+  onSelectPrecipitationSelection,
 }) => {
   const { t } = useLanguage();
 
@@ -259,54 +280,207 @@ export const GrandPrixRulesCard: React.FC<GrandPrixRulesCardProps> = ({
         </div>
       </div>
 
-      {/* Circuit Atmosphere / Biome Selector */}
-      <div className="pt-2 border-t border-emerald-200/70 dark:border-emerald-900/50">
-        <div className="flex items-center justify-between mb-1.5">
-          <span className="text-[11px] font-black text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
-            <span>🗺️</span>
-            <span>{t('Circuit Stage / Season Atmosphere', 'サーキットの舞台・季節ステージ')}</span>
-          </span>
-          <span className="text-[10px] font-black text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-900/60 px-2 py-0.5 rounded-full">
-            {trackThemeSelection === 'RANDOM' ? t('🎲 Auto-Rotate Every Race', '🎲 毎試合ランダム切替') : t('Pinned Stage', 'ステージ固定')}
-          </span>
-        </div>
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-1.5">
-          <button
-            type="button"
-            onClick={() => onSelectTrackThemeSelection('RANDOM')}
-            className={`p-2 rounded-xl border-2 text-left transition-all cursor-pointer flex items-center gap-2 ${
-              trackThemeSelection === 'RANDOM'
-                ? 'border-emerald-500 ring-2 ring-emerald-400/40 bg-white dark:bg-slate-900 text-emerald-950 dark:text-emerald-100 shadow-xs'
-                : 'border-slate-200 dark:border-slate-800 bg-white/60 dark:bg-slate-900/60 text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800'
-            }`}
-          >
-            <span className="text-lg shrink-0 leading-none">🎲</span>
-            <div className="min-w-0">
-              <span className="text-[11px] font-black block truncate">{t('Random', 'ランダム')}</span>
-              <span className="text-[10px] opacity-80 block truncate">{t('No repeats', '被りなし抽選')}</span>
+      {/* Independent 3-Axis Environment Controls: Biome × Time of Day (Le Mans 24h) × Weather */}
+      <div className="pt-2.5 border-t border-emerald-200/70 dark:border-emerald-900/50 space-y-3">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+          {/* 1. Circuit Biome Selector */}
+          <div>
+            <div className="flex items-center justify-between mb-1.5">
+              <span className="text-[11px] font-black text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                <span>🗺️</span>
+                <span>{t('Circuit Biome', 'サーキットのバイオーム (地形)')}</span>
+              </span>
+              <span className="text-[10px] font-black text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-900/60 px-2 py-0.5 rounded-full">
+                {trackThemeSelection === 'RANDOM'
+                  ? t('🎲 Auto-Rotate', '🎲 ランダム')
+                  : t('Pinned Biome', 'バイオーム固定')}
+              </span>
             </div>
-          </button>
-          {TRACK_THEME_LIST.map((theme) => {
-            const isSelected = trackThemeSelection === theme.id;
-            return (
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
               <button
-                key={theme.id}
                 type="button"
-                onClick={() => onSelectTrackThemeSelection(theme.id)}
+                onClick={() => onSelectTrackThemeSelection('RANDOM')}
                 className={`p-2 rounded-xl border-2 text-left transition-all cursor-pointer flex items-center gap-2 ${
-                  isSelected
-                    ? `${theme.cardBorderSelected} ${theme.cardBgSelected} shadow-xs`
+                  trackThemeSelection === 'RANDOM'
+                    ? 'border-emerald-500 ring-2 ring-emerald-400/40 bg-white dark:bg-slate-900 text-emerald-950 dark:text-emerald-100 shadow-xs'
                     : 'border-slate-200 dark:border-slate-800 bg-white/60 dark:bg-slate-900/60 text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800'
                 }`}
               >
-                <span className="text-lg shrink-0 leading-none">{theme.emoji}</span>
+                <span className="text-lg shrink-0 leading-none">🎲</span>
                 <div className="min-w-0">
-                  <span className="text-[11px] font-black block truncate">{t(theme.shortEn, theme.shortJa)}</span>
-                  <span className="text-[10px] opacity-80 block truncate">{t(theme.nameEn, theme.nameJa)}</span>
+                  <span className="text-[11px] font-black block truncate">{t('Random', 'ランダム')}</span>
+                  <span className="text-[10px] opacity-80 block truncate">{t('No repeats', '被りなし')}</span>
                 </div>
               </button>
-            );
-          })}
+              {TRACK_THEME_LIST.map((theme) => {
+                const isSelected = trackThemeSelection === theme.id;
+                return (
+                  <button
+                    key={theme.id}
+                    type="button"
+                    onClick={() => onSelectTrackThemeSelection(theme.id)}
+                    className={`p-2 rounded-xl border-2 text-left transition-all cursor-pointer flex items-center gap-2 ${
+                      isSelected
+                        ? `${theme.cardBorderSelected} ${theme.cardBgSelected} shadow-xs`
+                        : 'border-slate-200 dark:border-slate-800 bg-white/60 dark:bg-slate-900/60 text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800'
+                    }`}
+                  >
+                    <span className="text-lg shrink-0 leading-none">{theme.emoji}</span>
+                    <div className="min-w-0">
+                      <span className="text-[11px] font-black block truncate">{t(theme.shortEn, theme.shortJa)}</span>
+                      <span className="text-[10px] opacity-80 block truncate">{t(theme.nameEn, theme.nameJa)}</span>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* 2. Time of Day & 24 Hours of Le Mans Dynamic Cycle */}
+          <div>
+            <div className="flex items-center justify-between mb-1.5">
+              <span className="text-[11px] font-black text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                <span>🌅</span>
+                <span>{t('Time of Day & 24h Le Mans Cycle', '時間帯・ル・マン24時間サイクル')}</span>
+              </span>
+              <span className="text-[10px] font-black text-amber-800 dark:text-amber-300 bg-amber-100 dark:bg-amber-900/50 px-2 py-0.5 rounded-full">
+                {timeOfDaySelection === 'LE_MANS_CYCLE'
+                  ? t('⏱️ Sunrise → Midnight Live', '⏱️ 日の出→真夜中 動的変化')
+                  : timeOfDaySelection === 'RANDOM'
+                  ? t('🎲 Random Time', '🎲 ランダム時間')
+                  : t('Fixed Lighting', '時刻固定')}
+              </span>
+            </div>
+            <div className="grid grid-cols-3 sm:grid-cols-6 gap-1.5">
+              <button
+                type="button"
+                onClick={() => onSelectTimeOfDaySelection('RANDOM')}
+                className={`py-1.5 px-1.5 rounded-xl border-2 text-center transition-all cursor-pointer flex flex-col items-center justify-center ${
+                  timeOfDaySelection === 'RANDOM'
+                    ? 'border-emerald-500 ring-1 ring-emerald-400/40 bg-white dark:bg-slate-900 text-emerald-950 dark:text-emerald-100 font-black shadow-xs'
+                    : 'border-slate-200 dark:border-slate-800 bg-white/60 dark:bg-slate-900/60 text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800 font-bold'
+                }`}
+              >
+                <span className="text-sm leading-none">🎲</span>
+                <span className="text-[10px] leading-tight mt-0.5 truncate max-w-full">{t('Random', 'ランダム')}</span>
+              </button>
+              {TIME_OF_DAY_LIST.map((tod) => {
+                const isSelected = timeOfDaySelection === tod.id;
+                const isLeMans = tod.id === 'LE_MANS_CYCLE';
+                return (
+                  <button
+                    key={tod.id}
+                    type="button"
+                    onClick={() => onSelectTimeOfDaySelection(tod.id)}
+                    className={`py-1.5 px-1.5 rounded-xl border-2 text-center transition-all cursor-pointer flex flex-col items-center justify-center ${
+                      isSelected
+                        ? isLeMans
+                          ? 'border-amber-500 ring-2 ring-amber-400/40 bg-amber-50 dark:bg-amber-950/60 text-amber-950 dark:text-amber-100 font-black shadow-xs'
+                          : 'border-emerald-500 ring-1 ring-emerald-400/40 bg-white dark:bg-slate-900 text-emerald-950 dark:text-emerald-100 font-black shadow-xs'
+                        : 'border-slate-200 dark:border-slate-800 bg-white/60 dark:bg-slate-900/60 text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800 font-bold'
+                    }`}
+                  >
+                    <span className="text-sm leading-none">{tod.emoji}</span>
+                    <span className="text-[10px] leading-tight mt-0.5 truncate max-w-full">
+                      {t(tod.shortEn, tod.shortJa)}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* Row 2: Cloud Cover × Precipitation */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 pt-1">
+          {/* 3. Cloud Cover Selector */}
+          <div>
+            <div className="flex items-center justify-between mb-1.5">
+              <span className="text-[11px] font-black text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                <span>⛅</span>
+                <span>{t('Cloud Cover', '雲の量 (空模様)')}</span>
+              </span>
+            </div>
+            <div className="grid grid-cols-4 gap-1.5">
+              <button
+                type="button"
+                onClick={() => onSelectCloudCoverSelection('RANDOM')}
+                className={`py-1.5 px-2 rounded-xl border-2 text-center transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                  cloudCoverSelection === 'RANDOM'
+                    ? 'border-emerald-500 ring-1 ring-emerald-400/40 bg-white dark:bg-slate-900 text-emerald-950 dark:text-emerald-100 font-black shadow-xs'
+                    : 'border-slate-200 dark:border-slate-800 bg-white/60 dark:bg-slate-900/60 text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800 font-bold'
+                }`}
+              >
+                <span className="text-sm leading-none">🎲</span>
+                <span className="text-[11px] truncate">{t('Random', 'ランダム')}</span>
+              </button>
+              {CLOUD_COVER_LIST.map((cc) => {
+                const isSelected = cloudCoverSelection === cc.id;
+                return (
+                  <button
+                    key={cc.id}
+                    type="button"
+                    onClick={() => onSelectCloudCoverSelection(cc.id)}
+                    className={`py-1.5 px-2 rounded-xl border-2 text-center transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                      isSelected
+                        ? 'border-emerald-500 ring-1 ring-emerald-400/40 bg-white dark:bg-slate-900 text-emerald-950 dark:text-emerald-100 font-black shadow-xs'
+                        : 'border-slate-200 dark:border-slate-800 bg-white/60 dark:bg-slate-900/60 text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800 font-bold'
+                    }`}
+                  >
+                    <span className="text-sm leading-none">{cc.emoji}</span>
+                    <span className="text-[11px] truncate">{t(cc.shortEn, cc.shortJa)}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* 4. Precipitation Selector (Rain / Snow works in any biome!) */}
+          <div>
+            <div className="flex items-center justify-between mb-1.5">
+              <span className="text-[11px] font-black text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                <span>🌧️</span>
+                <span>{t('Precipitation (Rain / Snow)', '降水エフェクト (雨・雪)')}</span>
+              </span>
+              <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400">
+                {t('Works in any biome!', '砂漠の雪なども組み合わせ自由！')}
+              </span>
+            </div>
+            <div className="grid grid-cols-3 sm:grid-cols-6 gap-1.5">
+              <button
+                type="button"
+                onClick={() => onSelectPrecipitationSelection('RANDOM')}
+                className={`py-1.5 px-1 rounded-xl border-2 text-center transition-all cursor-pointer flex flex-col items-center justify-center ${
+                  precipitationSelection === 'RANDOM'
+                    ? 'border-emerald-500 ring-1 ring-emerald-400/40 bg-white dark:bg-slate-900 text-emerald-950 dark:text-emerald-100 font-black shadow-xs'
+                    : 'border-slate-200 dark:border-slate-800 bg-white/60 dark:bg-slate-900/60 text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800 font-bold'
+                }`}
+              >
+                <span className="text-sm leading-none">🎲</span>
+                <span className="text-[10px] leading-tight mt-0.5 truncate max-w-full">{t('Random', 'ランダム')}</span>
+              </button>
+              {PRECIPITATION_LIST.map((pr) => {
+                const isSelected = precipitationSelection === pr.id;
+                return (
+                  <button
+                    key={pr.id}
+                    type="button"
+                    onClick={() => onSelectPrecipitationSelection(pr.id)}
+                    className={`py-1.5 px-1 rounded-xl border-2 text-center transition-all cursor-pointer flex flex-col items-center justify-center ${
+                      isSelected
+                        ? 'border-emerald-500 ring-1 ring-emerald-400/40 bg-white dark:bg-slate-900 text-emerald-950 dark:text-emerald-100 font-black shadow-xs'
+                        : 'border-slate-200 dark:border-slate-800 bg-white/60 dark:bg-slate-900/60 text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800 font-bold'
+                    }`}
+                  >
+                    <span className="text-sm leading-none">{pr.emoji}</span>
+                    <span className="text-[10px] leading-tight mt-0.5 truncate max-w-full">
+                      {t(pr.shortEn, pr.shortJa)}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
         </div>
       </div>
     </div>

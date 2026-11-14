@@ -4,6 +4,7 @@ import { SUZUKA_PATH_D, SUZUKA_SECTORS, SuzukaSector } from './SuzukaPathData';
 import {
   SuzukaTrackThemeId,
   SuzukaTrackThemeConfig,
+  EvaluatedSuzukaAtmosphere,
   getTrackTheme,
   DEFAULT_TRACK_THEME_ID,
 } from '../trackThemes';
@@ -30,6 +31,7 @@ export interface SuzukaTrackWorld {
   gantryGroup: THREE.Group;
   sceneryGroup: THREE.Group;
   updateScenery?: (dt: number) => void;
+  applyAtmosphere?: (atmo: EvaluatedSuzukaAtmosphere) => void;
   setStartLights: (count: number) => void;
   samples: SuzukaTrackSample[];
   totalLengthMeters: number;
@@ -137,17 +139,17 @@ function createVertexEmissiveMaterial(
     roughness,
     metalness,
   });
-  if (emissiveIntensity > 0) {
-    mat.customProgramCacheKey = () => `suzuka-vcol-emissive`;
-    mat.onBeforeCompile = (shader) => {
-      shader.uniforms.uVColEmissive = { value: emissiveIntensity };
-      shader.fragmentShader = `uniform float uVColEmissive;\n` + shader.fragmentShader;
-      shader.fragmentShader = shader.fragmentShader.replace(
-        '#include <emissivemap_fragment>',
-        '#include <emissivemap_fragment>\n totalEmissiveRadiance += diffuseColor.rgb * uVColEmissive;'
-      );
-    };
-  }
+  const uVColEmissive = { value: emissiveIntensity };
+  mat.userData.uVColEmissive = uVColEmissive;
+  mat.customProgramCacheKey = () => `suzuka-vcol-emissive`;
+  mat.onBeforeCompile = (shader) => {
+    shader.uniforms.uVColEmissive = uVColEmissive;
+    shader.fragmentShader = `uniform float uVColEmissive;\n` + shader.fragmentShader;
+    shader.fragmentShader = shader.fragmentShader.replace(
+      '#include <emissivemap_fragment>',
+      '#include <emissivemap_fragment>\n totalEmissiveRadiance += diffuseColor.rgb * uVColEmissive;'
+    );
+  };
   return mat;
 }
 
@@ -1234,15 +1236,19 @@ function appendSpectatorGrandstandParts(
  */
 export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWorld {
   const theme = getTrackTheme(themeId);
-  const makeSignMaterial = (tex: THREE.CanvasTexture, roughness = 0.35) =>
-    new THREE.MeshStandardMaterial({
+  const signMaterials: THREE.MeshStandardMaterial[] = [];
+  const makeSignMaterial = (tex: THREE.CanvasTexture, roughness = 0.35) => {
+    const mat = new THREE.MeshStandardMaterial({
       map: tex,
       color: 0xffffff,
       roughness,
-      ...(theme.signEmissiveIntensity > 0
-        ? { emissive: 0xffffff, emissiveMap: tex, emissiveIntensity: theme.signEmissiveIntensity }
-        : {}),
+      emissive: 0xffffff,
+      emissiveMap: tex,
+      emissiveIntensity: theme.signEmissiveIntensity,
     });
+    signMaterials.push(mat);
+    return mat;
+  };
 
   const root = new THREE.Group();
   root.name = 'Suzuka3DTrackRoot';
@@ -1457,13 +1463,9 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
     roughness: 0.62,
     metalness: 0.12,
     side: THREE.DoubleSide,
-    ...(theme.roadEmissiveIntensity > 0
-      ? {
-          emissive: theme.roadEmissiveHex,
-          emissiveMap: roadTex,
-          emissiveIntensity: theme.roadEmissiveIntensity,
-        }
-      : {}),
+    emissive: theme.roadEmissiveHex,
+    emissiveMap: roadTex,
+    emissiveIntensity: theme.roadEmissiveIntensity,
   });
   const roadMesh = new THREE.Mesh(roadGeo, roadMat);
   roadMesh.receiveShadow = true;
@@ -1482,13 +1484,9 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
     roughness: 0.66,
     metalness: 0.08,
     side: THREE.DoubleSide,
-    ...(theme.redRoadEmissiveIntensity > 0
-      ? {
-          emissive: theme.redRoadEmissiveHex,
-          emissiveMap: redRoadTex,
-          emissiveIntensity: theme.redRoadEmissiveIntensity,
-        }
-      : {}),
+    emissive: theme.redRoadEmissiveHex,
+    emissiveMap: redRoadTex,
+    emissiveIntensity: theme.redRoadEmissiveIntensity,
   });
   const redRoadMesh = new THREE.Mesh(redRoadGeo, redRoadMat);
   redRoadMesh.receiveShadow = true;
@@ -2363,9 +2361,8 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
     color: theme.glassHex,
     roughness: 0.1,
     metalness: 0.85,
-    ...(theme.glassEmissiveIntensity > 0
-      ? { emissive: theme.glassHex, emissiveIntensity: theme.glassEmissiveIntensity }
-      : {}),
+    emissive: theme.glassHex,
+    emissiveIntensity: theme.glassEmissiveIntensity,
   });
   const pitGlassGeo = new THREE.BoxGeometry(0.18, 2.3, pitLengthZ - 3);
   composeBakeMatrix(scLocalMat, [pitTowardTrackX * 3.64, 5.6, 0]);
@@ -2411,9 +2408,9 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
     color: 0xffffff,
     roughness: 0.25,
     metalness: 0.5,
-    ...(theme.towerWindowEmissiveIntensity > 0
-      ? { emissive: 0xffffff, emissiveMap: towerWinTex, emissiveIntensity: theme.towerWindowEmissiveIntensity }
-      : {}),
+    emissive: 0xffffff,
+    emissiveMap: towerWinTex,
+    emissiveIntensity: theme.towerWindowEmissiveIntensity,
   });
   const towerShaft = new THREE.Mesh(new THREE.BoxGeometry(7.6, 21.0, 7.6), towerWinMat);
   towerShaft.position.copy(towerBaseWorldPos).add(new THREE.Vector3(0, 10.5, 0));
@@ -2576,9 +2573,8 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
     color: theme.ferrisRimHex,
     roughness: 0.28,
     metalness: 0.5,
-    ...(theme.ferrisEmissiveIntensity > 0
-      ? { emissive: theme.ferrisRimEmissiveHex, emissiveIntensity: theme.ferrisEmissiveIntensity }
-      : {}),
+    emissive: theme.ferrisRimEmissiveHex,
+    emissiveIntensity: theme.ferrisEmissiveIntensity,
   });
 
   const hubHeight = 34.0;
@@ -2653,14 +2649,10 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
       })
     );
   }
+  const ferrisGondolaMat = createVertexEmissiveMaterial(theme.ferrisEmissiveIntensity * 0.65, 0.4, 0.2);
   const mergedGondolasGeo = mergeStaticParts(gondolaParts);
   if (mergedGondolasGeo) {
-    ferrisWheelRotating.add(
-      new THREE.Mesh(
-        mergedGondolasGeo,
-        createVertexEmissiveMaterial(theme.ferrisEmissiveIntensity * 0.65, 0.4, 0.2)
-      )
-    );
+    ferrisWheelRotating.add(new THREE.Mesh(mergedGondolasGeo, ferrisGondolaMat));
   }
   spokeGeo.dispose();
   sharedGondolaGeo.dispose();
@@ -2769,9 +2761,8 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
     color: theme.cloudMeshHex,
     roughness: 0.9,
     metalness: 0.0,
-    ...(theme.cloudEmissiveIntensity > 0
-      ? { emissive: theme.cloudMeshHex, emissiveIntensity: theme.cloudEmissiveIntensity }
-      : {}),
+    emissive: theme.cloudMeshHex,
+    emissiveIntensity: theme.cloudEmissiveIntensity,
   });
   const cloudCount = 34;
   const cloudInstanced = new THREE.InstancedMesh(mergedCloudGeo, cloudMat, cloudCount);
@@ -3081,63 +3072,122 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
     sceneryGroup.add(floodHeadInst);
   }
 
-  // J. Lush Multi-Tiered InstancedMesh Forest & Sakura Groves (520+ Trees & Hedges in 5 GPU draw calls!)
+  // J. Lush Multi-Tiered InstancedMesh Forest / Desert Cacti & Rock Outcrops (520+ items in 4 GPU draw calls!)
+  const isDesertBiome = theme.id === 'DESERT';
   const treeTrunkGeo = new THREE.CylinderGeometry(0.32, 0.5, 3.4, 6);
   treeTrunkGeo.translate(0, 1.7, 0);
-  const trunkMat = new THREE.MeshStandardMaterial({ color: 0x4a2e18, roughness: 0.9 });
-
-  // Multi-tiered Japanese Pine (3 stacked conical tiers merged into 1 geometry with vertical AO)
-  const pineTier1 = new THREE.ConeGeometry(3.2, 3.8, 9);
-  pineTier1.translate(0, 3.8, 0);
-  const pineTier2 = new THREE.ConeGeometry(2.5, 3.4, 9);
-  pineTier2.translate(0, 5.8, 0);
-  const pineTier3 = new THREE.ConeGeometry(1.7, 2.8, 9);
-  pineTier3.translate(0, 7.6, 0);
-  const pineCanopyGeo = mergeSimpleGeometries([pineTier1, pineTier2, pineTier3], {
-    minY: 1.9,
-    maxY: 9.0,
-    bottomShade: 0.62,
-    topBoost: 1.08,
+  const trunkMat = new THREE.MeshStandardMaterial({
+    color: isDesertBiome ? 0x784c24 : 0x4a2e18,
+    roughness: 0.9,
   });
+
+  // 1) Pine slot: Multi-tiered Japanese Pine OR 3D Desert Saguaro Cactus
+  let pineCanopyGeo: THREE.BufferGeometry;
+  if (isDesertBiome) {
+    // Sculpted 3D Saguaro Cactus (central trunk + left & right elbow arms, grounded at y=0)
+    const sagMain = new THREE.CylinderGeometry(0.52, 0.66, 6.8, 9);
+    sagMain.translate(0, 3.4, 0);
+    const sagTop = new THREE.SphereGeometry(0.52, 8, 6);
+    sagTop.translate(0, 6.8, 0);
+
+    const sagArmLHoriz = new THREE.CylinderGeometry(0.34, 0.38, 1.6, 8);
+    sagArmLHoriz.rotateZ(Math.PI / 2);
+    sagArmLHoriz.translate(-0.95, 3.2, 0);
+    const sagArmLVert = new THREE.CylinderGeometry(0.32, 0.35, 2.5, 8);
+    sagArmLVert.translate(-1.65, 4.35, 0);
+    const sagArmLTop = new THREE.SphereGeometry(0.32, 7, 5);
+    sagArmLTop.translate(-1.65, 5.6, 0);
+
+    const sagArmRHoriz = new THREE.CylinderGeometry(0.32, 0.36, 1.45, 8);
+    sagArmRHoriz.rotateZ(-Math.PI / 2);
+    sagArmRHoriz.translate(0.88, 4.1, 0);
+    const sagArmRVert = new THREE.CylinderGeometry(0.30, 0.33, 2.2, 8);
+    sagArmRVert.translate(1.5, 5.1, 0);
+    const sagArmRTop = new THREE.SphereGeometry(0.30, 7, 5);
+    sagArmRTop.translate(1.5, 6.2, 0);
+
+    pineCanopyGeo = mergeSimpleGeometries(
+      [sagMain, sagTop, sagArmLHoriz, sagArmLVert, sagArmLTop, sagArmRHoriz, sagArmRVert, sagArmRTop],
+      {
+        minY: 0.0,
+        maxY: 7.4,
+        bottomShade: 0.62,
+        topBoost: 1.08,
+      }
+    );
+  } else {
+    const pineTier1 = new THREE.ConeGeometry(3.2, 3.8, 9);
+    pineTier1.translate(0, 3.8, 0);
+    const pineTier2 = new THREE.ConeGeometry(2.5, 3.4, 9);
+    pineTier2.translate(0, 5.8, 0);
+    const pineTier3 = new THREE.ConeGeometry(1.7, 2.8, 9);
+    pineTier3.translate(0, 7.6, 0);
+    pineCanopyGeo = mergeSimpleGeometries([pineTier1, pineTier2, pineTier3], {
+      minY: 1.9,
+      maxY: 9.0,
+      bottomShade: 0.62,
+      topBoost: 1.08,
+    });
+  }
   const pineMat = new THREE.MeshStandardMaterial({
     color: 0xffffff,
     vertexColors: true,
     roughness: 0.84,
   });
 
-  // Lush Japanese Cedar (3 sculpted organic domes merged into 1 geometry with vertical AO)
-  const cedarTier1 = new THREE.IcosahedronGeometry(3.1, 2);
-  cedarTier1.scale(1.05, 0.82, 1.05);
-  cedarTier1.translate(0, 4.3, 0);
-  const cedarTier2 = new THREE.IcosahedronGeometry(2.4, 2);
-  cedarTier2.scale(1.0, 0.85, 1.0);
-  cedarTier2.translate(0.5, 6.2, 0.3);
-  const cedarTier3 = new THREE.IcosahedronGeometry(1.9, 2);
-  cedarTier3.translate(-0.4, 7.5, -0.3);
-  const cedarCanopyGeo = mergeSimpleGeometries([cedarTier1, cedarTier2, cedarTier3], {
-    minY: 2.2,
-    maxY: 9.2,
-    bottomShade: 0.64,
-    topBoost: 1.06,
-  });
+  // 2) Cedar slot: Lush Japanese Cedar OR 3D Red-Rock Sandstone Boulders / Hoodoo Outcrop
+  let cedarCanopyGeo: THREE.BufferGeometry;
+  if (isDesertBiome) {
+    // 3D Red-Rock Sandstone Boulder & Hoodoo Outcrop grounded directly on desert sand (y=0)
+    const rockMain = new THREE.DodecahedronGeometry(2.9, 1);
+    rockMain.scale(1.25, 0.85, 1.1);
+    rockMain.translate(0, 2.1, 0);
+    const rockSpire = new THREE.DodecahedronGeometry(2.1, 1);
+    rockSpire.scale(0.85, 1.45, 0.85);
+    rockSpire.translate(1.2, 3.2, 0.5);
+    const rockSide = new THREE.DodecahedronGeometry(1.8, 1);
+    rockSide.scale(1.15, 0.72, 1.05);
+    rockSide.translate(-1.6, 1.2, -0.4);
+    cedarCanopyGeo = mergeSimpleGeometries([rockMain, rockSpire, rockSide], {
+      minY: 0.0,
+      maxY: 6.2,
+      bottomShade: 0.58,
+      topBoost: 1.08,
+    });
+  } else {
+    const cedarTier1 = new THREE.IcosahedronGeometry(3.1, 2);
+    cedarTier1.scale(1.05, 0.82, 1.05);
+    cedarTier1.translate(0, 4.3, 0);
+    const cedarTier2 = new THREE.IcosahedronGeometry(2.4, 2);
+    cedarTier2.scale(1.0, 0.85, 1.0);
+    cedarTier2.translate(0.5, 6.2, 0.3);
+    const cedarTier3 = new THREE.IcosahedronGeometry(1.9, 2);
+    cedarTier3.translate(-0.4, 7.5, -0.3);
+    cedarCanopyGeo = mergeSimpleGeometries([cedarTier1, cedarTier2, cedarTier3], {
+      minY: 2.2,
+      maxY: 9.2,
+      bottomShade: 0.64,
+      topBoost: 1.06,
+    });
+  }
   const cedarMat = new THREE.MeshStandardMaterial({
     color: 0xffffff,
     vertexColors: true,
-    roughness: 0.85,
+    roughness: isDesertBiome ? 0.92 : 0.85,
   });
 
-  // Multi-puff Sakura Cherry Blossom Tree (4 organic blossom clouds with rich petal-pink AO gradient)
+  // 3) Sakura slot: Multi-puff Sakura Cherry Blossom Tree OR Desert Oasis Fan-Palm Crown
   const sakPuff1 = new THREE.IcosahedronGeometry(2.8, 2);
-  sakPuff1.scale(1.12, 0.78, 1.12);
+  sakPuff1.scale(isDesertBiome ? 1.35 : 1.12, isDesertBiome ? 0.48 : 0.78, isDesertBiome ? 1.35 : 1.12);
   sakPuff1.translate(0, 4.3, 0);
   const sakPuff2 = new THREE.IcosahedronGeometry(2.2, 2);
-  sakPuff2.scale(1.08, 0.8, 1.08);
+  sakPuff2.scale(isDesertBiome ? 1.25 : 1.08, isDesertBiome ? 0.45 : 0.8, isDesertBiome ? 1.25 : 1.08);
   sakPuff2.translate(1.45, 5.1, 0.65);
   const sakPuff3 = new THREE.IcosahedronGeometry(2.1, 2);
-  sakPuff3.scale(1.08, 0.8, 1.08);
+  sakPuff3.scale(isDesertBiome ? 1.25 : 1.08, isDesertBiome ? 0.45 : 0.8, isDesertBiome ? 1.25 : 1.08);
   sakPuff3.translate(-1.35, 4.9, -0.7);
   const sakPuff4 = new THREE.IcosahedronGeometry(1.85, 2);
-  sakPuff4.scale(1.1, 0.78, 1.1);
+  sakPuff4.scale(1.1, isDesertBiome ? 0.55 : 0.78, 1.1);
   sakPuff4.translate(0.1, 6.1, -0.2);
   const sakuraCanopyGeo = mergeSimpleGeometries([sakPuff1, sakPuff2, sakPuff3, sakPuff4], {
     minY: 2.4,
@@ -3232,10 +3282,12 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
   const pinePlacements = placements.filter((p) => p.type === 'pine');
   const cedarPlacements = placements.filter((p) => p.type === 'cedar');
   const sakuraPlacements = placements.filter((p) => p.type === 'sakura');
+  // In Desert biome, Saguaro cacti ('pine') and Red-Rock Boulders ('cedar') sit directly on the ground without wooden tree trunks
+  const trunkPlacements = isDesertBiome ? sakuraPlacements : placements;
 
-  if (placements.length > 0) {
-    const trunkInstanced = new THREE.InstancedMesh(treeTrunkGeo, trunkMat, placements.length);
-    placements.forEach((p, idx) => {
+  if (trunkPlacements.length > 0) {
+    const trunkInstanced = new THREE.InstancedMesh(treeTrunkGeo, trunkMat, trunkPlacements.length);
+    trunkPlacements.forEach((p, idx) => {
       dummyObj.position.set(p.x, 0, p.z);
       dummyObj.rotation.set(0, p.rotY, 0);
       dummyObj.scale.setScalar(p.scale);
@@ -3347,6 +3399,37 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
     }
   }
 
+  function applyAtmosphere(atmo: EvaluatedSuzukaAtmosphere) {
+    roadMat.roughness = atmo.roadRoughness;
+    roadMat.metalness = atmo.roadMetalness;
+    roadMat.emissiveIntensity = atmo.roadEmissiveIntensity;
+    redRoadMat.roughness = Math.min(0.95, atmo.roadRoughness + 0.03);
+    redRoadMat.metalness = atmo.roadMetalness * 0.6;
+    redRoadMat.emissiveIntensity = atmo.redRoadEmissiveIntensity;
+
+    floodGlowMat.emissiveIntensity = atmo.floodEmissiveIntensity;
+    ferrisRimMat.emissiveIntensity = atmo.ferrisEmissiveIntensity;
+    if (ferrisGondolaMat.userData.uVColEmissive) {
+      ferrisGondolaMat.userData.uVColEmissive.value = atmo.ferrisEmissiveIntensity * 0.65;
+    }
+    towerWinMat.emissiveIntensity = atmo.towerWindowEmissiveIntensity;
+    glassMat.emissiveIntensity = atmo.glassEmissiveIntensity;
+    if (balloonVertexMat.userData.uVColEmissive) {
+      balloonVertexMat.userData.uVColEmissive.value = atmo.balloonEmissiveIntensity;
+    }
+
+    for (let i = 0; i < signMaterials.length; i++) {
+      signMaterials[i].emissiveIntensity = atmo.signEmissiveIntensity;
+    }
+
+    cloudMat.color.setHex(atmo.cloudMeshHex);
+    cloudMat.emissive.setHex(atmo.cloudMeshHex);
+    cloudMat.emissiveIntensity = atmo.nightLightFactor * 0.12;
+    cloudInstanced.visible = atmo.cloudCoverage > 0.16;
+
+    crowdUniforms.uCrowdBrightness.value = atmo.crowdBrightness;
+  }
+
   return {
     root,
     roadMesh,
@@ -3357,6 +3440,7 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
     sceneryGroup,
     updateScenery,
     setStartLights,
+    applyAtmosphere,
     samples,
     totalLengthMeters,
     evaluate,

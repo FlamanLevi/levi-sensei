@@ -109,27 +109,71 @@ export interface TelemetrySyncSnapshot {
   timestampMs: number;
 }
 
+export interface TelemetryDeltaOptions {
+  maxSilenceMs?: number;
+  minSpeedDeltaKmh?: number;
+  minDistDriftMeters?: number;
+}
+
+/**
+ * Relaxed Fix 1 preset for full G1-G6 3D Grand Prix classroom rollout:
+ * Suppresses predictable straightaway coasting & stationary packets while keeping
+ * ~1 kart-length (~3.0m) parity and sub-500ms updates on braking, corner exits & boosts.
+ */
+export const RELAXED_GP3D_TELEMETRY_OPTIONS: Required<TelemetryDeltaOptions> = {
+  maxSilenceMs: 2400,
+  minSpeedDeltaKmh: 10.5,
+  minDistDriftMeters: 3.0,
+};
+
+/**
+ * Lower-priority sync preset after a racer has finished and entered automatic Victory Cruise.
+ */
+export const VICTORY_CRUISE_TELEMETRY_OPTIONS: Required<TelemetryDeltaOptions> = {
+  maxSilenceMs: 4000,
+  minSpeedDeltaKmh: 15.0,
+  minDistDriftMeters: 6.0,
+};
+
 export function shouldBroadcastTelemetryDelta(
   lastSent: TelemetrySyncSnapshot | null,
   current: TelemetrySyncSnapshot,
-  maxSilenceMs: number = 3200
+  optionsOrMaxSilenceMs: number | TelemetryDeltaOptions = 3200
 ): boolean {
-  if (!lastSent) return current.speedKmh > 0 || current.isFinished;
+  const maxSilenceMs =
+    typeof optionsOrMaxSilenceMs === 'number'
+      ? optionsOrMaxSilenceMs
+      : (optionsOrMaxSilenceMs.maxSilenceMs ?? 3200);
+  const minSpeedDeltaKmh =
+    typeof optionsOrMaxSilenceMs === 'number'
+      ? 6.5
+      : (optionsOrMaxSilenceMs.minSpeedDeltaKmh ?? 6.5);
+  const minDistDriftMeters =
+    typeof optionsOrMaxSilenceMs === 'number'
+      ? 4.0
+      : (optionsOrMaxSilenceMs.minDistDriftMeters ?? 4.0);
+
+  if (!lastSent) return current.speedKmh > 0 || current.inPitStop || current.isFinished;
   if (lastSent.isFinished !== current.isFinished) return true;
   if (lastSent.inPitStop !== current.inPitStop) return true;
 
-  const elapsedSec = Math.max(0, (current.timestampMs - lastSent.timestampMs) / 1000);
-  if (elapsedSec * 1000 >= maxSilenceMs && current.speedKmh > 0) {
+  // Broadcast once when coming to a complete stop so remote clients halt dead-reckoning
+  if (lastSent.speedKmh > 0 && current.speedKmh === 0) {
+    return true;
+  }
+
+  const elapsedMs = Math.max(0, current.timestampMs - lastSent.timestampMs);
+  if (elapsedMs >= maxSilenceMs && current.speedKmh > 0) {
     return true;
   }
 
   // Dead-reckoning prediction from lastSent
+  const elapsedSec = elapsedMs / 1000;
   const predictedDist = lastSent.distanceMeters + (lastSent.speedKmh / 3.6) * elapsedSec;
   const distDrift = Math.abs(current.distanceMeters - predictedDist);
   const speedDelta = Math.abs(current.speedKmh - lastSent.speedKmh);
 
-  // Only broadcast if speed changed by >= 6.5 km/h or position drifted >= 4.0m from linear prediction
-  return speedDelta >= 6.5 || distDrift >= 4.0;
+  return speedDelta >= minSpeedDeltaKmh || distDrift >= minDistDriftMeters;
 }
 
 /**

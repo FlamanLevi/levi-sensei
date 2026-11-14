@@ -3,6 +3,12 @@ import { QuizQuestion, QuizPlayer, TeamId, SprintSettings, SprintCumulativeStats
 import { Suzuka3DStage, RacerState, RacerTelemetry, CameraViewMode, LANE_DRIVING, LANE_PASSING } from '@/games/suzuka_grand_prix/Suzuka3DStage';
 import { SuzukaStudentDeck } from '@/games/suzuka_grand_prix/SuzukaStudentDeck';
 import { getSuzukaCornerSpeedLimit, SUZUKA_CIRCUIT_LENGTH_METERS } from '@/games/suzuka_grand_prix/engine/Suzuka3DEngine';
+import {
+  shouldBroadcastTelemetryDelta,
+  TelemetrySyncSnapshot,
+  RELAXED_GP3D_TELEMETRY_OPTIONS,
+  VICTORY_CRUISE_TELEMETRY_OPTIONS,
+} from '@/games/suzuka_grand_prix/engine/suzukaPhysics';
 import { getKartTheme, getSavedKartTheme, resolveRacerNumber } from '@/games/suzuka_grand_prix/kartPresets';
 import { suzukaAudio } from '@/games/suzuka_grand_prix/services/suzukaAudio';
 import { soundEffects } from '@/services/soundEffects';
@@ -36,7 +42,7 @@ interface QuizStudentGrandPrix3DProps {
     isCorrect: boolean,
     timeTakenMs: number,
     pointsEarned: number,
-    nextIndex: number,
+    nextIndex?: number,
     isFinished?: boolean,
     finishTimeMs?: number,
     cumulativeStats?: SprintCumulativeStats,
@@ -116,7 +122,12 @@ export const QuizStudentGrandPrix3D: React.FC<QuizStudentGrandPrix3DProps> = ({
 
   const studentProgressRef = useRef<number>(0);
   const studentDistanceRef = useRef<number>(player.distanceMeters || 0);
+  const studentDistanceAtMsRef = useRef<number>(0);
+  const studentSpeedRef = useRef<number>(player.speedKmh || 0);
   const studentMomentumRef = useRef<number>(player.speedKmh || 0);
+  const studentInPitStopRef = useRef<boolean>(false);
+  const lastSentTelemetryRef = useRef<TelemetrySyncSnapshot | null>(null);
+  const lastSyncEvalAtMsRef = useRef<number>(0);
   const questionStartTimeRef = useRef<number>(Date.now());
   const prevLapRef = useRef<number>(1);
   const hasSubmittedFinishRef = useRef<boolean>(!!player.isFinished);
@@ -128,6 +139,8 @@ export const QuizStudentGrandPrix3D: React.FC<QuizStudentGrandPrix3DProps> = ({
   const elapsedSinceStart = Math.max(0, nowTime - raceStartTime);
   const lightsCount = isLobby ? 0 : (elapsedSinceStart >= 2400 ? 6 : Math.max(0, Math.floor(elapsedSinceStart / 400)));
   const raceActive = !isLobby && elapsedSinceStart >= 2400;
+  const raceActiveRef = useRef<boolean>(raceActive);
+  raceActiveRef.current = raceActive;
 
   useEffect(() => {
     const intervalMs = raceActive ? 500 : 100;
@@ -169,7 +182,12 @@ export const QuizStudentGrandPrix3D: React.FC<QuizStudentGrandPrix3DProps> = ({
         prevLightsRef.current = 0;
         studentProgressRef.current = 0;
         studentDistanceRef.current = 0;
+        studentDistanceAtMsRef.current = 0;
+        studentSpeedRef.current = 0;
         studentMomentumRef.current = 0;
+        studentInPitStopRef.current = false;
+        lastSentTelemetryRef.current = null;
+        lastSyncEvalAtMsRef.current = 0;
         questionMissCountsRef.current = {};
         if (pitStopTimerRef.current) {
           clearTimeout(pitStopTimerRef.current);
@@ -251,10 +269,15 @@ export const QuizStudentGrandPrix3D: React.FC<QuizStudentGrandPrix3DProps> = ({
             isDrifting: nextSpeed > 65 && inCornerZone,
             onCurb: nextSpeed > 55 && onKerbApex,
           });
-          return Math.round(nextSpeed * 10) / 10;
+          const rounded = Math.round(nextSpeed * 10) / 10;
+          studentSpeedRef.current = rounded;
+          return rounded;
         }
 
-        if (prevSpeed <= 0 && studentMomentumRef.current <= 0) return 0;
+        if (prevSpeed <= 0 && studentMomentumRef.current <= 0) {
+          studentSpeedRef.current = 0;
+          return 0;
+        }
 
         const momDecay = (4.2 + 0.018 * studentMomentumRef.current) * dt;
         studentMomentumRef.current = Math.max(0, studentMomentumRef.current - momDecay);
@@ -287,7 +310,9 @@ export const QuizStudentGrandPrix3D: React.FC<QuizStudentGrandPrix3DProps> = ({
           isDrifting: nextSpeed > 65 && inCornerZone,
           onCurb: nextSpeed > 55 && onKerbApex,
         });
-        return Math.round(nextSpeed * 10) / 10;
+        const rounded = Math.round(nextSpeed * 10) / 10;
+        studentSpeedRef.current = rounded;
+        return rounded;
       });
     }, 50);
 
@@ -297,34 +322,82 @@ export const QuizStudentGrandPrix3D: React.FC<QuizStudentGrandPrix3DProps> = ({
   const onAnswerRef = useRef(onAnswer);
   onAnswerRef.current = onAnswer;
 
+  const getEstimatedDistanceMeters = (nowMs: number): number => {
+    const baseDist = studentDistanceRef.current;
+    const measuredAt = studentDistanceAtMsRef.current;
+    if (measuredAt <= 0) return Math.round(baseDist * 10) / 10;
+    const ageSec = Math.min(0.6, Math.max(0, (nowMs - measuredAt) / 1000));
+    const lapFrac = ((studentProgressRef.current % 1) + 1) % 1;
+    const effectiveSpeedKmh = Math.min(
+      Math.max(0, studentSpeedRef.current),
+      getSuzukaCornerSpeedLimit(lapFrac)
+    );
+    return Math.round((baseDist + (effectiveSpeedKmh / 3.6) * ageSec) * 10) / 10;
+  };
+
+  const maybeSyncTelemetry = (distanceMeters: number, nowMs: number) => {
+    if (!raceActiveRef.current) return;
+    lastSyncEvalAtMsRef.current = nowMs;
+
+    const st = latestStateRef.current;
+    const isFinishedNow = st.localIsFinished || hasSubmittedFinishRef.current;
+    const roundedDist = Math.round(distanceMeters * 10) / 10;
+    const snapshot: TelemetrySyncSnapshot = {
+      speedKmh: studentSpeedRef.current,
+      distanceMeters: roundedDist,
+      inPitStop: studentInPitStopRef.current,
+      isFinished: isFinishedNow,
+      timestampMs: nowMs,
+    };
+    const options = isFinishedNow
+      ? VICTORY_CRUISE_TELEMETRY_OPTIONS
+      : RELAXED_GP3D_TELEMETRY_OPTIONS;
+    const lastSent = lastSentTelemetryRef.current;
+
+    if (!shouldBroadcastTelemetryDelta(lastSent, snapshot, options)) {
+      return;
+    }
+
+    const pitChanged = !lastSent || lastSent.inPitStop !== snapshot.inPitStop;
+    lastSentTelemetryRef.current = snapshot;
+
+    // Slim telemetry heartbeat: only send changed kinematic fields so classmates/Host do not
+    // re-download unchanged cumulative score/streak/progress metadata on every tick.
+    onAnswerRef.current(
+      st.questionIdx,
+      '',
+      true,
+      0,
+      0,
+      undefined,
+      false,
+      undefined,
+      {
+        speedKmh: snapshot.speedKmh,
+        distanceMeters: snapshot.distanceMeters,
+        ...(pitChanged ? { inPitStop: snapshot.inPitStop } : {}),
+      }
+    );
+  };
+
+  const syncHelperRef = useRef({
+    getEstimatedDistanceMeters,
+    maybeSyncTelemetry,
+  });
+  syncHelperRef.current.getEstimatedDistanceMeters = getEstimatedDistanceMeters;
+  syncHelperRef.current.maybeSyncTelemetry = maybeSyncTelemetry;
+
   useEffect(() => {
     if (!raceActive) return;
-    const syncTimer = setInterval(() => {
-      const st = latestStateRef.current;
-      if (st.studentSpeed <= 0 && st.localTotalAnswered === 0) return;
-      onAnswerRef.current(
-        st.questionIdx,
-        '',
-        true,
-        0,
-        0,
-        st.localCorrectCount,
-        st.localIsFinished,
-        st.localFinishTimeMs,
-        {
-          score: st.localScore,
-          currentStreak: st.localStreak,
-          maxStreak: st.localMaxStreak,
-          correctCount: st.localCorrectCount,
-          totalAnswered: st.localTotalAnswered,
-          fastestTimeMs: st.localFastestTimeMs,
-          speedKmh: st.studentSpeed,
-          distanceMeters: Math.round(studentDistanceRef.current * 10) / 10,
-          inPitStop: st.studentInPitStop,
-        }
-      );
-    }, 600);
-    return () => clearInterval(syncTimer);
+    const syncBackupTimer = setInterval(() => {
+      const nowMs = Date.now();
+      // Primary delta evaluation runs cleanly in handleTelemetryUpdate with exact stage distance;
+      // only evaluate here if telemetry callbacks stalled (e.g., backgrounded tab throttling).
+      if (nowMs - lastSyncEvalAtMsRef.current < 1200) return;
+      const estDist = syncHelperRef.current.getEstimatedDistanceMeters(nowMs);
+      syncHelperRef.current.maybeSyncTelemetry(estDist, nowMs);
+    }, 1200);
+    return () => clearInterval(syncBackupTimer);
   }, [raceActive]);
 
   // Compile all racers (this student + all classmates/bots in room) for the 3D Cockpit stage
@@ -380,8 +453,11 @@ export const QuizStudentGrandPrix3D: React.FC<QuizStudentGrandPrix3DProps> = ({
     setLiveTelemetry(telemetry);
     const myTelem = telemetry.find((r) => r.id === player.id);
     if (myTelem) {
+      const nowMs = Date.now();
       studentProgressRef.current = myTelem.progress;
       studentDistanceRef.current = myTelem.distanceMeters;
+      studentDistanceAtMsRef.current = nowMs;
+
       const currentLap = Math.floor(myTelem.progress) + 1;
       if (currentLap > prevLapRef.current) {
         suzukaAudio.playLapChime();
@@ -393,16 +469,29 @@ export const QuizStudentGrandPrix3D: React.FC<QuizStudentGrandPrix3DProps> = ({
       const isLapFinished = myTelem.progress >= targetLaps || myTelem.distanceMeters >= targetDist;
       if (!isTimeTrial && isLapFinished && !hasSubmittedFinishRef.current) {
         hasSubmittedFinishRef.current = true;
+        studentInPitStopRef.current = false;
         // Sub-frame photo-finish interpolation: subtract time spent traveling past targetDist
         const overshootMeters = Math.max(0, myTelem.distanceMeters - targetDist);
-        const speedMs = Math.max(2.0, (myTelem.speedKmh || studentSpeed || 80) / 3.6);
+        const speedMs = Math.max(2.0, (myTelem.speedKmh || studentSpeedRef.current || 80) / 3.6);
         const overshootMs = Math.min(600, Math.round((overshootMeters / speedMs) * 1000));
         const finMs = Math.max(1000, getServerTime() - overshootMs - greenFlagTime);
         setLocalIsFinished(true);
         setLocalFinishTimeMs(finMs);
+        setStudentInPitStop(false);
         soundEffects.playCheckeredFlag();
 
         const st = latestStateRef.current;
+        const roundedDist = Math.round(myTelem.distanceMeters * 10) / 10;
+        const currentSpd = studentSpeedRef.current;
+        lastSentTelemetryRef.current = {
+          speedKmh: currentSpd,
+          distanceMeters: roundedDist,
+          inPitStop: false,
+          isFinished: true,
+          timestampMs: nowMs,
+        };
+        lastSyncEvalAtMsRef.current = nowMs;
+
         onAnswer(
           st.questionIdx,
           '',
@@ -419,12 +508,15 @@ export const QuizStudentGrandPrix3D: React.FC<QuizStudentGrandPrix3DProps> = ({
             correctCount: st.localCorrectCount,
             totalAnswered: st.localTotalAnswered,
             fastestTimeMs: st.localFastestTimeMs,
-            speedKmh: st.studentSpeed,
-            distanceMeters: Math.round(myTelem.distanceMeters * 10) / 10,
+            speedKmh: currentSpd,
+            distanceMeters: roundedDist,
             inPitStop: false,
           }
         );
+        return;
       }
+
+      syncHelperRef.current.maybeSyncTelemetry(myTelem.distanceMeters, nowMs);
     }
   };
 
@@ -441,8 +533,11 @@ export const QuizStudentGrandPrix3D: React.FC<QuizStudentGrandPrix3DProps> = ({
   );
 
   const handleStudentAnswer = (isCorrect: boolean, optionId: string) => {
-    const timeTakenMs = Math.max(100, Date.now() - questionStartTimeRef.current);
-    questionStartTimeRef.current = Date.now();
+    const nowMs = Date.now();
+    const timeTakenMs = Math.max(100, nowMs - questionStartTimeRef.current);
+    questionStartTimeRef.current = nowMs;
+    const estDist = getEstimatedDistanceMeters(nowMs);
+    const isFinishedNow = localIsFinished || hasSubmittedFinishRef.current;
 
     if (isCorrect) {
       const missesForQ = questionMissCountsRef.current[questionIdx] || 0;
@@ -470,17 +565,31 @@ export const QuizStudentGrandPrix3D: React.FC<QuizStudentGrandPrix3DProps> = ({
 
       const lapFrac = ((studentProgressRef.current % 1) + 1) % 1;
       const cornerCap = getSuzukaCornerSpeedLimit(lapFrac);
-      const nextMomentum = Math.min(180, Math.max(studentSpeed, studentMomentumRef.current) + throttleBoost);
+      const nextMomentum = Math.min(180, Math.max(studentSpeedRef.current, studentMomentumRef.current) + throttleBoost);
       studentMomentumRef.current = nextMomentum;
       const nextSpd = Math.round(Math.min(cornerCap, nextMomentum) * 10) / 10;
       const isBoost = nextMomentum >= 145 || nextStreak >= 3;
 
+      studentSpeedRef.current = nextSpd;
       setStudentSpeed(nextSpd);
       setStudentBoosting(isBoost);
+      if (studentInPitStopRef.current) {
+        studentInPitStopRef.current = false;
+        setStudentInPitStop(false);
+      }
       suzukaAudio.updateEngineTelemetry(nextSpd, isBoost);
 
       const nextQIdx = (questionIdx + 1) % Math.max(1, questions.length);
       setQuestionIdx(nextQIdx);
+
+      lastSentTelemetryRef.current = {
+        speedKmh: nextSpd,
+        distanceMeters: estDist,
+        inPitStop: false,
+        isFinished: isFinishedNow,
+        timestampMs: nowMs,
+      };
+      lastSyncEvalAtMsRef.current = nowMs;
 
       onAnswer(
         questionIdx,
@@ -489,7 +598,7 @@ export const QuizStudentGrandPrix3D: React.FC<QuizStudentGrandPrix3DProps> = ({
         timeTakenMs,
         pointsEarned,
         nextCorrect,
-        localIsFinished,
+        isFinishedNow,
         localFinishTimeMs,
         {
           score: nextScore,
@@ -499,7 +608,7 @@ export const QuizStudentGrandPrix3D: React.FC<QuizStudentGrandPrix3DProps> = ({
           totalAnswered: nextTotal,
           fastestTimeMs: nextFastest,
           speedKmh: nextSpd,
-          distanceMeters: Math.round(studentDistanceRef.current * 10) / 10,
+          distanceMeters: estDist,
           inPitStop: false,
         },
         missesForQ
@@ -515,19 +624,61 @@ export const QuizStudentGrandPrix3D: React.FC<QuizStudentGrandPrix3DProps> = ({
       suzukaAudio.playRailImpact(0.75);
 
       const retainedRatio = Math.max(0, 1 - wrongSpeedLossRatio);
-      const reducedSpd = Math.round(studentSpeed * retainedRatio * 10) / 10;
+      const reducedSpd = Math.round(studentSpeedRef.current * retainedRatio * 10) / 10;
       studentMomentumRef.current = Math.round(studentMomentumRef.current * retainedRatio * 10) / 10;
+      studentSpeedRef.current = reducedSpd;
       setStudentSpeed(reducedSpd);
       suzukaAudio.updateEngineTelemetry(reducedSpd, false);
 
-      if (wrongLockoutSeconds > 0) {
+      const enteredPitStop = wrongLockoutSeconds > 0;
+      if (enteredPitStop) {
+        studentInPitStopRef.current = true;
         setStudentInPitStop(true);
         if (pitStopTimerRef.current) clearTimeout(pitStopTimerRef.current);
         pitStopTimerRef.current = setTimeout(() => {
           pitStopTimerRef.current = null;
+          studentInPitStopRef.current = false;
           setStudentInPitStop(false);
+          if (!raceActiveRef.current) return;
+          const st = latestStateRef.current;
+          const finishNow = st.localIsFinished || hasSubmittedFinishRef.current;
+          const clearNowMs = Date.now();
+          const clearDist = syncHelperRef.current.getEstimatedDistanceMeters(clearNowMs);
+          const clearSnapshot: TelemetrySyncSnapshot = {
+            speedKmh: studentSpeedRef.current,
+            distanceMeters: clearDist,
+            inPitStop: false,
+            isFinished: finishNow,
+            timestampMs: clearNowMs,
+          };
+          lastSentTelemetryRef.current = clearSnapshot;
+          lastSyncEvalAtMsRef.current = clearNowMs;
+          onAnswerRef.current(
+            st.questionIdx,
+            '',
+            true,
+            0,
+            0,
+            undefined,
+            false,
+            undefined,
+            {
+              speedKmh: clearSnapshot.speedKmh,
+              distanceMeters: clearSnapshot.distanceMeters,
+              inPitStop: false,
+            }
+          );
         }, wrongLockoutSeconds * 1000);
       }
+
+      lastSentTelemetryRef.current = {
+        speedKmh: reducedSpd,
+        distanceMeters: estDist,
+        inPitStop: enteredPitStop ? true : studentInPitStopRef.current,
+        isFinished: isFinishedNow,
+        timestampMs: nowMs,
+      };
+      lastSyncEvalAtMsRef.current = nowMs;
 
       onAnswer(
         questionIdx,
@@ -536,7 +687,7 @@ export const QuizStudentGrandPrix3D: React.FC<QuizStudentGrandPrix3DProps> = ({
         timeTakenMs,
         0,
         localCorrectCount,
-        localIsFinished,
+        isFinishedNow,
         localFinishTimeMs,
         {
           score: localScore,
@@ -546,8 +697,8 @@ export const QuizStudentGrandPrix3D: React.FC<QuizStudentGrandPrix3DProps> = ({
           totalAnswered: nextTotal,
           fastestTimeMs: localFastestTimeMs,
           speedKmh: reducedSpd,
-          distanceMeters: Math.round(studentDistanceRef.current * 10) / 10,
-          inPitStop: wrongLockoutSeconds > 0,
+          distanceMeters: estDist,
+          inPitStop: enteredPitStop,
         },
         currentMisses
       );
@@ -564,12 +715,26 @@ export const QuizStudentGrandPrix3D: React.FC<QuizStudentGrandPrix3DProps> = ({
   useEffect(() => {
     if (raceFinishGraceStartTime && graceRemainingSeconds <= 0 && !hasSubmittedFinishRef.current) {
       hasSubmittedFinishRef.current = true;
+      studentInPitStopRef.current = false;
+      const nowMs = Date.now();
+      const estDist = syncHelperRef.current.getEstimatedDistanceMeters(nowMs);
       const finMs = Math.max(1000, getServerTime() - greenFlagTime);
       setLocalIsFinished(true);
       setLocalFinishTimeMs(finMs);
+      setStudentInPitStop(false);
       soundEffects.playCheckeredFlag();
 
       const st = latestStateRef.current;
+      studentSpeedRef.current = 0;
+      lastSentTelemetryRef.current = {
+        speedKmh: 0,
+        distanceMeters: estDist,
+        inPitStop: false,
+        isFinished: true,
+        timestampMs: nowMs,
+      };
+      lastSyncEvalAtMsRef.current = nowMs;
+
       onAnswerRef.current(
         st.questionIdx,
         '',
@@ -587,7 +752,7 @@ export const QuizStudentGrandPrix3D: React.FC<QuizStudentGrandPrix3DProps> = ({
           totalAnswered: st.localTotalAnswered,
           fastestTimeMs: st.localFastestTimeMs,
           speedKmh: 0,
-          distanceMeters: Math.round(studentDistanceRef.current * 10) / 10,
+          distanceMeters: estDist,
           inPitStop: false,
         }
       );

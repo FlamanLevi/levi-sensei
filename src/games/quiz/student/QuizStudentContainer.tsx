@@ -358,7 +358,7 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
     isCorrect: boolean,
     timeTakenMs: number,
     pointsEarned: number,
-    newSprintProgress: number,
+    newSprintProgress?: number,
     isFinished?: boolean,
     finishTimeMs?: number,
     cumulativeStats?: any,

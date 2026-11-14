@@ -92,7 +92,7 @@ interface UseQuizRoomReturn {
     isCorrect: boolean,
     timeTakenMs: number,
     pointsEarned: number,
-    newSprintProgress: number,
+    newSprintProgress?: number,
     isFinished?: boolean,
     finishTimeMs?: number,
     cumulativeStats?: SprintCumulativeStats,
@@ -2038,7 +2038,7 @@ export function useQuizRoom(
     isCorrect: boolean,
     timeTakenMs: number,
     pointsEarned: number,
-    newSprintProgress: number,
+    newSprintProgress?: number,
     isFinished: boolean = false,
     finishTimeMs?: number,
     cumulativeStats?: SprintCumulativeStats,
@@ -2046,16 +2046,28 @@ export function useQuizRoom(
   ) => {
     if (!roomCode) return;
     try {
-      const updatePayload: Record<string, any> = {
-        sprintProgress: newSprintProgress
-      };
+      const updatePayload: Record<string, any> = {};
+
+      if (newSprintProgress !== undefined) {
+        updatePayload.sprintProgress = newSprintProgress;
+      }
 
       if (cumulativeStats) {
-        updatePayload.score = cumulativeStats.score;
-        updatePayload.currentStreak = cumulativeStats.currentStreak;
-        updatePayload.maxStreak = cumulativeStats.maxStreak;
-        updatePayload.correctCount = cumulativeStats.correctCount;
-        updatePayload.totalAnswered = cumulativeStats.totalAnswered;
+        if (cumulativeStats.score !== undefined) {
+          updatePayload.score = cumulativeStats.score;
+        }
+        if (cumulativeStats.currentStreak !== undefined) {
+          updatePayload.currentStreak = cumulativeStats.currentStreak;
+        }
+        if (cumulativeStats.maxStreak !== undefined) {
+          updatePayload.maxStreak = cumulativeStats.maxStreak;
+        }
+        if (cumulativeStats.correctCount !== undefined) {
+          updatePayload.correctCount = cumulativeStats.correctCount;
+        }
+        if (cumulativeStats.totalAnswered !== undefined) {
+          updatePayload.totalAnswered = cumulativeStats.totalAnswered;
+        }
         if (cumulativeStats.fastestTimeMs !== undefined && cumulativeStats.fastestTimeMs < 999999) {
           updatePayload.fastestTimeMs = cumulativeStats.fastestTimeMs;
         }
@@ -2098,6 +2110,10 @@ export function useQuizRoom(
         }
       }
 
+      if (Object.keys(updatePayload).length === 0) {
+        return;
+      }
+
       // ======================================================================
       // [ANTIGRAVITY REFACTOR #4]: Eliminate O(N^2) Dual-Write & Throttle Spoke Writes to 8 Hz
       // ======================================================================
@@ -2110,7 +2126,7 @@ export function useQuizRoom(
       //    only when `isFinished === true`.
       // WHY:
       // All 40 student iPads subscribe to `rooms/${roomCode}`. Writing every answer
-      // and 600ms 3D telemetry tick to `rooms/${roomCode}/players/${playerId}` forced
+      // and telemetry tick to `rooms/${roomCode}/players/${playerId}` forced
       // Firebase RTDB to broadcast the entire room object to all 40 iPads on every
       // single student action (40 x 40 = 1,600 downstream messages per question round).
       // The Host already merges `roomPlayers/${roomCode}` into `room.players` at 10 Hz

@@ -4,6 +4,8 @@ import {
   stepKartLongitudinalPhysics,
   computeCorrectAnswerBoost,
   shouldBroadcastTelemetryDelta,
+  RELAXED_GP3D_TELEMETRY_OPTIONS,
+  VICTORY_CRUISE_TELEMETRY_OPTIONS,
   selectNextQuestionIndexWithSrs,
   wrapTrackDeltaMeters,
   computeCornerApexOffset,
@@ -86,6 +88,118 @@ test('shouldBroadcastTelemetryDelta suppresses redundant packets when coasting p
     timestampMs: 1600,
   });
   assert.equal(surged, true, 'Significant speed boost must broadcast immediately');
+});
+
+test('RELAXED_GP3D_TELEMETRY_OPTIONS balances Spark-tier bandwidth suppression with responsive corner/stop sync', () => {
+  // Initial stationary start emits nothing; initial pit stop emits immediately
+  assert.equal(
+    shouldBroadcastTelemetryDelta(
+      null,
+      { speedKmh: 0, distanceMeters: 0, inPitStop: false, isFinished: false, timestampMs: 1000 },
+      RELAXED_GP3D_TELEMETRY_OPTIONS
+    ),
+    false
+  );
+  assert.equal(
+    shouldBroadcastTelemetryDelta(
+      null,
+      { speedKmh: 0, distanceMeters: 0, inPitStop: true, isFinished: false, timestampMs: 1000 },
+      RELAXED_GP3D_TELEMETRY_OPTIONS
+    ),
+    true
+  );
+
+  const lastSent = {
+    speedKmh: 140,
+    distanceMeters: 500,
+    inPitStop: false,
+    isFinished: false,
+    timestampMs: 1000,
+  };
+
+  // Smooth straightaway aero drag over ~934ms (~6.3 km/h drop, ~0.8m drift) stays suppressed
+  assert.equal(
+    shouldBroadcastTelemetryDelta(
+      lastSent,
+      { speedKmh: 133.7, distanceMeters: 535.5, inPitStop: false, isFinished: false, timestampMs: 1934 },
+      RELAXED_GP3D_TELEMETRY_OPTIONS
+    ),
+    false,
+    'Smooth straightaway coasting must stay suppressed under Relaxed Fix 1'
+  );
+
+  // Corner braking (~45 km/h drop in 467ms) syncs on the very first check
+  assert.equal(
+    shouldBroadcastTelemetryDelta(
+      lastSent,
+      { speedKmh: 115, distanceMeters: 517.0, inPitStop: false, isFinished: false, timestampMs: 1467 },
+      RELAXED_GP3D_TELEMETRY_OPTIONS
+    ),
+    true
+  );
+
+  // Positional drift >= 3.0m syncs immediately even if speed is close
+  assert.equal(
+    shouldBroadcastTelemetryDelta(
+      lastSent,
+      { speedKmh: 138, distanceMeters: 531.0, inPitStop: false, isFinished: false, timestampMs: 1900 },
+      RELAXED_GP3D_TELEMETRY_OPTIONS
+    ),
+    true
+  );
+
+  // Max silence ceiling (2400ms) forces keepalive while moving
+  assert.equal(
+    shouldBroadcastTelemetryDelta(
+      lastSent,
+      { speedKmh: 135, distanceMeters: 593.0, inPitStop: false, isFinished: false, timestampMs: 3400 },
+      RELAXED_GP3D_TELEMETRY_OPTIONS
+    ),
+    true
+  );
+
+  // Full stop broadcasts once, then remains silent while parked
+  const slowLast = {
+    speedKmh: 4.0,
+    distanceMeters: 600,
+    inPitStop: false,
+    isFinished: false,
+    timestampMs: 5000,
+  };
+  assert.equal(
+    shouldBroadcastTelemetryDelta(
+      slowLast,
+      { speedKmh: 0, distanceMeters: 600.4, inPitStop: false, isFinished: false, timestampMs: 5500 },
+      RELAXED_GP3D_TELEMETRY_OPTIONS
+    ),
+    true
+  );
+  const stoppedLast = { ...slowLast, speedKmh: 0, distanceMeters: 600.4, timestampMs: 5500 };
+  assert.equal(
+    shouldBroadcastTelemetryDelta(
+      stoppedLast,
+      { speedKmh: 0, distanceMeters: 600.4, inPitStop: false, isFinished: false, timestampMs: 12000 },
+      RELAXED_GP3D_TELEMETRY_OPTIONS
+    ),
+    false
+  );
+
+  // Finished racers in Victory Cruise tolerate wider sync window
+  const finishedLast = {
+    speedKmh: 150,
+    distanceMeters: 2600,
+    inPitStop: false,
+    isFinished: true,
+    timestampMs: 10000,
+  };
+  assert.equal(
+    shouldBroadcastTelemetryDelta(
+      finishedLast,
+      { speedKmh: 138, distanceMeters: 2702, inPitStop: false, isFinished: true, timestampMs: 12500 },
+      VICTORY_CRUISE_TELEMETRY_OPTIONS
+    ),
+    false
+  );
 });
 
 test('selectNextQuestionIndexWithSrs prioritizes due review words for spaced repetition mastery', () => {

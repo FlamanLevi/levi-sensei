@@ -196,11 +196,11 @@ export interface PlayerAnswerRecord {
 }
 
 export interface SprintCumulativeStats {
-  score: number;
-  currentStreak: number;
-  maxStreak: number;
-  correctCount: number;
-  totalAnswered: number;
+  score?: number;
+  currentStreak?: number;
+  maxStreak?: number;
+  correctCount?: number;
+  totalAnswered?: number;
   fastestTimeMs?: number;
   speedKmh?: number;
   distanceMeters?: number;

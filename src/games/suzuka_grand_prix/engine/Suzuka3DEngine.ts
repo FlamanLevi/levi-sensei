@@ -3142,22 +3142,22 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
   }
 
   // 3) Tall Stadium Floodlight Towers + Volumetric Night Light Cones (InstancedMesh)
-  const floodPoleGeo = new THREE.CylinderGeometry(0.24, 0.38, 18.0, 8);
+  const floodPoleGeo = new THREE.CylinderGeometry(0.24, 0.42, 18.0, 8);
   floodPoleGeo.translate(0, 9.0, 0);
-  const floodHeadGeo = new THREE.BoxGeometry(3.6, 1.4, 0.9);
-  floodHeadGeo.translate(0, 18.2, 0.4);
+  const floodHeadGeo = new THREE.BoxGeometry(4.4, 1.6, 1.0);
+  floodHeadGeo.translate(0, 18.2, 0.45);
   const floodGlowMat = new THREE.MeshStandardMaterial({
-    color: theme.floodGlowHex,
+    color: 0x334155,
     emissive: theme.floodGlowHex,
-    emissiveIntensity: theme.floodEmissiveIntensity,
-    roughness: 0.2,
+    emissiveIntensity: 0,
+    roughness: 0.25,
   });
 
   // Volumetric light cone angled from the 18.2m lamp head toward the track (1 draw call for all towers)
-  const floodConeGeo = new THREE.ConeGeometry(7.2, 18.2, 14, 1, true);
-  floodConeGeo.translate(0, -9.1, 0);
-  floodConeGeo.rotateX(-0.28);
-  floodConeGeo.translate(0, 18.1, 0.55);
+  const floodConeGeo = new THREE.ConeGeometry(9.2, 18.4, 16, 1, true);
+  floodConeGeo.translate(0, -9.2, 0);
+  floodConeGeo.rotateX(-0.32);
+  floodConeGeo.translate(0, 18.1, 0.6);
   const fcPos = floodConeGeo.getAttribute('position');
   const fcColors = new Float32Array(fcPos.count * 3);
   for (let i = 0; i < fcPos.count; i++) {
@@ -3181,26 +3181,34 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
   let floodConeInst: THREE.InstancedMesh | null = null;
 
   const floodPlacements: { x: number; z: number; rotY: number }[] = [];
-  for (let i = 45; i < N; i += 85) {
+  const sideSigns = [outfieldSign, -outfieldSign];
+  const candidateOffsets = [13.8, 16.5];
+  for (let i = 16; i < N; i += 28) {
     const s = samples[i];
-    if (s.elevation > 0.2) continue;
-    const fPos = s.position.clone().addScaledVector(s.right, outfieldSign * 14.5);
-    if (!isClearOfAllTrack(fPos.x, fPos.z, 12.5)) continue;
-    let nearStand = false;
-    for (const ez of exclusionZones) {
-      const dx = fPos.x - ez.x;
-      const dz = fPos.z - ez.z;
-      if (dx * dx + dz * dz < (ez.r + 4) * (ez.r + 4)) {
-        nearStand = true;
+    if (s.elevation > 0.65) continue;
+    for (const sideSign of sideSigns) {
+      for (const latDist of candidateOffsets) {
+        const fPos = s.position.clone().addScaledVector(s.right, sideSign * latDist);
+        if (!isClearOfAllTrack(fPos.x, fPos.z, 11.8)) continue;
+        let nearObstacle = false;
+        for (const ez of exclusionZones) {
+          const dx = fPos.x - ez.x;
+          const dz = fPos.z - ez.z;
+          if (dx * dx + dz * dz < (ez.r + 3.2) * (ez.r + 3.2)) {
+            nearObstacle = true;
+            break;
+          }
+        }
+        if (nearObstacle) continue;
+        floodPlacements.push({
+          x: fPos.x,
+          z: fPos.z,
+          rotY: Math.atan2(-s.right.x * sideSign, -s.right.z * sideSign),
+        });
+        exclusionZones.push({ x: fPos.x, z: fPos.z, r: 3.6 });
         break;
       }
     }
-    if (nearStand) continue;
-    floodPlacements.push({
-      x: fPos.x,
-      z: fPos.z,
-      rotY: Math.atan2(-s.right.x * outfieldSign, -s.right.z * outfieldSign),
-    });
   }
 
   if (floodPlacements.length > 0) {
@@ -3730,9 +3738,10 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
     redRoadMat.emissiveIntensity = atmo.redRoadEmissiveIntensity;
 
     // 3. Stadium floodlights + volumetric cones, Ferris wheel, control tower, pit glass & signage
+    floodGlowMat.color.setHex(atmo.nightLightFactor > 0.02 ? theme.floodGlowHex : 0x334155);
     floodGlowMat.emissiveIntensity = atmo.floodEmissiveIntensity;
     if (floodConeInst) {
-      const coneOp = atmo.nightLightFactor * 0.22;
+      const coneOp = atmo.nightLightFactor * 0.28;
       floodConeMat.opacity = coneOp;
       floodConeInst.visible = coneOp > 0.01;
     }

@@ -1227,21 +1227,43 @@ export function buildMicroKart(options = {}) {
     const tSec = performance.now() * 0.001;
 
     // 4B. Dynamic Headlight & Taillight Beams + Rear Tire Weather Spray / Snow Rooster-Tails
+    // Lights stay completely OFF during Sunrise, Morning, Noon, and Afternoon (nightFactor === 0)
+    // and switch on late into the evening (Sunset -> Midnight).
     const nightFactor = Math.max(0.0, Math.min(1.0, state.nightFactor ?? 0.0));
     const isBraking = Boolean(state.isBraking);
-    const headBeamOpacity = THREE.MathUtils.lerp(0.14, 0.96, nightFactor);
-    const headConeOpacity = THREE.MathUtils.lerp(0.08, 0.62, nightFactor);
-    headlightGroundMat.opacity = headBeamOpacity;
-    headlightConeMat.opacity = headConeOpacity;
+    const lightsOn = nightFactor > 0.02;
 
-    const brakeFlare = isBraking ? 0.32 : 0.0;
-    const tailBeamOpacity = Math.min(1.0, THREE.MathUtils.lerp(0.24, 0.92, nightFactor) + brakeFlare);
-    const tailConeOpacity = Math.min(0.95, THREE.MathUtils.lerp(0.16, 0.68, nightFactor) + brakeFlare * 0.8);
-    taillightGroundMat.opacity = tailBeamOpacity;
-    taillightConeMat.opacity = tailConeOpacity;
+    sharedMats.headlightLensMat.emissiveIntensity = lightsOn ? nightFactor * 2.8 : 0.0;
+    sharedMats.taillightLensMat.emissiveIntensity = lightsOn
+      ? nightFactor * 2.8 + (isBraking ? 1.0 : 0.0)
+      : isBraking
+      ? 1.5
+      : 0.12;
+
+    headlightGroundBeamMesh.visible = lightsOn;
+    taillightGroundBeamMesh.visible = lightsOn;
+    for (const hCone of headlightVolCones) {
+      hCone.visible = lightsOn;
+    }
+    for (const tCone of taillightVolCones) {
+      tCone.visible = lightsOn;
+    }
+
+    if (lightsOn) {
+      headlightGroundMat.opacity = nightFactor * 0.96;
+      headlightConeMat.opacity = nightFactor * 0.64;
+
+      const brakeFlare = isBraking ? 0.32 : 0.0;
+      taillightGroundMat.opacity = Math.min(1.0, nightFactor * 0.88 + brakeFlare);
+      taillightConeMat.opacity = Math.min(0.95, nightFactor * 0.66 + brakeFlare * 0.8);
+    }
+
     for (const tPlane of tailLightGlowPlanes) {
-      const s = isBraking ? 1.38 : 1.0 + nightFactor * 0.25;
-      tPlane.scale.set(s, s, 1.0);
+      tPlane.visible = lightsOn || isBraking;
+      if (tPlane.visible) {
+        const s = isBraking ? 1.38 : 0.85 + nightFactor * 0.4;
+        tPlane.scale.set(s, s, 1.0);
+      }
     }
 
     const sprayMode = state.weatherSprayMode || 'NONE';

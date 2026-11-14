@@ -808,7 +808,7 @@ interface TimeKeyframe {
 }
 
 const LE_MANS_KEYFRAMES: TimeKeyframe[] = [
-  // 0.00 — Sunrise (Golden-rose eastern horizon, warm dawn shadows on ground)
+  // 0.00 — Sunrise (Golden-rose eastern horizon, warm dawn shadows on ground; lights OFF)
   {
     t: 0.0,
     sunDir: [480, 95, 180],
@@ -829,12 +829,12 @@ const LE_MANS_KEYFRAMES: TimeKeyframe[] = [
     groundTintHex: 0xd8a888,
     foliageTintHex: 0xe2b898,
     trackTintHex: 0xf5dcb8,
-    starIntensity: 0.14,
-    nightLightFactor: 0.35,
+    starIntensity: 0.06,
+    nightLightFactor: 0.0,
     cloudMeshHex: 0xffedd5,
     crowdBrightness: 0.88,
   },
-  // 0.22 — Morning (Fresh climbing sun)
+  // 0.22 — Morning (Fresh climbing sun; lights OFF)
   {
     t: 0.22,
     sunDir: [390, 290, 200],
@@ -860,7 +860,7 @@ const LE_MANS_KEYFRAMES: TimeKeyframe[] = [
     cloudMeshHex: 0xffffff,
     crowdBrightness: 1.0,
   },
-  // 0.46 — High Noon (Uses biome's native noon palette)
+  // 0.46 — High Noon (Uses biome's native noon palette; lights OFF)
   {
     t: 0.46,
     sunDir: [300, 450, 200],
@@ -886,9 +886,9 @@ const LE_MANS_KEYFRAMES: TimeKeyframe[] = [
     cloudMeshHex: 0xffffff,
     crowdBrightness: 1.0,
   },
-  // 0.66 — Late Afternoon (Warm golden-amber slant)
+  // 0.72 — Late Afternoon (Warm golden-amber slant; still bright daylight so lights remain OFF)
   {
-    t: 0.66,
+    t: 0.72,
     sunDir: [-170, 290, -320],
     zenithHex: 0x26529c,
     midSkyHex: 0x6ea4d8,
@@ -908,11 +908,11 @@ const LE_MANS_KEYFRAMES: TimeKeyframe[] = [
     foliageTintHex: 0xf5d8b0,
     trackTintHex: 0xffe8c8,
     starIntensity: 0.0,
-    nightLightFactor: 0.12,
+    nightLightFactor: 0.0,
     cloudMeshHex: 0xfff7ed,
     crowdBrightness: 0.95,
   },
-  // 0.82 — Crimson Sunset (Deep golden-crimson twilight on terrain)
+  // 0.82 — Crimson Sunset / Late Evening (Lights switch on as dusk settles over the circuit)
   {
     t: 0.82,
     sunDir: [-280, 110, -500],
@@ -934,7 +934,7 @@ const LE_MANS_KEYFRAMES: TimeKeyframe[] = [
     foliageTintHex: 0xc48870,
     trackTintHex: 0xebc29e,
     starIntensity: 0.25,
-    nightLightFactor: 0.62,
+    nightLightFactor: 0.58,
     cloudMeshHex: 0xfdba8c,
     crowdBrightness: 0.84,
   },
@@ -1122,15 +1122,15 @@ export function evaluateSuzukaAtmosphere(params: {
     roadMetalness = 0.06;
   }
 
-  // Night & twilight emissive lighting ramp (keeps the track & stadium glowing brightly against dark terrain)
-  const floodEmissiveIntensity = lerpNumber(1.25, 4.2, nightLightFactor);
+  // Night & late-evening emissive lighting ramp (0.0 during daytime -> full glow at night)
+  const floodEmissiveIntensity = lerpNumber(0.0, 4.4, nightLightFactor);
   const signEmissiveIntensity = lerpNumber(0.0, 0.95, nightLightFactor);
   const ferrisEmissiveIntensity = lerpNumber(0.0, 1.15, nightLightFactor);
-  const towerWindowEmissiveIntensity = lerpNumber(0.05, 1.25, nightLightFactor);
+  const towerWindowEmissiveIntensity = lerpNumber(0.0, 1.25, nightLightFactor);
   const glassEmissiveIntensity = lerpNumber(0.0, 0.72, nightLightFactor);
   const balloonEmissiveIntensity = lerpNumber(0.0, 0.78, nightLightFactor);
-  const roadEmissiveIntensity = lerpNumber(0.0, 0.52, nightLightFactor);
-  const redRoadEmissiveIntensity = lerpNumber(0.0, 0.68, nightLightFactor);
+  const roadEmissiveIntensity = lerpNumber(0.0, 0.55, nightLightFactor);
+  const redRoadEmissiveIntensity = lerpNumber(0.0, 0.70, nightLightFactor);
 
   return {
     sceneBackgroundHex: fogHex,

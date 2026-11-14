@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useClassroom } from '@/context/ClassroomContext';
 import { useVocabulary } from '@/context/VocabularyContext';
+import { useLanguage } from '@/context/LanguageContext';
 import { 
   QuizHostSettings, 
   QuizQuestion, 
@@ -42,7 +43,7 @@ interface QuizHostContainerProps {
   isStudentHost?: boolean;
 }
 
-import { computeTroubleWordsMap, GAME_MODE_STRATEGIES } from '../core/quizEngine';
+import { computeTroubleWordsMap, calculateClassicScore, GAME_MODE_STRATEGIES } from '../core/quizEngine';
 
 export type HostStep = 'SETUP' | 'LOBBY' | 'QUESTION' | 'REVEAL' | 'LEADERBOARD' | 'GAME_OVER' | 'SPRINT_RACE' | 'GRAND_PRIX_3D' | 'TUG_OF_WAR' | 'VOLLEYBALL';
 
@@ -66,6 +67,7 @@ const computeTroubleWordIds = (
 export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, onRegisterExit, onStepChange, isStudentHost = false }) => {
   const { activeGrade, activeUnit } = useClassroom();
   const { filteredWords, gradeWords, ensureCluesLoaded } = useVocabulary();
+  const { t } = useLanguage();
 
   const [step, setStep] = useState<HostStep>('SETUP');
   const [isEditingLobby, setIsEditingLobby] = useState<boolean>(false);
@@ -80,6 +82,7 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
   }, [step, onStepChange]);
 
   const [settings, setSettings] = useState<QuizHostSettings | null>(null);
+  const preRematchSettingsRef = useRef<QuizHostSettings | null>(null);
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
   const [localQuestionIndex, setLocalQuestionIndex] = useState<number>(0);
   const [roomCode, setRoomCode] = useState<string | null>(null);
@@ -101,18 +104,7 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
     answers: {}
   }), []);
 
-  const [soloPlayer, setSoloPlayer] = useState<QuizPlayer>(() => ({
-    id: 'stream_a_player',
-    nickname: 'Player',
-    score: 0,
-    currentStreak: 0,
-    maxStreak: 0,
-    correctCount: 0,
-    totalAnswered: 0,
-    fastestTimeMs: 999999,
-    joinedAt: getServerTime(),
-    answers: {}
-  }));
+  const [soloPlayer, setSoloPlayer] = useState<QuizPlayer>(() => createInitialSoloPlayer());
   const [soloSelectedOptionId, setSoloSelectedOptionId] = useState<string | null>(null);
   const [soloSelectedTimeTakenMs, setSoloSelectedTimeTakenMs] = useState<number | null>(null);
   const [soloResponses, setSoloResponses] = useState<Record<string, QuizResponse>>({});
@@ -226,6 +218,7 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
     const preserveRandom = isEditingLobby && settings?.sprintSettings?.trackThemeSelection === 'RANDOM';
     const newSettings = resolveSettingsForRound(rawSettings, prevConcreteTheme, preserveRandom);
     setSettings(newSettings);
+    preRematchSettingsRef.current = newSettings;
     let generated: QuizQuestion[] = [];
     if (newSettings.subject === 'MATH') {
       const mathGrade = (newSettings.mathGrade as MathGrade) || 'G1';
@@ -248,7 +241,7 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
     }
     
     if (generated.length === 0) {
-      alert('問題の作成に失敗しました。設定を確認してください。');
+      alert(t('Failed to generate questions. Please check your settings.', '問題の作成に失敗しました。設定を確認してください。') as string);
       return;
     }
 
@@ -263,11 +256,11 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
     if (isEditingLobby && roomCode) {
       setIsEditingLobby(false);
       if (newSettings.deliveryStream === 'STREAM_B_MULTIPLAYER') {
-        const success = await resetRoomForNewRound(timed, true, newSettings);
+        const success = await resetRoomForNewRound(timed, true, { ...newSettings, grade: activeGrade, unit: activeUnit });
         if (success) {
           setStep('LOBBY');
         } else {
-          alert('設定の更新に失敗しました。');
+          alert(t('Failed to update room settings.', '設定の更新に失敗しました。') as string);
         }
         return;
       }
@@ -296,7 +289,7 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
       if (success) {
         setStep('LOBBY');
       } else {
-        alert('ルームの作成に失敗しました。接続を確認してください。');
+        alert(t('Failed to create room. Please check your connection.', 'ルームの作成に失敗しました。接続を確認してください。') as string);
       }
     } else {
       isSoloRevealingRef.current = false;
@@ -309,7 +302,7 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
       setSoloTroubleWords({});
       setStep('QUESTION');
     }
-  }, [filteredWords, gradeWords, activeGrade, activeUnit, createRoom, createInitialSoloPlayer, isEditingLobby, roomCode, resetRoomForNewRound, clearBots, closeRoom, room?.sprintSettings?.trackTheme, settings?.sprintSettings?.trackTheme, settings?.sprintSettings?.trackThemeSelection, resolveSettingsForRound, isStudentHost]);
+  }, [filteredWords, gradeWords, activeGrade, activeUnit, createRoom, createInitialSoloPlayer, isEditingLobby, roomCode, resetRoomForNewRound, clearBots, closeRoom, room?.sprintSettings?.trackTheme, settings?.sprintSettings?.trackTheme, settings?.sprintSettings?.trackThemeSelection, resolveSettingsForRound, isStudentHost, t]);
 
   // Trigger in-lobby settings edit
   const handleEditSettingsFromLobby = useCallback(() => {
@@ -378,7 +371,7 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
         const isAnswered = !!chosenOptionId;
         const isCorrect = isAnswered && chosenOptionId === q.correctOptionId;
         const timeLimitMs = q.timeLimitMs || 15000;
-        const recallDelayMs = (settings?.recallDelaySeconds || 0) * 1000;
+        const recallDelaySeconds = settings?.recallDelaySeconds || 0;
         const safeTimeTaken = chosenTime
           ? Math.min(timeLimitMs, Math.max(100, chosenTime))
           : timeLimitMs;
@@ -395,12 +388,13 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
           if (newStreak > newMaxStreak) newMaxStreak = newStreak;
           if (safeTimeTaken < newFastestTime) newFastestTime = safeTimeTaken;
 
-          const activeWindowMs = Math.max(1000, timeLimitMs - recallDelayMs);
-          const effectiveTimeTakenMs = Math.max(0, safeTimeTaken - recallDelayMs);
-          const speedRatio = Math.max(0, Math.min(1, 1 - (effectiveTimeTakenMs / activeWindowMs)));
-          const speedPoints = Math.floor(speedRatio * 500);
-          const streakBonus = Math.min(250, (newStreak - 1) * 50);
-          pointsEarned = 500 + speedPoints + streakBonus;
+          pointsEarned = calculateClassicScore({
+            isCorrect: true,
+            timeTakenMs: safeTimeTaken,
+            timeLimitMs,
+            recallDelaySeconds,
+            newStreak,
+          });
         } else {
           newStreak = 0;
           setSoloTroubleWords(prev => ({
@@ -437,6 +431,7 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
           fastestTimeMs: newFastestTime,
           answers: updatedAnswers,
           lastAnswer: {
+            questionIndex: localQuestionIndex,
             optionId: chosenOptionId || '',
             isCorrect,
             pointsEarned,
@@ -543,11 +538,12 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
     setStep('GAME_OVER');
   }, [settings, room, questions, endSprintRace]);
 
-  // Play Again Same
+  // Play Again Same (restores pre-rematch full unit pool if returning from a Trouble Words Rematch)
   const handlePlayAgainSame = useCallback(async () => {
-    if (!settings) return;
-    const prevConcreteTheme = room?.sprintSettings?.trackTheme || settings.sprintSettings?.trackTheme || null;
-    const nextRoundSettings = resolveSettingsForRound(settings, prevConcreteTheme, false);
+    const baseSettings = preRematchSettingsRef.current || settings;
+    if (!baseSettings) return;
+    const prevConcreteTheme = room?.sprintSettings?.trackTheme || baseSettings.sprintSettings?.trackTheme || null;
+    const nextRoundSettings = resolveSettingsForRound(baseSettings, prevConcreteTheme, false);
     setSettings(nextRoundSettings);
 
     let generated: QuizQuestion[] = [];
@@ -572,7 +568,7 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
     }
 
     if (generated.length === 0) {
-      alert('問題の作成に失敗しました。');
+      alert(t('Failed to generate questions.', '問題の作成に失敗しました。') as string);
       return;
     }
 
@@ -590,7 +586,7 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
       if (success) {
         setStep('LOBBY');
       } else {
-        alert('再戦の初期化に失敗しました。');
+        alert(t('Failed to initialize replay.', '再戦の初期化に失敗しました。') as string);
       }
     } else {
       isSoloRevealingRef.current = false;
@@ -602,31 +598,34 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
       setSoloTroubleWords({});
       setStep('QUESTION');
     }
-  }, [settings, room?.sprintSettings?.trackTheme, resolveSettingsForRound, wordPool, activeGrade, gradeWords, roomCode, resetRoomForNewRound, createInitialSoloPlayer, nextTrack]);
+  }, [settings, room?.sprintSettings?.trackTheme, resolveSettingsForRound, wordPool, activeGrade, gradeWords, roomCode, resetRoomForNewRound, createInitialSoloPlayer, nextTrack, t]);
 
   // Trouble Words Rematch
   const handleTroubleWordsRematch = useCallback(async () => {
-    if (!settings) return;
-    const troubleSource = (settings.deliveryStream === 'STREAM_B_MULTIPLAYER' && room?.troubleWords)
+    const baseSettings = preRematchSettingsRef.current || settings;
+    if (!baseSettings) return;
+    const troubleSource = (baseSettings.deliveryStream === 'STREAM_B_MULTIPLAYER' && room?.troubleWords)
       ? room.troubleWords
       : soloTroubleWords;
 
     const troubleEntries = Object.entries(troubleSource);
     if (troubleEntries.length === 0) {
-      alert(settings.subject === 'MATH' ? '苦手な問題はありませんでした！' : '苦手単語はありませんでした！');
+      alert((baseSettings.subject === 'MATH'
+        ? t('No trouble problems were recorded!', '苦手な問題はありませんでした！')
+        : t('No trouble words were recorded!', '苦手単語はありませんでした！')) as string);
       return;
     }
 
     const troubleIds = new Set(troubleEntries.map(([id]) => id));
-    const prevConcreteTheme = room?.sprintSettings?.trackTheme || settings.sprintSettings?.trackTheme || null;
+    const prevConcreteTheme = room?.sprintSettings?.trackTheme || baseSettings.sprintSettings?.trackTheme || null;
     const isContinuousArcade =
-      settings.gamePlayType === 'GRAND_PRIX_3D' ||
-      settings.gamePlayType === 'SPRINT_RACE' ||
-      settings.gamePlayType === 'TUG_OF_WAR' ||
-      settings.gamePlayType === 'VOLLEYBALL';
+      baseSettings.gamePlayType === 'GRAND_PRIX_3D' ||
+      baseSettings.gamePlayType === 'SPRINT_RACE' ||
+      baseSettings.gamePlayType === 'TUG_OF_WAR' ||
+      baseSettings.gamePlayType === 'VOLLEYBALL';
 
     // Handle Math Mode Rematch: generate fresh procedural numbers for the missed topics!
-    if (settings.subject === 'MATH') {
+    if (baseSettings.subject === 'MATH') {
       const troubleMathQuestions = questions.filter(q => troubleIds.has(q.targetWordId));
       if (troubleMathQuestions.length > 0) {
         const targetCount = isContinuousArcade
@@ -636,11 +635,11 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
         for (let i = 0; i < targetCount; i++) {
           const sourceQ = troubleMathQuestions[i % troubleMathQuestions.length];
           const freshBatch = generateMathQuestions({
-            grade: (sourceQ.mathGrade as MathGrade) || (settings.mathGrade as MathGrade) || 'G3',
+            grade: (sourceQ.mathGrade as MathGrade) || (baseSettings.mathGrade as MathGrade) || 'G3',
             domain: (sourceQ.mathDomain as MathDomain) || 'ALL',
             topicId: sourceQ.mathTopicId,
             questionCount: 1,
-            timeLimitMs: (settings.timeLimitSeconds || 15) * 1000,
+            timeLimitMs: (baseSettings.timeLimitSeconds || 15) * 1000,
           });
           if (freshBatch[0]) {
             rematchQuestions.push({
@@ -654,7 +653,7 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
         if (rematchQuestions.length > 0) {
           const rematchSettings: QuizHostSettings = resolveSettingsForRound(
             {
-              ...settings,
+              ...baseSettings,
               questionCount: rematchQuestions.length
             },
             prevConcreteTheme,
@@ -669,7 +668,7 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
             if (success) {
               setStep('LOBBY');
             } else {
-              alert('リマッチの初期化に失敗しました。');
+              alert(t('Failed to initialize rematch.', 'リマッチの初期化に失敗しました。') as string);
             }
           } else {
             isSoloRevealingRef.current = false;
@@ -687,15 +686,25 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
     }
 
     const troubleEnglishSet = new Set(troubleEntries.map(([_, tw]) => tw.english.toLowerCase()));
+    const sourceCandidates = [
+      ...(baseSettings.customWordPool || []),
+      ...wordPool,
+      ...gradeWords,
+    ];
+    const seenIds = new Set<string>();
+    const troublePool = sourceCandidates.filter((w) => {
+      if (seenIds.has(w.id)) return false;
+      const matches = troubleIds.has(w.id) || troubleEnglishSet.has(w.english.toLowerCase());
+      if (matches) seenIds.add(w.id);
+      return matches;
+    });
 
-    let troublePool = wordPool.filter(w => troubleIds.has(w.id) || troubleEnglishSet.has(w.english.toLowerCase()));
-    if (troublePool.length < troubleEntries.length) {
-      const missing = gradeWords.filter(w => 
-        (troubleIds.has(w.id) || troubleEnglishSet.has(w.english.toLowerCase())) &&
-        !troublePool.some(p => p.id === w.id)
-      );
-      troublePool = [...troublePool, ...missing];
-    }
+    const distractorFallbackPool =
+      baseSettings.customWordPool && baseSettings.customWordPool.length >= 4
+        ? baseSettings.customWordPool
+        : wordPool.length >= 4
+          ? wordPool
+          : gradeWords;
 
     const rematchQuestionCount = isContinuousArcade
       ? Math.max(30, troublePool.length * 5)
@@ -703,8 +712,9 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
 
     const rematchSettings: QuizHostSettings = resolveSettingsForRound(
       {
-        ...settings,
-        questionCount: rematchQuestionCount
+        ...baseSettings,
+        questionCount: rematchQuestionCount,
+        customWordPool: troublePool,
       },
       prevConcreteTheme,
       false
@@ -714,11 +724,11 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
       troublePool,
       rematchSettings,
       activeGrade,
-      wordPool.length >= 4 ? wordPool : gradeWords
+      distractorFallbackPool
     );
 
     if (generated.length === 0) {
-      alert('苦手単語クイズの作成に失敗しました。');
+      alert(t('Failed to generate trouble words rematch.', '苦手単語クイズの作成に失敗しました。') as string);
       return;
     }
 
@@ -741,7 +751,7 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
       if (success) {
         setStep('LOBBY');
       } else {
-        alert('リマッチの初期化に失敗しました。');
+        alert(t('Failed to initialize rematch.', 'リマッチの初期化に失敗しました。') as string);
       }
     } else {
       isSoloRevealingRef.current = false;
@@ -753,10 +763,13 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
       setSoloTroubleWords({});
       setStep('QUESTION');
     }
-  }, [settings, room?.troubleWords, room?.sprintSettings?.trackTheme, resolveSettingsForRound, soloTroubleWords, questions, wordPool, gradeWords, activeGrade, roomCode, resetRoomForNewRound, createInitialSoloPlayer, nextTrack]);
+  }, [settings, room?.troubleWords, room?.sprintSettings?.trackTheme, resolveSettingsForRound, soloTroubleWords, questions, wordPool, gradeWords, activeGrade, roomCode, resetRoomForNewRound, createInitialSoloPlayer, nextTrack, t]);
 
   // Change settings flow from Game Over
   const handlePlayAgainChange = useCallback(() => {
+    if (preRematchSettingsRef.current) {
+      setSettings(preRematchSettingsRef.current);
+    }
     if (roomCode) {
       closeRoom();
       setRoomCode(null);
@@ -768,7 +781,11 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
   // Exit Quiz
   const handleExit = useCallback(async () => {
     if (roomCode) {
-      if (!window.confirm('アクティブなクイズルームがあります。終了して解散しますか？\n（参加中の生徒の端末は終了画面に移行します）')) {
+      const confirmMsg = t(
+        'An active quiz room is running. Close and disband it now? (Connected student tablets will exit.)',
+        'アクティブなクイズルームがあります。終了して解散しますか？\n（参加中の生徒の端末は終了画面に移行します）'
+      ) as string;
+      if (!window.confirm(confirmMsg)) {
         return;
       }
       clearBots();
@@ -776,7 +793,7 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
       setRoomCode(null);
     }
     onExit();
-  }, [roomCode, clearBots, closeRoom, onExit]);
+  }, [roomCode, clearBots, closeRoom, onExit, t]);
 
   const handleExitRef = useRef(handleExit);
   handleExitRef.current = handleExit;
@@ -800,7 +817,7 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
 
   return (
     <div className={`w-full flex-1 flex flex-col items-center relative ${
-      step === 'LOBBY' || step === 'QUESTION' || step === 'REVEAL' || step === 'LEADERBOARD' || step === 'SPRINT_RACE' || step === 'GRAND_PRIX_3D'
+      step === 'LOBBY' || step === 'QUESTION' || step === 'REVEAL' || step === 'LEADERBOARD' || step === 'SPRINT_RACE' || step === 'GRAND_PRIX_3D' || step === 'TUG_OF_WAR' || step === 'VOLLEYBALL'
         ? 'h-[calc(100dvh-3.75rem)] max-h-[calc(100dvh-3.75rem)] justify-between p-0 overflow-hidden'
         : 'justify-start py-2 sm:py-4'
     }`}>
@@ -904,7 +921,7 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
               );
               setCalculatedAwards(finalAwards);
             }
-            await endTugOfWar(finalAwards);
+            await endTugOfWar(finalAwards, winner);
             setStep('GAME_OVER');
           }}
           onExit={handleExit}
@@ -942,7 +959,7 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
               );
               setCalculatedAwards(finalAwards);
             }
-            await endVolleyball(finalAwards);
+            await endVolleyball(finalAwards, winner);
             setStep('GAME_OVER');
           }}
           onExit={handleExit}
@@ -1010,6 +1027,8 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
           classId={room?.classId}
           gameMode={room?.mode || settings?.gameMode}
           teamScores={room?.teamScores}
+          winningTeam={room?.winningTeam}
+          tugOfWarRoundWins={room?.tugOfWarRoundWins}
           boundStudents={room?.boundStudents}
           onReleaseBoundNumber={handleReleaseBoundNumber}
           onPlayAgainSame={handlePlayAgainSame}
@@ -1026,7 +1045,7 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
         />
       )}
 
-      {/* Floating Attention Lock / "Eyes Up Front" Pill for Classroom Host (hidden in Lobby, Sprint, 3D Grand Prix, Tug of War & Volleyball where it is in the header) */}
+      {/* Floating Attention Lock / "Eyes Up Front" Pill for Classroom Host (hidden in Lobby, Sprint, 3D Grand Prix, Tug of War & Tamaire where it is in the header) */}
       {roomCode && step !== 'SETUP' && step !== 'LOBBY' && step !== 'SPRINT_RACE' && step !== 'GRAND_PRIX_3D' && step !== 'TUG_OF_WAR' && step !== 'VOLLEYBALL' && (
         <button
           type="button"
@@ -1036,15 +1055,15 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
               ? 'bg-amber-400 text-slate-950 border-amber-300 ring-4 ring-amber-400/50 animate-pulse'
               : 'bg-slate-900/90 dark:bg-slate-800/90 hover:bg-slate-800 text-amber-300 border-amber-500/40 hover:border-amber-400'
           }`}
-          title={room?.eyesUp ? 'Dismiss Eyes Up (注目解除)' : 'Lock Attention: Eyes Up Front (全員注目！)'}
+          title={room?.eyesUp ? (t('Dismiss Eyes Up', '注目ロックを解除') as string) : (t('Lock Attention: Eyes Up Front', '全員注目ロック ON') as string)}
         >
           <span className="text-base sm:text-lg">👀</span>
-          <span>{room?.eyesUp ? '注目ロック中 (Eyes Up ON)' : '全員注目 (Eyes Up)'}</span>
+          <span>{room?.eyesUp ? t('Eyes Up ON', '注目ロック中') : t('Eyes Up', '全員注目')}</span>
         </button>
       )}
 
-      {/* Floating High-Energy BGM Control Pill for Classroom Host (hidden in Sprint, 3D Grand Prix, Tug of War & Volleyball modes since it is pinned in the top header) */}
-      {hasTrack && step !== 'SETUP' && step !== 'SPRINT_RACE' && step !== 'GRAND_PRIX_3D' && step !== 'TUG_OF_WAR' && step !== 'VOLLEYBALL' && (
+      {/* Floating High-Energy BGM Control Pill for Classroom Host (hidden in Sprint, 3D Grand Prix, Tug of War, Tamaire & Game Over screens) */}
+      {hasTrack && step !== 'SETUP' && step !== 'GAME_OVER' && step !== 'SPRINT_RACE' && step !== 'GRAND_PRIX_3D' && step !== 'TUG_OF_WAR' && step !== 'VOLLEYBALL' && (
         <div className="fixed bottom-4 right-4 z-50 flex items-center gap-2 bg-slate-900 dark:bg-slate-800 text-white px-3.5 py-2 rounded-2xl shadow-2xl border border-slate-700/80 animate-in fade-in slide-in-from-bottom-2 print:hidden">
           <Music size={15} className={`text-indigo-400 ${!isBgmMuted && isBgmPlaying ? 'animate-bounce' : ''}`} />
           <span className="text-xs font-bold max-w-[130px] truncate">
@@ -1058,7 +1077,7 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
                 ? 'bg-rose-500/30 text-rose-400 hover:bg-rose-500/50'
                 : 'bg-emerald-500/30 text-emerald-300 hover:bg-emerald-500/50'
             }`}
-            title={isBgmMuted ? 'Unmute BGM (BGMを再生)' : 'Mute BGM (BGMを消音)'}
+            title={isBgmMuted ? (t('Unmute BGM', 'BGMを再生') as string) : (t('Mute BGM', 'BGMを消音') as string)}
           >
             {isBgmMuted ? <VolumeX size={15} /> : <Volume2 size={15} />}
           </button>

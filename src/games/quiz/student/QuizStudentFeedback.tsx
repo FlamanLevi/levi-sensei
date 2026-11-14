@@ -1,12 +1,14 @@
 import React, { useEffect } from 'react';
 import { QuizPlayer, QuizQuestion } from '../types';
+import { resolveQuestionScopedAnswer } from '../core/quizEngine';
 import { soundEffects } from '@/services/soundEffects';
 import { useLanguage } from '@/context/LanguageContext';
-import { CheckCircle2, Flame, Trophy, Clock, ArrowUp } from 'lucide-react';
+import { CheckCircle2, Flame, Trophy, ArrowUp } from 'lucide-react';
 import { HanamaruStamp } from '@/components/common/HanamaruStamp';
 import { PandaMascot } from '@/components/mascot/PandaMascot';
 import { FloatingScorePopup } from '@/components/common/FloatingScorePopup';
 import { AvatarDisplay } from '@/components/common/AvatarDisplay';
+import { RubyText } from '@/components/common/RubyText';
 import { getShopItemById } from '@/services/shopCatalog';
 
 interface QuizStudentFeedbackProps {
@@ -20,8 +22,13 @@ export const QuizStudentFeedback: React.FC<QuizStudentFeedbackProps> = ({
   allPlayers,
   question
 }) => {
-  const { t } = useLanguage();
-  const lastAns = player.lastAnswer;
+  const { t, language } = useLanguage();
+  const lastAns = resolveQuestionScopedAnswer({
+    answers: player.answers,
+    lastAnswer: player.lastAnswer,
+    questionIndex: question?.questionIndex,
+  });
+  const didTimeout = !lastAns || !lastAns.optionId;
   const isCorrect = !!lastAns?.isCorrect;
   const points = lastAns?.pointsEarned || 0;
   const streak = player.currentStreak;
@@ -35,10 +42,6 @@ export const QuizStudentFeedback: React.FC<QuizStudentFeedbackProps> = ({
   // Points to catch next rank (rank above)
   const playerAbove = myIndex > 0 ? sortedPlayers[myIndex - 1] : null;
   const pointsToNext = playerAbove ? (playerAbove.score - player.score) : null;
-
-  // Points ahead of previous rank (rank below)
-  const playerBelow = (myIndex >= 0 && myIndex < sortedPlayers.length - 1) ? sortedPlayers[myIndex + 1] : null;
-  const pointsAheadOfPrev = playerBelow ? (player.score - playerBelow.score) : null;
 
   // Correct answer details for missed question review
   const targetId = question?.correctOptionId || question?.targetWordId;
@@ -60,27 +63,30 @@ export const QuizStudentFeedback: React.FC<QuizStudentFeedbackProps> = ({
   // Low-anxiety palette: warm vibrant emerald for correct, gentle encouraging indigo/amber for retry
   const cardBg = isCorrect
     ? 'bg-gradient-to-b from-emerald-500 to-teal-700 border-emerald-300'
-    : !lastAns
+    : didTimeout
       ? 'bg-gradient-to-b from-amber-500 via-orange-600 to-amber-700 border-amber-300'
       : 'bg-gradient-to-b from-indigo-600 via-indigo-700 to-purple-800 border-indigo-400';
 
   const titleText = isCorrect
     ? t('CORRECT!', 'せいかい！')
-    : !lastAns
+    : didTimeout
       ? t("TIME'S UP!", 'じかんぎれ！')
       : t("NICE TRY! DON'T WORRY!", 'おしい！ドンマイ！');
 
   const subtitleText = isCorrect
     ? t('Well done! Awesome job 🎉', 'たいへんよくできました 🎉')
-    : !lastAns
+    : didTimeout
       ? t(
           'Time ran out! Tap quickly next round ⏱️',
           <>つぎは<ruby>素早<rt>すばや</rt></ruby>くボタンをおそう ⏱️</>
         )
       : t("Great effort! You'll get it next time 💭", 'ナイスチャレンジ！つぎはできるよ 💭');
 
+  const titleItem = player.title ? getShopItemById(player.title) : null;
+  const localizedTitle = titleItem ? (language === 'ja' ? titleItem.jaName : titleItem.name) : player.title;
+
   return (
-    <div className="w-full max-w-3xl mx-auto p-3 sm:p-5 select-none flex flex-col items-center justify-center text-center animate-in zoom-in-95 duration-200 student-ui relative">
+    <div className="w-full max-w-3xl max-h-full overflow-y-auto my-auto mx-auto p-3 sm:p-5 select-none flex flex-col items-center justify-center text-center animate-in zoom-in-95 duration-200 student-ui relative">
       {/* Floating score popup on correct answer */}
       {isCorrect && points > 0 && (
         <FloatingScorePopup points={points} streak={streak} />
@@ -96,9 +102,9 @@ export const QuizStudentFeedback: React.FC<QuizStudentFeedbackProps> = ({
           <div className="flex items-center gap-2 mb-2 bg-black/25 px-3 py-1 rounded-full border border-white/20 shadow-xs">
             <AvatarDisplay avatar={player.avatar || '🇯🇵'} frameId={player.frame} sizeClassName="w-6 h-6 text-sm" />
             <span className="text-xs font-black tracking-tight">{player.nickname}</span>
-            {player.title && (
-              <span className="text-[9px] font-black px-1.5 py-0.5 rounded bg-amber-400 text-slate-950 leading-none">
-                {getShopItemById(player.title)?.jaName || player.title}
+            {localizedTitle && (
+              <span className="text-[10px] font-black px-1.5 py-0.5 rounded bg-amber-400 text-slate-950 leading-none">
+                {localizedTitle}
               </span>
             )}
           </div>
@@ -112,7 +118,7 @@ export const QuizStudentFeedback: React.FC<QuizStudentFeedbackProps> = ({
             /* Low-Anxiety Encouraging Mascot on Missed Answers */
             <div className="my-2 flex flex-col items-center">
               <div className="w-24 h-24 rounded-3xl bg-white/20 flex items-center justify-center shadow-lg p-2">
-                <PandaMascot mood={!lastAns ? 'nervous' : 'happy'} size={80} />
+                <PandaMascot mood={didTimeout ? 'nervous' : 'happy'} size={80} />
               </div>
             </div>
           )}
@@ -139,7 +145,14 @@ export const QuizStudentFeedback: React.FC<QuizStudentFeedbackProps> = ({
               </div>
               {correctWordJa && (
                 <span className="text-xs sm:text-sm font-bold text-white/90 block mt-0.5">
-                  ({correctWordJa})
+                  (
+                  <RubyText
+                    ruby={correctOption?.ruby || question?.targetWordRuby}
+                    kanji={correctWordJa}
+                    hiragana={question?.targetWordHiragana || correctOption?.ja_hiragana}
+                    className="text-xs sm:text-sm font-bold text-white/90"
+                  />
+                  )
                 </span>
               )}
             </div>

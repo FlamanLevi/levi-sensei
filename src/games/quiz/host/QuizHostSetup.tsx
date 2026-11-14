@@ -190,9 +190,23 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
   const [selectedScope, setSelectedScope] = useState<VocabularyScope>(initialScope);
   const [isExtendedScopesOpen, setIsExtendedScopesOpen] = useState<boolean>(initialScope !== 'CURRENT');
   
-  // Classic Kahoot pacing state
-  const [questionCount, setQuestionCount] = useState<number>(() => initialSettings?.questionCount ?? 10);
-  const [timeLimitSeconds, setTimeLimitSeconds] = useState<number>(() => initialSettings?.timeLimitSeconds ?? 10);
+  // Classic Kahoot pacing state (isolate from non-Kahoot round-trip values such as 60s/60Qs)
+  const [questionCount, setQuestionCount] = useState<number>(() => {
+    const raw = initialSettings?.questionCount;
+    if (initialSettings?.gamePlayType && initialSettings.gamePlayType !== 'KAHOOT') {
+      return 10;
+    }
+    if (raw !== undefined && [5, 10, 15, 20, -1].includes(raw)) return raw;
+    return 10;
+  });
+  const [timeLimitSeconds, setTimeLimitSeconds] = useState<number>(() => {
+    const raw = initialSettings?.timeLimitSeconds;
+    if (initialSettings?.gamePlayType && initialSettings.gamePlayType !== 'KAHOOT') {
+      return 10;
+    }
+    if (raw !== undefined && [5, 10, 15, 20].includes(raw)) return raw;
+    return 10;
+  });
 
   // 3D Suzuka Grand Prix state
   const [sprintMode, setSprintMode] = useState<SprintModeType>(
@@ -214,7 +228,7 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
     () => initialSettings?.sprintSettings?.wrongSpeedLossRatio ?? 0.33
   );
   const [wrongLockoutSeconds, setWrongLockoutSeconds] = useState<number>(
-    () => initialSettings?.sprintSettings?.wrongLockoutSeconds ?? 2.5
+    () => Math.max(2.5, initialSettings?.sprintSettings?.wrongLockoutSeconds ?? 2.5)
   );
 
   // Tug of War state
@@ -261,8 +275,10 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
     () => initialSettings?.recordRoster ?? true
   );
 
-  // Visual cheat prevention: choice images locked if prompts are only EN_TO_JA or IMAGE_ONLY
-  const isChoiceImageLocked = promptTypes.length > 0 && promptTypes.every(p => p === 'IMAGE_ONLY' || p === 'EN_TO_JA');
+  // Visual cheat prevention: match questionGenerator.ts (only JA_MEANING, AUDIO_ONLY, and THREE_HINTS allow choice artwork)
+  const isChoiceImageLocked =
+    promptTypes.length > 0 &&
+    !promptTypes.some((p) => p === 'JA_MEANING' || p === 'AUDIO_ONLY' || p === 'THREE_HINTS');
 
   // Auto-switch choice image mode to TEXT_ONLY if prompt varieties lock it out
   React.useEffect(() => {
@@ -405,12 +421,32 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
       volleyballSettings,
       bgm,
       vocabularyScope: subject === 'MATH' ? undefined : selectedScope,
-      selectedUnits: subject === 'MATH' ? undefined : (globalSelectedUnits.length > 0 ? globalSelectedUnits : (activeUnit !== 'ALL' ? [activeUnit] : undefined)),
+      selectedUnits: subject !== 'MATH' && selectedScope === 'CURRENT'
+        ? (globalSelectedUnits.length > 0 ? globalSelectedUnits : (activeUnit !== 'ALL' ? [activeUnit] : undefined))
+        : undefined,
       customWordPool: subject === 'MATH' ? undefined : wordsInPool,
       choiceImageMode: subject === 'MATH' ? 'TEXT_ONLY' : choiceImageMode,
       englishReadingAid: subject === 'MATH' ? 'SPELLING_ONLY' : englishReadingAid
     });
   };
+
+  let nextSetupStep = 1;
+  const playModeStep = !isStudentHost ? nextSetupStep++ : 0;
+  const gameStyleStep = deliveryStream === 'STREAM_B_MULTIPLAYER' ? nextSetupStep++ : 0;
+  const battleFormatStep =
+    deliveryStream === 'STREAM_B_MULTIPLAYER' &&
+    gamePlayType !== 'TUG_OF_WAR' &&
+    gamePlayType !== 'VOLLEYBALL'
+      ? nextSetupStep++
+      : 0;
+  const ipadDisplayStep =
+    gamePlayType === 'KAHOOT' && deliveryStream === 'STREAM_B_MULTIPLAYER' ? nextSetupStep++ : 0;
+  const questionCountStep = gamePlayType === 'KAHOOT' ? nextSetupStep++ : 0;
+  const timeLimitStep = gamePlayType === 'KAHOOT' ? nextSetupStep++ : 0;
+  const mechanicsStep = gamePlayType === 'KAHOOT' ? nextSetupStep++ : 0;
+  const questionVarietiesStep = subject !== 'MATH' ? nextSetupStep++ : 0;
+  const answerStylesStep = subject !== 'MATH' ? nextSetupStep++ : 0;
+  const awardsStep = nextSetupStep++;
 
   return (
     <div className="w-full max-w-6xl xl:max-w-7xl mx-auto my-2 sm:my-6 bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border-2 border-slate-200 dark:border-slate-800 p-5 sm:p-8 lg:p-10 animate-in fade-in zoom-in-95 duration-200">
@@ -427,7 +463,7 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
           <div className="min-w-0">
             <div className="flex items-center gap-2 flex-nowrap min-w-0">
               <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight truncate min-w-0">
-                {subject === 'MATH' ? t('Keisan Arena', 'けいさんアリーナ') : t('Eigo Arena', 'ライブ4択バトル')}
+                {subject === 'MATH' ? t('Keisan Arena', 'けいさんアリーナ') : t('Eigo Arena', '英語アリーナ')}
               </h2>
               <span className={`text-xs font-black px-2.5 py-0.5 rounded-full shrink-0 whitespace-nowrap ${
                 subject === 'MATH'
@@ -457,7 +493,7 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
           </div>
         ) : (
           <div className="text-left sm:text-right shrink-0 bg-slate-100 dark:bg-slate-800/80 px-3.5 py-2 rounded-2xl border border-slate-200 dark:border-slate-700">
-            <span className="text-[10px] font-bold text-slate-400 block uppercase tracking-wider">{t('Active Classroom', '選択中のクラス')}</span>
+            <span className="text-[10px] font-bold text-slate-600 dark:text-slate-400 block uppercase tracking-wider">{t('Active Classroom', '選択中のクラス')}</span>
             <span className="text-xs sm:text-sm font-black text-indigo-600 dark:text-indigo-400">
               {activeSchool === 'toyogaoka' ? (language === 'ja' ? '豊ヶ丘小' : 'Toyogaoka') : (language === 'ja' ? '二子玉小' : 'Futakotamagawa')} {selectedClassId} • {activeGrade} {globalSelectedUnits.length > 1 ? `(📦 ${globalSelectedUnits.length} Units)` : activeUnit !== 'ALL' ? `(${cleanUnitLabel(activeUnit)})` : ''}
             </span>
@@ -503,7 +539,11 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
                   const shouldRecord = e.target.checked;
                   setRecordRoster(shouldRecord);
                   if (shouldRecord && selectedClassId === 'TEST') {
-                    setSelectedClassId(availableClassesForGrade[0] || activeClassId || '2-3');
+                    setSelectedClassId(
+                      activeClassId && activeClassId !== 'TEST'
+                        ? activeClassId
+                        : (availableClassesForGrade[0] || '2-3')
+                    );
                   }
                 }}
                 className="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 border-slate-300 dark:border-slate-600"
@@ -580,7 +620,7 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
                   >
                     <span>{cId}</span>
                     {isSuggested && (
-                      <span className={`text-[9px] px-1 py-0.5 rounded font-black ${
+                      <span className={`text-[10px] px-1 py-0.5 rounded font-black leading-none ${
                         isSelected 
                           ? 'bg-amber-400 text-slate-950' 
                           : 'bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-700'
@@ -666,7 +706,7 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
             <span className="text-xl">🔤</span>
             <div className="flex flex-col items-start sm:items-center text-left sm:text-center min-w-0">
               <span className="truncate">{t('English (Foreign Language)', '英語・外国語 (Eigo Arena)')}</span>
-              <span className="text-[10px] font-bold text-slate-400">
+              <span className="text-[10px] font-bold text-slate-600 dark:text-slate-400">
                 {t('Textbook Units & Word Pool', '教科書単元・単語マスター')}
               </span>
             </div>
@@ -685,13 +725,13 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
             <div className="flex flex-col items-start sm:items-center text-left sm:text-center min-w-0">
               <div className="flex items-center gap-1.5">
                 <span className="truncate">{t('Mathematics (Elementary Math)', '算数 (Keisan Arena)')}</span>
-                <span className={`text-[9px] font-black px-1.5 py-0.2 rounded-full uppercase tracking-wider ${
+                <span className={`text-[10px] font-black px-1.5 py-0.5 rounded-full uppercase tracking-wider leading-none ${
                   subject === 'MATH' ? 'bg-amber-400 text-slate-950' : 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-200'
                 }`}>
                   NEW • G1–G6
                 </span>
               </div>
-              <span className={`text-[10px] font-bold ${subject === 'MATH' ? 'text-emerald-100' : 'text-slate-400'}`}>
+              <span className={`text-[10px] font-bold ${subject === 'MATH' ? 'text-emerald-100' : 'text-slate-600 dark:text-slate-400'}`}>
                 {t('Limitless Procedural Math (MEXT)', '学習指導要領準拠・無制限自動生成')}
               </span>
             </div>
@@ -732,7 +772,7 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
                     >
                       <span className="text-sm font-black flex items-center gap-1">
                         <span>{meta.badge}</span>
-                        <span className={`text-[10px] font-bold ${isSelected ? 'text-emerald-100' : 'text-slate-400'}`}>
+                        <span className={`text-[10px] font-bold ${isSelected ? 'text-emerald-100' : 'text-slate-600 dark:text-slate-400'}`}>
                           ({meta.labelEn})
                         </span>
                       </span>
@@ -870,7 +910,11 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
                 </div>
               </div>
               <span className="text-xs font-black px-3 py-1 rounded-full bg-emerald-600 text-white shrink-0 shadow-xs">
-                {questionCount === -1 ? t('Endless Sprint Laps', 'エンドレス') : `${questionCount} ${t('Questions', '問')}`}
+                {gamePlayType !== 'KAHOOT'
+                  ? `60 ${t('Questions (Arcade)', '問 (連続生成)')}`
+                  : questionCount === -1
+                    ? `40 ${t('Questions (Max)', '問 (最大)')}`
+                    : `${questionCount} ${t('Questions', '問')}`}
               </span>
             </div>
           </div>
@@ -880,7 +924,7 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
         {subject === 'ENGLISH' && (
         <div>
           <div className="flex items-center justify-between mb-3">
-            <label className="text-xs font-black text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+            <label className="text-xs font-black text-slate-600 dark:text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
               <BookOpen size={14} className="text-indigo-500" />
               <span>{t('Vocabulary Scope', '出題範囲・単語プール')}</span>
             </label>
@@ -1060,11 +1104,11 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
         </div>
         )}
 
-        {/* 1. Delivery Mode (Stream A Front-Screen vs Stream B iPad Multiplayer) */}
+        {/* Delivery Mode (Stream A Front-Screen vs Stream B iPad Multiplayer) */}
         {!isStudentHost && (
           <div>
-            <label className="text-xs font-black text-slate-400 uppercase tracking-wider block mb-2">
-              {t('1. Classroom Play Mode', '1. プレイ形式')}
+            <label className="text-xs font-black text-slate-600 dark:text-slate-400 uppercase tracking-wider block mb-2">
+              {t(`${playModeStep}. Classroom Play Mode`, `${playModeStep}. プレイ形式`)}
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <button
@@ -1092,7 +1136,11 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
 
               <button
                 type="button"
-                onClick={() => setDeliveryStream('STREAM_A_FRONT_SCREEN')}
+                onClick={() => {
+                  setDeliveryStream('STREAM_A_FRONT_SCREEN');
+                  setGamePlayType('KAHOOT');
+                  setGameMode('INDIVIDUAL');
+                }}
                 className={`p-4 rounded-2xl border-2 text-left transition-all flex items-start gap-3.5 ${
                   deliveryStream === 'STREAM_A_FRONT_SCREEN'
                     ? 'border-amber-500 bg-amber-50/80 dark:bg-amber-950/40 text-amber-950 dark:text-amber-100 shadow-md ring-2 ring-amber-400/30'
@@ -1113,11 +1161,11 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
           </div>
         )}
 
-        {/* 2. Game Style / Format (Only in Multiplayer) */}
+        {/* Game Style / Format (Only in Multiplayer) */}
         {deliveryStream === 'STREAM_B_MULTIPLAYER' && (
           <div>
-            <label className="text-xs font-black text-slate-400 uppercase tracking-wider block mb-2.5">
-              {t('2. Game Style', '2. ゲーム形式')}
+            <label className="text-xs font-black text-slate-600 dark:text-slate-400 uppercase tracking-wider block mb-2.5">
+              {t(`${gameStyleStep}. Game Style`, `${gameStyleStep}. ゲーム形式`)}
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 items-start">
               {/* Column 1: Turn-Based / Synchronized */}
@@ -1251,11 +1299,11 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
           </div>
         )}
 
-        {/* 3. Battle Format (Individual vs Team Battle) */}
+        {/* Battle Format (Individual vs Team Battle) */}
         {deliveryStream === 'STREAM_B_MULTIPLAYER' && gamePlayType !== 'TUG_OF_WAR' && gamePlayType !== 'VOLLEYBALL' && (
           <div>
-            <label className="text-xs font-black text-slate-400 uppercase tracking-wider block mb-2">
-              {t('3. Battle Format', '3. 対戦形式')}
+            <label className="text-xs font-black text-slate-600 dark:text-slate-400 uppercase tracking-wider block mb-2">
+              {t(`${battleFormatStep}. Battle Format`, `${battleFormatStep}. 対戦形式`)}
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-2">
               <button
@@ -1331,7 +1379,7 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
                             {language === 'ja' ? preset.jaName : preset.name.replace(' Team', '')}
                           </span>
                           <span className={`text-[10px] font-black px-1.5 py-0.5 rounded-full ${
-                            isSelected ? 'bg-blue-600 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-500'
+                            isSelected ? 'bg-blue-600 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300'
                           }`}>
                             {isSelected ? t('ON', '参加') : t('OFF', '不参加')}
                           </span>
@@ -1342,7 +1390,7 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
 
                   {/* Active Rainbow Color Chips Preview */}
                   <div className="flex flex-wrap items-center gap-1.5 p-2 bg-white/80 dark:bg-slate-800/80 rounded-xl border border-blue-200 dark:border-blue-800">
-                    <span className="text-[10px] font-black text-slate-400 mr-1 uppercase">
+                    <span className="text-[10px] font-black text-slate-600 dark:text-slate-400 mr-1 uppercase">
                       {t('Active:', '参加チーム:')}
                     </span>
                     {selectedTeams.map((tId) => {
@@ -1410,7 +1458,7 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
         )}
 
         {/* 4a. 3D Suzuka Grand Prix Configuration */}
-        {gamePlayType === 'GRAND_PRIX_3D' && (
+        {deliveryStream === 'STREAM_B_MULTIPLAYER' && gamePlayType === 'GRAND_PRIX_3D' && (
           <div className="p-4 rounded-3xl bg-gradient-to-br from-emerald-50/85 to-teal-50/85 dark:from-emerald-950/30 dark:to-teal-950/30 border-2 border-emerald-300 dark:border-emerald-900/60 space-y-4 animate-in fade-in duration-150">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -1535,7 +1583,7 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
                       }`}
                     >
                       <Clock size={12} />
-                      <span>{sec >= 60 ? `${sec / 60}分` : `${sec}秒`}</span>
+                      <span>{sec >= 60 ? `${sec / 60}${t('m', '分')}` : `${sec}${t('s', '秒')}`}</span>
                     </button>
                   ))}
                 </div>
@@ -1579,7 +1627,7 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
                       }`}
                     >
                       <span className="text-xs leading-tight">{opt.label}</span>
-                      <span className="text-[9px] opacity-75 leading-tight">{opt.sub}</span>
+                      <span className="text-[10px] opacity-80 leading-tight">{opt.sub}</span>
                     </button>
                   ))}
                 </div>
@@ -1591,9 +1639,7 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
                     {t('Incorrect Answer Lockout', '誤答時の回答ロック時間')}
                   </span>
                   <span className="text-[10px] font-black text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-900/60 px-2 py-0.5 rounded-full">
-                    {wrongLockoutSeconds === 0
-                      ? t('0s (No Lock)', '0秒 (ロックなし)')
-                      : wrongLockoutSeconds === 2.5
+                    {wrongLockoutSeconds <= 2.5
                       ? t('2.5s (Standard Pit Stop)', '2.5秒 (標準ピットストップ)')
                       : `${wrongLockoutSeconds}s`}
                   </span>
@@ -1617,7 +1663,7 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
                       }`}
                     >
                       <span className="text-xs leading-tight">{opt.label}</span>
-                      {opt.sub && <span className="text-[9px] opacity-75 leading-tight">{opt.sub}</span>}
+                      {opt.sub && <span className="text-[10px] opacity-80 leading-tight">{opt.sub}</span>}
                     </button>
                   ))}
                 </div>
@@ -1652,7 +1698,7 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
                     <span className="text-[11px] font-black block truncate">
                       {t('Random', 'ランダム')}
                     </span>
-                    <span className="text-[9px] opacity-75 block truncate">
+                    <span className="text-[10px] opacity-80 block truncate">
                       {t('No repeats', '被りなし抽選')}
                     </span>
                   </div>
@@ -1675,7 +1721,7 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
                         <span className="text-[11px] font-black block truncate">
                           {t(theme.shortEn, theme.shortJa)}
                         </span>
-                        <span className="text-[9px] opacity-75 block truncate">
+                        <span className="text-[10px] opacity-80 block truncate">
                           {t(theme.nameEn, theme.nameJa)}
                         </span>
                       </div>
@@ -1690,7 +1736,7 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
 
 
         {/* 4b. Tug of War Configuration */}
-        {gamePlayType === 'TUG_OF_WAR' && (
+        {deliveryStream === 'STREAM_B_MULTIPLAYER' && gamePlayType === 'TUG_OF_WAR' && (
           <div className="p-4 rounded-3xl bg-gradient-to-br from-amber-50/90 to-rose-50/90 dark:from-amber-950/30 dark:to-rose-950/30 border-2 border-amber-300 dark:border-amber-900/60 space-y-4 animate-in fade-in duration-150">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -1754,7 +1800,7 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
                     }`}
                   >
                     <span>{t(fmt.labelEn, fmt.labelJa)}</span>
-                    <span className={`text-[10px] font-normal ${tugOfWarMatchFormat === fmt.id ? 'text-slate-900 font-bold' : 'text-slate-400'}`}>
+                    <span className={`text-[10px] font-normal ${tugOfWarMatchFormat === fmt.id ? 'text-slate-900 font-bold' : 'text-slate-600 dark:text-slate-400'}`}>
                       {t(fmt.subEn, fmt.subJa)}
                     </span>
                   </button>
@@ -1773,7 +1819,7 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
         )}
 
         {/* 4c. Undokai Bean Bag Toss (Tamaire) Configuration */}
-        {gamePlayType === 'VOLLEYBALL' && (
+        {deliveryStream === 'STREAM_B_MULTIPLAYER' && gamePlayType === 'VOLLEYBALL' && (
           <div className="p-4 rounded-3xl bg-gradient-to-br from-indigo-50/90 to-purple-50/90 dark:from-indigo-950/30 dark:to-purple-950/30 border-2 border-indigo-300 dark:border-indigo-900/60 space-y-4 animate-in fade-in duration-150">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -1805,7 +1851,7 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
                   }`}
                 >
                   <span className="block">{t('🤫 Mystery Count (Recommended)', '🤫 ドキドキ玉かぞえ (推奨)')}</span>
-                  <span className={`text-[10px] block mt-0.5 font-normal ${tamaireMysteryCount ? 'text-indigo-100' : 'text-slate-400'}`}>
+                  <span className={`text-[10px] block mt-0.5 font-normal ${tamaireMysteryCount ? 'text-indigo-100' : 'text-slate-600 dark:text-slate-400'}`}>
                     {t('Scores hidden (???) until whistle & dramatic counting ceremony!', '笛が鳴るまで個数シークレット！最後はドラマチック玉かぞえ！')}
                   </span>
                 </button>
@@ -1820,7 +1866,7 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
                   }`}
                 >
                   <span className="block">{t('👀 Live Real-Time Count', '👀 リアルタイム表示')}</span>
-                  <span className={`text-[10px] block mt-0.5 font-normal ${!tamaireMysteryCount ? 'text-indigo-100' : 'text-slate-400'}`}>
+                  <span className={`text-[10px] block mt-0.5 font-normal ${!tamaireMysteryCount ? 'text-indigo-100' : 'text-slate-600 dark:text-slate-400'}`}>
                     {t('Live bean bag tally shown on TV throughout the match.', '試合中もリアルタイムに玉の個数をテレビに表示します。')}
                   </span>
                 </button>
@@ -1866,8 +1912,8 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
             {/* iPad Display Mode (Only shown if Multiplayer is selected) */}
             {deliveryStream === 'STREAM_B_MULTIPLAYER' && (
               <div>
-                <label className="text-xs font-black text-slate-400 uppercase tracking-wider block mb-2">
-                  {t('4. Student iPad Display', '4. 児童の画面表示')}
+                <label className="text-xs font-black text-slate-600 dark:text-slate-400 uppercase tracking-wider block mb-2">
+                  {t(`${ipadDisplayStep}. Student iPad Display`, `${ipadDisplayStep}. 児童の画面表示`)}
                 </label>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <button
@@ -1879,10 +1925,10 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
                         : 'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'
                     }`}
                   >
-                    <Eye className={ipadDisplayMode === 'EYES_UP' ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400'} size={20} />
+                    <Eye className={ipadDisplayMode === 'EYES_UP' ? 'text-blue-600 dark:text-blue-400' : 'text-slate-500 dark:text-slate-400'} size={20} />
                     <div>
                       <span className="text-xs font-black block">{t('Eyes-Up (Shapes Only: ▲ ◆ ● ■)', '前を向く！マークのみ (▲ ◆ ● ■)')}</span>
-                      <span className="text-[11px] text-slate-500 dark:text-slate-400">{t('Forces students to look up at the classroom TV for questions.', '問題文はテレビの大画面に注目させ、iPadは回答ボタンのみ表示。')}</span>
+                      <span className="text-[11px] text-slate-600 dark:text-slate-400">{t('Forces students to look up at the classroom TV for questions.', '問題文はテレビの大画面に注目させ、iPadは回答ボタンのみ表示。')}</span>
                     </div>
                   </button>
 
@@ -1895,10 +1941,10 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
                         : 'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'
                     }`}
                   >
-                    <Layers className={ipadDisplayMode === 'MIRRORED' ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400'} size={20} />
+                    <Layers className={ipadDisplayMode === 'MIRRORED' ? 'text-blue-600 dark:text-blue-400' : 'text-slate-500 dark:text-slate-400'} size={20} />
                     <div>
                       <span className="text-xs font-black block">{t('Mirrored (Full Cards on iPads)', '手元表示 (イラスト・文字)')}</span>
-                      <span className="text-[11px] text-slate-500 dark:text-slate-400">{t('Shows English words & illustrations directly on iPads.', '手元のiPadにも英語とイラストを直接表示。')}</span>
+                      <span className="text-[11px] text-slate-600 dark:text-slate-400">{t('Shows English words & illustrations directly on iPads.', '手元のiPadにも英語とイラストを直接表示。')}</span>
                     </div>
                   </button>
                 </div>
@@ -1908,8 +1954,8 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
             {/* Question Count & Time Limit */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="text-xs font-black text-slate-400 uppercase tracking-wider block mb-2">
-                  {t('5. Question Count', '5. 問題数')}
+                <label className="text-xs font-black text-slate-600 dark:text-slate-400 uppercase tracking-wider block mb-2">
+                  {t(`${questionCountStep}. Question Count`, `${questionCountStep}. 問題数`)}
                 </label>
                 <div className="grid grid-cols-5 gap-2">
                   {[5, 10, 15, 20, -1].map((num) => {
@@ -1923,7 +1969,7 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
                         title={isDisabled ? (language === 'ja' ? `単語数（${wordsInPool.length}語）を超えているため選択できません` : `Exceeds pool size (${wordsInPool.length} words)`) : undefined}
                         className={`py-2.5 rounded-xl font-black text-xs border-2 transition-all ${
                           isDisabled
-                            ? 'opacity-30 cursor-not-allowed border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-800 text-slate-400'
+                            ? 'opacity-30 cursor-not-allowed border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'
                             : questionCount === num
                             ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/40 text-blue-900 dark:text-blue-200 shadow-sm'
                             : 'border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
@@ -1937,8 +1983,8 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
               </div>
 
               <div>
-                <label className="text-xs font-black text-slate-400 uppercase tracking-wider block mb-2">
-                  {t('5. Time Per Question', '5. 制限時間')}
+                <label className="text-xs font-black text-slate-600 dark:text-slate-400 uppercase tracking-wider block mb-2">
+                  {t(`${timeLimitStep}. Time Per Question`, `${timeLimitStep}. 制限時間`)}
                 </label>
                 <div className="grid grid-cols-4 gap-2">
                   {[5, 10, 15, 20].map((sec) => (
@@ -1960,13 +2006,14 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
               </div>
             </div>
 
-            {/* 6. Question Mechanics & Hints (Recall First & 50/50 Elimination) */}
+            {/* Question Mechanics & Hints (Recall First & 50/50 Elimination) */}
             <div>
-              <label className="text-xs font-black text-slate-400 uppercase tracking-wider block mb-2">
-                {t('6. Question Mechanics & Hints', '6. 出題ギミック・ヒント設定')}
+              <label className="text-xs font-black text-slate-600 dark:text-slate-400 uppercase tracking-wider block mb-2">
+                {t(`${mechanicsStep}. Question Mechanics & Hints`, `${mechanicsStep}. 出題ギミック・ヒント設定`)}
               </label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {/* Recall First / Think First Blind Delay */}
+              <div className={`grid grid-cols-1 ${subject === 'MATH' ? '' : 'sm:grid-cols-2'} gap-3`}>
+                {/* Recall First / Think First Blind Delay (English only; Math clears recallDelaySeconds on launch) */}
+                {subject !== 'MATH' && (
                 <div className="p-4 rounded-2xl border-2 border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 flex flex-col justify-between">
                   <div>
                     <div className="flex items-center justify-between mb-1.5">
@@ -1974,7 +2021,7 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
                         <div className={`w-7 h-7 rounded-xl flex items-center justify-center ${
                           recallDelaySeconds > 0
                             ? 'bg-blue-500 text-white shadow-xs'
-                            : 'bg-slate-100 dark:bg-slate-800 text-slate-400'
+                            : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'
                         }`}>
                           <EyeOff size={15} />
                         </div>
@@ -1985,12 +2032,12 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
                       <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${
                         recallDelaySeconds > 0
                           ? 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300'
-                          : 'bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-bold'
+                          : 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-bold'
                       }`}>
                         {recallDelaySeconds === 0 ? 'OFF' : `${recallDelaySeconds}s ${t('Blur', 'ぼかし')}`}
                       </span>
                     </div>
-                    <p className="text-[11px] text-slate-500 dark:text-slate-400 mb-2.5 leading-snug">
+                    <p className="text-[11px] text-slate-600 dark:text-slate-400 mb-2.5 leading-snug">
                       {t('Hides options for the first few seconds so students recall English in their mind first.', '最初の数秒間、選択肢を隠して頭で英単語を思い浮かべる時間を設けます。')}
                     </p>
                   </div>
@@ -2014,6 +2061,7 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
                     })}
                   </div>
                 </div>
+                )}
 
                 {/* Distractor Elimination Hint */}
                 <div className="p-4 rounded-2xl border-2 border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 flex flex-col justify-between">
@@ -2023,7 +2071,7 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
                         <div className={`w-7 h-7 rounded-xl flex items-center justify-center ${
                           distractorEliminationMode !== 'OFF'
                             ? 'bg-blue-500 text-white shadow-xs'
-                            : 'bg-slate-100 dark:bg-slate-800 text-slate-400'
+                            : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'
                         }`}>
                           <Zap size={15} />
                         </div>
@@ -2034,12 +2082,12 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
                       <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${
                         distractorEliminationMode !== 'OFF'
                           ? 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300'
-                          : 'bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-bold'
+                          : 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-bold'
                       }`}>
                         {distractorEliminationMode === 'GRADUAL' ? 'GRADUAL' : distractorEliminationMode === 'HALFWAY' ? '50/50' : 'OFF'}
                       </span>
                     </div>
-                    <p className="text-[11px] text-slate-500 dark:text-slate-400 mb-2.5 leading-snug">
+                    <p className="text-[11px] text-slate-600 dark:text-slate-400 mb-2.5 leading-snug">
                       {distractorEliminationMode === 'GRADUAL'
                         ? t('Dims 1 incorrect choice at 33% elapsed, and 2nd incorrect choice at 66% elapsed.', '残り時間が約66%で1択、約33%で2択目を段階的に消去してアシストします。')
                         : distractorEliminationMode === 'HALFWAY'
@@ -2110,8 +2158,8 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
         <>
         <div>
           <div className="flex flex-nowrap items-center justify-between gap-2 mb-2 overflow-x-auto no-scrollbar">
-            <label className="text-xs font-black text-slate-400 uppercase tracking-wider shrink-0 whitespace-nowrap">
-              {gamePlayType === 'KAHOOT' ? t('7. Question Varieties', '7. 出題バリエーション') : t('4. Question Varieties', '4. 出題バリエーション')}
+            <label className="text-xs font-black text-slate-600 dark:text-slate-400 uppercase tracking-wider shrink-0 whitespace-nowrap">
+              {`${questionVarietiesStep}. `}{t('Question Varieties', '出題バリエーション')}
             </label>
             <div className="flex items-center gap-1.5 shrink-0 flex-nowrap">
               <button
@@ -2149,10 +2197,10 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
               className={`p-3 rounded-xl border-2 text-left text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
                 promptTypes.includes('JA_MEANING')
                   ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/40 text-blue-900 dark:text-blue-200 shadow-xs'
-                  : 'border-slate-200 dark:border-slate-800 text-slate-400'
+                  : 'border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 bg-white dark:bg-slate-800/60 hover:border-slate-300 dark:hover:border-slate-700'
               }`}
             >
-              <HelpCircle size={16} className={promptTypes.includes('JA_MEANING') ? 'text-blue-500 shrink-0' : 'text-slate-400 shrink-0'} />
+              <HelpCircle size={16} className={promptTypes.includes('JA_MEANING') ? 'text-blue-500 shrink-0' : 'text-slate-500 dark:text-slate-400 shrink-0'} />
               <span className="truncate">{t('Japanese ➔ English', '日本語 ➔ 英語')}</span>
             </button>
 
@@ -2162,10 +2210,10 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
               className={`p-3 rounded-xl border-2 text-left text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
                 promptTypes.includes('EN_TO_JA')
                   ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/40 text-blue-900 dark:text-blue-200 shadow-xs'
-                  : 'border-slate-200 dark:border-slate-800 text-slate-400'
+                  : 'border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 bg-white dark:bg-slate-800/60 hover:border-slate-300 dark:hover:border-slate-700'
               }`}
             >
-              <Languages size={16} className={promptTypes.includes('EN_TO_JA') ? 'text-blue-500 shrink-0' : 'text-slate-400 shrink-0'} />
+              <Languages size={16} className={promptTypes.includes('EN_TO_JA') ? 'text-blue-500 shrink-0' : 'text-slate-500 dark:text-slate-400 shrink-0'} />
               <span className="truncate">{t('English ➔ Japanese', '英語 ➔ 日本語')}</span>
             </button>
 
@@ -2175,10 +2223,10 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
               className={`p-3 rounded-xl border-2 text-left text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
                 promptTypes.includes('IMAGE_ONLY')
                   ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/40 text-blue-900 dark:text-blue-200 shadow-xs'
-                  : 'border-slate-200 dark:border-slate-800 text-slate-400'
+                  : 'border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 bg-white dark:bg-slate-800/60 hover:border-slate-300 dark:hover:border-slate-700'
               }`}
             >
-              <ImageIcon size={16} className={promptTypes.includes('IMAGE_ONLY') ? 'text-blue-500 shrink-0' : 'text-slate-400 shrink-0'} />
+              <ImageIcon size={16} className={promptTypes.includes('IMAGE_ONLY') ? 'text-blue-500 shrink-0' : 'text-slate-500 dark:text-slate-400 shrink-0'} />
               <span className="truncate">{t('Illustration ➔ English', 'イラスト ➔ 英語')}</span>
             </button>
 
@@ -2188,10 +2236,10 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
               className={`p-3 rounded-xl border-2 text-left text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
                 promptTypes.includes('AUDIO_ONLY')
                   ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/40 text-blue-900 dark:text-blue-200 shadow-xs'
-                  : 'border-slate-200 dark:border-slate-800 text-slate-400'
+                  : 'border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 bg-white dark:bg-slate-800/60 hover:border-slate-300 dark:hover:border-slate-700'
               }`}
             >
-              <Volume2 size={16} className={promptTypes.includes('AUDIO_ONLY') ? 'text-blue-500 shrink-0' : 'text-slate-400 shrink-0'} />
+              <Volume2 size={16} className={promptTypes.includes('AUDIO_ONLY') ? 'text-blue-500 shrink-0' : 'text-slate-500 dark:text-slate-400 shrink-0'} />
               <span className="truncate">{t('Audio Listening ➔ English', '音声 ➔ 英語')}</span>
             </button>
 
@@ -2202,16 +2250,16 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
               className={`p-2.5 rounded-xl border-2 text-left text-xs font-bold transition-all flex flex-col justify-between gap-1 cursor-pointer ${
                 promptTypes.includes('PHONICS_MASK')
                   ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-900 dark:text-indigo-200 shadow-xs'
-                  : 'border-slate-200 dark:border-slate-800 text-slate-400'
+                  : 'border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 bg-white dark:bg-slate-800/60 hover:border-slate-300 dark:hover:border-slate-700'
               }`}
             >
               <div className="flex items-center justify-between w-full gap-1">
                 <span className="truncate font-black">{t('🔤 Phonics Blank (K[?]rea)', '🔤 虫食いフォニックス')}</span>
-                <span className="text-[9px] font-black px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-600 dark:text-emerald-300 shrink-0">
+                <span className="text-[10px] font-black px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 shrink-0">
                   {t('⚡ Fast OK', '⚡ レース◎')}
                 </span>
               </div>
-              <span className="text-[10px] opacity-75 truncate">
+              <span className="text-[10px] opacity-80 truncate">
                 {t('Pick the missing letters (ea / ee / er / o)', '単語の [ ? ] に入る文字・つづりを選ぶ')}
               </span>
             </button>
@@ -2223,16 +2271,16 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
               className={`p-2.5 rounded-xl border-2 text-left text-xs font-bold transition-all flex flex-col justify-between gap-1 cursor-pointer ${
                 promptTypes.includes('CATEGORY_HUNT')
                   ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-900 dark:text-indigo-200 shadow-xs'
-                  : 'border-slate-200 dark:border-slate-800 text-slate-400'
+                  : 'border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 bg-white dark:bg-slate-800/60 hover:border-slate-300 dark:hover:border-slate-700'
               }`}
             >
               <div className="flex items-center justify-between w-full gap-1">
                 <span className="truncate font-black">{t('🐾 Category Hunter', '🐾 なかま探し (分類)')}</span>
-                <span className="text-[9px] font-black px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-600 dark:text-emerald-300 shrink-0">
+                <span className="text-[10px] font-black px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 shrink-0">
                   {t('⚡ Fast OK', '⚡ レース◎')}
                 </span>
               </div>
-              <span className="text-[10px] opacity-75 truncate">
+              <span className="text-[10px] opacity-80 truncate">
                 {t('Find the word in the target category', '「動物はどれ？」などカテゴリーで選ぶ')}
               </span>
             </button>
@@ -2244,16 +2292,16 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
               className={`p-2.5 rounded-xl border-2 text-left text-xs font-bold transition-all flex flex-col justify-between gap-1 cursor-pointer ${
                 promptTypes.includes('SHORT_CLOZE')
                   ? 'border-amber-500 bg-amber-50 dark:bg-amber-950/40 text-amber-900 dark:text-amber-200 shadow-xs'
-                  : 'border-slate-200 dark:border-slate-800 text-slate-400'
+                  : 'border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 bg-white dark:bg-slate-800/60 hover:border-slate-300 dark:hover:border-slate-700'
               }`}
             >
               <div className="flex items-center justify-between w-full gap-1">
                 <span className="truncate font-black">{t('💬 Sentence Blank [ ? ]', '💬 会話・文の空欄 [ ? ]')}</span>
-                <span className="text-[9px] font-black px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-700 dark:text-amber-300 shrink-0">
+                <span className="text-[10px] font-black px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-800 dark:text-amber-300 shrink-0">
                   {t('📺 Kahoot', '📺 Kahoot推奨')}
                 </span>
               </div>
-              <span className="text-[10px] opacity-75 truncate">
+              <span className="text-[10px] opacity-80 truncate">
                 {t('"I like [ ? ]." textbook sentence cloze', '教科書のやりとり・例文の [ ? ] を埋める')}
               </span>
             </button>
@@ -2265,29 +2313,29 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
               className={`p-2.5 rounded-xl border-2 text-left text-xs font-bold transition-all flex flex-col justify-between gap-1 cursor-pointer ${
                 promptTypes.includes('THREE_HINTS')
                   ? 'border-amber-500 bg-amber-50 dark:bg-amber-950/40 text-amber-900 dark:text-amber-200 shadow-xs'
-                  : 'border-slate-200 dark:border-slate-800 text-slate-400'
+                  : 'border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 bg-white dark:bg-slate-800/60 hover:border-slate-300 dark:hover:border-slate-700'
               }`}
             >
               <div className="flex items-center justify-between w-full gap-1">
                 <span className="truncate font-black">{t('🕵️‍♂️ 3-Hint Detective', '🕵️‍♂️ 3ヒント・クイズ')}</span>
-                <span className="text-[9px] font-black px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-700 dark:text-amber-300 shrink-0">
+                <span className="text-[10px] font-black px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-800 dark:text-amber-300 shrink-0">
                   {t('📺 Kahoot', '📺 Kahoot推奨')}
                 </span>
               </div>
-              <span className="text-[10px] opacity-75 truncate">
+              <span className="text-[10px] opacity-80 truncate">
                 {t('Unlocks Hint 1 ➔ Hint 2 ➔ Hint 3', '時間経過でヒント1 ➔ 2 ➔ 3がオープン！')}
               </span>
             </button>
           </div>
         </div>
 
-        {/* 8. Answer Varieties & Pedagogical Scaffolding */}
+        {/* 9. Answer Varieties & Pedagogical Scaffolding */}
         <div>
           <div className="flex items-center justify-between mb-2">
-            <label className="text-xs font-black text-slate-400 uppercase tracking-wider block">
-              {gamePlayType === 'KAHOOT' ? t('8. Answer Styles & Scaffolding', '8. 回答形式 & 学習補助') : t('5. Answer Styles & Scaffolding', '5. 回答形式 & 学習補助')}
+            <label className="text-xs font-black text-slate-600 dark:text-slate-400 uppercase tracking-wider block">
+              {`${answerStylesStep}. `}{t('Answer Styles & Scaffolding', '回答形式 & 学習補助')}
             </label>
-            <span className="text-[11px] font-bold text-slate-400">
+            <span className="text-[11px] font-bold text-slate-600 dark:text-slate-400">
               {t('Pedagogical Guardrails Active', '指導要領ガードレール適用中')}
             </span>
           </div>
@@ -2301,11 +2349,11 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
                     <span>🖼️</span>
                     <span>{t('Choice Illustrations', '選択肢の画像表示')}</span>
                   </span>
-                  <span className="text-[10px] font-bold text-slate-400">
+                  <span className="text-[10px] font-bold text-slate-600 dark:text-slate-400">
                     {isChoiceImageLocked ? t('Cheat-Lock Active', '絵合わせロック中') : t('Smart Auto-Active', 'スマート連動')}
                   </span>
                 </div>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400 mb-3 leading-snug">
+                <p className="text-[11px] text-slate-600 dark:text-slate-400 mb-3 leading-snug">
                   {t('Controls whether 4 answer buttons display textbook illustrations (Visual cheat prevention prevents picture-matching).', '選択肢に教科書イラストを添えるかを設定（問題に絵がある時は絵合わせ不正を防ぐため自動無効）。')}
                 </p>
               </div>
@@ -2324,7 +2372,7 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
                   <div className="flex items-center justify-between gap-1 mb-1">
                     <span className="text-xs font-black">{t('Text Only', '文字のみ')}</span>
                     {['ES_G5', 'ES_G6', 'JHS_G1'].includes(activeGrade) && (
-                      <span className={`text-[9px] font-black px-1.5 py-0.5 rounded ${
+                      <span className={`text-[10px] font-black px-1.5 py-0.5 rounded ${
                         choiceImageMode === 'TEXT_ONLY'
                           ? 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300'
                           : 'bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300'
@@ -2349,7 +2397,7 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
                       <span className="text-xs font-black flex items-center gap-1">
                         <span>{t('With Pictures', 'イラスト付き')}</span>
                       </span>
-                      <span className="text-[9px] font-black px-1.5 py-0.5 rounded bg-rose-200 dark:bg-rose-900 text-rose-800 dark:text-rose-200">
+                      <span className="text-[10px] font-black px-1.5 py-0.5 rounded bg-rose-200 dark:bg-rose-900 text-rose-800 dark:text-rose-200">
                         {t('Locked (No Cheat)', '🚫 絵合わせ防止')}
                       </span>
                     </div>
@@ -2371,15 +2419,15 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
                     <div className="flex items-center justify-between gap-1 mb-1">
                       <span className="text-xs font-black">{t('With Pictures', 'イラスト付き')}</span>
                       {choiceImageMode === 'AUTO_CLEVER' ? (
-                        <span className="text-[9px] font-black px-1.5 py-0.5 rounded bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300">
+                        <span className="text-[10px] font-black px-1.5 py-0.5 rounded bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300">
                           {promptTypes.includes('AUDIO_ONLY') ? t('⭐ Best for Audio', '⭐ リスニング推奨') : t('💡 Optional Aid', '💡 視覚アシスト')}
                         </span>
                       ) : promptTypes.includes('AUDIO_ONLY') ? (
-                        <span className="text-[9px] font-black px-1.5 py-0.5 rounded bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300">
+                        <span className="text-[10px] font-black px-1.5 py-0.5 rounded bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300">
                           {t('⭐ Best for Audio', '⭐ リスニング推奨')}
                         </span>
                       ) : promptTypes.includes('JA_MEANING') ? (
-                        <span className="text-[9px] font-black px-1.5 py-0.5 rounded bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300">
+                        <span className="text-[10px] font-black px-1.5 py-0.5 rounded bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300">
                           {t('💡 Optional Aid', '💡 視覚アシスト')}
                         </span>
                       ) : null}
@@ -2402,11 +2450,11 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
                     <span>🔤</span>
                     <span>{t('English Reading & Pronunciation Aid', '英語の表記・読みサポート')}</span>
                   </span>
-                  <span className="text-[10px] font-bold text-slate-400">
+                  <span className="text-[10px] font-bold text-slate-600 dark:text-slate-400">
                     {t('MEXT Standard', '指導要領準拠')}
                   </span>
                 </div>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400 mb-3 leading-snug">
+                <p className="text-[11px] text-slate-600 dark:text-slate-400 mb-3 leading-snug">
                   {t('Select whether English buttons display pure textbook alphabet spelling, or include Katakana pronunciation aids.', '英語ボタンを教科書通りの英単語のみにするか、カタカナ発音目安を添えるかを設定。')}
                 </p>
               </div>
@@ -2425,11 +2473,11 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
                   <div className="flex items-center justify-between gap-1 mb-1">
                     <span className="text-xs font-black">{t('ABC Only', 'ABC のみ')}</span>
                     {englishReadingAid === 'SPELLING_ONLY' ? (
-                      <span className="text-[9px] font-black px-1.5 py-0.5 rounded bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300">
+                      <span className="text-[10px] font-black px-1.5 py-0.5 rounded bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300">
                         {t('Standard', '標準')}
                       </span>
                     ) : ['ES_G5', 'ES_G6', 'JHS_G1'].includes(activeGrade) ? (
-                      <span className="text-[9px] font-black px-1.5 py-0.5 rounded bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300">
+                      <span className="text-[10px] font-black px-1.5 py-0.5 rounded bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300">
                         {t('Standard', '標準')}
                       </span>
                     ) : null}
@@ -2451,7 +2499,7 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
                 >
                   <div className="flex items-center justify-between gap-1 mb-1">
                     <span className="text-xs font-black">{t('ABC + Kana', 'ABC + カナ')}</span>
-                    <span className={`text-[9px] font-black px-1.5 py-0.5 rounded ${
+                    <span className={`text-[10px] font-black px-1.5 py-0.5 rounded ${
                       englishReadingAid === 'WITH_KATAKANA'
                         ? 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300'
                         : 'bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300'
@@ -2472,8 +2520,8 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
 
         {/* Classroom Award Categories */}
         <div>
-          <label className="text-xs font-black text-slate-400 uppercase tracking-wider block mb-2">
-            {gamePlayType === 'KAHOOT' ? t('9. Post-Game Classroom Awards', '9. 終了後の表彰カテゴリー') : t('6. Post-Game Classroom Awards', '6. 終了後の表彰カテゴリー')}
+          <label className="text-xs font-black text-slate-600 dark:text-slate-400 uppercase tracking-wider block mb-2">
+            {`${awardsStep}. `}{t('Post-Game Classroom Awards', '終了後の表彰カテゴリー')}
           </label>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             {/* Core (Always-On) */}
@@ -2499,23 +2547,23 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
               className={`p-3.5 rounded-2xl border-2 text-left transition-all cursor-pointer ${
                 awardToggles.effortGrowth
                   ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/40 text-blue-950 dark:text-blue-100 shadow-sm ring-1 ring-blue-400/30'
-                  : 'border-slate-200 dark:border-slate-800 text-slate-400 hover:border-slate-300 dark:hover:border-slate-700'
+                  : 'border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800/60 hover:border-slate-300 dark:hover:border-slate-700'
               }`}
             >
               <div className="flex items-center justify-between mb-1.5">
                 <div className="flex items-center gap-1.5">
-                  <Heart size={15} className={awardToggles.effortGrowth ? 'text-blue-500' : 'text-slate-400'} />
+                  <Heart size={15} className={awardToggles.effortGrowth ? 'text-blue-500' : 'text-slate-500 dark:text-slate-400'} />
                   <span className="text-xs font-black">{t('Effort & Growth', '努力・成長賞 (Effort & Growth)')}</span>
                 </div>
                 <span className={`text-[10px] font-black px-1.5 py-0.5 rounded ${
                   awardToggles.effortGrowth
                     ? 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300'
-                    : 'bg-slate-200 dark:bg-slate-700 text-slate-500'
+                    : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
                 }`}>
                   {awardToggles.effortGrowth ? 'ON' : 'OFF'}
                 </span>
               </div>
-              <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
+              <p className="text-[11px] text-slate-600 dark:text-slate-400 font-medium">
                 {t('Never Give Up 💫, Rising Star 🚀, Flawless Finish 💎, Last Spurt 🏃', '最後まで粘ったで賞💫、急成長賞🚀、パーフェクト賞💎、ラストスパート賞🏃')}
               </p>
             </button>
@@ -2527,23 +2575,23 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
               className={`p-3.5 rounded-2xl border-2 text-left transition-all cursor-pointer ${
                 awardToggles.skillChallenge
                   ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/40 text-blue-950 dark:text-blue-100 shadow-sm ring-1 ring-blue-400/30'
-                  : 'border-slate-200 dark:border-slate-800 text-slate-400 hover:border-slate-300 dark:hover:border-slate-700'
+                  : 'border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800/60 hover:border-slate-300 dark:hover:border-slate-700'
               }`}
             >
               <div className="flex items-center justify-between mb-1.5">
                 <div className="flex items-center gap-1.5">
-                  <Shield size={15} className={awardToggles.skillChallenge ? 'text-blue-500' : 'text-slate-400'} />
+                  <Shield size={15} className={awardToggles.skillChallenge ? 'text-blue-500' : 'text-slate-500 dark:text-slate-400'} />
                   <span className="text-xs font-black">{t('Skill & Challenge', '実力・挑戦賞 (Skill & Challenge)')}</span>
                 </div>
                 <span className={`text-[10px] font-black px-1.5 py-0.5 rounded ${
                   awardToggles.skillChallenge
                     ? 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300'
-                    : 'bg-slate-200 dark:bg-slate-700 text-slate-500'
+                    : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
                 }`}>
                   {awardToggles.skillChallenge ? 'ON' : 'OFF'}
                 </span>
               </div>
-              <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
+              <p className="text-[11px] text-slate-600 dark:text-slate-400 font-medium">
                 {t('Iron Defense 🛡️, Wise Owl 🦉, All-Rounder 🌟, Quick Draw 🎯', '鉄壁ディフェンス🛡️、ものしりフクロウ🦉、オールラウンダー🌟、早押し名人🎯')}
               </p>
             </button>
@@ -2555,23 +2603,23 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
               className={`p-3.5 rounded-2xl border-2 text-left transition-all cursor-pointer sm:col-span-3 ${
                 awardToggles.funSurprise
                   ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/40 text-blue-950 dark:text-blue-100 shadow-sm ring-1 ring-blue-400/30'
-                  : 'border-slate-200 dark:border-slate-800 text-slate-400 hover:border-slate-300 dark:hover:border-slate-700'
+                  : 'border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800/60 hover:border-slate-300 dark:hover:border-slate-700'
               }`}
             >
               <div className="flex items-center justify-between mb-1">
                 <div className="flex items-center gap-1.5">
-                  <Smile size={15} className={awardToggles.funSurprise ? 'text-blue-500' : 'text-slate-400'} />
+                  <Smile size={15} className={awardToggles.funSurprise ? 'text-blue-500' : 'text-slate-500 dark:text-slate-400'} />
                   <span className="text-xs font-black">{t('Fun & Classroom Spirit', 'お楽しみ・特別賞')}</span>
                 </div>
                 <span className={`text-[10px] font-black px-1.5 py-0.5 rounded ${
                   awardToggles.funSurprise
                     ? 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300'
-                    : 'bg-slate-200 dark:bg-slate-700 text-slate-500'
+                    : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
                 }`}>
                   {awardToggles.funSurprise ? 'ON' : 'OFF'}
                 </span>
               </div>
-              <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
+              <p className="text-[11px] text-slate-600 dark:text-slate-400 font-medium">
                 {t('Rainbow Master 🌈, Just-in-Time ⏱️, Twin Sync 🤝, Median Hero 🍀', 'レインボーマスター🌈、ギリギリセーフ⏱️、シンクロ回答🤝、中央値ヒーロー🍀')}
               </p>
             </button>
@@ -2581,7 +2629,7 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
         {/* Classroom BGM Selection */}
         <div>
           <div className="flex items-center justify-between mb-2">
-            <label className="text-xs font-black text-slate-400 uppercase tracking-wider block">
+            <label className="text-xs font-black text-slate-600 dark:text-slate-400 uppercase tracking-wider block">
               {t(
                 'Classroom Sound Pack (High-Energy Audio)',
                 <>
@@ -2652,7 +2700,7 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
                       {bgm === 'none' ? t('Muted (SFX Only)', '無音中 (効果音のみ)') : t('Quick Mute', 'BGMをミュート')}
                     </span>
                   </div>
-                  <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">
+                  <span className="text-[10px] text-slate-600 dark:text-slate-400 font-medium">
                     {bgm === 'none' ? t('Tap to restore music', 'タップで音楽を再開') : t('Play quiz without BGM', '効果音のみでプレイ')}
                   </span>
                 </button>
@@ -2679,7 +2727,7 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
         >
           <Play size={16} fill="white" />
           <span>
-            {gamePlayType === 'GRAND_PRIX_3D' 
+            {deliveryStream === 'STREAM_B_MULTIPLAYER' && gamePlayType === 'GRAND_PRIX_3D' 
               ? t('START GRAND PRIX ROOM', 'グランプリ部屋を作成') 
               : (deliveryStream === 'STREAM_B_MULTIPLAYER' ? t('CREATE ROOM', '部屋を作成') : t('START WARMUP', 'クイズ開始'))}
           </span>

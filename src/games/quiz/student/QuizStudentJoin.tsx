@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { FUN_NICKNAMES, TeamId, TEAM_PRESETS, RAINBOW_TEAM_ORDER, QuizRoomState } from '../types';
+import { isTeamSelectionFull } from '../core/quizEngine';
 import { getSavedStudentProfile, setLocalStudentProfile } from '@/services/studentProfile';
-import { safeSubscribe } from '@/services/rtdbSafe';
+import { safeSubscribe, getServerTime } from '@/services/rtdbSafe';
 import { useLanguage } from '@/context/LanguageContext';
 import { verifyTeacherPin } from '@/context/ClassroomContext';
 import { getClassSize, getRandomAvatarEmoji, StudentProfile } from '@/types/roster';
@@ -34,7 +35,10 @@ export const QuizStudentJoin: React.FC<QuizStudentJoinProps> = ({
   const [activeTab, setActiveTab] = useState<'ATTENDANCE' | 'TYPE' | 'RANDOM'>('ATTENDANCE');
   const [nickname, setNickname] = useState(() => {
     if (savedProfile?.nickname) return savedProfile.nickname;
-    if (savedProfile?.attendanceNumber) return language === 'ja' ? `${savedProfile.attendanceNumber}番` : `#${savedProfile.attendanceNumber}`;
+    if (typeof savedProfile?.attendanceNumber === 'number') {
+      if (savedProfile.attendanceNumber === 0) return language === 'ja' ? '00 先生' : '#00 Teacher';
+      return language === 'ja' ? `${savedProfile.attendanceNumber}番` : `#${savedProfile.attendanceNumber}`;
+    }
     return '';
   });
   const [roomInfo, setRoomInfo] = useState<QuizRoomState | null>(null);
@@ -76,8 +80,11 @@ export const QuizStudentJoin: React.FC<QuizStudentJoinProps> = ({
   // Generate random nickname from presets
   const handlePickRandomName = () => {
     const randomName = FUN_NICKNAMES[Math.floor(Math.random() * FUN_NICKNAMES.length)];
-    if (selectedAttendanceNumber) {
-      setNickname(`${selectedAttendanceNumber}番 ${randomName}`);
+    if (typeof selectedAttendanceNumber === 'number') {
+      const seatLabel = selectedAttendanceNumber === 0
+        ? (language === 'ja' ? '00番' : '#00')
+        : (language === 'ja' ? `${selectedAttendanceNumber}番` : `#${selectedAttendanceNumber}`);
+      setNickname(`${seatLabel} ${randomName}`);
     } else {
       setNickname(randomName);
     }
@@ -139,6 +146,7 @@ export const QuizStudentJoin: React.FC<QuizStudentJoinProps> = ({
       // Create local teacher student profile with attendanceNumber: 0
       const activeClass = roomInfo?.classId || '2-1';
       const activeSchool = roomInfo?.schoolId || 'futakotamagawa';
+      const nowServer = getServerTime();
       const teacherStudentProfile: StudentProfile = {
         schoolId: activeSchool,
         classId: activeClass,
@@ -150,8 +158,8 @@ export const QuizStudentJoin: React.FC<QuizStudentJoinProps> = ({
         xp: 9999,
         level: 10,
         gold: 999,
-        boundAt: Date.now(),
-        lastPlayedAt: Date.now()
+        boundAt: nowServer,
+        lastPlayedAt: nowServer
       };
       setLocalStudentProfile(teacherStudentProfile);
 
@@ -172,13 +180,16 @@ export const QuizStudentJoin: React.FC<QuizStudentJoinProps> = ({
     e.preventDefault();
     requestMobileFullscreen();
     if (pin.length !== 4 || !nickname.trim() || loading) return;
+    const isTeacherUnlocked = sessionStorage.getItem('levi_sensei_teacher_unlocked') === 'true' || savedProfile?.attendanceNumber === 0;
     const parsedNum = typeof selectedAttendanceNumber === 'number'
-      ? selectedAttendanceNumber
+      ? (selectedAttendanceNumber === 0 && !isTeacherUnlocked ? undefined : selectedAttendanceNumber)
       : typeof savedProfile?.attendanceNumber === 'number'
       ? savedProfile.attendanceNumber
       : (() => {
           const match = nickname.trim().match(/^(\d+)番/) || nickname.trim().match(/#(\d+)/);
-          return match ? parseInt(match[1], 10) : undefined;
+          if (!match) return undefined;
+          const n = parseInt(match[1], 10);
+          return n > 0 ? n : undefined;
         })();
     await onJoin(pin, nickname.trim(), selectedTeam === 'RANDOM' ? undefined : selectedTeam, parsedNum);
   };
@@ -209,7 +220,7 @@ export const QuizStudentJoin: React.FC<QuizStudentJoinProps> = ({
             <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight leading-tight truncate">
               {t('Join the Quiz!', 'クイズに参加しよう！')}
             </h2>
-            <p className="text-xs font-bold text-slate-400 truncate">
+            <p className="text-xs font-bold text-slate-500 dark:text-slate-400 truncate">
               {t('Enter room code and select your attendance number', 'へやの番号を入れて、出席番号をえらんでね')}
             </p>
           </div>
@@ -284,7 +295,16 @@ export const QuizStudentJoin: React.FC<QuizStudentJoinProps> = ({
                           return activeTeams.map((tId) => {
                             const preset = TEAM_PRESETS[tId];
                             const tCount = teamCounts[tId] || 0;
-                            const isFull = tCount >= 10 || (tCount >= minCount + 2 && currentPlayers.length >= 8);
+                            const classSize = roomInfo.schoolId && roomInfo.classId && roomInfo.classId !== 'TEST'
+                              ? getClassSize(roomInfo.schoolId, roomInfo.classId)
+                              : 35;
+                            const isFull = isTeamSelectionFull({
+                              teamCountForTeam: tCount,
+                              minCount,
+                              totalPlayers: currentPlayers.length,
+                              teamCount: activeTeams.length,
+                              classSize,
+                            });
                             const isSelected = selectedTeam === tId;
 
                             return (
@@ -304,11 +324,11 @@ export const QuizStudentJoin: React.FC<QuizStudentJoinProps> = ({
                                 <div className="flex items-center justify-between">
                                   <span className="text-lg">{preset.emoji}</span>
                                   {isFull ? (
-                                    <span className="text-[9px] font-black px-1 rounded bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300">
+                                    <span className="text-[10px] font-black px-1 rounded bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300">
                                       {t('Full', '満員')}
                                     </span>
                                   ) : (
-                                    <span className="text-[10px] font-black text-slate-400">
+                                    <span className="text-[10px] font-black text-slate-500 dark:text-slate-400">
                                       {teamCounts[tId]}{t('p', '人')}
                                     </span>
                                   )}
@@ -411,7 +431,7 @@ export const QuizStudentJoin: React.FC<QuizStudentJoinProps> = ({
                           {t('Bound Profile on this iPad', 'このiPadの登録生徒')}
                         </span>
                         <strong className="text-lg font-black text-slate-900 dark:text-white block">
-                          {savedProfile.nickname} ({savedProfile.classId} #{savedProfile.attendanceNumber})
+                          {savedProfile.nickname} ({savedProfile.classId} #{savedProfile.attendanceNumber === 0 ? '00' : savedProfile.attendanceNumber})
                         </strong>
                       </div>
                     </div>
@@ -484,7 +504,7 @@ export const QuizStudentJoin: React.FC<QuizStudentJoinProps> = ({
                         <div className="text-[11px] font-black text-slate-500 dark:text-slate-400 mb-1.5 text-center">
                           {t('Tap your attendance number (1-35):', '自分の出席番号をタップしてください (1〜35):')}
                         </div>
-                        <div className="grid grid-cols-6 sm:grid-cols-7 gap-1.5 max-h-60 sm:max-h-72 overflow-y-auto overscroll-contain p-0.5">
+                        <div className="grid grid-cols-6 gap-1.5 max-h-72 sm:max-h-80 overflow-y-auto overscroll-contain p-0.5">
                           {[0, ...Array.from({ length: Math.max(35, getClassSize(roomInfo?.schoolId || savedProfile?.schoolId, roomInfo?.classId || savedProfile?.classId)) }, (_, i) => i + 1)].map((num) => {
                             const isSelected = selectedAttendanceNumber === num;
                             const isTeacherSeat = num === 0;
@@ -494,7 +514,7 @@ export const QuizStudentJoin: React.FC<QuizStudentJoinProps> = ({
                                 type="button"
                                 onClick={() => handleSelectSeatNumber(num)}
                                 title={isTeacherSeat ? (language === 'ja' ? '00番 (先生・テスター席)' : '#00 (Teacher Seat)') : undefined}
-                                className={`h-11 sm:h-12 rounded-xl text-sm font-black transition-all flex flex-col items-center justify-center cursor-pointer ${
+                                className={`h-10 sm:h-11 rounded-xl text-sm font-black transition-all flex flex-col items-center justify-center cursor-pointer ${
                                   isSelected
                                     ? 'bg-gradient-to-tr from-purple-600 to-indigo-600 text-white shadow-lg ring-3 ring-purple-400 scale-105'
                                     : isTeacherSeat
@@ -507,7 +527,7 @@ export const QuizStudentJoin: React.FC<QuizStudentJoinProps> = ({
                                   {isTeacherSeat && <span className="text-[10px]">👨‍🏫</span>}
                                 </div>
                                 {isTeacherSeat && (
-                                  <span className="text-[8px] font-black text-purple-600 dark:text-purple-400 leading-none mt-0.5">
+                                  <span className="text-[10px] font-black text-purple-600 dark:text-purple-400 leading-none mt-0.5">
                                     {language === 'ja' ? '先生' : 'Teacher'}
                                   </span>
                                 )}
@@ -526,9 +546,11 @@ export const QuizStudentJoin: React.FC<QuizStudentJoinProps> = ({
                           onChange={(e) => {
                             const val = e.target.value;
                             setCustomNameSuffix(val);
-                            if (selectedAttendanceNumber) {
-                              const prefix = language === 'ja' ? `${selectedAttendanceNumber}番` : `#${selectedAttendanceNumber}`;
-                              setNickname(val.trim() ? `${prefix} ${val.trim()}` : prefix);
+                            if (typeof selectedAttendanceNumber === 'number') {
+                              const prefix = selectedAttendanceNumber === 0
+                                ? '00'
+                                : (language === 'ja' ? `${selectedAttendanceNumber}番` : `#${selectedAttendanceNumber}`);
+                              setNickname(val.trim() ? `${prefix} ${val.trim()}` : (selectedAttendanceNumber === 0 ? (language === 'ja' ? '00 先生' : '#00 Teacher') : prefix));
                             } else if (val.trim()) {
                               setNickname(val.trim());
                             }
@@ -545,12 +567,15 @@ export const QuizStudentJoin: React.FC<QuizStudentJoinProps> = ({
                     <div className="flex flex-col gap-2">
                       <input
                         type="text"
-                        maxLength={14}
+                        maxLength={10}
                         value={nickname}
                         onChange={(e) => {
                           setNickname(e.target.value);
                           const match = e.target.value.match(/^(\d+)番/) || e.target.value.match(/#(\d+)/);
-                          if (match) setSelectedAttendanceNumber(parseInt(match[1], 10));
+                          if (match) {
+                            const n = parseInt(match[1], 10);
+                            if (n > 0) setSelectedAttendanceNumber(n);
+                          }
                         }}
                         placeholder={t('Enter name (e.g. #27 Ken)', '名前を入力 (例: 27番 けんた)')}
                         className="w-full py-3 px-4 text-center font-black text-lg rounded-2xl border-2 border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:border-purple-500 focus:outline-none focus:ring-4 focus:ring-purple-100 dark:focus:ring-purple-950/40"
@@ -629,7 +654,7 @@ export const QuizStudentJoin: React.FC<QuizStudentJoinProps> = ({
                 </button>
                 <button
                   type="submit"
-                  disabled={teacherPinInput.length < 4}
+                  disabled={teacherPinInput.length < 6}
                   className="flex-1 py-2.5 px-3 rounded-xl bg-amber-500 hover:bg-amber-600 disabled:opacity-50 text-white font-black text-xs shadow-md transition-all cursor-pointer"
                 >
                   {t('Unlock', '解除する')}

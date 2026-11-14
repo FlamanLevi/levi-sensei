@@ -176,20 +176,23 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
   // Reset or restore answer state when question changes.
   // Crucial: decoupled from classmate responses to avoid O(N^2) render storm!
   useEffect(() => {
+    let isActive = true;
     if (room && room.status === 'QUESTION') {
       if (lastSeenQuestionIndexRef.current !== room.currentQuestionIndex) {
-        lastSeenQuestionIndexRef.current = room.currentQuestionIndex;
+        const targetIdx = room.currentQuestionIndex;
+        lastSeenQuestionIndexRef.current = targetIdx;
         questionReceivedAtRef.current = getServerTime();
 
         const existingResp = playerId ? room.responses?.[playerId] : undefined;
         if (existingResp) {
           setSelectedOptionId(existingResp.answerId);
-          setAnsweredQuestionIndex(room.currentQuestionIndex);
+          setAnsweredQuestionIndex(targetIdx);
         } else if (playerId && pin) {
           safeGet<QuizResponse>(`roomResponses/${pin}/${playerId}`).then((r) => {
+            if (!isActive || lastSeenQuestionIndexRef.current !== targetIdx) return;
             if (r) {
               setSelectedOptionId(r.answerId);
-              setAnsweredQuestionIndex(room.currentQuestionIndex);
+              setAnsweredQuestionIndex(targetIdx);
             } else {
               setSelectedOptionId(null);
               setAnsweredQuestionIndex(null);
@@ -203,6 +206,9 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
     } else if (room && room.status !== 'QUESTION') {
       lastSeenQuestionIndexRef.current = null;
     }
+    return () => {
+      isActive = false;
+    };
   }, [room?.status, room?.currentQuestionIndex, playerId, pin]);
 
   // Resynchronize clock when iPad cover opens / tab becomes visible
@@ -231,6 +237,35 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
     return list;
   }, [room?.questions]);
 
+  const cachedRosterRef = React.useRef<{ key: string; list: { id: string; nickname: string; team: 'red' | 'white' }[] }>({
+    key: '',
+    list: []
+  });
+  const tamaireStudentRoster = useMemo(() => {
+    const rawPlayers = room?.players;
+    if (!rawPlayers) {
+      if (cachedRosterRef.current.key !== '') {
+        cachedRosterRef.current = { key: '', list: [] };
+      }
+      return cachedRosterRef.current.list;
+    }
+    const entries = Object.values(rawPlayers);
+    const key = entries
+      .map((p) => `${p.id}:${p.nickname || 'Student'}:${p.teamId === 'team_white' ? 'white' : 'red'}`)
+      .sort()
+      .join('|');
+    if (key === cachedRosterRef.current.key) {
+      return cachedRosterRef.current.list;
+    }
+    const list = entries.map((p) => ({
+      id: p.id,
+      nickname: p.nickname || 'Student',
+      team: (p.teamId === 'team_white' ? 'white' : 'red') as 'red' | 'white'
+    }));
+    cachedRosterRef.current = { key, list };
+    return list;
+  }, [room?.players]);
+
   // If not joined yet or no player ID
   if (!playerId || !room) {
     if (loading && pin && playerId) {
@@ -241,7 +276,7 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
             <h2 className="text-lg font-black text-slate-900 dark:text-white mb-1">
               {t('Reconnecting...', '再接続中...')}
             </h2>
-            <p className="text-xs font-bold text-slate-400">
+            <p className="text-xs font-bold text-slate-600 dark:text-slate-400">
               {t('Rejoining quiz room...', 'クイズルームに復帰しています...')}
             </p>
           </div>
@@ -273,7 +308,7 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
       correctCount: 0,
       totalAnswered: 0,
       fastestTimeMs: 999999,
-      joinedAt: getServerTime(),
+      joinedAt: 0,
       answers: {}
     }),
     ...(localKartThemeOverride ? { kartTheme: localKartThemeOverride } : {})
@@ -290,7 +325,7 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
           <h2 className="text-xl font-black text-slate-900 dark:text-white mb-2">
             {t('Room has ended', 'ルームが終了しました')}
           </h2>
-          <p className="text-xs font-bold text-slate-400 mb-6">
+          <p className="text-xs font-bold text-slate-600 dark:text-slate-400 mb-6">
             {t('The teacher has closed the quiz room. Great effort today!', '先生がクイズルームを終了しました。おつかれさまでした！')}
           </p>
           <button
@@ -370,7 +405,7 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
           allPlayers={room.players || {}}
           questions={studentQuestions}
           sprintSettings={room.sprintSettings}
-          raceStartTime={room.raceStartTime || getServerTime()}
+          raceStartTime={room.raceStartTime || 0}
           raceFinishGraceStartTime={room.raceFinishGraceStartTime}
           isLobby={room.status === 'LOBBY'}
           onAnswer={handleArcadeAnswer}
@@ -401,7 +436,7 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
           key={`tug-${room.tugOfWarRound || 1}-${room.tugOfWarStartTime || 'active'}`}
           player={currentPlayer}
           questions={studentQuestions}
-          raceStartTime={room.tugOfWarStartTime || room.raceStartTime || getServerTime()}
+          raceStartTime={room.tugOfWarStartTime || room.raceStartTime || 0}
           tugOfWarSettings={room.tugOfWarSettings}
           tugOfWarFinished={room.tugOfWarFinished}
           onAnswer={handleArcadeAnswer}
@@ -415,12 +450,13 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
           key={`volleyball-${room.volleyballStartTime || 'active'}`}
           player={currentPlayer}
           questions={studentQuestions}
-          raceStartTime={room.volleyballStartTime || room.raceStartTime || getServerTime()}
+          raceStartTime={room.volleyballStartTime || room.raceStartTime || 0}
           volleyballSettings={room.volleyballSettings}
           volleyballFinished={room.volleyballFinished}
           volleyballLiveState={room.volleyballLiveState}
           redScore={room.volleyballLiveState?.redScore}
           whiteScore={room.volleyballLiveState?.whiteScore}
+          studentRoster={tamaireStudentRoster}
           onAnswer={handleArcadeAnswer}
           onLeave={handleLeave}
         />
@@ -446,7 +482,7 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
             <h2 className="text-xl font-black text-slate-900 dark:text-white mb-2">
               {t('Preparing match...', 'じゅんび中...')}
             </h2>
-            <p className="text-xs font-bold text-slate-400 animate-pulse">
+            <p className="text-xs font-bold text-slate-600 dark:text-slate-400 animate-pulse">
               {t('Loading questions. Please wait a moment...', 'もんだいを読み込んでいます。少々おまちください...')}
             </p>
           </div>
@@ -482,7 +518,7 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
             <h2 className="text-lg font-black text-slate-900 dark:text-white mb-1">
               {t('Preparing question...', 'もんだいをじゅんび中...')}
             </h2>
-            <p className="text-xs font-bold text-slate-400">
+            <p className="text-xs font-bold text-slate-600 dark:text-slate-400">
               {t('Waiting for teacher’s signal', '先生の合図をまっています')}
             </p>
           </div>
@@ -505,7 +541,7 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
             <div className="w-20 h-20 rounded-3xl bg-gradient-to-tr from-amber-400 to-orange-500 text-white flex items-center justify-center mx-auto mb-4 shadow-xl text-3xl font-black animate-pulse">
               🏆
             </div>
-            <span className="text-xs font-black uppercase tracking-widest text-slate-400 block mb-1">
+            <span className="text-xs font-black uppercase tracking-widest text-slate-600 dark:text-slate-400 block mb-1">
               {t('LEADERBOARD', 'ランキング')}
             </span>
             <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-4">
@@ -517,7 +553,7 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
                 {currentPlayer.score.toLocaleString()} pts
               </strong>
             </div>
-            <p className="text-xs font-bold text-slate-400 animate-pulse">
+            <p className="text-xs font-bold text-slate-600 dark:text-slate-400 animate-pulse">
               {t('Waiting for teacher to advance to next question...', '先生が次の問題へ進むのを待っています...')}
             </p>
           </div>

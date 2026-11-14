@@ -3,22 +3,22 @@
  * [ANTIGRAVITY REFACTOR MODULE: src/games/quiz/hooks/useQuizSharedHooks.ts]
  * ============================================================================
  * PURPOSE FOR GOOGLE ANTIGRAVITY:
- * Consolidates duplicated React state and lifecycle hooks across the 5 student
- * and 5 host game controllers:
+ * Consolidates duplicated React state and lifecycle hooks across the Student
+ * and Host game controllers:
  *
- * 1. `useServerClock`: Replaces 8 duplicated `setInterval(() => setNow(getServerTime()))`
- *    effects across `QuizStudentSprint`, `QuizStudentGrandPrix3D`, `QuizStudentTugOfWar`,
- *    `QuizStudentVolleyball`, `QuizHostSprint`, `QuizHostTugOfWar`, and `QuizHostVolleyball`.
+ * 1. `useServerClock`: Replaces duplicated `setInterval(() => setNow(getServerTime()))`
+ *    effects across `QuizStudentGrandPrix3D`, `QuizStudentTugOfWar`,
+ *    `QuizStudentTamaire`, `QuizHostTugOfWar`, and `QuizHostVolleyball`.
  * 2. `useLockoutPenalty`: Replaces 4 duplicated `lockedUntil` / `penaltySecondsLeft`
  *    countdown timers and guarantees the Pit Stop UI tier (`resolveLockoutPenaltySeconds`)
  *    is always synchronized with the active penalty duration (>= 2.5s per GEMINI.md §7).
- * 3. `useAuthoritativeStudentStats`: Replaces 4 identical 30-line reconnection state
+ * 3. `useAuthoritativeStudentStats`: Replaces duplicated reconnection state
  *    blocks (`localScore`, `localStreak`, `localMaxStreak`, `localCorrectCount`,
- *    `localTotalAnswered`, `localFastestTimeMs`) across Sprint, GrandPrix3D,
- *    TugOfWar, and Volleyball.
+ *    `localTotalAnswered`, `localFastestTimeMs`) across GrandPrix3D,
+ *    TugOfWar, and Tamaire.
  * 4. `useDistractorElimination`: Replaces duplicated `computeEliminatedOptionIds`
- *    memos across `QuizStudentQuestion`, `QuizStudentSprint`, `QuizStudentTugOfWar`,
- *    and `QuizStudentVolleyball`.
+ *    memos across `QuizStudentQuestion`, `QuizStudentTugOfWar`,
+ *    and `QuizStudentTamaire`.
  * ============================================================================
  */
 

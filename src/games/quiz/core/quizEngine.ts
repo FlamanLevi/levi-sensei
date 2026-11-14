@@ -14,10 +14,9 @@
  *    updates into at most 8 Hz (125ms) writes to `roomPlayers/{code}/{playerId}`,
  *    eliminating the O(N^2) dual-write storm in `useQuizRoom.ts:1863-1866`.
  * 2. GEMINI.md §7 (2.5s Minimum Pit Stop Lockout Penalty):
- *    `resolveLockoutPenaltySeconds` enforces `Math.max(2.5, ...)` on Sprint,
- *    3D Grand Prix, and Tug of War mistakes, and fixes the UI/Timer bug in
- *    `QuizStudentSprint.tsx:662-684` where a 2.5s 1st mistake fell through
- *    legacy `<= 1.0` / `<= 1.5` checks and showed "Engine Service! (+2.0s)".
+ *    `resolveLockoutPenaltySeconds` enforces `Math.max(2.5, ...)` on
+ *    3D Grand Prix, Tug of War, and Tamaire mistakes so guessing is
+ *    never faster than reading and UI labels match the active penalty tier.
  * 3. GEMINI.md §3 & §7 (`!isEnPrompt` Cheating Prevention & Furigana):
  *    `resolveOptionPresentation` centralizes option image visibility
  *    (`!isEnPrompt && !hasPromptImage && Boolean(option.image)`), Katakana reading
@@ -86,12 +85,21 @@ export interface QuizQuestion {
   targetWordEnglish: string;
   targetWordJa: string;
   targetWordHiragana?: string;
+  targetWordKatakana?: string;
+  targetWordRuby?: { base: string; ruby: string }[];
+  phonicsChunks?: string[];
+  phonicsPattern?: string;
+  exampleSentenceEn?: string;
+  exampleSentenceJa?: string;
+  categoryNameEn?: string;
+  categoryNameJa?: string;
   promptType: PromptType;
   promptText: string;
   promptSubtext?: string;
   promptImage?: string;
   promptSound?: string;
   threeHints?: { en: string; ja: string }[];
+  isDrsReview?: boolean;
   options: QuizOption[];
   correctOptionId?: string;
   distractorOptionIds?: string[];
@@ -129,6 +137,13 @@ export interface QuizPlayer {
   fastestTimeMs: number;
   joinedAt: number;
   answers: Record<number, PlayerAnswerRecord>;
+  lastAnswer?: {
+    questionIndex?: number;
+    optionId: string;
+    isCorrect: boolean;
+    pointsEarned: number;
+    timeTakenMs: number;
+  };
   sprintProgress?: number;
   finishTimeMs?: number;
   finishRank?: number;
@@ -195,6 +210,11 @@ export interface ThrottlerController<TPayload extends Record<string, any>> {
   getStats: () => { queuedCalls: number; dispatchedWrites: number };
 }
 
+const getMonotonicNowMs = () =>
+  typeof performance !== 'undefined' && typeof performance.now === 'function'
+    ? performance.now()
+    : Date.now();
+
 export function createRtdbWriteThrottler<TPayload extends Record<string, any>>(
   writer: (mergedPayload: TPayload) => Promise<void> | void,
   intervalMs: number = 125 // 8 Hz default (strictly <= 10 Hz / >= 100ms)
@@ -202,7 +222,7 @@ export function createRtdbWriteThrottler<TPayload extends Record<string, any>>(
   const safeIntervalMs = Math.max(100, intervalMs); // Hard clamp to <= 10 Hz per GEMINI.md §5
   let pendingPatch: TPayload | null = null;
   let timerId: ReturnType<typeof setTimeout> | null = null;
-  let lastWriteTime = 0;
+  let lastWriteTime = -safeIntervalMs;
   let queuedCalls = 0;
   let dispatchedWrites = 0;
   let disposed = false;
@@ -215,7 +235,7 @@ export function createRtdbWriteThrottler<TPayload extends Record<string, any>>(
       clearTimeout(timerId);
       timerId = null;
     }
-    lastWriteTime = Date.now();
+    lastWriteTime = getMonotonicNowMs();
     dispatchedWrites++;
     await writer(payloadToSend);
   };
@@ -231,7 +251,7 @@ export function createRtdbWriteThrottler<TPayload extends Record<string, any>>(
       return;
     }
 
-    const now = Date.now();
+    const now = getMonotonicNowMs();
     const elapsed = now - lastWriteTime;
 
     if (elapsed >= safeIntervalMs && !timerId) {
@@ -269,17 +289,17 @@ export function createRtdbWriteThrottler<TPayload extends Record<string, any>>(
 }
 
 // ============================================================================
-// [ANTIGRAVITY REFACTOR #2]: Shared Scoring, 2.5s Lockout & !isEnPrompt Rules
+  // [ANTIGRAVITY REFACTOR #2]: Shared Scoring, 2.5s Lockout & !isEnPrompt Rules
 // ============================================================================
 // WHAT CHANGED:
 // Extracted `evaluateOptionMatch`, `calculateClassicScore`, `calculateArcadeScore`,
 // `resolveLockoutPenaltySeconds`, `resolveOptionPresentation`, and
 // `computeEliminatedOptionIds` from 6 separate Host/Student components.
 // WHY:
-// 1. `resolveLockoutPenaltySeconds` fixes the desynchronized Pit Stop overlay
-//    in `QuizStudentSprint.tsx:662-684` and enforces the >= 2.5s floor in
-//    `QuizStudentGrandPrix3D.tsx:78` (GEMINI.md §7).
-// 2. `resolveOptionPresentation` fixes `QuizStudentTugOfWar.tsx:372-421` which
+// 1. `resolveLockoutPenaltySeconds` enforces the >= 2.5s lockout floor and keeps
+//    Pit Stop / slip UI labels synchronized with `QuizStudentGrandPrix3D.tsx`
+//    and `QuizStudentTugOfWar.tsx` (GEMINI.md §7).
+// 2. `resolveOptionPresentation` fixes `QuizStudentTugOfWar.tsx` which
 //    previously omitted `<RubyText />` furigana, Katakana reading aids, and
 //    `!isEnPrompt` option image guards (GEMINI.md §3 & §7).
 // ============================================================================
@@ -962,11 +982,15 @@ export function computeStudentShotTrajectoryPoint(
   }
 }
 
+export function isEnglishPromptType(promptType?: PromptType | string): boolean {
+  return promptType === 'EN_TO_JA' || promptType === 'EN_WORD';
+}
+
 export function resolveOptionPresentation(question: QuizQuestion, option: QuizOption) {
   // [ANTIGRAVITY REFACTOR]: Enforces GEMINI.md §7 Cheating Prevention (`!isEnPrompt`)
   // When promptType is EN_TO_JA or EN_WORD, illustrations on options MUST be omitted
   // so students cannot match the prompt picture to the option picture without reading.
-  const isEnPrompt = question.promptType === 'EN_TO_JA' || question.promptType === 'EN_WORD';
+  const isEnPrompt = isEnglishPromptType(question.promptType);
   const hasPromptImage = Boolean(question.promptImage) || question.promptType === 'IMAGE_ONLY';
 
   const displayText = isEnPrompt
@@ -1109,6 +1133,54 @@ export function reconcileTeamScores(
   return result;
 }
 
+/**
+ * Preserves existing valid team assignments (e.g. teacher manual lobby swaps or
+ * student choices) during rematch / Edit Settings resets, and balances only
+ * unassigned players or players whose previous team is no longer active.
+ */
+export function assignTeamsForNewRound<T extends { teamId?: TeamId }>(
+  players: Record<string, T>,
+  activeTeams: TeamId[],
+  mode: 'INDIVIDUAL' | 'TEAM'
+): Record<TeamId, number> {
+  const memberCounts = {} as Record<TeamId, number>;
+  activeTeams.forEach((tId) => {
+    memberCounts[tId] = 0;
+  });
+
+  if (mode !== 'TEAM') {
+    Object.values(players).forEach((p) => {
+      delete p.teamId;
+    });
+    return memberCounts;
+  }
+
+  const playerList = Object.values(players);
+  playerList.forEach((p) => {
+    if (p.teamId && activeTeams.includes(p.teamId)) {
+      memberCounts[p.teamId] = (memberCounts[p.teamId] || 0) + 1;
+    }
+  });
+
+  playerList.forEach((p) => {
+    if (activeTeams.length > 0 && (!p.teamId || !activeTeams.includes(p.teamId))) {
+      let fewestTeam = activeTeams[0];
+      let fewestCount = memberCounts[fewestTeam] ?? 0;
+      for (const candidate of activeTeams) {
+        const count = memberCounts[candidate] ?? 0;
+        if (count < fewestCount) {
+          fewestTeam = candidate;
+          fewestCount = count;
+        }
+      }
+      p.teamId = fewestTeam;
+      memberCounts[fewestTeam] = (memberCounts[fewestTeam] || 0) + 1;
+    }
+  });
+
+  return memberCounts;
+}
+
 // ============================================================================
 // [ANTIGRAVITY REFACTOR #4]: Declarative Mini-Game Strategy Adapter Registry
 // ============================================================================
@@ -1232,3 +1304,61 @@ export const GAME_MODE_STRATEGIES: Record<GamePlayType, MiniGameStrategyDescript
     }),
   },
 };
+
+// ============================================================================
+// [AUDIT POLISH]: Dynamic Team Capacity, Question-Scoped Answer Lookup,
+// and Exact Tug of War Sweep Countdown
+// ============================================================================
+
+export function resolveTeamMaxCapacity(classSize: number = 35, teamCount: number = 2): number {
+  const safeTeams = Math.max(1, teamCount || 2);
+  const safeRoster = Math.max(36, classSize || 35);
+  return Math.max(10, Math.ceil(safeRoster / safeTeams));
+}
+
+export function isTeamSelectionFull(params: {
+  teamCountForTeam: number;
+  minCount: number;
+  totalPlayers: number;
+  teamCount?: number;
+  classSize?: number;
+}): boolean {
+  const { teamCountForTeam, minCount, totalPlayers, teamCount = 2, classSize = 35 } = params;
+  const maxPerTeam = resolveTeamMaxCapacity(classSize, teamCount);
+  if (teamCountForTeam >= maxPerTeam) return true;
+  return teamCountForTeam >= minCount + 2 && totalPlayers >= 8;
+}
+
+export function resolveQuestionScopedAnswer<T extends { questionIndex?: number; optionId?: string }>(params: {
+  answers?: Record<number, T> | null;
+  lastAnswer?: T | null;
+  questionIndex?: number | null;
+}): T | undefined {
+  const { answers, lastAnswer, questionIndex } = params;
+  if (questionIndex !== undefined && questionIndex !== null) {
+    if (answers && answers[questionIndex] !== undefined) {
+      return answers[questionIndex];
+    }
+    if (lastAnswer && lastAnswer.questionIndex === questionIndex) {
+      return lastAnswer;
+    }
+    return undefined;
+  }
+  return lastAnswer ?? undefined;
+}
+
+export function computeTugOfWarSweepsRemaining(params: {
+  displacement: number;
+  sensitivity: number;
+  activeTeamCount: number;
+  team: 'team_red' | 'team_white';
+}): number {
+  const { displacement, sensitivity, activeTeamCount, team } = params;
+  if (team === 'team_red' && displacement <= -100) return 0;
+  if (team === 'team_white' && displacement >= 100) return 0;
+
+  const remainingDisplacement = team === 'team_red' ? 100 + displacement : 100 - displacement;
+  const perPullStep = Math.max(0.01, sensitivity / Math.max(1, activeTeamCount));
+  return Math.max(1, Math.ceil(remainingDisplacement / perPullStep));
+}
+

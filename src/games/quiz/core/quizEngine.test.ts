@@ -14,6 +14,10 @@ import {
   formatTamaireCountCallout,
   buildTamaireSuspenseSchedule,
   computeStudentShotTrajectoryPoint,
+  resolveTeamMaxCapacity,
+  isTeamSelectionFull,
+  resolveQuestionScopedAnswer,
+  computeTugOfWarSweepsRemaining,
   GAME_MODE_STRATEGIES,
   QuizQuestion,
   QuizPlayer,
@@ -353,6 +357,146 @@ test('Student iPad Over-the-Shoulder Shot Trajectory: SWISH passes through net w
   assert.ok(doinkLand.nx > 0.75);
   assert.ok(doinkLand.ny > 0.85);
 });
+
+test('Dynamic team capacity & balance guard scales cleanly to 35-student classrooms', () => {
+  // 2-team 35-student class should allow 18 per team (not capped at 10)
+  assert.equal(resolveTeamMaxCapacity(35, 2), 18);
+  // 4-team classroom keeps minimum floor of 10 per team
+  assert.equal(resolveTeamMaxCapacity(35, 4), 10);
+
+  // Team Red with 10 of 18 players while Team White has 9 should NOT be marked full
+  assert.equal(
+    isTeamSelectionFull({
+      teamCountForTeam: 10,
+      minCount: 9,
+      totalPlayers: 19,
+      teamCount: 2,
+      classSize: 35,
+    }),
+    false
+  );
+
+  // Stacking rule still locks a team >= minCount + 2 once >= 8 students have joined
+  assert.equal(
+    isTeamSelectionFull({
+      teamCountForTeam: 6,
+      minCount: 4,
+      totalPlayers: 10,
+      teamCount: 2,
+      classSize: 35,
+    }),
+    true
+  );
+
+  // At full 2-team capacity (18), team locks cleanly
+  assert.equal(
+    isTeamSelectionFull({
+      teamCountForTeam: 18,
+      minCount: 17,
+      totalPlayers: 35,
+      teamCount: 2,
+      classSize: 35,
+    }),
+    true
+  );
+});
+
+test('resolveQuestionScopedAnswer prevents previous-question lastAnswer leakage', () => {
+  const staleLast = {
+    questionIndex: 0,
+    optionId: 'opt_1',
+    isCorrect: true,
+    pointsEarned: 1000,
+    timeTakenMs: 900,
+  };
+
+  // Querying Q1 when only Q0 exists returns undefined (does not leak Q0 result)
+  assert.equal(
+    resolveQuestionScopedAnswer({
+      answers: { 0: staleLast },
+      lastAnswer: staleLast,
+      questionIndex: 1,
+    }),
+    undefined
+  );
+
+  // Untrusted legacy lastAnswer without questionIndex cannot masquerade as Q1
+  const untaggedLast = {
+    optionId: 'opt_1',
+    isCorrect: true,
+    pointsEarned: 950,
+    timeTakenMs: 1100,
+  };
+  assert.equal(
+    resolveQuestionScopedAnswer({
+      answers: {},
+      lastAnswer: untaggedLast,
+      questionIndex: 1,
+    }),
+    undefined
+  );
+
+  // Timeout answer record on Q1 is found and distinguishable by empty optionId
+  const timeoutRecord = {
+    questionIndex: 1,
+    optionId: '',
+    isCorrect: false,
+    pointsEarned: 0,
+    timeTakenMs: 15000,
+  };
+  const resolved = resolveQuestionScopedAnswer({
+    answers: { 0: staleLast, 1: timeoutRecord },
+    lastAnswer: staleLast,
+    questionIndex: 1,
+  });
+  assert.equal(resolved?.optionId, '');
+  assert.equal(resolved?.isCorrect, false);
+});
+
+test('computeTugOfWarSweepsRemaining computes pulls across center and never returns 0 before ±100', () => {
+  // Trailing Red team when White is ahead (+50) needs 150 displacement units at step 20 => 8 pulls
+  assert.equal(
+    computeTugOfWarSweepsRemaining({
+      displacement: 50,
+      sensitivity: 20,
+      activeTeamCount: 1,
+      team: 'team_red',
+    }),
+    8
+  );
+
+  // Nearly swept at -99 still needs 1 pull (not 0 from rounding down)
+  assert.equal(
+    computeTugOfWarSweepsRemaining({
+      displacement: -99,
+      sensitivity: 20,
+      activeTeamCount: 10,
+      team: 'team_red',
+    }),
+    1
+  );
+
+  // Already swept returns 0
+  assert.equal(
+    computeTugOfWarSweepsRemaining({
+      displacement: -100,
+      sensitivity: 20,
+      activeTeamCount: 10,
+      team: 'team_red',
+    }),
+    0
+  );
+  assert.equal(
+    computeTugOfWarSweepsRemaining({
+      displacement: 100,
+      sensitivity: 20,
+      activeTeamCount: 10,
+      team: 'team_white',
+    }),
+    0
+  );
+});
+
 
 
 

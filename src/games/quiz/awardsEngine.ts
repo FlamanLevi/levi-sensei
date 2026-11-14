@@ -371,11 +371,14 @@ export function calculateClassroomAwards(
     // 🌈 Rainbow Master
     const rainbowHolders = players.filter(p => {
       const colorsPicked = new Set(
-        getValidAnswers(p).map(a => {
-          const q = questions[a.questionIndex % questions.length];
-          const opt = q?.options.find(o => o.id === a.optionId);
-          return opt?.color;
-        }).filter(Boolean)
+        getValidAnswers(p)
+          .filter(a => a.isCorrect)
+          .map(a => {
+            const q = questions[a.questionIndex % questions.length];
+            const opt = q?.options.find(o => o.id === a.optionId);
+            return opt?.color;
+          })
+          .filter(Boolean)
       );
       return colorsPicked.size === 4;
     }).map(p => p.nickname);

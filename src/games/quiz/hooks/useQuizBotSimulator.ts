@@ -1,5 +1,6 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { QuizRoomState, QuizQuestion, QuizPlayer, TeamId, RAINBOW_TEAM_ORDER } from '../types';
+import { advanceTamaireThrowStep, TamaireThrowActionStep } from '../core/quizEngine';
 import { KART_THEME_LIST } from '@/games/suzuka_grand_prix/kartPresets';
 import { SUZUKA_CIRCUIT_LENGTH_METERS } from '@/games/suzuka_grand_prix/engine/Suzuka3DEngine';
 import { ensureAnonymousAuth } from '@/services/firebase';
@@ -37,6 +38,7 @@ interface BotSprintState {
   speedKmh: number;
   distanceMeters: number;
   lastTickMs: number;
+  tamaireStep: TamaireThrowActionStep;
 }
 
 export function useQuizBotSimulator({
@@ -376,6 +378,7 @@ export function useQuizBotSimulator({
           speedKmh: bot.speedKmh || 0,
           distanceMeters: bot.distanceMeters || 0,
           lastTickMs: nowMs,
+          tamaireStep: 0,
           // [ANTIGRAVITY REFACTOR]: Per-bot next answer timestamp inside the shared 5 Hz loop
           nextAnswerDueAtMs: Math.max(nowMs, greenFlagTime) + sampleBotIntervalMs(botDiff)
         } as BotSprintState & { nextAnswerDueAtMs: number });
@@ -431,8 +434,8 @@ export function useQuizBotSimulator({
           if (nowMs < dueAt) continue;
 
           const botDiff = bot.botDifficulty || 'normal';
-          botState.nextAnswerDueAtMs = nowMs + sampleBotIntervalMs(botDiff);
-
+          const botIntervalMs = sampleBotIntervalMs(botDiff);
+          botState.nextAnswerDueAtMs = nowMs + botIntervalMs;
 
           const dtSec = Math.max(0.2, Math.min(4.0, (nowMs - botState.lastTickMs) / 1000));
           botState.lastTickMs = nowMs;
@@ -445,7 +448,24 @@ export function useQuizBotSimulator({
 
           const sprintAccuracy = botDiff === 'chill' ? 0.65 : botDiff === 'fast' ? 0.95 : 0.85;
           const isCorrect = Math.random() < sprintAccuracy;
-          if (isCorrect) {
+          if (isVolleyball) {
+            const stepResult = advanceTamaireThrowStep({
+              currentStep: botState.tamaireStep ?? 0,
+              isCorrect,
+              previousStreak: botState.streak,
+              timeTakenMs: Math.round(botIntervalMs),
+            });
+            botState.tamaireStep = stepResult.nextStep;
+            botState.streak = stepResult.newStreak;
+            if (botState.streak > botState.maxStreak) {
+              botState.maxStreak = botState.streak;
+            }
+            botState.correctCount += stepResult.bagsThrown;
+            botState.score += stepResult.pointsEarned;
+            if (stepResult.bagsThrown > 0) {
+              botState.progress += 1;
+            }
+          } else if (isCorrect) {
             botState.progress += 1;
             botState.streak += 1;
             if (botState.streak > botState.maxStreak) {

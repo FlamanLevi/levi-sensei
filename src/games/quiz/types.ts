@@ -65,7 +65,7 @@ export interface SprintSettings {
   // ==========================================================================
   // [ANTIGRAVITY REFACTOR]: Enforced GEMINI.md §7 Mandatory >= 2.5s Lockout Floor
   // WHAT CHANGED: Updated wrongLockoutSeconds documentation and runtime clamping
-  // in `resolveLockoutPenaltySeconds` / `QuizStudentGrandPrix3D` / `QuizStudentSprint`.
+  // in `resolveLockoutPenaltySeconds` / `QuizStudentGrandPrix3D`.
   // WHY: Previously documented as `0, 0.5, 1.0 (default 1s)`, which violated
   // GEMINI.md §7 ("In competitive speed games, incorrect choices MUST incur at
   // least a 2.5s Pit Stop lockout penalty so guessing is mathematically slower
@@ -208,6 +208,7 @@ export interface QuizPlayer {
   joinedAt: number;
   answers: Record<number, PlayerAnswerRecord>;
   lastAnswer?: {
+    questionIndex?: number;
     optionId: string;
     isCorrect: boolean;
     pointsEarned: number;
@@ -333,6 +334,7 @@ export interface QuizRoomState {
   volleyballStartTime?: number;
   volleyballFinished?: boolean;
   volleyballLiveState?: VolleyballLiveState;
+  winningTeam?: TeamId | 'draw';
   questions?: QuizQuestion[];
   raceStartTime?: number;
   raceDurationSeconds?: number;

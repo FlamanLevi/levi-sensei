@@ -31,6 +31,7 @@ import { computeSessionAnalytics, persistSessionAnalytics } from '@/services/ana
 import { getSavedStudentProfile } from '@/services/studentProfile';
 import { getSavedKartTheme } from '@/games/suzuka_grand_prix/kartPresets';
 import { depositClassEnergy } from '@/services/classVault';
+import { getClassSize } from '@/types/roster';
 // ============================================================================
 // [ANTIGRAVITY REFACTOR]: Import Pure Engine Throttler & Aggregators
 // ============================================================================
@@ -38,6 +39,8 @@ import {
   createRtdbWriteThrottler,
   computeTroubleWordsMap,
   reconcileTeamScores,
+  assignTeamsForNewRound,
+  isTeamSelectionFull,
   ThrottlerController
 } from './core/quizEngine';
 
@@ -58,15 +61,15 @@ interface UseQuizRoomReturn {
   startTugOfWar: () => Promise<void>;
   nextTugOfWarRound: (newWins: { team_red: number; team_white: number }, nextRoundNumber: number, baselinePulls: Record<string, number>) => Promise<void>;
   freezeTugOfWar: () => Promise<void>;
-  endTugOfWar: (awards?: any[]) => Promise<void>;
+  endTugOfWar: (awards?: any[], winningTeam?: TeamId | 'draw') => Promise<void>;
   startVolleyball: () => Promise<void>;
   freezeVolleyball: () => Promise<void>;
-  endVolleyball: (awards?: any[]) => Promise<void>;
+  endVolleyball: (awards?: any[], winningTeam?: TeamId | 'draw') => Promise<void>;
   closeRoom: () => Promise<void>;
   kickPlayer: (playerId: string) => Promise<void>;
   changePlayerTeam: (playerId: string, newTeamId: TeamId) => Promise<void>;
   toggleEyesUp: (forcedState?: boolean) => Promise<void>;
-  resetRoomForNewRound: (newQuestions: QuizQuestion[], keepSettings?: boolean, updatedSettings?: Partial<QuizHostSettings>) => Promise<boolean>;
+  resetRoomForNewRound: (newQuestions: QuizQuestion[], keepSettings?: boolean, updatedSettings?: Partial<QuizHostSettings> & { grade?: string; unit?: string }) => Promise<boolean>;
   // Student functions
   joinRoom: (code: string, nickname: string, teamId?: TeamId, attendanceNumber?: number) => Promise<{ success: boolean; playerId?: string; error?: string }>;
   updateKartTheme: (themeId: string) => Promise<void>;
@@ -186,6 +189,21 @@ function sanitizeQuestionsForPublicRoom(
     return questions;
   }
   return questions.map(({ correctOptionId: _correct, distractorOptionIds: _distractors, ...rest }) => rest);
+}
+
+function isClassRecordableRoom(
+  r: Partial<QuizRoomState> | null | undefined,
+  code: string | null | undefined
+): boolean {
+  return Boolean(
+    r?.schoolId &&
+    r?.classId &&
+    r.classId !== 'TEST' &&
+    !r.isStudentHost &&
+    !r.isTestGame &&
+    r.recordRoster !== false &&
+    !(code && code.startsWith('9'))
+  );
 }
 
 export function useQuizRoom(
@@ -449,6 +467,10 @@ export function useQuizRoom(
   useEffect(() => {
     const throttlers = studentSpokeThrottlersRef.current;
     return () => {
+      if (closeRoomTimerRef.current) {
+        clearTimeout(closeRoomTimerRef.current);
+        closeRoomTimerRef.current = null;
+      }
       throttlers.forEach((t) => t.dispose());
       throttlers.clear();
     };
@@ -505,6 +527,11 @@ export function useQuizRoom(
       const isTug = settings.gamePlayType === 'TUG_OF_WAR';
       const isVolleyball = settings.gamePlayType === 'VOLLEYBALL';
       const isVolleyballVs = isVolleyball && (!settings.volleyballSettings || settings.volleyballSettings.gameStyle === 'TEAM_VS');
+      const effectiveMode: GameMode = (isTug || isVolleyballVs)
+        ? 'TEAM'
+        : (isVolleyball && settings.volleyballSettings?.gameStyle === 'COOP_RALLY')
+          ? 'INDIVIDUAL'
+          : settings.gameMode;
       const activeTeams: TeamId[] = (isTug || isVolleyballVs)
         ? ['team_red', 'team_white']
         : (settings.activeTeams && settings.activeTeams.length >= 2
@@ -512,21 +539,23 @@ export function useQuizRoom(
           : (settings.teamCount === 2 ? ['team_red', 'team_white'] : RAINBOW_TEAM_ORDER.slice(0, settings.teamCount || 2)));
 
       const initialTeamScores: Partial<Record<TeamId, any>> = {};
-      activeTeams.forEach(tId => {
-        const preset = TEAM_PRESETS[tId];
-        if (preset) {
-          initialTeamScores[tId] = {
-            name: preset.name,
-            jaName: preset.jaName,
-            score: 0,
-            correctCount: 0,
-            memberCount: 0,
-            averageScore: 0,
-            color: preset.color,
-            emoji: preset.emoji
-          };
-        }
-      });
+      if (effectiveMode === 'TEAM') {
+        activeTeams.forEach(tId => {
+          const preset = TEAM_PRESETS[tId];
+          if (preset) {
+            initialTeamScores[tId] = {
+              name: preset.name,
+              jaName: preset.jaName,
+              score: 0,
+              correctCount: 0,
+              memberCount: 0,
+              averageScore: 0,
+              color: preset.color,
+              emoji: preset.emoji
+            };
+          }
+        });
+      }
 
       const initialRoom: QuizRoomState = {
         code,
@@ -545,10 +574,10 @@ export function useQuizRoom(
         recordRoster: settings.recordRoster !== false && !settings.isStudentHost && !settings.isTestGame && settings.classId !== 'TEST' && !code.startsWith('9'),
         isStudentHost: !!settings.isStudentHost,
         isTestGame: !!settings.isTestGame || settings.classId === 'TEST' || code.startsWith('9'),
-        mode: settings.gameMode,
+        mode: effectiveMode,
         teamAssignment: settings.teamAssignment || 'AUTO_BALANCE',
-        teamCount: settings.teamCount || activeTeams.length,
-        activeTeams,
+        teamCount: effectiveMode === 'TEAM' ? (settings.teamCount || activeTeams.length) : 2,
+        activeTeams: effectiveMode === 'TEAM' ? activeTeams : [],
         deliveryStream: settings.deliveryStream,
         ipadDisplayMode: settings.ipadDisplayMode,
         awardToggles: settings.awardToggles,
@@ -581,7 +610,7 @@ export function useQuizRoom(
       await safeSet(`rooms/${code}`, initialRoom);
       await safeSet(`hostSessions/${code}/questions`, questions);
 
-      if (settings.schoolId && settings.classId && !settings.isStudentHost) {
+      if (settings.schoolId && settings.classId && !settings.isStudentHost && !initialRoom.isTestGame && settings.classId !== 'TEST') {
         const teacherRoomSummary = {
           code,
           gamePlayType: settings.gamePlayType || 'KAHOOT',
@@ -613,15 +642,18 @@ export function useQuizRoom(
     soundEffects.playFanfare();
     await ensureAnonymousAuth();
 
+    let snap: QuizRoomState | null = null;
     let sessionAnalytics: SessionAnalytics | undefined;
     try {
-      const snap = await safeGet<QuizRoomState>(`rooms/${roomCode}`);
+      snap = await safeGet<QuizRoomState>(`rooms/${roomCode}`);
       if (snap) {
         const rawQ = await getAuthoritativeQuestions();
         const questionsList = [...rawQ].sort((a, b) => (a.questionIndex ?? 0) - (b.questionIndex ?? 0));
         const roomDurationSec = snap.raceStartTime ? Math.max(1, Math.round((getServerTime() - snap.raceStartTime) / 1000)) : 300;
         sessionAnalytics = computeSessionAnalytics(snap, questionsList, roomDurationSec);
-        await persistSessionAnalytics(sessionAnalytics);
+        if (isClassRecordableRoom(snap, roomCode)) {
+          await persistSessionAnalytics(sessionAnalytics);
+        }
       }
     } catch (aErr) {
       console.warn('Error computing Kahoot session analytics:', aErr);
@@ -634,17 +666,18 @@ export function useQuizRoom(
     if (awards && awards.length > 0) {
       updateData.awardedBadges = awards;
     }
-    const currentRoom = roomRef.current || room;
+    const currentRoom = snap || roomRef.current;
     if (currentRoom?.schoolId && currentRoom?.classId && !currentRoom?.isStudentHost) {
-      try {
-        const snap = await safeGet<QuizRoomState>(`rooms/${roomCode}`);
-        const totalPoints = Object.values(snap?.players || {}).reduce((sum, p) => sum + (p.score || 0), 0);
-        depositClassEnergy(currentRoom.schoolId, currentRoom.classId, totalPoints, roomCode).catch(() => {});
-      } catch {}
+      if (isClassRecordableRoom(currentRoom, roomCode)) {
+        try {
+          const totalPoints = Object.values(currentRoom?.players || {}).reduce((sum, p) => sum + (p.score || 0), 0);
+          depositClassEnergy(currentRoom.schoolId, currentRoom.classId, totalPoints, roomCode).catch(() => {});
+        } catch {}
+      }
       clearClassRoomPointers(currentRoom.schoolId, currentRoom.classId, roomCode).catch(() => {});
     }
     await safeUpdate(`rooms/${roomCode}`, updateData);
-  }, [roomCode, getAuthoritativeQuestions, room?.schoolId, room?.classId]);
+  }, [roomCode, getAuthoritativeQuestions]);
 
   // Host: Send next question (cleans responses node and local responses state)
   const nextQuestion = useCallback(async (index: number) => {
@@ -703,8 +736,9 @@ export function useQuizRoom(
 
   // Host: Reveal Answer and calculate scores
   const revealAnswer = useCallback(async () => {
-    if (!roomCode || !room || !room.currentQuestion) return;
-    if (isRevealingRef.current || room.status !== 'QUESTION') return;
+    const activeRoom = roomRef.current;
+    if (!roomCode || !activeRoom || !activeRoom.currentQuestion) return;
+    if (isRevealingRef.current || activeRoom.status !== 'QUESTION') return;
     isRevealingRef.current = true;
 
     soundEffects.playReveal();
@@ -714,12 +748,17 @@ export function useQuizRoom(
       // 350ms Wi-Fi flush buffer so student answers tapped at 0.0s arrive before grading
       await new Promise(resolve => setTimeout(resolve, 350));
 
+      const freshRoom = roomRef.current || activeRoom;
+      const currentQuestionIdx = freshRoom.currentQuestionIndex;
+      const activeQuestion = freshRoom.currentQuestion || activeRoom.currentQuestion;
+      if (!activeQuestion) return;
+
       const rawQuestions = await getAuthoritativeQuestions();
-      const targetQuestion = rawQuestions.find(q => q.questionIndex === room.currentQuestionIndex) || rawQuestions[room.currentQuestionIndex];
-      let targetId = targetQuestion?.correctOptionId || room.currentQuestion.correctOptionId || '';
-      if (!targetId && room.currentQuestion.targetWordEnglish) {
-        const matchingOption = room.currentQuestion.options.find(
-          o => o.english?.trim().toLowerCase() === room.currentQuestion?.targetWordEnglish?.trim().toLowerCase()
+      const targetQuestion = rawQuestions.find(q => q.questionIndex === currentQuestionIdx) || rawQuestions[currentQuestionIdx];
+      let targetId = targetQuestion?.correctOptionId || activeQuestion.correctOptionId || '';
+      if (!targetId && activeQuestion.targetWordEnglish) {
+        const matchingOption = activeQuestion.options.find(
+          o => o.english?.trim().toLowerCase() === activeQuestion?.targetWordEnglish?.trim().toLowerCase()
         );
         if (matchingOption) {
           targetId = matchingOption.id;
@@ -735,9 +774,9 @@ export function useQuizRoom(
       const responses = { ...legacyResponses, ...decoupledResponses };
       const players = playersRaw || {};
 
-      const teamScores = { ...room.teamScores };
-      const timeLimitMs = (room.currentQuestion.timeLimitMs && room.currentQuestion.timeLimitMs > 0)
-        ? room.currentQuestion.timeLimitMs
+      const teamScores = { ...freshRoom.teamScores };
+      const timeLimitMs = (activeQuestion.timeLimitMs && activeQuestion.timeLimitMs > 0)
+        ? activeQuestion.timeLimitMs
         : 15000;
 
       let totalAnswers = 0;
@@ -772,7 +811,7 @@ export function useQuizRoom(
             if (streak > maxStreak) maxStreak = streak;
             if (safeTimeTaken < fastestTime) fastestTime = safeTimeTaken;
 
-            const recallDelayMs = (room.recallDelaySeconds || 0) * 1000;
+            const recallDelayMs = (freshRoom.recallDelaySeconds || 0) * 1000;
             const activeWindowMs = Math.max(1000, timeLimitMs - recallDelayMs);
             const effectiveTimeTakenMs = Math.max(0, safeTimeTaken - recallDelayMs);
             const speedRatio = Math.max(0, Math.min(1, 1 - (effectiveTimeTakenMs / activeWindowMs)));
@@ -793,8 +832,8 @@ export function useQuizRoom(
             incorrectAnswers++;
           }
 
-          playerAnswers[room.currentQuestionIndex] = {
-            questionIndex: room.currentQuestionIndex,
+          playerAnswers[currentQuestionIdx] = {
+            questionIndex: currentQuestionIdx,
             optionId: resp.answerId,
             isCorrect,
             timeTakenMs: safeTimeTaken,
@@ -804,8 +843,8 @@ export function useQuizRoom(
           streak = 0;
           totalAnswered++;
           incorrectAnswers++;
-          playerAnswers[room.currentQuestionIndex] = {
-            questionIndex: room.currentQuestionIndex,
+          playerAnswers[currentQuestionIdx] = {
+            questionIndex: currentQuestionIdx,
             optionId: '',
             isCorrect: false,
             timeTakenMs: timeLimitMs,
@@ -823,19 +862,26 @@ export function useQuizRoom(
           fastestTimeMs: fastestTime,
           answers: playerAnswers,
           lastAnswer: (resp && resp.answerId) ? {
+            questionIndex: currentQuestionIdx,
             optionId: resp.answerId,
             isCorrect,
             pointsEarned,
             timeTakenMs: (typeof resp.timeTakenMs === 'number' && !isNaN(resp.timeTakenMs)) ? resp.timeTakenMs : timeLimitMs
-          } : undefined
+          } : {
+            questionIndex: currentQuestionIdx,
+            optionId: '',
+            isCorrect: false,
+            pointsEarned: 0,
+            timeTakenMs: timeLimitMs
+          }
         };
       });
 
-      if (room.mode === 'TEAM') {
-        const isTug = room.gamePlayType === 'TUG_OF_WAR';
+      if (freshRoom.mode === 'TEAM') {
+        const isTug = freshRoom.gamePlayType === 'TUG_OF_WAR';
         const teamIds: TeamId[] = isTug
           ? ['team_red', 'team_white']
-          : (room.activeTeams || (room.teamCount === 2 ? ['team_red', 'team_white'] : RAINBOW_TEAM_ORDER.slice(0, room.teamCount || 2)));
+          : (freshRoom.activeTeams || (freshRoom.teamCount === 2 ? ['team_red', 'team_white'] : RAINBOW_TEAM_ORDER.slice(0, freshRoom.teamCount || 2)));
         teamIds.forEach((tId) => {
           if (!teamScores[tId]) return;
           const teamMembers = Object.values(updatedPlayers).filter(p => p.teamId === tId);
@@ -843,7 +889,7 @@ export function useQuizRoom(
           teamScores[tId].memberCount = mCount;
 
           let cumulativeAvg = 0;
-          for (let q = 0; q <= room.currentQuestionIndex; q++) {
+          for (let q = 0; q <= currentQuestionIdx; q++) {
             const roundParticipants = teamMembers.filter(p => p.answers && p.answers[q] !== undefined);
             if (roundParticipants.length > 0) {
               const roundSum = roundParticipants.reduce((sum, p) => sum + (p.answers[q]?.pointsEarned || 0), 0);
@@ -862,13 +908,13 @@ export function useQuizRoom(
         });
       }
 
-      const troubleWords = { ...(room.troubleWords || {}) };
+      const troubleWords = { ...(freshRoom.troubleWords || {}) };
       if (totalAnswers > 0 && (incorrectAnswers / totalAnswers) >= 0.5) {
-        troubleWords[room.currentQuestion.targetWordId] = {
-          english: room.currentQuestion.isMath ? room.currentQuestion.promptText : room.currentQuestion.targetWordEnglish,
-          ja: room.currentQuestion.isMath ? (room.currentQuestion.targetWordJa || `正解: ${room.currentQuestion.targetWordEnglish}`) : room.currentQuestion.targetWordJa,
-          image: room.currentQuestion.promptImage,
-          sound: room.currentQuestion.isMath ? undefined : room.currentQuestion.promptSound,
+        troubleWords[activeQuestion.targetWordId] = {
+          english: activeQuestion.isMath ? activeQuestion.promptText : activeQuestion.targetWordEnglish,
+          ja: activeQuestion.isMath ? (activeQuestion.targetWordJa || `正解: ${activeQuestion.targetWordEnglish}`) : activeQuestion.targetWordJa,
+          image: activeQuestion.promptImage,
+          sound: activeQuestion.isMath ? undefined : activeQuestion.promptSound,
           incorrectCount: incorrectAnswers,
           totalCount: totalAnswers
         };
@@ -887,7 +933,7 @@ export function useQuizRoom(
     } finally {
       isRevealingRef.current = false;
     }
-  }, [roomCode, room]);
+  }, [roomCode, getAuthoritativeQuestions]);
 
   // Host: Show Leaderboard
   const showLeaderboard = useCallback(async () => {
@@ -906,8 +952,9 @@ export function useQuizRoom(
     try {
       await ensureAnonymousAuth();
       livePlayersRef.current = {};
-      const duration = settingsRef.current?.sprintSettings?.timeLimitSeconds || room?.sprintSettings?.timeLimitSeconds || 60;
-      const modeType = settingsRef.current?.gamePlayType || room?.gamePlayType;
+      const activeRoom = roomRef.current;
+      const duration = settingsRef.current?.sprintSettings?.timeLimitSeconds || activeRoom?.sprintSettings?.timeLimitSeconds || 60;
+      const modeType = settingsRef.current?.gamePlayType || activeRoom?.gamePlayType;
       const targetStatus: QuizRoomState['status'] =
         modeType === 'SPRINT_RACE' ? 'SPRINT_RACE' : 'GRAND_PRIX_3D';
       
@@ -924,7 +971,7 @@ export function useQuizRoom(
     } catch (err: any) {
       console.error("Error starting sprint race:", err);
     }
-  }, [roomCode, room?.sprintSettings, room?.gamePlayType]);
+  }, [roomCode]);
 
   // Host: Trigger 20s/30s grace countdown
   const triggerSprintGraceCountdown = useCallback(async () => {
@@ -1074,7 +1121,9 @@ export function useQuizRoom(
           questions: sprintQuestions
         } as QuizRoomState;
         sessionAnalytics = computeSessionAnalytics(roomForAnalytics, sprintQuestions, roomDurationSec);
-        await persistSessionAnalytics(sessionAnalytics);
+        if (isClassRecordableRoom(roomVal, roomCode)) {
+          await persistSessionAnalytics(sessionAnalytics);
+        }
       } catch (aErr) {
         console.warn('Error computing sprint session analytics:', aErr);
       }
@@ -1093,10 +1142,12 @@ export function useQuizRoom(
         updateData.awardedBadges = awards;
       }
       if (roomVal?.schoolId && roomVal?.classId && !roomVal?.isStudentHost) {
-        try {
-          const totalPoints = (playerList || []).reduce((sum, p) => sum + (p.score || 0), 0);
-          depositClassEnergy(roomVal.schoolId, roomVal.classId, totalPoints, roomCode).catch(() => {});
-        } catch {}
+        if (isClassRecordableRoom(roomVal, roomCode)) {
+          try {
+            const totalPoints = (playerList || []).reduce((sum, p) => sum + (p.score || 0), 0);
+            depositClassEnergy(roomVal.schoolId, roomVal.classId, totalPoints, roomCode).catch(() => {});
+          } catch {}
+        }
         clearClassRoomPointers(roomVal.schoolId, roomVal.classId, roomCode).catch(() => {});
       }
       await safeUpdate(`rooms/${roomCode}`, updateData);
@@ -1113,7 +1164,10 @@ export function useQuizRoom(
       await ensureAnonymousAuth();
       livePlayersRef.current = {};
       await safeRemove(`roomPlayers/${roomCode}`).catch(() => {});
-      const duration = settingsRef.current?.tugOfWarSettings?.timeLimitSeconds || room?.tugOfWarSettings?.timeLimitSeconds || 60;
+      const duration =
+        settingsRef.current?.tugOfWarSettings?.timeLimitSeconds ||
+        roomRef.current?.tugOfWarSettings?.timeLimitSeconds ||
+        60;
       soundEffects.playWhistle(0.8);
       await safeUpdate(`rooms/${roomCode}`, {
         status: 'TUG_OF_WAR',
@@ -1128,7 +1182,7 @@ export function useQuizRoom(
     } catch (err: any) {
       console.error("Error starting tug of war:", err);
     }
-  }, [roomCode, room?.tugOfWarSettings]);
+  }, [roomCode]);
 
   // Host: Start Next Tug of War Round (in multi-round series)
   const nextTugOfWarRound = useCallback(async (
@@ -1145,7 +1199,7 @@ export function useQuizRoom(
         safeGet<Record<string, QuizPlayer>>(`rooms/${roomCode}/players`),
         safeGet<Record<string, Partial<QuizPlayer>>>(`roomPlayers/${roomCode}`)
       ]);
-      const preservedPlayers = mergeLivePlayers(basePlayers || room?.players || {}, livePlayers || livePlayersRef.current || {});
+      const preservedPlayers = mergeLivePlayers(basePlayers || roomRef.current?.players || {}, livePlayers || livePlayersRef.current || {});
 
       // Ensure baselinePulls reflects the authoritative merged correctCount for every player
       const authoritativeBaselines: Record<string, number> = { ...baselinePulls };
@@ -1158,7 +1212,10 @@ export function useQuizRoom(
 
       livePlayersRef.current = {};
       await safeRemove(`roomPlayers/${roomCode}`).catch(() => {});
-      const duration = settingsRef.current?.tugOfWarSettings?.timeLimitSeconds || room?.tugOfWarSettings?.timeLimitSeconds || 60;
+      const duration =
+        settingsRef.current?.tugOfWarSettings?.timeLimitSeconds ||
+        roomRef.current?.tugOfWarSettings?.timeLimitSeconds ||
+        60;
       soundEffects.playWhistle(0.8);
       await safeUpdate(`rooms/${roomCode}`, {
         status: 'TUG_OF_WAR',
@@ -1174,7 +1231,7 @@ export function useQuizRoom(
     } catch (err: any) {
       console.error("Error starting next tug of war round:", err);
     }
-  }, [roomCode, room?.tugOfWarSettings, room?.players]);
+  }, [roomCode]);
 
   // Host: Freeze Tug of War when time expires or early sweep happens
   const freezeTugOfWar = useCallback(async () => {
@@ -1190,7 +1247,7 @@ export function useQuizRoom(
   }, [roomCode]);
 
   // Host: End Tug of War (Deduplicated via computeTroubleWordsMap & reconcileTeamScores)
-  const endTugOfWar = useCallback(async (awards?: any[]) => {
+  const endTugOfWar = useCallback(async (awards?: any[], winningTeam?: TeamId | 'draw') => {
     if (!roomCode) return;
     soundEffects.playWhistle(1.2);
     soundEffects.playFanfare();
@@ -1229,7 +1286,9 @@ export function useQuizRoom(
           questions: modeQuestions
         } as QuizRoomState;
         sessionAnalytics = computeSessionAnalytics(roomForAnalytics, modeQuestions, roomDurationSec);
-        await persistSessionAnalytics(sessionAnalytics);
+        if (isClassRecordableRoom(roomVal, roomCode)) {
+          await persistSessionAnalytics(sessionAnalytics);
+        }
       } catch (aErr) {
         console.warn('Error computing tug of war session analytics:', aErr);
       }
@@ -1239,7 +1298,8 @@ export function useQuizRoom(
         players,
         activeTeams: ['team_red', 'team_white'],
         teamScores: sanitizedTeamScores,
-        troubleWords
+        troubleWords,
+        winningTeam: winningTeam || null
       };
       if (sessionAnalytics) {
         updateData.analytics = sessionAnalytics;
@@ -1248,10 +1308,12 @@ export function useQuizRoom(
         updateData.awardedBadges = awards;
       }
       if (roomVal?.schoolId && roomVal?.classId && !roomVal?.isStudentHost) {
-        try {
-          const totalPoints = (playerList || []).reduce((sum, p) => sum + (p.score || 0), 0);
-          depositClassEnergy(roomVal.schoolId, roomVal.classId, totalPoints, roomCode).catch(() => {});
-        } catch {}
+        if (isClassRecordableRoom(roomVal, roomCode)) {
+          try {
+            const totalPoints = (playerList || []).reduce((sum, p) => sum + (p.score || 0), 0);
+            depositClassEnergy(roomVal.schoolId, roomVal.classId, totalPoints, roomCode).catch(() => {});
+          } catch {}
+        }
         clearClassRoomPointers(roomVal.schoolId, roomVal.classId, roomCode).catch(() => {});
       }
       await safeUpdate(`rooms/${roomCode}`, updateData);
@@ -1268,7 +1330,10 @@ export function useQuizRoom(
       await ensureAnonymousAuth();
       livePlayersRef.current = {};
       await safeRemove(`roomPlayers/${roomCode}`).catch(() => {});
-      const duration = settingsRef.current?.volleyballSettings?.timeLimitSeconds || room?.volleyballSettings?.timeLimitSeconds || 60;
+      const duration =
+        settingsRef.current?.volleyballSettings?.timeLimitSeconds ||
+        roomRef.current?.volleyballSettings?.timeLimitSeconds ||
+        60;
       soundEffects.playWhistle(0.8);
       await safeUpdate(`rooms/${roomCode}`, {
         status: 'VOLLEYBALL',
@@ -1280,7 +1345,7 @@ export function useQuizRoom(
     } catch (err: any) {
       console.error("Error starting volleyball:", err);
     }
-  }, [roomCode, room?.volleyballSettings]);
+  }, [roomCode]);
 
   // Host: Freeze Volleyball
   const freezeVolleyball = useCallback(async () => {
@@ -1296,7 +1361,7 @@ export function useQuizRoom(
   }, [roomCode]);
 
   // Host: End Volleyball (Deduplicated via computeTroubleWordsMap & reconcileTeamScores)
-  const endVolleyball = useCallback(async (awards?: any[]) => {
+  const endVolleyball = useCallback(async (awards?: any[], winningTeam?: TeamId | 'draw') => {
     if (!roomCode) return;
     soundEffects.playWhistle(1.2);
     soundEffects.playFanfare();
@@ -1337,7 +1402,9 @@ export function useQuizRoom(
           questions: modeQuestions
         } as QuizRoomState;
         sessionAnalytics = computeSessionAnalytics(roomForAnalytics, modeQuestions, roomDurationSec);
-        await persistSessionAnalytics(sessionAnalytics);
+        if (isClassRecordableRoom(roomVal, roomCode)) {
+          await persistSessionAnalytics(sessionAnalytics);
+        }
       } catch (aErr) {
         console.warn('Error computing volleyball session analytics:', aErr);
       }
@@ -1346,7 +1413,8 @@ export function useQuizRoom(
         status: 'GAME_OVER',
         players,
         teamScores: sanitizedTeamScores,
-        troubleWords
+        troubleWords,
+        winningTeam: winningTeam || null
       };
       if (sessionAnalytics) {
         updateData.analytics = sessionAnalytics;
@@ -1355,10 +1423,12 @@ export function useQuizRoom(
         updateData.awardedBadges = awards;
       }
       if (roomVal?.schoolId && roomVal?.classId && !roomVal?.isStudentHost) {
-        try {
-          const totalPoints = (playerList || []).reduce((sum, p) => sum + (p.score || 0), 0);
-          depositClassEnergy(roomVal.schoolId, roomVal.classId, totalPoints, roomCode).catch(() => {});
-        } catch {}
+        if (isClassRecordableRoom(roomVal, roomCode)) {
+          try {
+            const totalPoints = (playerList || []).reduce((sum, p) => sum + (p.score || 0), 0);
+            depositClassEnergy(roomVal.schoolId, roomVal.classId, totalPoints, roomCode).catch(() => {});
+          } catch {}
+        }
         clearClassRoomPointers(roomVal.schoolId, roomVal.classId, roomCode).catch(() => {});
       }
       await safeUpdate(`rooms/${roomCode}`, updateData);
@@ -1371,7 +1441,7 @@ export function useQuizRoom(
   const resetRoomForNewRound = useCallback(async (
     newQuestions: QuizQuestion[],
     keepSettings = true,
-    updatedSettings?: Partial<QuizHostSettings>
+    updatedSettings?: Partial<QuizHostSettings> & { grade?: string; unit?: string }
   ): Promise<boolean> => {
     if (!roomCode) return false;
     setLoading(true);
@@ -1445,20 +1515,13 @@ export function useQuizRoom(
         });
       }
 
-      // Assign/balance teams in TEAM mode, or clear teamId when switching back to INDIVIDUAL mode
+      // Preserve existing valid team assignments (manual lobby swaps & student picks) while balancing new/invalid players
+      const memberCounts = assignTeamsForNewRound(resetPlayers, activeTeams, effectiveMode);
       if (effectiveMode === 'TEAM') {
-        const playerEntries = Object.entries(resetPlayers);
-        playerEntries.forEach(([_, p], idx) => {
-          if (activeTeams.length > 0) {
-            p.teamId = activeTeams[idx % activeTeams.length];
-            if (initialTeamScores[p.teamId]) {
-              initialTeamScores[p.teamId].memberCount += 1;
-            }
+        activeTeams.forEach((tId) => {
+          if (initialTeamScores[tId]) {
+            initialTeamScores[tId].memberCount = memberCounts[tId] ?? 0;
           }
-        });
-      } else {
-        Object.values(resetPlayers).forEach((p) => {
-          delete p.teamId;
         });
       }
 
@@ -1506,6 +1569,7 @@ export function useQuizRoom(
         volleyballStartTime: null,
         volleyballFinished: null,
         volleyballLiveState: null,
+        winningTeam: null,
         podiumFinishers: null,
         awardedBadges: null,
         analytics: null,
@@ -1513,6 +1577,8 @@ export function useQuizRoom(
       };
 
       if (updatedSettings) {
+        if (updatedSettings.grade !== undefined) updates.grade = updatedSettings.grade;
+        if (updatedSettings.unit !== undefined) updates.unit = updatedSettings.unit;
         if (updatedSettings.gamePlayType) {
           updates.gamePlayType = updatedSettings.gamePlayType;
           if (updatedSettings.gamePlayType !== 'GRAND_PRIX_3D' && updatedSettings.gamePlayType !== 'SPRINT_RACE') {
@@ -1544,7 +1610,9 @@ export function useQuizRoom(
         if (updatedSettings.englishReadingAid !== undefined) updates.englishReadingAid = updatedSettings.englishReadingAid;
         if (updatedSettings.schoolId !== undefined) updates.schoolId = updatedSettings.schoolId || null;
         if (updatedSettings.classId !== undefined) updates.classId = updatedSettings.classId || null;
-        if (updatedSettings.isTestGame !== undefined) updates.isTestGame = updatedSettings.isTestGame;
+        if (updatedSettings.isTestGame !== undefined) {
+          updates.isTestGame = updatedSettings.isTestGame || updatedSettings.classId === 'TEST' || roomCode.startsWith('9');
+        }
         if (updatedSettings.recordRoster !== undefined) updates.recordRoster = updatedSettings.recordRoster;
         if (updatedSettings.bgm !== undefined) updates.bgm = updatedSettings.bgm;
         if (updatedSettings.vocabularyScope !== undefined) updates.vocabularyScope = updatedSettings.vocabularyScope;
@@ -1564,17 +1632,37 @@ export function useQuizRoom(
 
       await safeUpdate(`rooms/${roomCode}`, updates);
 
-      if (currentRoom?.schoolId && currentRoom?.classId && !currentRoom?.isStudentHost) {
+      const nextSchoolId = updatedSettings?.schoolId !== undefined
+        ? (updatedSettings.schoolId || undefined)
+        : currentRoom?.schoolId;
+      const nextClassId = updatedSettings?.classId !== undefined
+        ? (updatedSettings.classId || undefined)
+        : currentRoom?.classId;
+      const nextIsTestGame = Boolean(
+        updatedSettings?.isTestGame ?? currentRoom?.isTestGame
+      ) || nextClassId === 'TEST' || roomCode.startsWith('9');
+
+      if (
+        currentRoom?.schoolId &&
+        currentRoom?.classId &&
+        currentRoom.classId !== 'TEST' &&
+        !currentRoom?.isStudentHost &&
+        (nextSchoolId !== currentRoom.schoolId || nextClassId !== currentRoom.classId || nextIsTestGame)
+      ) {
+        clearClassRoomPointers(currentRoom.schoolId, currentRoom.classId, roomCode).catch(() => {});
+      }
+
+      if (nextSchoolId && nextClassId && nextClassId !== 'TEST' && !nextIsTestGame && !currentRoom?.isStudentHost) {
         const teacherRoomSummary = {
           code: roomCode,
           gamePlayType: resolvedGamePlayType,
-          unit: currentRoom.unit,
+          unit: updatedSettings?.unit ?? currentRoom?.unit ?? '',
           isTeacher: true,
           updatedAt: serverNow
         };
         await Promise.all([
-          safeSet(`schools/${currentRoom.schoolId}/classes/${currentRoom.classId}/analyticsSummary/teacherRoom`, teacherRoomSummary),
-          safeSet(`schools/${currentRoom.schoolId}/classes/${currentRoom.classId}/analyticsSummary/activeRoom`, teacherRoomSummary)
+          safeSet(`schools/${nextSchoolId}/classes/${nextClassId}/analyticsSummary/teacherRoom`, teacherRoomSummary),
+          safeSet(`schools/${nextSchoolId}/classes/${nextClassId}/analyticsSummary/activeRoom`, teacherRoomSummary)
         ]).catch(() => {});
       }
 
@@ -1593,7 +1681,7 @@ export function useQuizRoom(
     if (!roomCode) return;
     try {
       await ensureAnonymousAuth();
-      const currentRoom = roomRef.current || room;
+      const currentRoom = roomRef.current;
       try {
         sessionStorage.removeItem(`quiz_host_questions_${roomCode}`);
       } catch {}
@@ -1619,27 +1707,28 @@ export function useQuizRoom(
     } catch (err) {
       console.error("Error closing room:", err);
     }
-  }, [roomCode, room?.schoolId, room?.classId]);
+  }, [roomCode]);
 
   // Host: Kick player with atomic team score recalculation
   const kickPlayer = useCallback(async (playerId: string) => {
     if (!roomCode) return;
     try {
       await ensureAnonymousAuth();
-      const playerToKick = room?.players?.[playerId];
+      const currentRoom = roomRef.current;
+      const playerToKick = currentRoom?.players?.[playerId];
       await safeRemove(`rooms/${roomCode}/players/${playerId}`);
       await safeRemove(`roomPlayers/${roomCode}/${playerId}`).catch(() => {});
 
-      if (room?.boundStudents) {
-        for (const [attNum, boundData] of Object.entries(room.boundStudents)) {
+      if (currentRoom?.boundStudents) {
+        for (const [attNum, boundData] of Object.entries(currentRoom.boundStudents)) {
           if ((boundData as any)?.playerId === playerId) {
             await safeRemove(`rooms/${roomCode}/boundStudents/${attNum}`);
           }
         }
       }
 
-      if (room?.mode === 'TEAM' && playerToKick?.teamId && room?.teamScores?.[playerToKick.teamId]) {
-        const remainingTeamMembers = Object.values(room.players || {})
+      if (currentRoom?.mode === 'TEAM' && playerToKick?.teamId && currentRoom?.teamScores?.[playerToKick.teamId]) {
+        const remainingTeamMembers = Object.values(currentRoom.players || {})
           .filter(p => p.id !== playerId && p.teamId === playerToKick.teamId);
         const mCount = remainingTeamMembers.length;
         const totalScore = remainingTeamMembers.reduce((sum, m) => sum + (m.score || 0), 0);
@@ -1660,7 +1749,7 @@ export function useQuizRoom(
     } catch (err: any) {
       console.error("Error kicking player:", err);
     }
-  }, [roomCode, room]);
+  }, [roomCode]);
 
   // Host: Change player team in lobby
   const changePlayerTeam = useCallback(async (playerId: string, newTeamId: TeamId) => {
@@ -1680,12 +1769,12 @@ export function useQuizRoom(
     if (!roomCode) return;
     try {
       await ensureAnonymousAuth();
-      const nextState = forcedState !== undefined ? forcedState : !room?.eyesUp;
+      const nextState = forcedState !== undefined ? forcedState : !roomRef.current?.eyesUp;
       await safeUpdate(`rooms/${roomCode}`, { eyesUp: nextState });
     } catch (err: any) {
       console.error("Error toggling eyes up front:", err);
     }
-  }, [roomCode, room?.eyesUp]);
+  }, [roomCode]);
 
   // Student: Join an existing room
   const joinRoom = useCallback(async (
@@ -1777,7 +1866,16 @@ export function useQuizRoom(
 
         if (assignedTeam && teams.includes(assignedTeam)) {
           const chosenCount = currentPlayers.filter(p => p.teamId === assignedTeam).length;
-          const isFull = chosenCount >= 10 || (chosenCount >= minCount + 2 && currentPlayers.length >= 8);
+          const classSize = roomData.schoolId && roomData.classId && roomData.classId !== 'TEST'
+            ? getClassSize(roomData.schoolId, roomData.classId)
+            : 35;
+          const isFull = isTeamSelectionFull({
+            teamCountForTeam: chosenCount,
+            minCount,
+            totalPlayers: currentPlayers.length,
+            teamCount: teams.length,
+            classSize,
+          });
           if (isFull) {
             const minIndex = counts.indexOf(minCount);
             assignedTeam = teams[minIndex];
@@ -1879,10 +1977,11 @@ export function useQuizRoom(
 
   // Student: Submit answer
   const submitAnswer = useCallback(async (playerId: string, optionId: string, clientTimeTakenMs?: number) => {
-    if (!roomCode || !room?.currentQuestion) return;
+    const currentRoom = roomRef.current;
+    if (!roomCode || !currentRoom?.currentQuestion) return;
 
-    const timeLimit = room.currentQuestion.timeLimitMs || 15000;
-    const hostStartTime = room.currentQuestion.startTime || 0;
+    const timeLimit = currentRoom.currentQuestion.timeLimitMs || 15000;
+    const hostStartTime = currentRoom.currentQuestion.startTime || 0;
     const timeTakenMs = clientTimeTakenMs !== undefined && clientTimeTakenMs > 0
       ? Math.min(timeLimit, Math.max(100, clientTimeTakenMs))
       : (hostStartTime > 0 ? Math.min(timeLimit, Math.max(100, getServerTime() - hostStartTime)) : 1000);
@@ -1897,7 +1996,7 @@ export function useQuizRoom(
     } catch (err: any) {
       console.error("Error submitting answer:", err);
     }
-  }, [roomCode, room]);
+  }, [roomCode]);
 
   // Student: Submit Sprint / 3D Grand Prix Answer & Telemetry
   const submitSprintAnswer = useCallback(async (
@@ -1952,6 +2051,7 @@ export function useQuizRoom(
         }
         updatePayload[`answers/${questionIndex}`] = answerRecord;
         updatePayload.lastAnswer = {
+          questionIndex,
           optionId,
           isCorrect,
           pointsEarned,

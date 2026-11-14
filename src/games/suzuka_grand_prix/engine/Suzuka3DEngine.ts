@@ -3181,20 +3181,25 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
   let floodConeInst: THREE.InstancedMesh | null = null;
 
   const floodPlacements: { x: number; z: number; rotY: number }[] = [];
-  const sideSigns = [outfieldSign, -outfieldSign];
-  const candidateOffsets = [13.8, 16.5];
-  for (let i = 16; i < N; i += 28) {
+  const candidateOffsets = [14.2, 16.8];
+  let stationIdx = 0;
+  for (let i = 25; i < N && floodPlacements.length < 32; i += 52) {
     const s = samples[i];
-    if (s.elevation > 0.65) continue;
-    for (const sideSign of sideSigns) {
+    if (s.elevation > 0.5) continue;
+    const preferredSide = (stationIdx % 2 === 0 ? 1 : -1) * outfieldSign;
+    stationIdx++;
+    const sideOrder = [preferredSide, -preferredSide];
+    let placedAtStation = false;
+    for (const sideSign of sideOrder) {
+      if (placedAtStation) break;
       for (const latDist of candidateOffsets) {
         const fPos = s.position.clone().addScaledVector(s.right, sideSign * latDist);
-        if (!isClearOfAllTrack(fPos.x, fPos.z, 11.8)) continue;
+        if (!isClearOfAllTrack(fPos.x, fPos.z, 12.0)) continue;
         let nearObstacle = false;
         for (const ez of exclusionZones) {
           const dx = fPos.x - ez.x;
           const dz = fPos.z - ez.z;
-          if (dx * dx + dz * dz < (ez.r + 3.2) * (ez.r + 3.2)) {
+          if (dx * dx + dz * dz < (ez.r + 3.5) * (ez.r + 3.5)) {
             nearObstacle = true;
             break;
           }
@@ -3206,6 +3211,7 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
           rotY: Math.atan2(-s.right.x * sideSign, -s.right.z * sideSign),
         });
         exclusionZones.push({ x: fPos.x, z: fPos.z, r: 3.6 });
+        placedAtStation = true;
         break;
       }
     }

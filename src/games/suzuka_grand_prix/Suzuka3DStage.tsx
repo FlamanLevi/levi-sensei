@@ -497,13 +497,22 @@ function createPrecipitationSystem(
  */
 function createFireworksSystem(anchorPos: THREE.Vector3) {
   const shells = [
-    { offset: [0, 32, -18], color: [1.0, 0.82, 0.22], phase: 0.0 },
-    { offset: [-24, 38, 12], color: [1.0, 0.28, 0.68], phase: 0.55 },
-    { offset: [22, 35, 16], color: [0.18, 0.92, 1.0], phase: 1.1 },
-    { offset: [-14, 42, -28], color: [0.32, 1.0, 0.52], phase: 1.65 },
-    { offset: [18, 40, -8], color: [1.0, 0.45, 0.15], phase: 2.2 },
+    { offset: [0, 30, -16], color: [1.0, 0.85, 0.24], phase: 0.0 },
+    { offset: [-22, 36, 10], color: [1.0, 0.24, 0.68], phase: 0.15 },
+    { offset: [20, 34, 14], color: [0.15, 0.94, 1.0], phase: 0.30 },
+    { offset: [-14, 42, -26], color: [0.28, 1.0, 0.52], phase: 0.45 },
+    { offset: [18, 39, -8], color: [1.0, 0.42, 0.14], phase: 0.60 },
+    { offset: [-34, 33, -6], color: [0.72, 0.36, 1.0], phase: 0.75 },
+    { offset: [32, 37, -20], color: [1.0, 0.18, 0.32], phase: 0.90 },
+    { offset: [-6, 46, 4], color: [1.0, 0.92, 0.45], phase: 1.05 },
+    { offset: [28, 31, 24], color: [0.22, 0.82, 1.0], phase: 1.20 },
+    { offset: [-28, 40, 22], color: [1.0, 0.55, 0.18], phase: 1.35 },
+    { offset: [8, 44, -32], color: [0.95, 0.28, 0.88], phase: 1.50 },
+    { offset: [-18, 29, -34], color: [0.35, 1.0, 0.75], phase: 1.65 },
+    { offset: [14, 48, 12], color: [1.0, 0.78, 0.18], phase: 1.80 },
+    { offset: [0, 38, 28], color: [1.0, 0.32, 0.52], phase: 1.95 },
   ];
-  const sparksPerShell = 84;
+  const sparksPerShell = 140;
   const totalSparks = shells.length * sparksPerShell;
 
   const positions = new Float32Array(totalSparks * 3);
@@ -527,7 +536,9 @@ function createFireworksSystem(anchorPos: THREE.Vector3) {
       const v = rand();
       const theta = u * Math.PI * 2;
       const phi = Math.acos(2 * v - 1);
-      const speed = 10.5 + rand() * 8.5;
+      // Dual-layer chrysanthemum burst: outer high-velocity peony ring + bright inner pistil core
+      const isInnerCore = s < 36;
+      const speed = isInnerCore ? 6.5 + rand() * 5.5 : 13.5 + rand() * 10.5;
 
       positions[idx * 3 + 0] = cx;
       positions[idx * 3 + 1] = cy;
@@ -537,12 +548,19 @@ function createFireworksSystem(anchorPos: THREE.Vector3) {
       velocities[idx * 3 + 1] = Math.cos(phi) * speed;
       velocities[idx * 3 + 2] = Math.sin(phi) * Math.sin(theta) * speed;
 
-      const cJitter = 0.88 + rand() * 0.24;
-      colors[idx * 3 + 0] = Math.min(1, sh.color[0] * cJitter);
-      colors[idx * 3 + 1] = Math.min(1, sh.color[1] * cJitter);
-      colors[idx * 3 + 2] = Math.min(1, sh.color[2] * cJitter);
+      const cJitter = 0.9 + rand() * 0.25;
+      if (isInnerCore) {
+        // Hot golden-white inner pistil sparks
+        colors[idx * 3 + 0] = Math.min(1, (sh.color[0] * 0.45 + 0.55) * cJitter);
+        colors[idx * 3 + 1] = Math.min(1, (sh.color[1] * 0.45 + 0.52) * cJitter);
+        colors[idx * 3 + 2] = Math.min(1, (sh.color[2] * 0.45 + 0.42) * cJitter);
+      } else {
+        colors[idx * 3 + 0] = Math.min(1, sh.color[0] * cJitter);
+        colors[idx * 3 + 1] = Math.min(1, sh.color[1] * cJitter);
+        colors[idx * 3 + 2] = Math.min(1, sh.color[2] * cJitter);
+      }
 
-      phases[idx] = sh.phase + rand() * 0.08;
+      phases[idx] = sh.phase + rand() * 0.05;
       idx++;
     }
   }
@@ -574,16 +592,17 @@ function createFireworksSystem(anchorPos: THREE.Vector3) {
 
       void main() {
         vColor = aColor;
-        float cycle = mod(uTime + aPhase, 2.75);
-        float life = clamp(cycle / 1.95, 0.0, 1.0);
-        vec3 burstPos = position + aVelocity * (cycle * (1.0 - 0.24 * life));
-        burstPos.y -= 3.4 * cycle * cycle;
+        float cycle = mod(uTime * 1.45 + aPhase, 2.1);
+        float life = clamp(cycle / 1.75, 0.0, 1.0);
+        vec3 burstPos = position + aVelocity * (cycle * (1.0 - 0.22 * life));
+        burstPos.y -= 3.6 * cycle * cycle;
         vec4 mvPosition = modelViewMatrix * vec4(burstPos, 1.0);
         float dist = max(2.0, -mvPosition.z);
-        gl_PointSize = clamp((240.0 * (1.0 - life * 0.55)) / dist, 3.0, 16.0);
-        float fadeIn = smoothstep(0.0, 0.08, life);
-        float fadeOut = 1.0 - smoothstep(0.55, 1.0, life);
-        vAlpha = uActive * fadeIn * fadeOut * step(cycle, 1.95);
+        float flash = smoothstep(0.22, 0.0, life) * 1.5;
+        gl_PointSize = clamp(((340.0 + flash * 160.0) * (1.0 - life * 0.45)) / dist, 4.0, 24.0);
+        float fadeIn = smoothstep(0.0, 0.05, life);
+        float fadeOut = 1.0 - smoothstep(0.52, 1.0, life);
+        vAlpha = uActive * fadeIn * fadeOut * step(cycle, 1.75);
         gl_Position = projectionMatrix * mvPosition;
       }
     `,
@@ -596,8 +615,9 @@ function createFireworksSystem(anchorPos: THREE.Vector3) {
         vec2 uv = gl_PointCoord - vec2(0.5);
         float d = length(uv);
         if (d > 0.5) discard;
-        float core = smoothstep(0.5, 0.05, d);
-        gl_FragColor = vec4(mix(vColor, vec3(1.0), core * 0.45), core * vAlpha);
+        float core = smoothstep(0.5, 0.04, d);
+        vec3 hotColor = mix(vColor * 1.45, vec3(1.0, 0.98, 0.92), core * 0.62);
+        gl_FragColor = vec4(hotColor, core * min(1.0, vAlpha * 1.35));
       }
     `,
   });
@@ -1913,13 +1933,25 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
         precipSystem.uniforms.uCameraPos.value.copy(camera.position);
       }
 
-      // Celebration Fireworks over Main Straight when racers finish or during the 24h Le Mans finale
+      // Celebration Fireworks over Main Straight on green flag launch, lap crossings, final lap & finish
+      const targetLapCount = Math.max(1, targetLapsRef.current || 2);
       const anyRacerFinished =
         currentRacers.some((r) => !!r.isFinished) ||
-        (!!leaderTelem && leaderTelem.lap > Math.max(1, targetLapsRef.current || 2));
+        (!!leaderTelem && leaderTelem.lap > targetLapCount);
+      const onFinalLap =
+        !!leaderTelem &&
+        leaderTelem.lap >= targetLapCount &&
+        leaderTelem.progress > 0.65;
+      const lapCrossingSalute = telemetryList.some(
+        (t) => t.distanceMeters > totalCircuitLength * 0.92 && (t.progress < 0.09 || t.progress > 0.92)
+      );
+      const greenFlagSalute =
+        greenFlagStartSec !== null && elapsedTime - greenFlagStartSec < 5.5;
       const leMansFinale =
-        timeOfDayRef.current === 'LE_MANS_CYCLE' && smoothedLeMansProgress > 0.88;
-      const shouldShowFireworks = isGreenFlag && (anyRacerFinished || leMansFinale);
+        timeOfDayRef.current === 'LE_MANS_CYCLE' && smoothedLeMansProgress > 0.78;
+      const shouldShowFireworks =
+        isGreenFlag &&
+        (anyRacerFinished || onFinalLap || lapCrossingSalute || greenFlagSalute || leMansFinale);
       fireworksSystem.mesh.visible = shouldShowFireworks;
       if (shouldShowFireworks) {
         fireworksSystem.uniforms.uTime.value = elapsedTime;

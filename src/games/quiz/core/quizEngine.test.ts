@@ -19,6 +19,11 @@ import {
   resolveQuestionScopedAnswer,
   computeTugOfWarSweepsRemaining,
   GAME_MODE_STRATEGIES,
+  STANDARD_LOCKOUT_TIERS_SECONDS,
+  ALL_EIGHT_PROMPT_TYPES,
+  ACTION_SIX_PROMPT_TYPES,
+  isPromptTypeAllowedInGamePlay,
+  normalizePromptTypesForGamePlay,
   QuizQuestion,
   QuizPlayer,
 } from './quizEngine';
@@ -537,3 +542,33 @@ test('Release 1 TAMAIRE strategy and 5-tier configurable lockout [2.5, 3.0, 3.5,
     );
   }
 });
+
+test('PromptType compatibility automatically strips Kahoot-only varieties outside KAHOOT with safe fallback', () => {
+  assert.deepEqual([...STANDARD_LOCKOUT_TIERS_SECONDS], [2.5, 3.0, 3.5, 4.0, 5.0]);
+  assert.equal(ALL_EIGHT_PROMPT_TYPES.length, 8);
+  assert.equal(ACTION_SIX_PROMPT_TYPES.length, 6);
+
+  assert.equal(isPromptTypeAllowedInGamePlay('SHORT_CLOZE', 'KAHOOT'), true);
+  assert.equal(isPromptTypeAllowedInGamePlay('THREE_HINTS', 'KAHOOT'), true);
+  assert.equal(isPromptTypeAllowedInGamePlay('SHORT_CLOZE', 'GRAND_PRIX_3D'), false);
+  assert.equal(isPromptTypeAllowedInGamePlay('THREE_HINTS', 'TUG_OF_WAR'), false);
+  assert.equal(isPromptTypeAllowedInGamePlay('SHORT_CLOZE', 'TAMAIRE'), false);
+  assert.equal(isPromptTypeAllowedInGamePlay('PHONICS_MASK', 'TAMAIRE'), true);
+
+  assert.deepEqual(
+    normalizePromptTypesForGamePlay(['JA_MEANING', 'SHORT_CLOZE', 'THREE_HINTS'], 'KAHOOT'),
+    ['JA_MEANING', 'SHORT_CLOZE', 'THREE_HINTS']
+  );
+
+  for (const actionMode of ['GRAND_PRIX_3D', 'TUG_OF_WAR', 'TAMAIRE'] as const) {
+    assert.deepEqual(
+      normalizePromptTypesForGamePlay(['JA_MEANING', 'SHORT_CLOZE', 'PHONICS_MASK', 'THREE_HINTS'], actionMode),
+      ['JA_MEANING', 'PHONICS_MASK']
+    );
+    assert.deepEqual(
+      normalizePromptTypesForGamePlay(['SHORT_CLOZE', 'THREE_HINTS'], actionMode),
+      ['JA_MEANING', 'EN_TO_JA', 'IMAGE_ONLY']
+    );
+  }
+});
+

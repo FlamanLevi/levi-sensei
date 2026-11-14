@@ -1386,3 +1386,49 @@ export function computeTugOfWarSweepsRemaining(params: {
   return Math.max(1, Math.ceil(remainingDisplacement / perPullStep));
 }
 
+export const STANDARD_LOCKOUT_TIERS_SECONDS = [2.5, 3.0, 3.5, 4.0, 5.0] as const;
+
+export const ACTION_SIX_PROMPT_TYPES: PromptType[] = [
+  'JA_MEANING',
+  'EN_TO_JA',
+  'IMAGE_ONLY',
+  'AUDIO_ONLY',
+  'PHONICS_MASK',
+  'CATEGORY_HUNT',
+];
+
+export const ALL_EIGHT_PROMPT_TYPES: PromptType[] = [
+  'JA_MEANING',
+  'EN_TO_JA',
+  'IMAGE_ONLY',
+  'AUDIO_ONLY',
+  'PHONICS_MASK',
+  'SHORT_CLOZE',
+  'CATEGORY_HUNT',
+  'THREE_HINTS',
+];
+
+export function isPromptTypeAllowedInGamePlay(
+  promptType: PromptType,
+  gamePlayType: GamePlayType | 'ANTICIPATION'
+): boolean {
+  if (gamePlayType === 'KAHOOT') return true;
+  return promptType !== 'SHORT_CLOZE' && promptType !== 'THREE_HINTS';
+}
+
+export function normalizePromptTypesForGamePlay(
+  promptTypes: readonly PromptType[],
+  gamePlayType: GamePlayType | 'ANTICIPATION'
+): PromptType[] {
+  const unique: PromptType[] = [];
+  for (const p of promptTypes) {
+    if (!isPromptTypeAllowedInGamePlay(p, gamePlayType)) continue;
+    if (!unique.includes(p)) {
+      unique.push(p);
+    }
+  }
+  if (unique.length > 0) return unique;
+  return ['JA_MEANING', 'EN_TO_JA', 'IMAGE_ONLY'];
+}
+
+

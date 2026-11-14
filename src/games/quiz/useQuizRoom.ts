@@ -1888,7 +1888,7 @@ export function useQuizRoom(
       if (roomData.mode === 'TEAM') {
         const isTug = roomData.gamePlayType === 'TUG_OF_WAR';
         const resolvedTamaireCfg = roomData.tamaireSettings || roomData.volleyballSettings;
-        const isVolleyballVs = (roomData.gamePlayType === 'TAMAIRE' || roomData.gamePlayType === 'VOLLEYBALL') && (!resolvedTamaireCfg || resolvedTamaireCfg.gameStyle === 'TEAM_VS');
+        const isVolleyballVs = (roomData.gamePlayType === 'TAMAIRE' || roomData.gamePlayType === 'VOLLEYBALL') && (!resolvedTamaireCfg || resolvedTamaireCfg.gameStyle !== 'COOP_RALLY');
         const teams: TeamId[] = (isTug || isVolleyballVs)
           ? ['team_red', 'team_white']
           : (roomData.activeTeams || (roomData.teamCount === 2 ? ['team_red', 'team_white'] : RAINBOW_TEAM_ORDER.slice(0, roomData.teamCount || 2)));

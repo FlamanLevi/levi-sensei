@@ -135,7 +135,9 @@ export const QuizStudentTugOfWar: React.FC<QuizStudentTugOfWarProps> = ({
     setIsAnswering(false);
     setEliminatedOptionIds(new Set());
     setPenaltySecondsLeft(0);
+  }, [currentIndex, currentQuestion?.targetWordId]);
 
+  useEffect(() => {
     const audioKey = `${currentIndex}:${currentQuestion?.targetWordId || ''}`;
     if (
       currentQuestion &&

@@ -413,6 +413,9 @@ export const QuizStudentTamaire: React.FC<QuizStudentTamaireProps> = ({
     setEliminatedOptionIds(new Set());
     setMistakeCountOnQuestion(0);
     setPenaltySecondsLeft(0);
+  }, [currentIndex, currentQuestion?.targetWordId]);
+
+  useEffect(() => {
     const audioKey = `${currentIndex}:${currentQuestion?.targetWordId || ''}`;
     if (
       !isMatchFinished &&

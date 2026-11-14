@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { soundEffects } from '@/services/soundEffects';
 import { speechService } from '@/services/speechService';
 
@@ -28,11 +28,15 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [isPlayingWord, setIsPlayingWord] = useState(false);
   const audioCtxRef = useRef<AudioContext | null>(null);
   const wordAudioRef = useRef<HTMLAudioElement | null>(null);
+  const isMutedRef = useRef(isMuted);
+  isMutedRef.current = isMuted;
+  const volumeRef = useRef(volume);
+  volumeRef.current = volume;
 
-  const setQuietClassroomMode = (quiet: boolean) => {
+  const setQuietClassroomMode = useCallback((quiet: boolean) => {
     setIsQuietClassroomModeState(quiet);
     soundEffects.setQuietClassroomMode(quiet);
-  };
+  }, []);
 
   // Initialize Web Audio API and Web Speech API on first user interaction to bypass iOS Safari autoplay restrictions
   useEffect(() => {
@@ -90,7 +94,7 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     soundEffects.setVolume(volume);
   }, [volume]);
 
-  const getAudioCtx = () => {
+  const getAudioCtx = useCallback(() => {
     if (!audioCtxRef.current) {
       const AudioContextClass = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
       if (AudioContextClass) {
@@ -101,31 +105,33 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       audioCtxRef.current.resume();
     }
     return audioCtxRef.current;
-  };
+  }, []);
 
   // Sound Synthesizers (Zero latency, built-in)
-  const playPop = () => {
-    if (isMuted) return;
+  const playPop = useCallback(() => {
+    if (isMutedRef.current) return;
     const ctx = getAudioCtx();
     if (!ctx) return;
+    const vol = volumeRef.current;
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
     osc.type = 'sine';
     const now = ctx.currentTime;
     osc.frequency.setValueAtTime(450, now);
     osc.frequency.exponentialRampToValueAtTime(900, now + 0.08);
-    gain.gain.setValueAtTime(volume * 0.3, now);
+    gain.gain.setValueAtTime(vol * 0.3, now);
     gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
     osc.connect(gain);
     gain.connect(ctx.destination);
     osc.start(now);
     osc.stop(now + 0.08);
-  };
+  }, [getAudioCtx]);
 
-  const playSuccess = () => {
-    if (isMuted) return;
+  const playSuccess = useCallback(() => {
+    if (isMutedRef.current) return;
     const ctx = getAudioCtx();
     if (!ctx) return;
+    const vol = volumeRef.current;
     const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
     notes.forEach((freq, idx) => {
       const osc = ctx.createOscillator();
@@ -133,54 +139,57 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       const now = ctx.currentTime + idx * 0.08;
       osc.type = 'triangle';
       osc.frequency.setValueAtTime(freq, now);
-      gain.gain.setValueAtTime(volume * 0.4, now);
+      gain.gain.setValueAtTime(vol * 0.4, now);
       gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
       osc.connect(gain);
       gain.connect(ctx.destination);
       osc.start(now);
       osc.stop(now + 0.25);
     });
-  };
+  }, [getAudioCtx]);
 
-  const playBuzzer = () => {
-    if (isMuted) return;
+  const playBuzzer = useCallback(() => {
+    if (isMutedRef.current) return;
     const ctx = getAudioCtx();
     if (!ctx) return;
+    const vol = volumeRef.current;
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
     const now = ctx.currentTime;
     osc.type = 'sawtooth';
     osc.frequency.setValueAtTime(150, now);
     osc.frequency.linearRampToValueAtTime(130, now + 0.25);
-    gain.gain.setValueAtTime(volume * 0.25, now);
+    gain.gain.setValueAtTime(vol * 0.25, now);
     gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
     osc.connect(gain);
     gain.connect(ctx.destination);
     osc.start(now);
     osc.stop(now + 0.25);
-  };
+  }, [getAudioCtx]);
 
-  const playTick = () => {
-    if (isMuted) return;
+  const playTick = useCallback(() => {
+    if (isMutedRef.current) return;
     const ctx = getAudioCtx();
     if (!ctx) return;
+    const vol = volumeRef.current;
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
     const now = ctx.currentTime;
     osc.type = 'sine';
     osc.frequency.setValueAtTime(1200, now);
-    gain.gain.setValueAtTime(volume * 0.15, now);
+    gain.gain.setValueAtTime(vol * 0.15, now);
     gain.gain.exponentialRampToValueAtTime(0.001, now + 0.03);
     osc.connect(gain);
     gain.connect(ctx.destination);
     osc.start(now);
     osc.stop(now + 0.03);
-  };
+  }, [getAudioCtx]);
 
-  const playFanfare = () => {
-    if (isMuted) return;
+  const playFanfare = useCallback(() => {
+    if (isMutedRef.current) return;
     const ctx = getAudioCtx();
     if (!ctx) return;
+    const vol = volumeRef.current;
     const melody = [
       { f: 523.25, d: 0.12 },
       { f: 659.25, d: 0.12 },
@@ -194,7 +203,7 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       const now = ctx.currentTime + offset;
       osc.type = 'sine';
       osc.frequency.setValueAtTime(n.f, now);
-      gain.gain.setValueAtTime(volume * 0.4, now);
+      gain.gain.setValueAtTime(vol * 0.4, now);
       gain.gain.exponentialRampToValueAtTime(0.001, now + n.d);
       osc.connect(gain);
       gain.connect(ctx.destination);
@@ -202,24 +211,24 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       osc.stop(now + n.d);
       offset += n.d * 0.9;
     });
-  };
+  }, [getAudioCtx]);
 
-  const speakSynthesis = (text: string) => {
-    if (isMuted) return;
+  const speakSynthesis = useCallback((text: string) => {
+    if (isMutedRef.current) return;
     setIsPlayingWord(true);
     speechService.speak(text, {
-      volume,
+      volume: volumeRef.current,
       onStart: () => setIsPlayingWord(true),
       onEnd: () => setIsPlayingWord(false)
     });
-  };
+  }, []);
 
-  const speakText = (text: string) => {
+  const speakText = useCallback((text: string) => {
     speakSynthesis(text);
-  };
+  }, [speakSynthesis]);
 
-  const playWordAudio = async (soundFile?: string, fallbackText?: string): Promise<void> => {
-    if (isMuted) return;
+  const playWordAudio = useCallback(async (soundFile?: string, fallbackText?: string): Promise<void> => {
+    if (isMutedRef.current) return;
 
     const isAudioFile = soundFile && /\.(mp3|wav|m4a|ogg)$/i.test(soundFile.trim());
 
@@ -267,27 +276,49 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     } else {
       setIsPlayingWord(false);
     }
-  };
+  }, [speakSynthesis]);
 
-  const toggleMute = () => setIsMuted(prev => !prev);
+  const toggleMute = useCallback(() => {
+    setIsMuted(prev => {
+      const next = !prev;
+      isMutedRef.current = next;
+      return next;
+    });
+  }, []);
+
+  const contextValue = useMemo<AudioContextType>(() => ({
+    isMuted,
+    toggleMute,
+    volume,
+    setVolume,
+    isQuietClassroomMode,
+    setQuietClassroomMode,
+    playPop,
+    playSuccess,
+    playBuzzer,
+    playFanfare,
+    playTick,
+    playWordAudio,
+    speakText,
+    isPlayingWord
+  }), [
+    isMuted,
+    toggleMute,
+    volume,
+    isQuietClassroomMode,
+    setQuietClassroomMode,
+    playPop,
+    playSuccess,
+    playBuzzer,
+    playFanfare,
+    playTick,
+    playWordAudio,
+    speakText,
+    isPlayingWord
+  ]);
 
   return (
-    <AudioContext.Provider value={{
-      isMuted,
-      toggleMute,
-      volume,
-      setVolume,
-      isQuietClassroomMode,
-      setQuietClassroomMode,
-      playPop,
-      playSuccess,
-      playBuzzer,
-      playFanfare,
-      playTick,
-      playWordAudio,
-      speakText,
-      isPlayingWord
-    }}>
+    <AudioContext.Provider value={contextValue}>
       {children}
     </AudioContext.Provider>
   );

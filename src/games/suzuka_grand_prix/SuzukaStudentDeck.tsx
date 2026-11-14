@@ -90,7 +90,7 @@ export const SuzukaStudentDeck: React.FC<SuzukaStudentDeckProps> = ({
     };
   }, []);
 
-  // Reset eliminated options, feedback, and pending timers whenever question changes
+  // 1. Reset eliminated options, feedback, and pending timers ONLY when the question itself changes
   useEffect(() => {
     if (correctTimerRef.current) {
       clearTimeout(correctTimerRef.current);
@@ -104,7 +104,10 @@ export const SuzukaStudentDeck: React.FC<SuzukaStudentDeckProps> = ({
     setIsAnswering(false);
     setEliminatedOptionIds(new Set());
     setLastWrongOption(null);
+  }, [questionNumber, question.targetWordId]);
 
+  // 2. Auto-play prompt audio on AUDIO_ONLY questions without resetting active guesses/timers
+  useEffect(() => {
     const questionAudioKey = `${questionNumber}:${question.targetWordId}`;
     if (question.promptType === 'AUDIO_ONLY' && !isMuted && lastAutoPlayedQuestionKeyRef.current !== questionAudioKey) {
       lastAutoPlayedQuestionKeyRef.current = questionAudioKey;
@@ -160,6 +163,8 @@ export const SuzukaStudentDeck: React.FC<SuzukaStudentDeckProps> = ({
         onAnswer(true, optionId);
         setFeedback(null);
         setIsAnswering(false);
+        setEliminatedOptionIds(new Set());
+        setLastWrongOption(null);
       }, 340);
     } else {
       soundEffects.playIncorrect();

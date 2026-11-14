@@ -30,7 +30,14 @@ import { QuizHostGrandPrix3D } from './QuizHostGrandPrix3D';
 import { QuizHostTugOfWar } from './QuizHostTugOfWar';
 import { QuizHostTamaire } from './QuizHostTamaire';
 import { useQuizBotSimulator } from '../hooks/useQuizBotSimulator';
-import { isValidTrackThemeId, resolveTrackThemeId } from '@/games/suzuka_grand_prix/trackThemes';
+import {
+  isValidTrackThemeId,
+  resolveTrackThemeId,
+  resolveTimeOfDayId,
+  resolveCloudCoverId,
+  resolvePrecipitationId,
+  getTrackTheme,
+} from '@/games/suzuka_grand_prix/trackThemes';
 
 interface QuizHostContainerProps {
   onExit: () => void;
@@ -144,12 +151,29 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
         isValidTrackThemeId(existingConcrete)
           ? existingConcrete
           : resolveTrackThemeId(selection, prevConcreteTheme);
+
+      const biomeConfig = getTrackTheme(resolvedTheme);
+      const todSel = baseSettings.sprintSettings.timeOfDaySelection || 'LE_MANS_CYCLE';
+      const resolvedTod = resolveTimeOfDayId(todSel, baseSettings.sprintSettings.timeOfDay);
+
+      const ccSel = baseSettings.sprintSettings.cloudCoverSelection || biomeConfig.defaultCloudCover;
+      const resolvedCc = resolveCloudCoverId(ccSel, baseSettings.sprintSettings.cloudCover);
+
+      const precipSel = baseSettings.sprintSettings.precipitationSelection || biomeConfig.defaultPrecipitation;
+      const resolvedPrecip = resolvePrecipitationId(precipSel, baseSettings.sprintSettings.precipitation);
+
       return {
         ...baseSettings,
         sprintSettings: {
           ...baseSettings.sprintSettings,
           trackThemeSelection: selection,
           trackTheme: resolvedTheme,
+          timeOfDaySelection: todSel,
+          timeOfDay: resolvedTod,
+          cloudCoverSelection: ccSel,
+          cloudCover: resolvedCc,
+          precipitationSelection: precipSel,
+          precipitation: resolvedPrecip,
         },
       };
     },

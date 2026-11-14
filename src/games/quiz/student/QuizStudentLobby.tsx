@@ -20,7 +20,12 @@ import {
   getSavedKartTheme,
   saveSavedKartTheme,
 } from '@/games/suzuka_grand_prix/kartPresets';
-import { SuzukaTrackThemeId, getTrackTheme } from '@/games/suzuka_grand_prix/trackThemes';
+import {
+  SuzukaTrackThemeId,
+  getTrackTheme,
+  TIME_OF_DAY_LIST,
+  PRECIPITATION_LIST,
+} from '@/games/suzuka_grand_prix/trackThemes';
 
 interface QuizStudentLobbyProps {
   roomCode: string;
@@ -424,16 +429,16 @@ export const QuizStudentLobby: React.FC<QuizStudentLobbyProps> = ({
 
               {isGrandPrix3D && (() => {
                 const trackStage = getTrackTheme(sprintSettings?.trackTheme);
+                const todItem = TIME_OF_DAY_LIST.find((x) => x.id === (sprintSettings?.timeOfDay || 'LE_MANS_CYCLE'));
+                const precipItem = PRECIPITATION_LIST.find((x) => x.id === (sprintSettings?.precipitation || trackStage.defaultPrecipitation));
                 const renderJaStageName = (id: SuzukaTrackThemeId) => {
                   switch (id) {
-                    case 'SUZUKA_SPRING_DAY':
-                      return <><ruby>春<rt>はる</rt></ruby>のさくらGP</>;
-                    case 'TOKYO_NIGHT_LIGHTS':
-                      return <>ナイト<ruby>照明<rt>しょうめい</rt></ruby>GP</>;
-                    case 'AUTUMN_MOMIJI_SUNSET':
-                      return <><ruby>紅葉<rt>こうよう</rt></ruby>サンセットGP</>;
-                    case 'HOKKAIDO_WINTER_SNOW':
-                      return <><ruby>雪景色<rt>ゆきげしき</rt></ruby>ウィンターGP</>;
+                    case 'TEMPERATE':
+                      return <><ruby>温帯<rt>おんたい</rt></ruby>・さくらGP</>;
+                    case 'DESERT':
+                      return <><ruby>砂漠<rt>さばく</rt></ruby>キャニオンGP</>;
+                    case 'SNOW':
+                      return <><ruby>雪原<rt>せつげん</rt></ruby>アルプスGP</>;
                   }
                 };
                 return (
@@ -448,8 +453,16 @@ export const QuizStudentLobby: React.FC<QuizStudentLobbyProps> = ({
                         )}
                       </span>
                     </span>
-                    <span className="text-white truncate">
-                      {language === 'ja' ? renderJaStageName(trackStage.id) : trackStage.nameEn}
+                    <span className="text-white truncate flex items-center gap-1">
+                      <span>{language === 'ja' ? renderJaStageName(trackStage.id) : trackStage.shortEn}</span>
+                      {todItem && (
+                        <span className="text-amber-300">
+                          · {todItem.emoji} {language === 'ja' ? todItem.shortJa : todItem.shortEn}
+                        </span>
+                      )}
+                      {precipItem && precipItem.id !== 'NONE' && (
+                        <span>{precipItem.emoji}</span>
+                      )}
                     </span>
                   </div>
                 );

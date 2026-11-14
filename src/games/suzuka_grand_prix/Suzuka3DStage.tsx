@@ -13,7 +13,12 @@ import { SuzukaSector } from './engine/SuzukaPathData';
 import {
   SuzukaTrackThemeId,
   SuzukaTrackThemeConfig,
+  SuzukaTimeOfDayId,
+  SuzukaCloudCoverId,
+  SuzukaPrecipitationId,
   getTrackTheme,
+  evaluateSuzukaAtmosphere,
+  getLeMansPhaseBadge,
 } from './trackThemes';
 
 export const LANE_DRIVING = -2.1; // Left lane (cruising / standard driving line)
@@ -79,6 +84,11 @@ export interface Suzuka3DStageProps {
   racers: RacerState[];
   lightsCount?: number; // 0 to 6
   trackTheme?: SuzukaTrackThemeId;
+  timeOfDay?: SuzukaTimeOfDayId;
+  cloudCover?: SuzukaCloudCoverId;
+  precipitation?: SuzukaPrecipitationId;
+  targetLaps?: number;
+  timeTrialLimitSeconds?: number;
   performanceProfile?: 'MOBILE' | 'DESKTOP_HD';
   onTelemetryUpdate?: (telemetry: RacerTelemetry[]) => void;
   className?: string;
@@ -182,6 +192,7 @@ function createDynamicSkyDome(theme: SuzukaTrackThemeConfig) {
     uCloudShadowColor: { value: new THREE.Color(theme.cloudShadowHex) },
     uCloudLitColor: { value: new THREE.Color(theme.cloudLitHex) },
     uStarIntensity: { value: theme.starIntensity },
+    uCloudCoverage: { value: 0.52 },
   };
 
   const skyMat = new THREE.ShaderMaterial({
@@ -207,6 +218,7 @@ function createDynamicSkyDome(theme: SuzukaTrackThemeConfig) {
       uniform vec3 uCloudShadowColor;
       uniform vec3 uCloudLitColor;
       uniform float uStarIntensity;
+      uniform float uCloudCoverage;
       varying vec3 vWorldDir;
 
       void main() {
@@ -219,16 +231,17 @@ function createDynamicSkyDome(theme: SuzukaTrackThemeConfig) {
 
         // 2. Solar / Lunar Disc & Mie Atmospheric Glow
         float sunCos = max(dot(dir, uSunDir), 0.0);
+        float sunVis = 1.0 - smoothstep(0.55, 0.92, uCloudCoverage) * 0.72;
         float sunHalo = pow(sunCos, 8.0) * 0.26 + pow(sunCos, 64.0) * 0.45;
         float sunDisc = smoothstep(0.9982, 0.9994, sunCos);
-        skyCol += uSunColor * (sunHalo + sunDisc * 0.85);
+        skyCol += uSunColor * (sunHalo + sunDisc * 0.85) * sunVis;
 
-        // 3. Lightweight Procedural Starfield for Night Biomes (0 extra textures/draw calls)
+        // 3. Lightweight Procedural Starfield & Cloud Layer (0 extra draw calls)
         float cloudOcclusion = 0.0;
         vec3 cloudLayerColor = vec3(0.0);
         float finalCloudAlpha = 0.0;
 
-        if (elev > 0.005) {
+        if (elev > 0.005 && uCloudCoverage > 0.01) {
           // Spherical-dome UV mapping that stays crisp from low horizon (elev=0.02) to zenith
           vec2 domeUv = dir.xz / (elev + 0.32) * 0.55;
 
@@ -239,11 +252,14 @@ function createDynamicSkyDome(theme: SuzukaTrackThemeConfig) {
           float c2 = texture2D(uCloudTex, uvLayer2).g;
           float cloudDensity = c1 * 0.64 + c2 * 0.36;
 
-          // Distinct billowy cumulus & cirrus bands with clear sky between clouds
-          float cloudMask = smoothstep(0.47, 0.66, cloudDensity);
+          // Dynamic cloud coverage threshold: CLEAR (0.08) -> PARTLY_CLOUDY (0.52) -> OVERCAST (0.88)
+          float lowThresh = mix(0.66, 0.22, uCloudCoverage);
+          float highThresh = mix(0.84, 0.50, uCloudCoverage);
+          float cloudMask = smoothstep(lowThresh, highThresh, cloudDensity);
           // Smooth fade at the horizon line so clouds sit naturally behind mountain peaks
-          float horizonFade = smoothstep(0.008, 0.085, elev) * (1.0 - smoothstep(0.76, 0.96, elev) * 0.35);
-          finalCloudAlpha = cloudMask * horizonFade * 0.88;
+          float zenithOpenness = 0.35 * (1.0 - uCloudCoverage * 0.75);
+          float horizonFade = smoothstep(0.008, 0.085, elev) * (1.0 - smoothstep(0.76, 0.96, elev) * zenithOpenness);
+          finalCloudAlpha = cloudMask * horizonFade * mix(0.28, 0.96, uCloudCoverage);
           cloudOcclusion = finalCloudAlpha;
 
           // Sunlit highlight & atmospheric shadow cloud shading
@@ -282,6 +298,199 @@ function createDynamicSkyDome(theme: SuzukaTrackThemeConfig) {
   return { mesh, uniforms: skyUniforms, geometry: skyGeo, material: skyMat };
 }
 
+interface PrecipitationSystem {
+  mesh: THREE.Object3D;
+  uniforms: {
+    uTime: { value: number };
+    uCameraPos: { value: THREE.Vector3 };
+    uOpacity: { value: number };
+  };
+  dispose: () => void;
+}
+
+/**
+ * 1-Draw-Call Camera-Anchored GPU Precipitation System (Rain Streaks or Snowflakes).
+ * Wraps particles around `uCameraPos` inside the vertex shader (`mod(pos - uCameraPos, boxSize)`)
+ * so 0 CPU particle updates occur per frame on classroom iPads and Intel Dynabooks.
+ */
+function createPrecipitationSystem(
+  precipitation: SuzukaPrecipitationId | undefined,
+  isStudentView: boolean
+): PrecipitationSystem | null {
+  if (!precipitation || precipitation === 'NONE') return null;
+
+  const isRain = precipitation === 'LIGHT_RAIN' || precipitation === 'HEAVY_RAIN';
+  const isHeavy = precipitation === 'HEAVY_RAIN' || precipitation === 'HEAVY_SNOW';
+  const count = isStudentView
+    ? isHeavy
+      ? 1100
+      : 550
+    : isHeavy
+    ? 1800
+    : 850;
+
+  const uniforms = {
+    uTime: { value: 0.0 },
+    uCameraPos: { value: new THREE.Vector3() },
+    uOpacity: { value: isHeavy ? 0.82 : 0.56 },
+  };
+
+  let rng = 987654321;
+  const nextRand = () => {
+    rng = (rng * 1664525 + 1013904223) >>> 0;
+    return rng / 4294967296;
+  };
+
+  if (isRain) {
+    const geo = new THREE.BufferGeometry();
+    const positions = new Float32Array(count * 2 * 3);
+    const offsets = new Float32Array(count * 2 * 3);
+    const streakLen = isHeavy ? 1.85 : 1.35;
+
+    for (let i = 0; i < count; i++) {
+      const px = (nextRand() - 0.5) * 90.0;
+      const py = (nextRand() - 0.5) * 38.0;
+      const pz = (nextRand() - 0.5) * 90.0;
+      const v0 = i * 6;
+      positions[v0 + 0] = px;
+      positions[v0 + 1] = py;
+      positions[v0 + 2] = pz;
+      positions[v0 + 3] = px;
+      positions[v0 + 4] = py;
+      positions[v0 + 5] = pz;
+
+      offsets[v0 + 0] = 0;
+      offsets[v0 + 1] = 0;
+      offsets[v0 + 2] = 0;
+      offsets[v0 + 3] = -0.18 * streakLen;
+      offsets[v0 + 4] = -streakLen;
+      offsets[v0 + 5] = -0.12 * streakLen;
+    }
+
+    geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    geo.setAttribute('aDropOffset', new THREE.BufferAttribute(offsets, 3));
+
+    const mat = new THREE.ShaderMaterial({
+      uniforms,
+      transparent: true,
+      depthWrite: false,
+      vertexShader: /* glsl */ `
+        attribute vec3 aDropOffset;
+        uniform float uTime;
+        uniform vec3 uCameraPos;
+        varying float vAlpha;
+
+        void main() {
+          vec3 boxSize = vec3(90.0, 38.0, 90.0);
+          vec3 halfBox = boxSize * 0.5;
+          vec3 animOffset = vec3(-uTime * 3.4, -uTime * 29.0, -uTime * 2.2);
+          vec3 rel = mod(position + animOffset - uCameraPos + halfBox, boxSize) - halfBox;
+          vec3 worldPos = uCameraPos + rel + aDropOffset;
+          float distXZ = length(rel.xz);
+          float edgeFade = 1.0 - smoothstep(30.0, 44.0, distXZ);
+          float tipAlpha = aDropOffset.y < -0.1 ? 0.92 : 0.18;
+          vAlpha = edgeFade * tipAlpha;
+          gl_Position = projectionMatrix * viewMatrix * vec4(worldPos, 1.0);
+        }
+      `,
+      fragmentShader: /* glsl */ `
+        uniform float uOpacity;
+        varying float vAlpha;
+
+        void main() {
+          gl_FragColor = vec4(0.78, 0.88, 0.98, vAlpha * uOpacity);
+        }
+      `,
+    });
+
+    const lines = new THREE.LineSegments(geo, mat);
+    lines.name = 'SuzukaRainPrecipitation';
+    lines.frustumCulled = false;
+    lines.renderOrder = 200;
+    return {
+      mesh: lines,
+      uniforms,
+      dispose: () => {
+        geo.dispose();
+        mat.dispose();
+      },
+    };
+  } else {
+    const geo = new THREE.BufferGeometry();
+    const positions = new Float32Array(count * 3);
+    const flakeMeta = new Float32Array(count * 2);
+
+    for (let i = 0; i < count; i++) {
+      positions[i * 3 + 0] = (nextRand() - 0.5) * 90.0;
+      positions[i * 3 + 1] = (nextRand() - 0.5) * 36.0;
+      positions[i * 3 + 2] = (nextRand() - 0.5) * 90.0;
+
+      flakeMeta[i * 2 + 0] = nextRand() * Math.PI * 2.0;
+      flakeMeta[i * 2 + 1] = 0.65 + nextRand() * 0.75;
+    }
+
+    geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    geo.setAttribute('aFlakeMeta', new THREE.BufferAttribute(flakeMeta, 2));
+
+    const mat = new THREE.ShaderMaterial({
+      uniforms,
+      transparent: true,
+      depthWrite: false,
+      vertexShader: /* glsl */ `
+        attribute vec2 aFlakeMeta;
+        uniform float uTime;
+        uniform vec3 uCameraPos;
+        varying float vAlpha;
+
+        void main() {
+          float phase = aFlakeMeta.x;
+          float sizeScale = aFlakeMeta.y;
+          vec3 boxSize = vec3(90.0, 36.0, 90.0);
+          vec3 halfBox = boxSize * 0.5;
+          vec3 fallOffset = vec3(
+            sin(uTime * 1.35 + phase) * 2.4 - uTime * 1.2,
+            -uTime * 4.8,
+            cos(uTime * 1.15 + phase * 1.7) * 2.4 - uTime * 0.9
+          );
+          vec3 rel = mod(position + fallOffset - uCameraPos + halfBox, boxSize) - halfBox;
+          vec3 worldPos = uCameraPos + rel;
+          vec4 mvPosition = viewMatrix * vec4(worldPos, 1.0);
+          float dist = max(1.5, -mvPosition.z);
+          gl_PointSize = clamp((125.0 * sizeScale) / dist, 2.5, 11.5);
+          float distXZ = length(rel.xz);
+          vAlpha = 1.0 - smoothstep(30.0, 44.0, distXZ);
+          gl_Position = projectionMatrix * mvPosition;
+        }
+      `,
+      fragmentShader: /* glsl */ `
+        uniform float uOpacity;
+        varying float vAlpha;
+
+        void main() {
+          vec2 uv = gl_PointCoord - vec2(0.5);
+          float d = length(uv);
+          if (d > 0.5) discard;
+          float soft = smoothstep(0.5, 0.12, d);
+          gl_FragColor = vec4(0.96, 0.98, 1.0, soft * vAlpha * uOpacity);
+        }
+      `,
+    });
+
+    const points = new THREE.Points(geo, mat);
+    points.name = 'SuzukaSnowPrecipitation';
+    points.frustumCulled = false;
+    points.renderOrder = 200;
+    return {
+      mesh: points,
+      uniforms,
+      dispose: () => {
+        geo.dispose();
+        mat.dispose();
+      },
+    };
+  }
+}
+
 const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
   mode,
   cameraMode = 'DIRECTOR',
@@ -289,6 +498,11 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
   racers,
   lightsCount = 6,
   trackTheme,
+  timeOfDay,
+  cloudCover,
+  precipitation,
+  targetLaps = 2,
+  timeTrialLimitSeconds,
   performanceProfile,
   onTelemetryUpdate,
   className = '',
@@ -320,6 +534,21 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
   const lightsCountRef = useRef<number>(lightsCount);
   lightsCountRef.current = lightsCount;
 
+  const timeOfDayRef = useRef<SuzukaTimeOfDayId | undefined>(timeOfDay);
+  timeOfDayRef.current = timeOfDay;
+
+  const cloudCoverRef = useRef<SuzukaCloudCoverId | undefined>(cloudCover);
+  cloudCoverRef.current = cloudCover;
+
+  const precipitationRef = useRef<SuzukaPrecipitationId | undefined>(precipitation);
+  precipitationRef.current = precipitation;
+
+  const targetLapsRef = useRef<number>(targetLaps);
+  targetLapsRef.current = targetLaps;
+
+  const timeTrialLimitSecondsRef = useRef<number | undefined>(timeTrialLimitSeconds);
+  timeTrialLimitSecondsRef.current = timeTrialLimitSeconds;
+
   const onTelemetryRef = useRef(onTelemetryUpdate);
   onTelemetryRef.current = onTelemetryUpdate;
 
@@ -334,6 +563,7 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
 
     // Resolve biome/atmosphere theme configuration
     const theme = getTrackTheme(trackTheme);
+    const activePrecip = precipitation ?? theme.defaultPrecipitation;
 
     // Hardware profile detection & adaptive renderer setup (zero redundant temp canvases)
     const isStudentView = performanceProfile === 'MOBILE' || mode === 'STUDENT_COCKPIT';
@@ -346,6 +576,12 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
     // Dynamic Skybox with dual-layer cloud animation & optional night starfield (1 draw call, <0.08ms GPU cost)
     const skyDome = createDynamicSkyDome(theme);
     scene.add(skyDome.mesh);
+
+    // 1-Draw-Call Camera-Anchored GPU Precipitation System (Rain / Snow)
+    const precipSystem = createPrecipitationSystem(activePrecip, isStudentView);
+    if (precipSystem) {
+      scene.add(precipSystem.mesh);
+    }
 
     const {
       renderer,
@@ -384,8 +620,7 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
     const pmremGenerator = new THREE.PMREMGenerator(renderer);
     const envTexture = pmremGenerator.fromScene(new RoomEnvironment(), 0.04).texture;
     scene.environment = envTexture;
-    scene.environmentIntensity =
-      theme.id === 'TOKYO_NIGHT_LIGHTS' ? 0.55 : theme.id === 'AUTUMN_MOMIJI_SUNSET' ? 0.82 : 1.0;
+    scene.environmentIntensity = 1.0;
     pmremGenerator.dispose();
 
     // Biome-tuned Sunlight / Moonlight & Sky Ambient Contrast
@@ -631,6 +866,50 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
     const clockStartTime = performance.now();
     let clockLastTime = clockStartTime;
     let telemetryTimer = 0;
+    let greenFlagStartSec: number | null = null;
+    let smoothedLeMansProgress = 0;
+
+    const applyEvaluatedAtmosphere = (leMansProgress01: number) => {
+      const atmo = evaluateSuzukaAtmosphere({
+        biome: theme.id,
+        timeOfDay: timeOfDayRef.current ?? 'NOON',
+        cloudCover: cloudCoverRef.current ?? theme.defaultCloudCover,
+        precipitation: precipitationRef.current ?? theme.defaultPrecipitation,
+        leMansProgress: leMansProgress01,
+      });
+
+      skyDome.uniforms.uSunDir.value.set(atmo.sunDir[0], atmo.sunDir[1], atmo.sunDir[2]).normalize();
+      skyDome.uniforms.uZenithColor.value.setHex(atmo.zenithHex);
+      skyDome.uniforms.uMidSkyColor.value.setHex(atmo.midSkyHex);
+      skyDome.uniforms.uHorizonColor.value.setHex(atmo.horizonHex);
+      skyDome.uniforms.uSunColor.value.setHex(atmo.sunColorHex);
+      skyDome.uniforms.uCloudShadowColor.value.setHex(atmo.cloudShadowHex);
+      skyDome.uniforms.uCloudLitColor.value.setHex(atmo.cloudLitHex);
+      skyDome.uniforms.uStarIntensity.value = atmo.starIntensity;
+      skyDome.uniforms.uCloudCoverage.value = atmo.cloudCoverage;
+
+      (scene.background as THREE.Color).setHex(atmo.sceneBackgroundHex);
+      const fog = scene.fog as THREE.FogExp2;
+      if (fog) {
+        fog.color.setHex(atmo.fogHex);
+        fog.density = atmo.fogDensity;
+      }
+
+      hemiLight.color.setHex(atmo.hemiSkyHex);
+      hemiLight.groundColor.setHex(atmo.hemiGroundHex);
+      hemiLight.intensity = atmo.hemiIntensity;
+
+      dirLight.color.setHex(atmo.dirColorHex);
+      dirLight.intensity = atmo.dirIntensity;
+      dirLight.position.set(atmo.sunDir[0], atmo.sunDir[1], atmo.sunDir[2]);
+
+      renderer.toneMappingExposure = atmo.exposure;
+      scene.environmentIntensity = atmo.envIntensity;
+
+      trackWorld.applyAtmosphere?.(atmo);
+    };
+
+    applyEvaluatedAtmosphere(0);
 
     if (!isSoftwareGl) {
       renderer.compile(scene, camera);
@@ -1417,6 +1696,44 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
         camera.lookAt(currentCamLook);
       }
 
+      // 4. Dynamic 24 Hours of Le Mans Time-of-Day Progression & Atmosphere Update
+      if (!isGreenFlag) {
+        greenFlagStartSec = null;
+        smoothedLeMansProgress += (0 - smoothedLeMansProgress) * Math.min(1.0, dt * 3.0);
+      } else {
+        if (greenFlagStartSec === null) {
+          greenFlagStartSec = elapsedTime;
+        }
+        const raceElapsedSec = Math.max(0, elapsedTime - greenFlagStartSec);
+        const maxLeaderDist = leaderTelem ? Math.max(0, leaderTelem.distanceMeters) : 0;
+        const totalRaceDist = totalCircuitLength * Math.max(1, targetLapsRef.current || 2);
+        const distProgress = Math.max(0, Math.min(1, maxLeaderDist / totalRaceDist));
+
+        let targetLeMansProgress = distProgress;
+        const timeLimit = timeTrialLimitSecondsRef.current;
+        if (timeLimit && timeLimit > 0) {
+          const timeProgress = Math.max(0, Math.min(1, raceElapsedSec / timeLimit));
+          targetLeMansProgress = Math.max(timeProgress, distProgress * 0.5);
+        } else {
+          // Ensure smooth ambient progression even if leaders pause on a question
+          const nominalRaceSec = Math.max(45, (targetLapsRef.current || 2) * 58);
+          const timeFloor = Math.min(0.94, raceElapsedSec / nominalRaceSec);
+          targetLeMansProgress = Math.max(distProgress, timeFloor);
+        }
+        smoothedLeMansProgress +=
+          (targetLeMansProgress - smoothedLeMansProgress) * Math.min(1.0, dt * 1.8);
+      }
+
+      // Throttle full material/light atmosphere evaluation to every 2nd frame (~30Hz) or when not Le Mans
+      if (frameCount % 2 === 1 || timeOfDayRef.current === 'LE_MANS_CYCLE') {
+        applyEvaluatedAtmosphere(smoothedLeMansProgress);
+      }
+
+      if (timeOfDayRef.current === 'LE_MANS_CYCLE' && nextBadgeText) {
+        const lmBadge = getLeMansPhaseBadge(smoothedLeMansProgress);
+        nextBadgeText = `${lmBadge.emoji} ${lmBadge.labelEn} · ${nextBadgeText}`;
+      }
+
       if (mode === 'BROADCAST' && directorBadgeContainerRef.current && directorBadgeTextRef.current) {
         if (nextBadgeText) {
           if (nextBadgeText !== lastBadgeText) {
@@ -1437,9 +1754,14 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
         trackWorld.updateScenery(dt);
       }
 
-      // Update dynamic skybox cloud animation time & center sky dome on camera
+      // Update dynamic skybox cloud animation time & center sky dome + precipitation on camera
       skyDome.uniforms.uTime.value = elapsedTime;
       skyDome.mesh.position.copy(camera.position);
+
+      if (precipSystem) {
+        precipSystem.uniforms.uTime.value = elapsedTime;
+        precipSystem.uniforms.uCameraPos.value.copy(camera.position);
+      }
 
       renderer.render(scene, camera);
 
@@ -1487,13 +1809,14 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
         });
       }
 
+      precipSystem?.dispose();
       skyDome.geometry.dispose();
       skyDome.material.dispose();
       envTexture.dispose();
       scene.clear();
       cleanupClassroomRenderer();
     };
-  }, [performanceProfile, mode, trackTheme, contextRestartKey]);
+  }, [performanceProfile, mode, trackTheme, precipitation, contextRestartKey]);
 
   return (
     <div className={`relative w-full h-full overflow-hidden select-none bg-slate-950 ${className}`}>

@@ -3,7 +3,13 @@ import { useClassroom } from '@/context/ClassroomContext';
 import { useVocabulary, VocabularyScope } from '@/context/VocabularyContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { SCHOOL_CONFIGS, getSuggestedClassForSchedule } from '@/types/roster';
-import { SuzukaTrackThemeSelection } from '@/games/suzuka_grand_prix/trackThemes';
+import {
+  SuzukaTrackThemeSelection,
+  SuzukaTimeOfDaySelection,
+  SuzukaCloudCoverSelection,
+  SuzukaPrecipitationSelection,
+  getTrackTheme,
+} from '@/games/suzuka_grand_prix/trackThemes';
 import {
   isPromptTypeAllowedInGamePlay,
   normalizePromptTypesForGamePlay,
@@ -195,6 +201,25 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
   const [trackThemeSelection, setTrackThemeSelection] = useState<SuzukaTrackThemeSelection>(
     () => initialSettings?.sprintSettings?.trackThemeSelection ?? 'RANDOM'
   );
+  const [timeOfDaySelection, setTimeOfDaySelection] = useState<SuzukaTimeOfDaySelection>(
+    () => initialSettings?.sprintSettings?.timeOfDaySelection ?? 'LE_MANS_CYCLE'
+  );
+  const [cloudCoverSelection, setCloudCoverSelection] = useState<SuzukaCloudCoverSelection>(
+    () => initialSettings?.sprintSettings?.cloudCoverSelection ?? 'PARTLY_CLOUDY'
+  );
+  const [precipitationSelection, setPrecipitationSelection] = useState<SuzukaPrecipitationSelection>(
+    () => initialSettings?.sprintSettings?.precipitationSelection ?? 'NONE'
+  );
+
+  const handleSelectBiomeSelection = (nextBiome: SuzukaTrackThemeSelection) => {
+    setTrackThemeSelection(nextBiome);
+    if (nextBiome !== 'RANDOM') {
+      const biomeConfig = getTrackTheme(nextBiome);
+      setCloudCoverSelection(biomeConfig.defaultCloudCover);
+      setPrecipitationSelection(biomeConfig.defaultPrecipitation);
+    }
+  };
+
   const [wrongSpeedLossRatio, setWrongSpeedLossRatio] = useState<number>(
     () => initialSettings?.sprintSettings?.wrongSpeedLossRatio ?? 0.33
   );
@@ -360,6 +385,9 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
           initialSettings?.sprintSettings?.trackTheme
             ? { trackTheme: initialSettings.sprintSettings.trackTheme }
             : {}),
+          timeOfDaySelection,
+          cloudCoverSelection,
+          precipitationSelection,
           wrongSpeedLossRatio,
           wrongLockoutSeconds: Math.max(2.5, wrongLockoutSeconds),
         }
@@ -661,7 +689,13 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
             wrongLockoutSeconds={wrongLockoutSeconds}
             onSelectWrongLockoutSeconds={(sec) => setWrongLockoutSeconds(Math.max(2.5, sec))}
             trackThemeSelection={trackThemeSelection}
-            onSelectTrackThemeSelection={setTrackThemeSelection}
+            onSelectTrackThemeSelection={handleSelectBiomeSelection}
+            timeOfDaySelection={timeOfDaySelection}
+            onSelectTimeOfDaySelection={setTimeOfDaySelection}
+            cloudCoverSelection={cloudCoverSelection}
+            onSelectCloudCoverSelection={setCloudCoverSelection}
+            precipitationSelection={precipitationSelection}
+            onSelectPrecipitationSelection={setPrecipitationSelection}
           />
         )}
 

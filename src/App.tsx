@@ -35,7 +35,6 @@ import { TyphoonGame } from './games/typhoon';
 import { KatakanaBreakerGame } from './games/katakana_breaker';
 import { TownModelInspector } from './games/town_navigator/TownModelInspector';
 import { TownNavigator } from './games/town_navigator/TownNavigator';
-import { SuzukaGrandPrixContainer } from './games/suzuka_grand_prix/SuzukaGrandPrixContainer';
 import { DreamTownContainer } from './games/dream_town/DreamTownContainer';
 import { MysteryPencilCaseGame } from './games/mystery_pencil_case';
 import { MonsterMakerGame } from './games/monster_maker';
@@ -330,10 +329,6 @@ export const App: React.FC = () => {
 
       if (activeGameId === 'town_navigator') {
         return <TownNavigator onExit={exitToHub} onSwitchToInspector={() => launchGame('town_inspector')} />;
-      }
-
-      if (activeGameId === 'desk_grand_prix' || activeGameId === 'suzuka_grand_prix') {
-        return <SuzukaGrandPrixContainer />;
       }
 
       if (activeGameId === 'dream_town') {

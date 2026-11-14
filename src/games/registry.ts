@@ -102,20 +102,6 @@ export const GAME_REGISTRY: GameDefinition[] = [
     status: 'ready'
   },
   {
-    id: 'suzuka_grand_prix',
-    title: '3D Suzuka Grand Prix',
-    jaTitle: '3D 鈴鹿サーキット・グランプリ',
-    description: '3D racing on the authentic FIA Suzuka Circuit with the famous Figure-8 overpass! Answer English quiz questions to power your car, pass classmates, and watch the live F1 TV broadcast on the big screen.',
-    jaDescription: '日本が誇る名門「鈴鹿サーキット」を3Dで完全再現！立体交差・ヘアピン・S字を英語クイズの正解で疾走！前画面テレビのF1生中継で大盛り上がり！',
-    stream: 'STREAM_B',
-    targetGrades: ['ES_G3', 'ES_G4', 'ES_G5', 'ES_G6'],
-    skills: ['Speed Recall', 'Listening', 'Reading Comprehension', 'Reaction'],
-    icon: 'Flag',
-    color: 'from-amber-500 via-orange-600 to-rose-600',
-    minPlayers: 'Whole Class / iPads',
-    status: 'ready'
-  },
-  {
     id: 'dream_town',
     title: 'Dream Town Architects',
     jaTitle: 'ドリーム・タウン設計士',

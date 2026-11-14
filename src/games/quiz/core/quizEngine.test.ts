@@ -124,6 +124,20 @@ test('GEMINI.md §7: !isEnPrompt cheating prevention hides option images in EN_T
   assert.equal(enToJaPresentation.displayText, '林檎');
   assert.equal(enToJaPresentation.subText, 'りんご');
 
+  const enWordQuestion: QuizQuestion = {
+    ...sampleQuestion,
+    promptType: 'EN_WORD',
+  };
+  const enWordPresentation = resolveOptionPresentation(enWordQuestion, {
+    ...sampleQuestion.options[1],
+    ja_kanji: '',
+    ja_hiragana: 'ばなな',
+  });
+  assert.equal(enWordPresentation.isEnPrompt, true);
+  assert.equal(enWordPresentation.showOptionImage, false);
+  assert.equal(enWordPresentation.displayText, 'ばなな');
+  assert.equal(enWordPresentation.subText, undefined);
+
   const jaMeaningQuestion: QuizQuestion = {
     ...sampleQuestion,
     promptType: 'JA_MEANING',

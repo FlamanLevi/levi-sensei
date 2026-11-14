@@ -13,6 +13,7 @@ import {
 } from '@/services/rtdbSafe';
 import { sweepStaleRooms, clearClassRoomPointers } from '@/services/roomSweeper';
 import { 
+  GameMode,
   QuizRoomState, 
   QuizQuestion, 
   QuizPlayer, 
@@ -436,7 +437,15 @@ export function useQuizRoom(
     };
   }, [roomCode, options?.isStudent, options?.playerId, is3DGrandPrix]);
 
-  // Clean up any pending throttlers or delayed closeRoom timers on unmount
+  // Clean up pending throttlers when resetting to Lobby/GameOver/Closed or unmounting
+  useEffect(() => {
+    if (!roomCode || room?.status === 'LOBBY' || room?.status === 'GAME_OVER' || room?.status === 'CLOSED') {
+      const throttlers = studentSpokeThrottlersRef.current;
+      throttlers.forEach((t) => t.dispose());
+      throttlers.clear();
+    }
+  }, [roomCode, room?.status]);
+
   useEffect(() => {
     const throttlers = studentSpokeThrottlersRef.current;
     return () => {
@@ -610,7 +619,7 @@ export function useQuizRoom(
       if (snap) {
         const rawQ = await getAuthoritativeQuestions();
         const questionsList = [...rawQ].sort((a, b) => (a.questionIndex ?? 0) - (b.questionIndex ?? 0));
-        const roomDurationSec = snap.raceStartTime ? Math.round((Date.now() - snap.raceStartTime) / 1000) : 300;
+        const roomDurationSec = snap.raceStartTime ? Math.max(1, Math.round((getServerTime() - snap.raceStartTime) / 1000)) : 300;
         sessionAnalytics = computeSessionAnalytics(snap, questionsList, roomDurationSec);
         await persistSessionAnalytics(sessionAnalytics);
       }
@@ -652,7 +661,8 @@ export function useQuizRoom(
     const targetQ = questions[index];
     if (!targetQ) return;
     const { correctOptionId: _stripped, ...sanitizedTargetQ } = targetQ;
-    const q: QuizQuestion = { ...sanitizedTargetQ, startTime: getServerTime() };
+    const serverNow = getServerTime();
+    const q: QuizQuestion = { ...sanitizedTargetQ, startTime: serverNow };
 
     try {
       // Clear room responses in Firebase
@@ -660,14 +670,26 @@ export function useQuizRoom(
       await safeRemove(`rooms/${roomCode}/responses`);
       
       // Update local state immediately so allAnswered doesn't evaluate true from old question
-      setRoom(prev => prev ? { ...prev, responses: {}, currentQuestionIndex: index, currentQuestion: q, status: 'QUESTION' } : null);
+      setRoom(prev => prev ? {
+        ...prev,
+        responses: {},
+        currentQuestionIndex: index,
+        currentQuestion: q,
+        status: 'QUESTION',
+        ...(index === 0 ? { raceStartTime: serverNow } : {})
+      } : null);
 
-      await safeUpdate(`rooms/${roomCode}`, {
+      const roomUpdatePayload: Record<string, any> = {
         status: 'QUESTION',
         currentQuestionIndex: index,
         currentQuestion: q,
         responses: null
-      });
+      };
+      if (index === 0) {
+        roomUpdatePayload.raceStartTime = serverNow;
+      }
+
+      await safeUpdate(`rooms/${roomCode}`, roomUpdatePayload);
     } catch (err: any) {
       console.error("Error starting question:", err);
     }
@@ -1371,6 +1393,9 @@ export function useQuizRoom(
           answers: {},
           lastAnswer: undefined,
           sprintProgress: 0,
+          speedKmh: 0,
+          distanceMeters: 0,
+          inPitStop: false,
           finishTimeMs: undefined,
           finishRank: undefined,
           isFinished: false,
@@ -1381,38 +1406,59 @@ export function useQuizRoom(
       const resolvedGamePlayType = updatedSettings?.gamePlayType || currentRoom?.gamePlayType || settingsRef.current?.gamePlayType || 'KAHOOT';
       const isTug = resolvedGamePlayType === 'TUG_OF_WAR';
       const isVolleyball = resolvedGamePlayType === 'VOLLEYBALL';
-      const isVolleyballVs = isVolleyball && (updatedSettings?.volleyballSettings?.gameStyle === 'TEAM_VS' || currentRoom?.volleyballSettings?.gameStyle === 'TEAM_VS');
+      const resolvedVolleyballSettings = updatedSettings?.volleyballSettings ?? currentRoom?.volleyballSettings;
+      const isVolleyballVs = isVolleyball && (!resolvedVolleyballSettings || resolvedVolleyballSettings.gameStyle === 'TEAM_VS');
+      const requestedMode = updatedSettings?.gameMode || currentRoom?.mode || settingsRef.current?.gameMode || 'INDIVIDUAL';
+      const effectiveMode: GameMode = (isTug || isVolleyballVs)
+        ? 'TEAM'
+        : (isVolleyball && resolvedVolleyballSettings?.gameStyle === 'COOP_RALLY')
+          ? 'INDIVIDUAL'
+          : requestedMode;
+
+      const resolvedTeamCount = updatedSettings?.teamCount ?? currentRoom?.teamCount ?? 2;
       const activeTeams: TeamId[] = (isTug || isVolleyballVs)
         ? ['team_red', 'team_white']
-        : (updatedSettings?.activeTeams 
-          || (updatedSettings?.teamCount ? (updatedSettings.teamCount === 2 ? ['team_red', 'team_white'] : RAINBOW_TEAM_ORDER.slice(0, updatedSettings.teamCount)) : undefined)
-          || currentRoom?.activeTeams 
-          || (currentRoom?.teamCount === 2 ? ['team_red', 'team_white'] : RAINBOW_TEAM_ORDER.slice(0, currentRoom?.teamCount || 2)));
+        : (updatedSettings?.activeTeams && updatedSettings.activeTeams.length >= 2
+          ? updatedSettings.activeTeams
+          : updatedSettings?.teamCount
+            ? (updatedSettings.teamCount === 2 ? ['team_red', 'team_white'] : RAINBOW_TEAM_ORDER.slice(0, updatedSettings.teamCount))
+            : (currentRoom?.activeTeams && currentRoom.activeTeams.length >= 2
+              ? currentRoom.activeTeams
+              : (resolvedTeamCount === 2 ? ['team_red', 'team_white'] : RAINBOW_TEAM_ORDER.slice(0, resolvedTeamCount))));
 
       const initialTeamScores: Partial<Record<TeamId, any>> = {};
-      activeTeams.forEach(tId => {
-        const preset = TEAM_PRESETS[tId];
-        if (preset) {
-          initialTeamScores[tId] = {
-            name: preset.name,
-            jaName: preset.jaName,
-            score: 0,
-            correctCount: 0,
-            memberCount: 0,
-            averageScore: 0,
-            color: preset.color,
-            emoji: preset.emoji
-          };
-        }
-      });
+      if (effectiveMode === 'TEAM') {
+        activeTeams.forEach(tId => {
+          const preset = TEAM_PRESETS[tId];
+          if (preset) {
+            initialTeamScores[tId] = {
+              name: preset.name,
+              jaName: preset.jaName,
+              score: 0,
+              correctCount: 0,
+              memberCount: 0,
+              averageScore: 0,
+              color: preset.color,
+              emoji: preset.emoji
+            };
+          }
+        });
+      }
 
-      // In Team Mode, Tug of War, or Volleyball VS, re-balance connected players evenly across active teams on reset
-      if (currentRoom?.mode === 'TEAM' || isTug || isVolleyballVs) {
+      // Assign/balance teams in TEAM mode, or clear teamId when switching back to INDIVIDUAL mode
+      if (effectiveMode === 'TEAM') {
         const playerEntries = Object.entries(resetPlayers);
         playerEntries.forEach(([_, p], idx) => {
           if (activeTeams.length > 0) {
             p.teamId = activeTeams[idx % activeTeams.length];
+            if (initialTeamScores[p.teamId]) {
+              initialTeamScores[p.teamId].memberCount += 1;
+            }
           }
+        });
+      } else {
+        Object.values(resetPlayers).forEach((p) => {
+          delete p.teamId;
         });
       }
 
@@ -1431,13 +1477,21 @@ export function useQuizRoom(
       await safeRemove(`roomResponses/${roomCode}`);
       await safeRemove(`rooms/${roomCode}/responses`);
 
+      const serverNow = getServerTime();
       const updates: any = {
         status: 'LOBBY',
+        updatedAt: serverNow,
+        mode: effectiveMode,
+        activeTeams: effectiveMode === 'TEAM' ? activeTeams : null,
+        teamCount: effectiveMode === 'TEAM' ? activeTeams.length : null,
+        teamAssignment: effectiveMode === 'TEAM'
+          ? (updatedSettings?.teamAssignment || currentRoom?.teamAssignment || 'AUTO_BALANCE')
+          : null,
         currentQuestionIndex: 0,
         currentQuestion: null,
         responses: null,
         players: resetPlayers,
-        teamScores: initialTeamScores,
+        teamScores: effectiveMode === 'TEAM' ? initialTeamScores : {},
         troubleWords: {},
         questions: sanitizeQuestionsForPublicRoom(newQuestions, resolvedGamePlayType),
         totalQuestions: newQuestions.length,
@@ -1446,6 +1500,9 @@ export function useQuizRoom(
         raceFinishGraceStartTime: null,
         tugOfWarStartTime: null,
         tugOfWarFinished: null,
+        tugOfWarRound: null,
+        tugOfWarRoundWins: null,
+        tugOfWarBaselinePulls: null,
         volleyballStartTime: null,
         volleyballFinished: null,
         volleyballLiveState: null,
@@ -1456,11 +1513,22 @@ export function useQuizRoom(
       };
 
       if (updatedSettings) {
-        if (updatedSettings.gamePlayType) updates.gamePlayType = updatedSettings.gamePlayType;
-        if (updatedSettings.sprintSettings) updates.sprintSettings = updatedSettings.sprintSettings;
-        if (updatedSettings.tugOfWarSettings) updates.tugOfWarSettings = updatedSettings.tugOfWarSettings;
-        if (updatedSettings.volleyballSettings) updates.volleyballSettings = updatedSettings.volleyballSettings;
-        if (updatedSettings.timeLimitSeconds) updates.timeLimitSeconds = updatedSettings.timeLimitSeconds;
+        if (updatedSettings.gamePlayType) {
+          updates.gamePlayType = updatedSettings.gamePlayType;
+          if (updatedSettings.gamePlayType !== 'GRAND_PRIX_3D' && updatedSettings.gamePlayType !== 'SPRINT_RACE') {
+            updates.sprintSettings = null;
+          }
+          if (updatedSettings.gamePlayType !== 'TUG_OF_WAR') {
+            updates.tugOfWarSettings = null;
+          }
+          if (updatedSettings.gamePlayType !== 'VOLLEYBALL') {
+            updates.volleyballSettings = null;
+          }
+        }
+        if (updatedSettings.sprintSettings !== undefined) updates.sprintSettings = updatedSettings.sprintSettings;
+        if (updatedSettings.tugOfWarSettings !== undefined) updates.tugOfWarSettings = updatedSettings.tugOfWarSettings;
+        if (updatedSettings.volleyballSettings !== undefined) updates.volleyballSettings = updatedSettings.volleyballSettings;
+        if (updatedSettings.timeLimitSeconds !== undefined) updates.timeLimitSeconds = updatedSettings.timeLimitSeconds;
         if (updatedSettings.recallDelaySeconds !== undefined) updates.recallDelaySeconds = updatedSettings.recallDelaySeconds;
         if (updatedSettings.distractorEliminationMode !== undefined) {
           updates.distractorEliminationMode = updatedSettings.distractorEliminationMode;
@@ -1469,13 +1537,29 @@ export function useQuizRoom(
           updates.eliminateDistractors = updatedSettings.eliminateDistractors;
           updates.distractorEliminationMode = updatedSettings.eliminateDistractors ? 'HALFWAY' : 'OFF';
         }
-        if (updatedSettings.bgm) updates.bgm = updatedSettings.bgm;
-        if (updatedSettings.vocabularyScope) updates.vocabularyScope = updatedSettings.vocabularyScope;
-        if (updatedSettings.selectedUnits) updates.selectedUnits = updatedSettings.selectedUnits;
-        if (updatedSettings.subject) updates.subject = updatedSettings.subject;
-        if (updatedSettings.mathGrade) updates.mathGrade = updatedSettings.mathGrade;
-        if (updatedSettings.mathDomain) updates.mathDomain = updatedSettings.mathDomain;
-        if (updatedSettings.mathTopicId !== undefined) updates.mathTopicId = updatedSettings.mathTopicId;
+        if (updatedSettings.deliveryStream !== undefined) updates.deliveryStream = updatedSettings.deliveryStream;
+        if (updatedSettings.ipadDisplayMode !== undefined) updates.ipadDisplayMode = updatedSettings.ipadDisplayMode;
+        if (updatedSettings.awardToggles !== undefined) updates.awardToggles = updatedSettings.awardToggles;
+        if (updatedSettings.choiceImageMode !== undefined) updates.choiceImageMode = updatedSettings.choiceImageMode;
+        if (updatedSettings.englishReadingAid !== undefined) updates.englishReadingAid = updatedSettings.englishReadingAid;
+        if (updatedSettings.schoolId !== undefined) updates.schoolId = updatedSettings.schoolId || null;
+        if (updatedSettings.classId !== undefined) updates.classId = updatedSettings.classId || null;
+        if (updatedSettings.isTestGame !== undefined) updates.isTestGame = updatedSettings.isTestGame;
+        if (updatedSettings.recordRoster !== undefined) updates.recordRoster = updatedSettings.recordRoster;
+        if (updatedSettings.bgm !== undefined) updates.bgm = updatedSettings.bgm;
+        if (updatedSettings.vocabularyScope !== undefined) updates.vocabularyScope = updatedSettings.vocabularyScope;
+        if (updatedSettings.selectedUnits !== undefined) updates.selectedUnits = updatedSettings.selectedUnits || null;
+        if (updatedSettings.subject) {
+          updates.subject = updatedSettings.subject;
+          if (updatedSettings.subject === 'ENGLISH') {
+            updates.mathGrade = null;
+            updates.mathDomain = null;
+            updates.mathTopicId = null;
+          }
+        }
+        if (updatedSettings.mathGrade !== undefined) updates.mathGrade = updatedSettings.mathGrade;
+        if (updatedSettings.mathDomain !== undefined) updates.mathDomain = updatedSettings.mathDomain;
+        if ('mathTopicId' in updatedSettings) updates.mathTopicId = updatedSettings.mathTopicId ?? null;
       }
 
       await safeUpdate(`rooms/${roomCode}`, updates);
@@ -1486,7 +1570,7 @@ export function useQuizRoom(
           gamePlayType: resolvedGamePlayType,
           unit: currentRoom.unit,
           isTeacher: true,
-          updatedAt: getServerTime()
+          updatedAt: serverNow
         };
         await Promise.all([
           safeSet(`schools/${currentRoom.schoolId}/classes/${currentRoom.classId}/analyticsSummary/teacherRoom`, teacherRoomSummary),
@@ -1522,8 +1606,12 @@ export function useQuizRoom(
 
       await safeUpdate(`rooms/${roomCode}`, { status: 'CLOSED', updatedAt: getServerTime() });
       const codeToRemove = roomCode;
+      if (closeRoomTimerRef.current) {
+        clearTimeout(closeRoomTimerRef.current);
+      }
       // Fire delayed deletion non-blockingly so student tablets cleanly receive the CLOSED event
-      setTimeout(() => {
+      closeRoomTimerRef.current = setTimeout(() => {
+        closeRoomTimerRef.current = null;
         safeRemove(`rooms/${codeToRemove}`).catch(() => {});
       }, 2500);
       setRoom(null);
@@ -1622,22 +1710,26 @@ export function useQuizRoom(
 
       // Purge any stale ghost player from the exact same seat/iPad reconnecting under a new anonymous UID
       const cleanNick = nickname.trim().toLowerCase();
+      const hasAtt = attendanceNumber !== undefined && attendanceNumber !== null;
       if (roomData.players) {
         for (const [otherId, otherP] of Object.entries(roomData.players)) {
           if (otherId === playerId) continue;
-          
-          // Match 1: Same attendance number (definitive reconnect from same classroom seat)
-          const isSameSeat = attendanceNumber && otherP.attendanceNumber === attendanceNumber && attendanceNumber > 0;
+
+          const otherHasAtt = otherP.attendanceNumber !== undefined && otherP.attendanceNumber !== null;
+          // Match 1: Same attendance number (including Seat 00 Teacher/Tester)
+          const isSameSeat = hasAtt && otherHasAtt && otherP.attendanceNumber === attendanceNumber;
           // Match 2: Same nickname BUT only if not a different enrolled student's seat
           const isSameNick = otherP.nickname?.trim().toLowerCase() === cleanNick;
-          const isDifferentSeat = Boolean(attendanceNumber && otherP.attendanceNumber && otherP.attendanceNumber !== attendanceNumber);
-          
+          const isDifferentSeat = hasAtt && otherHasAtt && otherP.attendanceNumber !== attendanceNumber;
+
           if (isSameSeat || (isSameNick && !isDifferentSeat)) {
             await safeRemove(`rooms/${code}/players/${otherId}`).catch(() => {});
             await safeRemove(`roomPlayers/${code}/${otherId}`).catch(() => {});
           }
         }
       }
+
+      const serverNow = getServerTime();
 
       if (existingPlayer) {
         const liveExisting = await safeGet<Partial<QuizPlayer>>(`roomPlayers/${code}/${playerId}`).catch(() => null);
@@ -1650,7 +1742,7 @@ export function useQuizRoom(
           frame: studentProfile?.equipped?.frame || existingPlayer.frame,
           title: studentProfile?.equipped?.title || existingPlayer.title,
           attendanceNumber: attendanceNumber ?? existingPlayer.attendanceNumber,
-          joinedAt: existingPlayer.joinedAt || Date.now(),
+          joinedAt: existingPlayer.joinedAt || serverNow,
           kartTheme: studentProfile?.equipped?.kartTheme || existingPlayer.kartTheme || getSavedKartTheme(),
         };
         await safeSet(playerPath, reconnectedPlayer);
@@ -1711,7 +1803,7 @@ export function useQuizRoom(
         correctCount: 0,
         totalAnswered: 0,
         fastestTimeMs: 999999,
-        joinedAt: Date.now(),
+        joinedAt: serverNow,
         answers: {},
         kartTheme: studentProfile?.equipped?.kartTheme || getSavedKartTheme(),
       };
@@ -1775,7 +1867,7 @@ export function useQuizRoom(
       if (updates.callsign !== undefined) payload.callsign = updates.callsign;
       if (updates.greeting !== undefined) {
         payload.greeting = updates.greeting;
-        payload.greetingTimestamp = Date.now();
+        payload.greetingTimestamp = getServerTime();
       }
 
       await safeUpdate(`rooms/${roomCode}/players/${options.playerId}`, payload);
@@ -1951,7 +2043,7 @@ export function useQuizRoom(
           if (currentData !== null && currentData.playerId !== playerId) {
             return undefined;
           }
-          return { playerId, nickname, score, claimedAt: Date.now() };
+          return { playerId, nickname, score, claimedAt: getServerTime() };
         }
       );
       return result.committed;

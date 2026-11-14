@@ -464,6 +464,7 @@ export function generateQuizQuestions(
     // 3. Only allowed for 'JA_MEANING', 'AUDIO_ONLY', and 'THREE_HINTS' when choiceImageMode !== 'TEXT_ONLY'.
     const allowChoiceImages = settings.choiceImageMode !== 'TEXT_ONLY'
       && chosenPromptType !== 'EN_TO_JA'
+      && chosenPromptType !== 'EN_WORD'
       && chosenPromptType !== 'IMAGE_ONLY'
       && chosenPromptType !== 'PHONICS_MASK'
       && chosenPromptType !== 'SHORT_CLOZE'
@@ -529,7 +530,9 @@ export function generateQuizQuestions(
     switch (chosenPromptType) {
       case 'JA_MEANING':
         promptText = target.ja_kanji || target.ja_hiragana || target.english;
-        promptSubtext = target.ja_hiragana && target.ja_kanji !== target.ja_hiragana ? target.ja_hiragana : 'What is the English word?';
+        promptSubtext = target.ja_kanji && target.ja_hiragana && target.ja_kanji !== target.ja_hiragana
+          ? target.ja_hiragana
+          : 'What is the English word?';
         break;
       case 'EN_TO_JA':
       case 'EN_WORD':
@@ -581,7 +584,7 @@ export function generateQuizQuestions(
         ];
         // Compact single-line fallback for rapid-fire HUDs (Suzuka Circuit, Tamaire, Tug-of-War)
         promptText = `🔍 ${nonSpoiler2.en}`;
-        promptSubtext = jaMeaning ? `ヒント: ${h1.ja} （${jaMeaning}）` : h1.ja;
+        promptSubtext = `ヒント: ${h1.ja}`;
         break;
       }
     }

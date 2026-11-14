@@ -51,7 +51,7 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
   const [answeredQuestionIndex, setAnsweredQuestionIndex] = useState<number | null>(null);
   const [joinError, setJoinError] = useState<string | null>(null);
   const [localKartThemeOverride, setLocalKartThemeOverride] = useState<string | undefined>(undefined);
-  const questionReceivedAtRef = React.useRef<number>(Date.now());
+  const questionReceivedAtRef = React.useRef<number>(getServerTime());
   const lastSeenQuestionIndexRef = React.useRef<number | null>(null);
 
   const {
@@ -81,9 +81,9 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
     };
   }, []);
 
-  // Check if player was kicked by host
+  // Check if player was kicked by host (RTDB deletes `players` key completely when the last player is kicked)
   useEffect(() => {
-    if (playerId && room && room.players && !room.players[playerId]) {
+    if (playerId && room && room.status !== 'CLOSED' && !room.players?.[playerId]) {
       setJoinError(t('You were removed by the teacher. Please join again.', '先生によって退室させられました。もう一度参加してください。'));
       try {
         localStorage.removeItem('activeQuizRoomCode');
@@ -179,7 +179,7 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
     if (room && room.status === 'QUESTION') {
       if (lastSeenQuestionIndexRef.current !== room.currentQuestionIndex) {
         lastSeenQuestionIndexRef.current = room.currentQuestionIndex;
-        questionReceivedAtRef.current = Date.now();
+        questionReceivedAtRef.current = getServerTime();
 
         const existingResp = playerId ? room.responses?.[playerId] : undefined;
         if (existingResp) {
@@ -209,7 +209,7 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible') {
-        questionReceivedAtRef.current = Date.now();
+        questionReceivedAtRef.current = getServerTime();
       }
     };
     document.addEventListener('visibilitychange', handleVisibilityChange);
@@ -273,7 +273,7 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
       correctCount: 0,
       totalAnswered: 0,
       fastestTimeMs: 999999,
-      joinedAt: Date.now(),
+      joinedAt: getServerTime(),
       answers: {}
     }),
     ...(localKartThemeOverride ? { kartTheme: localKartThemeOverride } : {})
@@ -370,7 +370,7 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
           allPlayers={room.players || {}}
           questions={studentQuestions}
           sprintSettings={room.sprintSettings}
-          raceStartTime={room.raceStartTime || Date.now()}
+          raceStartTime={room.raceStartTime || getServerTime()}
           raceFinishGraceStartTime={room.raceFinishGraceStartTime}
           isLobby={room.status === 'LOBBY'}
           onAnswer={handleArcadeAnswer}
@@ -401,7 +401,7 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
           key={`tug-${room.tugOfWarRound || 1}-${room.tugOfWarStartTime || 'active'}`}
           player={currentPlayer}
           questions={studentQuestions}
-          raceStartTime={room.tugOfWarStartTime || room.raceStartTime || Date.now()}
+          raceStartTime={room.tugOfWarStartTime || room.raceStartTime || getServerTime()}
           tugOfWarSettings={room.tugOfWarSettings}
           tugOfWarFinished={room.tugOfWarFinished}
           onAnswer={handleArcadeAnswer}
@@ -415,7 +415,7 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
           key={`volleyball-${room.volleyballStartTime || 'active'}`}
           player={currentPlayer}
           questions={studentQuestions}
-          raceStartTime={room.volleyballStartTime || room.raceStartTime || Date.now()}
+          raceStartTime={room.volleyballStartTime || room.raceStartTime || getServerTime()}
           volleyballSettings={room.volleyballSettings}
           volleyballFinished={room.volleyballFinished}
           volleyballLiveState={room.volleyballLiveState}

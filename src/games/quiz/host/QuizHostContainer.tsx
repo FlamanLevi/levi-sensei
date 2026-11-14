@@ -97,7 +97,7 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
     correctCount: 0,
     totalAnswered: 0,
     fastestTimeMs: 999999,
-    joinedAt: Date.now(),
+    joinedAt: getServerTime(),
     answers: {}
   }), []);
 
@@ -110,7 +110,7 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
     correctCount: 0,
     totalAnswered: 0,
     fastestTimeMs: 999999,
-    joinedAt: Date.now(),
+    joinedAt: getServerTime(),
     answers: {}
   }));
   const [soloSelectedOptionId, setSoloSelectedOptionId] = useState<string | null>(null);
@@ -262,13 +262,19 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
     // Scenario A: Updating existing room from Lobby without disbanding or kicking students
     if (isEditingLobby && roomCode) {
       setIsEditingLobby(false);
-      const success = await resetRoomForNewRound(timed, true, newSettings);
-      if (success) {
-        setStep('LOBBY');
-      } else {
-        alert('設定の更新に失敗しました。');
+      if (newSettings.deliveryStream === 'STREAM_B_MULTIPLAYER') {
+        const success = await resetRoomForNewRound(timed, true, newSettings);
+        if (success) {
+          setStep('LOBBY');
+        } else {
+          alert('設定の更新に失敗しました。');
+        }
+        return;
       }
-      return;
+      // Switched from multiplayer lobby to Stream A Front-Screen solo: cleanly disband room before starting solo
+      clearBots();
+      await closeRoom();
+      setRoomCode(null);
     }
 
     // Scenario B: Creating a fresh room
@@ -303,7 +309,7 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
       setSoloTroubleWords({});
       setStep('QUESTION');
     }
-  }, [filteredWords, gradeWords, activeGrade, activeUnit, createRoom, createInitialSoloPlayer, isEditingLobby, roomCode, resetRoomForNewRound, room?.sprintSettings?.trackTheme, settings?.sprintSettings?.trackTheme, settings?.sprintSettings?.trackThemeSelection, resolveSettingsForRound, isStudentHost]);
+  }, [filteredWords, gradeWords, activeGrade, activeUnit, createRoom, createInitialSoloPlayer, isEditingLobby, roomCode, resetRoomForNewRound, clearBots, closeRoom, room?.sprintSettings?.trackTheme, settings?.sprintSettings?.trackTheme, settings?.sprintSettings?.trackThemeSelection, resolveSettingsForRound, isStudentHost]);
 
   // Trigger in-lobby settings edit
   const handleEditSettingsFromLobby = useCallback(() => {
@@ -400,10 +406,10 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
           setSoloTroubleWords(prev => ({
             ...prev,
             [q.targetWordId]: {
-              english: q.targetWordEnglish,
-              ja: q.targetWordJa,
+              english: q.isMath ? q.promptText : q.targetWordEnglish,
+              ja: q.isMath ? (q.targetWordJa || `正解: ${q.targetWordEnglish}`) : q.targetWordJa,
               image: q.promptImage,
-              sound: q.promptSound,
+              sound: q.isMath ? undefined : q.promptSound,
               incorrectCount: (prev[q.targetWordId]?.incorrectCount || 0) + 1,
               totalCount: (prev[q.targetWordId]?.totalCount || 0) + 1
             }
@@ -499,6 +505,7 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
 
       if (settings?.deliveryStream === 'STREAM_B_MULTIPLAYER') {
         await endGame(finalAwards);
+        setStep('GAME_OVER');
       } else {
         setStep('GAME_OVER');
       }
@@ -815,7 +822,7 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
             roomCode={roomCode || 'GP3D'}
             questions={questions}
             players={room?.players || {}}
-            raceStartTime={room?.raceStartTime || Date.now()}
+            raceStartTime={room?.raceStartTime || getServerTime()}
             sprintSettings={room?.sprintSettings || settings?.sprintSettings}
             raceFinishGraceStartTime={room?.raceFinishGraceStartTime}
             isLobby={step === 'LOBBY'}
@@ -876,7 +883,7 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
           roomCode={roomCode || 'TUG'}
           questions={questions}
           players={room?.players || {}}
-          raceStartTime={room?.tugOfWarStartTime || room?.raceStartTime || Date.now()}
+          raceStartTime={room?.tugOfWarStartTime || room?.raceStartTime || getServerTime()}
           tugOfWarSettings={room?.tugOfWarSettings || settings?.tugOfWarSettings}
           currentRound={room?.tugOfWarRound || 1}
           roundWins={room?.tugOfWarRoundWins || { team_red: 0, team_white: 0 }}
@@ -918,7 +925,7 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
           roomCode={roomCode || 'VOLLEY'}
           questions={questions}
           players={room?.players || {}}
-          raceStartTime={room?.volleyballStartTime || room?.raceStartTime || Date.now()}
+          raceStartTime={room?.volleyballStartTime || room?.raceStartTime || getServerTime()}
           volleyballSettings={room?.volleyballSettings || settings?.volleyballSettings}
           eyesUp={room?.eyesUp}
           onToggleEyesUp={toggleEyesUp}

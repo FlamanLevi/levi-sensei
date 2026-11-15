@@ -509,20 +509,20 @@ function createPrecipitationSystem(
  */
 function createFireworksSystem(anchorPos: THREE.Vector3) {
   const shells = [
-    { offset: [0, 30, -16], color: [1.0, 0.85, 0.24], phase: 0.0 },
-    { offset: [-22, 36, 10], color: [1.0, 0.24, 0.68], phase: 0.15 },
-    { offset: [20, 34, 14], color: [0.15, 0.94, 1.0], phase: 0.30 },
-    { offset: [-14, 42, -26], color: [0.28, 1.0, 0.52], phase: 0.45 },
-    { offset: [18, 39, -8], color: [1.0, 0.42, 0.14], phase: 0.60 },
-    { offset: [-34, 33, -6], color: [0.72, 0.36, 1.0], phase: 0.75 },
-    { offset: [32, 37, -20], color: [1.0, 0.18, 0.32], phase: 0.90 },
-    { offset: [-6, 46, 4], color: [1.0, 0.92, 0.45], phase: 1.05 },
-    { offset: [28, 31, 24], color: [0.22, 0.82, 1.0], phase: 1.20 },
-    { offset: [-28, 40, 22], color: [1.0, 0.55, 0.18], phase: 1.35 },
-    { offset: [8, 44, -32], color: [0.95, 0.28, 0.88], phase: 1.50 },
-    { offset: [-18, 29, -34], color: [0.35, 1.0, 0.75], phase: 1.65 },
-    { offset: [14, 48, 12], color: [1.0, 0.78, 0.18], phase: 1.80 },
-    { offset: [0, 38, 28], color: [1.0, 0.32, 0.52], phase: 1.95 },
+    { offset: [0, 36, -24], color: [1.0, 0.85, 0.24], phase: 0.0 },
+    { offset: [-38, 44, 18], color: [1.0, 0.24, 0.68], phase: 0.15 },
+    { offset: [36, 42, 22], color: [0.15, 0.94, 1.0], phase: 0.30 },
+    { offset: [-24, 54, -44], color: [0.28, 1.0, 0.52], phase: 0.45 },
+    { offset: [30, 48, -14], color: [1.0, 0.42, 0.14], phase: 0.60 },
+    { offset: [-58, 39, -10], color: [0.72, 0.36, 1.0], phase: 0.75 },
+    { offset: [56, 46, -34], color: [1.0, 0.18, 0.32], phase: 0.90 },
+    { offset: [-12, 60, 8], color: [1.0, 0.92, 0.45], phase: 1.05 },
+    { offset: [48, 38, 42], color: [0.22, 0.82, 1.0], phase: 1.20 },
+    { offset: [-48, 50, 38], color: [1.0, 0.55, 0.18], phase: 1.35 },
+    { offset: [14, 56, -54], color: [0.95, 0.28, 0.88], phase: 1.50 },
+    { offset: [-32, 34, -58], color: [0.35, 1.0, 0.75], phase: 1.65 },
+    { offset: [24, 62, 20], color: [1.0, 0.78, 0.18], phase: 1.80 },
+    { offset: [0, 46, 48], color: [1.0, 0.32, 0.52], phase: 1.95 },
   ];
   const sparksPerShell = 140;
   const totalSparks = shells.length * sparksPerShell;
@@ -2020,8 +2020,10 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
         greenFlagStartSec !== null && elapsedTime - greenFlagStartSec < 5.5;
       const leMansFinale =
         timeOfDayRef.current === 'LE_MANS_CYCLE' && smoothedLeMansProgress > 0.78;
+      const isDarkEnoughForFireworks = currentNightFactor > 0.15;
       const shouldShowFireworks =
         isGreenFlag &&
+        isDarkEnoughForFireworks &&
         (anyRacerFinished || onFinalLap || lapCrossingSalute || greenFlagSalute || leMansFinale);
       fireworksSystem.mesh.visible = shouldShowFireworks;
       if (shouldShowFireworks) {

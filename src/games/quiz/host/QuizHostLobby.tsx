@@ -551,7 +551,7 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
                       </span>
                     </div>
 
-                    <div className="flex-1 min-h-0 space-y-1 overflow-y-auto pr-0.5 pt-1">
+                    <div className="flex-1 min-h-0 space-y-1 overflow-y-auto pr-0.5 pt-7">
                       {teamMembers.length === 0 ? (
                         <div className="h-full flex items-center justify-center text-[11px] text-slate-600 dark:text-slate-300 font-bold italic py-4">
                           {t('Waiting...', '待機中...')}
@@ -624,7 +624,7 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
             </div>
           ) : (
             /* INDIVIDUAL MODE: Responsive 3-to-4 Column Grid with Dedicated Internal Scrollbar */
-            <div className="flex-1 min-h-0 overflow-y-auto pr-1 pt-2">
+            <div className="flex-1 min-h-0 overflow-y-auto pr-1 pt-8">
               {playerList.length === 0 ? (
                 <div className="w-full h-full flex flex-col items-center justify-center py-8 text-slate-700 dark:text-slate-200 italic text-xs font-black text-center">
                   <span className="text-3xl mb-2 drop-shadow-xs">📱</span>

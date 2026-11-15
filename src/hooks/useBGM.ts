@@ -1,191 +1,95 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { SOUND_PACKS, getSoundPack, SoundTrack } from '@/utils/soundPacks';
+import {
+  BgmRole,
+  BGMTrackMeta,
+  ResolvedBGMTrack,
+  QuizHostBgmPhase,
+  MARIO_BGM_TRACKS,
+  WANGAN_BGM_TRACKS,
+  ALL_BGM_TRACKS,
+  BGM_CATEGORIES,
+  DEFAULT_FADE_IN_DURATION_MS,
+  GAME_CROSSFADE_DURATION_MS,
+  LOBBY_FADE_IN_DURATION_MS,
+  LOBBY_CROSSFADE_DURATION_MS,
+  RACE_CROSSFADE_DURATION_MS,
+  drawNextTrackFromDeck,
+  resolveBGMTrack,
+  resolveQuizHostBgmPhase,
+  computeGradualFadeInVolume,
+  computeCrossfadeVolumes,
+} from './bgmHelpers';
 
-export interface BGMTrackMeta {
-  id: string;
-  file: string;
-  title: string;
-  series: string;
-}
-
-export const MARIO_BGM_TRACKS: BGMTrackMeta[] = [
-  { id: 'mariokart', file: 'mario/mariokart.mp3', title: 'Mario Kart 🏁', series: 'mario' },
-  { id: 'newsupermariobros2', file: 'mario/newsupermariobros2.mp3', title: 'NSMB 2 🍄', series: 'mario' },
-  { id: 'newsupermariobroswii', file: 'mario/newsupermariobroswii.mp3', title: 'NSMB Wii ⭐', series: 'mario' },
-  { id: 'supermarioworld', file: 'mario/supermarioworld.mp3', title: 'Super Mario World 🦖', series: 'mario' },
-  { id: 'warioland', file: 'mario/warioland.mp3', title: 'Wario Land 💰', series: 'mario' }
-];
-
-export const WANGAN_BGM_TRACKS: BGMTrackMeta[] = [
-  { id: 'wanganmidnight1', file: 'wangan/wanganmidnight1.mp3', title: 'Wangan Tune 1 🏎️', series: 'wangan' },
-  { id: 'wanganmidnight2', file: 'wangan/wanganmidnight2.mp3', title: 'Wangan Tune 2 ⚡', series: 'wangan' },
-  { id: 'wanganmidnight3', file: 'wangan/wanganmidnight3.mp3', title: 'Wangan Tune 3 🌌', series: 'wangan' },
-  { id: 'wanganmidnight4', file: 'wangan/wanganmidnight4.mp3', title: 'Wangan Tune 4 🏁', series: 'wangan' },
-  { id: 'wanganmidnight5', file: 'wangan/wanganmidnight5.mp3', title: 'Wangan Tune 5 💥', series: 'wangan' }
-];
-
-export const ALL_BGM_TRACKS: BGMTrackMeta[] = [
-  ...MARIO_BGM_TRACKS,
-  ...WANGAN_BGM_TRACKS,
-  ...SOUND_PACKS.all_stars.tracks.map(t => ({
-    id: t.id,
-    file: t.url.startsWith('/') ? t.url.replace(/^\/media\/bgm\//, '') : t.url,
-    title: t.title,
-    series: t.id.split('_')[0]
-  }))
-];
-
-/**
- * Registry of BGM categories.
- */
-export const BGM_CATEGORIES: Record<string, BGMTrackMeta[]> = {
-  random_all: ALL_BGM_TRACKS,
-  random_mario: MARIO_BGM_TRACKS,
-  random_wangan: WANGAN_BGM_TRACKS,
-  all_stars: ALL_BGM_TRACKS
+export type { BgmRole, BGMTrackMeta, ResolvedBGMTrack, QuizHostBgmPhase };
+export {
+  MARIO_BGM_TRACKS,
+  WANGAN_BGM_TRACKS,
+  ALL_BGM_TRACKS,
+  BGM_CATEGORIES,
+  DEFAULT_FADE_IN_DURATION_MS,
+  GAME_CROSSFADE_DURATION_MS,
+  LOBBY_FADE_IN_DURATION_MS,
+  LOBBY_CROSSFADE_DURATION_MS,
+  RACE_CROSSFADE_DURATION_MS,
+  drawNextTrackFromDeck,
+  resolveBGMTrack,
+  resolveQuizHostBgmPhase,
+  computeGradualFadeInVolume,
+  computeCrossfadeVolumes,
 };
 
-// Fisher-Yates true random array shuffle
-function shuffleArray<T>(items: T[]): T[] {
-  const array = [...items];
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-  return array;
+export interface UseBGMOptions {
+  /** Activity phase role used to pick matching tracks ('lobby', 'quiz', 'rush', 'boss', 'podium'). */
+  role?: BgmRole;
+  /** Duration (ms) to gradually fade in when starting cold (no active outgoing track). */
+  fadeInDurationMs?: number;
+  /** Duration (ms) for overlapping crossfade when transitioning between playing tracks. */
+  crossfadeDurationMs?: number;
 }
 
-interface SavedDeckState {
-  remainingIds: string[];
-  lastPlayedId: string | null;
-  lastPlayedAt: number;
+type PrimaryFadeCurve = 'linear' | 'gradual-fade-in' | 'crossfade-in' | 'cos-fade-out';
+
+interface OutgoingFadeEntry {
+  audio: HTMLAudioElement;
+  timerId: ReturnType<typeof setInterval>;
 }
 
-const DECK_STORAGE_PREFIX = 'levi_bgm_deck_';
+const NORMAL_VOLUME = 0.35;
+const DUCKED_VOLUME = 0.05;
+const FADE_TICK_MS = 25;
+const PAUSE_FADE_OUT_MS = 320;
+const MAX_CONCURRENT_OUTGOING_FADES = 2;
 
-/**
- * Draws the next track from a persistent, indeterminate-length shuffle bag.
- * - Stores state in localStorage so it survives tab closures & iPad reboots.
- * - Works with any number of tracks (3, 5, 8, 20+).
- * - Auto-reconciles if new tracks are added to or removed from the catalog.
- * - Guarantees the same track is never dealt consecutively when the deck resets.
- */
-export function drawNextTrackFromDeck(categoryKey: string, trackPool: BGMTrackMeta[]): { file: string; title: string; id: string } | null {
-  if (!trackPool || trackPool.length === 0) return null;
-  if (trackPool.length === 1) {
-    return { file: trackPool[0].file, title: trackPool[0].title, id: trackPool[0].id };
-  }
+function clamp01(value: number): number {
+  if (!Number.isFinite(value)) return 0;
+  return Math.max(0, Math.min(1, value));
+}
 
-  const validIds = trackPool.map(t => t.id);
-  const storageKey = `${DECK_STORAGE_PREFIX}${categoryKey}`;
-  let state: SavedDeckState = {
-    remainingIds: [],
-    lastPlayedId: null,
-    lastPlayedAt: 0
-  };
-
+function stopAndReleaseAudio(audio: HTMLAudioElement | null | undefined): void {
+  if (!audio) return;
   try {
-    const raw = localStorage.getItem(storageKey);
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed.remainingIds)) {
-        state = parsed;
-      }
-    }
+    audio.pause();
+    audio.currentTime = 0;
+    audio.src = '';
   } catch {
-    // Ignore parse errors, fallback to clean state
+    // Ignore hardware audio release quirks on mobile Safari
   }
-
-  // 1. Reconcile remainingIds against currently valid trackPool
-  let remaining = state.remainingIds.filter(id => validIds.includes(id));
-
-  // If new tracks were added to the code that aren't in remaining and weren't last played, fold them in
-  const missingNewIds = validIds.filter(id => !remaining.includes(id) && id !== state.lastPlayedId);
-  if (missingNewIds.length > 0) {
-    remaining = shuffleArray([...remaining, ...missingNewIds]);
-  }
-
-  // 2. If the deck is exhausted, reshuffle all valid IDs
-  if (remaining.length === 0) {
-    const freshDeck = shuffleArray(validIds);
-    // Guard against back-to-back duplicate across reshuffles
-    if (freshDeck.length > 1 && freshDeck[0] === state.lastPlayedId) {
-      [freshDeck[0], freshDeck[1]] = [freshDeck[1], freshDeck[0]];
-    }
-    remaining = freshDeck;
-  }
-
-  // 3. Draw the next card
-  const pickedId = remaining.shift()!;
-  const pickedTrack = trackPool.find(t => t.id === pickedId) || trackPool[0];
-
-  // 4. Persist updated deck state
-  try {
-    const updatedState: SavedDeckState = {
-      remainingIds: remaining,
-      lastPlayedId: pickedTrack.id,
-      lastPlayedAt: Date.now()
-    };
-    localStorage.setItem(storageKey, JSON.stringify(updatedState));
-  } catch {}
-
-  return { file: pickedTrack.file, title: pickedTrack.title, id: pickedTrack.id };
 }
 
-export function resolveBGMTrack(selection?: string, role?: string): { file: string; title: string; id?: string } | null {
-  if (!selection || selection === 'none') {
-    return null;
-  }
-
-  // 1. Resolve from Sound Packs Registry (all_stars, initial_d, persona_5, wangan, dragon, mario)
-  const pack = getSoundPack(selection);
-  if (pack && pack.id !== 'none' && pack.tracks.length > 0) {
-    let pool = pack.tracks;
-    if (role) {
-      const roleMatches = pack.tracks.filter(t => t.role === role);
-      if (roleMatches.length > 0) pool = roleMatches;
-    }
-    const trackPool: BGMTrackMeta[] = pool.map(t => ({
-      id: t.id,
-      file: t.url.startsWith('/') ? t.url.replace(/^\/media\/bgm\//, '') : t.url,
-      title: t.title,
-      series: pack.id
-    }));
-    return drawNextTrackFromDeck(`${selection}_${role || 'all'}`, trackPool);
-  }
-
-  // 2. Legacy category shuffle bags (random_all, random_mario, random_wangan)
-  if (BGM_CATEGORIES[selection]) {
-    return drawNextTrackFromDeck(selection, BGM_CATEGORIES[selection]);
-  }
-
-  // 3. Direct track selection by id or filename (supports both 'mario/mariokart.mp3' and 'mariokart.mp3')
-  const direct = ALL_BGM_TRACKS.find(t => 
-    t.id === selection || 
-    t.file === selection || 
-    t.file.endsWith('/' + selection)
-  );
-  if (direct) {
-    return { file: direct.file, title: direct.title, id: direct.id };
-  }
-
-  if (selection.endsWith('.mp3')) {
-    // If a raw mp3 is passed without folder, check if it lives in any known category
-    const known = ALL_BGM_TRACKS.find(t => t.file.endsWith('/' + selection));
-    const filePath = known ? known.file : selection;
-    return { file: filePath, title: selection, id: selection };
-  }
-
-  return null;
-}
-
-let activeGlobalBgmElement: HTMLAudioElement | null = null;
+// Ensures two separate mounted components never accidentally stack orphaned BGM loops,
+// while letting one active hook instance smoothly crossfade its own outgoing/incoming elements.
+let activeGlobalHookStopper: (() => void) | null = null;
 
 export const useBGM = (
   trackSelection?: string,
   isPlaying = true,
-  _estimatedDurationSeconds = 0
+  _estimatedDurationSeconds = 0,
+  options?: UseBGMOptions
 ) => {
+  const role = options?.role;
+  const fadeInDurationMs = options?.fadeInDurationMs ?? DEFAULT_FADE_IN_DURATION_MS;
+  const crossfadeDurationMs = options?.crossfadeDurationMs ?? GAME_CROSSFADE_DURATION_MS;
+
   const [isUserMuted, setIsUserMuted] = useState<boolean>(() => {
     try {
       return localStorage.getItem('levi_sensei_bgm_muted') === 'true';
@@ -194,9 +98,13 @@ export const useBGM = (
     }
   });
 
-  const [resolvedTrack, setResolvedTrack] = useState<{ file: string; title: string; id?: string } | null>(null);
+  const [resolvedTrack, setResolvedTrack] = useState<ResolvedBGMTrack | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const volumeIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const volumeIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const outgoingFadesRef = useRef<OutgoingFadeEntry[]>([]);
+  const trackFadeHintRef = useRef<'fade-in' | 'crossfade'>('fade-in');
+  const trackGenerationRef = useRef<number>(0);
+  const retryInteractionCleanupRef = useRef<(() => void) | null>(null);
 
   const [isDucked, setIsDucked] = useState<boolean>(false);
   const isDuckedRef = useRef<boolean>(false);
@@ -206,184 +114,435 @@ export const useBGM = (
   const playbackRateRef = useRef<number>(1.0);
   playbackRateRef.current = playbackRate;
 
-  const NORMAL_VOLUME = 0.35;
-  const DUCKED_VOLUME = 0.05;
+  const isPlayingRef = useRef<boolean>(isPlaying);
+  isPlayingRef.current = isPlaying;
+  const isUserMutedRef = useRef<boolean>(isUserMuted);
+  isUserMutedRef.current = isUserMuted;
 
-  // Draw or re-draw track
+  const fadeInDurationRef = useRef<number>(fadeInDurationMs);
+  fadeInDurationRef.current = fadeInDurationMs;
+  const crossfadeDurationRef = useRef<number>(crossfadeDurationMs);
+  crossfadeDurationRef.current = crossfadeDurationMs;
+
+  // Reset speed-up pitch whenever returning to Lobby
+  useEffect(() => {
+    if (role === 'lobby') {
+      setPlaybackRate(1.0);
+    }
+  }, [role]);
+
+  // Draw or re-draw track respecting active role
   const advanceToNextTrack = useCallback(() => {
     if (!trackSelection || trackSelection === 'none') {
       setResolvedTrack(null);
       return;
     }
-    const next = resolveBGMTrack(trackSelection);
+    const next = resolveBGMTrack(trackSelection, role);
     setResolvedTrack(next);
-  }, [trackSelection]);
+  }, [trackSelection, role]);
 
-  // Resolve track when trackSelection changes
+  // Resolve track when selection or role changes
   useEffect(() => {
     advanceToNextTrack();
   }, [advanceToNextTrack]);
 
-  // Unified smooth volume ramp helper (clears any competing volume animations)
-  const rampVolumeTo = useCallback((targetVol: number, durationMs = 300) => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    if (volumeIntervalRef.current) {
-      clearInterval(volumeIntervalRef.current);
-      volumeIntervalRef.current = null;
+  const clearAutoplayRetry = useCallback(() => {
+    if (retryInteractionCleanupRef.current) {
+      retryInteractionCleanupRef.current();
+      retryInteractionCleanupRef.current = null;
     }
-
-    const startVol = audio.volume;
-    const diff = targetVol - startVol;
-    if (Math.abs(diff) < 0.01) {
-      audio.volume = targetVol;
-      return;
-    }
-
-    const steps = 12;
-    const intervalTime = Math.max(16, Math.floor(durationMs / steps));
-    let stepCount = 0;
-
-    volumeIntervalRef.current = setInterval(() => {
-      if (!audioRef.current) {
-        if (volumeIntervalRef.current) clearInterval(volumeIntervalRef.current);
-        return;
-      }
-      stepCount++;
-      const progress = Math.min(1, stepCount / steps);
-      const nextVol = startVol + diff * progress;
-      audioRef.current.volume = Math.max(0, Math.min(1, nextVol));
-
-      if (progress >= 1) {
-        if (volumeIntervalRef.current) {
-          clearInterval(volumeIntervalRef.current);
-          volumeIntervalRef.current = null;
-        }
-      }
-    }, intervalTime);
   }, []);
 
-  // 1. Initialize and Preload Audio (Starts cleanly from 0:00)
-  useEffect(() => {
+  const clearPrimaryVolumeRamp = useCallback(() => {
     if (volumeIntervalRef.current) {
       clearInterval(volumeIntervalRef.current);
       volumeIntervalRef.current = null;
     }
+  }, []);
 
-    if (!resolvedTrack) {
-      if (audioRef.current) {
-        if (activeGlobalBgmElement === audioRef.current) {
-          activeGlobalBgmElement = null;
-        }
-        audioRef.current.pause();
-        audioRef.current.src = '';
-        audioRef.current = null;
+  const clearAllOutgoingFades = useCallback(() => {
+    const entries = outgoingFadesRef.current;
+    if (entries.length === 0) return;
+    outgoingFadesRef.current = [];
+    for (const entry of entries) {
+      clearInterval(entry.timerId);
+      stopAndReleaseAudio(entry.audio);
+    }
+  }, []);
+
+  const stopAllInstanceAudio = useCallback(() => {
+    trackGenerationRef.current += 1;
+    clearAutoplayRetry();
+    clearPrimaryVolumeRamp();
+    clearAllOutgoingFades();
+    if (audioRef.current) {
+      stopAndReleaseAudio(audioRef.current);
+      audioRef.current = null;
+    }
+  }, [clearAutoplayRetry, clearPrimaryVolumeRamp, clearAllOutgoingFades]);
+
+  const stopAllInstanceAudioRef = useRef(stopAllInstanceAudio);
+  stopAllInstanceAudioRef.current = stopAllInstanceAudio;
+
+  // Timestamped smooth primary volume animator
+  const rampPrimaryVolumeTo = useCallback(
+    (
+      targetVol: number,
+      durationMs = 300,
+      curve: PrimaryFadeCurve = 'linear',
+      onComplete?: () => void
+    ) => {
+      const audio = audioRef.current;
+      if (!audio) return;
+
+      clearPrimaryVolumeRamp();
+
+      const clampedTarget = clamp01(targetVol);
+      const startVol = clamp01(audio.volume);
+      const diff = clampedTarget - startVol;
+
+      if (durationMs <= 0 || Math.abs(diff) < 0.004) {
+        try {
+          audio.volume = clampedTarget;
+        } catch {}
+        onComplete?.();
+        return;
       }
+
+      const startedAt = performance.now();
+      volumeIntervalRef.current = setInterval(() => {
+        const currentAudio = audioRef.current;
+        if (!currentAudio || currentAudio !== audio) {
+          clearPrimaryVolumeRamp();
+          return;
+        }
+
+        const progress = Math.min(1, (performance.now() - startedAt) / durationMs);
+        let nextVol: number;
+
+        if (curve === 'gradual-fade-in') {
+          nextVol = startVol <= 0.004
+            ? computeGradualFadeInVolume(progress, clampedTarget)
+            : clamp01(startVol + diff * Math.pow(progress, 1.75));
+        } else if (curve === 'crossfade-in') {
+          nextVol = startVol <= 0.004
+            ? computeCrossfadeVolumes(progress, 0, clampedTarget).incomingVolume
+            : clamp01(startVol + diff * Math.sin(progress * (Math.PI / 2)));
+        } else if (curve === 'cos-fade-out') {
+          nextVol = clamp01(startVol * Math.cos(progress * (Math.PI / 2)) + clampedTarget * (1 - Math.cos(progress * (Math.PI / 2))));
+        } else {
+          nextVol = clamp01(startVol + diff * progress);
+        }
+
+        try {
+          currentAudio.volume = nextVol;
+        } catch {}
+
+        if (progress >= 1) {
+          clearPrimaryVolumeRamp();
+          try {
+            currentAudio.volume = clampedTarget;
+          } catch {}
+          onComplete?.();
+        }
+      }, FADE_TICK_MS);
+    },
+    [clearPrimaryVolumeRamp]
+  );
+
+  // Fade out and dispose an outgoing track concurrently for true crossfades
+  const fadeOutAndDispose = useCallback((outgoingAudio: HTMLAudioElement, durationMs: number) => {
+    while (outgoingFadesRef.current.length >= MAX_CONCURRENT_OUTGOING_FADES) {
+      const oldest = outgoingFadesRef.current.shift();
+      if (oldest) {
+        clearInterval(oldest.timerId);
+        stopAndReleaseAudio(oldest.audio);
+      }
+    }
+
+    const startVol = clamp01(outgoingAudio.volume);
+    if (durationMs <= 0 || startVol <= 0.004 || outgoingAudio.paused) {
+      stopAndReleaseAudio(outgoingAudio);
       return;
     }
 
-    if (activeGlobalBgmElement && activeGlobalBgmElement !== audioRef.current) {
+    const startedAt = performance.now();
+    const entry: OutgoingFadeEntry = {
+      audio: outgoingAudio,
+      timerId: setInterval(() => {
+        const progress = Math.min(1, (performance.now() - startedAt) / durationMs);
+        const { outgoingVolume } = computeCrossfadeVolumes(progress, startVol, 0);
+        try {
+          outgoingAudio.volume = outgoingVolume;
+        } catch {}
+
+        if (progress >= 1) {
+          clearInterval(entry.timerId);
+          outgoingFadesRef.current = outgoingFadesRef.current.filter((item) => item !== entry);
+          stopAndReleaseAudio(outgoingAudio);
+        }
+      }, FADE_TICK_MS),
+    };
+
+    outgoingFadesRef.current.push(entry);
+  }, []);
+
+  // Retry autoplay on first user gesture if async room creation exceeded activation window
+  const scheduleAutoplayRetry = useCallback(
+    (
+      audio: HTMLAudioElement,
+      expectedGen: number,
+      fadeMs: number,
+      curve: PrimaryFadeCurve
+    ) => {
+      clearAutoplayRetry();
+      if (typeof window === 'undefined') return;
+
+      const handleUnlock = () => {
+        clearAutoplayRetry();
+        if (
+          expectedGen !== trackGenerationRef.current ||
+          audioRef.current !== audio ||
+          !isPlayingRef.current ||
+          isUserMutedRef.current
+        ) {
+          return;
+        }
+        try {
+          const retryPromise = audio.play();
+          const beginRamp = () => {
+            if (
+              expectedGen !== trackGenerationRef.current ||
+              audioRef.current !== audio ||
+              !isPlayingRef.current ||
+              isUserMutedRef.current
+            ) {
+              return;
+            }
+            const targetVol = isDuckedRef.current ? DUCKED_VOLUME : NORMAL_VOLUME;
+            rampPrimaryVolumeTo(targetVol, fadeMs, curve);
+          };
+          if (retryPromise !== undefined) {
+            retryPromise.then(beginRamp).catch(() => {});
+          } else {
+            beginRamp();
+          }
+        } catch {
+          // Ignore unlock failure
+        }
+      };
+
+      const opts: AddEventListenerOptions = { capture: true, passive: true };
+      window.addEventListener('pointerdown', handleUnlock, opts);
+      window.addEventListener('touchstart', handleUnlock, opts);
+      window.addEventListener('keydown', handleUnlock, { capture: true });
+
+      retryInteractionCleanupRef.current = () => {
+        window.removeEventListener('pointerdown', handleUnlock, opts);
+        window.removeEventListener('touchstart', handleUnlock, opts);
+        window.removeEventListener('keydown', handleUnlock, { capture: true });
+      };
+    },
+    [clearAutoplayRetry, rampPrimaryVolumeTo]
+  );
+
+  // Unmount cleanup (separated so track swaps can crossfade cleanly without pausing outgoing track in effect cleanup)
+  useEffect(() => {
+    const stopper = () => stopAllInstanceAudioRef.current();
+    return () => {
+      stopper();
+      if (activeGlobalHookStopper === stopper) {
+        activeGlobalHookStopper = null;
+      }
+    };
+  }, []);
+
+  // 1. Initialize New Track & Trigger Crossfade when Swapping Between Playing Tracks
+  useEffect(() => {
+    trackGenerationRef.current += 1;
+    clearAutoplayRetry();
+    clearPrimaryVolumeRamp();
+
+    const prevAudio = audioRef.current;
+
+    if (!resolvedTrack) {
+      audioRef.current = null;
+      stopAndReleaseAudio(prevAudio);
+      clearAllOutgoingFades();
+      return;
+    }
+
+    const thisStopper = () => stopAllInstanceAudioRef.current();
+    if (activeGlobalHookStopper && activeGlobalHookStopper !== thisStopper) {
       try {
-        activeGlobalBgmElement.pause();
-        activeGlobalBgmElement.src = '';
+        activeGlobalHookStopper();
       } catch {}
-      activeGlobalBgmElement = null;
+    }
+    activeGlobalHookStopper = thisStopper;
+
+    const canCrossfadeFromPrev =
+      Boolean(prevAudio) &&
+      isPlayingRef.current &&
+      !isUserMutedRef.current &&
+      !prevAudio!.paused &&
+      prevAudio!.volume > 0.008;
+
+    if (canCrossfadeFromPrev && prevAudio) {
+      trackFadeHintRef.current = 'crossfade';
+      fadeOutAndDispose(prevAudio, crossfadeDurationRef.current);
+    } else {
+      trackFadeHintRef.current = 'fade-in';
+      stopAndReleaseAudio(prevAudio);
     }
 
     const trackUrl = `/media/bgm/${resolvedTrack.file}`;
     const audio = new Audio(trackUrl);
     audio.loop = true;
-    audio.preload = 'metadata';
+    audio.preload = 'auto';
 
     try {
-      audio.volume = 0; // Start at 0 for smooth fade-in
+      audio.volume = 0; // Start at silence for smooth fade-in or crossfade-in
     } catch (e) {
       console.warn('Could not set volume on this device:', e);
     }
 
-    // Audio always starts at 0:00 for iconic game intros
+    try {
+      audio.playbackRate = playbackRateRef.current;
+      if ('preservesPitch' in audio) {
+        (audio as unknown as { preservesPitch: boolean }).preservesPitch = false;
+      }
+    } catch {
+      // Ignore playbackRate errors on unsupported devices
+    }
+
     audio.currentTime = 0;
     audioRef.current = audio;
-    activeGlobalBgmElement = audio;
+  }, [
+    resolvedTrack?.file,
+    clearAutoplayRetry,
+    clearPrimaryVolumeRamp,
+    clearAllOutgoingFades,
+    fadeOutAndDispose,
+  ]);
 
-    return () => {
-      if (volumeIntervalRef.current) {
-        clearInterval(volumeIntervalRef.current);
-        volumeIntervalRef.current = null;
-      }
-      if (audioRef.current) {
-        if (activeGlobalBgmElement === audioRef.current) {
-          activeGlobalBgmElement = null;
-        }
-        audioRef.current.pause();
-        audioRef.current.src = '';
-        audioRef.current = null;
-      }
-    };
-  }, [resolvedTrack?.file]);
-
-  // 2. Handle Play / Pause / Volume Transitions
+  // 2. Handle Play / Pause / Mute / Gradual Fade-In / Crossfade-In
   useEffect(() => {
+    clearAutoplayRetry();
     const audio = audioRef.current;
     if (!audio) return;
 
+    const myGen = trackGenerationRef.current;
+
     if (isPlaying && !isUserMuted) {
+      const fadeMode = trackFadeHintRef.current;
+      trackFadeHintRef.current = 'fade-in';
+
+      const durationMs =
+        fadeMode === 'crossfade' ? crossfadeDurationRef.current : fadeInDurationRef.current;
+      const curve: PrimaryFadeCurve =
+        fadeMode === 'crossfade' ? 'crossfade-in' : 'gradual-fade-in';
+      const targetVol = isDuckedRef.current ? DUCKED_VOLUME : NORMAL_VOLUME;
+
+      // If audio is already actively playing (e.g., resuming from brief pause-fade), ramp directly
+      if (!audio.paused) {
+        rampPrimaryVolumeTo(targetVol, durationMs, curve);
+        return;
+      }
+
+      const startRampOnPlayback = () => {
+        if (
+          myGen !== trackGenerationRef.current ||
+          audioRef.current !== audio ||
+          !isPlayingRef.current ||
+          isUserMutedRef.current
+        ) {
+          return;
+        }
+        const liveTarget = isDuckedRef.current ? DUCKED_VOLUME : NORMAL_VOLUME;
+        rampPrimaryVolumeTo(liveTarget, durationMs, curve);
+      };
+
       try {
         const playPromise = audio.play();
         if (playPromise !== undefined) {
-          playPromise.catch(e => {
-            console.warn('BGM Auto-play waiting for user interaction:', e);
-          });
+          playPromise
+            .then(startRampOnPlayback)
+            .catch((e) => {
+              console.warn('BGM Auto-play waiting for user interaction:', e);
+              scheduleAutoplayRetry(audio, myGen, durationMs, curve);
+            });
+        } else {
+          startRampOnPlayback();
         }
-
-        // Smooth fade-in over 800ms to target volume
-        const targetVol = isDuckedRef.current ? DUCKED_VOLUME : NORMAL_VOLUME;
-        rampVolumeTo(targetVol, 800);
       } catch (e) {
         console.warn('BGM play threw error:', e);
+        scheduleAutoplayRetry(audio, myGen, durationMs, curve);
       }
     } else {
-      if (volumeIntervalRef.current) {
-        clearInterval(volumeIntervalRef.current);
-        volumeIntervalRef.current = null;
+      clearAllOutgoingFades();
+
+      if (isUserMuted) {
+        // Explicit mute should respond immediately
+        clearPrimaryVolumeRamp();
+        try {
+          audio.volume = 0;
+          audio.pause();
+        } catch {}
+      } else if (!audio.paused && audio.volume > 0.01) {
+        // Phase transition stop (e.g., Game Over or Edit Settings): gentle fade-out before pause
+        rampPrimaryVolumeTo(0, PAUSE_FADE_OUT_MS, 'cos-fade-out', () => {
+          if (audioRef.current === audio && !isPlayingRef.current) {
+            try {
+              audio.pause();
+            } catch {}
+          }
+        });
+      } else {
+        clearPrimaryVolumeRamp();
+        try {
+          audio.pause();
+        } catch {}
       }
-      try {
-        audio.pause();
-      } catch {}
     }
-  }, [isPlaying, isUserMuted, resolvedTrack, rampVolumeTo]);
+  }, [
+    isPlaying,
+    isUserMuted,
+    resolvedTrack?.file,
+    clearAutoplayRetry,
+    clearAllOutgoingFades,
+    clearPrimaryVolumeRamp,
+    rampPrimaryVolumeTo,
+    scheduleAutoplayRetry,
+  ]);
 
-  const isPlayingRef = useRef(isPlaying);
-  isPlayingRef.current = isPlaying;
-  const isUserMutedRef = useRef(isUserMuted);
-  isUserMutedRef.current = isUserMuted;
-
-  // Apply dynamic playbackRate (e.g. 1.18x speed up during Final Sprint grace period!)
+  // Apply dynamic playbackRate (e.g. 1.25x speed up during Final Sprint grace period!)
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
     try {
       audio.playbackRate = playbackRate;
       if ('preservesPitch' in audio) {
-        (audio as any).preservesPitch = false;
+        (audio as unknown as { preservesPitch: boolean }).preservesPitch = false;
       }
     } catch (e) {
       console.warn('Could not set audio playbackRate:', e);
     }
-  }, [playbackRate]);
+  }, [playbackRate, resolvedTrack?.file]);
 
   // Dynamic BGM Ducking (smoothly dims volume for native speech prompts)
-  const duckBGM = useCallback((duck: boolean) => {
-    setIsDucked(duck);
-    isDuckedRef.current = duck;
-    const audio = audioRef.current;
-    if (!audio || !isPlayingRef.current || isUserMutedRef.current) return;
+  const duckBGM = useCallback(
+    (duck: boolean) => {
+      setIsDucked(duck);
+      isDuckedRef.current = duck;
+      const audio = audioRef.current;
+      if (!audio || !isPlayingRef.current || isUserMutedRef.current) return;
 
-    const targetVolume = duck ? DUCKED_VOLUME : NORMAL_VOLUME;
-    const duration = duck ? 200 : 350;
-    rampVolumeTo(targetVolume, duration);
-  }, [rampVolumeTo]);
+      const targetVolume = duck ? DUCKED_VOLUME : NORMAL_VOLUME;
+      const duration = duck ? 200 : 350;
+      rampPrimaryVolumeTo(targetVolume, duration, 'linear');
+    },
+    [rampPrimaryVolumeTo]
+  );
 
   // High-Energy Speed Up during Final Sprint Grace Period (classic Mario Kart rush!)
   const speedUpBGM = useCallback((speedUp: boolean) => {
@@ -396,22 +555,22 @@ export const useBGM = (
     setPlaybackRate(clamped);
   }, []);
 
-  const toggleMute = () => {
-    setIsUserMuted(prev => {
+  const toggleMute = useCallback(() => {
+    setIsUserMuted((prev) => {
       const next = !prev;
       try {
         localStorage.setItem('levi_sensei_bgm_muted', String(next));
       } catch {}
       return next;
     });
-  };
+  }, []);
 
-  const setMuted = (muted: boolean) => {
+  const setMuted = useCallback((muted: boolean) => {
     setIsUserMuted(muted);
     try {
       localStorage.setItem('levi_sensei_bgm_muted', String(muted));
     } catch {}
-  };
+  }, []);
 
   return {
     isMuted: isUserMuted,
@@ -423,7 +582,8 @@ export const useBGM = (
     playbackRate,
     isDucked,
     currentTrackTitle: resolvedTrack?.title || null,
-    hasTrack: !!resolvedTrack,
-    nextTrack: advanceToNextTrack
+    currentTrackRole: resolvedTrack?.role || role || null,
+    hasTrack: Boolean(resolvedTrack),
+    nextTrack: advanceToNextTrack,
   };
 };

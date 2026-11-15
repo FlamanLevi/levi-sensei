@@ -18,8 +18,8 @@ import { loadThreeHintsBank } from '@/games/three_hints/utils';
 import { calculateClassroomAwards } from '../awardsEngine';
 import { useQuizRoom, generateUniqueRoomPin } from '../useQuizRoom';
 import { getServerTime } from '@/services/rtdbSafe';
-import { useBGM } from '@/hooks/useBGM';
-import { Music, Volume2, VolumeX } from 'lucide-react';
+import { useBGM, resolveQuizHostBgmPhase, BgmRole } from '@/hooks/useBGM';
+import { Music, SkipForward, Volume2, VolumeX } from 'lucide-react';
 import { QuizHostSetup } from './QuizHostSetup';
 import { QuizHostLobby } from './QuizHostLobby';
 import { QuizHostQuestion } from './QuizHostQuestion';
@@ -124,9 +124,25 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
     isHost: true
   });
 
-  // BGM playback during active game phases
-  const isBgmPlaying = (step === 'QUESTION' || step === 'SPRINT_RACE' || step === 'GRAND_PRIX_3D' || step === 'TUG_OF_WAR' || step === 'TAMAIRE' || step === 'VOLLEYBALL' || step === 'REVEAL' || step === 'LEADERBOARD') && !!settings?.bgm && settings.bgm !== 'none';
-  const { isMuted: isBgmMuted, toggleMute: toggleBgmMute, currentTrackTitle, hasTrack, duckBGM, speedUpBGM, setBgmPlaybackRate, playbackRate: bgmPlaybackRate, nextTrack } = useBGM(settings?.bgm, isBgmPlaying);
+  // BGM playback during lobby (gradual fade-in) & active game phases (smooth crossfade)
+  const bgmPhase = useMemo(() => resolveQuizHostBgmPhase(step), [step]);
+  const effectiveBgmRole: BgmRole = step === 'SETUP' && isEditingLobby ? 'lobby' : bgmPhase.role;
+  const isBgmPlaying = bgmPhase.isBgmStep && !!settings?.bgm && settings.bgm !== 'none';
+  const {
+    isMuted: isBgmMuted,
+    toggleMute: toggleBgmMute,
+    currentTrackTitle,
+    hasTrack,
+    duckBGM,
+    speedUpBGM,
+    setBgmPlaybackRate,
+    playbackRate: bgmPlaybackRate,
+    nextTrack,
+  } = useBGM(settings?.bgm, isBgmPlaying, 0, {
+    role: effectiveBgmRole,
+    fadeInDurationMs: bgmPhase.fadeInDurationMs,
+    crossfadeDurationMs: bgmPhase.crossfadeDurationMs,
+  });
 
   const handleReleaseBoundNumber = useCallback(async (attendanceNumber: number) => {
     if (roomCode) {
@@ -391,8 +407,6 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
     }
     setQuestions(timed);
 
-    nextTrack();
-
     if (roomCode) {
       const success = await resetRoomForNewRound(timed, true, nextRoundSettings);
       if (success) {
@@ -401,7 +415,7 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
         alert(t('Failed to initialize replay.', '再戦の初期化に失敗しました。') as string);
       }
     }
-  }, [settings, room?.sprintSettings?.trackTheme, resolveSettingsForRound, wordPool, activeGrade, gradeWords, roomCode, resetRoomForNewRound, nextTrack, t]);
+  }, [settings, room?.sprintSettings?.trackTheme, resolveSettingsForRound, wordPool, activeGrade, gradeWords, roomCode, resetRoomForNewRound, t]);
 
   // Trouble Words Rematch
   const handleTroubleWordsRematch = useCallback(async () => {
@@ -463,7 +477,6 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
           );
           setSettings(rematchSettings);
           setQuestions(rematchQuestions);
-          nextTrack();
           if (roomCode) {
             const success = await resetRoomForNewRound(rematchQuestions, true, rematchSettings);
             if (success) {
@@ -535,8 +548,6 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
     setSettings(finalRematchSettings);
     setQuestions(timed);
 
-    nextTrack();
-
     if (roomCode) {
       const success = await resetRoomForNewRound(timed, true, finalRematchSettings);
       if (success) {
@@ -545,7 +556,7 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
         alert(t('Failed to initialize rematch.', 'リマッチの初期化に失敗しました。') as string);
       }
     }
-  }, [settings, room?.troubleWords, room?.sprintSettings?.trackTheme, resolveSettingsForRound, questions, wordPool, gradeWords, activeGrade, roomCode, resetRoomForNewRound, nextTrack, t]);
+  }, [settings, room?.troubleWords, room?.sprintSettings?.trackTheme, resolveSettingsForRound, questions, wordPool, gradeWords, activeGrade, roomCode, resetRoomForNewRound, t]);
 
   // Change settings flow from Game Over
   const handlePlayAgainChange = useCallback(() => {
@@ -663,6 +674,10 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
             onChangePlayerTeam={changePlayerTeam}
             eyesUp={room?.eyesUp}
             onToggleEyesUp={toggleEyesUp}
+            bgmTrackTitle={hasTrack ? currentTrackTitle : null}
+            isBgmMuted={isBgmMuted}
+            onToggleBgmMute={toggleBgmMute}
+            onNextBgmTrack={nextTrack}
             onCancel={handleExit}
           />
         </div>
@@ -832,17 +847,25 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
         </button>
       )}
 
-      {/* Floating High-Energy BGM Control Pill for Classroom Host (hidden in Sprint, 3D Grand Prix, Tug of War, Tamaire & Game Over screens) */}
-      {hasTrack && step !== 'SETUP' && step !== 'GAME_OVER' && step !== 'SPRINT_RACE' && step !== 'GRAND_PRIX_3D' && step !== 'TUG_OF_WAR' && step !== 'TAMAIRE' && step !== 'VOLLEYBALL' && (
-        <div className="fixed bottom-4 right-4 z-50 flex items-center gap-2 bg-slate-900 dark:bg-slate-800 text-white px-3.5 py-2 rounded-2xl shadow-2xl border border-slate-700/80 animate-in fade-in slide-in-from-bottom-2 print:hidden">
-          <Music size={15} className={`text-indigo-400 ${!isBgmMuted && isBgmPlaying ? 'animate-bounce' : ''}`} />
+      {/* Floating High-Energy BGM Control Pill for Classroom Host (hidden in Lobby, Sprint, 3D Grand Prix, Tug of War, Tamaire & Game Over screens which have integrated or silent audio) */}
+      {hasTrack && step !== 'SETUP' && step !== 'LOBBY' && step !== 'GAME_OVER' && step !== 'SPRINT_RACE' && step !== 'GRAND_PRIX_3D' && step !== 'TUG_OF_WAR' && step !== 'TAMAIRE' && step !== 'VOLLEYBALL' && (
+        <div className="fixed bottom-4 right-4 z-50 flex items-center gap-1.5 bg-slate-900 dark:bg-slate-800 text-white px-3.5 py-2 rounded-2xl shadow-2xl border border-slate-700/80 animate-in fade-in slide-in-from-bottom-2 print:hidden">
+          <Music size={15} className={`text-indigo-400 shrink-0 ${!isBgmMuted && isBgmPlaying ? 'animate-bounce' : ''}`} />
           <span className="text-xs font-bold max-w-[130px] truncate">
             {currentTrackTitle || 'BGM'}
           </span>
           <button
             type="button"
+            onClick={nextTrack}
+            className="p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-all cursor-pointer shrink-0"
+            title={t('Next Track', '次の曲へ') as string}
+          >
+            <SkipForward size={14} />
+          </button>
+          <button
+            type="button"
             onClick={toggleBgmMute}
-            className={`p-1.5 rounded-xl transition-all ${
+            className={`p-1.5 rounded-xl transition-all cursor-pointer shrink-0 ${
               isBgmMuted
                 ? 'bg-rose-500/30 text-rose-400 hover:bg-rose-500/50'
                 : 'bg-emerald-500/30 text-emerald-300 hover:bg-emerald-500/50'

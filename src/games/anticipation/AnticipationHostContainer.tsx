@@ -18,7 +18,14 @@ import { useClassroom } from '@/context/ClassroomContext';
 import { useVocabulary } from '@/context/VocabularyContext';
 import { useAudio } from '@/context/AudioContext';
 import { useLanguage } from '@/context/LanguageContext';
-import { useBGM } from '@/hooks/useBGM';
+import {
+  useBGM,
+  BgmRole,
+  LOBBY_FADE_IN_DURATION_MS,
+  DEFAULT_FADE_IN_DURATION_MS,
+  LOBBY_CROSSFADE_DURATION_MS,
+  GAME_CROSSFADE_DURATION_MS,
+} from '@/hooks/useBGM';
 import { getServerTime } from '@/services/rtdbSafe';
 import { soundEffects } from '@/services/soundEffects';
 import { SCHOOL_CONFIGS } from '@/types/roster';
@@ -229,14 +236,34 @@ export const AnticipationHostContainer: React.FC<AnticipationHostContainerProps>
     }
   };
 
-  // Music hook while actively sketching
+  // Role-aware Music hook: gentle fade-in in Lobby, crossfade into Quiz rhythm on Start
+  const anticipationBgmRole: BgmRole =
+    step === 'PLAYING'
+      ? 'quiz'
+      : step === 'GAME_OVER'
+      ? 'podium'
+      : 'lobby';
+  const isAnticipationBgmPlaying =
+    (step === 'LOBBY' || step === 'PLAYING') &&
+    settings.bgm !== 'none' &&
+    !isAudioMuted;
+  const anticipationBgmSelection =
+    roomCode || step !== 'SETUP' ? settings.bgm : undefined;
+
   const {
     isMuted: bgmMuted,
     toggleMute: toggleBgmMute,
     duckBGM,
     currentTrackTitle,
     hasTrack,
-  } = useBGM(settings.bgm, step === 'PLAYING' && settings.bgm !== 'none' && !isAudioMuted);
+    nextTrack: nextBgmTrack,
+  } = useBGM(anticipationBgmSelection, isAnticipationBgmPlaying, 0, {
+    role: anticipationBgmRole,
+    fadeInDurationMs:
+      step === 'LOBBY' ? LOBBY_FADE_IN_DURATION_MS : DEFAULT_FADE_IN_DURATION_MS,
+    crossfadeDurationMs:
+      step === 'PLAYING' ? GAME_CROSSFADE_DURATION_MS : LOBBY_CROSSFADE_DURATION_MS,
+  });
 
   const antState = (room as (typeof room & { anticipationState?: AnticipationRoomState }) | null)
     ?.anticipationState;
@@ -889,6 +916,10 @@ export const AnticipationHostContainer: React.FC<AnticipationHostContainerProps>
           eyesUp={room?.eyesUp}
           onToggleEyesUp={toggleEyesUp}
           isStudentHost={isStudentHost}
+          bgmTrackTitle={hasTrack ? currentTrackTitle : null}
+          isBgmMuted={bgmMuted}
+          onToggleBgmMute={toggleBgmMute}
+          onNextBgmTrack={nextBgmTrack}
           onCancel={handleExit}
         />
       </div>

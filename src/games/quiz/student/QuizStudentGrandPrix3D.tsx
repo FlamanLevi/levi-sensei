@@ -14,7 +14,8 @@ import { suzukaAudio } from '@/games/suzuka_grand_prix/services/suzukaAudio';
 import { soundEffects } from '@/services/soundEffects';
 import { getServerTime } from '@/services/rtdbSafe';
 import { useLanguage } from '@/context/LanguageContext';
-import { Flag, Clock, Trophy, LogOut, Flame, Sparkles, AlertTriangle } from 'lucide-react';
+import { useAudio } from '@/context/AudioContext';
+import { Flag, Clock, Trophy, LogOut, Flame, Sparkles, AlertTriangle, Volume2 } from 'lucide-react';
 import {
   resolveLockoutPenaltySeconds,
   sanitizeConfiguredLockoutSeconds,
@@ -67,6 +68,7 @@ export const QuizStudentGrandPrix3D: React.FC<QuizStudentGrandPrix3DProps> = ({
   onLeave,
 }) => {
   const { t } = useLanguage();
+  const { playWordAudio } = useAudio();
   const isTimeTrial = sprintSettings?.sprintMode === 'TIME_TRIAL';
   const targetLaps = sprintSettings?.targetLaps3D || 1;
   const graceSeconds = sprintSettings?.graceCountdownSeconds || 15;
@@ -900,6 +902,21 @@ export const QuizStudentGrandPrix3D: React.FC<QuizStudentGrandPrix3DProps> = ({
           className="w-full h-full"
           hideSectorBadge={true}
         />
+
+        {/* Large Floating Pill Repeat-Audio Button for AUDIO_ONLY prompts */}
+        {!isLobby && !localIsFinished && currentQuestion?.promptType === 'AUDIO_ONLY' && (
+          <div className="absolute bottom-[70px] sm:bottom-[74px] left-1/2 -translate-x-1/2 z-30 pointer-events-auto">
+            <button
+              type="button"
+              onClick={() => playWordAudio(currentQuestion.promptSound, currentQuestion.targetWordEnglish)}
+              aria-label={t('Listen to prompt audio again', '英語の音声をもういちど聞く')}
+              className="px-5 py-2.5 rounded-full bg-blue-600/80 hover:bg-blue-500/90 backdrop-blur-md border-2 border-white/40 text-white shadow-xl flex items-center gap-2 text-sm sm:text-base font-black active:scale-95 transition-all cursor-pointer touch-manipulation"
+            >
+              <Volume2 size={20} />
+              <span>{t('Listen Again', 'もういちど聞く')}</span>
+            </button>
+          </div>
+        )}
 
         {/* Floating Glassmorphic Telemetry HUD over bottom edge of 3D Track (Fixed height, no wrapping shifts) */}
         {!isLobby && (

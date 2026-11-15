@@ -156,8 +156,9 @@ export const SuzukaStudentDeck: React.FC<SuzukaStudentDeckProps> = ({
     if (isCorrect) {
       soundEffects.playCorrect();
       suzukaAudio.playBoostSputter();
-      // Speak target English word aloud to reinforce auditory acquisition on every correct answer
-      if (!question.isMath && autoSpeak && !isMuted && question.targetWordEnglish) {
+      // Speak target English word aloud to reinforce auditory acquisition on non-AUDIO_ONLY questions
+      // (AUDIO_ONLY already plays the word as the prompt; speaking it again on answer collides with the next prompt 340ms later)
+      if (!question.isMath && question.promptType !== 'AUDIO_ONLY' && autoSpeak && !isMuted && question.targetWordEnglish) {
         speakText(question.targetWordEnglish);
       }
       if (correctTimerRef.current) clearTimeout(correctTimerRef.current);

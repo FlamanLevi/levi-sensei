@@ -35,6 +35,7 @@ export type SuzukaCloudCoverId = 'CLEAR' | 'PARTLY_CLOUDY' | 'OVERCAST';
 export type SuzukaCloudCoverSelection = SuzukaCloudCoverId | 'RANDOM';
 
 export const DEFAULT_CLOUD_COVER_ID: SuzukaCloudCoverId = 'PARTLY_CLOUDY';
+export const DEFAULT_CLOUD_COVER_SELECTION: SuzukaCloudCoverSelection = 'RANDOM';
 
 export type SuzukaPrecipitationId =
   | 'NONE'
@@ -46,6 +47,7 @@ export type SuzukaPrecipitationId =
 export type SuzukaPrecipitationSelection = SuzukaPrecipitationId | 'RANDOM';
 
 export const DEFAULT_PRECIPITATION_ID: SuzukaPrecipitationId = 'NONE';
+export const DEFAULT_PRECIPITATION_SELECTION: SuzukaPrecipitationSelection = 'RANDOM';
 
 export interface FoliageHslRange {
   hMin: number;
@@ -664,18 +666,34 @@ export function getCloudCoverPreset(id?: string | null): SuzukaCloudCoverPreset 
   return CLOUD_COVER_LIST.find((c) => c.id === id) || CLOUD_COVER_LIST[1];
 }
 
+export function getAllowedCloudCoversForPrecipitation(
+  precipitation?: SuzukaPrecipitationSelection | string | null
+): SuzukaCloudCoverId[] {
+  if (precipitation === 'HEAVY_RAIN' || precipitation === 'HEAVY_SNOW') {
+    return ['OVERCAST'];
+  }
+  if (precipitation === 'LIGHT_RAIN' || precipitation === 'LIGHT_SNOW') {
+    return ['PARTLY_CLOUDY', 'OVERCAST'];
+  }
+  return ['CLEAR', 'PARTLY_CLOUDY', 'OVERCAST'];
+}
+
 export function resolveCloudCoverId(
   selection?: SuzukaCloudCoverSelection | string | null,
   excludeId?: string | null,
-  rng: () => number = Math.random
+  rng: () => number = Math.random,
+  precipitationConstraint?: SuzukaPrecipitationSelection | string | null
 ): SuzukaCloudCoverId {
   if (isValidCloudCoverId(selection)) {
     return selection;
   }
+  const allowedIds = getAllowedCloudCoversForPrecipitation(precipitationConstraint);
+  const allowedPresets = CLOUD_COVER_LIST.filter((c) => allowedIds.includes(c.id));
+  const pool = allowedPresets.length > 0 ? allowedPresets : CLOUD_COVER_LIST;
   const candidates =
-    CLOUD_COVER_LIST.length > 1 && isValidCloudCoverId(excludeId)
-      ? CLOUD_COVER_LIST.filter((c) => c.id !== excludeId)
-      : CLOUD_COVER_LIST;
+    pool.length > 1 && isValidCloudCoverId(excludeId)
+      ? pool.filter((c) => c.id !== excludeId)
+      : pool;
   const r = Math.max(0, Math.min(0.999999, rng()));
   return candidates[Math.floor(r * candidates.length)]?.id || DEFAULT_CLOUD_COVER_ID;
 }
@@ -705,32 +723,85 @@ export function getPrecipitationPreset(id?: string | null): SuzukaPrecipitationP
   return PRECIPITATION_LIST.find((p) => p.id === id) || PRECIPITATION_LIST[0];
 }
 
+export function getAllowedPrecipitationsForCloudCover(
+  cloudCover?: SuzukaCloudCoverSelection | string | null
+): SuzukaPrecipitationId[] {
+  if (cloudCover === 'CLEAR') {
+    return ['NONE'];
+  }
+  if (cloudCover === 'PARTLY_CLOUDY') {
+    return ['NONE', 'LIGHT_RAIN', 'LIGHT_SNOW'];
+  }
+  return ['NONE', 'LIGHT_RAIN', 'HEAVY_RAIN', 'LIGHT_SNOW', 'HEAVY_SNOW'];
+}
+
+export function isPrecipitationSelectionAllowedForCloudCover(
+  selection?: SuzukaPrecipitationSelection | string | null,
+  cloudCover?: SuzukaCloudCoverSelection | string | null
+): boolean {
+  if (!selection || selection === 'RANDOM') {
+    return cloudCover !== 'CLEAR';
+  }
+  const allowed = getAllowedPrecipitationsForCloudCover(cloudCover);
+  return allowed.includes(selection as SuzukaPrecipitationId);
+}
+
+export function coercePrecipitationSelectionForCloudCover(
+  selection?: SuzukaPrecipitationSelection | string | null,
+  cloudCover?: SuzukaCloudCoverSelection | string | null
+): SuzukaPrecipitationSelection {
+  if (cloudCover === 'CLEAR') {
+    return 'NONE';
+  }
+  if (!selection || selection === 'RANDOM') {
+    return 'RANDOM';
+  }
+  if (isPrecipitationSelectionAllowedForCloudCover(selection, cloudCover)) {
+    return selection as SuzukaPrecipitationId;
+  }
+  if (cloudCover === 'PARTLY_CLOUDY') {
+    if (selection === 'HEAVY_RAIN') return 'LIGHT_RAIN';
+    if (selection === 'HEAVY_SNOW') return 'LIGHT_SNOW';
+  }
+  return 'NONE';
+}
+
 /**
- * Resolves precipitation selection. Explicit choices are always honored (allowing
- * fun combinations like snowfall in the desert). When rolling `'RANDOM'`, uses
- * sensible biome-aware pools so random rolls feel natural.
+ * Resolves precipitation selection while enforcing cloud cover constraints when provided.
+ * Under CLEAR skies only NONE is allowed; under PARTLY_CLOUDY only NONE/LIGHT_RAIN/LIGHT_SNOW
+ * are allowed; under OVERCAST or unconstrained calls, all precipitation types are permitted.
  */
 export function resolvePrecipitationId(
   selection?: SuzukaPrecipitationSelection | string | null,
   biomeId?: SuzukaTrackThemeId | string | null,
   excludeId?: string | null,
-  rng: () => number = Math.random
+  rng: () => number = Math.random,
+  cloudCoverConstraint?: SuzukaCloudCoverSelection | string | null
 ): SuzukaPrecipitationId {
+  const allowed = getAllowedPrecipitationsForCloudCover(cloudCoverConstraint);
+
   if (isValidPrecipitationId(selection)) {
-    return selection;
+    if (allowed.includes(selection)) {
+      return selection;
+    }
+    const coerced = coercePrecipitationSelectionForCloudCover(selection, cloudCoverConstraint);
+    return isValidPrecipitationId(coerced) ? coerced : allowed[0] || 'NONE';
   }
 
   const normBiome = normalizeTrackThemeId(biomeId) || 'TEMPERATE';
-  let pool: SuzukaPrecipitationId[];
+  let biomePool: SuzukaPrecipitationId[];
   if (normBiome === 'SNOW') {
-    pool = ['NONE', 'LIGHT_SNOW', 'HEAVY_SNOW'];
+    biomePool = ['NONE', 'LIGHT_SNOW', 'HEAVY_SNOW'];
   } else if (normBiome === 'DESERT') {
-    pool = ['NONE', 'NONE', 'LIGHT_RAIN'];
+    biomePool = ['NONE', 'NONE', 'LIGHT_RAIN'];
   } else {
-    pool = ['NONE', 'NONE', 'LIGHT_RAIN', 'HEAVY_RAIN'];
+    biomePool = ['NONE', 'NONE', 'LIGHT_RAIN', 'HEAVY_RAIN'];
   }
 
-  const filtered = pool.length > 1 && excludeId ? pool.filter((id) => id !== excludeId) : pool;
+  const constrainedPool = biomePool.filter((id) => allowed.includes(id));
+  const pool = constrainedPool.length > 0 ? constrainedPool : allowed;
+  const uniqueIds = new Set(pool);
+  const filtered = uniqueIds.size > 1 && excludeId ? pool.filter((id) => id !== excludeId) : pool;
   const candidates = filtered.length > 0 ? filtered : pool;
   const r = Math.max(0, Math.min(0.999999, rng()));
   return candidates[Math.floor(r * candidates.length)] || 'NONE';

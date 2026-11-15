@@ -10,8 +10,15 @@ import {
   TIME_OF_DAY_LIST,
   CLOUD_COVER_LIST,
   PRECIPITATION_LIST,
+  isPrecipitationSelectionAllowedForCloudCover,
 } from '@/games/suzuka_grand_prix/trackThemes';
-import { STANDARD_LOCKOUT_TIERS_SECONDS } from '../../core/quizEngine';
+import {
+  LOCKOUT_ADAPTIVE_SENTINEL,
+  STANDARD_LOCKOUT_TIERS_SECONDS,
+  isAdaptiveLockoutSetting,
+  sanitizeConfiguredLockoutSeconds,
+  formatLockoutDurationNumber,
+} from '../../core/quizEngine';
 import { SprintModeType } from '../../types';
 
 interface GrandPrixRulesCardProps {
@@ -60,6 +67,9 @@ export const GrandPrixRulesCard: React.FC<GrandPrixRulesCardProps> = ({
   onSelectPrecipitationSelection,
 }) => {
   const { t } = useLanguage();
+  const safeWrongLockoutSec = sanitizeConfiguredLockoutSeconds(wrongLockoutSeconds);
+  const isAdaptiveLockout = isAdaptiveLockoutSetting(safeWrongLockoutSec);
+  const wrongLockoutLabel = formatLockoutDurationNumber(safeWrongLockoutSec);
 
   return (
     <div className="p-4 rounded-3xl bg-gradient-to-br from-emerald-50/85 to-teal-50/85 dark:from-emerald-950/30 dark:to-teal-950/30 border-2 border-emerald-300 dark:border-emerald-900/60 space-y-4 animate-in fade-in duration-150">
@@ -245,34 +255,47 @@ export const GrandPrixRulesCard: React.FC<GrandPrixRulesCardProps> = ({
               {t('Incorrect Answer Lockout', '誤答時の回答ロック時間')}
             </span>
             <span className="text-[10px] font-black text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-900/60 px-2 py-0.5 rounded-full">
-              {wrongLockoutSeconds <= 2.5
-                ? t('2.5s (Standard Pit Stop)', '2.5秒 (標準ピットストップ)')
-                : `${wrongLockoutSeconds.toFixed(1)}s`}
+              {isAdaptiveLockout
+                ? t('Adaptive: 1→2→4s ⭐', '段階式: 1→2→4秒 ⭐')
+                : safeWrongLockoutSec === 0
+                  ? t('No Lockout (0s)', 'ロックなし (0秒)')
+                  : `${wrongLockoutLabel}s`}
             </span>
           </div>
           <div className="grid grid-cols-5 gap-1.5">
             {STANDARD_LOCKOUT_TIERS_SECONDS.map((tierSec) => {
+              const isSelected = isAdaptiveLockout
+                ? tierSec === LOCKOUT_ADAPTIVE_SENTINEL
+                : tierSec !== LOCKOUT_ADAPTIVE_SENTINEL && Math.abs(safeWrongLockoutSec - tierSec) < 0.05;
+              const label =
+                tierSec === LOCKOUT_ADAPTIVE_SENTINEL
+                  ? t('Adaptive', '段階式')
+                  : tierSec === 0
+                    ? t('None', 'なし')
+                    : `${tierSec.toFixed(1)}s`;
               const sub =
-                tierSec === 2.5
-                  ? `⭐ ${t('Std', '標準')}`
-                  : tierSec === 3.5
-                    ? t('Firm', 'しっかり')
-                    : tierSec === 5.0
-                      ? t('Strict', '厳しめ')
-                      : '';
+                tierSec === LOCKOUT_ADAPTIVE_SENTINEL
+                  ? t('1→2→4s ⭐', '1→2→4秒 ⭐')
+                  : tierSec === 0
+                    ? t('0s', '0秒')
+                    : tierSec === 1.0
+                      ? t('Quick', '短め')
+                      : tierSec === 2.0
+                        ? t('Firm', '標準')
+                        : t('Strict', '長め');
               return (
                 <button
                   key={tierSec}
                   type="button"
                   onClick={() => onSelectWrongLockoutSeconds(tierSec)}
                   className={`py-1.5 px-1 rounded-xl border text-center transition-all cursor-pointer flex flex-col items-center justify-center ${
-                    Math.abs(wrongLockoutSeconds - tierSec) < 0.05
+                    isSelected
                       ? 'border-emerald-500 bg-white dark:bg-slate-800 text-emerald-700 dark:text-emerald-300 shadow-xs ring-1 ring-emerald-400/40 font-black'
                       : 'border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-white/50 font-bold'
                   }`}
                 >
-                  <span className="text-xs leading-tight">{tierSec.toFixed(1)}s</span>
-                  {sub && <span className="text-[10px] opacity-80 leading-tight">{sub}</span>}
+                  <span className="text-xs leading-tight whitespace-nowrap">{label}</span>
+                  <span className="text-[10px] opacity-80 leading-tight whitespace-nowrap">{sub}</span>
                 </button>
               );
             })}
@@ -435,52 +458,97 @@ export const GrandPrixRulesCard: React.FC<GrandPrixRulesCardProps> = ({
             </div>
           </div>
 
-          {/* 4. Precipitation Selector (Rain / Snow works in any biome!) */}
-          <div>
-            <div className="flex items-center justify-between mb-1.5">
-              <span className="text-[11px] font-black text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
-                <span>🌧️</span>
-                <span>{t('Precipitation (Rain / Snow)', '降水エフェクト (雨・雪)')}</span>
-              </span>
-              <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400">
-                {t('Works in any biome!', '砂漠の雪なども組み合わせ自由！')}
-              </span>
-            </div>
-            <div className="grid grid-cols-3 sm:grid-cols-6 gap-1.5">
-              <button
-                type="button"
-                onClick={() => onSelectPrecipitationSelection('RANDOM')}
-                className={`py-1.5 px-1 rounded-xl border-2 text-center transition-all cursor-pointer flex flex-col items-center justify-center ${
-                  precipitationSelection === 'RANDOM'
-                    ? 'border-emerald-500 ring-1 ring-emerald-400/40 bg-white dark:bg-slate-900 text-emerald-950 dark:text-emerald-100 font-black shadow-xs'
-                    : 'border-slate-200 dark:border-slate-800 bg-white/60 dark:bg-slate-900/60 text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800 font-bold'
-                }`}
-              >
-                <span className="text-sm leading-none">🎲</span>
-                <span className="text-[10px] leading-tight mt-0.5 truncate max-w-full">{t('Random', 'ランダム')}</span>
-              </button>
-              {PRECIPITATION_LIST.map((pr) => {
-                const isSelected = precipitationSelection === pr.id;
-                return (
+          {/* 4. Precipitation Selector (Gated by Cloud Cover) */}
+          {(() => {
+            const isRandomPrecipAllowed = isPrecipitationSelectionAllowedForCloudCover(
+              'RANDOM',
+              cloudCoverSelection
+            );
+            return (
+              <div>
+                <div className="flex items-center justify-between gap-2 mb-1.5">
+                  <span className="text-[11px] font-black text-slate-700 dark:text-slate-300 flex items-center gap-1.5 shrink-0">
+                    <span>🌧️</span>
+                    <span>{t('Precipitation (Rain / Snow)', '降水エフェクト (雨・雪)')}</span>
+                  </span>
+                  <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 truncate">
+                    {cloudCoverSelection === 'CLEAR'
+                      ? t('Clear sky: Dry only', '快晴はドライ限定')
+                      : cloudCoverSelection === 'PARTLY_CLOUDY'
+                        ? t('Partly cloudy: Light rain/snow max', '晴れ時々くもりは小雨・小雪まで')
+                        : t('All rain & snow options unlocked!', 'すべての雨・雪が選択可能！')}
+                  </span>
+                </div>
+                <div className="grid grid-cols-3 sm:grid-cols-6 gap-1.5">
                   <button
-                    key={pr.id}
                     type="button"
-                    onClick={() => onSelectPrecipitationSelection(pr.id)}
-                    className={`py-1.5 px-1 rounded-xl border-2 text-center transition-all cursor-pointer flex flex-col items-center justify-center ${
-                      isSelected
-                        ? 'border-emerald-500 ring-1 ring-emerald-400/40 bg-white dark:bg-slate-900 text-emerald-950 dark:text-emerald-100 font-black shadow-xs'
-                        : 'border-slate-200 dark:border-slate-800 bg-white/60 dark:bg-slate-900/60 text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800 font-bold'
+                    disabled={!isRandomPrecipAllowed}
+                    onClick={() => isRandomPrecipAllowed && onSelectPrecipitationSelection('RANDOM')}
+                    title={
+                      !isRandomPrecipAllowed
+                        ? (t(
+                            'Only Dry / None is available under Clear Sky',
+                            '快晴のときは「なし(ドライ)」のみ選択できます'
+                          ) as string)
+                        : undefined
+                    }
+                    className={`py-1.5 px-1 rounded-xl border-2 text-center transition-all flex flex-col items-center justify-center ${
+                      precipitationSelection === 'RANDOM' && isRandomPrecipAllowed
+                        ? 'border-emerald-500 ring-1 ring-emerald-400/40 bg-white dark:bg-slate-900 text-emerald-950 dark:text-emerald-100 font-black shadow-xs cursor-pointer'
+                        : !isRandomPrecipAllowed
+                          ? 'border-slate-200/70 dark:border-slate-800/70 bg-slate-100/70 dark:bg-slate-900/30 text-slate-400 dark:text-slate-600 font-bold opacity-40 cursor-not-allowed'
+                          : 'border-slate-200 dark:border-slate-800 bg-white/60 dark:bg-slate-900/60 text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800 font-bold cursor-pointer'
                     }`}
                   >
-                    <span className="text-sm leading-none">{pr.emoji}</span>
+                    <span className="text-sm leading-none">🎲</span>
                     <span className="text-[10px] leading-tight mt-0.5 truncate max-w-full">
-                      {t(pr.shortEn, pr.shortJa)}
+                      {t('Random', 'ランダム')}
                     </span>
                   </button>
-                );
-              })}
-            </div>
-          </div>
+                  {PRECIPITATION_LIST.map((pr) => {
+                    const isAllowed = isPrecipitationSelectionAllowedForCloudCover(
+                      pr.id,
+                      cloudCoverSelection
+                    );
+                    const isSelected = precipitationSelection === pr.id;
+                    return (
+                      <button
+                        key={pr.id}
+                        type="button"
+                        disabled={!isAllowed}
+                        onClick={() => isAllowed && onSelectPrecipitationSelection(pr.id)}
+                        title={
+                          !isAllowed
+                            ? (cloudCoverSelection === 'CLEAR'
+                                ? t(
+                                    'Only Dry / None is available under Clear Sky',
+                                    '快晴のときは「なし(ドライ)」のみ選択できます'
+                                  )
+                                : t(
+                                    'Select Overcast clouds to unlock Heavy Rain / Blizzard',
+                                    '曇天(オーバーキャスト)で選択できます'
+                                  )) as string
+                            : undefined
+                        }
+                        className={`py-1.5 px-1 rounded-xl border-2 text-center transition-all flex flex-col items-center justify-center ${
+                          isSelected
+                            ? 'border-emerald-500 ring-1 ring-emerald-400/40 bg-white dark:bg-slate-900 text-emerald-950 dark:text-emerald-100 font-black shadow-xs cursor-pointer'
+                            : !isAllowed
+                              ? 'border-slate-200/70 dark:border-slate-800/70 bg-slate-100/70 dark:bg-slate-900/30 text-slate-400 dark:text-slate-600 font-bold opacity-40 cursor-not-allowed'
+                              : 'border-slate-200 dark:border-slate-800 bg-white/60 dark:bg-slate-900/60 text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800 font-bold cursor-pointer'
+                        }`}
+                      >
+                        <span className="text-sm leading-none">{pr.emoji}</span>
+                        <span className="text-[10px] leading-tight mt-0.5 truncate max-w-full">
+                          {t(pr.shortEn, pr.shortJa)}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })()}
         </div>
       </div>
     </div>

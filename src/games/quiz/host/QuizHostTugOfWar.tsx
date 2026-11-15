@@ -1,6 +1,11 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { QuizQuestion, QuizPlayer, TeamId, TEAM_PRESETS, TugOfWarSettings, TugOfWarMatchFormat } from '../types';
-import { computeTugOfWarSweepsRemaining } from '../core/quizEngine';
+import {
+  computeTugOfWarSweepsRemaining,
+  isAdaptiveLockoutSetting,
+  sanitizeConfiguredLockoutSeconds,
+  formatLockoutDurationNumber,
+} from '../core/quizEngine';
 import { soundEffects } from '@/services/soundEffects';
 import { getServerTime } from '@/services/rtdbSafe';
 import { useLanguage } from '@/context/LanguageContext';
@@ -669,9 +674,24 @@ export const QuizHostTugOfWar: React.FC<QuizHostTugOfWarProps> = ({
             <span>{t('🚩 Undokai English Tug-of-War', '🚩 運動会 英語綱引きバトル')}</span>
             <span>•</span>
             <span>{(() => {
-              const mudSec = Math.max(2.5, tugOfWarSettings?.mudLockoutSeconds ?? 2.5);
-              const mudLabel = Number.isInteger(mudSec) ? `${mudSec}` : mudSec.toFixed(1);
-              return t(`Correct answers pull the rope! Mistakes trigger a ${mudLabel}s mud slip lockout!`, `正解するとロープを引き寄せる！ まちがえると泥で${mudLabel}秒ストップ！`);
+              const safeMudSec = sanitizeConfiguredLockoutSeconds(tugOfWarSettings?.mudLockoutSeconds);
+              if (isAdaptiveLockoutSetting(safeMudSec)) {
+                return t(
+                  'Correct answers pull the rope! Mistakes trigger an adaptive 1→2→4s mud slip lockout!',
+                  '正解するとロープを引き寄せる！ まちがえると泥で段階ロック (1→2→4秒)！'
+                );
+              }
+              if (safeMudSec <= 0) {
+                return t(
+                  'Correct answers pull the rope! Wrong cards are eliminated right away!',
+                  '正解するとロープを引き寄せる！ 誤答はカード消去のみ (ロックなし)！'
+                );
+              }
+              const mudLabel = formatLockoutDurationNumber(safeMudSec);
+              return t(
+                `Correct answers pull the rope! Mistakes trigger a ${mudLabel}s mud slip lockout!`,
+                `正解するとロープを引き寄せる！ まちがえると泥で${mudLabel}秒ストップ！`
+              );
             })()}</span>
           </div>
 

@@ -1,6 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { QuizQuestion, QuizOption, OPTION_STYLES } from '@/games/quiz/types';
-import { isEnglishPromptType } from '@/games/quiz/core/quizEngine';
+import {
+  DEFAULT_LOCKOUT_SECONDS,
+  isEnglishPromptType,
+  resolveLockoutPenaltySeconds,
+} from '@/games/quiz/core/quizEngine';
 import { soundEffects } from '@/services/soundEffects';
 import { suzukaAudio } from './services/suzukaAudio';
 import { useLanguage } from '@/context/LanguageContext';
@@ -44,7 +48,7 @@ export const SuzukaStudentDeck: React.FC<SuzukaStudentDeckProps> = ({
   speedKmh,
   cornerSpeedLimit = 180,
   isPassingLane = false,
-  wrongLockoutSeconds = 2.5,
+  wrongLockoutSeconds = DEFAULT_LOCKOUT_SECONDS,
   wrongSpeedLossRatio = 0.33,
   scaffoldingLevel: propScaffolding,
   onChangeScaffoldingLevel: _onChangeScaffoldingLevel,
@@ -80,9 +84,6 @@ export const SuzukaStudentDeck: React.FC<SuzukaStudentDeckProps> = ({
   const wrongTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastAutoPlayedQuestionKeyRef = useRef<string>('');
 
-  // Enforce mandatory >= 2.5s Pit Stop floor even if caller passes 0 or < 2.5
-  const effectiveLockoutSeconds = Math.max(2.5, wrongLockoutSeconds || 2.5);
-
   useEffect(() => {
     return () => {
       if (correctTimerRef.current) clearTimeout(correctTimerRef.current);
@@ -104,6 +105,8 @@ export const SuzukaStudentDeck: React.FC<SuzukaStudentDeckProps> = ({
     setIsAnswering(false);
     setEliminatedOptionIds(new Set());
     setLastWrongOption(null);
+    penaltyEndTimeRef.current = 0;
+    setPenaltySecondsLeft(0);
   }, [questionNumber, question.targetWordId]);
 
   // 2. Auto-play prompt audio on AUDIO_ONLY questions without resetting active guesses/timers
@@ -170,6 +173,13 @@ export const SuzukaStudentDeck: React.FC<SuzukaStudentDeckProps> = ({
       soundEffects.playIncorrect();
       suzukaAudio.playRailImpact(0.75);
       setLastWrongOption(chosenOpt);
+      const mistakeCountOnQuestion = eliminatedOptionIds.size + 1;
+      const lockout = resolveLockoutPenaltySeconds({
+        mode: 'GRAND_PRIX_3D',
+        mistakeCountOnQuestion,
+        configuredLockoutSeconds: wrongLockoutSeconds,
+      });
+      const resolvedLockoutSec = lockout.penaltySeconds;
       setEliminatedOptionIds((prev) => {
         const next = new Set(prev);
         next.add(optionId);
@@ -177,16 +187,19 @@ export const SuzukaStudentDeck: React.FC<SuzukaStudentDeckProps> = ({
       });
       onAnswer(false, optionId);
 
-      if (effectiveLockoutSeconds > 0) {
-        penaltyEndTimeRef.current = Date.now() + Math.round(effectiveLockoutSeconds * 1000);
-        setPenaltySecondsLeft(effectiveLockoutSeconds);
+      if (resolvedLockoutSec > 0) {
+        penaltyEndTimeRef.current = Date.now() + Math.round(resolvedLockoutSec * 1000);
+        setPenaltySecondsLeft(resolvedLockoutSec);
+      } else {
+        penaltyEndTimeRef.current = 0;
+        setPenaltySecondsLeft(0);
       }
       if (wrongTimerRef.current) clearTimeout(wrongTimerRef.current);
       wrongTimerRef.current = setTimeout(() => {
         wrongTimerRef.current = null;
         setFeedback(null);
         setIsAnswering(false);
-      }, Math.min(350, Math.max(180, effectiveLockoutSeconds * 450)));
+      }, resolvedLockoutSec > 0 ? Math.min(350, Math.max(180, resolvedLockoutSec * 450)) : 200);
     }
   };
 

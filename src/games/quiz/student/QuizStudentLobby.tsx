@@ -26,6 +26,11 @@ import {
   TIME_OF_DAY_LIST,
   PRECIPITATION_LIST,
 } from '@/games/suzuka_grand_prix/trackThemes';
+import {
+  isAdaptiveLockoutSetting,
+  sanitizeConfiguredLockoutSeconds,
+  formatLockoutDurationNumber,
+} from '../core/quizEngine';
 
 interface QuizStudentLobbyProps {
   roomCode: string;
@@ -586,15 +591,39 @@ export const QuizStudentLobby: React.FC<QuizStudentLobbyProps> = ({
                   '1. Guess the English word while the progressive sketch or connect-the-dots draws! Wrong guesses lock your pad for 2.5s.'
                 )
               ) : isVolleyball ? (() => {
-                const fumbleSec = Math.max(2.5, tamaireSettings?.missLockoutSeconds ?? 2.5);
-                const fumbleLabel = Number.isInteger(fumbleSec) ? `${fumbleSec}` : fumbleSec.toFixed(1);
+                const safeFumbleSec = sanitizeConfiguredLockoutSeconds(tamaireSettings?.missLockoutSeconds);
+                if (isAdaptiveLockoutSetting(safeFumbleSec)) {
+                  return t(
+                    '1. Answer on your iPad in 3 steps (Scoop → Aim → Throw) to toss bean bags into your team basket! (Fumbles lock 1→2→4s)',
+                    '1. 3ステップ（①玉を拾う → ②狙う → ③投げる）で正解してお手玉をカゴへ投げ入れよう！（お手つきは1→2→4秒ストップ）'
+                  );
+                }
+                if (safeFumbleSec <= 0) {
+                  return t(
+                    '1. Answer on your iPad in 3 steps (Scoop → Aim → Throw) to toss bean bags into your team basket!',
+                    '1. 3ステップ（①玉を拾う → ②狙う → ③投げる）で正解してお手玉をカゴへ投げ入れよう！（ロックなし）'
+                  );
+                }
+                const fumbleLabel = formatLockoutDurationNumber(safeFumbleSec);
                 return t(
                   `1. Answer on your iPad in 3 steps (Scoop → Aim → Throw) to toss bean bags into your team basket! (Fumbles lock for ${fumbleLabel}s)`,
                   `1. 3ステップ（①玉を拾う → ②狙う → ③投げる）で正解してお手玉をカゴへ投げ入れよう！（お手つきは${fumbleLabel}秒ストップ）`
                 );
               })() : isTug ? (() => {
-                const mudSec = Math.max(2.5, tugOfWarSettings?.mudLockoutSeconds ?? 2.5);
-                const mudLabel = Number.isInteger(mudSec) ? `${mudSec}` : mudSec.toFixed(1);
+                const safeMudSec = sanitizeConfiguredLockoutSeconds(tugOfWarSettings?.mudLockoutSeconds);
+                if (isAdaptiveLockoutSetting(safeMudSec)) {
+                  return t(
+                    '1. Every correct answer pulls the rope toward your team on the big screen! (Mistakes slip in mud for 1→2→4s)',
+                    '1. 正解するとテレビのロープをグイッと引き寄せる！誤答は泥で1→2→4秒ストップ！'
+                  );
+                }
+                if (safeMudSec <= 0) {
+                  return t(
+                    '1. Every correct answer pulls the rope toward your team on the big screen!',
+                    '1. 正解するとテレビのロープをグイッと引き寄せる！（ロックなし）'
+                  );
+                }
+                const mudLabel = formatLockoutDurationNumber(safeMudSec);
                 return t(
                   `1. Every correct answer pulls the rope toward your team on the big screen! (Mistakes slip in mud for ${mudLabel}s)`,
                   `1. 正解するとテレビのロープをグイッと引き寄せる！誤答は泥で${mudLabel}秒ストップ！`

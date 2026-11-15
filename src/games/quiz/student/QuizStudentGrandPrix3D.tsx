@@ -15,6 +15,10 @@ import { soundEffects } from '@/services/soundEffects';
 import { getServerTime } from '@/services/rtdbSafe';
 import { useLanguage } from '@/context/LanguageContext';
 import { Flag, Clock, Trophy, LogOut, Flame, Sparkles, AlertTriangle } from 'lucide-react';
+import {
+  resolveLockoutPenaltySeconds,
+  sanitizeConfiguredLockoutSeconds,
+} from '../core/quizEngine';
 
 const TEAM_HEX_MAP: Record<TeamId, number> = {
   team_red: 0xef4444,
@@ -67,13 +71,9 @@ export const QuizStudentGrandPrix3D: React.FC<QuizStudentGrandPrix3DProps> = ({
   const targetLaps = sprintSettings?.targetLaps3D || 1;
   const graceSeconds = sprintSettings?.graceCountdownSeconds || 15;
   const wrongSpeedLossRatio = sprintSettings?.wrongSpeedLossRatio ?? 0.33;
-  // ==========================================================================
-  // [ANTIGRAVITY REFACTOR]: Enforced >= 2.5s Pit Stop Lockout Floor (GEMINI.md §7)
-  // WHAT CHANGED: Clamped `wrongLockoutSeconds` with `Math.max(2.5, ...)`.
-  // WHY: Prevents legacy room settings (`0.5` or `1.0`) from bypassing the
-  // mandatory 2.5s anti-spam lockout in 3D Suzuka Grand Prix.
-  // ==========================================================================
-  const wrongLockoutSeconds = Math.max(2.5, sprintSettings?.wrongLockoutSeconds ?? 2.5);
+  const configuredWrongLockoutSeconds = sanitizeConfiguredLockoutSeconds(
+    sprintSettings?.wrongLockoutSeconds
+  );
 
   const greenFlagTime = raceStartTime + 2400;
   const [nowTime, setNowTime] = useState<number>(() => getServerTime());
@@ -630,7 +630,13 @@ export const QuizStudentGrandPrix3D: React.FC<QuizStudentGrandPrix3DProps> = ({
       setStudentSpeed(reducedSpd);
       suzukaAudio.updateEngineTelemetry(reducedSpd, false);
 
-      const enteredPitStop = wrongLockoutSeconds > 0;
+      const lockoutInfo = resolveLockoutPenaltySeconds({
+        mode: 'GRAND_PRIX_3D',
+        mistakeCountOnQuestion: currentMisses,
+        configuredLockoutSeconds: configuredWrongLockoutSeconds,
+      });
+      const resolvedLockoutSec = lockoutInfo.penaltySeconds;
+      const enteredPitStop = resolvedLockoutSec > 0;
       if (enteredPitStop) {
         studentInPitStopRef.current = true;
         setStudentInPitStop(true);
@@ -668,7 +674,7 @@ export const QuizStudentGrandPrix3D: React.FC<QuizStudentGrandPrix3DProps> = ({
               inPitStop: false,
             }
           );
-        }, wrongLockoutSeconds * 1000);
+        }, Math.round(resolvedLockoutSec * 1000));
       }
 
       lastSentTelemetryRef.current = {
@@ -1060,7 +1066,7 @@ export const QuizStudentGrandPrix3D: React.FC<QuizStudentGrandPrix3DProps> = ({
                   speedKmh={studentSpeed}
                   cornerSpeedLimit={currentCornerSpeedLimit}
                   isPassingLane={isPassingLane}
-                  wrongLockoutSeconds={wrongLockoutSeconds}
+                  wrongLockoutSeconds={configuredWrongLockoutSeconds}
                   wrongSpeedLossRatio={wrongSpeedLossRatio}
                   onAnswer={handleStudentAnswer}
                   disabled={!raceActive}

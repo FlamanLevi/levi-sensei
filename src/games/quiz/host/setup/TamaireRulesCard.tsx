@@ -1,6 +1,12 @@
 import React from 'react';
 import { useLanguage } from '@/context/LanguageContext';
-import { STANDARD_LOCKOUT_TIERS_SECONDS } from '../../core/quizEngine';
+import {
+  LOCKOUT_ADAPTIVE_SENTINEL,
+  STANDARD_LOCKOUT_TIERS_SECONDS,
+  isAdaptiveLockoutSetting,
+  sanitizeConfiguredLockoutSeconds,
+  formatLockoutDurationNumber,
+} from '../../core/quizEngine';
 
 interface TamaireRulesCardProps {
   tamaireMysteryCount: boolean;
@@ -20,8 +26,9 @@ export const TamaireRulesCard: React.FC<TamaireRulesCardProps> = ({
   onSelectMissLockoutSeconds,
 }) => {
   const { t } = useLanguage();
-  const safeMissSec = Math.max(2.5, missLockoutSeconds);
-  const missLabel = Number.isInteger(safeMissSec) ? `${safeMissSec}.0` : safeMissSec.toFixed(1);
+  const safeMissSec = sanitizeConfiguredLockoutSeconds(missLockoutSeconds);
+  const isAdaptiveMiss = isAdaptiveLockoutSetting(safeMissSec);
+  const missLabel = formatLockoutDurationNumber(safeMissSec);
 
   return (
     <div className="p-4 rounded-3xl bg-gradient-to-br from-indigo-50/90 to-purple-50/90 dark:from-indigo-950/30 dark:to-purple-950/30 border-2 border-indigo-300 dark:border-indigo-900/60 space-y-4 animate-in fade-in duration-150">
@@ -113,34 +120,47 @@ export const TamaireRulesCard: React.FC<TamaireRulesCardProps> = ({
               {t('Fumbled Bag Lockout', '誤答時のお手玉落としロック')}
             </span>
             <span className="text-[10px] font-black text-indigo-700 dark:text-indigo-300 bg-indigo-100 dark:bg-indigo-900/60 px-2 py-0.5 rounded-full">
-              {safeMissSec <= 2.5
-                ? t('2.5s (Standard Fumble)', '2.5秒 (標準ロック)')
-                : `${missLabel}s`}
+              {isAdaptiveMiss
+                ? t('Adaptive: 1→2→4s ⭐', '段階式: 1→2→4秒 ⭐')
+                : safeMissSec === 0
+                  ? t('No Lockout (0s)', 'ロックなし (0秒)')
+                  : `${missLabel}s`}
             </span>
           </div>
           <div className="grid grid-cols-5 gap-1.5">
             {STANDARD_LOCKOUT_TIERS_SECONDS.map((tierSec) => {
+              const isSelected = isAdaptiveMiss
+                ? tierSec === LOCKOUT_ADAPTIVE_SENTINEL
+                : tierSec !== LOCKOUT_ADAPTIVE_SENTINEL && Math.abs(safeMissSec - tierSec) < 0.05;
+              const label =
+                tierSec === LOCKOUT_ADAPTIVE_SENTINEL
+                  ? t('Adaptive', '段階式')
+                  : tierSec === 0
+                    ? t('None', 'なし')
+                    : `${tierSec.toFixed(1)}s`;
               const sub =
-                tierSec === 2.5
-                  ? `⭐ ${t('Std', '標準')}`
-                  : tierSec === 3.5
-                    ? t('Firm', 'しっかり')
-                    : tierSec === 5.0
-                      ? t('Strict', '厳しめ')
-                      : '';
+                tierSec === LOCKOUT_ADAPTIVE_SENTINEL
+                  ? t('1→2→4s ⭐', '1→2→4秒 ⭐')
+                  : tierSec === 0
+                    ? t('0s', '0秒')
+                    : tierSec === 1.0
+                      ? t('Quick', '短め')
+                      : tierSec === 2.0
+                        ? t('Firm', '標準')
+                        : t('Strict', '長め');
               return (
                 <button
                   key={tierSec}
                   type="button"
                   onClick={() => onSelectMissLockoutSeconds(tierSec)}
                   className={`py-1.5 px-1 rounded-xl border text-center transition-all cursor-pointer flex flex-col items-center justify-center ${
-                    Math.abs(safeMissSec - tierSec) < 0.05
+                    isSelected
                       ? 'border-indigo-500 bg-white dark:bg-slate-800 text-indigo-700 dark:text-indigo-300 shadow-xs ring-1 ring-indigo-400/40 font-black'
                       : 'border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-white/50 bg-white/40 dark:bg-slate-900/40 font-bold'
                   }`}
                 >
-                  <span className="text-xs leading-tight">{tierSec.toFixed(1)}s</span>
-                  {sub && <span className="text-[10px] opacity-80 leading-tight">{sub}</span>}
+                  <span className="text-xs leading-tight whitespace-nowrap">{label}</span>
+                  <span className="text-[10px] opacity-80 leading-tight whitespace-nowrap">{sub}</span>
                 </button>
               );
             })}
@@ -152,10 +172,20 @@ export const TamaireRulesCard: React.FC<TamaireRulesCardProps> = ({
       <div className="p-2.5 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-[11px] text-indigo-800 dark:text-indigo-300 flex items-center gap-2">
         <span className="text-base">🧺</span>
         <span>
-          {t(
-            `Mistake Penalty: ${missLabel}s fumbled bean bag delay (wrong option eliminated to guide learning).`,
-            `誤答ペナルティ: ${missLabel}秒のお手玉落としロック（誤答カードが消去され正しい単語を学べます）。`
-          )}
+          {isAdaptiveMiss
+            ? t(
+                'Mistake Penalty: Adaptive 1.0s → 2.0s → 4.0s fumbled bean bag delay (wrong option eliminated to guide learning).',
+                '誤答ペナルティ: 段階式 (1.0秒→2.0秒→4.0秒) のお手玉落としロック（誤答カードが消去され正しい単語を学べます）。'
+              )
+            : safeMissSec === 0
+              ? t(
+                  'Mistake Penalty: No answer lockout — wrong option is eliminated right away so students keep throwing.',
+                  '誤答ペナルティ: 回答ロックなし（誤答カードのみ消去され、すぐ次の選択ができます）。'
+                )
+              : t(
+                  `Mistake Penalty: ${missLabel}s fumbled bean bag delay (wrong option eliminated to guide learning).`,
+                  `誤答ペナルティ: ${missLabel}秒のお手玉落としロック（誤答カードが消去され正しい単語を学べます）。`
+                )}
         </span>
       </div>
     </div>

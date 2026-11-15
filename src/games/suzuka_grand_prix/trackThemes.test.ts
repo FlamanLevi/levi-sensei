@@ -2,6 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   DEFAULT_TRACK_THEME_ID,
+  DEFAULT_CLOUD_COVER_SELECTION,
+  DEFAULT_PRECIPITATION_SELECTION,
   TRACK_THEMES,
   TRACK_THEME_LIST,
   TIME_OF_DAY_LIST,
@@ -13,6 +15,10 @@ import {
   resolveTimeOfDayId,
   resolveCloudCoverId,
   resolvePrecipitationId,
+  getAllowedCloudCoversForPrecipitation,
+  getAllowedPrecipitationsForCloudCover,
+  isPrecipitationSelectionAllowedForCloudCover,
+  coercePrecipitationSelectionForCloudCover,
   evaluateSuzukaAtmosphere,
   getLeMansPhaseBadge,
   SuzukaTrackThemeId,
@@ -67,20 +73,55 @@ test('resolveTrackThemeId preserves explicit picks and excludes prior biome when
   }
 });
 
-test('Independent Time of Day, Cloud Cover, and Precipitation resolvers honor all explicit combos and roll sensible RANDOMs', () => {
-  // Explicit odd combo (e.g. heavy snow in the desert at midnight) must be 100% allowed
-  assert.equal(resolvePrecipitationId('HEAVY_SNOW', 'DESERT'), 'HEAVY_SNOW');
+test('Independent Time of Day, Cloud Cover, and Precipitation defaults & resolvers enforce cloud cover gating', () => {
+  assert.equal(DEFAULT_CLOUD_COVER_SELECTION, 'RANDOM');
+  assert.equal(DEFAULT_PRECIPITATION_SELECTION, 'RANDOM');
+
+  // Explicit odd combo when overcast (e.g. heavy snow in the desert at midnight) must be 100% allowed
+  assert.equal(resolvePrecipitationId('HEAVY_SNOW', 'DESERT', undefined, Math.random, 'OVERCAST'), 'HEAVY_SNOW');
   assert.equal(resolveTimeOfDayId('NIGHT', 'NIGHT'), 'NIGHT');
   assert.equal(resolveTimeOfDayId('LE_MANS_CYCLE', 'NOON'), 'LE_MANS_CYCLE');
   assert.equal(resolveCloudCoverId('OVERCAST', 'OVERCAST'), 'OVERCAST');
 
-  // RANDOM rolls rotate and respect sensible biome pools for precipitation
+  // Cloud cover gating rules
+  assert.deepEqual(getAllowedPrecipitationsForCloudCover('CLEAR'), ['NONE']);
+  assert.deepEqual(getAllowedPrecipitationsForCloudCover('PARTLY_CLOUDY'), ['NONE', 'LIGHT_RAIN', 'LIGHT_SNOW']);
+  assert.deepEqual(getAllowedPrecipitationsForCloudCover('OVERCAST'), ['NONE', 'LIGHT_RAIN', 'HEAVY_RAIN', 'LIGHT_SNOW', 'HEAVY_SNOW']);
+  assert.deepEqual(getAllowedPrecipitationsForCloudCover('RANDOM'), ['NONE', 'LIGHT_RAIN', 'HEAVY_RAIN', 'LIGHT_SNOW', 'HEAVY_SNOW']);
+
+  assert.equal(isPrecipitationSelectionAllowedForCloudCover('NONE', 'CLEAR'), true);
+  assert.equal(isPrecipitationSelectionAllowedForCloudCover('RANDOM', 'CLEAR'), false);
+  assert.equal(isPrecipitationSelectionAllowedForCloudCover('LIGHT_RAIN', 'CLEAR'), false);
+  assert.equal(isPrecipitationSelectionAllowedForCloudCover('LIGHT_RAIN', 'PARTLY_CLOUDY'), true);
+  assert.equal(isPrecipitationSelectionAllowedForCloudCover('HEAVY_RAIN', 'PARTLY_CLOUDY'), false);
+  assert.equal(isPrecipitationSelectionAllowedForCloudCover('HEAVY_SNOW', 'OVERCAST'), true);
+
+  // Coercion when teacher switches cloud cover
+  assert.equal(coercePrecipitationSelectionForCloudCover('RANDOM', 'CLEAR'), 'NONE');
+  assert.equal(coercePrecipitationSelectionForCloudCover('HEAVY_RAIN', 'CLEAR'), 'NONE');
+  assert.equal(coercePrecipitationSelectionForCloudCover('HEAVY_RAIN', 'PARTLY_CLOUDY'), 'LIGHT_RAIN');
+  assert.equal(coercePrecipitationSelectionForCloudCover('HEAVY_SNOW', 'PARTLY_CLOUDY'), 'LIGHT_SNOW');
+  assert.equal(coercePrecipitationSelectionForCloudCover('RANDOM', 'PARTLY_CLOUDY'), 'RANDOM');
+  assert.equal(coercePrecipitationSelectionForCloudCover('HEAVY_RAIN', 'OVERCAST'), 'HEAVY_RAIN');
+
+  // Reverse constraint when Cloud Cover is RANDOM and Precipitation is heavy/light
+  assert.deepEqual(getAllowedCloudCoversForPrecipitation('HEAVY_RAIN'), ['OVERCAST']);
+  assert.deepEqual(getAllowedCloudCoversForPrecipitation('LIGHT_SNOW'), ['PARTLY_CLOUDY', 'OVERCAST']);
+  assert.equal(resolveCloudCoverId('RANDOM', 'CLEAR', Math.random, 'HEAVY_RAIN'), 'OVERCAST');
+
+  // RANDOM rolls rotate and respect both biome pools and cloud cover gating
   for (let i = 0; i < 20; i++) {
     const rng = () => i / 20;
-    const snowPrecip = resolvePrecipitationId('RANDOM', 'SNOW', undefined, rng);
-    assert.ok(['NONE', 'LIGHT_SNOW', 'HEAVY_SNOW'].includes(snowPrecip));
+    const clearPrecip = resolvePrecipitationId('RANDOM', 'SNOW', undefined, rng, 'CLEAR');
+    assert.equal(clearPrecip, 'NONE');
 
-    const desertPrecip = resolvePrecipitationId('RANDOM', 'DESERT', undefined, rng);
+    const partlySnow = resolvePrecipitationId('RANDOM', 'SNOW', undefined, rng, 'PARTLY_CLOUDY');
+    assert.ok(['NONE', 'LIGHT_SNOW'].includes(partlySnow));
+
+    const overcastSnow = resolvePrecipitationId('RANDOM', 'SNOW', undefined, rng, 'OVERCAST');
+    assert.ok(['NONE', 'LIGHT_SNOW', 'HEAVY_SNOW'].includes(overcastSnow));
+
+    const desertPrecip = resolvePrecipitationId('RANDOM', 'DESERT', undefined, rng, 'PARTLY_CLOUDY');
     assert.ok(['NONE', 'LIGHT_RAIN'].includes(desertPrecip));
 
     const tod = resolveTimeOfDayId('RANDOM', 'NOON', rng);

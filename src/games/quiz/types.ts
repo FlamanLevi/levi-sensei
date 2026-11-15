@@ -77,12 +77,8 @@ export interface SprintSettings {
   precipitationSelection?: SuzukaPrecipitationSelection; // Teacher choice: 'RANDOM' or concrete precipitation
   precipitation?: SuzukaPrecipitationId; // Resolved precipitation shared across TV & all student iPads
   wrongSpeedLossRatio?: number; // 0, 0.25, 0.33 (default 1/3), 0.5, 0.75, 1.0
-  // ==========================================================================
-  // [ANTIGRAVITY REFACTOR]: Enforced GEMINI.md §7 Mandatory >= 2.5s Lockout Floor
-  // Standardized 5-tier lockout options: 2.5s, 3.0s, 3.5s, 4.0s, 5.0s
-  // Runtime clamps `Math.max(2.5, wrongLockoutSeconds ?? 2.5)`.
-  // ==========================================================================
-  wrongLockoutSeconds?: number; // Minimum 2.5s floor enforced at runtime (2.5, 3.0, 3.5, 4.0, 5.0)
+  // Standardized 5-tier lockout options: 0 (None), 1.0s, 2.0s, 4.0s, or -1 (Adaptive: 1.0s -> 2.0s -> 4.0s)
+  wrongLockoutSeconds?: number;
 }
 
 export type TugOfWarMatchFormat = 'SINGLE' | 'BEST_OF_3' | 'BEST_OF_5' | 'BEST_OF_7';
@@ -90,7 +86,7 @@ export type TugOfWarMatchFormat = 'SINGLE' | 'BEST_OF_3' | 'BEST_OF_5' | 'BEST_O
 export interface TugOfWarSettings {
   timeLimitSeconds: number; // 30, 60, 90, 120, 180
   pullSensitivity: number;  // 15, 20, 25 (Slow / Standard / Intense multiplier on normalized lead)
-  mudLockoutSeconds?: number; // >= 2.5s (2.5, 3.0, 3.5, 4.0, 5.0)
+  mudLockoutSeconds?: number; // 0 (None), 1.0, 2.0, 4.0, or -1 (Adaptive 1->2->4s)
   matchFormat?: TugOfWarMatchFormat;
 }
 
@@ -117,7 +113,7 @@ export interface VolleyballSettings {
   timeLimitSeconds: number; // 30, 60, 90, 120, 180
   gameStyle?: VolleyballGameStyle; // Deprecated Release 1 field (defaults to TEAM_VS)
   targetRallies?: number; // Deprecated legacy coop field
-  missLockoutSeconds?: number; // >= 2.5s (2.5, 3.0, 3.5, 4.0, 5.0)
+  missLockoutSeconds?: number; // 0 (None), 1.0, 2.0, 4.0, or -1 (Adaptive 1->2->4s)
   hideScoreUntilEnd?: boolean; // Mystery count until whistle
 }
 

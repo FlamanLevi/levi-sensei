@@ -605,7 +605,6 @@ export const QuizStudentTamaire: React.FC<QuizStudentTamaireProps> = ({
     } else {
       setLastFumbleReason(stepResult.outcome);
 
-      // [ANTIGRAVITY REFACTOR]: Enforces >= 2.5s Fumbled Bean Bag lockout floor
       const nextMistakes = mistakeCountOnQuestion + 1;
       setMistakeCountOnQuestion(nextMistakes);
       setEliminatedOptionIds((prev) => new Set(prev).add(optionId));
@@ -616,9 +615,14 @@ export const QuizStudentTamaire: React.FC<QuizStudentTamaireProps> = ({
         configuredLockoutSeconds: effectiveSettings?.missLockoutSeconds,
       });
 
-      const penaltyEnd = Date.now() + Math.round(lockoutInfo.penaltySeconds * 1000);
-      penaltyEndTimeRef.current = penaltyEnd;
-      setPenaltySecondsLeft(lockoutInfo.penaltySeconds);
+      if (lockoutInfo.penaltySeconds > 0) {
+        const penaltyEnd = Date.now() + Math.round(lockoutInfo.penaltySeconds * 1000);
+        penaltyEndTimeRef.current = penaltyEnd;
+        setPenaltySecondsLeft(lockoutInfo.penaltySeconds);
+      } else {
+        penaltyEndTimeRef.current = 0;
+        setPenaltySecondsLeft(0);
+      }
 
       const newTotalAnswered = localTotalAnswered + 1;
       setLocalStreak(0);

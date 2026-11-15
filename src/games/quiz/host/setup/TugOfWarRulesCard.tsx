@@ -1,6 +1,12 @@
 import React from 'react';
 import { useLanguage } from '@/context/LanguageContext';
-import { STANDARD_LOCKOUT_TIERS_SECONDS } from '../../core/quizEngine';
+import {
+  LOCKOUT_ADAPTIVE_SENTINEL,
+  STANDARD_LOCKOUT_TIERS_SECONDS,
+  isAdaptiveLockoutSetting,
+  sanitizeConfiguredLockoutSeconds,
+  formatLockoutDurationNumber,
+} from '../../core/quizEngine';
 import { TugOfWarMatchFormat } from '../../types';
 
 interface TugOfWarRulesCardProps {
@@ -31,8 +37,9 @@ export const TugOfWarRulesCard: React.FC<TugOfWarRulesCardProps> = ({
   onSelectMudLockoutSeconds,
 }) => {
   const { t } = useLanguage();
-  const safeMudSec = Math.max(2.5, mudLockoutSeconds);
-  const mudLabel = Number.isInteger(safeMudSec) ? `${safeMudSec}.0` : safeMudSec.toFixed(1);
+  const safeMudSec = sanitizeConfiguredLockoutSeconds(mudLockoutSeconds);
+  const isAdaptiveMud = isAdaptiveLockoutSetting(safeMudSec);
+  const mudLabel = formatLockoutDurationNumber(safeMudSec);
 
   return (
     <div className="p-4 rounded-3xl bg-gradient-to-br from-amber-50/90 to-rose-50/90 dark:from-amber-950/30 dark:to-rose-950/30 border-2 border-amber-300 dark:border-amber-900/60 space-y-4 animate-in fade-in duration-150">
@@ -153,34 +160,47 @@ export const TugOfWarRulesCard: React.FC<TugOfWarRulesCardProps> = ({
               {t('Mud Slip Lockout', '誤答時の泥すべりロック')}
             </span>
             <span className="text-[10px] font-black text-amber-800 dark:text-amber-300 bg-amber-100 dark:bg-amber-900/60 px-2 py-0.5 rounded-full">
-              {safeMudSec <= 2.5
-                ? t('2.5s (Standard Slip)', '2.5秒 (標準ロック)')
-                : `${mudLabel}s`}
+              {isAdaptiveMud
+                ? t('Adaptive: 1→2→4s ⭐', '段階式: 1→2→4秒 ⭐')
+                : safeMudSec === 0
+                  ? t('No Lockout (0s)', 'ロックなし (0秒)')
+                  : `${mudLabel}s`}
             </span>
           </div>
           <div className="grid grid-cols-5 gap-1.5">
             {STANDARD_LOCKOUT_TIERS_SECONDS.map((tierSec) => {
+              const isSelected = isAdaptiveMud
+                ? tierSec === LOCKOUT_ADAPTIVE_SENTINEL
+                : tierSec !== LOCKOUT_ADAPTIVE_SENTINEL && Math.abs(safeMudSec - tierSec) < 0.05;
+              const label =
+                tierSec === LOCKOUT_ADAPTIVE_SENTINEL
+                  ? t('Adaptive', '段階式')
+                  : tierSec === 0
+                    ? t('None', 'なし')
+                    : `${tierSec.toFixed(1)}s`;
               const sub =
-                tierSec === 2.5
-                  ? `⭐ ${t('Std', '標準')}`
-                  : tierSec === 3.5
-                    ? t('Firm', 'しっかり')
-                    : tierSec === 5.0
-                      ? t('Strict', '厳しめ')
-                      : '';
+                tierSec === LOCKOUT_ADAPTIVE_SENTINEL
+                  ? t('1→2→4s ⭐', '1→2→4秒 ⭐')
+                  : tierSec === 0
+                    ? t('0s', '0秒')
+                    : tierSec === 1.0
+                      ? t('Quick', '短め')
+                      : tierSec === 2.0
+                        ? t('Firm', '標準')
+                        : t('Strict', '長め');
               return (
                 <button
                   key={tierSec}
                   type="button"
                   onClick={() => onSelectMudLockoutSeconds(tierSec)}
                   className={`py-1.5 px-1 rounded-xl border text-center transition-all cursor-pointer flex flex-col items-center justify-center ${
-                    Math.abs(safeMudSec - tierSec) < 0.05
+                    isSelected
                       ? 'border-amber-500 bg-white dark:bg-slate-800 text-amber-800 dark:text-amber-300 shadow-xs ring-1 ring-amber-400/40 font-black'
                       : 'border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-white/50 bg-white/40 dark:bg-slate-900/40 font-bold'
                   }`}
                 >
-                  <span className="text-xs leading-tight">{tierSec.toFixed(1)}s</span>
-                  {sub && <span className="text-[10px] opacity-80 leading-tight">{sub}</span>}
+                  <span className="text-xs leading-tight whitespace-nowrap">{label}</span>
+                  <span className="text-[10px] opacity-80 leading-tight whitespace-nowrap">{sub}</span>
                 </button>
               );
             })}
@@ -192,10 +212,20 @@ export const TugOfWarRulesCard: React.FC<TugOfWarRulesCardProps> = ({
       <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-[11px] text-amber-900 dark:text-amber-300 flex items-center gap-2">
         <span className="text-base">🥾</span>
         <span>
-          {t(
-            `Mistake Penalty: ${mudLabel}s mud slip lockout (eliminates the wrong choice so the student learns).`,
-            `誤答ペナルティ: ${mudLabel}秒の泥すべりロック（誤答カードが消えるため正しい単語を学べます）。`
-          )}
+          {isAdaptiveMud
+            ? t(
+                'Mistake Penalty: Adaptive 1.0s → 2.0s → 4.0s mud slip lockout (wrong choice is eliminated to guide learning).',
+                '誤答ペナルティ: 段階式 (1.0秒→2.0秒→4.0秒) の泥すべりロック（誤答カードが消えるため正しい単語を学べます）。'
+              )
+            : safeMudSec === 0
+              ? t(
+                  'Mistake Penalty: No answer lockout — wrong choice is eliminated right away so students keep pulling.',
+                  '誤答ペナルティ: 回答ロックなし（誤答カードのみ消去され、すぐ次の選択ができます）。'
+                )
+              : t(
+                  `Mistake Penalty: ${mudLabel}s mud slip lockout (eliminates the wrong choice so the student learns).`,
+                  `誤答ペナルティ: ${mudLabel}秒の泥すべりロック（誤答カードが消えるため正しい単語を学べます）。`
+                )}
         </span>
       </div>
     </div>

@@ -59,8 +59,8 @@ export function useServerClock(
 
 /**
  * [ANTIGRAVITY REFACTOR #2]: Shared Pit Stop / Mud / Miss Lockout Hook
- * Enforces the 2.5s minimum penalty from GEMINI.md §7 and returns synchronized
- * tier labels (`activePenaltyTier`) so the UI never displays a mismatched headline.
+ * Keeps student lockout duration and tier labels synchronized with
+ * `resolveLockoutPenaltySeconds` (supports None 0s, Fixed tiers, and Adaptive 1->2->4s).
  */
 export function useLockoutPenalty(params: {
   mode: GamePlayType;
@@ -92,8 +92,13 @@ export function useLockoutPenalty(params: {
         mistakeCountOnQuestion,
         configuredLockoutSeconds,
       });
+      if (resolution.penaltySeconds <= 0) {
+        setLockedUntil(0);
+        setActivePenaltyTier(null);
+        return resolution;
+      }
       setActivePenaltyTier(resolution);
-      setLockedUntil(getServerTime() + resolution.penaltySeconds * 1000);
+      setLockedUntil(getServerTime() + Math.round(resolution.penaltySeconds * 1000));
       return resolution;
     },
     [mode, configuredLockoutSeconds, getServerTime]
@@ -106,7 +111,7 @@ export function useLockoutPenalty(params: {
 
   return {
     penaltySecondsLeft,
-    activePenaltyTotalSec: activePenaltyTier?.penaltySeconds || 2.5,
+    activePenaltyTotalSec: activePenaltyTier?.penaltySeconds ?? 0,
     activePenaltyTier,
     isLockedOut: penaltySecondsLeft > 0,
     triggerLockout,

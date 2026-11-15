@@ -47,10 +47,10 @@ export const GAME_REGISTRY: GameDefinition[] = [
   },
   {
     id: 'eigo_arena',
-    title: 'Eigo Arena (Kahoot Style)',
+    title: 'Eigo Arena',
     jaTitle: 'ライブ4択バトル',
-    description: 'Flagship live multiplayer quiz! Students buzz in on iPads (▲◆●■) or play solo front-screen on the classroom TV.',
-    jaDescription: 'iPad（▲◆●■）や前画面テレビで大白熱！4択早押し英語クイズバトル。',
+    description: 'Flagship live multiplayer arena! Race 3D Suzuka Grand Prix, clash in Sports Day Tug of War & Tamaire, or buzz in live on iPads (▲◆●■).',
+    jaDescription: '3D鈴鹿グランプリや運動会バトル、iPad（▲◆●■）早押しクイズで大白熱！授業の主役になる4択アリーナ。',
     stream: 'STREAM_B',
     targetGrades: ['ES_G1', 'ES_G2', 'ES_G3', 'ES_G4', 'ES_G5', 'ES_G6'],
     skills: ['Speed Recall', 'Listening', 'Reading Comprehension'],

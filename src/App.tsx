@@ -270,7 +270,7 @@ export const App: React.FC = () => {
         }
         return (
           <GameContainer 
-            title="Eigo Arena (Kahoot Style)" 
+            title="Eigo Arena"
             jaTitle={<>ライブ4<ruby>択<rt>たく</rt></ruby>バトル</>}
             onExit={activeGameExitHandler || exitToHub}
             isScrollable={hostQuizStep === 'SETUP' || hostQuizStep === 'LOBBY' || hostQuizStep === 'GAME_OVER'}

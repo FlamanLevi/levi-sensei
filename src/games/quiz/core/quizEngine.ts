@@ -13,10 +13,9 @@
  *    `createRtdbWriteThrottler` coalesces rapid student telemetry & answer
  *    updates into at most 8 Hz (125ms) writes to `roomPlayers/{code}/{playerId}`,
  *    eliminating the O(N^2) dual-write storm in `useQuizRoom.ts:1863-1866`.
- * 2. GEMINI.md §7 (2.5s Minimum Pit Stop Lockout Penalty):
- *    `resolveLockoutPenaltySeconds` enforces `Math.max(2.5, ...)` on
- *    3D Grand Prix, Tug of War, and Tamaire mistakes so guessing is
- *    never faster than reading and UI labels match the active penalty tier.
+ * 2. Pedagogical Lockout Tiers (`None`, `1.0s`, `2.0s`, `4.0s`, `Adaptive 1->2->4s`):
+ *    `resolveLockoutPenaltySeconds` resolves configured lockout durations across
+ *    3D Grand Prix, Tug of War, and Tamaire so UI countdowns and RTDB state match.
  * 3. GEMINI.md §3 & §7 (`!isEnPrompt` Cheating Prevention & Furigana):
  *    `resolveOptionPresentation` centralizes option image visibility
  *    (`!isEnPrompt && !hasPromptImage && Boolean(option.image)`), Katakana reading
@@ -290,16 +289,16 @@ export function createRtdbWriteThrottler<TPayload extends Record<string, any>>(
 }
 
 // ============================================================================
-  // [ANTIGRAVITY REFACTOR #2]: Shared Scoring, 2.5s Lockout & !isEnPrompt Rules
+// [ANTIGRAVITY REFACTOR #2]: Shared Scoring, Configurable Lockout & !isEnPrompt Rules
 // ============================================================================
 // WHAT CHANGED:
 // Extracted `evaluateOptionMatch`, `calculateClassicScore`, `calculateArcadeScore`,
 // `resolveLockoutPenaltySeconds`, `resolveOptionPresentation`, and
 // `computeEliminatedOptionIds` from 6 separate Host/Student components.
 // WHY:
-// 1. `resolveLockoutPenaltySeconds` enforces the >= 2.5s lockout floor and keeps
-//    Pit Stop / slip UI labels synchronized with `QuizStudentGrandPrix3D.tsx`
-//    and `QuizStudentTugOfWar.tsx` (GEMINI.md §7).
+// 1. `resolveLockoutPenaltySeconds` resolves None (0s), Fixed (1.0/2.0/4.0s),
+//    and Adaptive (1.0 -> 2.0 -> 4.0s) lockout durations and keeps Pit Stop /
+//    slip / fumble UI labels synchronized across Host & Student components.
 // 2. `resolveOptionPresentation` fixes `QuizStudentTugOfWar.tsx` which
 //    previously omitted `<RubyText />` furigana, Katakana reading aids, and
 //    `!isEnPrompt` option image guards (GEMINI.md §3 & §7).
@@ -369,9 +368,35 @@ export function calculateArcadeScore(params: {
   return base + streakBonus;
 }
 
+export const LOCKOUT_ADAPTIVE_SENTINEL = -1 as const;
+export const ADAPTIVE_LOCKOUT_TIERS_SECONDS = [1.0, 2.0, 4.0] as const;
+export const DEFAULT_LOCKOUT_SECONDS: number = LOCKOUT_ADAPTIVE_SENTINEL;
+
+export function isAdaptiveLockoutSetting(configuredLockoutSeconds?: number | null): boolean {
+  if (configuredLockoutSeconds === undefined || configuredLockoutSeconds === null) {
+    return true;
+  }
+  if (!Number.isFinite(configuredLockoutSeconds)) return true;
+  return configuredLockoutSeconds < 0;
+}
+
+export function sanitizeConfiguredLockoutSeconds(raw?: number | null): number {
+  if (raw === undefined || raw === null || !Number.isFinite(raw)) {
+    return DEFAULT_LOCKOUT_SECONDS;
+  }
+  if (raw < 0) return LOCKOUT_ADAPTIVE_SENTINEL;
+  return Math.max(0, Math.round(raw * 10) / 10);
+}
+
+export function formatLockoutDurationNumber(sec: number): string {
+  const safe = Math.max(0, Math.round(sec * 10) / 10);
+  return Number.isInteger(safe) ? `${safe}.0` : safe.toFixed(1);
+}
+
 export interface LockoutPenaltyResolution {
   penaltySeconds: number;
   tierIndex: 1 | 2 | 3;
+  isAdaptive: boolean;
   badgeTextEn: string;
   badgeTextJa: string;
   tierLabelEn: string;
@@ -387,46 +412,82 @@ export function resolveLockoutPenaltySeconds(params: {
   configuredLockoutSeconds?: number;
 }): LockoutPenaltyResolution {
   const { mode, mistakeCountOnQuestion, configuredLockoutSeconds } = params;
+  const normalized = sanitizeConfiguredLockoutSeconds(configuredLockoutSeconds);
+  const isAdaptive = normalized === LOCKOUT_ADAPTIVE_SENTINEL;
+  const safeMistake = Math.max(1, Math.floor(mistakeCountOnQuestion || 1));
+
+  let sec: number;
+  let tierIndex: 1 | 2 | 3;
+  if (isAdaptive) {
+    if (safeMistake <= 1) {
+      sec = ADAPTIVE_LOCKOUT_TIERS_SECONDS[0]; // 1.0s
+      tierIndex = 1;
+    } else if (safeMistake === 2) {
+      sec = ADAPTIVE_LOCKOUT_TIERS_SECONDS[1]; // 2.0s
+      tierIndex = 2;
+    } else {
+      sec = ADAPTIVE_LOCKOUT_TIERS_SECONDS[2]; // 4.0s
+      tierIndex = 3;
+    }
+  } else {
+    sec = normalized;
+    tierIndex = safeMistake <= 1 ? 1 : safeMistake === 2 ? 2 : 3;
+  }
+
+  if (sec <= 0) {
+    return {
+      penaltySeconds: 0,
+      tierIndex: 1,
+      isAdaptive: false,
+      badgeTextEn: 'WRONG CHOICE ELIMINATED',
+      badgeTextJa: 'ミスカード消去！',
+      tierLabelEn: 'No Lockout (0s)',
+      tierLabelJa: 'ロックなし (0秒)',
+      subtextEn: 'Keep going! Choose from the remaining cards!',
+      subtextJa: '残りのカードからすぐ選び直そう！',
+      icon: '⚡',
+    };
+  }
+
+  const secFixed = sec.toFixed(1);
 
   if (mode === 'SPRINT_RACE' || mode === 'GRAND_PRIX_3D') {
-    // [ANTIGRAVITY REFACTOR]: Enforces GEMINI.md §7 mandatory >= 2.5s floor
-    // Escalating tiers: 1st miss = 2.5s (Tire Slip), 2nd miss = 3.5s (Pit Stop), 3rd+ miss = 5.0s (Engine Service)
-    const baseFloor = Math.max(2.5, configuredLockoutSeconds ?? 2.5);
-    if (mistakeCountOnQuestion <= 1) {
+    if (tierIndex === 1) {
       return {
-        penaltySeconds: baseFloor,
+        penaltySeconds: sec,
         tierIndex: 1,
+        isAdaptive,
         badgeTextEn: 'TIRE SLIP! / QUICK RECOVERY',
         badgeTextJa: 'スリップ！ / クイックリカバー',
-        tierLabelEn: `Pit Stop! (+${baseFloor.toFixed(1)}s)`,
-        tierLabelJa: `ピットストップ！ (+${baseFloor.toFixed(1)}秒)`,
+        tierLabelEn: `Pit Stop! (+${secFixed}s)`,
+        tierLabelJa: `ピットストップ！ (+${secFixed}秒)`,
         subtextEn: 'Quick correction! Back in the race shortly!',
         subtextJa: '体勢を立て直してすぐ再開！',
         icon: '🛞',
       };
     }
-    if (mistakeCountOnQuestion === 2) {
-      const sec = Math.max(3.5, baseFloor + 1.0);
+    if (tierIndex === 2) {
       return {
         penaltySeconds: sec,
         tierIndex: 2,
+        isAdaptive,
         badgeTextEn: 'PIT STOP! / RAPID TIRE SERVICE',
         badgeTextJa: 'ピットイン！ / タイヤ交換',
-        tierLabelEn: `Tire Service! (+${sec.toFixed(1)}s)`,
-        tierLabelJa: `タイヤ交換！ (+${sec.toFixed(1)}秒)`,
+        tierLabelEn: `Tire Service! (+${secFixed}s)`,
+        tierLabelJa: `タイヤ交換！ (+${secFixed}秒)`,
         subtextEn: 'Rapid pit stop! Fresh tires fitted!',
         subtextJa: 'ピットクルーがタイヤ交換中！まもなく発進！',
         icon: '🔧',
       };
     }
-    const sec = Math.max(5.0, baseFloor + 2.5);
     return {
       penaltySeconds: sec,
       tierIndex: 3,
+      isAdaptive,
       badgeTextEn: 'ENGINE CHECK / LAST CHANCE',
       badgeTextJa: 'マシン点検 / ラストチャンス',
-      tierLabelEn: `Full Engine Check! (+${sec.toFixed(1)}s)`,
-      tierLabelJa: `マシン点検！ (+${sec.toFixed(1)}秒)`,
+      tierLabelEn: `Full Engine Check! (+${secFixed}s)`,
+      tierLabelJa: `マシン点検！ (+${secFixed}秒)`,
       subtextEn: 'Check carefully! Only one choice remaining!',
       subtextJa: '落ち着いて！残りはあと1つ！',
       icon: '⚠️',
@@ -434,32 +495,28 @@ export function resolveLockoutPenaltySeconds(params: {
   }
 
   if (mode === 'TUG_OF_WAR') {
-    const sec = Math.max(2.5, configuredLockoutSeconds ?? 2.5);
     return {
       penaltySeconds: sec,
-      tierIndex: 1,
+      tierIndex,
+      isAdaptive,
       badgeTextEn: 'MUD SLIP! / REGAIN GRIP',
       badgeTextJa: 'ぬかるみでスリップ！',
-      tierLabelEn: `Mud Slip! (+${sec.toFixed(1)}s)`,
-      tierLabelJa: `すべった！ (+${sec.toFixed(1)}秒)`,
+      tierLabelEn: `Mud Slip! (+${secFixed}s)`,
+      tierLabelJa: `すべった！ (+${secFixed}秒)`,
       subtextEn: 'Slipped in the mud! Regaining grip on the rope!',
       subtextJa: '足もとを固めてもう一度引こう！',
       icon: '💦',
     };
   }
 
-  // [ANTIGRAVITY REFACTOR]: Replaced Volleyball 2.0s "Missed Dig" with Undokai
-  // Bean Bag Toss (Tamaire / 玉入れ) 2.5s "Fumbled Bean Bag" lockout floor
-  // per GEMINI.md §7 ("In competitive speed games, incorrect choices MUST incur
-  // at least a 2.5s lockout penalty so guessing is mathematically slower than reading").
-  const sec = Math.max(2.5, configuredLockoutSeconds ?? 2.5);
   return {
     penaltySeconds: sec,
-    tierIndex: 1,
+    tierIndex,
+    isAdaptive,
     badgeTextEn: 'FUMBLED BEAN BAG! / RECOVER',
     badgeTextJa: 'お手玉を落とした！',
-    tierLabelEn: `Fumbled Bag! (+${sec.toFixed(1)}s)`,
-    tierLabelJa: `お手玉を落とした！ (+${sec.toFixed(1)}秒)`,
+    tierLabelEn: `Fumbled Bag! (+${secFixed}s)`,
+    tierLabelJa: `お手玉を落とした！ (+${secFixed}秒)`,
     subtextEn: 'Pick up your bean bag and aim carefully at the basket!',
     subtextJa: 'あわてずに！カゴをよくねらって投げよう！',
     icon: '🔴',
@@ -1235,7 +1292,7 @@ export const GAME_MODE_STRATEGIES: Record<GamePlayType, MiniGameStrategyDescript
     preWarmInLobby: false,
     studentSpokeSubscription: 'SELF_ONLY',
     maxClientWriteHz: 8,
-    defaultLockoutSeconds: 2.5,
+    defaultLockoutSeconds: LOCKOUT_ADAPTIVE_SENTINEL,
     resolveInitialRoomPatch: (nowServerMs, durationSeconds) => ({
       status: 'SPRINT_RACE',
       raceStartTime: nowServerMs,
@@ -1254,7 +1311,7 @@ export const GAME_MODE_STRATEGIES: Record<GamePlayType, MiniGameStrategyDescript
     preWarmInLobby: true,
     studentSpokeSubscription: 'ALL_RACERS_THROTTLED_5HZ',
     maxClientWriteHz: 5,
-    defaultLockoutSeconds: 2.5,
+    defaultLockoutSeconds: LOCKOUT_ADAPTIVE_SENTINEL,
     resolveInitialRoomPatch: (nowServerMs, durationSeconds) => ({
       status: 'GRAND_PRIX_3D',
       raceStartTime: nowServerMs,
@@ -1273,7 +1330,7 @@ export const GAME_MODE_STRATEGIES: Record<GamePlayType, MiniGameStrategyDescript
     preWarmInLobby: false,
     studentSpokeSubscription: 'SELF_ONLY',
     maxClientWriteHz: 8,
-    defaultLockoutSeconds: 2.5,
+    defaultLockoutSeconds: LOCKOUT_ADAPTIVE_SENTINEL,
     resolveInitialRoomPatch: (nowServerMs, durationSeconds) => ({
       status: 'TUG_OF_WAR',
       raceStartTime: nowServerMs,
@@ -1295,7 +1352,7 @@ export const GAME_MODE_STRATEGIES: Record<GamePlayType, MiniGameStrategyDescript
     preWarmInLobby: false,
     studentSpokeSubscription: 'SELF_ONLY',
     maxClientWriteHz: 8,
-    defaultLockoutSeconds: 2.5,
+    defaultLockoutSeconds: LOCKOUT_ADAPTIVE_SENTINEL,
     resolveInitialRoomPatch: (nowServerMs, durationSeconds) => ({
       status: 'TAMAIRE',
       raceStartTime: nowServerMs,
@@ -1316,7 +1373,7 @@ export const GAME_MODE_STRATEGIES: Record<GamePlayType, MiniGameStrategyDescript
     preWarmInLobby: false,
     studentSpokeSubscription: 'SELF_ONLY',
     maxClientWriteHz: 8,
-    defaultLockoutSeconds: 2.5,
+    defaultLockoutSeconds: LOCKOUT_ADAPTIVE_SENTINEL,
     resolveInitialRoomPatch: (nowServerMs, durationSeconds) => ({
       status: 'VOLLEYBALL',
       raceStartTime: nowServerMs,
@@ -1386,7 +1443,7 @@ export function computeTugOfWarSweepsRemaining(params: {
   return Math.max(1, Math.ceil(remainingDisplacement / perPullStep));
 }
 
-export const STANDARD_LOCKOUT_TIERS_SECONDS = [2.5, 3.0, 3.5, 4.0, 5.0] as const;
+export const STANDARD_LOCKOUT_TIERS_SECONDS = [0, 1.0, 2.0, 4.0, LOCKOUT_ADAPTIVE_SENTINEL] as const;
 
 export const ACTION_SIX_PROMPT_TYPES: PromptType[] = [
   'JA_MEANING',

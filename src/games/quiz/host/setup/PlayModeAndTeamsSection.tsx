@@ -75,7 +75,7 @@ export const PlayModeAndTeamsSection: React.FC<PlayModeAndTeamsSectionProps> = (
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="text-xs font-black block">{t('Live Arena (Kahoot Style)', '一斉対戦 (Kahootスタイル)')}</span>
                   <span className="text-[10px] font-black px-1.5 py-0.5 rounded bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300">
-                    {t('Standard', '定番')}
+                    {t('Sync Quiz', '一斉クイズ')}
                   </span>
                 </div>
                 <span className="text-[11px] text-slate-500 dark:text-slate-400 leading-tight block mt-0.5">
@@ -118,7 +118,7 @@ export const PlayModeAndTeamsSection: React.FC<PlayModeAndTeamsSectionProps> = (
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="text-xs font-black block">{t('3D Suzuka Grand Prix', '3D 鈴鹿グランプリ')}</span>
                   <span className="text-[10px] font-black px-1.5 py-0.5 rounded bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300">
-                    {t('🏎️ 3D Circuit', '🏎️ 3Dコース')}
+                    {t('🏎️ 3D Circuit ⭐', '🏎️ 3Dコース ⭐')}
                   </span>
                 </div>
                 <span className="text-[11px] text-slate-500 dark:text-slate-400 leading-tight block mt-0.5">

@@ -19,6 +19,7 @@ import {
   resolveQuestionScopedAnswer,
   computeTugOfWarSweepsRemaining,
   GAME_MODE_STRATEGIES,
+  LOCKOUT_ADAPTIVE_SENTINEL,
   STANDARD_LOCKOUT_TIERS_SECONDS,
   ALL_EIGHT_PROMPT_TYPES,
   ACTION_SIX_PROMPT_TYPES,
@@ -104,26 +105,48 @@ test('GEMINI.md §5: RTDB write throttler coalesces 60Hz bursts into <= 10Hz wri
   throttler.dispose();
 });
 
-test('GEMINI.md §7: Anti-spam lockout enforces >= 2.5s Pit Stop floor in Sprint and 3D Grand Prix', () => {
-  // Even if misconfigured to 0.5s or 1.0s in legacy SprintSettings, floor is 2.5s
-  const firstMiss = resolveLockoutPenaltySeconds({
+test('Configurable mistake lockout supports None (0s), Fixed tiers (1.0/2.0/4.0s), and Adaptive escalation (1.0 -> 2.0 -> 4.0s)', () => {
+  // Adaptive default escalates 1.0 -> 2.0 -> 4.0 (7.0s total across 3 misses)
+  const miss1 = resolveLockoutPenaltySeconds({
     mode: 'GRAND_PRIX_3D',
     mistakeCountOnQuestion: 1,
-    configuredLockoutSeconds: 0.5,
   });
-  assert.equal(firstMiss.penaltySeconds, 2.5);
+  assert.equal(miss1.penaltySeconds, 1.0);
+  assert.equal(miss1.isAdaptive, true);
 
-  const secondMiss = resolveLockoutPenaltySeconds({
+  const miss2 = resolveLockoutPenaltySeconds({
     mode: 'SPRINT_RACE',
     mistakeCountOnQuestion: 2,
+    configuredLockoutSeconds: -1,
   });
-  assert.equal(secondMiss.penaltySeconds, 3.5);
+  assert.equal(miss2.penaltySeconds, 2.0);
+  assert.equal(miss2.isAdaptive, true);
 
-  const thirdMiss = resolveLockoutPenaltySeconds({
+  const miss3 = resolveLockoutPenaltySeconds({
     mode: 'SPRINT_RACE',
     mistakeCountOnQuestion: 3,
+    configuredLockoutSeconds: -1,
   });
-  assert.equal(thirdMiss.penaltySeconds, 5.0);
+  assert.equal(miss3.penaltySeconds, 4.0);
+  assert.equal(miss3.isAdaptive, true);
+
+  // None (0s) eliminates wrong option immediately with 0s lockout
+  const noLockout = resolveLockoutPenaltySeconds({
+    mode: 'GRAND_PRIX_3D',
+    mistakeCountOnQuestion: 2,
+    configuredLockoutSeconds: 0,
+  });
+  assert.equal(noLockout.penaltySeconds, 0);
+  assert.equal(noLockout.isAdaptive, false);
+
+  // Explicit fixed tier honors configured seconds without clamping
+  const fixedLow = resolveLockoutPenaltySeconds({
+    mode: 'GRAND_PRIX_3D',
+    mistakeCountOnQuestion: 3,
+    configuredLockoutSeconds: 1.0,
+  });
+  assert.equal(fixedLow.penaltySeconds, 1.0);
+  assert.equal(fixedLow.isAdaptive, false);
 });
 
 test('GEMINI.md §7: !isEnPrompt cheating prevention hides option images in EN_TO_JA mode', () => {
@@ -257,18 +280,35 @@ test('Strategy registry defines all 5 gamePlayType adapters within <=10Hz budget
     assert.ok(strategy.maxClientWriteHz <= 10);
   }
   assert.equal(GAME_MODE_STRATEGIES.VOLLEYBALL.labelJa, '3D 運動会 玉入れバトル');
-  assert.equal(GAME_MODE_STRATEGIES.VOLLEYBALL.defaultLockoutSeconds, 2.5);
+  assert.equal(GAME_MODE_STRATEGIES.VOLLEYBALL.defaultLockoutSeconds, LOCKOUT_ADAPTIVE_SENTINEL);
+  assert.equal(GAME_MODE_STRATEGIES.GRAND_PRIX_3D.defaultLockoutSeconds, LOCKOUT_ADAPTIVE_SENTINEL);
 });
 
-test('Undokai Bean Bag Toss (Tamaire / 玉入れ): 2.5s fumbled bag lockout, golden 3-streak double throw, and counting ceremony', () => {
-  // 1. Even if legacy volleyballSettings passes 2.0s, Tamaire enforces >= 2.5s per GEMINI.md §7
-  const fumbleLockout = resolveLockoutPenaltySeconds({
+test('Undokai Bean Bag Toss (Tamaire / 玉入れ): adaptive/configurable fumbled bag lockout, golden 3-streak double throw, and counting ceremony', () => {
+  // 1. Tamaire honors None (0s), Fixed tiers (e.g. 2.0s), and Adaptive escalation (1.0 -> 2.0 -> 4.0s)
+  const fumbleAdaptive1 = resolveLockoutPenaltySeconds({
     mode: 'VOLLEYBALL',
     mistakeCountOnQuestion: 1,
+    configuredLockoutSeconds: LOCKOUT_ADAPTIVE_SENTINEL,
+  });
+  assert.equal(fumbleAdaptive1.penaltySeconds, 1.0);
+  assert.equal(fumbleAdaptive1.isAdaptive, true);
+  assert.equal(fumbleAdaptive1.badgeTextJa, 'お手玉を落とした！');
+
+  const fumbleFixed = resolveLockoutPenaltySeconds({
+    mode: 'TAMAIRE',
+    mistakeCountOnQuestion: 2,
     configuredLockoutSeconds: 2.0,
   });
-  assert.equal(fumbleLockout.penaltySeconds, 2.5);
-  assert.equal(fumbleLockout.badgeTextJa, 'お手玉を落とした！');
+  assert.equal(fumbleFixed.penaltySeconds, 2.0);
+  assert.equal(fumbleFixed.isAdaptive, false);
+
+  const fumbleNone = resolveLockoutPenaltySeconds({
+    mode: 'TAMAIRE',
+    mistakeCountOnQuestion: 1,
+    configuredLockoutSeconds: 0,
+  });
+  assert.equal(fumbleNone.penaltySeconds, 0);
 
   // 2. Standard correct answer (streak 1 & 2) throws 1 bean bag
   const throw1 = calculateTamaireThrowResult({ isCorrect: true, previousStreak: 0, timeTakenMs: 1500 });
@@ -502,7 +542,7 @@ test('computeTugOfWarSweepsRemaining computes pulls across center and never retu
   );
 });
 
-test('Release 1 TAMAIRE strategy and 5-tier configurable lockout [2.5, 3.0, 3.5, 4.0, 5.0]', () => {
+test('Release 1 TAMAIRE strategy and 5-tier configurable lockout [0, 1.0, 2.0, 4.0, Adaptive(-1)]', () => {
   assert.equal(GAME_MODE_STRATEGIES.TAMAIRE.gamePlayType, 'TAMAIRE');
   assert.equal(GAME_MODE_STRATEGIES.TAMAIRE.activeStatus, 'TAMAIRE');
   assert.equal(GAME_MODE_STRATEGIES.TAMAIRE.requiresTwoTeams, true);
@@ -514,37 +554,50 @@ test('Release 1 TAMAIRE strategy and 5-tier configurable lockout [2.5, 3.0, 3.5,
   assert.equal(initialPatch.tamaireFinished, false);
   assert.equal(initialPatch.volleyballFinished, false);
 
-  const lockoutTiers = [2.5, 3.0, 3.5, 4.0, 5.0];
-  for (const tierSec of lockoutTiers) {
+  const fixedTiers = [0, 1.0, 2.0, 4.0];
+  for (const tierSec of fixedTiers) {
+    for (const mode of ['GRAND_PRIX_3D', 'TUG_OF_WAR', 'TAMAIRE'] as const) {
+      assert.equal(
+        resolveLockoutPenaltySeconds({
+          mode,
+          mistakeCountOnQuestion: 1,
+          configuredLockoutSeconds: tierSec,
+        }).penaltySeconds,
+        tierSec
+      );
+    }
+  }
+
+  for (const mode of ['GRAND_PRIX_3D', 'TUG_OF_WAR', 'TAMAIRE'] as const) {
     assert.equal(
       resolveLockoutPenaltySeconds({
-        mode: 'GRAND_PRIX_3D',
+        mode,
         mistakeCountOnQuestion: 1,
-        configuredLockoutSeconds: tierSec,
+        configuredLockoutSeconds: LOCKOUT_ADAPTIVE_SENTINEL,
       }).penaltySeconds,
-      tierSec
+      1.0
     );
     assert.equal(
       resolveLockoutPenaltySeconds({
-        mode: 'TUG_OF_WAR',
-        mistakeCountOnQuestion: 1,
-        configuredLockoutSeconds: tierSec,
+        mode,
+        mistakeCountOnQuestion: 2,
+        configuredLockoutSeconds: LOCKOUT_ADAPTIVE_SENTINEL,
       }).penaltySeconds,
-      tierSec
+      2.0
     );
     assert.equal(
       resolveLockoutPenaltySeconds({
-        mode: 'TAMAIRE',
-        mistakeCountOnQuestion: 1,
-        configuredLockoutSeconds: tierSec,
+        mode,
+        mistakeCountOnQuestion: 3,
+        configuredLockoutSeconds: LOCKOUT_ADAPTIVE_SENTINEL,
       }).penaltySeconds,
-      tierSec
+      4.0
     );
   }
 });
 
 test('PromptType compatibility automatically strips Kahoot-only varieties outside KAHOOT with safe fallback', () => {
-  assert.deepEqual([...STANDARD_LOCKOUT_TIERS_SECONDS], [2.5, 3.0, 3.5, 4.0, 5.0]);
+  assert.deepEqual([...STANDARD_LOCKOUT_TIERS_SECONDS], [0, 1.0, 2.0, 4.0, LOCKOUT_ADAPTIVE_SENTINEL]);
   assert.equal(ALL_EIGHT_PROMPT_TYPES.length, 8);
   assert.equal(ACTION_SIX_PROMPT_TYPES.length, 6);
 

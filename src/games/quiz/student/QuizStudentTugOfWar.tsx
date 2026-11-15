@@ -217,7 +217,7 @@ export const QuizStudentTugOfWar: React.FC<QuizStudentTugOfWarProps> = ({
         setCurrentIndex(nextIndex);
       }, 260);
     } else {
-      // Slipped in the mud! Mandatory >= 2.5s lockout penalty floor
+      // Slipped in the mud! Resolve configured lockout (None 0s, Fixed, or Adaptive 1->2->4s)
       const newMistakes = eliminatedOptionIds.size + 1;
       soundEffects.playIncorrect();
       soundEffects.playMudSlip();
@@ -234,10 +234,16 @@ export const QuizStudentTugOfWar: React.FC<QuizStudentTugOfWarProps> = ({
         configuredLockoutSeconds: tugOfWarSettings?.mudLockoutSeconds,
       });
       const penaltySec = lockoutInfo.penaltySeconds;
-      penaltyTotalSecondsRef.current = penaltySec;
-      const penaltyEnd = Date.now() + Math.round(penaltySec * 1000);
-      penaltyEndTimeRef.current = penaltyEnd;
-      setPenaltySecondsLeft(penaltySec);
+      if (penaltySec > 0) {
+        penaltyTotalSecondsRef.current = penaltySec;
+        const penaltyEnd = Date.now() + Math.round(penaltySec * 1000);
+        penaltyEndTimeRef.current = penaltyEnd;
+        setPenaltySecondsLeft(penaltySec);
+      } else {
+        penaltyTotalSecondsRef.current = 1;
+        penaltyEndTimeRef.current = 0;
+        setPenaltySecondsLeft(0);
+      }
 
       const cumulative: SprintCumulativeStats = {
         score: localScore,

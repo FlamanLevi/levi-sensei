@@ -8,11 +8,14 @@ import {
   SuzukaTimeOfDaySelection,
   SuzukaCloudCoverSelection,
   SuzukaPrecipitationSelection,
-  getTrackTheme,
+  DEFAULT_CLOUD_COVER_SELECTION,
+  DEFAULT_PRECIPITATION_SELECTION,
+  coercePrecipitationSelectionForCloudCover,
 } from '@/games/suzuka_grand_prix/trackThemes';
 import {
   isPromptTypeAllowedInGamePlay,
   normalizePromptTypesForGamePlay,
+  sanitizeConfiguredLockoutSeconds,
 } from '../core/quizEngine';
 import {
   AVAILABLE_TEAMS,
@@ -107,7 +110,7 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
   );
 
   const [gamePlayType, setGamePlayType] = useState<GamePlayType>(
-    () => initialSettings?.gamePlayType || 'KAHOOT'
+    () => initialSettings?.gamePlayType || 'GRAND_PRIX_3D'
   );
   const [gameMode, setGameMode] = useState<GameMode>(
     () => initialSettings?.gameMode || 'INDIVIDUAL'
@@ -205,26 +208,32 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
     () => initialSettings?.sprintSettings?.timeOfDaySelection ?? 'LE_MANS_CYCLE'
   );
   const [cloudCoverSelection, setCloudCoverSelection] = useState<SuzukaCloudCoverSelection>(
-    () => initialSettings?.sprintSettings?.cloudCoverSelection ?? 'PARTLY_CLOUDY'
+    () => initialSettings?.sprintSettings?.cloudCoverSelection ?? DEFAULT_CLOUD_COVER_SELECTION
   );
   const [precipitationSelection, setPrecipitationSelection] = useState<SuzukaPrecipitationSelection>(
-    () => initialSettings?.sprintSettings?.precipitationSelection ?? 'NONE'
+    () =>
+      coercePrecipitationSelectionForCloudCover(
+        initialSettings?.sprintSettings?.precipitationSelection ?? DEFAULT_PRECIPITATION_SELECTION,
+        initialSettings?.sprintSettings?.cloudCoverSelection ?? DEFAULT_CLOUD_COVER_SELECTION
+      )
   );
 
   const handleSelectBiomeSelection = (nextBiome: SuzukaTrackThemeSelection) => {
     setTrackThemeSelection(nextBiome);
-    if (nextBiome !== 'RANDOM') {
-      const biomeConfig = getTrackTheme(nextBiome);
-      setCloudCoverSelection(biomeConfig.defaultCloudCover);
-      setPrecipitationSelection(biomeConfig.defaultPrecipitation);
-    }
+  };
+
+  const handleSelectCloudCoverSelection = (nextCloudCover: SuzukaCloudCoverSelection) => {
+    setCloudCoverSelection(nextCloudCover);
+    setPrecipitationSelection((prev) =>
+      coercePrecipitationSelectionForCloudCover(prev, nextCloudCover)
+    );
   };
 
   const [wrongSpeedLossRatio, setWrongSpeedLossRatio] = useState<number>(
     () => initialSettings?.sprintSettings?.wrongSpeedLossRatio ?? 0.33
   );
   const [wrongLockoutSeconds, setWrongLockoutSeconds] = useState<number>(
-    () => Math.max(2.5, initialSettings?.sprintSettings?.wrongLockoutSeconds ?? 2.5)
+    () => sanitizeConfiguredLockoutSeconds(initialSettings?.sprintSettings?.wrongLockoutSeconds)
   );
 
   // Tug of War state
@@ -238,7 +247,7 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
     () => initialSettings?.tugOfWarSettings?.pullSensitivity ?? 20
   );
   const [mudLockoutSeconds, setMudLockoutSeconds] = useState<number>(
-    () => Math.max(2.5, initialSettings?.tugOfWarSettings?.mudLockoutSeconds ?? 2.5)
+    () => sanitizeConfiguredLockoutSeconds(initialSettings?.tugOfWarSettings?.mudLockoutSeconds)
   );
 
   // Undokai Bean Bag Toss (Tamaire) state
@@ -249,7 +258,10 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
     () => (initialSettings?.tamaireSettings ?? initialSettings?.volleyballSettings)?.hideScoreUntilEnd ?? true
   );
   const [missLockoutSeconds, setMissLockoutSeconds] = useState<number>(
-    () => Math.max(2.5, (initialSettings?.tamaireSettings ?? initialSettings?.volleyballSettings)?.missLockoutSeconds ?? 2.5)
+    () =>
+      sanitizeConfiguredLockoutSeconds(
+        (initialSettings?.tamaireSettings ?? initialSettings?.volleyballSettings)?.missLockoutSeconds
+      )
   );
 
   // Question mechanics & hint toggles (Mutually exclusive: Gradual default ON, Recall delay default OFF)
@@ -267,7 +279,7 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
       initialSettings?.promptTypes?.length
         ? initialSettings.promptTypes
         : ['JA_MEANING', 'EN_TO_JA', 'IMAGE_ONLY'],
-      initialSettings?.gamePlayType || 'KAHOOT'
+      initialSettings?.gamePlayType || 'GRAND_PRIX_3D'
     )
   );
   const [choiceImageMode, setChoiceImageMode] = useState<ChoiceImageMode>(
@@ -387,9 +399,12 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
             : {}),
           timeOfDaySelection,
           cloudCoverSelection,
-          precipitationSelection,
+          precipitationSelection: coercePrecipitationSelectionForCloudCover(
+            precipitationSelection,
+            cloudCoverSelection
+          ),
           wrongSpeedLossRatio,
-          wrongLockoutSeconds: Math.max(2.5, wrongLockoutSeconds),
+          wrongLockoutSeconds: sanitizeConfiguredLockoutSeconds(wrongLockoutSeconds),
         }
       : undefined;
 
@@ -398,7 +413,7 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
         ? {
             timeLimitSeconds: tugOfWarTimeLimit,
             pullSensitivity: tugOfWarSensitivity,
-            mudLockoutSeconds: Math.max(2.5, mudLockoutSeconds),
+            mudLockoutSeconds: sanitizeConfiguredLockoutSeconds(mudLockoutSeconds),
             matchFormat: tugOfWarMatchFormat,
           }
         : undefined;
@@ -406,7 +421,7 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
     const tamaireConfig: TamaireSettings | undefined = isTamaire
       ? {
           timeLimitSeconds: tamaireTimeLimit,
-          missLockoutSeconds: Math.max(2.5, missLockoutSeconds),
+          missLockoutSeconds: sanitizeConfiguredLockoutSeconds(missLockoutSeconds),
           hideScoreUntilEnd: tamaireMysteryCount,
         }
       : undefined;
@@ -687,15 +702,21 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
             wrongSpeedLossRatio={wrongSpeedLossRatio}
             onSelectWrongSpeedLossRatio={setWrongSpeedLossRatio}
             wrongLockoutSeconds={wrongLockoutSeconds}
-            onSelectWrongLockoutSeconds={(sec) => setWrongLockoutSeconds(Math.max(2.5, sec))}
+            onSelectWrongLockoutSeconds={(sec) =>
+              setWrongLockoutSeconds(sanitizeConfiguredLockoutSeconds(sec))
+            }
             trackThemeSelection={trackThemeSelection}
             onSelectTrackThemeSelection={handleSelectBiomeSelection}
             timeOfDaySelection={timeOfDaySelection}
             onSelectTimeOfDaySelection={setTimeOfDaySelection}
             cloudCoverSelection={cloudCoverSelection}
-            onSelectCloudCoverSelection={setCloudCoverSelection}
+            onSelectCloudCoverSelection={handleSelectCloudCoverSelection}
             precipitationSelection={precipitationSelection}
-            onSelectPrecipitationSelection={setPrecipitationSelection}
+            onSelectPrecipitationSelection={(nextPrecip) =>
+              setPrecipitationSelection(
+                coercePrecipitationSelectionForCloudCover(nextPrecip, cloudCoverSelection)
+              )
+            }
           />
         )}
 
@@ -708,7 +729,9 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
             tugOfWarSensitivity={tugOfWarSensitivity}
             onSelectSensitivity={setTugOfWarSensitivity}
             mudLockoutSeconds={mudLockoutSeconds}
-            onSelectMudLockoutSeconds={(sec) => setMudLockoutSeconds(Math.max(2.5, sec))}
+            onSelectMudLockoutSeconds={(sec) =>
+              setMudLockoutSeconds(sanitizeConfiguredLockoutSeconds(sec))
+            }
           />
         )}
 
@@ -719,7 +742,9 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
             tamaireTimeLimit={tamaireTimeLimit}
             onSelectTimeLimit={setTamaireTimeLimit}
             missLockoutSeconds={missLockoutSeconds}
-            onSelectMissLockoutSeconds={(sec) => setMissLockoutSeconds(Math.max(2.5, sec))}
+            onSelectMissLockoutSeconds={(sec) =>
+              setMissLockoutSeconds(sanitizeConfiguredLockoutSeconds(sec))
+            }
           />
         )}
 

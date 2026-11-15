@@ -10,6 +10,7 @@ import { TeacherProfileSwitcher } from './TeacherProfileSwitcher';
 import { ActiveRoomsModal } from './ActiveRoomsModal';
 import { ClassroomRosterManagerModal } from '../teacher/ClassroomRosterManagerModal';
 import { BingoPrintModal } from '../../games/bingo/BingoPrintModal';
+import { WordFilterModal } from './WordFilterModal';
 import { resolveCardImage } from '../../utils/cardUtils';
 import { safeSubscribe } from '@/services/rtdbSafe';
 
@@ -684,6 +685,8 @@ export const Header: React.FC = () => {
         />,
         document.body
       )}
+
+      <WordFilterModal />
     </header>
   );
 };

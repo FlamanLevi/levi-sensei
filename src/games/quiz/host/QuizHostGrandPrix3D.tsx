@@ -9,15 +9,14 @@ import { soundEffects } from '@/services/soundEffects';
 import { getServerTime } from '@/services/rtdbSafe';
 import { useLanguage } from '@/context/LanguageContext';
 import { detectClassroomGpuProfile } from '@/utils/classroom3d';
+import { BgmControlPill } from '@/components/common';
+import { computeGrandPrix3DBgmRate } from '@/hooks/useBGM';
 import {
   Flag,
   Clock,
   Users,
   Trophy,
   Tv,
-  Music,
-  Volume2,
-  VolumeX,
   CheckCircle2,
   Sparkles,
 } from 'lucide-react';
@@ -48,9 +47,15 @@ interface QuizHostGrandPrix3DProps {
   onFinishRace: (podium: PodiumFinisher[]) => void;
   onExit?: () => void;
   onAddBots?: (count: number) => void;
+  onSpeedUpBGM?: (speedUp: boolean) => void;
+  onSetBgmPlaybackRate?: (rate: number) => void;
+  bgmPlaybackRate?: number;
   bgmTrackTitle?: string | null;
   isBgmMuted?: boolean;
   onToggleBgmMute?: () => void;
+  onNextBgmTrack?: () => void;
+  bgmVolume?: number;
+  onChangeBgmVolume?: (volume: number) => void;
 }
 
 export const QuizHostGrandPrix3D: React.FC<QuizHostGrandPrix3DProps> = ({
@@ -67,9 +72,15 @@ export const QuizHostGrandPrix3D: React.FC<QuizHostGrandPrix3DProps> = ({
   onFinishRace,
   onExit,
   onAddBots,
+  onSpeedUpBGM: _onSpeedUpBGM,
+  onSetBgmPlaybackRate,
+  bgmPlaybackRate = 1.0,
   bgmTrackTitle,
   isBgmMuted,
   onToggleBgmMute,
+  onNextBgmTrack,
+  bgmVolume,
+  onChangeBgmVolume,
 }) => {
   const { t, language } = useLanguage();
   const isTimeTrial = sprintSettings?.sprintMode === 'TIME_TRIAL';
@@ -238,6 +249,42 @@ export const QuizHostGrandPrix3D: React.FC<QuizHostGrandPrix3DProps> = ({
     [sortedStandings, isTimeTrial, targetLaps]
   );
 
+  // Restore 2D Suzuka Circuit final-sprint BGM speed-up cadence (+0.02x per finisher, Final Lap bump, 1.25x rush)
+  const leaderProgress = sortedStandings[0]?.progress ?? 0;
+  const targetBgmRate = useMemo(
+    () =>
+      computeGrandPrix3DBgmRate({
+        isLobby,
+        raceActive,
+        isTimeTrial,
+        timeTrialRemainingMs,
+        hasGraceCountdown: Boolean(raceFinishGraceStartTime),
+        finishedCount: finishedRacers.length,
+        leaderProgress,
+        targetLaps,
+      }),
+    [
+      isLobby,
+      raceActive,
+      isTimeTrial,
+      timeTrialRemainingMs,
+      raceFinishGraceStartTime,
+      finishedRacers.length,
+      leaderProgress,
+      targetLaps,
+    ]
+  );
+
+  useEffect(() => {
+    onSetBgmPlaybackRate?.(targetBgmRate);
+  }, [targetBgmRate, onSetBgmPlaybackRate]);
+
+  useEffect(() => {
+    return () => {
+      onSetBgmPlaybackRate?.(1.0);
+    };
+  }, [onSetBgmPlaybackRate]);
+
   // Trigger grace countdown when enough racers finish in Lap Race
   const graceTriggerCount =
     playerList.length > 1 ? Math.min(12, Math.max(1, Math.ceil(playerList.length * 0.5))) : 1;
@@ -253,6 +300,7 @@ export const QuizHostGrandPrix3D: React.FC<QuizHostGrandPrix3DProps> = ({
       !graceTriggeredRef.current
     ) {
       graceTriggeredRef.current = true;
+      soundEffects.playUrgencyTick();
       onTriggerGrace();
     }
   }, [isTimeTrial, raceActive, playerList.length, finishedRacers.length, graceTriggerCount, raceFinishGraceStartTime, onTriggerGrace]);
@@ -389,16 +437,18 @@ export const QuizHostGrandPrix3D: React.FC<QuizHostGrandPrix3DProps> = ({
               </button>
             )}
 
-            {onToggleBgmMute && (
-              <button
-                type="button"
-                onClick={onToggleBgmMute}
-                className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 cursor-pointer transition-all active:scale-95 flex items-center gap-1 shrink-0"
-                title={bgmTrackTitle || 'BGM'}
-              >
-                <Music size={14} className="text-indigo-400" />
-                {isBgmMuted ? <VolumeX size={14} className="text-rose-400" /> : <Volume2 size={14} className="text-emerald-400" />}
-              </button>
+            {onToggleBgmMute && bgmTrackTitle && (
+              <BgmControlPill
+                trackTitle={bgmTrackTitle}
+                isMuted={isBgmMuted}
+                onToggleMute={onToggleBgmMute}
+                onNextTrack={onNextBgmTrack}
+                volume={bgmVolume}
+                onChangeVolume={onChangeBgmVolume}
+                playbackRate={bgmPlaybackRate}
+                compact={true}
+                variant="dark"
+              />
             )}
 
             <button

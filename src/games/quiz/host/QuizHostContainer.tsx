@@ -19,7 +19,7 @@ import { calculateClassroomAwards } from '../awardsEngine';
 import { useQuizRoom, generateUniqueRoomPin } from '../useQuizRoom';
 import { getServerTime } from '@/services/rtdbSafe';
 import { useBGM, resolveQuizHostBgmPhase, BgmRole } from '@/hooks/useBGM';
-import { Music, SkipForward, Volume2, VolumeX } from 'lucide-react';
+import { BgmControlPill } from '@/components/common';
 import { QuizHostSetup } from './QuizHostSetup';
 import { QuizHostLobby } from './QuizHostLobby';
 import { QuizHostQuestion } from './QuizHostQuestion';
@@ -128,9 +128,18 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
   const bgmPhase = useMemo(() => resolveQuizHostBgmPhase(step), [step]);
   const effectiveBgmRole: BgmRole = step === 'SETUP' && isEditingLobby ? 'lobby' : bgmPhase.role;
   const isBgmPlaying = bgmPhase.isBgmStep && !!settings?.bgm && settings.bgm !== 'none';
+  const upcomingGameType = room?.gamePlayType || settings?.gamePlayType || '';
+  const preloadNextRole: BgmRole | undefined =
+    step === 'LOBBY'
+      ? ['GRAND_PRIX_3D', 'SPRINT_RACE', 'TUG_OF_WAR', 'TAMAIRE', 'VOLLEYBALL'].includes(upcomingGameType)
+        ? 'rush'
+        : 'quiz'
+      : undefined;
   const {
     isMuted: isBgmMuted,
     toggleMute: toggleBgmMute,
+    bgmVolume,
+    setBgmVolume,
     currentTrackTitle,
     hasTrack,
     duckBGM,
@@ -142,6 +151,7 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
     role: effectiveBgmRole,
     fadeInDurationMs: bgmPhase.fadeInDurationMs,
     crossfadeDurationMs: bgmPhase.crossfadeDurationMs,
+    preloadNextRole,
   });
 
   const handleReleaseBoundNumber = useCallback(async (attendanceNumber: number) => {
@@ -638,9 +648,15 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
             onFinishRace={handleFinishSprintRace}
             onExit={handleExit}
             onAddBots={addBots}
-            bgmTrackTitle={currentTrackTitle}
+            onSpeedUpBGM={speedUpBGM}
+            onSetBgmPlaybackRate={setBgmPlaybackRate}
+            bgmPlaybackRate={bgmPlaybackRate}
+            bgmTrackTitle={hasTrack ? currentTrackTitle : null}
             isBgmMuted={isBgmMuted}
             onToggleBgmMute={toggleBgmMute}
+            onNextBgmTrack={nextTrack}
+            bgmVolume={bgmVolume}
+            onChangeBgmVolume={setBgmVolume}
           />
         )}
 
@@ -678,6 +694,8 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
             isBgmMuted={isBgmMuted}
             onToggleBgmMute={toggleBgmMute}
             onNextBgmTrack={nextTrack}
+            bgmVolume={bgmVolume}
+            onChangeBgmVolume={setBgmVolume}
             onCancel={handleExit}
           />
         </div>
@@ -723,9 +741,12 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
           onSpeedUpBGM={speedUpBGM}
           onSetBgmPlaybackRate={setBgmPlaybackRate}
           bgmPlaybackRate={bgmPlaybackRate}
-          bgmTrackTitle={currentTrackTitle}
+          bgmTrackTitle={hasTrack ? currentTrackTitle : null}
           isBgmMuted={isBgmMuted}
           onToggleBgmMute={toggleBgmMute}
+          onNextBgmTrack={nextTrack}
+          bgmVolume={bgmVolume}
+          onChangeBgmVolume={setBgmVolume}
         />
       )}
 
@@ -757,9 +778,12 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
           }}
           onExit={handleExit}
           onAddBots={addBots}
-          bgmTrackTitle={currentTrackTitle}
+          bgmTrackTitle={hasTrack ? currentTrackTitle : null}
           isBgmMuted={isBgmMuted}
           onToggleBgmMute={toggleBgmMute}
+          onNextBgmTrack={nextTrack}
+          bgmVolume={bgmVolume}
+          onChangeBgmVolume={setBgmVolume}
         />
       )}
 
@@ -849,31 +873,20 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
 
       {/* Floating High-Energy BGM Control Pill for Classroom Host (hidden in Lobby, Sprint, 3D Grand Prix, Tug of War, Tamaire & Game Over screens which have integrated or silent audio) */}
       {hasTrack && step !== 'SETUP' && step !== 'LOBBY' && step !== 'GAME_OVER' && step !== 'SPRINT_RACE' && step !== 'GRAND_PRIX_3D' && step !== 'TUG_OF_WAR' && step !== 'TAMAIRE' && step !== 'VOLLEYBALL' && (
-        <div className="fixed bottom-4 right-4 z-50 flex items-center gap-1.5 bg-slate-900 dark:bg-slate-800 text-white px-3.5 py-2 rounded-2xl shadow-2xl border border-slate-700/80 animate-in fade-in slide-in-from-bottom-2 print:hidden">
-          <Music size={15} className={`text-indigo-400 shrink-0 ${!isBgmMuted && isBgmPlaying ? 'animate-bounce' : ''}`} />
-          <span className="text-xs font-bold max-w-[130px] truncate">
-            {currentTrackTitle || 'BGM'}
-          </span>
-          <button
-            type="button"
-            onClick={nextTrack}
-            className="p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-all cursor-pointer shrink-0"
-            title={t('Next Track', '次の曲へ') as string}
-          >
-            <SkipForward size={14} />
-          </button>
-          <button
-            type="button"
-            onClick={toggleBgmMute}
-            className={`p-1.5 rounded-xl transition-all cursor-pointer shrink-0 ${
-              isBgmMuted
-                ? 'bg-rose-500/30 text-rose-400 hover:bg-rose-500/50'
-                : 'bg-emerald-500/30 text-emerald-300 hover:bg-emerald-500/50'
-            }`}
-            title={isBgmMuted ? (t('Unmute BGM', 'BGMを再生') as string) : (t('Mute BGM', 'BGMを消音') as string)}
-          >
-            {isBgmMuted ? <VolumeX size={15} /> : <Volume2 size={15} />}
-          </button>
+        <div className="fixed bottom-4 right-4 z-50 animate-in fade-in slide-in-from-bottom-2 print:hidden">
+          <BgmControlPill
+            trackTitle={currentTrackTitle}
+            isMuted={isBgmMuted}
+            onToggleMute={toggleBgmMute}
+            onNextTrack={nextTrack}
+            volume={bgmVolume}
+            onChangeVolume={setBgmVolume}
+            playbackRate={bgmPlaybackRate}
+            compact={false}
+            variant="dark"
+            isPlaying={isBgmPlaying}
+            className="px-3 py-1.5 rounded-2xl shadow-2xl"
+          />
         </div>
       )}
     </div>

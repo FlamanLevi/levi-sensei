@@ -7,3 +7,4 @@ export * from './CardDisplay';
 export * from './FourLineNotebookGuide';
 export * from './AudioButton';
 export * from './BgmSelectorModal';
+export * from './BgmControlPill';

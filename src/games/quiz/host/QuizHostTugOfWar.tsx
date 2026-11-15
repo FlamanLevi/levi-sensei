@@ -5,7 +5,8 @@ import { soundEffects } from '@/services/soundEffects';
 import { getServerTime } from '@/services/rtdbSafe';
 import { useLanguage } from '@/context/LanguageContext';
 import { useClassroom } from '@/context/ClassroomContext';
-import { Clock, Users, Flame, Trophy, Play, Volume2, VolumeX, AlertTriangle, Sparkles, Award, Music } from 'lucide-react';
+import { Clock, Users, Flame, Trophy, Play, AlertTriangle, Sparkles, Award } from 'lucide-react';
+import { BgmControlPill } from '@/components/common';
 import { useClassroomClicker } from '@/hooks/useClassroomClicker';
 import confetti from 'canvas-confetti';
 import { TugOfWar3DStage } from './TugOfWar3DStage';
@@ -33,6 +34,9 @@ interface QuizHostTugOfWarProps {
   bgmTrackTitle?: string | null;
   isBgmMuted?: boolean;
   onToggleBgmMute?: () => void;
+  onNextBgmTrack?: () => void;
+  bgmVolume?: number;
+  onChangeBgmVolume?: (volume: number) => void;
 }
 
 export const QuizHostTugOfWar: React.FC<QuizHostTugOfWarProps> = ({
@@ -57,7 +61,10 @@ export const QuizHostTugOfWar: React.FC<QuizHostTugOfWarProps> = ({
   bgmPlaybackRate = 1.0,
   bgmTrackTitle,
   isBgmMuted = false,
-  onToggleBgmMute
+  onToggleBgmMute,
+  onNextBgmTrack,
+  bgmVolume,
+  onChangeBgmVolume
 }) => {
   const { t, language } = useLanguage();
   const { activeSchool } = useClassroom();
@@ -449,21 +456,21 @@ export const QuizHostTugOfWar: React.FC<QuizHostTugOfWarProps> = ({
           </div>
         </div>
 
-        {/* Right: BGM Mute, Referee Whistle & Exit */}
+        {/* Right: BGM Controls, Referee Whistle & Exit */}
         <div className="flex items-center gap-2 sm:gap-3 shrink-0 flex-nowrap">
           {/* Integrated BGM Control */}
-          {onToggleBgmMute && (
-            <div className="flex items-center gap-1.5 bg-slate-900 border border-slate-800 px-2.5 py-1.5 rounded-xl shrink-0">
-              <Music size={14} className={`text-indigo-400 ${!isBgmMuted ? 'animate-bounce' : ''}`} />
-              <button
-                type="button"
-                onClick={onToggleBgmMute}
-                className="p-1 rounded-lg text-slate-300 hover:text-white transition cursor-pointer"
-                title={isBgmMuted ? t('Unmute BGM', 'BGMミュート解除') : t('Mute BGM', 'BGMミュート')}
-              >
-                {isBgmMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
-              </button>
-            </div>
+          {onToggleBgmMute && bgmTrackTitle && (
+            <BgmControlPill
+              trackTitle={bgmTrackTitle}
+              isMuted={isBgmMuted}
+              onToggleMute={onToggleBgmMute}
+              onNextTrack={onNextBgmTrack}
+              volume={bgmVolume}
+              onChangeVolume={onChangeBgmVolume}
+              playbackRate={bgmPlaybackRate}
+              compact={true}
+              variant="dark"
+            />
           )}
 
           {!matchEnded ? (

@@ -13,11 +13,22 @@ import {
   LOBBY_FADE_IN_DURATION_MS,
   LOBBY_CROSSFADE_DURATION_MS,
   RACE_CROSSFADE_DURATION_MS,
+  AUTO_ADVANCE_CROSSFADE_MS,
+  DEFAULT_BGM_MASTER_VOLUME,
   drawNextTrackFromDeck,
   resolveBGMTrack,
+  peekNextBGMTrack,
+  getRoleTrackCount,
   resolveQuizHostBgmPhase,
   computeGradualFadeInVolume,
   computeCrossfadeVolumes,
+  computeEffectiveBgmVolume,
+  computeGrandPrix3DBgmRate,
+  shouldAutoAdvanceAtTime,
+  sanitizeTrackGain,
+  getStoredBgmVolume,
+  setStoredBgmVolume,
+  subscribeBgmVolume,
 } from './bgmHelpers';
 
 export type { BgmRole, BGMTrackMeta, ResolvedBGMTrack, QuizHostBgmPhase };
@@ -31,11 +42,22 @@ export {
   LOBBY_FADE_IN_DURATION_MS,
   LOBBY_CROSSFADE_DURATION_MS,
   RACE_CROSSFADE_DURATION_MS,
+  AUTO_ADVANCE_CROSSFADE_MS,
+  DEFAULT_BGM_MASTER_VOLUME,
   drawNextTrackFromDeck,
   resolveBGMTrack,
+  peekNextBGMTrack,
+  getRoleTrackCount,
   resolveQuizHostBgmPhase,
   computeGradualFadeInVolume,
   computeCrossfadeVolumes,
+  computeEffectiveBgmVolume,
+  computeGrandPrix3DBgmRate,
+  shouldAutoAdvanceAtTime,
+  sanitizeTrackGain,
+  getStoredBgmVolume,
+  setStoredBgmVolume,
+  subscribeBgmVolume,
 };
 
 export interface UseBGMOptions {
@@ -45,17 +67,18 @@ export interface UseBGMOptions {
   fadeInDurationMs?: number;
   /** Duration (ms) for overlapping crossfade when transitioning between playing tracks. */
   crossfadeDurationMs?: number;
+  /** Optional upcoming phase role (e.g., 'rush' / 'quiz') to silently pre-warm while idling in Lobby. */
+  preloadNextRole?: BgmRole;
 }
 
 type PrimaryFadeCurve = 'linear' | 'gradual-fade-in' | 'crossfade-in' | 'cos-fade-out';
+type TargetVolumeMode = 'active' | 'zero';
 
 interface OutgoingFadeEntry {
   audio: HTMLAudioElement;
   timerId: ReturnType<typeof setInterval>;
 }
 
-const NORMAL_VOLUME = 0.35;
-const DUCKED_VOLUME = 0.05;
 const FADE_TICK_MS = 25;
 const PAUSE_FADE_OUT_MS = 320;
 const MAX_CONCURRENT_OUTGOING_FADES = 2;
@@ -87,6 +110,7 @@ export const useBGM = (
   options?: UseBGMOptions
 ) => {
   const role = options?.role;
+  const preloadNextRole = options?.preloadNextRole;
   const fadeInDurationMs = options?.fadeInDurationMs ?? DEFAULT_FADE_IN_DURATION_MS;
   const crossfadeDurationMs = options?.crossfadeDurationMs ?? GAME_CROSSFADE_DURATION_MS;
 
@@ -98,11 +122,24 @@ export const useBGM = (
     }
   });
 
+  const [bgmVolume, setBgmVolumeState] = useState<number>(() => getStoredBgmVolume());
+  useEffect(() => {
+    return subscribeBgmVolume(setBgmVolumeState);
+  }, []);
+
+  const setBgmVolume = useCallback((vol: number) => {
+    setStoredBgmVolume(vol);
+  }, []);
+
   const [resolvedTrack, setResolvedTrack] = useState<ResolvedBGMTrack | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const prewarmAudioRef = useRef<HTMLAudioElement | null>(null);
+  const prewarmUrlRef = useRef<string | null>(null);
   const volumeIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const outgoingFadesRef = useRef<OutgoingFadeEntry[]>([]);
   const trackFadeHintRef = useRef<'fade-in' | 'crossfade'>('fade-in');
+  const nextCrossfadeOverrideRef = useRef<number | null>(null);
+  const activeCrossfadeMsRef = useRef<number>(crossfadeDurationMs);
   const trackGenerationRef = useRef<number>(0);
   const retryInteractionCleanupRef = useRef<(() => void) | null>(null);
 
@@ -118,11 +155,29 @@ export const useBGM = (
   isPlayingRef.current = isPlaying;
   const isUserMutedRef = useRef<boolean>(isUserMuted);
   isUserMutedRef.current = isUserMuted;
+  const bgmVolumeRef = useRef<number>(bgmVolume);
+  bgmVolumeRef.current = bgmVolume;
+  const resolvedTrackGainRef = useRef<number>(sanitizeTrackGain(resolvedTrack?.gain));
+  resolvedTrackGainRef.current = sanitizeTrackGain(resolvedTrack?.gain);
 
   const fadeInDurationRef = useRef<number>(fadeInDurationMs);
   fadeInDurationRef.current = fadeInDurationMs;
   const crossfadeDurationRef = useRef<number>(crossfadeDurationMs);
   crossfadeDurationRef.current = crossfadeDurationMs;
+
+  const isSingleTrackPool = getRoleTrackCount(trackSelection, role) <= 1;
+  const isSingleTrackPoolRef = useRef<boolean>(isSingleTrackPool);
+  isSingleTrackPoolRef.current = isSingleTrackPool;
+
+  const getLiveTargetVolume = useCallback((mode: TargetVolumeMode): number => {
+    if (mode === 'zero') return 0;
+    return computeEffectiveBgmVolume({
+      masterVolume: bgmVolumeRef.current,
+      trackGain: resolvedTrackGainRef.current,
+      isDucked: isDuckedRef.current,
+      isMuted: isUserMutedRef.current,
+    });
+  }, []);
 
   // Reset speed-up pitch whenever returning to Lobby
   useEffect(() => {
@@ -140,6 +195,9 @@ export const useBGM = (
     const next = resolveBGMTrack(trackSelection, role);
     setResolvedTrack(next);
   }, [trackSelection, role]);
+
+  const advanceToNextTrackRef = useRef(advanceToNextTrack);
+  advanceToNextTrackRef.current = advanceToNextTrack;
 
   // Resolve track when selection or role changes
   useEffect(() => {
@@ -179,15 +237,20 @@ export const useBGM = (
       stopAndReleaseAudio(audioRef.current);
       audioRef.current = null;
     }
+    if (prewarmAudioRef.current) {
+      stopAndReleaseAudio(prewarmAudioRef.current);
+      prewarmAudioRef.current = null;
+      prewarmUrlRef.current = null;
+    }
   }, [clearAutoplayRetry, clearPrimaryVolumeRamp, clearAllOutgoingFades]);
 
   const stopAllInstanceAudioRef = useRef(stopAllInstanceAudio);
   stopAllInstanceAudioRef.current = stopAllInstanceAudio;
 
-  // Timestamped smooth primary volume animator
+  // Timestamped smooth primary volume animator honoring live Master Volume & track LUFS gain
   const rampPrimaryVolumeTo = useCallback(
     (
-      targetVol: number,
+      targetMode: TargetVolumeMode,
       durationMs = 300,
       curve: PrimaryFadeCurve = 'linear',
       onComplete?: () => void
@@ -197,13 +260,12 @@ export const useBGM = (
 
       clearPrimaryVolumeRamp();
 
-      const clampedTarget = clamp01(targetVol);
+      const initialTarget = clamp01(getLiveTargetVolume(targetMode));
       const startVol = clamp01(audio.volume);
-      const diff = clampedTarget - startVol;
 
-      if (durationMs <= 0 || Math.abs(diff) < 0.004) {
+      if (durationMs <= 0 || Math.abs(initialTarget - startVol) < 0.004) {
         try {
-          audio.volume = clampedTarget;
+          audio.volume = initialTarget;
         } catch {}
         onComplete?.();
         return;
@@ -217,19 +279,26 @@ export const useBGM = (
           return;
         }
 
+        const clampedTarget = clamp01(getLiveTargetVolume(targetMode));
+        const diff = clampedTarget - startVol;
         const progress = Math.min(1, (performance.now() - startedAt) / durationMs);
         let nextVol: number;
 
         if (curve === 'gradual-fade-in') {
-          nextVol = startVol <= 0.004
-            ? computeGradualFadeInVolume(progress, clampedTarget)
-            : clamp01(startVol + diff * Math.pow(progress, 1.75));
+          nextVol =
+            startVol <= 0.004
+              ? computeGradualFadeInVolume(progress, clampedTarget)
+              : clamp01(startVol + diff * Math.pow(progress, 1.75));
         } else if (curve === 'crossfade-in') {
-          nextVol = startVol <= 0.004
-            ? computeCrossfadeVolumes(progress, 0, clampedTarget).incomingVolume
-            : clamp01(startVol + diff * Math.sin(progress * (Math.PI / 2)));
+          nextVol =
+            startVol <= 0.004
+              ? computeCrossfadeVolumes(progress, 0, clampedTarget).incomingVolume
+              : clamp01(startVol + diff * Math.sin(progress * (Math.PI / 2)));
         } else if (curve === 'cos-fade-out') {
-          nextVol = clamp01(startVol * Math.cos(progress * (Math.PI / 2)) + clampedTarget * (1 - Math.cos(progress * (Math.PI / 2))));
+          nextVol = clamp01(
+            startVol * Math.cos(progress * (Math.PI / 2)) +
+              clampedTarget * (1 - Math.cos(progress * (Math.PI / 2)))
+          );
         } else {
           nextVol = clamp01(startVol + diff * progress);
         }
@@ -247,7 +316,7 @@ export const useBGM = (
         }
       }, FADE_TICK_MS);
     },
-    [clearPrimaryVolumeRamp]
+    [clearPrimaryVolumeRamp, getLiveTargetVolume]
   );
 
   // Fade out and dispose an outgoing track concurrently for true crossfades
@@ -319,8 +388,7 @@ export const useBGM = (
             ) {
               return;
             }
-            const targetVol = isDuckedRef.current ? DUCKED_VOLUME : NORMAL_VOLUME;
-            rampPrimaryVolumeTo(targetVol, fadeMs, curve);
+            rampPrimaryVolumeTo('active', fadeMs, curve);
           };
           if (retryPromise !== undefined) {
             retryPromise.then(beginRamp).catch(() => {});
@@ -357,7 +425,7 @@ export const useBGM = (
     };
   }, []);
 
-  // 1. Initialize New Track & Trigger Crossfade when Swapping Between Playing Tracks
+  // 1. Initialize New Track, Wire Auto-Advance Listeners & Crossfade Between Playing Tracks
   useEffect(() => {
     trackGenerationRef.current += 1;
     clearAutoplayRetry();
@@ -380,6 +448,11 @@ export const useBGM = (
     }
     activeGlobalHookStopper = thisStopper;
 
+    const overrideCrossfadeMs = nextCrossfadeOverrideRef.current;
+    nextCrossfadeOverrideRef.current = null;
+    const crossfadeMs = overrideCrossfadeMs ?? crossfadeDurationRef.current;
+    activeCrossfadeMsRef.current = crossfadeMs;
+
     const canCrossfadeFromPrev =
       Boolean(prevAudio) &&
       isPlayingRef.current &&
@@ -389,7 +462,7 @@ export const useBGM = (
 
     if (canCrossfadeFromPrev && prevAudio) {
       trackFadeHintRef.current = 'crossfade';
-      fadeOutAndDispose(prevAudio, crossfadeDurationRef.current);
+      fadeOutAndDispose(prevAudio, crossfadeMs);
     } else {
       trackFadeHintRef.current = 'fade-in';
       stopAndReleaseAudio(prevAudio);
@@ -397,7 +470,8 @@ export const useBGM = (
 
     const trackUrl = `/media/bgm/${resolvedTrack.file}`;
     const audio = new Audio(trackUrl);
-    audio.loop = true;
+    const singleTrackPool = isSingleTrackPoolRef.current;
+    audio.loop = singleTrackPool;
     audio.preload = 'auto';
 
     try {
@@ -415,8 +489,50 @@ export const useBGM = (
       // Ignore playbackRate errors on unsupported devices
     }
 
+    let autoAdvanced = false;
+    const triggerAutoAdvance = () => {
+      if (
+        autoAdvanced ||
+        isSingleTrackPoolRef.current ||
+        audioRef.current !== audio ||
+        !isPlayingRef.current ||
+        isUserMutedRef.current
+      ) {
+        return;
+      }
+      autoAdvanced = true;
+      nextCrossfadeOverrideRef.current = AUTO_ADVANCE_CROSSFADE_MS;
+      advanceToNextTrackRef.current();
+    };
+
+    const handleTimeUpdate = () => {
+      if (
+        shouldAutoAdvanceAtTime(
+          audio.currentTime,
+          audio.duration,
+          isSingleTrackPoolRef.current
+        )
+      ) {
+        triggerAutoAdvance();
+      }
+    };
+
+    const handleEnded = () => {
+      if (isSingleTrackPoolRef.current) return;
+      triggerAutoAdvance();
+    };
+
+    audio.addEventListener('timeupdate', handleTimeUpdate);
+    audio.addEventListener('ended', handleEnded);
+
     audio.currentTime = 0;
     audioRef.current = audio;
+
+    // Detach end/timeupdate listeners only (do NOT stop audio so outgoing crossfades keep running smoothly)
+    return () => {
+      audio.removeEventListener('timeupdate', handleTimeUpdate);
+      audio.removeEventListener('ended', handleEnded);
+    };
   }, [
     resolvedTrack?.file,
     clearAutoplayRetry,
@@ -438,14 +554,13 @@ export const useBGM = (
       trackFadeHintRef.current = 'fade-in';
 
       const durationMs =
-        fadeMode === 'crossfade' ? crossfadeDurationRef.current : fadeInDurationRef.current;
+        fadeMode === 'crossfade' ? activeCrossfadeMsRef.current : fadeInDurationRef.current;
       const curve: PrimaryFadeCurve =
         fadeMode === 'crossfade' ? 'crossfade-in' : 'gradual-fade-in';
-      const targetVol = isDuckedRef.current ? DUCKED_VOLUME : NORMAL_VOLUME;
 
       // If audio is already actively playing (e.g., resuming from brief pause-fade), ramp directly
       if (!audio.paused) {
-        rampPrimaryVolumeTo(targetVol, durationMs, curve);
+        rampPrimaryVolumeTo('active', durationMs, curve);
         return;
       }
 
@@ -458,8 +573,7 @@ export const useBGM = (
         ) {
           return;
         }
-        const liveTarget = isDuckedRef.current ? DUCKED_VOLUME : NORMAL_VOLUME;
-        rampPrimaryVolumeTo(liveTarget, durationMs, curve);
+        rampPrimaryVolumeTo('active', durationMs, curve);
       };
 
       try {
@@ -490,7 +604,7 @@ export const useBGM = (
         } catch {}
       } else if (!audio.paused && audio.volume > 0.01) {
         // Phase transition stop (e.g., Game Over or Edit Settings): gentle fade-out before pause
-        rampPrimaryVolumeTo(0, PAUSE_FADE_OUT_MS, 'cos-fade-out', () => {
+        rampPrimaryVolumeTo('zero', PAUSE_FADE_OUT_MS, 'cos-fade-out', () => {
           if (audioRef.current === audio && !isPlayingRef.current) {
             try {
               audio.pause();
@@ -515,6 +629,80 @@ export const useBGM = (
     scheduleAutoplayRetry,
   ]);
 
+  // Keep native loop property synced if track selection/role changes while same audio element plays
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (audio) {
+      audio.loop = isSingleTrackPool;
+    }
+  }, [isSingleTrackPool]);
+
+  // Apply live Master BGM Volume slider adjustments immediately when steady (mid-fade ticks already read live target!)
+  const prevBgmVolumeRef = useRef<number>(bgmVolume);
+  useEffect(() => {
+    if (prevBgmVolumeRef.current === bgmVolume) return;
+    prevBgmVolumeRef.current = bgmVolume;
+
+    const audio = audioRef.current;
+    if (!audio || audio.paused || !isPlayingRef.current || isUserMutedRef.current) return;
+    if (volumeIntervalRef.current) return;
+
+    try {
+      audio.volume = getLiveTargetVolume('active');
+    } catch {}
+  }, [bgmVolume, getLiveTargetVolume]);
+
+  // 3. Pre-warm upcoming phase track (e.g., 'rush' or 'quiz') silently while sitting in Lobby
+  useEffect(() => {
+    if (
+      !isPlaying ||
+      isUserMuted ||
+      !trackSelection ||
+      trackSelection === 'none' ||
+      !preloadNextRole ||
+      preloadNextRole === role
+    ) {
+      if (prewarmAudioRef.current) {
+        stopAndReleaseAudio(prewarmAudioRef.current);
+        prewarmAudioRef.current = null;
+        prewarmUrlRef.current = null;
+      }
+      return;
+    }
+
+    const timerId = setTimeout(() => {
+      if (!isPlayingRef.current || isUserMutedRef.current) return;
+      const upcoming = peekNextBGMTrack(trackSelection, preloadNextRole, undefined, {
+        primeIfEmpty: true,
+      });
+      if (!upcoming || upcoming.file === resolvedTrack?.file) return;
+
+      const nextUrl = `/media/bgm/${upcoming.file}`;
+      if (prewarmUrlRef.current === nextUrl && prewarmAudioRef.current) return;
+
+      if (prewarmAudioRef.current) {
+        stopAndReleaseAudio(prewarmAudioRef.current);
+        prewarmAudioRef.current = null;
+      }
+
+      try {
+        const prewarm = new Audio();
+        prewarm.preload = 'auto';
+        prewarm.muted = true;
+        prewarm.src = nextUrl;
+        prewarm.load();
+        prewarmAudioRef.current = prewarm;
+        prewarmUrlRef.current = nextUrl;
+      } catch {
+        prewarmUrlRef.current = null;
+      }
+    }, 1200);
+
+    return () => {
+      clearTimeout(timerId);
+    };
+  }, [isPlaying, isUserMuted, trackSelection, role, preloadNextRole, resolvedTrack?.file]);
+
   // Apply dynamic playbackRate (e.g. 1.25x speed up during Final Sprint grace period!)
   useEffect(() => {
     const audio = audioRef.current;
@@ -537,9 +725,8 @@ export const useBGM = (
       const audio = audioRef.current;
       if (!audio || !isPlayingRef.current || isUserMutedRef.current) return;
 
-      const targetVolume = duck ? DUCKED_VOLUME : NORMAL_VOLUME;
       const duration = duck ? 200 : 350;
-      rampPrimaryVolumeTo(targetVolume, duration, 'linear');
+      rampPrimaryVolumeTo('active', duration, 'linear');
     },
     [rampPrimaryVolumeTo]
   );
@@ -576,6 +763,8 @@ export const useBGM = (
     isMuted: isUserMuted,
     toggleMute,
     setMuted,
+    bgmVolume,
+    setBgmVolume,
     duckBGM,
     speedUpBGM,
     setBgmPlaybackRate,

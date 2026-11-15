@@ -20,6 +20,12 @@ import { useClassroom } from '@/context/ClassroomContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { useAudio } from '@/context/AudioContext';
 import { SOUND_PACKS, SOUND_PACK_LIST, getSoundPack, SoundTrack } from '@/utils/soundPacks';
+import {
+  getStoredBgmVolume,
+  setStoredBgmVolume,
+  subscribeBgmVolume,
+  computeEffectiveBgmVolume,
+} from '@/hooks/bgmHelpers';
 
 export interface BgmSelectorModalProps {
   isOpen: boolean;
@@ -54,10 +60,31 @@ export const BgmSelectorModal: React.FC<BgmSelectorModalProps> = ({
   const [stagedPackId, setStagedPackId] = useState<string>(selectedPackId);
   const [roleFilter, setRoleFilter] = useState<RoleFilter>('all');
 
-  // Preview Audio Engine
+  // Preview Audio Engine + Reactive Shared BGM Volume
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const playingTrackRef = useRef<SoundTrack | null>(null);
+  const previewGenRef = useRef<number>(0);
   const [playingTrackId, setPlayingTrackId] = useState<string | null>(null);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const [bgmVolume, setBgmVolume] = useState<number>(() => getStoredBgmVolume());
+  const bgmVolumeRef = useRef<number>(bgmVolume);
+  bgmVolumeRef.current = bgmVolume;
+
+  useEffect(() => {
+    return subscribeBgmVolume(setBgmVolume);
+  }, []);
+
+  // Apply live Master BGM Volume slider changes immediately during active audition
+  useEffect(() => {
+    if (audioRef.current && playingTrackRef.current) {
+      try {
+        audioRef.current.volume = computeEffectiveBgmVolume({
+          masterVolume: bgmVolume,
+          trackGain: playingTrackRef.current.gain,
+        });
+      } catch {}
+    }
+  }, [bgmVolume]);
 
   // Sync stagedPackId when opened
   useEffect(() => {
@@ -89,6 +116,8 @@ export const BgmSelectorModal: React.FC<BgmSelectorModalProps> = ({
   }, [isOpen, onClose]);
 
   const stopPreview = () => {
+    previewGenRef.current += 1;
+    playingTrackRef.current = null;
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
@@ -107,6 +136,9 @@ export const BgmSelectorModal: React.FC<BgmSelectorModalProps> = ({
     }
 
     // Stop current track
+    previewGenRef.current += 1;
+    const myGen = previewGenRef.current;
+    playingTrackRef.current = null;
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current = null;
@@ -114,12 +146,19 @@ export const BgmSelectorModal: React.FC<BgmSelectorModalProps> = ({
 
     try {
       const audio = new Audio(track.url);
-      audio.volume = 0.75;
+      audio.volume = computeEffectiveBgmVolume({
+        masterVolume: bgmVolumeRef.current,
+        trackGain: track.gain,
+      });
       audio.onended = () => {
+        if (previewGenRef.current !== myGen) return;
+        playingTrackRef.current = null;
         setPlayingTrackId(null);
         setIsPlaying(false);
       };
       audio.onerror = () => {
+        if (previewGenRef.current !== myGen) return;
+        playingTrackRef.current = null;
         setPlayingTrackId(null);
         setIsPlaying(false);
       };
@@ -128,18 +167,28 @@ export const BgmSelectorModal: React.FC<BgmSelectorModalProps> = ({
       if (playPromise !== undefined) {
         playPromise
           .then(() => {
+            if (previewGenRef.current !== myGen) {
+              try {
+                audio.pause();
+                audio.currentTime = 0;
+              } catch {}
+              return;
+            }
             audioRef.current = audio;
+            playingTrackRef.current = track;
             setPlayingTrackId(track.id);
             setIsPlaying(true);
           })
           .catch((err) => {
             console.warn('Audio preview playback blocked or failed:', err);
+            playingTrackRef.current = null;
             setPlayingTrackId(null);
             setIsPlaying(false);
           });
       }
     } catch (e) {
       console.warn('Audio preview instantiation failed:', e);
+      playingTrackRef.current = null;
       setPlayingTrackId(null);
       setIsPlaying(false);
     }
@@ -631,18 +680,39 @@ export const BgmSelectorModal: React.FC<BgmSelectorModalProps> = ({
         {/* =========================================================================
             FOOTER ACTIONS (Pinned, zero layout shift)
         ========================================================================= */}
-        <div className="p-3.5 px-5 sm:px-6 border-t border-slate-200 dark:border-slate-800 bg-slate-50/90 dark:bg-slate-900/90 backdrop-blur-xs flex items-center justify-between gap-3 shrink-0">
-          <div className="flex items-center gap-2 min-w-0">
+        <div className="p-3 sm:py-3.5 px-4 sm:px-6 border-t border-slate-200 dark:border-slate-800 bg-slate-50/90 dark:bg-slate-900/90 backdrop-blur-xs flex flex-wrap sm:flex-nowrap items-center justify-between gap-2.5 sm:gap-3 shrink-0">
+          <div className="flex items-center gap-2 min-w-0 shrink">
             <span className="text-lg">{stagedPack.icon}</span>
             <span className="text-xs font-black text-slate-700 dark:text-slate-200 truncate hidden xs:inline">
               {textLang === 'ja' ? stagedPack.nameJa : stagedPack.name}
             </span>
-            <span className="text-[10px] text-slate-400 font-bold">
+            <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold shrink-0">
               ({stagedPack.tracks.length} {t('tracks', '曲')})
             </span>
           </div>
 
-          <div className="flex items-center gap-2.5 shrink-0">
+          {/* Global Master BGM Volume Slider (shared across audition & classroom gameplay) */}
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-2xs shrink-0">
+            <Volume2 size={14} className="text-indigo-500 dark:text-indigo-400 shrink-0" />
+            <span className="text-[11px] font-black text-slate-600 dark:text-slate-300 whitespace-nowrap hidden md:inline">
+              {t('BGM Volume', <>BGM<ruby>音量<rt>おんりょう</rt></ruby></>)}
+            </span>
+            <input
+              type="range"
+              min={0}
+              max={1}
+              step={0.02}
+              value={bgmVolume}
+              onChange={(e) => setStoredBgmVolume(parseFloat(e.target.value))}
+              aria-label={textLang === 'ja' ? 'BGMマスター音量' : 'BGM Master Volume'}
+              className="w-24 sm:w-28 md:w-36 h-1.5 rounded-full accent-indigo-600 cursor-pointer bg-slate-200 dark:bg-slate-700"
+            />
+            <span className="text-[11px] font-mono font-black text-indigo-600 dark:text-indigo-400 w-9 text-right tabular-nums shrink-0">
+              {Math.round(bgmVolume * 100)}%
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2 shrink-0">
             <button
               type="button"
               onClick={handleCancel}

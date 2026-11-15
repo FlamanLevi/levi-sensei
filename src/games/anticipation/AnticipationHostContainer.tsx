@@ -6,14 +6,13 @@ import {
   SkipForward,
   Eye,
   Trophy,
-  Volume2,
-  VolumeX,
   CheckCircle2,
   Clock,
   Sparkles,
   Users,
   X,
 } from 'lucide-react';
+import { BgmControlPill } from '@/components/common';
 import { useClassroom } from '@/context/ClassroomContext';
 import { useVocabulary } from '@/context/VocabularyContext';
 import { useAudio } from '@/context/AudioContext';
@@ -253,6 +252,8 @@ export const AnticipationHostContainer: React.FC<AnticipationHostContainerProps>
   const {
     isMuted: bgmMuted,
     toggleMute: toggleBgmMute,
+    bgmVolume,
+    setBgmVolume,
     duckBGM,
     currentTrackTitle,
     hasTrack,
@@ -263,6 +264,7 @@ export const AnticipationHostContainer: React.FC<AnticipationHostContainerProps>
       step === 'LOBBY' ? LOBBY_FADE_IN_DURATION_MS : DEFAULT_FADE_IN_DURATION_MS,
     crossfadeDurationMs:
       step === 'PLAYING' ? GAME_CROSSFADE_DURATION_MS : LOBBY_CROSSFADE_DURATION_MS,
+    preloadNextRole: step === 'LOBBY' ? 'quiz' : undefined,
   });
 
   const antState = (room as (typeof room & { anticipationState?: AnticipationRoomState }) | null)
@@ -920,6 +922,8 @@ export const AnticipationHostContainer: React.FC<AnticipationHostContainerProps>
           isBgmMuted={bgmMuted}
           onToggleBgmMute={toggleBgmMute}
           onNextBgmTrack={nextBgmTrack}
+          bgmVolume={bgmVolume}
+          onChangeBgmVolume={setBgmVolume}
           onCancel={handleExit}
         />
       </div>
@@ -1036,14 +1040,17 @@ export const AnticipationHostContainer: React.FC<AnticipationHostContainerProps>
 
         <div className="flex items-center gap-1.5 shrink-0 flex-nowrap">
           {hasTrack && (
-            <button
-              type="button"
-              onClick={toggleBgmMute}
-              title={currentTrackTitle || 'BGM'}
-              className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 cursor-pointer"
-            >
-              {bgmMuted ? <VolumeX size={15} /> : <Volume2 size={15} />}
-            </button>
+            <BgmControlPill
+              trackTitle={currentTrackTitle}
+              isMuted={bgmMuted}
+              onToggleMute={toggleBgmMute}
+              onNextTrack={nextBgmTrack}
+              volume={bgmVolume}
+              onChangeVolume={setBgmVolume}
+              compact={true}
+              variant="adaptive"
+              isPlaying={isAnticipationBgmPlaying}
+            />
           )}
           <button
             type="button"

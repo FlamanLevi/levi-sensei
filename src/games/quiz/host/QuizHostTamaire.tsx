@@ -5,7 +5,8 @@ import { ensureAnonymousAuth } from '@/services/firebase';
 import { safeUpdate, getServerTime } from '@/services/rtdbSafe';
 import { useLanguage } from '@/context/LanguageContext';
 import { useClassroom } from '@/context/ClassroomContext';
-import { Clock, Users, Volume2, VolumeX, Eye, EyeOff, Music } from 'lucide-react';
+import { Clock, Users, Eye, EyeOff } from 'lucide-react';
+import { BgmControlPill } from '@/components/common';
 import { useClassroomClicker } from '@/hooks/useClassroomClicker';
 import confetti from 'canvas-confetti';
 import { Tamaire3DStage, VolleyballPhaseChangeEvent, VolleyballAnswerEvent } from './Tamaire3DStage';
@@ -39,6 +40,9 @@ export interface QuizHostTamaireProps {
   bgmTrackTitle?: string | null;
   isBgmMuted?: boolean;
   onToggleBgmMute?: () => void;
+  onNextBgmTrack?: () => void;
+  bgmVolume?: number;
+  onChangeBgmVolume?: (volume: number) => void;
 }
 
 export const QuizHostTamaire: React.FC<QuizHostTamaireProps> = ({
@@ -56,9 +60,12 @@ export const QuizHostTamaire: React.FC<QuizHostTamaireProps> = ({
   onFinishVolleyball,
   onExit,
   onAddBots,
-  bgmTrackTitle: _bgmTrackTitle,
+  bgmTrackTitle,
   isBgmMuted = false,
   onToggleBgmMute,
+  onNextBgmTrack,
+  bgmVolume,
+  onChangeBgmVolume,
 }) => {
   const { t } = useLanguage();
   const { activeSchool } = useClassroom();
@@ -473,19 +480,19 @@ export const QuizHostTamaire: React.FC<QuizHostTamaireProps> = ({
           </button>
         </div>
 
-        {/* Right: BGM Mute, Whistle (Start Counting Ceremony) & Exit */}
+        {/* Right: BGM Controls, Whistle (Start Counting Ceremony) & Exit */}
         <div className="flex items-center gap-2 sm:gap-3 shrink-0 flex-nowrap">
-          {onToggleBgmMute && (
-            <div className="flex items-center gap-1.5 bg-slate-900 border border-slate-800 px-2.5 py-1.5 rounded-xl shrink-0">
-              <Music size={14} className="text-indigo-400" />
-              <button
-                type="button"
-                onClick={onToggleBgmMute}
-                className="p-1 rounded-lg text-slate-300 hover:text-white transition cursor-pointer"
-              >
-                {isBgmMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
-              </button>
-            </div>
+          {onToggleBgmMute && bgmTrackTitle && (
+            <BgmControlPill
+              trackTitle={bgmTrackTitle}
+              isMuted={isBgmMuted}
+              onToggleMute={onToggleBgmMute}
+              onNextTrack={onNextBgmTrack}
+              volume={bgmVolume}
+              onChangeVolume={onChangeBgmVolume}
+              compact={true}
+              variant="dark"
+            />
           )}
 
           {!matchEnded ? (

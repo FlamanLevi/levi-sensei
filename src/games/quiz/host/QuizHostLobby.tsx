@@ -3,7 +3,8 @@ import { QuizPlayer, GameMode, TeamAssignmentMode, TeamId, TEAM_PRESETS, RAINBOW
 import { MathGrade, MathDomain, MATH_GRADES, MATH_DOMAINS } from '../mathTypes';
 import { SCHOOL_CONFIGS, SchoolId, getClassSize } from '@/types/roster';
 import { fetchClassBoundNumbers } from '@/services/studentProfile';
-import { Users, Play, X, QrCode, School, RefreshCw, Settings, Bot, Music, SkipForward, Volume2, VolumeX } from 'lucide-react';
+import { Users, Play, X, QrCode, School, RefreshCw, Settings, Bot } from 'lucide-react';
+import { BgmControlPill } from '@/components/common';
 import { useLanguage } from '@/context/LanguageContext';
 import QRCode from 'qrcode';
 import { prewarmSuzukaAssets } from '@/games/suzuka_grand_prix/engine/Suzuka3DEngine';
@@ -47,6 +48,8 @@ interface QuizHostLobbyProps {
   isBgmMuted?: boolean;
   onToggleBgmMute?: () => void;
   onNextBgmTrack?: () => void;
+  bgmVolume?: number;
+  onChangeBgmVolume?: (volume: number) => void;
   onCancel: () => void;
 }
 
@@ -83,6 +86,8 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
   isBgmMuted = false,
   onToggleBgmMute,
   onNextBgmTrack,
+  bgmVolume,
+  onChangeBgmVolume,
   onCancel
 }) => {
   const { t, language } = useLanguage();
@@ -702,34 +707,17 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
             </span>
             <div className="flex items-center gap-2 shrink-0 flex-nowrap">
               {onToggleBgmMute && bgmTrackTitle && (
-                <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[10px] font-bold text-slate-700 dark:text-slate-200 shrink-0">
-                  <Music size={11} className={`text-indigo-500 shrink-0 ${!isBgmMuted ? 'animate-pulse' : ''}`} />
-                  <span className="max-w-[115px] truncate" title={bgmTrackTitle}>
-                    {bgmTrackTitle}
-                  </span>
-                  {onNextBgmTrack && (
-                    <button
-                      type="button"
-                      onClick={onNextBgmTrack}
-                      className="p-0.5 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-300 cursor-pointer shrink-0 transition-colors"
-                      title={t('Next Lobby Track', '次のロビー曲へ') as string}
-                    >
-                      <SkipForward size={11} />
-                    </button>
-                  )}
-                  <button
-                    type="button"
-                    onClick={onToggleBgmMute}
-                    className={`p-0.5 rounded-full cursor-pointer shrink-0 transition-colors ${
-                      isBgmMuted
-                        ? 'text-rose-500 hover:bg-rose-100 dark:hover:bg-rose-950/60'
-                        : 'text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-950/60'
-                    }`}
-                    title={isBgmMuted ? (t('Unmute BGM', 'BGMを再生') as string) : (t('Mute BGM', 'BGMを消音') as string)}
-                  >
-                    {isBgmMuted ? <VolumeX size={11} /> : <Volume2 size={11} />}
-                  </button>
-                </div>
+                <BgmControlPill
+                  trackTitle={bgmTrackTitle}
+                  isMuted={isBgmMuted}
+                  onToggleMute={onToggleBgmMute}
+                  onNextTrack={onNextBgmTrack}
+                  volume={bgmVolume}
+                  onChangeVolume={onChangeBgmVolume}
+                  compact={false}
+                  variant="adaptive"
+                  className="rounded-full py-0.5"
+                />
               )}
               <span className="font-mono text-indigo-600 dark:text-indigo-400 whitespace-nowrap shrink-0">
                 {playerList.length > 0 ? t(`${playerList.length} Connected`, `${playerList.length} 名接続中`) : t('Lobby Open', '入室受付中')}

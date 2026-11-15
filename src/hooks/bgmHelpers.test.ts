@@ -194,7 +194,7 @@ test('Master BGM Volume store preserves 0.35 classroom baseline at 50% slider an
   assert.ok(duckedVol > 0 && duckedVol <= BGM_MAX_DUCKED_VOLUME);
 });
 
-test('computeGrandPrix3DBgmRate restores 2D Suzuka incremental + final sprint speed-up', () => {
+test('computeGrandPrix3DBgmRate ramps proportionally as racers finish without final-lap floor', () => {
   // Idle / Lobby / Pre-Green stays 1.0x
   assert.equal(
     computeGrandPrix3DBgmRate({
@@ -204,26 +204,12 @@ test('computeGrandPrix3DBgmRate restores 2D Suzuka incremental + final sprint sp
       timeTrialRemainingMs: 60000,
       hasGraceCountdown: false,
       finishedCount: 15,
-      leaderProgress: 2.9,
-      targetLaps: 3,
+      graceTriggerCount: 15,
     }),
     1.0
   );
 
-  // Lap race: +0.02x per finisher, Final Lap min 1.12x (multi-lap), 1.25x at 12+ or Grace
-  assert.equal(
-    computeGrandPrix3DBgmRate({
-      isLobby: false,
-      raceActive: true,
-      isTimeTrial: false,
-      timeTrialRemainingMs: 0,
-      hasGraceCountdown: false,
-      finishedCount: 2,
-      leaderProgress: 1.5,
-      targetLaps: 3,
-    }),
-    1.04
-  );
+  // Lap race: starts at 1.0x even with 0 finishers, ramps proportionally toward 1.24x, 1.25x at trigger/grace
   assert.equal(
     computeGrandPrix3DBgmRate({
       isLobby: false,
@@ -232,10 +218,9 @@ test('computeGrandPrix3DBgmRate restores 2D Suzuka incremental + final sprint sp
       timeTrialRemainingMs: 0,
       hasGraceCountdown: false,
       finishedCount: 0,
-      leaderProgress: 2.05,
-      targetLaps: 3,
+      graceTriggerCount: 15,
     }),
-    1.12
+    1.0
   );
   assert.equal(
     computeGrandPrix3DBgmRate({
@@ -244,9 +229,20 @@ test('computeGrandPrix3DBgmRate restores 2D Suzuka incremental + final sprint sp
       isTimeTrial: false,
       timeTrialRemainingMs: 0,
       hasGraceCountdown: false,
-      finishedCount: 8,
-      leaderProgress: 2.9,
-      targetLaps: 3,
+      finishedCount: 5,
+      graceTriggerCount: 15,
+    }),
+    1.08
+  );
+  assert.equal(
+    computeGrandPrix3DBgmRate({
+      isLobby: false,
+      raceActive: true,
+      isTimeTrial: false,
+      timeTrialRemainingMs: 0,
+      hasGraceCountdown: false,
+      finishedCount: 10,
+      graceTriggerCount: 15,
     }),
     1.16
   );
@@ -258,8 +254,7 @@ test('computeGrandPrix3DBgmRate restores 2D Suzuka incremental + final sprint sp
       timeTrialRemainingMs: 0,
       hasGraceCountdown: true,
       finishedCount: 5,
-      leaderProgress: 2.5,
-      targetLaps: 3,
+      graceTriggerCount: 15,
     }),
     1.25
   );
@@ -271,26 +266,13 @@ test('computeGrandPrix3DBgmRate restores 2D Suzuka incremental + final sprint sp
       timeTrialRemainingMs: 0,
       hasGraceCountdown: false,
       finishedCount: 12,
-      leaderProgress: 3,
-      targetLaps: 3,
+      graceTriggerCount: 12,
     }),
     1.25
   );
 
   // 1-lap final 80% bump
-  assert.equal(
-    computeGrandPrix3DBgmRate({
-      isLobby: false,
-      raceActive: true,
-      isTimeTrial: false,
-      timeTrialRemainingMs: 0,
-      hasGraceCountdown: false,
-      finishedCount: 0,
-      leaderProgress: 0.82,
-      targetLaps: 1,
-    }),
-    1.1
-  );
+
 
   // Time Trial 15s -> 1.15x, 5s -> 1.25x
   assert.equal(

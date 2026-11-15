@@ -571,16 +571,16 @@ export interface GrandPrix3DBgmRateParams {
   timeTrialRemainingMs: number;
   hasGraceCountdown: boolean;
   finishedCount: number;
-  leaderProgress?: number;
-  targetLaps?: number;
+  graceTriggerCount?: number;
 }
 
 /**
- * Restores and adapts the classic 2D Suzuka Circuit music speed-up cadence for 3D Suzuka:
+ * Proportional BGM tempo ramp for 3D Suzuka Grand Prix:
  * - Idle/Lobby/Pre-Green-Flag -> 1.00x
  * - Time Trial -> 1.15x (final 15s) -> 1.25x (final 5s)
- * - Lap Race -> +0.02x per finisher (1.02x..1.24x), minimum 1.12x on Final Lap (multi-lap) or 1.10x past 80% (1-lap),
- *   and full 1.25x adrenaline rush during the Final Countdown grace period or at 12+ finishers.
+ * - Lap Race -> starts at 1.00x, ramps proportionally from 1.00x to 1.24x as finishers
+ *   approach graceTriggerCount (50% of connected racers), and hits 1.25x when the
+ *   Final Countdown grace timer triggers.
  */
 export function computeGrandPrix3DBgmRate({
   isLobby,
@@ -589,8 +589,7 @@ export function computeGrandPrix3DBgmRate({
   timeTrialRemainingMs,
   hasGraceCountdown,
   finishedCount,
-  leaderProgress = 0,
-  targetLaps = 1,
+  graceTriggerCount = 1,
 }: GrandPrix3DBgmRateParams): number {
   if (isLobby || !raceActive) return 1.0;
 
@@ -601,20 +600,18 @@ export function computeGrandPrix3DBgmRate({
   }
 
   const count = Math.max(0, Math.floor(finishedCount));
-  if (hasGraceCountdown || count >= 12) {
+  const trigger = Math.max(1, Math.floor(graceTriggerCount));
+
+  if (hasGraceCountdown || count >= trigger) {
     return 1.25;
   }
 
-  let rate = count > 0 ? Math.min(1.24, Number((1.0 + count * 0.02).toFixed(2))) : 1.0;
-  const laps = Math.max(1, targetLaps || 1);
-  const progress = Number.isFinite(leaderProgress) ? leaderProgress : 0;
-
-  if (laps >= 2 && progress >= laps - 1) {
-    rate = Math.max(rate, 1.12);
-  } else if (laps === 1 && progress >= 0.8) {
-    rate = Math.max(rate, 1.1);
+  if (count === 0) {
+    return 1.0;
   }
 
+  const ratio = Math.min(1, count / trigger);
+  const rate = Math.min(1.24, 1.0 + ratio * 0.24);
   return Number(rate.toFixed(2));
 }
 

@@ -249,8 +249,11 @@ export const QuizHostGrandPrix3D: React.FC<QuizHostGrandPrix3DProps> = ({
     [sortedStandings, isTimeTrial, targetLaps]
   );
 
-  // Restore 2D Suzuka Circuit final-sprint BGM speed-up cadence (+0.02x per finisher, Final Lap bump, 1.25x rush)
-  const leaderProgress = sortedStandings[0]?.progress ?? 0;
+  // Trigger grace countdown when 50% of connected racers finish in Lap Race
+  const graceTriggerCount =
+    playerList.length > 1 ? Math.max(1, Math.ceil(playerList.length * 0.5)) : 1;
+
+  // Proportional BGM tempo ramp: 1.00x -> 1.24x as finishers approach graceTriggerCount, 1.25x at grace countdown
   const targetBgmRate = useMemo(
     () =>
       computeGrandPrix3DBgmRate({
@@ -260,8 +263,7 @@ export const QuizHostGrandPrix3D: React.FC<QuizHostGrandPrix3DProps> = ({
         timeTrialRemainingMs,
         hasGraceCountdown: Boolean(raceFinishGraceStartTime),
         finishedCount: finishedRacers.length,
-        leaderProgress,
-        targetLaps,
+        graceTriggerCount,
       }),
     [
       isLobby,
@@ -270,8 +272,7 @@ export const QuizHostGrandPrix3D: React.FC<QuizHostGrandPrix3DProps> = ({
       timeTrialRemainingMs,
       raceFinishGraceStartTime,
       finishedRacers.length,
-      leaderProgress,
-      targetLaps,
+      graceTriggerCount,
     ]
   );
 
@@ -284,10 +285,6 @@ export const QuizHostGrandPrix3D: React.FC<QuizHostGrandPrix3DProps> = ({
       onSetBgmPlaybackRate?.(1.0);
     };
   }, [onSetBgmPlaybackRate]);
-
-  // Trigger grace countdown when enough racers finish in Lap Race
-  const graceTriggerCount =
-    playerList.length > 1 ? Math.min(12, Math.max(1, Math.ceil(playerList.length * 0.5))) : 1;
 
   useEffect(() => {
     if (

@@ -1,7 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Header } from './components/shell/Header';
 import { GradeSelector } from './components/shell/GradeSelector';
-import { UnitCategoryBar } from './components/shell/UnitCategoryBar';
 import { GameLauncherCard } from './components/shell/GameLauncherCard';
 import { GameFilterBar, TeachingMomentFilter, SkillCategoryFilter, StatusFilter, PlayerFilter, StreamFilter, SortOption } from './components/shell/GameFilterBar';
 import { PictureDictionaryBrowser } from './components/dictionary/PictureDictionaryBrowser';
@@ -77,7 +76,7 @@ export const App: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTeachingMoment, setSelectedTeachingMoment] = useState<TeachingMomentFilter>('ALL');
   const [selectedSkill, setSelectedSkill] = useState<SkillCategoryFilter>('ALL');
-  const [selectedStatus, setSelectedStatus] = useState<StatusFilter>('ALL');
+  const [selectedStatus, setSelectedStatus] = useState<StatusFilter>('READY');
   const [selectedStream, setSelectedStream] = useState<StreamFilter>('ALL');
   const [selectedPlayer, setSelectedPlayer] = useState<PlayerFilter>('ALL');
   const [selectedSort, setSelectedSort] = useState<SortOption>('PLAYABLE_FIRST');
@@ -86,7 +85,7 @@ export const App: React.FC = () => {
     setSearchQuery('');
     setSelectedTeachingMoment('ALL');
     setSelectedSkill('ALL');
-    setSelectedStatus('ALL');
+    setSelectedStatus('READY');
     setSelectedStream('ALL');
     setSelectedPlayer('ALL');
   };
@@ -518,7 +517,6 @@ export const App: React.FC = () => {
         <div className="min-h-dvh bg-slate-50 dark:bg-slate-950 flex flex-col">
           <Header />
           <GradeSelector />
-          <UnitCategoryBar />
           <main className="flex-1">
             <PictureDictionaryBrowser />
           </main>
@@ -570,7 +568,6 @@ export const App: React.FC = () => {
     return (
       <div className="min-h-dvh bg-slate-50 dark:bg-slate-950 flex flex-col">
         <Header />
-        <UnitCategoryBar />
 
         <main className="flex-1 max-w-7xl mx-auto px-4 py-6 w-full">
           {/* Section Header */}
@@ -615,7 +612,7 @@ export const App: React.FC = () => {
           />
 
           {/* Pinned for Today Section (Visible on default view when games are pinned) */}
-          {pinnedGames.length > 0 && selectedTeachingMoment === 'ALL' && !searchQuery.trim() && selectedStatus === 'ALL' && (
+          {pinnedGames.length > 0 && selectedTeachingMoment === 'ALL' && !searchQuery.trim() && (selectedStatus === 'ALL' || selectedStatus === 'READY') && (
             <div className="mb-8 p-4 sm:p-5 rounded-3xl bg-amber-500/10 dark:bg-amber-500/5 border-2 border-amber-300 dark:border-amber-700/60 shadow-xs">
               <div className="flex items-center justify-between mb-3.5">
                 <div className="flex items-center gap-2">

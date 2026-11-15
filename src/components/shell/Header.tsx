@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { createPortal } from 'react-dom';
-import { Volume2, VolumeX, Maximize, Minimize, Sparkles, Sun, Moon, Lock, KeyRound, Radio, Printer, ChevronDown, FileSpreadsheet } from 'lucide-react';
+import { Volume2, VolumeX, Maximize, Minimize, Sparkles, Sun, Moon, Lock, KeyRound, Radio, Printer, ChevronDown, FileSpreadsheet, SlidersHorizontal } from 'lucide-react';
 import { useAudio } from '../../context/AudioContext';
 import { useClassroom } from '../../context/ClassroomContext';
 import { useVocabulary } from '../../context/VocabularyContext';
@@ -27,7 +27,9 @@ export const Header: React.FC = () => {
     activeView,
     activeGameId,
     activeGrade,
+    activeCategory,
     activeUnit,
+    selectedUnits,
     exitToHub,
     openDictionary,
     openAlphabet,
@@ -37,7 +39,7 @@ export const Header: React.FC = () => {
     openRoutineModal,
     launchGame
   } = useClassroom();
-  const { filteredWords, gradeWords, allWords } = useVocabulary();
+  const { filteredWords, gradeWords, allWords, excludedWordIds, openWordFilterModal } = useVocabulary();
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isPinModalOpen, setIsPinModalOpen] = useState(false);
   const [isRoomsModalOpen, setIsRoomsModalOpen] = useState(false);
@@ -209,6 +211,33 @@ export const Header: React.FC = () => {
               <SchoolClassSwitcher />
               <div className="h-5 w-px bg-slate-200 dark:bg-slate-700 shrink-0" />
               <TeacherProfileSwitcher />
+              <div className="h-5 w-px bg-slate-200 dark:bg-slate-700 shrink-0 hidden md:block" />
+              <button
+                type="button"
+                onClick={() => { playPop(); openWordFilterModal(); }}
+                className="group hidden md:flex items-center gap-2 px-2.5 py-1 rounded-xl bg-gradient-to-r from-blue-500/10 via-indigo-500/10 to-purple-500/10 hover:from-blue-500/20 hover:to-purple-500/20 border border-blue-200 dark:border-blue-800/80 transition-all cursor-pointer shadow-xs text-left shrink-0"
+                title={t("Open Lesson Deck Studio to customize units and cards", "教材デッキスタジオを開いて単元やカードを調整")}
+              >
+                <span className="text-sm leading-none shrink-0">🧺</span>
+                <span className="text-xs font-black text-slate-900 dark:text-white truncate max-w-[160px] lg:max-w-[220px]">
+                  {selectedUnits.length > 1
+                    ? (language === 'ja' ? `📦 ${selectedUnits.length}単元` : `📦 ${selectedUnits.length} Units`)
+                    : activeUnit !== 'ALL'
+                    ? activeUnit.replace(/^Unit\s+(\d+):\s*/i, 'U$1: ').replace(/\s*\([^)]*\)$/, '')
+                    : activeCategory !== 'ALL'
+                    ? activeCategory.replace(/^\d+_/, '')
+                    : (language === 'ja' ? '📖 すべての単元' : '📖 All Units')}
+                </span>
+                <span className="px-1.5 py-0.5 rounded-md bg-blue-600 text-white font-mono font-black text-[10px] shrink-0">
+                  {filteredWords.length}{language === 'ja' ? '語' : 'w'}
+                </span>
+                {excludedWordIds.length > 0 && (
+                  <span className="px-1 py-0.5 rounded bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300 font-bold text-[10px] shrink-0">
+                    -{excludedWordIds.length}
+                  </span>
+                )}
+                <SlidersHorizontal size={12} className="text-blue-600 dark:text-blue-400 group-hover:rotate-45 transition-transform shrink-0" />
+              </button>
             </>
           )}
         </div>

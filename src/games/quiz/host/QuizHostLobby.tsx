@@ -126,14 +126,14 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
     : configuredSize;
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
 
-  // Generate high-resolution, high-contrast QR Code (480px) linking directly to student portal
+  // Generate high-resolution, high-contrast QR Code (640px) linking directly to student portal
   useEffect(() => {
     const origin = window.location.origin;
     const directJoinUrl = isStudentHost
       ? `${origin}/?pin=${roomCode}`
       : `${origin}/?pin=${roomCode}${classId ? `&class=${classId}` : ''}${schoolId ? `&school=${schoolId}` : ''}`;
     QRCode.toDataURL(directJoinUrl, {
-      width: 480,
+      width: 640,
       margin: 1,
       color: {
         dark: '#0f172a',
@@ -324,34 +324,34 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
       {/* Main Classroom Layout: Left PIN+QR Card + Right Viewport-Locked Scrollable Roster */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5 my-2 flex-1 min-h-0 items-stretch overflow-hidden">
         {/* Left Column: Prominent Top PIN Banner + High-Contrast QR Code Centerpiece (5 cols) */}
-        <div className="lg:col-span-5 flex flex-col items-center justify-between p-4 sm:p-5 bg-white dark:bg-slate-900 border-4 border-slate-200 dark:border-slate-800 rounded-3xl shadow-xl min-h-0 overflow-hidden">
+        <div className="lg:col-span-5 flex flex-col items-center justify-between p-4 sm:p-5 bg-white/95 dark:bg-slate-900/92 backdrop-blur-md border-4 border-slate-200 dark:border-slate-800 rounded-3xl shadow-xl min-h-0 overflow-hidden">
           {/* Top-Pinned Prominent Room PIN Banner (Always visible to back-row students!) */}
-          <div className="w-full p-2.5 sm:p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/90 border-2 border-indigo-200 dark:border-indigo-800/80 flex items-center justify-between shrink-0 shadow-xs">
+          <div className="w-full p-3 sm:p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/90 border-2 border-indigo-200 dark:border-indigo-800/80 flex items-center justify-between shrink-0 shadow-xs">
             <div className="text-left">
-              <span className="text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest block leading-none mb-1">
+              <span className="text-[11px] sm:text-xs font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest block leading-none mb-1">
                 {t('ROOM PIN CODE', 'ルームPIN番号')}
               </span>
-              <span className="text-xs font-bold text-slate-600 dark:text-slate-300">
+              <span className="text-xs sm:text-sm font-bold text-slate-600 dark:text-slate-300">
                 {t('Enter on Student Portal', '生徒ポータル画面で入力')}
               </span>
             </div>
 
-            <div className="px-4 py-1 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-mono text-2xl sm:text-3xl font-black tracking-widest shadow-sm select-all">
+            <div className="px-4 sm:px-5 py-1.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-mono text-3xl sm:text-4xl lg:text-5xl font-black tracking-widest shadow-sm select-all">
               {roomCode}
             </div>
           </div>
 
-          {/* High-Resolution QR Canvas (Auto-scales inside remaining card height) */}
-          <div className="flex-1 min-h-0 flex items-center justify-center my-2">
-            <div className="p-2.5 sm:p-3 bg-white rounded-3xl shadow-inner border-4 border-slate-900 flex items-center justify-center max-h-full">
+          {/* High-Resolution QR Canvas (Sized large for 8m back-row scanning through TV guards) */}
+          <div className="flex-1 min-h-0 w-full flex items-center justify-center my-2">
+            <div className="p-3 sm:p-4 bg-white rounded-3xl shadow-inner border-4 border-slate-900 flex items-center justify-center max-h-full">
               {qrDataUrl ? (
                 <img
                   src={qrDataUrl}
                   alt={`Join room ${roomCode}`}
-                  className="w-48 h-48 sm:w-56 sm:h-56 xl:w-64 xl:h-64 max-h-[38dvh] object-contain rounded-2xl"
+                  className="w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 lg:w-[340px] lg:h-[340px] xl:w-[380px] xl:h-[380px] max-h-[54dvh] aspect-square object-contain rounded-2xl"
                 />
               ) : (
-                <div className="w-48 h-48 sm:w-56 sm:h-56 xl:w-64 xl:h-64 flex items-center justify-center bg-slate-100 rounded-2xl text-xs text-slate-500">
+                <div className="w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 lg:w-[340px] lg:h-[340px] xl:w-[380px] xl:h-[380px] max-h-[54dvh] aspect-square flex items-center justify-center bg-slate-100 rounded-2xl text-xs text-slate-500">
                   {t('Generating QR...', 'QRコード生成中...')}
                 </div>
               )}

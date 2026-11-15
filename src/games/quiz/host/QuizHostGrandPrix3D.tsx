@@ -612,7 +612,7 @@ export const QuizHostGrandPrix3D: React.FC<QuizHostGrandPrix3DProps> = ({
 
         {/* Live Broadcast Leaderboard Ticker (Bottom-Left) */}
         {!isLobby && (
-          <div className="absolute bottom-3 left-3 z-20 w-72 bg-slate-950/88 backdrop-blur-md border border-slate-800 rounded-2xl p-3 shadow-2xl pointer-events-none">
+          <div className="absolute bottom-3 left-3 z-20 w-80 bg-slate-950/88 backdrop-blur-md border border-slate-800 rounded-2xl p-3 shadow-2xl pointer-events-none">
             <div className="flex items-center justify-between pb-1.5 border-b border-slate-800 mb-2 text-xs font-black">
               <span className="text-amber-400 flex items-center gap-1.5">
                 <Trophy size={13} />
@@ -621,41 +621,63 @@ export const QuizHostGrandPrix3D: React.FC<QuizHostGrandPrix3DProps> = ({
               <span className="text-slate-400 text-[11px]">{playerList.length} {t('Racers', '台')}</span>
             </div>
 
-            <div className="space-y-1 max-h-64 overflow-hidden">
-              {sortedStandings.slice(0, 8).map((item, rank) => (
-                <div
-                  key={item.player.id}
-                  className={`flex items-center justify-between px-2 py-1 rounded-lg text-xs font-bold ${
-                    rank === 0
-                      ? 'bg-amber-500/20 border border-amber-400/80 text-amber-300 font-black'
-                      : 'bg-slate-900/70 text-slate-200'
-                  }`}
-                >
-                  <div className="flex items-center gap-1.5 truncate min-w-0">
-                    <span className="font-mono text-[10px] text-slate-400 w-5 shrink-0">P{rank + 1}</span>
-                    <div
-                      className="w-2.5 h-2.5 rounded-full shrink-0"
-                      style={{ backgroundColor: `#${item.colorHex.toString(16).padStart(6, '0')}` }}
-                    />
-                    <span className="truncate">#{item.number} {item.player.nickname}</span>
-                  </div>
-                  <div className="flex items-center gap-2 shrink-0 font-mono text-[11px]">
-                    {item.player.isFinished ? (
-                      <span className="text-emerald-400 font-black flex items-center gap-0.5">
-                        <CheckCircle2 size={11} />
-                        <span>FIN</span>
-                      </span>
-                    ) : (
-                      <>
-                        <span className="text-cyan-400">{item.speedKmh}km/h</span>
-                        <span className="text-slate-400">
-                          {isTimeTrial ? `${item.player.correctCount || 0}Q` : `L${item.lap}/${targetLaps}`}
+            <div className="space-y-1 max-h-[360px] overflow-hidden">
+              {sortedStandings.slice(0, 10).map((item, rank) => {
+                const racePct = item.player.isFinished
+                  ? 100
+                  : Math.min(100, Math.max(0, Math.floor((item.progress / Math.max(1, targetLaps)) * 100)));
+                const rowStyle =
+                  rank === 0
+                    ? 'bg-amber-500/20 border border-amber-400/80 text-amber-300 font-black'
+                    : rank === 1
+                    ? 'bg-slate-300/20 border border-slate-300/75 text-slate-100 font-black'
+                    : rank === 2
+                    ? 'bg-orange-500/20 border border-amber-600/80 text-orange-200 font-black'
+                    : 'bg-slate-900/70 border border-transparent text-slate-200';
+                const rankBadgeColor =
+                  rank === 0
+                    ? 'text-amber-300 font-black'
+                    : rank === 1
+                    ? 'text-slate-200 font-black'
+                    : rank === 2
+                    ? 'text-orange-300 font-black'
+                    : 'text-slate-400';
+
+                return (
+                  <div
+                    key={item.player.id}
+                    className={`flex items-center justify-between px-2 py-1 rounded-lg text-xs font-bold ${rowStyle}`}
+                  >
+                    <div className="flex items-center gap-1.5 truncate min-w-0">
+                      <span className={`font-mono text-[10px] w-6 shrink-0 ${rankBadgeColor}`}>P{rank + 1}</span>
+                      <div
+                        className="w-2.5 h-2.5 rounded-full shrink-0"
+                        style={{ backgroundColor: `#${item.colorHex.toString(16).padStart(6, '0')}` }}
+                      />
+                      <span className="truncate">#{item.number} {item.player.nickname}</span>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0 font-mono text-[11px]">
+                      {item.player.isFinished ? (
+                        <span className="text-emerald-400 font-black flex items-center gap-0.5">
+                          <CheckCircle2 size={11} />
+                          <span>FIN</span>
                         </span>
-                      </>
-                    )}
+                      ) : (
+                        <>
+                          <span className="text-cyan-400">{item.speedKmh}km/h</span>
+                          <span className="text-slate-300">
+                            {isTimeTrial
+                              ? `${item.player.correctCount || 0}Q`
+                              : targetLaps === 1
+                              ? `${racePct}%`
+                              : `L${item.lap}/${targetLaps} · ${racePct}%`}
+                          </span>
+                        </>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         )}

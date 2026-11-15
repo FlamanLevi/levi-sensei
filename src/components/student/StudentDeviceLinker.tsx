@@ -14,7 +14,7 @@ import {
   getDefaultSecretCharm,
   generateDefaultCallsign
 } from '@/types/roster';
-import { claimAttendanceNumber, fetchClassBoundNumbers } from '@/services/studentProfile';
+import { claimAttendanceNumber, fetchClassBoundNumbers, createGuestStudentProfile } from '@/services/studentProfile';
 import { safeGet } from '@/services/rtdbSafe';
 import { soundEffects } from '@/services/soundEffects';
 import { useLanguage } from '@/context/LanguageContext';
@@ -819,6 +819,29 @@ export const StudentDeviceLinker: React.FC<StudentDeviceLinkerProps> = ({ onLink
                 <span>{t('Continue', 'クラスをえらぶ')}</span>
                 <ChevronRight size={18} />
               </button>
+
+              <div className="pt-2 border-t border-slate-200 dark:border-slate-700/80">
+                <button
+                  type="button"
+                  onClick={() => {
+                    soundEffects.playCorrect();
+                    const guest = createGuestStudentProfile(
+                      language === 'ja' ? 'ゲスト' : 'Guest',
+                      pickCompletelyRandomAvatar()
+                    );
+                    onLinked(guest);
+                  }}
+                  className="w-full py-2.5 px-3 rounded-xl font-black text-xs sm:text-sm text-indigo-700 dark:text-indigo-200 bg-indigo-50/90 hover:bg-indigo-100 dark:bg-indigo-950/60 dark:hover:bg-indigo-900/70 border border-indigo-200 dark:border-indigo-800/80 transition-all active:scale-98 cursor-pointer flex items-center justify-center gap-2"
+                >
+                  <span>👋</span>
+                  <span>
+                    {t(
+                      'Guest / Demo Mode (Visiting Teachers & Guests)',
+                      'ゲスト・体験モード（見学・お試し用）'
+                    )}
+                  </span>
+                </button>
+              </div>
             </form>
           </div>
         ) : (

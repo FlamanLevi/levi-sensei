@@ -520,12 +520,35 @@ export const QuizStudentGrandPrix3D: React.FC<QuizStudentGrandPrix3DProps> = ({
     }
   };
 
-  // Compute live rank among all racers
-  const studentRank = useMemo(() => {
-    if (liveTelemetry.length === 0) return 1;
+  // Compute live rank, distance gap to adjacent racer, and track completion % from local 60Hz telemetry
+  const { studentRank, studentGapText, isLeadingGap, studentRacePct } = useMemo(() => {
+    const myTelem = liveTelemetry.find((r) => r.id === player.id);
+    const rawProgress = myTelem?.progress ?? studentProgressRef.current;
+    const pct = localIsFinished
+      ? 100
+      : Math.min(100, Math.max(0, Math.floor((rawProgress / Math.max(1, targetLaps)) * 100)));
+
+    if (liveTelemetry.length === 0) {
+      return { studentRank: 1, studentGapText: null as string | null, isLeadingGap: false, studentRacePct: pct };
+    }
     const sorted = [...liveTelemetry].sort((a, b) => b.distanceMeters - a.distanceMeters);
-    return Math.max(1, sorted.findIndex((r) => r.id === player.id) + 1);
-  }, [liveTelemetry, player.id]);
+    const myIdx = sorted.findIndex((r) => r.id === player.id);
+    const rank = Math.max(1, myIdx + 1);
+
+    let gapText: string | null = null;
+    let leading = false;
+    if (myIdx === 0 && sorted.length > 1) {
+      const leadMeters = Math.max(0, Math.round(sorted[0].distanceMeters - sorted[1].distanceMeters));
+      gapText = `+${leadMeters}m`;
+      leading = true;
+    } else if (myIdx > 0) {
+      const behindMeters = Math.max(0, Math.round(sorted[myIdx - 1].distanceMeters - sorted[myIdx].distanceMeters));
+      gapText = `-${behindMeters}m`;
+      leading = false;
+    }
+
+    return { studentRank: rank, studentGapText: gapText, isLeadingGap: leading, studentRacePct: pct };
+  }, [liveTelemetry, player.id, localIsFinished, targetLaps]);
 
   const currentLapDisplay = Math.min(
     targetLaps,
@@ -813,19 +836,35 @@ export const QuizStudentGrandPrix3D: React.FC<QuizStudentGrandPrix3DProps> = ({
           </div>
         )}
 
-        {/* Top Student Race Metrics HUD: Position, Lap, and Points clustered together under Landmark! */}
+        {/* Top Student Race Metrics HUD: Flush in top-left corner with Position+Gap, Track %, and Points */}
         {!isLobby && (
-          <div className="absolute top-11 sm:top-12 left-3 z-30 flex flex-nowrap items-center gap-1.5 sm:gap-2 pointer-events-none whitespace-nowrap">
+          <div className="absolute top-2.5 left-3 z-30 flex flex-nowrap items-center gap-1.5 sm:gap-2 pointer-events-none whitespace-nowrap">
             <div className="px-3 py-1 rounded-full bg-slate-950/85 backdrop-blur-md border border-slate-700 text-white font-black text-xs flex items-center gap-1.5 shadow-lg pointer-events-auto shrink-0">
               <span className="text-amber-400">POS:</span>
               <span className="font-mono text-sm text-emerald-400">P{studentRank}</span>
               <span className="text-slate-400 text-[10px]">/ {allRacers3D.length}</span>
+              {studentGapText && (
+                <>
+                  <span className="text-slate-600">·</span>
+                  <span
+                    className={`font-mono text-[11px] font-black ${
+                      isLeadingGap ? 'text-emerald-300' : 'text-amber-300'
+                    }`}
+                  >
+                    {studentGapText}
+                  </span>
+                </>
+              )}
             </div>
 
             {!isTimeTrial && (
               <div className="px-3 py-1 rounded-full bg-slate-950/85 backdrop-blur-md border border-slate-700 text-cyan-400 font-mono font-black text-xs shadow-lg flex items-center gap-1 pointer-events-auto shrink-0">
                 <Flag size={11} />
-                <span>LAP {currentLapDisplay} / {targetLaps}</span>
+                <span>
+                  {targetLaps === 1
+                    ? `${studentRacePct}%`
+                    : `LAP ${currentLapDisplay}/${targetLaps} · ${studentRacePct}%`}
+                </span>
               </div>
             )}
 
@@ -859,7 +898,7 @@ export const QuizStudentGrandPrix3D: React.FC<QuizStudentGrandPrix3DProps> = ({
           performanceProfile="MOBILE"
           onTelemetryUpdate={handleTelemetryUpdate}
           className="w-full h-full"
-          hideSectorBadge={isLobby}
+          hideSectorBadge={true}
         />
 
         {/* Floating Glassmorphic Telemetry HUD over bottom edge of 3D Track (Fixed height, no wrapping shifts) */}

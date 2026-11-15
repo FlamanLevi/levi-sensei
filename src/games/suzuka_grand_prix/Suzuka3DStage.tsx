@@ -908,7 +908,7 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
       LandmarkCamId,
       { t: number; label: string; rightOffset: number; upOffset: number; backOffset: number }
     > = {
-      MAIN_STRAIGHT: { t: 0.02, label: '🏁 Main Straight & Grandstand', rightOffset: 22, upOffset: 11, backOffset: -20 },
+      MAIN_STRAIGHT: { t: 0.01, label: '🏁 Main Straight & Grandstand', rightOffset: -9, upOffset: 6.2, backOffset: -22 },
       S_CURVES:      { t: 0.21, label: '🐍 S-Curves (Esses)', rightOffset: -26, upOffset: 14, backOffset: -16 },
       DEGNER:        { t: 0.39, label: '🌉 Degner Underpass', rightOffset: 24, upOffset: 10, backOffset: -18 },
       HAIRPIN:       { t: 0.50, label: '🔄 180° Hairpin', rightOffset: 28, upOffset: 14, backOffset: -14 },
@@ -1907,7 +1907,22 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
         }
 
         if (!isGreenFlag) {
-          nextBadgeText = `🎬 AI DIRECTOR · ${applyLandmarkCamera('MAIN_STRAIGHT', telemetryList)}`;
+          const sStart = trackWorld.samples[0];
+          const sweepRight = -2.5 + Math.sin(elapsedTime * 0.24) * 5.5;
+          const sweepUp = 5.4 + Math.cos(elapsedTime * 0.18) * 0.7;
+          targetCamPos
+            .copy(sStart.position)
+            .addScaledVector(sStart.right, sweepRight)
+            .addScaledVector(sStart.tangent, -21);
+          targetCamPos.y += sweepUp;
+
+          targetCamLook
+            .copy(sStart.position)
+            .addScaledVector(sStart.right, 1.5)
+            .addScaledVector(sStart.tangent, 22);
+          targetCamLook.y += 2.1;
+
+          nextBadgeText = '🎬 AI DIRECTOR · 🏁 Starting Grid & Main Grandstand';
         } else if (activeBattle && (directorPhaseIndex === 0 || directorPhaseIndex === 2)) {
           const angleIdx = battleLock ? battleLock.angleIndex : 0;
           nextBadgeText = `🎬 AI DIRECTOR · ${frameBattleCamera(activeBattle, angleIdx)}`;
@@ -2129,7 +2144,7 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
         <div
           ref={directorBadgeContainerRef}
           style={{ display: 'none' }}
-          className="absolute bottom-3 right-3 max-w-[calc(100%-17.5rem)] z-10 pointer-events-none"
+          className="absolute bottom-3 right-3 max-w-[calc(100%-21.5rem)] z-10 pointer-events-none"
         >
           <div className="px-3 py-1.5 rounded-xl bg-slate-950/92 border border-amber-500/40 text-amber-300 text-xs font-black shadow-xl flex items-center gap-2 truncate">
             <span className="w-2 h-2 rounded-full bg-rose-500 shrink-0" />

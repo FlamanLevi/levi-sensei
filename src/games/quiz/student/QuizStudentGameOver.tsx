@@ -254,7 +254,8 @@ export const QuizStudentGameOver: React.FC<QuizStudentGameOverProps> = ({
 
   // Auto-award if already bound to an iPad profile (Protected against iPad sleep/wake, tab switches, and remounts)
   useEffect(() => {
-    if (!savedProfile || !recordRoster || roomCode?.startsWith('9') || classId === 'TEST') return;
+    if (!savedProfile) return;
+    if (!savedProfile.isGuest && (!recordRoster || roomCode?.startsWith('9') || classId === 'TEST')) return;
 
     const sessionKey = `${roomCode || 'noroom'}_${savedProfile.attendanceNumber}_${player.score}_${player.correctCount}`;
     
@@ -273,7 +274,7 @@ export const QuizStudentGameOver: React.FC<QuizStudentGameOverProps> = ({
       sessionStorage.setItem(`quiz_awarded_${sessionKey}`, 'true');
     } catch {}
 
-    // 2. Deposit rewards directly into the student's OWN profile!
+    // 2. Deposit rewards directly into the student's OWN profile! (100% local when isGuest / attendanceNumber <= 0)
     addRewardsToProfile(
       savedProfile.schoolId, 
       savedProfile.classId, 
@@ -296,13 +297,15 @@ export const QuizStudentGameOver: React.FC<QuizStudentGameOverProps> = ({
       }
     });
 
-    // 3. If official teacher game AND student belongs to this exact room's class, bind roster attendance!
+    // 3. If official teacher game AND student belongs to this exact room's class (seats 1-35 only), bind roster attendance!
     if (
       recordRoster && 
       schoolId && 
       classId && 
       savedProfile.schoolId === schoolId && 
       savedProfile.classId === classId && 
+      savedProfile.attendanceNumber > 0 &&
+      !savedProfile.isGuest &&
       roomCode && 
       onClaimRoomNumber
     ) {

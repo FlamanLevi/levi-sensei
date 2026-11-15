@@ -310,6 +310,7 @@ export interface StudentProfile {
   schoolId: SchoolId;
   classId: string;
   attendanceNumber: number;
+  isGuest?: boolean;
   nickname: string;
   callsign?: string; // Broadcast tag / 3-character racer callsign (e.g. "SAR", "KEN", "MIZ")
   avatar: string;

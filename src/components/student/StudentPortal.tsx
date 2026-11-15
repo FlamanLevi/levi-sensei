@@ -245,7 +245,7 @@ export const StudentPortal: React.FC = () => {
   // 3. 3.5s heartbeat polling fallback while on portal screen
   // 4. Defensive room validation to prevent transient status blips from locking out auto-join
   useEffect(() => {
-    if (!profile?.schoolId || !profile?.classId || activeQuizPin !== null) {
+    if (!profile?.schoolId || !profile?.classId || profile?.isGuest || profile.attendanceNumber < 0 || activeQuizPin !== null) {
       setDetectedRoom(null);
       return;
     }
@@ -673,7 +673,9 @@ export const StudentPortal: React.FC = () => {
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black bg-emerald-950/40 border border-emerald-300/40 text-emerald-200 whitespace-nowrap">
                   <ShieldCheck size={14} />
                   <span>
-                    {profile.attendanceNumber === 0
+                    {profile.isGuest || profile.attendanceNumber < 0
+                      ? t("👋 Guest / Demo Mode", "👋 ゲスト・体験モード")
+                      : profile.attendanceNumber === 0
                       ? t("👨‍🏫 Teacher / Tester Mode", "👨‍🏫 先生・テスターモード")
                       : `${profile.classId} #${profile.attendanceNumber} ${t("Linked", "登録済み")}`}
                   </span>
@@ -788,13 +790,23 @@ export const StudentPortal: React.FC = () => {
                   type="button"
                   onClick={() => {
                     playPop();
-                    setIsUnlinkModalOpen(true);
+                    if (profile.isGuest || profile.attendanceNumber < 0) {
+                      handleClearProfile();
+                    } else {
+                      setIsUnlinkModalOpen(true);
+                    }
                   }}
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 active:scale-95 text-white font-black text-xs transition-all shadow-xs cursor-pointer border border-white/20 shrink-0 whitespace-nowrap"
                   title={t("Switch student or class", "席の交代・別のクラスをえらぶ")}
                 >
                   <RefreshCw size={12} />
-                  <span>{profile.attendanceNumber === 0 ? t("Exit Test Mode", "テスト終了") : t("Switch Seat", "席をかえる")}</span>
+                  <span>
+                    {profile.isGuest || profile.attendanceNumber < 0
+                      ? t("Exit Guest Mode", "ゲスト終了")
+                      : profile.attendanceNumber === 0
+                      ? t("Exit Test Mode", "テスト終了")
+                      : t("Switch Seat", "席をかえる")}
+                  </span>
                 </button>
               </div>
             </div>
@@ -807,8 +819,8 @@ export const StudentPortal: React.FC = () => {
         <div className="absolute -right-6 -bottom-6 w-44 h-44 bg-white/10 rounded-full blur-xl pointer-events-none" />
       </div>
 
-      {/* Grade Selector (only shown if not linked to a class/seat) */}
-      {!profile && (
+      {/* Grade Selector (shown in Guest / Demo Mode or when not linked to a class/seat) */}
+      {(!profile || profile.isGuest || profile.attendanceNumber < 0) && (
         <div className="mb-8">
           <h3 className="text-sm font-black text-slate-700 dark:text-slate-300 mb-3 flex items-center gap-2">
             <span>🎒</span>

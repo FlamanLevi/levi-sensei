@@ -111,6 +111,30 @@ export function getSavedStudentProfile(): StudentProfile | null {
 }
 
 /**
+ * Create a local-only Guest / Demo profile for visiting teachers, friends, or networking demos.
+ * Uses attendanceNumber = -1 and isGuest = true so it NEVER reads or writes classroom roster nodes in RTDB.
+ */
+export function createGuestStudentProfile(nickname?: string, avatar?: string): StudentProfile {
+  const cleanName = (nickname || 'Guest').trim().slice(0, 10) || 'Guest';
+  const guestProfile: StudentProfile = {
+    schoolId: 'futakotamagawa',
+    classId: 'GUEST',
+    attendanceNumber: -1,
+    isGuest: true,
+    nickname: cleanName,
+    callsign: 'GUEST',
+    avatar: avatar || '🐼',
+    xp: 500,
+    level: 3,
+    gold: 300,
+    boundAt: Date.now(),
+    lastPlayedAt: Date.now(),
+  };
+  setLocalStudentProfile(guestProfile);
+  return guestProfile;
+}
+
+/**
  * Attempt to restore student profile from Firebase cloud SSO (/users/$uid) if localStorage was cleared
  */
 export async function fetchCloudStudentProfile(): Promise<StudentProfile | null> {
@@ -814,8 +838,11 @@ export async function purchaseShopItem(
 
     await ensureAnonymousAuth();
     const studentPath = `schools/${schoolId}/classes/${classId}/students/${attendanceNumber}`;
-    const cloudExisting = await safeGet<StudentProfile>(studentPath);
     const localExisting = getSavedStudentProfile();
+    const cloudExisting =
+      attendanceNumber > 0 && !localExisting?.isGuest
+        ? await safeGet<StudentProfile>(studentPath)
+        : null;
     const existing = cloudExisting || (
       localExisting &&
       localExisting.schoolId === schoolId &&
@@ -871,7 +898,9 @@ export async function purchaseShopItem(
       lastPlayedAt: Date.now()
     };
 
-    await safeSet(studentPath, updatedProfile);
+    if (attendanceNumber > 0 && !existing.isGuest) {
+      await safeSet(studentPath, updatedProfile);
+    }
     setLocalStudentProfile(updatedProfile);
 
     return { success: true, profile: updatedProfile };
@@ -894,8 +923,11 @@ export async function equipProfileItem(
   try {
     await ensureAnonymousAuth();
     const studentPath = `schools/${schoolId}/classes/${classId}/students/${attendanceNumber}`;
-    const cloudExisting = await safeGet<StudentProfile>(studentPath);
     const localExisting = getSavedStudentProfile();
+    const cloudExisting =
+      attendanceNumber > 0 && !localExisting?.isGuest
+        ? await safeGet<StudentProfile>(studentPath)
+        : null;
     const existing = cloudExisting || (
       localExisting &&
       localExisting.schoolId === schoolId &&
@@ -920,7 +952,9 @@ export async function equipProfileItem(
       lastPlayedAt: Date.now()
     };
 
-    await safeSet(studentPath, updatedProfile);
+    if (attendanceNumber > 0 && !existing.isGuest) {
+      await safeSet(studentPath, updatedProfile);
+    }
     setLocalStudentProfile(updatedProfile);
 
     return { success: true, profile: updatedProfile };
@@ -942,8 +976,11 @@ export async function spinLuckyGacha(
     const GACHA_COST = 100;
     await ensureAnonymousAuth();
     const studentPath = `schools/${schoolId}/classes/${classId}/students/${attendanceNumber}`;
-    const cloudExisting = await safeGet<StudentProfile>(studentPath);
     const localExisting = getSavedStudentProfile();
+    const cloudExisting =
+      attendanceNumber > 0 && !localExisting?.isGuest
+        ? await safeGet<StudentProfile>(studentPath)
+        : null;
     const existing = cloudExisting || (
       localExisting &&
       localExisting.schoolId === schoolId &&
@@ -1015,7 +1052,9 @@ export async function spinLuckyGacha(
       lastPlayedAt: Date.now()
     };
 
-    await safeSet(studentPath, updatedProfile);
+    if (attendanceNumber > 0 && !existing.isGuest) {
+      await safeSet(studentPath, updatedProfile);
+    }
     setLocalStudentProfile(updatedProfile);
 
     return { success: true, wonItem, bonusXp, profile: updatedProfile };

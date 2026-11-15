@@ -332,9 +332,9 @@ export const SuzukaStudentDeck: React.FC<SuzukaStudentDeckProps> = ({
 
         {/* Hero Prompt Layout: Giant Square Card on Left + (Prompt Bar on top & 2x2 Grid on bottom) on Right */}
         {hasPromptHero ? (
-          <div className="flex gap-2 sm:gap-3 w-full h-[184px] sm:h-[192px] shrink-0 select-none touch-manipulation">
+          <div className="flex gap-2 sm:gap-3 w-full h-[236px] sm:h-[268px] md:h-[292px] shrink-0 select-none touch-manipulation">
             {/* Left: Giant Hero Image Card (Spans full console height!) */}
-            <div className="w-[170px] sm:w-[185px] md:w-[195px] h-full rounded-2xl bg-slate-900/95 border-2 border-slate-700/80 p-2 shadow-2xl flex items-center justify-center shrink-0 overflow-hidden relative">
+            <div className="w-[195px] sm:w-[225px] md:w-[248px] h-full rounded-2xl bg-slate-900/95 border-2 border-slate-700/80 p-2 shadow-2xl flex items-center justify-center shrink-0 overflow-hidden relative">
               <div className="w-full h-full rounded-xl bg-white p-2 shadow-sm border border-black/10 flex items-center justify-center overflow-hidden">
                 <img
                   src={question.promptImage}
@@ -543,7 +543,7 @@ export const SuzukaStudentDeck: React.FC<SuzukaStudentDeckProps> = ({
           <>
             {/* Standard Full-Width Layout: Top Prompt Bar */}
             <div
-              className="w-full shrink-0 h-10 sm:h-11 px-3 sm:px-4 mb-1 sm:mb-1.5 rounded-xl bg-slate-900/90 border border-slate-700/80 flex items-center justify-between gap-2 text-center shadow-md relative"
+              className="w-full shrink-0 h-11 sm:h-12 px-3 sm:px-4 mb-1 sm:mb-1.5 rounded-xl bg-slate-900/90 border border-slate-700/80 flex items-center justify-between gap-2 text-center shadow-md relative"
             >
               <div className="w-8 shrink-0" />
               <div className="flex-1 flex items-center justify-center min-w-0">
@@ -594,7 +594,7 @@ export const SuzukaStudentDeck: React.FC<SuzukaStudentDeckProps> = ({
 
         {/* 4 Touch Choice Buttons: Interlocking L-Pods when options contain illustrations, or standard 2x2 grid for text */}
         {hasChoiceImages && question.options.length === 4 ? (
-          <div className="grid grid-cols-2 gap-2 sm:gap-2.5 relative w-full h-[146px] sm:h-[154px] shrink-0 select-none touch-manipulation">
+          <div className="grid grid-cols-2 gap-2 sm:gap-2.5 relative w-full h-[208px] sm:h-[238px] md:h-[264px] shrink-0 select-none touch-manipulation">
             {/* Constructive Pit-Stop Mistake Coach Overlay */}
             {penaltySecondsLeft > 0 && (
               <div className="absolute inset-x-2 top-1/2 -translate-y-1/2 z-40 mx-auto max-w-sm pointer-events-none flex flex-col items-center justify-center rounded-2xl bg-slate-950/96 border-2 border-amber-400 text-white py-1.5 px-3 shadow-xl">
@@ -769,7 +769,7 @@ export const SuzukaStudentDeck: React.FC<SuzukaStudentDeckProps> = ({
                 const isSPressed = activeTouchId === sOpt.id;
 
                 return (
-                  <div className="relative w-full h-full grid grid-cols-[115px_1fr_115px] sm:grid-cols-[130px_1fr_130px] grid-rows-2 rounded-2xl bg-slate-950/90 border border-slate-800 shadow-xl overflow-hidden p-0.5">
+                  <div className="relative w-full h-full grid grid-cols-[130px_1fr_130px] sm:grid-cols-[156px_1fr_156px] md:grid-cols-[172px_1fr_172px] grid-rows-2 rounded-2xl bg-slate-950/90 border border-slate-800 shadow-xl overflow-hidden p-0.5">
                     {/* Primary Tall Image Pod (Left column, rows 1 & 2) */}
                     <button
                       type="button"
@@ -875,7 +875,7 @@ export const SuzukaStudentDeck: React.FC<SuzukaStudentDeckProps> = ({
             })()}
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-1.5 sm:gap-2 relative w-full flex-1 min-h-0">
+          <div className="grid grid-cols-2 gap-1.5 sm:gap-2 relative w-full h-[196px] sm:h-[226px] md:h-[252px] shrink-0 select-none touch-manipulation">
             {/* Constructive Pit-Stop Mistake Coach Overlay */}
             {penaltySecondsLeft > 0 && (
               <div className="absolute inset-x-2 top-1/2 -translate-y-1/2 z-30 mx-auto max-w-sm pointer-events-none flex flex-col items-center justify-center rounded-2xl bg-slate-950/96 border-2 border-amber-400 text-white py-1.5 px-3 shadow-xl">

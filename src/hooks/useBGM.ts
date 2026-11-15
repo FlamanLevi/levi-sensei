@@ -483,7 +483,7 @@ export const useBGM = (
     try {
       audio.playbackRate = playbackRateRef.current;
       if ('preservesPitch' in audio) {
-        (audio as unknown as { preservesPitch: boolean }).preservesPitch = false;
+        (audio as unknown as { preservesPitch: boolean }).preservesPitch = true;
       }
     } catch {
       // Ignore playbackRate errors on unsupported devices
@@ -710,7 +710,7 @@ export const useBGM = (
     try {
       audio.playbackRate = playbackRate;
       if ('preservesPitch' in audio) {
-        (audio as unknown as { preservesPitch: boolean }).preservesPitch = false;
+        (audio as unknown as { preservesPitch: boolean }).preservesPitch = true;
       }
     } catch (e) {
       console.warn('Could not set audio playbackRate:', e);

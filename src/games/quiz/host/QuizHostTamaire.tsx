@@ -422,23 +422,6 @@ export const QuizHostTamaire: React.FC<QuizHostTamaireProps> = ({
               </button>
             </div>
           )}
-
-          {onToggleEyesUp && (
-            <button
-              type="button"
-              onClick={onToggleEyesUp}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-black border transition-all active:scale-95 cursor-pointer shrink-0 whitespace-nowrap ${
-                eyesUp
-                  ? 'bg-amber-400 text-slate-950 border-amber-300 ring-2 ring-amber-400/50'
-                  : 'bg-slate-800 hover:bg-slate-700 text-amber-300 border-amber-500/30'
-              }`}
-            >
-              <span className="text-sm">👀</span>
-              <span className="hidden md:inline">
-                {eyesUp ? t('Eyes Up ON', '注目ロック中') : t('Eyes Up', '全員注目')}
-              </span>
-            </button>
-          )}
         </div>
 
         {/* Center: Undokai Tamaire (玉入れ) Scoreboard + Mystery Count Toggle */}

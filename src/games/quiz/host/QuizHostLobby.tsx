@@ -277,21 +277,6 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
 
         {/* Top-Right Action Cluster: START GAME + Settings + Cancel */}
         <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 flex-nowrap">
-          {onToggleEyesUp && (
-            <button
-              onClick={() => onToggleEyesUp()}
-              className={`px-3 sm:px-3.5 py-2 rounded-2xl font-bold text-xs transition-all flex items-center gap-1.5 cursor-pointer shadow-xs border active:scale-95 whitespace-nowrap ${
-                eyesUp
-                  ? 'bg-amber-400 text-slate-950 border-amber-300 ring-2 ring-amber-400/50 animate-pulse font-black'
-                  : 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800/60 hover:bg-amber-100 dark:hover:bg-amber-900/60'
-              }`}
-              title={eyesUp ? t('Unlock Student Screens', '注目解除（画面をもどす）') : t('Lock Attention: Eyes Up Front', '全員注目（前を見てね）')}
-            >
-              <span className="text-sm">👀</span>
-              <span>{eyesUp ? t('Eyes Up ON', '注目中') : t('Eyes Up', '全員注目')}</span>
-            </button>
-          )}
-
           {onEditSettings && (
             <button
               onClick={onEditSettings}

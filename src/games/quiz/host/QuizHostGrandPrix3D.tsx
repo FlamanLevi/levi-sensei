@@ -419,21 +419,6 @@ export const QuizHostGrandPrix3D: React.FC<QuizHostGrandPrix3DProps> = ({
               </button>
             )}
 
-            {onToggleEyesUp && (
-              <button
-                type="button"
-                onClick={onToggleEyesUp}
-                className={`px-2.5 py-1.5 rounded-xl font-black text-xs flex items-center gap-1 cursor-pointer transition-all active:scale-95 border whitespace-nowrap ${
-                  eyesUp
-                    ? 'bg-amber-400 text-slate-950 border-amber-300 animate-pulse'
-                    : 'bg-slate-800 hover:bg-slate-700 text-amber-300 border-slate-700'
-                }`}
-              >
-                <span>👀</span>
-                <span className="hidden md:inline">{eyesUp ? t('Eyes Up ON', '注目中') : t('Eyes Up', '全員注目')}</span>
-              </button>
-            )}
-
             {onToggleBgmMute && bgmTrackTitle && (
               <BgmControlPill
                 trackTitle={bgmTrackTitle}

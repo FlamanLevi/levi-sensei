@@ -600,26 +600,6 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
         />
       )}
 
-      {/* Eyes on Teacher (Attention Lock) Dimmer Overlay */}
-      {room.eyesUp && (
-        <div className="fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center select-none animate-in fade-in duration-150">
-          <div className="w-24 h-24 rounded-3xl bg-amber-400 text-slate-950 flex items-center justify-center text-5xl shadow-2xl mb-5 animate-bounce">
-            👀
-          </div>
-          <h2 className="text-3xl sm:text-4xl font-black text-white mb-2 tracking-tight">
-            <ruby>前<rt>まえ</rt></ruby>を<ruby>見<rt>み</rt></ruby>てね！
-          </h2>
-          <p className="text-xl sm:text-2xl font-black text-amber-400 mb-3">
-            Eyes Up Front!
-          </p>
-          <p className="text-base sm:text-lg font-bold text-slate-200 max-w-sm mt-1">
-            <ruby>先生<rt>せんせい</rt></ruby>の<ruby>話<rt>はなし</rt></ruby>を<ruby>聞<rt>き</rt></ruby>こう 👨‍🏫
-          </p>
-          <span className="text-xs text-slate-500 font-medium mt-1">
-            (Listen to Levi Sensei)
-          </span>
-        </div>
-      )}
     </div>
   );
 };

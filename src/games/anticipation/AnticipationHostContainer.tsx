@@ -1054,17 +1054,6 @@ export const AnticipationHostContainer: React.FC<AnticipationHostContainerProps>
           )}
           <button
             type="button"
-            onClick={() => toggleEyesUp()}
-            className={`px-2.5 py-1.5 rounded-xl font-black text-xs border cursor-pointer whitespace-nowrap ${
-              room?.eyesUp
-                ? 'bg-amber-400 text-slate-950 border-amber-500'
-                : 'bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border-amber-200 dark:border-amber-800'
-            }`}
-          >
-            👀 {room?.eyesUp ? t('Eyes Up ON', '注目中') : t('Eyes Up', '全員注目')}
-          </button>
-          <button
-            type="button"
             onClick={() => setIsInstructionsOpen(true)}
             className="p-2 rounded-xl bg-sky-50 dark:bg-sky-950/50 text-sky-700 dark:text-sky-300 border border-sky-200 dark:border-sky-800 cursor-pointer"
             title={t('How to Play', 'あそびかた')}

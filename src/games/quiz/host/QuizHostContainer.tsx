@@ -863,23 +863,6 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
         />
       )}
 
-      {/* Floating Attention Lock / "Eyes Up Front" Pill for Classroom Host (hidden in Lobby, Sprint, 3D Grand Prix, Tug of War & Tamaire where it is in the header) */}
-      {roomCode && step !== 'SETUP' && step !== 'LOBBY' && step !== 'SPRINT_RACE' && step !== 'GRAND_PRIX_3D' && step !== 'TUG_OF_WAR' && step !== 'TAMAIRE' && step !== 'VOLLEYBALL' && (
-        <button
-          type="button"
-          onClick={() => toggleEyesUp()}
-          className={`fixed bottom-4 left-4 z-50 flex items-center gap-2 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-2xl shadow-2xl font-black text-xs sm:text-sm transition-all duration-200 border-2 active:scale-95 cursor-pointer print:hidden ${
-            room?.eyesUp
-              ? 'bg-amber-400 text-slate-950 border-amber-300 ring-4 ring-amber-400/50 animate-pulse'
-              : 'bg-slate-900/90 dark:bg-slate-800/90 hover:bg-slate-800 text-amber-300 border-amber-500/40 hover:border-amber-400'
-          }`}
-          title={room?.eyesUp ? (t('Dismiss Eyes Up', '注目ロックを解除') as string) : (t('Lock Attention: Eyes Up Front', '全員注目ロック ON') as string)}
-        >
-          <span className="text-base sm:text-lg">👀</span>
-          <span>{room?.eyesUp ? t('Eyes Up ON', '注目ロック中') : t('Eyes Up', '全員注目')}</span>
-        </button>
-      )}
-
       {/* Floating High-Energy BGM Control Pill for Classroom Host (hidden in Lobby, Sprint, 3D Grand Prix, Tug of War, Tamaire & Game Over screens which have integrated or silent audio) */}
       {hasTrack && step !== 'SETUP' && step !== 'LOBBY' && step !== 'GAME_OVER' && step !== 'SPRINT_RACE' && step !== 'GRAND_PRIX_3D' && step !== 'TUG_OF_WAR' && step !== 'TAMAIRE' && step !== 'VOLLEYBALL' && (
         <div className="fixed bottom-4 right-4 z-50 animate-in fade-in slide-in-from-bottom-2 print:hidden">

@@ -381,23 +381,6 @@ export const QuizHostTugOfWar: React.FC<QuizHostTugOfWarProps> = ({
               +4 {t('Bots', 'ボット')}
             </button>
           )}
-
-          {/* Integrated Attention Lock (Eyes Up) Toggle - eliminates overlapping bottom pill */}
-          {onToggleEyesUp && (
-            <button
-              type="button"
-              onClick={onToggleEyesUp}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-black border transition-all active:scale-95 cursor-pointer shrink-0 whitespace-nowrap ${
-                eyesUp
-                  ? 'bg-amber-400 text-slate-950 border-amber-300 ring-2 ring-amber-400/50 animate-pulse'
-                  : 'bg-slate-800/80 hover:bg-slate-700 text-amber-300 border-amber-500/30'
-              }`}
-              title={(eyesUp ? t('Attention Lock ON (Click to Unlock)', '注目ロック中（クリックで解除）') : t('Lock Attention: Eyes Up Front', '全員注目（前を見てね！）')) as string}
-            >
-              <span className="text-sm">👀</span>
-              <span className="hidden md:inline">{eyesUp ? t('Eyes Up ON', '注目ロック中') : t('Eyes Up', '全員注目')}</span>
-            </button>
-          )}
         </div>
 
         {/* Center: Sports Day Headband Banner with Multi-Round Win Dots */}

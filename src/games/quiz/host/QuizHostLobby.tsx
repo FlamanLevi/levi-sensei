@@ -359,15 +359,15 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
         <div className="lg:col-span-7 flex flex-col justify-between p-3.5 sm:p-4 bg-white/75 dark:bg-slate-900/75 backdrop-blur-xs border-4 border-white/80 dark:border-slate-700/80 rounded-3xl shadow-xl min-h-0 overflow-hidden">
           {/* Roster Header */}
           <div className="flex items-center justify-between pb-2 border-b border-slate-200/80 dark:border-slate-700/80 mb-2 shrink-0 flex-nowrap gap-2">
-            <div className="flex items-center gap-2 min-w-0 flex-nowrap">
-              <Users className="text-blue-600 dark:text-blue-400 shrink-0" size={20} />
-              <h3 className="text-base font-black text-slate-900 dark:text-white flex items-baseline gap-1 whitespace-nowrap drop-shadow-2xs">
-                <span>{isStudentHost ? t('Connected Players:', '参加中のプレイヤー:') : t('Connected Students:', '接続中の生徒:')}</span>
-                <span className="text-blue-600 dark:text-blue-400 font-mono text-xl">{playerList.length}</span>
+            <div className="flex items-center gap-1.5 min-w-0 flex-nowrap shrink-0">
+              <Users className="text-blue-600 dark:text-blue-400 shrink-0" size={18} />
+              <h3 className="text-sm sm:text-base font-black text-slate-900 dark:text-white flex items-baseline gap-1 whitespace-nowrap drop-shadow-2xs shrink-0">
+                <span>{isStudentHost ? t('Connected Players:', '参加中:') : t('Connected Students:', '接続中の生徒:')}</span>
+                <span className="text-blue-600 dark:text-blue-400 font-mono text-lg sm:text-xl">{playerList.length}</span>
                 {!isStudentHost && expectedCapacity > 0 && (
-                  <span className="text-slate-600 dark:text-slate-300 font-mono text-sm font-bold">
+                  <span className="text-slate-600 dark:text-slate-300 font-mono text-xs sm:text-sm font-bold">
                     / {expectedCapacity}
-                    <span className="ml-1 text-xs font-semibold text-slate-600 dark:text-slate-300">
+                    <span className="ml-1 text-[11px] font-semibold text-slate-600 dark:text-slate-300">
                       ({Math.round((playerList.length / expectedCapacity) * 100)}%)
                     </span>
                   </span>
@@ -381,43 +381,46 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
               )}
             </div>
 
-            {/* Class Energy Vault Co-Op Meter */}
-            {classVault && vaultTierInfo && (
-              <div
-                className="hidden sm:flex items-center gap-2 px-3 py-1 rounded-2xl bg-amber-50/95 dark:bg-amber-950/75 border-2 border-amber-300 dark:border-amber-800 shadow-2xs shrink-0"
-                title={t(
-                  `Class Energy Vault: ${classVault.totalEnergy.toLocaleString()} pts. 10% of quiz scores are deposited here toward shared milestones!`,
-                  `クラス団結エナジー: ${classVault.totalEnergy.toLocaleString()} pts。全員のクイズ得点の10%がここに貯まり、クラス合同のマスコットが解放されます！`
-                )}
-              >
-                <span className="text-lg animate-pulse">{vaultTierInfo.currentTier.badge}{vaultTierInfo.currentTier.mascotEmoji}</span>
-                <div className="flex flex-col min-w-[110px]">
-                  <div className="flex items-center justify-between text-[10px] font-black text-amber-900 dark:text-amber-200 leading-none mb-1">
-                    <span>⚡ {language === 'ja' ? 'クラス団結エナジー' : 'Class Energy'}</span>
-                    <span className="font-mono">{classVault.totalEnergy.toLocaleString()} pts</span>
+            <div className="flex items-center gap-1.5 shrink-0 flex-nowrap min-w-0">
+              {/* Class Energy Vault Co-Op Meter (compact on tablet widths so student count never truncates) */}
+              {classVault && vaultTierInfo && (
+                <div
+                  className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-2xl bg-amber-50/95 dark:bg-amber-950/75 border-2 border-amber-300 dark:border-amber-800 shadow-2xs shrink-0"
+                  title={t(
+                    `Class Energy Vault: ${classVault.totalEnergy.toLocaleString()} pts. 10% of quiz scores are deposited here toward shared milestones!`,
+                    `クラス団結エナジー: ${classVault.totalEnergy.toLocaleString()} pts。全員のクイズ得点の10%がここに貯まり、クラス合同のマスコットが解放されます！`
+                  )}
+                >
+                  <span className="text-base animate-pulse leading-none">{vaultTierInfo.currentTier.badge}{vaultTierInfo.currentTier.mascotEmoji}</span>
+                  <div className="flex flex-col min-w-[84px]">
+                    <div className="flex items-center justify-between gap-1.5 text-[10px] font-black text-amber-900 dark:text-amber-200 leading-none mb-1 whitespace-nowrap">
+                      <span>⚡ {language === 'ja' ? 'エナジー' : 'Energy'}</span>
+                      <span className="font-mono">{classVault.totalEnergy.toLocaleString()}</span>
+                    </div>
+                    <div className="w-full h-1.5 rounded-full bg-amber-200 dark:bg-amber-900/60 overflow-hidden">
+                      <div
+                        className={`h-full rounded-full bg-gradient-to-r ${vaultTierInfo.currentTier.accentGradient} transition-all duration-500`}
+                        style={{ width: `${vaultTierInfo.progressPct}%` }}
+                      />
+                    </div>
                   </div>
-                  <div className="w-full h-1.5 rounded-full bg-amber-200 dark:bg-amber-900/60 overflow-hidden">
-                    <div
-                      className={`h-full rounded-full bg-gradient-to-r ${vaultTierInfo.currentTier.accentGradient} transition-all duration-500`}
-                      style={{ width: `${vaultTierInfo.progressPct}%` }}
-                    />
-                  </div>
+                  <span className="text-[10px] font-black font-mono text-amber-800 dark:text-amber-300 px-1.5 py-0.5 rounded-md bg-amber-200/60 dark:bg-amber-900/40 shrink-0">
+                    T{vaultTierInfo.currentTier.tier}
+                  </span>
                 </div>
-                <span className="text-[10px] font-black font-mono text-amber-800 dark:text-amber-300 px-1.5 py-0.5 rounded-md bg-amber-200/60 dark:bg-amber-900/40">
-                  T{vaultTierInfo.currentTier.tier}
+              )}
+
+              {playerList.length === 0 ? (
+                <span className={`text-xs text-slate-700 dark:text-slate-300 font-bold animate-pulse shrink-0 whitespace-nowrap ${classVault ? 'hidden xl:inline-block' : ''}`}>
+                  {t('Waiting to scan...', 'スキャン待ち...')}
                 </span>
-              </div>
-            )}
-            {playerList.length === 0 ? (
-              <span className="text-xs text-slate-700 dark:text-slate-300 font-bold animate-pulse shrink-0 whitespace-nowrap">
-                {t('Waiting for students to scan...', '生徒のスキャンを待っています...')}
-              </span>
-            ) : (
-              <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1 shrink-0 whitespace-nowrap">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
-                <span>{t('Ready to play!', '参加準備OK!')}</span>
-              </span>
-            )}
+              ) : (
+                <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1 shrink-0 whitespace-nowrap">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
+                  <span className={classVault ? 'hidden xl:inline' : ''}>{t('Ready!', '準備OK!')}</span>
+                </span>
+              )}
+            </div>
           </div>
 
           {/* Streamlined Single-Row CPU Practice Bots Control Bar */}

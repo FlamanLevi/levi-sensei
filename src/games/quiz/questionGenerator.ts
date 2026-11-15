@@ -433,31 +433,6 @@ export function generateQuizQuestions(
     const getNormalizedJa = (w: VocabularyItem): string =>
       (w.ja_kanji || w.ja_hiragana || (w as any).japanese || '').trim().toLowerCase();
 
-    // Deduplicate distractor candidates by BOTH English lemma and Japanese meaning to ensure 3 completely unique choices
-    const seenDistractorLemmas = new Set<string>([targetLower]);
-    const targetJaNorm = getNormalizedJa(target);
-    const seenDistractorJa = new Set<string>(targetJaNorm ? [targetJaNorm] : []);
-
-    const distractors: VocabularyItem[] = [];
-    for (const cand of distractorCandidates) {
-      const candLemma = cand.english.trim().toLowerCase();
-      const candJa = getNormalizedJa(cand);
-      if (
-        !seenDistractorLemmas.has(candLemma) &&
-        (!candJa || !seenDistractorJa.has(candJa))
-      ) {
-        seenDistractorLemmas.add(candLemma);
-        if (candJa) seenDistractorJa.add(candJa);
-        distractors.push(cand);
-        if (distractors.length === 3) break;
-      }
-    }
-
-    if (chosenPromptType !== 'PHONICS_MASK' && distractors.length < 3) {
-      // Not enough distractors anywhere
-      continue;
-    }
-
     // HARDCODED PEDAGOGICAL INVARIANT (Visual Cheat Prevention):
     // 1. Strictly NO for 'EN_TO_JA' and 'IMAGE_ONLY' (if prompt has image or is translation, choices must never have pictures).
     // 2. If settings.choiceImageMode === 'TEXT_ONLY', strictly no images on choices.
@@ -469,6 +444,55 @@ export function generateQuizQuestions(
       && chosenPromptType !== 'PHONICS_MASK'
       && chosenPromptType !== 'SHORT_CLOZE'
       && chosenPromptType !== 'CATEGORY_HUNT';
+
+    // Deduplicate distractor candidates by English lemma, Japanese meaning, AND resolved artwork URL
+    // so two choices never show identical pictures when image choices are active.
+    const seenDistractorLemmas = new Set<string>([targetLower]);
+    const targetJaNorm = getNormalizedJa(target);
+    const seenDistractorJa = new Set<string>(targetJaNorm ? [targetJaNorm] : []);
+    const seenDistractorImages = new Set<string>(allowChoiceImages && targetImage ? [targetImage] : []);
+
+    const distractors: VocabularyItem[] = [];
+    for (const cand of distractorCandidates) {
+      const candLemma = cand.english.trim().toLowerCase();
+      const candJa = getNormalizedJa(cand);
+      const candImg = allowChoiceImages ? resolveWordImage(cand, grade) : '';
+      if (
+        !seenDistractorLemmas.has(candLemma) &&
+        (!candJa || !seenDistractorJa.has(candJa)) &&
+        (!allowChoiceImages || !candImg || !seenDistractorImages.has(candImg))
+      ) {
+        seenDistractorLemmas.add(candLemma);
+        if (candJa) seenDistractorJa.add(candJa);
+        if (candImg) seenDistractorImages.add(candImg);
+        distractors.push(cand);
+        if (distractors.length === 3) break;
+      }
+    }
+
+    // Fallback pass for ultra-small custom pools where words might share fallback artwork:
+    // keep distinct English lemmas & Japanese meanings while filling up to 3 distractors.
+    if (allowChoiceImages && distractors.length < 3) {
+      for (const cand of distractorCandidates) {
+        if (distractors.includes(cand)) continue;
+        const candLemma = cand.english.trim().toLowerCase();
+        const candJa = getNormalizedJa(cand);
+        if (
+          !seenDistractorLemmas.has(candLemma) &&
+          (!candJa || !seenDistractorJa.has(candJa))
+        ) {
+          seenDistractorLemmas.add(candLemma);
+          if (candJa) seenDistractorJa.add(candJa);
+          distractors.push(cand);
+          if (distractors.length === 3) break;
+        }
+      }
+    }
+
+    if (chosenPromptType !== 'PHONICS_MASK' && distractors.length < 3) {
+      // Not enough distractors anywhere
+      continue;
+    }
 
     let options: QuizOption[] = [];
     let distractorOptionIds: string[] = [];

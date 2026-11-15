@@ -28,7 +28,10 @@ import {
   Star, 
   Users,
   Flag,
-  Clock
+  Clock,
+  X,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 
 import { useLanguage } from '@/context/LanguageContext';
@@ -37,6 +40,7 @@ import { SchoolId, getClassSize } from '@/types/roster';
 import { speechService } from '@/services/speechService';
 import { useClassroomClicker } from '@/hooks/useClassroomClicker';
 import { ClassroomBlackoutShutter } from '@/components/common/ClassroomBlackoutShutter';
+import { RubyText } from '@/components/common/RubyText';
 import { resolveRacerNumber } from '@/games/suzuka_grand_prix/kartPresets';
 import { AvatarDisplay } from '@/components/common/AvatarDisplay';
 import { getShopItemById } from '@/services/shopCatalog';
@@ -147,6 +151,7 @@ export const QuizHostGameOver: React.FC<QuizHostGameOverProps> = ({
   const { t, language } = useLanguage();
   const { isMuted, playWordAudio } = useAudio();
   const [activeAudioWord, setActiveAudioWord] = useState<string | null>(null);
+  const [spotlightIndex, setSpotlightIndex] = useState<number | null>(null);
   const [isBlackout, setIsBlackout] = useState(false);
   const [viewMode, setViewMode] = useState<'PODIUM' | 'DEBRIEF'>('PODIUM');
 
@@ -219,6 +224,73 @@ export const QuizHostGameOver: React.FC<QuizHostGameOverProps> = ({
       onDuckBGM?.(false);
     });
   };
+
+  // Enrich trouble/recap words with illustration, ruby, hiragana, and katakana from generated session questions
+  const questionMetaByEnglish = useMemo(() => {
+    const map = new Map<string, {
+      image?: string;
+      sound?: string;
+      ja?: string;
+      hiragana?: string;
+      katakana?: string;
+      ruby?: QuizQuestion['targetWordRuby'];
+    }>();
+    for (const q of questions) {
+      const key = q.targetWordEnglish?.trim().toLowerCase();
+      if (!key) continue;
+      const correctOpt = q.options.find(o => o.id === q.correctOptionId);
+      const resolvedImage = q.promptImage || correctOpt?.image || '';
+      const existing = map.get(key);
+      map.set(key, {
+        image: resolvedImage || existing?.image,
+        sound: q.promptSound || existing?.sound,
+        ja: q.targetWordJa || existing?.ja,
+        hiragana: q.targetWordHiragana || existing?.hiragana,
+        katakana: q.targetWordKatakana || existing?.katakana,
+        ruby: q.targetWordRuby || existing?.ruby,
+      });
+    }
+    return map;
+  }, [questions]);
+
+  const uniqueRecapQuestions = useMemo(() => {
+    const seen = new Set<string>();
+    const list: QuizQuestion[] = [];
+    for (const q of questions) {
+      const key = (q.targetWordEnglish || q.targetWordId || q.promptText || String(q.questionIndex)).trim().toLowerCase();
+      if (isMathRound) {
+        list.push(q);
+      } else if (!seen.has(key)) {
+        seen.add(key);
+        list.push(q);
+      }
+    }
+    return list;
+  }, [questions, isMathRound]);
+
+  const troubleCount = Object.keys(troubleWords).length;
+
+  useEffect(() => {
+    if (spotlightIndex === null || isMathRound) return;
+    const deckLen = troubleCount > 0 ? troubleCount : uniqueRecapQuestions.length;
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        e.stopPropagation();
+        setSpotlightIndex(null);
+      } else if (e.key === 'ArrowRight' || e.key === 'PageDown') {
+        e.preventDefault();
+        e.stopPropagation();
+        if (deckLen > 1) setSpotlightIndex(prev => (prev === null ? 0 : (prev + 1) % deckLen));
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        e.preventDefault();
+        e.stopPropagation();
+        if (deckLen > 1) setSpotlightIndex(prev => (prev === null ? 0 : (prev - 1 + deckLen) % deckLen));
+      }
+    };
+    window.addEventListener('keydown', handleKey, true);
+    return () => window.removeEventListener('keydown', handleKey, true);
+  }, [spotlightIndex, isMathRound, troubleCount, uniqueRecapQuestions.length]);
 
   const computedAnalytics: SessionAnalytics = useMemo(() => {
     if (analytics) return analytics;
@@ -1412,7 +1484,7 @@ export const QuizHostGameOver: React.FC<QuizHostGameOverProps> = ({
       {/* 3. Interactive Trouble Words Choral Review */}
       {troubleList.length > 0 && (
         <div className="mt-4 p-5 rounded-3xl bg-rose-50/60 dark:bg-rose-950/20 border-2 border-rose-200 dark:border-rose-900/60">
-          <div className="flex items-center justify-between mb-3">
+          <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
             <div className="flex items-center gap-2">
               <AlertCircle className="text-rose-500" size={20} />
               <h3 className="text-base font-black text-rose-950 dark:text-rose-200">
@@ -1423,34 +1495,58 @@ export const QuizHostGameOver: React.FC<QuizHostGameOverProps> = ({
             </div>
             {!isMathRound && (
               <span className="text-xs font-bold text-rose-600 dark:text-rose-400">
-                {t('Tap any card to repeat pronunciation! 🗣️', <>カードをタップして<ruby>発音<rt>はつおん</rt></ruby>を<ruby>確認<rt>かくにん</rt></ruby>しよう！ 🗣️</>)}
+                {t('Tap any card for big Flashcard & Audio! 🗣️', <>カードをタップして<ruby>大画面<rt>だいがめん</rt></ruby>＆<ruby>発音<rt>はつおん</rt></ruby>チェック！ 🗣️</>)}
               </span>
             )}
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {troubleList.map((tw) => {
+            {troubleList.map((tw, idx) => {
               const isPlaying = activeAudioWord === tw.english;
+              const meta = questionMetaByEnglish.get(tw.english.trim().toLowerCase());
+              const thumbImage = tw.image || meta?.image;
+              const soundSrc = tw.sound || meta?.sound;
               return (
                 <button
                   key={tw.english}
-                  onClick={() => playTroubleAudio(tw)}
-                  className={`p-3 rounded-2xl bg-white dark:bg-slate-900 border-2 transition-all flex items-center justify-between text-left shadow-sm group ${
+                  type="button"
+                  onClick={() => {
+                    if (!isMathRound) {
+                      setSpotlightIndex(idx);
+                      playTroubleAudio({ english: tw.english, sound: soundSrc });
+                    }
+                  }}
+                  className={`p-3 rounded-2xl bg-white dark:bg-slate-900 border-2 transition-all flex items-center justify-between gap-2 text-left shadow-sm group cursor-pointer ${
                     isPlaying
                       ? 'border-rose-500 ring-2 ring-rose-400'
                       : 'border-slate-200 dark:border-slate-800 hover:border-rose-400'
                   }`}
                 >
-                  <div className="min-w-0 flex-1 pr-2">
+                  {!isMathRound && thumbImage && (
+                    <div className="w-11 h-11 rounded-xl bg-white border border-slate-200 p-0.5 flex items-center justify-center shrink-0 overflow-hidden">
+                      <img
+                        src={thumbImage}
+                        alt={tw.english}
+                        referrerPolicy="no-referrer"
+                        className="w-full h-full object-contain"
+                      />
+                    </div>
+                  )}
+                  <div className="min-w-0 flex-1">
                     <span className="text-base font-black text-slate-900 dark:text-white block truncate group-hover:text-rose-600 dark:group-hover:text-rose-400">
                       {tw.english}
                     </span>
                     <span className="text-xs text-slate-500 dark:text-slate-400 block truncate">
                       {tw.ja}
                     </span>
+                    {tw.incorrectCount > 0 && (
+                      <span className="inline-block mt-0.5 text-[10px] font-black text-rose-600 dark:text-rose-400">
+                        {tw.incorrectCount} {t('misses', '回ミス')}
+                      </span>
+                    )}
                   </div>
                   {!isMathRound && (
-                    <div className={`p-2 rounded-xl text-white shrink-0 ${isPlaying ? 'bg-rose-500 animate-bounce' : 'bg-rose-100 dark:bg-rose-950 text-rose-600 dark:text-rose-300'}`}>
+                    <div className={`p-2 rounded-xl shrink-0 ${isPlaying ? 'bg-rose-500 text-white animate-bounce' : 'bg-rose-100 dark:bg-rose-950 text-rose-600 dark:text-rose-300'}`}>
                       <Volume2 size={16} />
                     </div>
                   )}
@@ -1481,7 +1577,7 @@ export const QuizHostGameOver: React.FC<QuizHostGameOverProps> = ({
       {/* 4. Session Flashcard / Math Problems Recap */}
       {troubleList.length === 0 && questions.length > 0 && (
         <div className="mt-4 p-5 rounded-3xl bg-indigo-50/60 dark:bg-indigo-950/20 border-2 border-indigo-200 dark:border-indigo-900/60">
-          <div className="flex items-center justify-between mb-3">
+          <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
             <div className="flex items-center gap-2">
               <BookOpen className="text-indigo-600 dark:text-indigo-400" size={20} />
               <h3 className="text-base font-black text-indigo-950 dark:text-indigo-200">
@@ -1492,25 +1588,42 @@ export const QuizHostGameOver: React.FC<QuizHostGameOverProps> = ({
             </div>
             {!isMathRound && (
               <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400">
-                {t('Tap any card to repeat pronunciation! 🗣️', <>カードをタップして<ruby>発音<rt>はつおん</rt></ruby>を<ruby>確認<rt>かくにん</rt></ruby>しよう！ 🗣️</>)}
+                {t('Tap any card for big Flashcard & Audio! 🗣️', <>カードをタップして<ruby>大画面<rt>だいがめん</rt></ruby>＆<ruby>発音<rt>はつおん</rt></ruby>チェック！ 🗣️</>)}
               </span>
             )}
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {questions.map((q) => {
+            {uniqueRecapQuestions.map((q, idx) => {
               const isPlaying = activeAudioWord === q.targetWordEnglish;
+              const thumbImage = q.promptImage || q.options.find(o => o.id === q.correctOptionId)?.image;
               return (
                 <button
                   key={q.targetWordId + q.questionIndex}
-                  onClick={() => !isMathRound && playTroubleAudio({ english: q.targetWordEnglish, sound: q.promptSound })}
-                  className={`p-3 rounded-2xl bg-white dark:bg-slate-900 border-2 transition-all flex items-center justify-between text-left shadow-sm group ${
+                  type="button"
+                  onClick={() => {
+                    if (!isMathRound) {
+                      setSpotlightIndex(idx);
+                      playTroubleAudio({ english: q.targetWordEnglish, sound: q.promptSound });
+                    }
+                  }}
+                  className={`p-3 rounded-2xl bg-white dark:bg-slate-900 border-2 transition-all flex items-center justify-between gap-2 text-left shadow-sm group cursor-pointer ${
                     isPlaying
                       ? 'border-indigo-500 ring-2 ring-indigo-400'
                       : 'border-slate-200 dark:border-slate-800 hover:border-indigo-400'
                   }`}
                 >
-                  <div className="min-w-0 flex-1 pr-2">
+                  {!isMathRound && thumbImage && (
+                    <div className="w-11 h-11 rounded-xl bg-white border border-slate-200 p-0.5 flex items-center justify-center shrink-0 overflow-hidden">
+                      <img
+                        src={thumbImage}
+                        alt={q.targetWordEnglish}
+                        referrerPolicy="no-referrer"
+                        className="w-full h-full object-contain"
+                      />
+                    </div>
+                  )}
+                  <div className="min-w-0 flex-1">
                     <span className="text-base font-black text-slate-900 dark:text-white block truncate group-hover:text-indigo-600 dark:group-hover:text-indigo-400">
                       {isMathRound ? q.promptText : q.targetWordEnglish}
                     </span>
@@ -1519,7 +1632,7 @@ export const QuizHostGameOver: React.FC<QuizHostGameOverProps> = ({
                     </span>
                   </div>
                   {!isMathRound && (
-                    <div className={`p-2 rounded-xl text-white shrink-0 ${isPlaying ? 'bg-indigo-500 animate-bounce' : 'bg-indigo-100 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-300'}`}>
+                    <div className={`p-2 rounded-xl shrink-0 ${isPlaying ? 'bg-indigo-500 text-white animate-bounce' : 'bg-indigo-100 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-300'}`}>
                       <Volume2 size={16} />
                     </div>
                   )}
@@ -1531,6 +1644,170 @@ export const QuizHostGameOver: React.FC<QuizHostGameOverProps> = ({
       )}
         </>
       )}
+
+      {/* Whole-Class TV Flashcard Spotlight Modal */}
+      {!isMathRound && spotlightIndex !== null && (() => {
+        const isTroubleDeck = troubleList.length > 0;
+        const deck = isTroubleDeck
+          ? troubleList.map((tw) => {
+              const meta = questionMetaByEnglish.get(tw.english.trim().toLowerCase());
+              return {
+                english: tw.english,
+                ja: tw.ja || meta?.ja || '',
+                hiragana: meta?.hiragana,
+                katakana: meta?.katakana,
+                ruby: meta?.ruby,
+                image: tw.image || meta?.image,
+                sound: tw.sound || meta?.sound,
+                incorrectCount: tw.incorrectCount,
+              };
+            })
+          : uniqueRecapQuestions.map((q) => ({
+              english: q.targetWordEnglish,
+              ja: q.targetWordJa || '',
+              hiragana: q.targetWordHiragana,
+              katakana: q.targetWordKatakana,
+              ruby: q.targetWordRuby,
+              image: q.promptImage || q.options.find((o) => o.id === q.correctOptionId)?.image,
+              sound: q.promptSound,
+              incorrectCount: 0,
+            }));
+
+        if (deck.length === 0) return null;
+        const safeIdx = ((spotlightIndex % deck.length) + deck.length) % deck.length;
+        const card = deck[safeIdx];
+        const isPlaying = activeAudioWord === card.english;
+
+        const goStep = (delta: number) => {
+          const nextIdx = (safeIdx + delta + deck.length) % deck.length;
+          const nextCard = deck[nextIdx];
+          setSpotlightIndex(nextIdx);
+          if (nextCard) {
+            playTroubleAudio({ english: nextCard.english, sound: nextCard.sound });
+          }
+        };
+
+        return (
+          <div
+            className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 print:hidden"
+            onClick={() => setSpotlightIndex(null)}
+          >
+            <div
+              className={`w-full max-w-4xl max-h-[92dvh] rounded-3xl bg-white dark:bg-slate-900 border-4 ${
+                isTroubleDeck ? 'border-rose-400 dark:border-rose-700' : 'border-indigo-400 dark:border-indigo-700'
+              } shadow-2xl flex flex-col overflow-hidden`}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Modal Top Bar */}
+              <div
+                className={`px-5 py-3 flex items-center justify-between border-b border-slate-200 dark:border-slate-800 ${
+                  isTroubleDeck ? 'bg-rose-50 dark:bg-rose-950/40' : 'bg-indigo-50 dark:bg-indigo-950/40'
+                }`}
+              >
+                <div className="flex items-center gap-2.5">
+                  <span className="text-xl">{isTroubleDeck ? '🔍' : '📖'}</span>
+                  <h4 className="text-sm sm:text-base font-black text-slate-900 dark:text-white">
+                    {isTroubleDeck
+                      ? t('Trouble Word Spotlight', <>苦手単語の<ruby>復習<rt>ふくしゅう</rt></ruby>スポットライト</>)
+                      : t('Flashcard Spotlight', <>フラッシュカード<ruby>復習<rt>ふくしゅう</rt></ruby></>)}
+                  </h4>
+                  <span className="text-xs font-mono font-black px-2 py-0.5 rounded-full bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700">
+                    {safeIdx + 1} / {deck.length}
+                  </span>
+                  {card.incorrectCount > 0 && (
+                    <span className="text-xs font-black px-2.5 py-0.5 rounded-full bg-rose-600 text-white">
+                      {card.incorrectCount} {t('class misses', '回ミス')}
+                    </span>
+                  )}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setSpotlightIndex(null)}
+                  aria-label={t('Close spotlight', '閉じる')}
+                  className="p-2 rounded-xl bg-white/80 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-rose-100 hover:text-rose-600 dark:hover:bg-rose-950/60 transition cursor-pointer"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
+              {/* Landscape-First Flashcard Body */}
+              <div
+                className={`p-5 sm:p-7 flex-1 min-h-0 grid ${
+                  card.image ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1'
+                } gap-5 sm:gap-7 items-center`}
+              >
+                {card.image && (
+                  <div className="w-full max-w-[340px] mx-auto aspect-square max-h-[46dvh] rounded-3xl bg-white border-2 border-slate-200 shadow-inner p-4 flex items-center justify-center overflow-hidden">
+                    <img
+                      src={card.image}
+                      alt={card.english}
+                      referrerPolicy="no-referrer"
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                )}
+
+                <div className="flex flex-col items-center md:items-start text-center md:text-left gap-3 min-w-0">
+                  <div className="text-4xl sm:text-5xl font-black text-slate-900 dark:text-white tracking-tight break-words w-full">
+                    {card.english}
+                  </div>
+                  {card.katakana && (
+                    <span className="text-sm sm:text-base font-bold px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                      [ {card.katakana} ]
+                    </span>
+                  )}
+                  <div className="text-2xl sm:text-3xl font-black text-rose-700 dark:text-rose-300">
+                    <RubyText
+                      ruby={card.ruby}
+                      kanji={card.ja}
+                      hiragana={card.hiragana}
+                      rtClassName="text-slate-500 dark:text-slate-400 font-semibold"
+                    />
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => playTroubleAudio({ english: card.english, sound: card.sound })}
+                    className={`mt-2 px-6 py-3.5 rounded-2xl font-black text-base sm:text-lg text-white shadow-lg flex items-center gap-2.5 transition cursor-pointer active:scale-95 ${
+                      isPlaying
+                        ? 'bg-emerald-500 ring-4 ring-emerald-300 animate-pulse'
+                        : 'bg-blue-600 hover:bg-blue-500'
+                    }`}
+                  >
+                    <Volume2 size={22} />
+                    <span>{t('Listen & Repeat Together', <>みんなで<ruby>発音<rt>はつおん</rt></ruby>しよう！</>)}</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Navigation Footer */}
+              <div className="px-5 py-3 bg-slate-50 dark:bg-slate-950/60 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between gap-3">
+                <button
+                  type="button"
+                  disabled={deck.length <= 1}
+                  onClick={() => goStep(-1)}
+                  className="px-4 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 font-black text-sm text-slate-800 dark:text-slate-200 hover:bg-slate-100 disabled:opacity-40 flex items-center gap-1 cursor-pointer"
+                >
+                  <ChevronLeft size={18} />
+                  <span>{t('Previous', 'まえの単語')}</span>
+                </button>
+                <span className="text-xs font-bold text-slate-500 dark:text-slate-400 hidden sm:inline">
+                  {t('Tap outside or press ESC to return to results', '外側をクリックまたはESCで戻る')}
+                </span>
+                <button
+                  type="button"
+                  disabled={deck.length <= 1}
+                  onClick={() => goStep(1)}
+                  className="px-4 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 font-black text-sm text-slate-800 dark:text-slate-200 hover:bg-slate-100 disabled:opacity-40 flex items-center gap-1 cursor-pointer"
+                >
+                  <span>{t('Next', 'つぎの単語')}</span>
+                  <ChevronRight size={18} />
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
 
       {/* Emergency Blackout Shutter */}
       <ClassroomBlackoutShutter isOpen={isBlackout} onToggle={() => setIsBlackout(b => !b)} />

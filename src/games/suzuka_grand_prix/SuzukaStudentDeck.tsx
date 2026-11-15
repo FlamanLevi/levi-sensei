@@ -348,7 +348,7 @@ export const SuzukaStudentDeck: React.FC<SuzukaStudentDeckProps> = ({
             {/* Right: Question Prompt Bar on Top + 2x2 Answer Grid on Bottom */}
             <div className="flex-1 flex flex-col gap-1.5 min-w-0 h-full">
               {/* Question Prompt Bar */}
-              <div className="w-full h-10 sm:h-11 px-3 sm:px-4 rounded-xl bg-slate-900/90 border border-slate-700/80 flex items-center justify-between gap-2 text-center shadow-md shrink-0">
+              <div className="w-full min-h-10 sm:min-h-11 px-3 sm:px-4 py-1 rounded-xl bg-slate-900/90 border border-slate-700/80 flex items-center justify-between gap-2 text-center shadow-md shrink-0">
                 <div className="w-4 shrink-0" />
                 <div className="flex-1 flex items-center justify-center min-w-0">
                   {question.isMath ? (
@@ -356,25 +356,33 @@ export const SuzukaStudentDeck: React.FC<SuzukaStudentDeckProps> = ({
                       {question.promptText}
                     </h4>
                   ) : question.promptType === 'JA_MEANING' ? (
-                    <div className="flex items-center justify-center gap-2 flex-nowrap min-w-0">
+                    <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-0.5 min-w-0">
                       <RubyText
                         ruby={question.targetWordRuby}
                         kanji={question.targetWordJa}
                         hiragana={question.targetWordHiragana}
-                        className="text-xl sm:text-2xl font-black text-white text-center leading-tight truncate"
+                        className="text-lg sm:text-xl md:text-2xl font-black text-white text-center leading-tight break-words"
                         rtClassName="text-cyan-300 font-semibold select-none"
                       />
-                      <span className="text-sm sm:text-base font-bold text-slate-300 whitespace-nowrap shrink-0">
+                      <span className="text-xs sm:text-sm md:text-base font-bold text-slate-300 whitespace-nowrap shrink-0">
                         {t('in English?', 'は英語で？')}
                       </span>
                     </div>
                   ) : (
-                    <h4 className="text-base sm:text-lg md:text-xl font-black text-white tracking-tight leading-tight text-center truncate">
+                    <h4
+                      className={`${
+                        (question.promptText?.length || 0) > 36
+                          ? 'text-xs sm:text-sm md:text-base'
+                          : (question.promptText?.length || 0) > 22
+                          ? 'text-sm sm:text-base md:text-lg'
+                          : 'text-base sm:text-lg md:text-xl'
+                      } font-black text-white tracking-tight leading-snug text-center line-clamp-2 break-words`}
+                    >
                       {question.promptText}
                     </h4>
                   )}
                   {feedback?.isCorrect && question.exampleSentenceEn && (
-                    <span className="hidden sm:inline-block ml-2 text-xs font-black text-emerald-300 truncate">
+                    <span className="hidden sm:inline-block ml-2 text-xs font-black text-emerald-300 truncate shrink-0">
                       ✓ {question.exampleSentenceEn}
                     </span>
                   )}
@@ -543,7 +551,7 @@ export const SuzukaStudentDeck: React.FC<SuzukaStudentDeckProps> = ({
           <>
             {/* Standard Full-Width Layout: Top Prompt Bar */}
             <div
-              className="w-full shrink-0 h-11 sm:h-12 px-3 sm:px-4 mb-1 sm:mb-1.5 rounded-xl bg-slate-900/90 border border-slate-700/80 flex items-center justify-between gap-2 text-center shadow-md relative"
+              className="w-full shrink-0 min-h-11 sm:min-h-12 px-3 sm:px-4 py-1 mb-1 sm:mb-1.5 rounded-xl bg-slate-900/90 border border-slate-700/80 flex items-center justify-between gap-2 text-center shadow-md relative"
             >
               <div className="w-8 shrink-0" />
               <div className="flex-1 flex items-center justify-center min-w-0">
@@ -552,12 +560,12 @@ export const SuzukaStudentDeck: React.FC<SuzukaStudentDeckProps> = ({
                     {question.promptText}
                   </h4>
                 ) : question.promptType === 'JA_MEANING' ? (
-                  <div className="flex items-center justify-center gap-2 flex-nowrap min-w-0">
+                  <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-0.5 min-w-0">
                     <RubyText
                       ruby={question.targetWordRuby}
                       kanji={question.targetWordJa}
                       hiragana={question.targetWordHiragana}
-                      className="text-xl sm:text-2xl md:text-3xl font-black text-white text-center leading-tight truncate"
+                      className="text-xl sm:text-2xl md:text-3xl font-black text-white text-center leading-tight break-words"
                       rtClassName="text-cyan-300 font-semibold select-none"
                     />
                     <span className="text-sm sm:text-base md:text-lg font-bold text-slate-300 whitespace-nowrap shrink-0">
@@ -565,13 +573,21 @@ export const SuzukaStudentDeck: React.FC<SuzukaStudentDeckProps> = ({
                     </span>
                   </div>
                 ) : (
-                  <h4 className="text-base sm:text-lg md:text-xl font-black text-white tracking-tight leading-tight text-center truncate">
+                  <h4
+                    className={`${
+                      (question.promptText?.length || 0) > 42
+                        ? 'text-xs sm:text-sm md:text-base'
+                        : (question.promptText?.length || 0) > 24
+                        ? 'text-sm sm:text-base md:text-lg'
+                        : 'text-base sm:text-lg md:text-xl'
+                    } font-black text-white tracking-tight leading-snug text-center line-clamp-2 break-words`}
+                  >
                     {question.promptText}
                   </h4>
                 )}
 
                 {feedback?.isCorrect && question.exampleSentenceEn && (
-                  <span className="hidden sm:inline-block ml-2 text-xs font-black text-emerald-300 truncate">
+                  <span className="hidden sm:inline-block ml-2 text-xs font-black text-emerald-300 truncate shrink-0">
                     ✓ {question.exampleSentenceEn}
                   </span>
                 )}

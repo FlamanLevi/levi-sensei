@@ -119,3 +119,29 @@ test('questionGenerator does not leak target Japanese meaning inside THREE_HINTS
     );
   }
 });
+
+test('questionGenerator avoids duplicate choice illustrations when alternative distractors exist', () => {
+  const sharedImg = '/cards/illustration/apple_illust.png';
+  const dupApple: VocabularyItem = {
+    ...makeWord('w_red_apple', 'red apple', '赤いりんご', 'あかいりんご', 'レッドアップル'),
+    card_image: sharedImg,
+    primary_image: sharedImg,
+  };
+  const customPool = [
+    SAMPLE_POOL[0], // apple -> apple_illust.png
+    dupApple,       // red apple -> also apple_illust.png!
+    SAMPLE_POOL[1], // banana
+    SAMPLE_POOL[2], // grape
+    SAMPLE_POOL[3], // orange
+  ];
+  const questions = generateQuizQuestions(
+    customPool,
+    { ...BASE_SETTINGS, questionCount: 5, promptTypes: ['JA_MEANING'], choiceImageMode: 'AUTO_CLEVER' },
+    'ES_G5'
+  );
+  const appleQ = questions.find((q) => q.targetWordId === 'w_apple');
+  assert.ok(appleQ);
+  const images = appleQ.options.map((o) => o.image).filter(Boolean);
+  assert.equal(new Set(images).size, images.length, 'Every option image in a question must be unique');
+});
+

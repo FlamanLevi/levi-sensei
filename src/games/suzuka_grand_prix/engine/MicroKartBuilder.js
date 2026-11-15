@@ -98,40 +98,41 @@ function getSharedHeadlightBeamTexture() {
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, 256, 256);
 
-    // Dual expanding halogen/LED beams from bottom (y=248, near nose) toward top (y=8, far down track)
+    // Soft oval twin-beam pool from bottom (y=236, near nose) fading cleanly before top/side edges
     for (const [startX, endX] of [
-      [102, 74],
-      [154, 182],
+      [106, 88],
+      [150, 168],
     ]) {
       ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(startX - 10, 250);
-      ctx.lineTo(startX + 10, 250);
-      ctx.lineTo(endX + 58, 6);
-      ctx.lineTo(endX - 58, 6);
-      ctx.closePath();
-      ctx.clip();
-
-      const grad = ctx.createRadialGradient(startX, 248, 4, (startX + endX) * 0.5, 220, 238);
-      grad.addColorStop(0.0, 'rgba(255, 252, 235, 0.96)');
-      grad.addColorStop(0.18, 'rgba(255, 244, 200, 0.72)');
-      grad.addColorStop(0.48, 'rgba(254, 232, 165, 0.34)');
-      grad.addColorStop(0.78, 'rgba(253, 224, 140, 0.10)');
+      const cx = (startX + endX) * 0.5;
+      const cy = 148;
+      ctx.translate(cx, cy);
+      ctx.scale(0.55, 1.0);
+      const grad = ctx.createRadialGradient(0, 72, 4, 0, 10, 128);
+      grad.addColorStop(0.0, 'rgba(255, 252, 235, 0.92)');
+      grad.addColorStop(0.24, 'rgba(255, 244, 200, 0.62)');
+      grad.addColorStop(0.55, 'rgba(254, 232, 165, 0.24)');
+      grad.addColorStop(0.82, 'rgba(253, 224, 140, 0.06)');
       grad.addColorStop(1.0, 'rgba(253, 224, 140, 0.0)');
       ctx.fillStyle = grad;
-      ctx.fillRect(0, 0, 256, 256);
+      ctx.beginPath();
+      ctx.arc(0, 0, 130, 0, Math.PI * 2);
+      ctx.fill();
       ctx.restore();
     }
 
-    // Soft lateral feathering so cone edges never look hard
-    const edgeMask = ctx.createLinearGradient(0, 0, 256, 0);
-    edgeMask.addColorStop(0.0, 'rgba(0,0,0,1)');
-    edgeMask.addColorStop(0.14, 'rgba(0,0,0,0)');
-    edgeMask.addColorStop(0.86, 'rgba(0,0,0,0)');
-    edgeMask.addColorStop(1.0, 'rgba(0,0,0,1)');
+    // Elliptical edge fade mask so zero alpha is guaranteed around the entire perimeter
+    ctx.save();
     ctx.globalCompositeOperation = 'destination-out';
-    ctx.fillStyle = edgeMask;
-    ctx.fillRect(0, 0, 256, 256);
+    ctx.translate(128, 136);
+    ctx.scale(1.0, 1.05);
+    const ovalMask = ctx.createRadialGradient(0, 0, 46, 0, 0, 114);
+    ovalMask.addColorStop(0.0, 'rgba(0,0,0,0)');
+    ovalMask.addColorStop(0.7, 'rgba(0,0,0,0.35)');
+    ovalMask.addColorStop(1.0, 'rgba(0,0,0,1)');
+    ctx.fillStyle = ovalMask;
+    ctx.fillRect(-128, -140, 256, 280);
+    ctx.restore();
     ctx.globalCompositeOperation = 'source-over';
 
     _sharedHeadlightBeamTex = new THREE.CanvasTexture(canvas);
@@ -150,22 +151,37 @@ function getSharedTaillightBeamTexture() {
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, 256, 256);
 
-    // Dual ruby-red LED tail & brake light pools projecting from top (y=8, rear bumper) toward bottom (y=248, trailing asphalt)
-    for (const [startX, endX] of [
-      [92, 68],
-      [164, 188],
-    ]) {
+    // Compact ruby-red oval tail glow behind rear bumper, fading cleanly to 0 before any edge
+    for (const startX of [98, 158]) {
       ctx.save();
-      const grad = ctx.createRadialGradient(startX, 14, 3, (startX + endX) * 0.5, 42, 210);
-      grad.addColorStop(0.0, 'rgba(255, 38, 68, 0.95)');
-      grad.addColorStop(0.22, 'rgba(255, 12, 42, 0.68)');
-      grad.addColorStop(0.55, 'rgba(225, 0, 28, 0.26)');
-      grad.addColorStop(0.85, 'rgba(190, 0, 20, 0.06)');
+      ctx.translate(startX, 118);
+      ctx.scale(0.65, 1.0);
+      const grad = ctx.createRadialGradient(0, -48, 3, 0, -10, 108);
+      grad.addColorStop(0.0, 'rgba(255, 42, 72, 0.90)');
+      grad.addColorStop(0.26, 'rgba(255, 16, 46, 0.56)');
+      grad.addColorStop(0.58, 'rgba(225, 0, 28, 0.18)');
+      grad.addColorStop(0.84, 'rgba(190, 0, 20, 0.04)');
       grad.addColorStop(1.0, 'rgba(160, 0, 15, 0.0)');
       ctx.fillStyle = grad;
-      ctx.fillRect(0, 0, 256, 256);
+      ctx.beginPath();
+      ctx.arc(0, 0, 112, 0, Math.PI * 2);
+      ctx.fill();
       ctx.restore();
     }
+
+    // Elliptical edge fade mask so no rectangular border is ever visible
+    ctx.save();
+    ctx.globalCompositeOperation = 'destination-out';
+    ctx.translate(128, 118);
+    ctx.scale(1.0, 0.95);
+    const ovalMask = ctx.createRadialGradient(0, 0, 40, 0, 0, 108);
+    ovalMask.addColorStop(0.0, 'rgba(0,0,0,0)');
+    ovalMask.addColorStop(0.65, 'rgba(0,0,0,0.4)');
+    ovalMask.addColorStop(1.0, 'rgba(0,0,0,1)');
+    ctx.fillStyle = ovalMask;
+    ctx.fillRect(-128, -128, 256, 256);
+    ctx.restore();
+    ctx.globalCompositeOperation = 'source-over';
 
     _sharedTaillightBeamTex = new THREE.CanvasTexture(canvas);
     _sharedTaillightBeamTex.colorSpace = THREE.SRGBColorSpace;
@@ -319,8 +335,8 @@ function getSharedKartGeos() {
     // 3D Headlight & Taillight Lenses + Ground Projection Beams & Volumetric Light Cones
     const headlightLens = new THREE.SphereGeometry(0.00065, 10, 8);
     const taillightLens = new THREE.BoxGeometry(0.0020, 0.00072, 0.00048);
-    const headlightGroundBeam = new THREE.PlaneGeometry(0.042, 0.105);
-    const taillightGroundBeam = new THREE.PlaneGeometry(0.030, 0.048);
+    const headlightGroundBeam = new THREE.PlaneGeometry(0.024, 0.056);
+    const taillightGroundBeam = new THREE.PlaneGeometry(0.018, 0.028);
 
     // Volumetric 3D cone with vertex-alpha fade from apex (at lamp) to open base
     const buildVolumetricLightConeGeo = (radiusBottom, lengthZ, rCol, gCol, bCol, apexAlpha, baseAlpha) => {
@@ -341,8 +357,8 @@ function getSharedKartGeos() {
       return cone;
     };
 
-    const headlightVolCone = buildVolumetricLightConeGeo(0.0068, 0.064, 1.0, 0.95, 0.78, 0.55, 0.0);
-    const taillightVolCone = buildVolumetricLightConeGeo(0.0046, 0.032, 1.0, 0.08, 0.18, 0.62, 0.0);
+    const headlightVolCone = buildVolumetricLightConeGeo(0.0046, 0.042, 1.0, 0.95, 0.78, 0.50, 0.0);
+    const taillightVolCone = buildVolumetricLightConeGeo(0.0032, 0.020, 1.0, 0.08, 0.18, 0.52, 0.0);
 
     // Rear tire wet mist spray / snow rooster-tail plume cone
     const tireSprayCone = new THREE.CylinderGeometry(0.0008, 0.0044, 0.022, 10, 5, true);
@@ -757,7 +773,7 @@ export function buildMicroKart(options = {}) {
   });
   const headlightGroundBeamMesh = new THREE.Mesh(sharedGeos.headlightGroundBeam, headlightGroundMat);
   headlightGroundBeamMesh.rotation.x = -Math.PI / 2;
-  headlightGroundBeamMesh.position.set(0, -0.00162, 0.060);
+  headlightGroundBeamMesh.position.set(0, -0.00162, 0.036);
   headlightGroundBeamMesh.frustumCulled = false;
   kartRoot.add(headlightGroundBeamMesh);
 
@@ -794,7 +810,7 @@ export function buildMicroKart(options = {}) {
   });
   const taillightGroundBeamMesh = new THREE.Mesh(sharedGeos.taillightGroundBeam, taillightGroundMat);
   taillightGroundBeamMesh.rotation.x = -Math.PI / 2;
-  taillightGroundBeamMesh.position.set(0, -0.00162, -0.032);
+  taillightGroundBeamMesh.position.set(0, -0.00162, -0.022);
   taillightGroundBeamMesh.frustumCulled = false;
   kartRoot.add(taillightGroundBeamMesh);
 

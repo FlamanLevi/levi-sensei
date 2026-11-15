@@ -388,19 +388,7 @@ export const SuzukaStudentDeck: React.FC<SuzukaStudentDeckProps> = ({
                     </span>
                   )}
                 </div>
-                {question.promptType === 'AUDIO_ONLY' ? (
-                  <button
-                    type="button"
-                    onClick={() => playWordAudio(question.promptSound, question.targetWordEnglish)}
-                    aria-label={t('Listen to prompt audio', '英語の音声を聞く')}
-                    className="px-2.5 py-1 rounded-lg bg-blue-600 hover:bg-blue-500 text-white flex items-center gap-1 text-xs font-black active:scale-95 transition-transform cursor-pointer shrink-0"
-                  >
-                    <Volume2 size={13} />
-                    <span className="hidden sm:inline">{t('Listen', '聞く')}</span>
-                  </button>
-                ) : (
-                  <div className="w-4 shrink-0" />
-                )}
+                <div className="w-4 shrink-0" />
               </div>
 
               {/* 2x2 Choice Buttons Grid */}
@@ -594,19 +582,7 @@ export const SuzukaStudentDeck: React.FC<SuzukaStudentDeckProps> = ({
                 )}
               </div>
 
-              {question.promptType === 'AUDIO_ONLY' ? (
-                <button
-                  type="button"
-                  onClick={() => playWordAudio(question.promptSound, question.targetWordEnglish)}
-                  aria-label={t('Listen to prompt audio', '英語の音声を聞く')}
-                  className="px-2.5 py-1 rounded-lg bg-blue-600 hover:bg-blue-500 text-white flex items-center gap-1 text-xs font-black active:scale-95 transition-transform cursor-pointer shrink-0"
-                >
-                  <Volume2 size={13} />
-                  <span className="hidden sm:inline">{t('Listen', '聞く')}</span>
-                </button>
-              ) : (
-                <div className="w-8 shrink-0" />
-              )}
+              <div className="w-8 shrink-0" />
             </div>
 
         {/* 4 Touch Choice Buttons: Interlocking L-Pods when options contain illustrations, or standard 2x2 grid for text */}

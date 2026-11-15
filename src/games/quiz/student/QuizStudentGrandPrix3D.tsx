@@ -903,24 +903,20 @@ export const QuizStudentGrandPrix3D: React.FC<QuizStudentGrandPrix3DProps> = ({
           hideSectorBadge={true}
         />
 
-        {/* Large Floating Pill Repeat-Audio Button for AUDIO_ONLY prompts */}
-        {!isLobby && !localIsFinished && currentQuestion?.promptType === 'AUDIO_ONLY' && (
-          <div className="absolute bottom-[70px] sm:bottom-[74px] left-1/2 -translate-x-1/2 z-30 pointer-events-auto">
-            <button
-              type="button"
-              onClick={() => playWordAudio(currentQuestion.promptSound, currentQuestion.targetWordEnglish)}
-              aria-label={t('Listen to prompt audio again', '英語の音声をもういちど聞く')}
-              className="px-5 py-2.5 rounded-full bg-blue-600/80 hover:bg-blue-500/90 backdrop-blur-md border-2 border-white/40 text-white shadow-xl flex items-center gap-2 text-sm sm:text-base font-black active:scale-95 transition-all cursor-pointer touch-manipulation"
-            >
-              <Volume2 size={20} />
-              <span>{t('Listen Again', 'もういちど聞く')}</span>
-            </button>
-          </div>
-        )}
-
         {/* Floating Glassmorphic Telemetry HUD over bottom edge of 3D Track (Fixed height, no wrapping shifts) */}
         {!isLobby && (
-          <div className="absolute bottom-2 sm:bottom-2.5 left-3 right-3 z-30 pointer-events-none flex justify-center">
+          <div className="absolute bottom-2 sm:bottom-2.5 left-3 right-3 z-30 pointer-events-none flex items-center justify-center gap-2 sm:gap-3">
+            {!localIsFinished && currentQuestion?.promptType === 'AUDIO_ONLY' && (
+              <button
+                type="button"
+                onClick={() => playWordAudio(currentQuestion.promptSound, currentQuestion.targetWordEnglish)}
+                aria-label={t('Listen to prompt audio again', '英語の音声をもういちど聞く')}
+                className="h-[58px] px-3.5 sm:px-4 rounded-2xl bg-blue-600/85 hover:bg-blue-500/95 backdrop-blur-md border-2 border-white/35 text-white shadow-2xl flex items-center gap-1.5 text-xs sm:text-sm font-black active:scale-95 transition-all cursor-pointer touch-manipulation pointer-events-auto shrink-0"
+              >
+                <Volume2 size={18} />
+                <span className="hidden sm:inline">{t('Listen', '聞く')}</span>
+              </button>
+            )}
             <div className="w-full max-w-2xl bg-slate-950/85 backdrop-blur-md border border-white/20 rounded-2xl px-3 py-1.5 shadow-2xl flex flex-col gap-1 pointer-events-auto h-[58px] justify-center">
               {/* Row 1: Race Telemetry & Nitro Streak (Fixed single row, never wraps) */}
               <div className="flex items-center justify-between gap-2 flex-nowrap shrink-0">
@@ -1005,6 +1001,17 @@ export const QuizStudentGrandPrix3D: React.FC<QuizStudentGrandPrix3DProps> = ({
                 </div>
               </div>
             </div>
+            {!localIsFinished && currentQuestion?.promptType === 'AUDIO_ONLY' && (
+              <button
+                type="button"
+                onClick={() => playWordAudio(currentQuestion.promptSound, currentQuestion.targetWordEnglish)}
+                aria-label={t('Listen to prompt audio again', '英語の音声をもういちど聞く')}
+                className="h-[58px] px-3.5 sm:px-4 rounded-2xl bg-blue-600/85 hover:bg-blue-500/95 backdrop-blur-md border-2 border-white/35 text-white shadow-2xl flex items-center gap-1.5 text-xs sm:text-sm font-black active:scale-95 transition-all cursor-pointer touch-manipulation pointer-events-auto shrink-0"
+              >
+                <Volume2 size={18} />
+                <span className="hidden sm:inline">{t('Listen', '聞く')}</span>
+              </button>
+            )}
           </div>
         )}
       </div>

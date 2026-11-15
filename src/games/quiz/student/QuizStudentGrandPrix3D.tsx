@@ -905,7 +905,7 @@ export const QuizStudentGrandPrix3D: React.FC<QuizStudentGrandPrix3DProps> = ({
 
         {/* Floating Glassmorphic Telemetry HUD over bottom edge of 3D Track (Fixed height, no wrapping shifts) */}
         {!isLobby && (
-          <div className="absolute bottom-2 sm:bottom-2.5 left-3 right-3 z-30 pointer-events-none flex items-center justify-center gap-2 sm:gap-3">
+          <div className="absolute bottom-2 sm:bottom-2.5 left-3 right-3 z-30 pointer-events-none flex items-center justify-between gap-2 sm:gap-3">
             {!localIsFinished && currentQuestion?.promptType === 'AUDIO_ONLY' && (
               <button
                 type="button"
@@ -917,7 +917,7 @@ export const QuizStudentGrandPrix3D: React.FC<QuizStudentGrandPrix3DProps> = ({
                 <span className="hidden sm:inline">{t('Listen', '聞く')}</span>
               </button>
             )}
-            <div className="w-full max-w-2xl bg-slate-950/85 backdrop-blur-md border border-white/20 rounded-2xl px-3 py-1.5 shadow-2xl flex flex-col gap-1 pointer-events-auto h-[58px] justify-center">
+            <div className="w-full max-w-2xl mx-auto bg-slate-950/85 backdrop-blur-md border border-white/20 rounded-2xl px-3 py-1.5 shadow-2xl flex flex-col gap-1 pointer-events-auto h-[58px] justify-center">
               {/* Row 1: Race Telemetry & Nitro Streak (Fixed single row, never wraps) */}
               <div className="flex items-center justify-between gap-2 flex-nowrap shrink-0">
                 <div className="flex items-center gap-1.5 sm:gap-2 flex-nowrap min-w-0">

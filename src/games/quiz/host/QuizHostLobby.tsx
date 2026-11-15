@@ -189,7 +189,7 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
   };
 
   return (
-    <div className="flex flex-col w-full h-full min-h-0 max-w-7xl mx-auto px-3 sm:px-5 py-2 sm:py-3 text-slate-900 dark:text-white select-none overflow-hidden">
+    <div className="flex flex-col w-full h-full min-h-0 max-w-full mx-auto px-3 sm:px-5 lg:px-6 py-2 sm:py-3 text-slate-900 dark:text-white select-none overflow-hidden">
       {/* Top Header Bar with prominent START GAME + Settings + Cancel */}
       <div className="flex items-center justify-between gap-2 pb-2.5 border-b border-slate-200 dark:border-slate-800 shrink-0 flex-nowrap">
         <div className="flex items-center gap-1.5 min-w-0 flex-1 overflow-x-auto no-scrollbar flex-nowrap">
@@ -341,17 +341,17 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
             </div>
           </div>
 
-          {/* High-Resolution QR Canvas (Sized large for 8m back-row scanning through TV guards) */}
-          <div className="flex-1 min-h-0 w-full flex items-center justify-center my-2">
-            <div className="p-3 sm:p-4 bg-white rounded-3xl shadow-inner border-4 border-slate-900 flex items-center justify-center max-h-full">
+          {/* High-Resolution QR Canvas (Fluidly scales to available card width & height across iPad / Dynabook / Surface / TV) */}
+          <div className="flex-1 min-h-0 w-full flex items-center justify-center my-2 overflow-hidden">
+            <div className="h-full max-h-full max-w-full aspect-square p-2.5 sm:p-3.5 bg-white rounded-3xl shadow-inner border-4 border-slate-900 flex items-center justify-center">
               {qrDataUrl ? (
                 <img
                   src={qrDataUrl}
                   alt={`Join room ${roomCode}`}
-                  className="w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 lg:w-[340px] lg:h-[340px] xl:w-[380px] xl:h-[380px] max-h-[54dvh] aspect-square object-contain rounded-2xl"
+                  className="w-full h-full object-contain rounded-2xl"
                 />
               ) : (
-                <div className="w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 lg:w-[340px] lg:h-[340px] xl:w-[380px] xl:h-[380px] max-h-[54dvh] aspect-square flex items-center justify-center bg-slate-100 rounded-2xl text-xs text-slate-500">
+                <div className="w-full h-full flex items-center justify-center bg-slate-100 rounded-2xl text-xs text-slate-500">
                   {t('Generating QR...', 'QRコード生成中...')}
                 </div>
               )}

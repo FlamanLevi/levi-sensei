@@ -1800,7 +1800,7 @@ export function useQuizRoom(
     if (!roomCode) return;
     try {
       await ensureAnonymousAuth();
-      const nextState = forcedState !== undefined ? forcedState : !roomRef.current?.eyesUp;
+      const nextState = typeof forcedState === 'boolean' ? forcedState : !roomRef.current?.eyesUp;
       await safeUpdate(`rooms/${roomCode}`, { eyesUp: nextState });
     } catch (err: any) {
       console.error("Error toggling eyes up front:", err);

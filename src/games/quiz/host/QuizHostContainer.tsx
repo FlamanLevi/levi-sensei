@@ -698,7 +698,7 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
             onKickPlayer={kickPlayer}
             onChangePlayerTeam={changePlayerTeam}
             eyesUp={room?.eyesUp}
-            onToggleEyesUp={toggleEyesUp}
+            onToggleEyesUp={() => toggleEyesUp()}
             bgmTrackTitle={hasTrack ? currentTrackTitle : null}
             isBgmMuted={isBgmMuted}
             onToggleBgmMute={toggleBgmMute}
@@ -726,7 +726,7 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
           roundWins={room?.tugOfWarRoundWins || { team_red: 0, team_white: 0 }}
           baselinePulls={room?.tugOfWarBaselinePulls || {}}
           eyesUp={room?.eyesUp}
-          onToggleEyesUp={toggleEyesUp}
+          onToggleEyesUp={() => toggleEyesUp()}
           onFreezeTugOfWar={freezeTugOfWar}
           onNextRound={nextTugOfWarRound}
           onFinishTugOfWar={async (winner) => {
@@ -768,7 +768,7 @@ export const QuizHostContainer: React.FC<QuizHostContainerProps> = ({ onExit, on
           raceStartTime={room?.tamaireStartTime || room?.volleyballStartTime || room?.raceStartTime || getServerTime()}
           tamaireSettings={room?.tamaireSettings || room?.volleyballSettings || settings?.tamaireSettings || settings?.volleyballSettings}
           eyesUp={room?.eyesUp}
-          onToggleEyesUp={toggleEyesUp}
+          onToggleEyesUp={() => toggleEyesUp()}
           onFreezeTamaire={freezeTamaire}
           onFinishTamaire={async (winner) => {
             let finalAwards: ClassroomAward[] = [];

@@ -189,9 +189,9 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
   };
 
   return (
-    <div className="flex flex-col w-full h-full min-h-0 max-w-full mx-auto px-3 sm:px-5 lg:px-6 py-2 sm:py-3 text-slate-900 dark:text-white select-none overflow-hidden">
+    <div className="flex flex-col w-full h-full min-h-0 max-w-full mx-auto px-1.5 sm:px-2.5 py-1 sm:py-1.5 text-slate-900 dark:text-white select-none overflow-hidden">
       {/* Top Header Bar with prominent START GAME + Settings + Cancel */}
-      <div className="flex items-center justify-between gap-2 pb-2.5 border-b border-slate-200 dark:border-slate-800 shrink-0 flex-nowrap">
+      <div className="flex items-center justify-between gap-2 pb-1.5 border-b border-slate-200/70 dark:border-slate-800/80 shrink-0 flex-nowrap">
         <div className="flex items-center gap-1.5 min-w-0 flex-1 overflow-x-auto no-scrollbar flex-nowrap">
           {isStudentHost ? (
             <span className="text-xs font-black px-3 py-1 rounded-full bg-teal-100 dark:bg-teal-950/60 text-teal-800 dark:text-teal-200 flex items-center gap-1.5 border border-teal-200 dark:border-teal-800 shrink-0 whitespace-nowrap">
@@ -279,7 +279,7 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
         <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 flex-nowrap">
           {onToggleEyesUp && (
             <button
-              onClick={onToggleEyesUp}
+              onClick={() => onToggleEyesUp()}
               className={`px-3 sm:px-3.5 py-2 rounded-2xl font-bold text-xs transition-all flex items-center gap-1.5 cursor-pointer shadow-xs border active:scale-95 whitespace-nowrap ${
                 eyesUp
                   ? 'bg-amber-400 text-slate-950 border-amber-300 ring-2 ring-amber-400/50 animate-pulse font-black'
@@ -321,12 +321,12 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
         </div>
       </div>
 
-      {/* Main Classroom Layout: Left PIN+QR Card + Right Viewport-Locked Scrollable Roster */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5 my-2 flex-1 min-h-0 items-stretch overflow-hidden">
-        {/* Left Column: Prominent Top PIN Banner + High-Contrast QR Code Centerpiece (5 cols) */}
-        <div className="lg:col-span-5 flex flex-col items-center justify-between p-4 sm:p-5 bg-white/95 dark:bg-slate-900/92 backdrop-blur-md border-4 border-slate-200 dark:border-slate-800 rounded-3xl shadow-xl min-h-0 overflow-hidden">
+      {/* Main Classroom Layout: Left Opaque PIN+QR Card + Right Translucent Roster Card */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-2.5 sm:gap-3.5 mt-1.5 mb-0.5 flex-1 min-h-0 items-stretch overflow-hidden">
+        {/* Left Column: Solid High-Contrast PIN Banner + QR Code Centerpiece (5 cols) */}
+        <div className="lg:col-span-5 flex flex-col items-center justify-between p-3.5 sm:p-4 bg-white dark:bg-slate-900 border-4 border-slate-200 dark:border-slate-800 rounded-3xl shadow-xl min-h-0 overflow-hidden">
           {/* Top-Pinned Prominent Room PIN Banner (Always visible to back-row students!) */}
-          <div className="w-full p-3 sm:p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/90 border-2 border-indigo-200 dark:border-indigo-800/80 flex items-center justify-between shrink-0 shadow-xs">
+          <div className="w-full p-2.5 sm:p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/90 border-2 border-indigo-200 dark:border-indigo-800/80 flex items-center justify-between shrink-0 shadow-xs">
             <div className="text-left">
               <span className="text-[11px] sm:text-xs font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest block leading-none mb-1">
                 {t('ROOM PIN CODE', 'ルームPIN番号')}
@@ -370,26 +370,26 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
           </div>
         </div>
 
-        {/* Right Column: Viewport-Locked Student Roster & Teams Grid with Internal Scrollbar (7 cols) */}
-        <div className="lg:col-span-7 flex flex-col justify-between p-4 sm:p-5 bg-white dark:bg-slate-900 border-4 border-slate-200 dark:border-slate-800 rounded-3xl shadow-xl min-h-0 overflow-hidden">
+        {/* Right Column: Translucent Student Roster & Teams Grid so live 3D track is visible behind (7 cols) */}
+        <div className="lg:col-span-7 flex flex-col justify-between p-3.5 sm:p-4 bg-white/75 dark:bg-slate-900/75 backdrop-blur-xs border-4 border-white/80 dark:border-slate-700/80 rounded-3xl shadow-xl min-h-0 overflow-hidden">
           {/* Roster Header */}
-          <div className="flex items-center justify-between pb-2.5 border-b border-slate-200 dark:border-slate-800 mb-2 shrink-0 flex-nowrap gap-2">
+          <div className="flex items-center justify-between pb-2 border-b border-slate-200/80 dark:border-slate-700/80 mb-2 shrink-0 flex-nowrap gap-2">
             <div className="flex items-center gap-2 min-w-0 flex-nowrap">
-              <Users className="text-blue-500 shrink-0" size={20} />
-              <h3 className="text-base font-black text-slate-900 dark:text-white flex items-baseline gap-1 whitespace-nowrap">
+              <Users className="text-blue-600 dark:text-blue-400 shrink-0" size={20} />
+              <h3 className="text-base font-black text-slate-900 dark:text-white flex items-baseline gap-1 whitespace-nowrap drop-shadow-2xs">
                 <span>{isStudentHost ? t('Connected Players:', '参加中のプレイヤー:') : t('Connected Students:', '接続中の生徒:')}</span>
                 <span className="text-blue-600 dark:text-blue-400 font-mono text-xl">{playerList.length}</span>
                 {!isStudentHost && expectedCapacity > 0 && (
-                  <span className="text-slate-500 dark:text-slate-400 font-mono text-sm font-bold">
+                  <span className="text-slate-600 dark:text-slate-300 font-mono text-sm font-bold">
                     / {expectedCapacity}
-                    <span className="ml-1 text-xs font-semibold text-slate-500 dark:text-slate-400">
+                    <span className="ml-1 text-xs font-semibold text-slate-600 dark:text-slate-300">
                       ({Math.round((playerList.length / expectedCapacity) * 100)}%)
                     </span>
                   </span>
                 )}
               </h3>
               {botCount > 0 && (
-                <span className="text-[11px] font-black px-2 py-0.5 rounded-full bg-indigo-100 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 flex items-center gap-1 shrink-0 whitespace-nowrap">
+                <span className="text-[11px] font-black px-2 py-0.5 rounded-full bg-indigo-100/95 dark:bg-indigo-950/90 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 flex items-center gap-1 shrink-0 whitespace-nowrap">
                   <span>🤖</span>
                   <span>{botCount} {language === 'ja' ? '体' : 'Bots'}</span>
                 </span>
@@ -399,7 +399,7 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
             {/* Class Energy Vault Co-Op Meter */}
             {classVault && vaultTierInfo && (
               <div
-                className="hidden sm:flex items-center gap-2 px-3 py-1 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border-2 border-amber-300 dark:border-amber-800 shadow-2xs shrink-0"
+                className="hidden sm:flex items-center gap-2 px-3 py-1 rounded-2xl bg-amber-50/95 dark:bg-amber-950/75 border-2 border-amber-300 dark:border-amber-800 shadow-2xs shrink-0"
                 title={t(
                   `Class Energy Vault: ${classVault.totalEnergy.toLocaleString()} pts. 10% of quiz scores are deposited here toward shared milestones!`,
                   `クラス団結エナジー: ${classVault.totalEnergy.toLocaleString()} pts。全員のクイズ得点の10%がここに貯まり、クラス合同のマスコットが解放されます！`
@@ -424,7 +424,7 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
               </div>
             )}
             {playerList.length === 0 ? (
-              <span className="text-xs text-slate-500 dark:text-slate-400 font-medium animate-pulse shrink-0 whitespace-nowrap">
+              <span className="text-xs text-slate-700 dark:text-slate-300 font-bold animate-pulse shrink-0 whitespace-nowrap">
                 {t('Waiting for students to scan...', '生徒のスキャンを待っています...')}
               </span>
             ) : (
@@ -437,7 +437,7 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
 
           {/* Streamlined Single-Row CPU Practice Bots Control Bar */}
           {onAddBots && (
-            <div className="px-2.5 py-1.5 mb-2 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-xs shrink-0 flex items-center justify-between gap-1.5 flex-nowrap overflow-x-auto no-scrollbar">
+            <div className="px-2.5 py-1.5 mb-2 rounded-2xl bg-white/85 dark:bg-slate-800/85 border border-slate-200/90 dark:border-slate-700/80 text-xs shrink-0 flex items-center justify-between gap-1.5 flex-nowrap overflow-x-auto no-scrollbar shadow-2xs">
               <div className="flex items-center gap-1.5 shrink-0 whitespace-nowrap">
                 <Bot size={15} className="text-indigo-500 shrink-0" />
                 <span className="font-black text-slate-800 dark:text-slate-200 text-[11px]">
@@ -551,7 +551,7 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
                 return (
                   <div 
                     key={tId}
-                    className="p-2.5 rounded-2xl border-2 bg-slate-50/80 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 flex flex-col min-h-[120px] max-h-full overflow-hidden shadow-2xs"
+                    className="p-2.5 rounded-2xl border-2 bg-white/80 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 flex flex-col min-h-[120px] max-h-full overflow-hidden shadow-2xs"
                   >
                     <div className="flex items-center justify-between pb-1.5 border-b border-slate-200 dark:border-slate-700 mb-1.5 shrink-0">
                       <span className="text-xs font-black flex items-center gap-1 text-slate-800 dark:text-slate-100 truncate">
@@ -565,7 +565,7 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
 
                     <div className="flex-1 min-h-0 space-y-1 overflow-y-auto pr-0.5 pt-1">
                       {teamMembers.length === 0 ? (
-                        <div className="h-full flex items-center justify-center text-[11px] text-slate-500 dark:text-slate-400 font-bold italic py-4">
+                        <div className="h-full flex items-center justify-center text-[11px] text-slate-600 dark:text-slate-300 font-bold italic py-4">
                           {t('Waiting...', '待機中...')}
                         </div>
                       ) : (
@@ -574,10 +574,10 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
                           return (
                             <div
                               key={p.id}
-                              className={`group relative flex items-center justify-between px-2.5 py-1 rounded-xl border text-xs font-bold ${
+                              className={`group relative flex items-center justify-between px-2.5 py-1 rounded-xl border text-xs font-bold shadow-2xs ${
                                 isBot
-                                  ? 'bg-indigo-50/60 dark:bg-indigo-950/40 border-indigo-200 dark:border-indigo-800/60'
-                                  : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700'
+                                  ? 'bg-indigo-50/95 dark:bg-indigo-950/90 border-indigo-200 dark:border-indigo-800'
+                                  : 'bg-white/95 dark:bg-slate-900/95 border-slate-200 dark:border-slate-700'
                               }`}
                             >
                               {/* Floating Speech Bubble Greeting */}
@@ -593,7 +593,7 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
                                 const num = typeof p.attendanceNumber === 'number' ? p.attendanceNumber : resolveRacerNumber(p);
                                 const hasNumInNick = p.nickname?.includes('番') || p.nickname?.startsWith('#') || p.nickname?.startsWith('00');
                                 return (
-                                  <span className="flex items-center gap-1 truncate max-w-[145px] text-slate-800 dark:text-slate-200">
+                                  <span className="flex items-center gap-1 truncate max-w-[145px] text-slate-900 dark:text-slate-100">
                                     {isBot && <span className="text-[10px] text-indigo-500 dark:text-indigo-400">🤖</span>}
                                     {p.avatar && !isBot && (
                                       <AvatarDisplay avatar={p.avatar} frameId={p.frame} sizeClassName="w-4 h-4 text-sm" />
@@ -638,9 +638,11 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
             /* INDIVIDUAL MODE: Responsive 3-to-4 Column Grid with Dedicated Internal Scrollbar */
             <div className="flex-1 min-h-0 overflow-y-auto pr-1 pt-2">
               {playerList.length === 0 ? (
-                <div className="w-full h-full flex flex-col items-center justify-center py-10 text-slate-500 dark:text-slate-400 italic text-xs font-bold text-center">
-                  <span className="text-3xl mb-2">📱</span>
-                  <span>{t('Scan the QR code to see your name appear here!', 'QRコードをスキャンするとここに名前が表示されます！')}</span>
+                <div className="w-full h-full flex flex-col items-center justify-center py-8 text-slate-700 dark:text-slate-200 italic text-xs font-black text-center">
+                  <span className="text-3xl mb-2 drop-shadow-xs">📱</span>
+                  <span className="px-3 py-1 rounded-full bg-white/80 dark:bg-slate-900/80 shadow-2xs">
+                    {t('Scan the QR code to see your name appear here!', 'QRコードをスキャンするとここに名前が表示されます！')}
+                  </span>
                 </div>
               ) : (
                 <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-2 content-start">
@@ -649,10 +651,10 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
                     return (
                       <div
                         key={p.id}
-                        className={`group relative flex items-center justify-between gap-1.5 px-2.5 py-1.5 rounded-xl border shadow-2xs animate-in zoom-in-95 duration-100 min-w-0 ${
+                        className={`group relative flex items-center justify-between gap-1.5 px-2.5 py-1.5 rounded-xl border shadow-xs animate-in zoom-in-95 duration-100 min-w-0 ${
                           isBot 
-                            ? 'bg-indigo-50/60 dark:bg-indigo-950/40 border-indigo-200 dark:border-indigo-800/70' 
-                            : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700'
+                            ? 'bg-indigo-50/95 dark:bg-indigo-950/90 border-indigo-200 dark:border-indigo-800' 
+                            : 'bg-white/95 dark:bg-slate-800/95 border-slate-200 dark:border-slate-700'
                         }`}
                       >
                         {/* Floating Speech Bubble Greeting */}
@@ -680,7 +682,7 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
                                     #{num === 0 ? '00' : num}
                                   </span>
                                 )}
-                                <span className="text-xs font-bold text-slate-800 dark:text-slate-100 truncate">{p.nickname}</span>
+                                <span className="text-xs font-black text-slate-900 dark:text-slate-100 truncate">{p.nickname}</span>
                               </div>
                             );
                           })()}
@@ -701,7 +703,7 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
           )}
 
           {/* Roster Bottom Status Bar */}
-          <div className="pt-2 mt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2 text-[11px] text-slate-500 dark:text-slate-400 font-bold shrink-0 flex-nowrap">
+          <div className="pt-2 mt-1.5 border-t border-slate-200/80 dark:border-slate-700/80 flex items-center justify-between gap-2 text-[11px] text-slate-700 dark:text-slate-300 font-bold shrink-0 flex-nowrap">
             <span className="truncate min-w-0">
               {t('Teacher: Click START GAME or press [Enter] to begin', '先生用: [Enter] または [ゲーム開始] でスタート')}
             </span>
@@ -719,7 +721,7 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
                   className="rounded-full py-0.5"
                 />
               )}
-              <span className="font-mono text-indigo-600 dark:text-indigo-400 whitespace-nowrap shrink-0">
+              <span className="font-mono text-indigo-700 dark:text-indigo-300 whitespace-nowrap shrink-0">
                 {playerList.length > 0 ? t(`${playerList.length} Connected`, `${playerList.length} 名接続中`) : t('Lobby Open', '入室受付中')}
               </span>
             </div>

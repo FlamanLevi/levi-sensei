@@ -280,7 +280,12 @@ export function buildShortClozePrompt(word: VocabularyItem): { promptText: strin
 function pickRotatingVoiceSound(word: VocabularyItem, index: number): string | undefined {
   const suite = word.audio_suite;
   if (suite) {
-    const voices = [suite.jenny, suite.andrew, suite.ana].filter((v): v is string => Boolean(v));
+    const isSingleLetter = /^[A-Za-z]$/.test(word.english.trim());
+    const voices = [
+      suite.jenny,
+      isSingleLetter ? undefined : suite.andrew,
+      suite.ana,
+    ].filter((v): v is string => Boolean(v));
     if (voices.length > 0) {
       return voices[index % voices.length];
     }

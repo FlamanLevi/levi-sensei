@@ -1,6 +1,7 @@
 import { VocabularyItem, GradeLevel } from '@data/types';
 import { PromptType, QuizOption, QuizQuestion, QuizHostSettings, OPTION_STYLES } from './types';
 import { getCluePoolsForWord } from '@/games/three_hints/utils';
+import { arrangeOptions } from './optionOrder';
 
 // Helper to shuffle arrays
 function shuffle<T>(array: T[]): T[] {
@@ -339,6 +340,7 @@ export function generateQuizQuestions(
   grade?: GradeLevel,
   fallbackPool: VocabularyItem[] = []
 ): QuizQuestion[] {
+  const hostLayoutSeed = `host-${Math.random().toString(36).slice(2)}`;
   if (!pool || pool.length === 0) {
     return [];
   }
@@ -619,6 +621,8 @@ export function generateQuizQuestions(
     }
 
     const qIndex = questions.length;
+    // Shared (TV/host) layout: keep the correct answer from landing in the same slot 3+ times in a row.
+    options = arrangeOptions(options, target.id, hostLayoutSeed, qIndex, false);
     questions.push({
       questionIndex: qIndex,
       totalQuestions: selectedTargets.length,

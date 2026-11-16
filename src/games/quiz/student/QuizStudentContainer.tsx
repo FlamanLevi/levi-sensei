@@ -14,6 +14,7 @@ import { AnticipationStudentContainer } from '@/games/anticipation';
 import { Trophy, ArrowLeft, AlertCircle } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 import { soundEffects } from '@/services/soundEffects';
+import { personalizeQuestion } from '../optionOrder';
 
 interface QuizStudentContainerProps {
   initialPin?: string;
@@ -224,7 +225,7 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
 
   // Normalize questions array unconditionally before any early returns (Rules of Hooks)
   const cachedQuestionsRef = React.useRef<{ key: string; list: QuizQuestion[] }>({ key: '', list: [] });
-  const studentQuestions: QuizQuestion[] = useMemo(() => {
+  const sharedStudentQuestions: QuizQuestion[] = useMemo(() => {
     if (!room?.questions) return [];
     const raw = room.questions;
     const entries = Array.isArray(raw) ? raw : (Object.values(raw) as QuizQuestion[]);
@@ -236,6 +237,17 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
     cachedQuestionsRef.current = { key, list };
     return list;
   }, [room?.questions]);
+
+  // Private answer layout per student (seeded by room + player so it survives reloads).
+  const layoutSeed = `${pin || room?.code || 'room'}:${playerId || 'anon'}`;
+  const studentQuestions: QuizQuestion[] = useMemo(
+    () => sharedStudentQuestions.map((q) => personalizeQuestion(q, layoutSeed)),
+    [sharedStudentQuestions, layoutSeed]
+  );
+  const personalCurrentQuestion = useMemo(
+    () => (room?.currentQuestion ? personalizeQuestion(room.currentQuestion, layoutSeed) : room?.currentQuestion),
+    [room?.currentQuestion, layoutSeed]
+  );
 
   const cachedRosterRef = React.useRef<{ key: string; list: { id: string; nickname: string; team: 'red' | 'white' }[] }>({
     key: '',
@@ -497,7 +509,7 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
       {/* 3. Classic Question View */}
       {room.status === 'QUESTION' && room.currentQuestion && (
         <QuizStudentQuestion
-          question={room.currentQuestion}
+          question={personalCurrentQuestion || room.currentQuestion}
           ipadDisplayMode={room.ipadDisplayMode || 'EYES_UP'}
           teamId={currentPlayer.teamId}
           recallDelaySeconds={room.recallDelaySeconds}

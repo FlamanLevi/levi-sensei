@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { prewarmSuzukaAssets } from '@/games/suzuka_grand_prix/engine/Suzuka3DEngine';
 import { prewarmMicroKartAssets } from '@/games/suzuka_grand_prix/engine/MicroKartBuilder.js';
 import { QuizPlayer, TEAM_PRESETS, SprintSettings, TugOfWarSettings, TamaireSettings, GamePlayType, PRE_GAME_GREETINGS } from '../types';
@@ -646,20 +647,22 @@ export const QuizStudentLobby: React.FC<QuizStudentLobbyProps> = ({
           onUpdated={handleProfileUpdated}
         />
       )}
-      {isShopOpen && (
+      {isShopOpen && createPortal(
         <EigoShopModal
           isOpen={isShopOpen}
           profile={currentProfile}
           onClose={() => setIsShopOpen(false)}
           onProfileUpdated={handleProfileUpdated}
-        />
+        />,
+        document.body
       )}
-      {isPassportOpen && (
+      {isPassportOpen && createPortal(
         <StudentStatsModal
           isOpen={isPassportOpen}
           profile={currentProfile}
           onClose={() => setIsPassportOpen(false)}
-        />
+        />,
+        document.body
       )}
     </div>
   );

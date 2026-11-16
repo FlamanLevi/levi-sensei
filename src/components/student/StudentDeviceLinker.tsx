@@ -14,7 +14,7 @@ import {
   getDefaultSecretCharm,
   generateDefaultCallsign
 } from '@/types/roster';
-import { claimAttendanceNumber, fetchClassBoundNumbers, createGuestStudentProfile, getDeviceToken, requestSeatUnlock } from '@/services/studentProfile';
+import { claimAttendanceNumber, fetchClassBoundNumbers, createGuestStudentProfile, getDeviceToken, requestSeatUnlock, subscribeOpenSeating } from '@/services/studentProfile';
 import { safeGet, safeSubscribe } from '@/services/rtdbSafe';
 import { soundEffects } from '@/services/soundEffects';
 import { useLanguage } from '@/context/LanguageContext';
@@ -171,6 +171,24 @@ export const StudentDeviceLinker: React.FC<StudentDeviceLinkerProps> = ({ onLink
     );
     return () => unsub();
   }, [waitingForSenseiUnlock, reclaimingNum, activeSchoolId, activeClassId, claimedNumbers, onLinked]);
+
+  const [openSeatingUntil, setOpenSeatingUntil] = useState<number>(0);
+  useEffect(() => {
+    if (!activeSchoolId || !activeClassId) return;
+    return subscribeOpenSeating(activeSchoolId, activeClassId, setOpenSeatingUntil);
+  }, [activeSchoolId, activeClassId]);
+
+  const [showSafariNudge, setShowSafariNudge] = useState<boolean>(() => {
+    try {
+      const ua = navigator.userAgent || '';
+      const isIOS = /iPad|iPhone|iPod/.test(ua);
+      const isStandalone = Boolean((navigator as any).standalone);
+      const isFullSafari = /Version\/[\d.]+.*Safari/.test(ua);
+      return isIOS && !isStandalone && !isFullSafari;
+    } catch {
+      return false;
+    }
+  });
 
   const classSize = getClassSize(activeSchoolId, activeClassId);
 
@@ -379,8 +397,26 @@ export const StudentDeviceLinker: React.FC<StudentDeviceLinkerProps> = ({ onLink
     const claim = claimedNumbers[num];
 
     // Check if someone has a registered keyword icon (secret charm):
-    // If they do, use that keyword icon to access the account via the Reclaim Challenge Modal!
+    // If Open Seating is active, skip the Secret Charm challenge!
     if (claim && claim.secretCharm) {
+      if (openSeatingUntil > Date.now()) {
+        soundEffects.playCorrect();
+        claimAttendanceNumber(
+          activeSchoolId!,
+          activeClassId!,
+          num,
+          claim.nickname,
+          0,
+          0,
+          claim.avatar,
+          0,
+          0,
+          undefined,
+          claim.secretCharm,
+          claim.callsign
+        ).then((p) => onLinked(p));
+        return;
+      }
       soundEffects.playReveal();
       setReclaimAttempts(0);
       setChallengeError(false);
@@ -779,6 +815,24 @@ export const StudentDeviceLinker: React.FC<StudentDeviceLinkerProps> = ({ onLink
             <p className="text-[11px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 mt-0.5">
               {t('Tap your attendance number below to get started.', 'あなたの出席番号（しゅっせきばんごう）をタップしてね')}
             </p>
+            {openSeatingUntil > Date.now() && (
+              <div className="mt-1.5 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500 text-white text-xs font-black shadow-sm animate-pulse">
+                <span>🔓</span>
+                <span>{t('Open Seating Active! Just tap your number.', '自由着席タイム！じぶんのばんごうをタップしてね')}</span>
+              </div>
+            )}
+            {showSafariNudge && (
+              <div className="mt-1.5 flex items-center justify-between gap-2 px-3 py-1.5 rounded-xl bg-sky-50 dark:bg-sky-950/60 border border-sky-300 dark:border-sky-700 text-sky-900 dark:text-sky-100 text-[11px] font-bold">
+                <span>🧭 {t('Tap the Safari icon at the bottom right so your iPad remembers your seat!', '右下のSafari (🧭) をタップすると、せきをおぼえてくれるよ！')}</span>
+                <button
+                  type="button"
+                  onClick={() => setShowSafariNudge(false)}
+                  className="px-1.5 py-0.5 rounded bg-sky-200/70 dark:bg-sky-800 text-sky-900 dark:text-sky-100 text-[10px] font-black shrink-0"
+                >
+                  ✕
+                </button>
+              </div>
+            )}
             <div className="mt-1">
               <button
                 type="button"

@@ -7,6 +7,8 @@ import {
   subscribeUnlockRequests,
   approveSeatUnlock,
   dismissSeatUnlock,
+  setOpenSeatingWindow,
+  subscribeOpenSeating,
   SeatUnlockRequest,
 } from '@/services/studentProfile';
 import { Users, Play, X, QrCode, School, RefreshCw, Settings, Bot, Volume2 } from 'lucide-react';
@@ -122,6 +124,27 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
     if (!schoolId || !classId || isStudentHost) return;
     return subscribeUnlockRequests(schoolId, classId, setUnlockRequests);
   }, [schoolId, classId, isStudentHost]);
+
+  // Subscribe to 2-minute Open Seating grace window
+  const [openSeatingUntil, setOpenSeatingUntil] = useState<number>(0);
+  const [openSeatingSecLeft, setOpenSeatingSecLeft] = useState<number>(0);
+  useEffect(() => {
+    if (!schoolId || !classId || isStudentHost) return;
+    return subscribeOpenSeating(schoolId, classId, setOpenSeatingUntil);
+  }, [schoolId, classId, isStudentHost]);
+  useEffect(() => {
+    if (!openSeatingUntil || openSeatingUntil <= Date.now()) {
+      setOpenSeatingSecLeft(0);
+      return;
+    }
+    const tick = () => {
+      const left = Math.max(0, Math.ceil((openSeatingUntil - Date.now()) / 1000));
+      setOpenSeatingSecLeft(left);
+    };
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, [openSeatingUntil]);
 
   // Subscribe to shared Class Energy Vault
   const [classVault, setClassVault] = useState<ClassVaultState | null>(null);
@@ -536,6 +559,22 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
                     className="px-2 py-1 font-bold text-[10px] rounded-lg bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 text-rose-600 dark:text-rose-300 border border-rose-200 dark:border-rose-800 transition-all cursor-pointer active:scale-95 whitespace-nowrap"
                   >
                     {t('Clear', '全削除')}
+                  </button>
+                )}
+                {!isStudentHost && schoolId && classId && (
+                  <button
+                    type="button"
+                    onClick={() => setOpenSeatingWindow(schoolId, classId, openSeatingSecLeft > 0 ? 0 : 120_000)}
+                    className={`px-2 py-1 font-bold text-[10px] rounded-lg border transition-all cursor-pointer active:scale-95 whitespace-nowrap ${
+                      openSeatingSecLeft > 0
+                        ? 'bg-emerald-500 text-white border-emerald-600 shadow-sm animate-pulse'
+                        : 'bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border-slate-300 dark:border-slate-600'
+                    }`}
+                    title={t('Allow students to tap their own seat without a Secret Charm for 2 minutes', '2分間、ひみつのマークなしで自分の席を選べるようにします')}
+                  >
+                    {openSeatingSecLeft > 0
+                      ? `🔓 ${t('Open Seating', '自由着席')} (${Math.floor(openSeatingSecLeft / 60)}:${String(openSeatingSecLeft % 60).padStart(2, '0')})`
+                      : `🔓 ${t('Open Seating (2m)', '自由着席 (2分)')}`}
                   </button>
                 )}
               </div>

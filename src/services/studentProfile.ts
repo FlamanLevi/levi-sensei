@@ -1087,16 +1087,58 @@ export async function requestSeatUnlock(
   });
 }
 
+function readCookie(name: string): string | null {
+  try {
+    const match = document.cookie.match(new RegExp(`(?:^|; )${name.replace(/([.$?*|{}()[\]\\/+^])/g, '\\$1')}=([^;]*)`));
+    return match ? decodeURIComponent(match[1]) : null;
+  } catch {
+    return null;
+  }
+}
+
+function writeCookie(name: string, value: string, days = 365): void {
+  try {
+    const maxAge = days * 86400;
+    document.cookie = `${name}=${encodeURIComponent(value)}; path=/; max-age=${maxAge}; SameSite=Lax`;
+  } catch {
+    // ignore cookie errors
+  }
+}
+
+function idbSet(key: string, value: string): void {
+  try {
+    if (typeof indexedDB === 'undefined') return;
+    const req = indexedDB.open('levi_sensei_idb', 1);
+    req.onupgradeneeded = () => {
+      const db = req.result;
+      if (!db.objectStoreNames.contains('kv')) db.createObjectStore('kv');
+    };
+    req.onsuccess = () => {
+      try {
+        const db = req.result;
+        const tx = db.transaction('kv', 'readwrite');
+        tx.objectStore('kv').put(value, key);
+      } catch {
+        // ignore
+      }
+    };
+  } catch {
+    // ignore
+  }
+}
+
 export function getDeviceToken(): string {
   const key = 'levi_sensei_device_token';
   try {
-    let token = localStorage.getItem(key);
+    let token = localStorage.getItem(key) || readCookie(key);
     if (!token) {
       token = typeof crypto !== 'undefined' && crypto.randomUUID
         ? crypto.randomUUID()
         : `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
-      localStorage.setItem(key, token);
     }
+    localStorage.setItem(key, token);
+    writeCookie(key, token, 365);
+    idbSet(key, token);
     return token;
   } catch {
     return `ephemeral-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
@@ -1141,5 +1183,25 @@ export async function dismissSeatUnlock(
 ): Promise<void> {
   await ensureAnonymousAuth();
   await safeRemove(`class_rosters/${schoolId}/${classId}/unlockRequests/${attendanceNumber}`);
+}
+
+export async function setOpenSeatingWindow(
+  schoolId: SchoolId,
+  classId: string,
+  durationMs: number = 120_000
+): Promise<void> {
+  await ensureAnonymousAuth();
+  const until = durationMs > 0 ? Date.now() + durationMs : 0;
+  await safeSet(`class_rosters/${schoolId}/${classId}/openSeatingUntil`, until);
+}
+
+export function subscribeOpenSeating(
+  schoolId: SchoolId,
+  classId: string,
+  cb: (untilMs: number) => void
+): () => void {
+  return safeSubscribe<number>(`class_rosters/${schoolId}/${classId}/openSeatingUntil`, (val) => {
+    cb(typeof val === 'number' ? val : 0);
+  });
 }
 

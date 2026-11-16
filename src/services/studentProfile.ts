@@ -1,4 +1,4 @@
-import { safeGet, safeSet, safeRemove, safeUpdate } from '@/services/rtdbSafe';
+import { safeGet, safeSet, safeRemove, safeUpdate, safeSubscribe } from '@/services/rtdbSafe';
 import { 
   SchoolId, 
   StudentProfile, 
@@ -1063,3 +1063,83 @@ export async function spinLuckyGacha(
     return { success: false, error: err.message || 'Gacha failed' };
   }
 }
+
+export interface SeatUnlockRequest {
+  attendanceNumber: number;
+  nickname: string;
+  requesterToken: string;
+  requestedAt: number;
+}
+
+export async function requestSeatUnlock(
+  schoolId: SchoolId,
+  classId: string,
+  attendanceNumber: number,
+  nickname: string,
+  requesterToken: string
+): Promise<void> {
+  await ensureAnonymousAuth();
+  await safeSet(`class_rosters/${schoolId}/${classId}/unlockRequests/${attendanceNumber}`, {
+    attendanceNumber,
+    nickname,
+    requesterToken,
+    requestedAt: Date.now(),
+  });
+}
+
+export function getDeviceToken(): string {
+  const key = 'levi_sensei_device_token';
+  try {
+    let token = localStorage.getItem(key);
+    if (!token) {
+      token = typeof crypto !== 'undefined' && crypto.randomUUID
+        ? crypto.randomUUID()
+        : `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+      localStorage.setItem(key, token);
+    }
+    return token;
+  } catch {
+    return `ephemeral-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+  }
+}
+
+export function subscribeUnlockRequests(
+  schoolId: SchoolId,
+  classId: string,
+  cb: (requests: SeatUnlockRequest[]) => void
+): () => void {
+  return safeSubscribe<Record<string, SeatUnlockRequest>>(`class_rosters/${schoolId}/${classId}/unlockRequests`, (data) => {
+    if (!data) {
+      cb([]);
+      return;
+    }
+    const list = Object.values(data)
+      .filter((r) => r && typeof r.attendanceNumber === 'number' && r.requesterToken)
+      .sort((a, b) => a.attendanceNumber - b.attendanceNumber);
+    cb(list);
+  });
+}
+
+export async function approveSeatUnlock(
+  schoolId: SchoolId,
+  classId: string,
+  attendanceNumber: number,
+  requesterToken: string
+): Promise<void> {
+  await ensureAnonymousAuth();
+  await safeUpdate(`class_rosters/${schoolId}/${classId}/boundNumbers/${attendanceNumber}`, {
+    deviceToken: requesterToken,
+    unlockedAt: Date.now(),
+  });
+  await safeRemove(`class_rosters/${schoolId}/${classId}/unlockRequests/${attendanceNumber}`);
+}
+
+export async function dismissSeatUnlock(
+  schoolId: SchoolId,
+  classId: string,
+  attendanceNumber: number
+): Promise<void> {
+  await ensureAnonymousAuth();
+  await safeRemove(`class_rosters/${schoolId}/${classId}/unlockRequests/${attendanceNumber}`);
+}
+

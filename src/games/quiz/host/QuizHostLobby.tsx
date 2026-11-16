@@ -2,7 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { QuizPlayer, GameMode, TeamAssignmentMode, TeamId, TEAM_PRESETS, RAINBOW_TEAM_ORDER, QuizScope, GamePlayType, QuizSubject, SprintSettings } from '../types';
 import { MathGrade, MathDomain, MATH_GRADES, MATH_DOMAINS } from '../mathTypes';
 import { SCHOOL_CONFIGS, SchoolId, getClassSize } from '@/types/roster';
-import { fetchClassBoundNumbers } from '@/services/studentProfile';
+import {
+  fetchClassBoundNumbers,
+  subscribeUnlockRequests,
+  approveSeatUnlock,
+  dismissSeatUnlock,
+  SeatUnlockRequest,
+} from '@/services/studentProfile';
 import { Users, Play, X, QrCode, School, RefreshCw, Settings, Bot, Volume2 } from 'lucide-react';
 import { BgmControlPill } from '@/components/common';
 import { useLanguage } from '@/context/LanguageContext';
@@ -108,6 +114,13 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
         }
       }).catch(() => {});
     }
+  }, [schoolId, classId, isStudentHost]);
+
+  // Subscribe to student 1-tap seat unlock requests
+  const [unlockRequests, setUnlockRequests] = useState<SeatUnlockRequest[]>([]);
+  useEffect(() => {
+    if (!schoolId || !classId || isStudentHost) return;
+    return subscribeUnlockRequests(schoolId, classId, setUnlockRequests);
   }, [schoolId, classId, isStudentHost]);
 
   // Subscribe to shared Class Energy Vault
@@ -526,6 +539,51 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
                   </button>
                 )}
               </div>
+            </div>
+          )}
+
+          {/* 1-Tap Seat Unlock Requests Queue */}
+          {!isStudentHost && schoolId && classId && unlockRequests.length > 0 && (
+            <div className="mb-2 px-3 py-1.5 rounded-2xl bg-amber-50/95 dark:bg-amber-950/80 border-2 border-amber-400 dark:border-amber-600 flex items-center justify-between gap-2 shrink-0 flex-wrap shadow-sm">
+              <div className="flex items-center gap-1.5 flex-wrap min-w-0">
+                <span className="text-xs font-black text-amber-950 dark:text-amber-200 whitespace-nowrap">
+                  🔓 {t('Unlock Requests:', 'ロック解除リクエスト:')}
+                </span>
+                {unlockRequests.map((req) => (
+                  <div key={req.attendanceNumber} className="inline-flex items-center rounded-xl bg-white dark:bg-slate-900 border border-amber-300 dark:border-amber-700 shadow-2xs overflow-hidden">
+                    <button
+                      type="button"
+                      onClick={() => approveSeatUnlock(schoolId, classId, req.attendanceNumber, req.requesterToken)}
+                      className="px-2.5 py-1 text-xs font-black text-emerald-700 dark:text-emerald-300 hover:bg-emerald-50 dark:hover:bg-emerald-950/60 transition cursor-pointer flex items-center gap-1"
+                      title={t('Tap to unlock this student seat', 'タップしてロックを解除')}
+                    >
+                      <span>✅ #{req.attendanceNumber}</span>
+                      <span className="max-w-[80px] truncate text-slate-700 dark:text-slate-200">{req.nickname}</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => dismissSeatUnlock(schoolId, classId, req.attendanceNumber)}
+                      className="px-1.5 py-1 text-slate-400 hover:text-rose-500 border-l border-amber-200 dark:border-amber-800 cursor-pointer"
+                      aria-label={t('Dismiss', '閉じる')}
+                    >
+                      <X size={12} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+              {unlockRequests.length > 1 && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    unlockRequests.forEach((req) => {
+                      approveSeatUnlock(schoolId, classId, req.attendanceNumber, req.requesterToken);
+                    });
+                  }}
+                  className="px-3 py-1 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs shadow-xs cursor-pointer shrink-0 whitespace-nowrap"
+                >
+                  {t('Unlock All', '全員解除')} ({unlockRequests.length})
+                </button>
+              )}
             </div>
           )}
 

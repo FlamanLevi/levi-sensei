@@ -14,8 +14,8 @@ import {
   getDefaultSecretCharm,
   generateDefaultCallsign
 } from '@/types/roster';
-import { claimAttendanceNumber, fetchClassBoundNumbers, createGuestStudentProfile } from '@/services/studentProfile';
-import { safeGet } from '@/services/rtdbSafe';
+import { claimAttendanceNumber, fetchClassBoundNumbers, createGuestStudentProfile, getDeviceToken, requestSeatUnlock } from '@/services/studentProfile';
+import { safeGet, safeSubscribe } from '@/services/rtdbSafe';
 import { soundEffects } from '@/services/soundEffects';
 import { useLanguage } from '@/context/LanguageContext';
 import { useClassroom, verifyTeacherPin } from '@/context/ClassroomContext';
@@ -114,6 +114,7 @@ export const StudentDeviceLinker: React.FC<StudentDeviceLinkerProps> = ({ onLink
   // Reclaim Challenge Modal State & Anti-Brute-Force Lockout
   const [reclaimingNum, setReclaimingNum] = useState<number | null>(null);
   const [reclaimAttempts, setReclaimAttempts] = useState<number>(0);
+  const [waitingForSenseiUnlock, setWaitingForSenseiUnlock] = useState<boolean>(false);
   const [challengeError, setChallengeError] = useState<boolean>(false);
 
   // Seat Lockout State (3 minutes on 2 failed secret mark attempts)
@@ -135,6 +136,41 @@ export const StudentDeviceLinker: React.FC<StudentDeviceLinkerProps> = ({ onLink
 
   const activeSchoolId = (lockedSchoolId || selectedSchool);
   const activeClassId = (lockedClassId || selectedClass);
+
+  useEffect(() => {
+    if (!waitingForSenseiUnlock || reclaimingNum === null || !activeSchoolId || !activeClassId) return;
+    const myToken = getDeviceToken();
+    const num = reclaimingNum;
+    const unsub = safeSubscribe<string>(
+      `class_rosters/${activeSchoolId}/${activeClassId}/boundNumbers/${num}/deviceToken`,
+      async (token) => {
+        if (token && token === myToken) {
+          setWaitingForSenseiUnlock(false);
+          setReclaimingNum(null);
+          setReclaimAttempts(0);
+          const seatInfo = claimedNumbers[num];
+          const nickname = seatInfo?.nickname || `Student #${num}`;
+          const newProfile = await claimAttendanceNumber(
+            activeSchoolId,
+            activeClassId,
+            num,
+            nickname,
+            0,
+            0,
+            seatInfo?.avatar,
+            0,
+            0,
+            undefined,
+            seatInfo?.secretCharm,
+            seatInfo?.callsign
+          );
+          soundEffects.playCorrect();
+          onLinked(newProfile);
+        }
+      }
+    );
+    return () => unsub();
+  }, [waitingForSenseiUnlock, reclaimingNum, activeSchoolId, activeClassId, claimedNumbers, onLinked]);
 
   const classSize = getClassSize(activeSchoolId, activeClassId);
 
@@ -1347,8 +1383,36 @@ export const StudentDeviceLinker: React.FC<StudentDeviceLinkerProps> = ({ onLink
               </div>
             </div>
 
-            {/* Bottom Actions: Teacher PIN Override + Wrong Seat Escape */}
-            <div className="shrink-0 grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-3 border-t border-slate-200 dark:border-slate-800">
+            {/* Bottom Actions: Ask Sensei to Unlock + Teacher PIN Override + Wrong Seat Escape */}
+            <div className="shrink-0 grid grid-cols-1 sm:grid-cols-3 gap-2 pt-3 border-t border-slate-200 dark:border-slate-800">
+              <button
+                type="button"
+                disabled={waitingForSenseiUnlock}
+                onClick={async () => {
+                  if (!activeSchoolId || !activeClassId || reclaimingNum === null) return;
+                  setWaitingForSenseiUnlock(true);
+                  await requestSeatUnlock(
+                    activeSchoolId,
+                    activeClassId,
+                    reclaimingNum,
+                    claimedNumbers[reclaimingNum]?.nickname || `#${reclaimingNum}`,
+                    getDeviceToken()
+                  );
+                }}
+                className={`w-full py-2.5 px-3 rounded-xl font-black text-xs sm:text-sm flex items-center justify-center gap-1.5 transition-colors cursor-pointer border whitespace-nowrap ${
+                  waitingForSenseiUnlock
+                    ? 'bg-emerald-100 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-200 border-emerald-400 animate-pulse'
+                    : 'bg-blue-600 hover:bg-blue-500 text-white border-blue-500 shadow-sm'
+                }`}
+              >
+                <span>{waitingForSenseiUnlock ? '⏳' : '🙋'}</span>
+                <span>
+                  {waitingForSenseiUnlock
+                    ? t('Waiting for Sensei...', 'せんせい を まっています...')
+                    : t('Ask Sensei to Unlock', 'せんせいに ロックかいじょ')}
+                </span>
+              </button>
+
               <button
                 type="button"
                 onClick={() => handleOpenTeacherUnlock(reclaimingNum)}
@@ -1357,8 +1421,8 @@ export const StudentDeviceLinker: React.FC<StudentDeviceLinkerProps> = ({ onLink
                 <span>👨‍🏫</span>
                 <span>
                   {t(
-                    'Teacher PIN Override',
-                    <><ruby>合言葉<rt>あいことば</rt></ruby>を忘れたら先生PINで解除</>
+                    'Teacher PIN',
+                    '先生PINで解除'
                   )}
                 </span>
               </button>
@@ -1369,10 +1433,11 @@ export const StudentDeviceLinker: React.FC<StudentDeviceLinkerProps> = ({ onLink
                   setReclaimingNum(null);
                   setChallengeError(false);
                   setReclaimAttempts(0);
+                  setWaitingForSenseiUnlock(false);
                 }}
                 className="w-full py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 font-black text-xs sm:text-sm transition-colors cursor-pointer whitespace-nowrap"
               >
-                {t('No, I picked the wrong number', 'いいえ、番号をまちがえました')}
+                {t('Wrong Number', '番号をまちがえた')}
               </button>
             </div>
           </div>

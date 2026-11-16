@@ -249,9 +249,10 @@ export const QuizHostGrandPrix3D: React.FC<QuizHostGrandPrix3DProps> = ({
     [sortedStandings, isTimeTrial, targetLaps]
   );
 
-  // Trigger grace countdown when 50% of connected racers finish in Lap Race
+  // Trigger grace countdown when configured % of connected racers finish in Lap Race (default 50%)
+  const graceThresholdRatio = (sprintSettings?.graceFinisherThresholdPct || 50) / 100;
   const graceTriggerCount =
-    playerList.length > 1 ? Math.max(1, Math.ceil(playerList.length * 0.5)) : 1;
+    playerList.length > 1 ? Math.max(1, Math.ceil(playerList.length * graceThresholdRatio)) : 1;
 
   // Proportional BGM tempo ramp: 1.00x -> 1.24x as finishers approach graceTriggerCount, 1.25x at grace countdown
   const targetBgmRate = useMemo(

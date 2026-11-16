@@ -40,6 +40,7 @@ interface QuizStudentLobbyProps {
   tugOfWarSettings?: TugOfWarSettings;
   tamaireSettings?: TamaireSettings;
   totalQuestions?: number;
+  hasAudioPrompt?: boolean;
   totalStudents?: number;
   onLeave: () => void;
   onUpdateKartTheme?: (themeId: string) => void;

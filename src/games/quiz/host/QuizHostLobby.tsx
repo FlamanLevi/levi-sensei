@@ -3,7 +3,7 @@ import { QuizPlayer, GameMode, TeamAssignmentMode, TeamId, TEAM_PRESETS, RAINBOW
 import { MathGrade, MathDomain, MATH_GRADES, MATH_DOMAINS } from '../mathTypes';
 import { SCHOOL_CONFIGS, SchoolId, getClassSize } from '@/types/roster';
 import { fetchClassBoundNumbers } from '@/services/studentProfile';
-import { Users, Play, X, QrCode, School, RefreshCw, Settings, Bot } from 'lucide-react';
+import { Users, Play, X, QrCode, School, RefreshCw, Settings, Bot, Volume2 } from 'lucide-react';
 import { BgmControlPill } from '@/components/common';
 import { useLanguage } from '@/context/LanguageContext';
 import QRCode from 'qrcode';
@@ -33,6 +33,7 @@ interface QuizHostLobbyProps {
   vocabularyScope?: QuizScope;
   selectedUnits?: string[];
   totalQuestions?: number;
+  hasAudioPrompt?: boolean;
   players: Record<string, QuizPlayer>;
   botCount?: number;
   onAddBots?: (count: number, difficulty?: BotDifficulty | 'mixed') => void;
@@ -72,6 +73,7 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
   vocabularyScope,
   selectedUnits,
   totalQuestions,
+  hasAudioPrompt = false,
   players,
   botCount = 0,
   onAddBots,

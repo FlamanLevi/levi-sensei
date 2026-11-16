@@ -198,6 +198,9 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
   const [sprintGraceSeconds, setSprintGraceSeconds] = useState<number>(
     () => initialSettings?.sprintSettings?.graceCountdownSeconds ?? 15
   );
+  const [sprintGraceThresholdPct, setSprintGraceThresholdPct] = useState<number>(
+    () => initialSettings?.sprintSettings?.graceFinisherThresholdPct ?? 50
+  );
   const [targetLaps3D, setTargetLaps3D] = useState<number>(
     () => initialSettings?.sprintSettings?.targetLaps3D ?? 1
   );
@@ -390,6 +393,7 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
           sprintMode,
           timeLimitSeconds: sprintTimeLimitSeconds,
           graceCountdownSeconds: sprintGraceSeconds,
+          graceFinisherThresholdPct: sprintGraceThresholdPct,
           targetLaps3D: targetLaps3D || 1,
           trackThemeSelection,
           ...(trackThemeSelection === 'RANDOM' &&
@@ -697,6 +701,8 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
             onSelectTargetLaps3D={setTargetLaps3D}
             sprintGraceSeconds={sprintGraceSeconds}
             onSelectSprintGraceSeconds={setSprintGraceSeconds}
+            sprintGraceThresholdPct={sprintGraceThresholdPct}
+            onSelectSprintGraceThresholdPct={setSprintGraceThresholdPct}
             sprintTimeLimitSeconds={sprintTimeLimitSeconds}
             onSelectSprintTimeLimitSeconds={setSprintTimeLimitSeconds}
             wrongSpeedLossRatio={wrongSpeedLossRatio}

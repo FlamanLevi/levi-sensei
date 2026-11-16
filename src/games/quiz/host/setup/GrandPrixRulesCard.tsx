@@ -28,6 +28,8 @@ interface GrandPrixRulesCardProps {
   onSelectTargetLaps3D: (laps: number) => void;
   sprintGraceSeconds: number;
   onSelectSprintGraceSeconds: (sec: number) => void;
+  sprintGraceThresholdPct: number;
+  onSelectSprintGraceThresholdPct: (pct: number) => void;
   sprintTimeLimitSeconds: number;
   onSelectSprintTimeLimitSeconds: (sec: number) => void;
   wrongSpeedLossRatio: number;
@@ -51,6 +53,8 @@ export const GrandPrixRulesCard: React.FC<GrandPrixRulesCardProps> = ({
   onSelectTargetLaps3D,
   sprintGraceSeconds,
   onSelectSprintGraceSeconds,
+  sprintGraceThresholdPct,
+  onSelectSprintGraceThresholdPct,
   sprintTimeLimitSeconds,
   onSelectSprintTimeLimitSeconds,
   wrongSpeedLossRatio,
@@ -163,7 +167,7 @@ export const GrandPrixRulesCard: React.FC<GrandPrixRulesCardProps> = ({
               {t('Podium Grace Countdown', '上位ゴール後の猶予タイマー')}
             </span>
             <div className="grid grid-cols-4 gap-1.5">
-              {[15, 20, 25, 30].map((sec) => (
+              {[10, 15, 20, 25].map((sec) => (
                 <button
                   key={sec}
                   type="button"
@@ -176,6 +180,28 @@ export const GrandPrixRulesCard: React.FC<GrandPrixRulesCardProps> = ({
                 >
                   <Clock size={11} />
                   <span>{sec}s</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="sm:col-span-2">
+            <span className="text-[11px] font-black text-slate-600 dark:text-slate-400 block mb-1.5">
+              {t('Grace Trigger Threshold (% Finished)', '猶予タイマー開始ライン (ゴール割合)')}
+            </span>
+            <div className="grid grid-cols-5 gap-1.5">
+              {[10, 20, 30, 40, 50].map((pct) => (
+                <button
+                  key={pct}
+                  type="button"
+                  onClick={() => onSelectSprintGraceThresholdPct(pct)}
+                  className={`py-2 rounded-xl font-black text-xs border transition-all flex items-center justify-center ${
+                    sprintGraceThresholdPct === pct
+                      ? 'border-emerald-500 bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-xs'
+                      : 'border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-white/50'
+                  }`}
+                >
+                  {pct}%
                 </button>
               ))}
             </div>

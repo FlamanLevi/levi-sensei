@@ -152,10 +152,14 @@ export const EigoShopModal: React.FC<EigoShopModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/80 backdrop-blur-md animate-in fade-in duration-200 pointer-events-auto"
+      onClick={onClose}
+    >
       <div 
         className="w-full max-w-4xl max-h-[94dvh] flex flex-col rounded-3xl bg-white dark:bg-slate-900 border-4 border-amber-400 dark:border-amber-500 shadow-2xl overflow-hidden text-slate-900 dark:text-slate-100"
         style={{ fontFamily: "'UD Digi Kyokasho NP-R', 'UD Digi Kyokasho NK-R', 'BIZ UDPGothic', 'Zen Maru Gothic', sans-serif" }}
+        onClick={(e) => e.stopPropagation()}
       >
         {/* Modal Header */}
         <div className="p-4 sm:p-5 bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-white flex items-center justify-between gap-3 shrink-0 shadow-lg">

@@ -61,6 +61,7 @@ function createPoliceStationSignTexture(): THREE.CanvasTexture {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
   cachedPoliceStationSignTex = texture;
   return texture;
 }
@@ -93,6 +94,7 @@ function createPatrolCarSideTexture(): THREE.CanvasTexture {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
   cachedPatrolCarDoorTex = texture;
   return texture;
 }
@@ -561,6 +563,7 @@ function createKobanSignTexture(): THREE.CanvasTexture {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
   cachedKobanSignTex = texture;
   return texture;
 }
@@ -607,6 +610,7 @@ function createBulletinBoardTexture(): THREE.CanvasTexture {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
   cachedBulletinBoardTex = texture;
   return texture;
 }

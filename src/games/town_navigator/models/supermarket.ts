@@ -53,6 +53,7 @@ function createSupermarketSignTexture(): THREE.CanvasTexture {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
   cachedSupermarketSignTex = texture;
   return texture;
 }
@@ -93,6 +94,7 @@ function createGroceryInteriorTexture(): THREE.CanvasTexture {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
   cachedGroceryInteriorTex = texture;
   return texture;
 }
@@ -121,6 +123,7 @@ function createProduceTexture(): THREE.CanvasTexture {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
   cachedProduceTex = texture;
   return texture;
 }

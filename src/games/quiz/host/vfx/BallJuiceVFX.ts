@@ -5,7 +5,7 @@ import * as THREE from 'three';
  * High-impact kinetic VFX for 3D sports (Volleyball, Tennis):
  * 1. Squash-and-Stretch elastic ball deformation along contact normal
  * 2. Hit-Stop freeze frame (35-48ms impact pause) for visceral weight
- * 3. 3D Cartoon Star particles & expanding shockwave rings
+ * 3. Hardware-instanced 3D Cartoon Star particles & expanding shockwave rings (2 draw calls total)
  *
  * Derived from Gemini Argon Games (Argon Tennis swing_vfx engine).
  */
@@ -48,6 +48,47 @@ export function createCartoonStarGeometry(outerRadius = 0.14, innerRadius = 0.06
   return geom;
 }
 
+const STAR_CAPACITY = 24;
+const RING_CAPACITY = 8;
+const STAR_COLOR_PALETTE = [0xfbbf24, 0xf43f5e, 0x38bdf8, 0xfacc15, 0xffffff] as const;
+
+interface StarParticleState {
+  pos: THREE.Vector3;
+  rot: THREE.Euler;
+  vel: THREE.Vector3;
+  rotVel: THREE.Vector3;
+  age: number;
+  maxAge: number;
+  baseScale: number;
+  colorHex: number;
+  active: boolean;
+}
+
+interface BounceRingState {
+  x: number;
+  z: number;
+  age: number;
+  duration: number;
+  startScale: number;
+  endScale: number;
+  colorHex: number;
+  active: boolean;
+}
+
+function applyInstancedOpacityMaterial(mat: THREE.MeshBasicMaterial, cacheKey: string): THREE.MeshBasicMaterial {
+  (mat as unknown as { customProgramCacheKey: () => string }).customProgramCacheKey = () => cacheKey;
+  mat.onBeforeCompile = (shader) => {
+    shader.vertexShader = shader.vertexShader
+      .replace('#include <common>', '#include <common>\nattribute float aOpacity;\nvarying float vInstanceOpacity;')
+      .replace('#include <begin_vertex>', '#include <begin_vertex>\nvInstanceOpacity = aOpacity;');
+    shader.fragmentShader = shader.fragmentShader
+      .replace('#include <common>', '#include <common>\nvarying float vInstanceOpacity;')
+      .replace('#include <color_fragment>', '#include <color_fragment>\ndiffuseColor.a *= vInstanceOpacity;');
+  };
+  mat.needsUpdate = true;
+  return mat;
+}
+
 export class BallJuiceVFX {
   private scene: THREE.Scene;
   private hitStopTimer: number = 0;
@@ -64,31 +105,28 @@ export class BallJuiceVFX {
     isBounce: false,
   };
 
+  // Hoisted scratch objects (zero per-frame allocations)
   private tmpQuat = new THREE.Quaternion();
   private upVector = new THREE.Vector3(0, 1, 0);
+  private tmpObj = new THREE.Object3D();
+  private tmpMatrix = new THREE.Matrix4();
+  private tmpColor = new THREE.Color();
 
-  // Star Particles Pool
-  private starParticles: Array<{
-    mesh: THREE.Mesh;
-    vel: THREE.Vector3;
-    rotVel: THREE.Vector3;
-    age: number;
-    maxAge: number;
-    baseScale: number;
-    mat: THREE.MeshBasicMaterial;
-    active: boolean;
-  }> = [];
+  // Hardware-instanced Star Particles (24 slots -> 1 draw call)
+  private starGeo!: THREE.BufferGeometry;
+  private starMat!: THREE.MeshBasicMaterial;
+  private starInst!: THREE.InstancedMesh;
+  private starOpacityData!: Float32Array;
+  private starOpacityAttr!: THREE.InstancedBufferAttribute;
+  private starParticles: StarParticleState[] = [];
 
-  // Shockwave Rings Pool
-  private bounceRings: Array<{
-    mesh: THREE.Mesh;
-    age: number;
-    duration: number;
-    mat: THREE.MeshBasicMaterial;
-    startScale: number;
-    endScale: number;
-    active: boolean;
-  }> = [];
+  // Hardware-instanced Shockwave Bounce Rings (8 slots -> 1 draw call)
+  private ringGeo!: THREE.BufferGeometry;
+  private ringMat!: THREE.MeshBasicMaterial;
+  private ringInst!: THREE.InstancedMesh;
+  private ringOpacityData!: Float32Array;
+  private ringOpacityAttr!: THREE.InstancedBufferAttribute;
+  private bounceRings: BounceRingState[] = [];
 
   constructor(scene: THREE.Scene) {
     this.scene = scene;
@@ -96,60 +134,88 @@ export class BallJuiceVFX {
   }
 
   private initPools() {
-    // 1. Star Particles (Cartoon Extruded Stars in gold, rose, cyan, and amber)
-    const starGeo = createCartoonStarGeometry(0.12, 0.05, 0.035);
-    const starColors = [0xfbbf24, 0xf43f5e, 0x38bdf8, 0xfacc15, 0xffffff];
+    // 1. Star Particles InstancedMesh (Cartoon Extruded Stars in gold, rose, cyan, amber, white)
+    this.starGeo = createCartoonStarGeometry(0.12, 0.05, 0.035);
+    this.starOpacityData = new Float32Array(STAR_CAPACITY);
+    this.starOpacityAttr = new THREE.InstancedBufferAttribute(this.starOpacityData, 1);
+    this.starGeo.setAttribute('aOpacity', this.starOpacityAttr);
 
-    for (let i = 0; i < 24; i++) {
-      const mat = new THREE.MeshBasicMaterial({
-        color: starColors[i % starColors.length],
+    this.starMat = applyInstancedOpacityMaterial(
+      new THREE.MeshBasicMaterial({
+        color: 0xffffff,
         transparent: true,
-        opacity: 0,
+        opacity: 1.0,
         side: THREE.DoubleSide,
-      });
-      const mesh = new THREE.Mesh(starGeo, mat);
-      mesh.visible = false;
-      this.scene.add(mesh);
+        depthWrite: false,
+      }),
+      'ball_juice_instanced_star_v1'
+    );
 
+    this.starInst = new THREE.InstancedMesh(this.starGeo, this.starMat, STAR_CAPACITY);
+    this.starInst.frustumCulled = false;
+    this.starInst.count = 0;
+    this.starInst.visible = false;
+
+    for (let i = 0; i < STAR_CAPACITY; i++) {
+      const colorHex = STAR_COLOR_PALETTE[i % STAR_COLOR_PALETTE.length];
+      this.tmpColor.setHex(colorHex);
+      this.starInst.setColorAt(i, this.tmpColor);
+      this.starOpacityData[i] = 0;
       this.starParticles.push({
-        mesh,
+        pos: new THREE.Vector3(),
+        rot: new THREE.Euler(),
         vel: new THREE.Vector3(),
         rotVel: new THREE.Vector3(),
         age: 0,
         maxAge: 0.45,
         baseScale: 1.0,
-        mat,
+        colorHex,
         active: false,
       });
     }
+    if (this.starInst.instanceColor) this.starInst.instanceColor.needsUpdate = true;
+    this.scene.add(this.starInst);
 
-    // 2. Shockwave Bounce Rings
-    const ringGeo = new THREE.RingGeometry(0.15, 0.42, 32);
-    ringGeo.rotateX(-Math.PI / 2);
+    // 2. Shockwave Bounce Rings InstancedMesh
+    this.ringGeo = new THREE.RingGeometry(0.15, 0.42, 32);
+    this.ringGeo.rotateX(-Math.PI / 2);
+    this.ringOpacityData = new Float32Array(RING_CAPACITY);
+    this.ringOpacityAttr = new THREE.InstancedBufferAttribute(this.ringOpacityData, 1);
+    this.ringGeo.setAttribute('aOpacity', this.ringOpacityAttr);
 
-    for (let i = 0; i < 8; i++) {
-      const mat = new THREE.MeshBasicMaterial({
+    this.ringMat = applyInstancedOpacityMaterial(
+      new THREE.MeshBasicMaterial({
         color: 0xffffff,
         transparent: true,
-        opacity: 0,
+        opacity: 1.0,
         side: THREE.DoubleSide,
         depthWrite: false,
-      });
-      const mesh = new THREE.Mesh(ringGeo, mat);
-      mesh.position.y = 0.018;
-      mesh.visible = false;
-      this.scene.add(mesh);
+      }),
+      'ball_juice_instanced_ring_v1'
+    );
 
+    this.ringInst = new THREE.InstancedMesh(this.ringGeo, this.ringMat, RING_CAPACITY);
+    this.ringInst.frustumCulled = false;
+    this.ringInst.count = 0;
+    this.ringInst.visible = false;
+
+    this.tmpColor.setHex(0xffffff);
+    for (let i = 0; i < RING_CAPACITY; i++) {
+      this.ringInst.setColorAt(i, this.tmpColor);
+      this.ringOpacityData[i] = 0;
       this.bounceRings.push({
-        mesh,
+        x: 0,
+        z: 0,
         age: 0,
         duration: 0.38,
-        mat,
         startScale: 0.6,
         endScale: 2.8,
+        colorHex: 0xffffff,
         active: false,
       });
     }
+    if (this.ringInst.instanceColor) this.ringInst.instanceColor.needsUpdate = true;
+    this.scene.add(this.ringInst);
   }
 
   // ---------------------------------------------------------------------------
@@ -272,86 +338,124 @@ export class BallJuiceVFX {
         (Math.random() - 0.5) * 20
       );
 
-      p.mesh.position.copy(origin);
-      p.mesh.scale.setScalar(p.baseScale);
-      p.mat.opacity = 1.0;
-      p.mesh.visible = true;
+      p.pos.copy(origin);
+      p.rot.set(0, 0, 0);
       spawned++;
     }
   }
 
   public spawnBounceRing(x: number, z: number, colorHex = 0xffffff, scaleMultiplier = 1.0) {
-    const ring = this.bounceRings.find((r) => !r.active) || this.bounceRings[0];
+    let ring: BounceRingState | undefined;
+    for (let i = 0; i < this.bounceRings.length; i++) {
+      if (!this.bounceRings[i].active) {
+        ring = this.bounceRings[i];
+        break;
+      }
+    }
+    if (!ring) ring = this.bounceRings[0];
     if (!ring) return;
 
     ring.active = true;
     ring.age = 0;
-    ring.mesh.position.set(x, 0.018, z);
-    ring.mesh.scale.setScalar(ring.startScale * scaleMultiplier);
-    ring.mat.color.setHex(colorHex);
-    ring.mat.opacity = 0.95;
-    ring.mesh.visible = true;
+    ring.x = x;
+    ring.z = z;
+    ring.startScale = 0.6 * scaleMultiplier;
+    ring.endScale = 2.8 * scaleMultiplier;
+    ring.colorHex = colorHex;
   }
 
   // ---------------------------------------------------------------------------
-  // Frame Update Loop
+  // Frame Update Loop (Zero Per-Frame Allocations)
   // ---------------------------------------------------------------------------
   public update(dt: number, ballMesh?: THREE.Mesh) {
     if (ballMesh) {
       this.updateBallDeformation(ballMesh, dt);
     }
 
-    // Update Star Particles
-    for (const p of this.starParticles) {
+    // 1. Update & Compact Active Star Particles -> 1 InstancedMesh
+    let activeStars = 0;
+    for (let i = 0; i < this.starParticles.length; i++) {
+      const p = this.starParticles[i];
       if (!p.active) continue;
       p.age += dt;
       const u = p.age / p.maxAge;
 
       if (u >= 1) {
         p.active = false;
-        p.mesh.visible = false;
-      } else {
-        p.vel.y -= 9.8 * dt; // Gravity
-        p.mesh.position.addScaledVector(p.vel, dt);
-        p.mesh.rotation.x += p.rotVel.x * dt;
-        p.mesh.rotation.y += p.rotVel.y * dt;
-        p.mesh.rotation.z += p.rotVel.z * dt;
-
-        const popScale = u < 0.15 ? 0.6 + (u / 0.15) * 0.45 : 1.05 * (1 - (u - 0.15) * 0.95);
-        p.mesh.scale.setScalar(Math.max(0.02, p.baseScale * popScale));
-        p.mat.opacity = Math.max(0, 1.0 - Math.pow(u, 1.5));
+        continue;
       }
+
+      p.vel.y -= 9.8 * dt; // Gravity
+      p.pos.addScaledVector(p.vel, dt);
+      p.rot.x += p.rotVel.x * dt;
+      p.rot.y += p.rotVel.y * dt;
+      p.rot.z += p.rotVel.z * dt;
+
+      const popScale = u < 0.15 ? 0.6 + (u / 0.15) * 0.45 : 1.05 * (1 - (u - 0.15) * 0.95);
+      const s = Math.max(0.02, p.baseScale * popScale);
+
+      this.tmpObj.position.copy(p.pos);
+      this.tmpObj.rotation.copy(p.rot);
+      this.tmpObj.scale.setScalar(s);
+      this.tmpObj.updateMatrix();
+
+      this.starInst.setMatrixAt(activeStars, this.tmpObj.matrix);
+      this.tmpColor.setHex(p.colorHex);
+      this.starInst.setColorAt(activeStars, this.tmpColor);
+      this.starOpacityData[activeStars] = Math.max(0, 1.0 - Math.pow(u, 1.5));
+      activeStars++;
+    }
+    this.starInst.count = activeStars;
+    this.starInst.visible = activeStars > 0;
+    if (activeStars > 0) {
+      this.starInst.instanceMatrix.needsUpdate = true;
+      if (this.starInst.instanceColor) this.starInst.instanceColor.needsUpdate = true;
+      this.starOpacityAttr.needsUpdate = true;
     }
 
-    // Update Bounce Rings
-    for (const r of this.bounceRings) {
+    // 2. Update & Compact Active Shockwave Rings -> 1 InstancedMesh
+    let activeRings = 0;
+    for (let i = 0; i < this.bounceRings.length; i++) {
+      const r = this.bounceRings[i];
       if (!r.active) continue;
       r.age += dt;
       const u = r.age / r.duration;
 
       if (u >= 1) {
         r.active = false;
-        r.mesh.visible = false;
-      } else {
-        const ease = 1 - Math.pow(1 - u, 2.2);
-        const currentScale = THREE.MathUtils.lerp(r.startScale, r.endScale, ease);
-        r.mesh.scale.setScalar(currentScale);
-        r.mat.opacity = (1 - u) * 0.92;
+        continue;
       }
+
+      const ease = 1 - Math.pow(1 - u, 2.2);
+      const currentScale = THREE.MathUtils.lerp(r.startScale, r.endScale, ease);
+
+      this.tmpMatrix.makeScale(currentScale, currentScale, currentScale);
+      this.tmpMatrix.setPosition(r.x, 0.018, r.z);
+
+      this.ringInst.setMatrixAt(activeRings, this.tmpMatrix);
+      this.tmpColor.setHex(r.colorHex);
+      this.ringInst.setColorAt(activeRings, this.tmpColor);
+      this.ringOpacityData[activeRings] = (1 - u) * 0.92;
+      activeRings++;
+    }
+    this.ringInst.count = activeRings;
+    this.ringInst.visible = activeRings > 0;
+    if (activeRings > 0) {
+      this.ringInst.instanceMatrix.needsUpdate = true;
+      if (this.ringInst.instanceColor) this.ringInst.instanceColor.needsUpdate = true;
+      this.ringOpacityAttr.needsUpdate = true;
     }
   }
 
   public dispose() {
-    this.starParticles.forEach((p) => {
-      p.mesh.geometry.dispose();
-      p.mat.dispose();
-      this.scene.remove(p.mesh);
-    });
-    this.bounceRings.forEach((r) => {
-      r.mesh.geometry.dispose();
-      r.mat.dispose();
-      this.scene.remove(r.mesh);
-    });
+    this.scene.remove(this.starInst);
+    this.scene.remove(this.ringInst);
+    this.starInst.dispose();
+    this.ringInst.dispose();
+    this.starGeo.dispose();
+    this.ringGeo.dispose();
+    this.starMat.dispose();
+    this.ringMat.dispose();
     this.starParticles = [];
     this.bounceRings = [];
   }

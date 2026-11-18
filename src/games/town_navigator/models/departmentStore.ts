@@ -51,6 +51,7 @@ function createBillboardTexture(): THREE.CanvasTexture {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
   cachedDepatoBillboardTex = texture;
   return texture;
 }
@@ -79,6 +80,7 @@ function createCanopyMarqueeTexture(): THREE.CanvasTexture {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
   cachedDepatoMarqueeTex = texture;
   return texture;
 }

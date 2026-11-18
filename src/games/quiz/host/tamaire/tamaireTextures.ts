@@ -393,11 +393,12 @@ export function createKohakuMakuTexture(): THREE.CanvasTexture | null {
 export function createUndokaiBannerTexture(schoolName = '二子玉川小'): THREE.CanvasTexture | null {
   if (typeof document === 'undefined') return null;
   const canvas = document.createElement('canvas');
-  canvas.width = 1536;
-  canvas.height = 384;
+  canvas.width = 1024;
+  canvas.height = 256;
   const ctx = canvas.getContext('2d');
   if (!ctx) return null;
 
+  ctx.scale(1024 / 1536, 256 / 384);
   ctx.fillStyle = '#0a2e16';
   ctx.fillRect(0, 0, 1536, 384);
 
@@ -492,27 +493,34 @@ export function createStitchedBeanBagTexture(
   return tex;
 }
 
+const FACE_ATLAS_W = 512;
+const FACE_ATLAS_H = 256;
+const FACE_ATLAS_COLS = 5;
+const FACE_ATLAS_ROWS = 2;
+const FACE_CELL_W = 102; // 5 * 102 = 510 <= 512
+const FACE_CELL_H = 128; // 2 * 128 = 256
+
 let cachedFaceAtlasTex: THREE.CanvasTexture | null = null;
 export function getFaceAtlasTexture(): THREE.CanvasTexture | null {
   if (cachedFaceAtlasTex) return cachedFaceAtlasTex;
   if (typeof document === 'undefined') return null;
 
-  const cellPx = 128;
-  const cols = 5;
-  const rows = 5;
   const canvas = document.createElement('canvas');
-  canvas.width = cellPx * cols;
-  canvas.height = cellPx * rows;
+  canvas.width = FACE_ATLAS_W;
+  canvas.height = FACE_ATLAS_H;
   const ctx = canvas.getContext('2d');
   if (!ctx) return null;
 
-  for (let row = 0; row < rows; row++) {
-    for (let col = 0; col < cols; col++) {
+  for (let row = 0; row < FACE_ATLAS_ROWS; row++) {
+    for (let col = 0; col < FACE_ATLAS_COLS; col++) {
       const skinHex = THROWER_SKIN_TONES[col];
       const hexStr = `#${skinHex.toString(16).padStart(6, '0')}`;
       ctx.save();
-      ctx.translate(col * cellPx, row * cellPx);
-      ctx.scale(0.5, 0.5);
+      ctx.beginPath();
+      ctx.rect(col * FACE_CELL_W, row * FACE_CELL_H, FACE_CELL_W, FACE_CELL_H);
+      ctx.clip();
+      ctx.translate(col * FACE_CELL_W, row * FACE_CELL_H);
+      ctx.scale(FACE_CELL_W / 256, FACE_CELL_H / 256);
 
       ctx.fillStyle = hexStr;
       ctx.fillRect(0, 0, 256, 256);
@@ -533,7 +541,7 @@ export function getFaceAtlasTexture(): THREE.CanvasTexture | null {
       ctx.quadraticCurveTo(168, 82, 188, 92);
       ctx.stroke();
 
-      if (row === 4) {
+      if (row === 1) {
         ctx.strokeStyle = '#0f172a';
         ctx.lineWidth = 8;
         ctx.beginPath();
@@ -596,45 +604,60 @@ export function getFaceAtlasTexture(): THREE.CanvasTexture | null {
   return tex;
 }
 
+export function writeFaceAtlasRect(
+  out: Float32Array,
+  offset: number,
+  skinIndex: number,
+  exprIndex: number
+): void {
+  const pad = 2;
+  const c = ((skinIndex % FACE_ATLAS_COLS) + FACE_ATLAS_COLS) % FACE_ATLAS_COLS;
+  // Map the 2 distinct atlas rows: row 1 for eyes-closed/happy special (exprIndex 4), row 0 for normal
+  const r = (((exprIndex % 5) + 5) % 5) === 4 ? 1 : 0;
+  out[offset] = (c * FACE_CELL_W + pad) / FACE_ATLAS_W;
+  out[offset + 1] = 1 - ((r + 1) * FACE_CELL_H - pad) / FACE_ATLAS_H;
+  out[offset + 2] = (FACE_CELL_W - 2 * pad) / FACE_ATLAS_W;
+  out[offset + 3] = (FACE_CELL_H - 2 * pad) / FACE_ATLAS_H;
+}
+
 export function getFaceAtlasRect(
   skinIdx: number,
   exprIdx: number
 ): [number, number, number, number] {
-  const cell = 128;
-  const pad = 3;
-  const w = 640;
-  const h = 640;
-  const c = skinIdx % 5;
-  const r = exprIdx % 5;
+  const pad = 2;
+  const c = ((skinIdx % FACE_ATLAS_COLS) + FACE_ATLAS_COLS) % FACE_ATLAS_COLS;
+  const r = (((exprIdx % 5) + 5) % 5) === 4 ? 1 : 0;
   return [
-    (c * cell + pad) / w,
-    1 - ((r + 1) * cell - pad) / h,
-    (cell - 2 * pad) / w,
-    (cell - 2 * pad) / h,
+    (c * FACE_CELL_W + pad) / FACE_ATLAS_W,
+    1 - ((r + 1) * FACE_CELL_H - pad) / FACE_ATLAS_H,
+    (FACE_CELL_W - 2 * pad) / FACE_ATLAS_W,
+    (FACE_CELL_H - 2 * pad) / FACE_ATLAS_H,
   ];
 }
+
+const BIB_ATLAS_SIZE = 512;
+const BIB_CELL_PX = 64;
+const BIB_ATLAS_COLS = 8;
 
 let cachedBibAtlasTex: THREE.CanvasTexture | null = null;
 export function getZekkenBibAtlasTexture(): THREE.CanvasTexture | null {
   if (cachedBibAtlasTex) return cachedBibAtlasTex;
   if (typeof document === 'undefined') return null;
 
-  const cellPx = 128;
-  const cols = 8;
-  const rows = 5;
   const canvas = document.createElement('canvas');
-  canvas.width = cellPx * cols;
-  canvas.height = cellPx * rows;
+  canvas.width = BIB_ATLAS_SIZE;
+  canvas.height = BIB_ATLAS_SIZE;
   const ctx = canvas.getContext('2d');
   if (!ctx) return null;
 
   for (let slot = 0; slot < 40; slot++) {
     const team: 'red' | 'white' = slot < 20 ? 'red' : 'white';
     const num = (slot % 20) + 1;
-    const col = slot % cols;
-    const row = Math.floor(slot / cols);
+    const col = slot % BIB_ATLAS_COLS;
+    const row = Math.floor(slot / BIB_ATLAS_COLS);
     ctx.save();
-    ctx.translate(col * cellPx, row * cellPx);
+    ctx.translate(col * BIB_CELL_PX, row * BIB_CELL_PX);
+    ctx.scale(BIB_CELL_PX / 128, BIB_CELL_PX / 128);
 
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, 128, 128);
@@ -663,22 +686,35 @@ export function getZekkenBibAtlasTexture(): THREE.CanvasTexture | null {
   return tex;
 }
 
+export function writeZekkenAtlasRect(
+  out: Float32Array,
+  offset: number,
+  team: 'red' | 'white',
+  bibNumZeroBased: number
+): void {
+  const pad = 1;
+  const slot = (team === 'red' ? 0 : 20) + (bibNumZeroBased % 20);
+  const col = slot % BIB_ATLAS_COLS;
+  const row = Math.floor(slot / BIB_ATLAS_COLS);
+  out[offset] = (col * BIB_CELL_PX + pad) / BIB_ATLAS_SIZE;
+  out[offset + 1] = 1 - ((row + 1) * BIB_CELL_PX - pad) / BIB_ATLAS_SIZE;
+  out[offset + 2] = (BIB_CELL_PX - 2 * pad) / BIB_ATLAS_SIZE;
+  out[offset + 3] = (BIB_CELL_PX - 2 * pad) / BIB_ATLAS_SIZE;
+}
+
 export function getZekkenAtlasRect(
   team: 'red' | 'white',
   bibNumZeroBased: number
 ): [number, number, number, number] {
-  const cell = 128;
-  const pad = 2;
-  const w = 1024;
-  const h = 640;
+  const pad = 1;
   const slot = (team === 'red' ? 0 : 20) + (bibNumZeroBased % 20);
-  const col = slot % 8;
-  const row = Math.floor(slot / 8);
+  const col = slot % BIB_ATLAS_COLS;
+  const row = Math.floor(slot / BIB_ATLAS_COLS);
   return [
-    (col * cell + pad) / w,
-    1 - ((row + 1) * cell - pad) / h,
-    (cell - 2 * pad) / w,
-    (cell - 2 * pad) / h,
+    (col * BIB_CELL_PX + pad) / BIB_ATLAS_SIZE,
+    1 - ((row + 1) * BIB_CELL_PX - pad) / BIB_ATLAS_SIZE,
+    (BIB_CELL_PX - 2 * pad) / BIB_ATLAS_SIZE,
+    (BIB_CELL_PX - 2 * pad) / BIB_ATLAS_SIZE,
   ];
 }
 

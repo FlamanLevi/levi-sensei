@@ -48,6 +48,7 @@ function createPostOfficeSignTexture(): THREE.CanvasTexture {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
   cachedPostSignTex = texture;
   return texture;
 }
@@ -85,6 +86,7 @@ function createAtmSignTexture(): THREE.CanvasTexture {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
   cachedAtmSignTex = texture;
   return texture;
 }
@@ -137,6 +139,7 @@ function createMailboxTexture(): THREE.CanvasTexture {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
   cachedMailboxTex = texture;
   return texture;
 }

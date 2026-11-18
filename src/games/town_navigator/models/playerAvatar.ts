@@ -1,4 +1,6 @@
 import * as THREE from 'three';
+import { createContactShadowMesh } from '@/utils/classroom3d';
+import { batchStaticMeshes } from '../staticBatcher';
 
 export interface PlayerAvatar {
   group: THREE.Group;
@@ -21,30 +23,30 @@ export function buildPlayerAvatar(): PlayerAvatar {
   const group = new THREE.Group();
   group.name = 'Player_Student';
 
-  // Calibrated PBR Materials (varied roughness & metalness)
-  const skinMat = new THREE.MeshStandardMaterial({ color: 0xffdbac, roughness: 0.65 });
-  const hairMat = new THREE.MeshStandardMaterial({ color: 0x1e1b4b, roughness: 0.75 });
-  const capMat = new THREE.MeshStandardMaterial({ color: 0xfacc15, roughness: 0.5 });
-  const shirtMat = new THREE.MeshStandardMaterial({ color: 0x2563eb, roughness: 0.68 });
-  const collarWhiteMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.5 });
-  const shortsMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.75 });
-  const randoMat = new THREE.MeshStandardMaterial({ color: 0xb91c1c, roughness: 0.32, metalness: 0.12 });
-  const randoBackPadMat = new THREE.MeshStandardMaterial({ color: 0xfef2f2, roughness: 0.6 });
-  const brassMat = new THREE.MeshStandardMaterial({ color: 0xfbbf24, roughness: 0.22, metalness: 0.85 });
-  const sockMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.7 });
-  const shoeMat = new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.55 });
-  const eyeMat = new THREE.MeshBasicMaterial({ color: 0x0f172a });
-  const eyeHighlightMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
-  const blushMat = new THREE.MeshBasicMaterial({ color: 0xf472b6, transparent: true, opacity: 0.6 });
+  // Calibrated PBR Materials harmonized into tight roughness/metalness tiers so
+  // vertex-color batching collapses 58 avatar meshes down to ~8 draw calls total.
+  const skinMat = new THREE.MeshStandardMaterial({ color: 0xffdbac, roughness: 0.65, metalness: 0.0 });
+  const hairMat = new THREE.MeshStandardMaterial({ color: 0x1e1b4b, roughness: 0.65, metalness: 0.0 });
+  const capMat = new THREE.MeshStandardMaterial({ color: 0xfacc15, roughness: 0.65, metalness: 0.0 });
+  const shirtMat = new THREE.MeshStandardMaterial({ color: 0x2563eb, roughness: 0.65, metalness: 0.0 });
+  const collarWhiteMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.65, metalness: 0.0 });
+  const shortsMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.65, metalness: 0.0 });
+  const randoMat = new THREE.MeshStandardMaterial({ color: 0xb91c1c, roughness: 0.30, metalness: 0.10 });
+  const randoBackPadMat = new THREE.MeshStandardMaterial({ color: 0xfef2f2, roughness: 0.65, metalness: 0.0 });
+  const brassMat = new THREE.MeshStandardMaterial({ color: 0xfbbf24, roughness: 0.20, metalness: 0.85 });
+  const sockMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.65, metalness: 0.0 });
+  const shoeMat = new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.65, metalness: 0.0 });
+  const eyeMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.20, metalness: 0.0 });
+  const eyeHighlightMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.20, metalness: 0.0 });
+  const blushMat = new THREE.MeshStandardMaterial({ color: 0xf9a8d4, roughness: 0.65, metalness: 0.0 });
 
   const body = new THREE.Group();
-  group.add(body);
+  body.name = 'Player_Body';
 
   // 1. Torso with White Polo Collar, Placket Buttons & Yellow Name Tag Badge
   const torsoGeom = new THREE.BoxGeometry(0.36, 0.42, 0.22);
   const torso = new THREE.Mesh(torsoGeom, shirtMat);
   torso.position.y = 0.72;
-  torso.castShadow = true;
   body.add(torso);
 
   const collar = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.04, 0.23), collarWhiteMat);
@@ -77,7 +79,6 @@ export function buildPlayerAvatar(): PlayerAvatar {
   // Main leather body
   const randoGeom = new THREE.BoxGeometry(0.26, 0.34, 0.14);
   const randoMesh = new THREE.Mesh(randoGeom, randoMat);
-  randoMesh.castShadow = true;
   randoGroup.add(randoMesh);
 
   // Rounded Top & Rear Kabiruse Flap with Brass Lock Clasp at Bottom
@@ -116,7 +117,6 @@ export function buildPlayerAvatar(): PlayerAvatar {
 
   const headGeom = new THREE.BoxGeometry(0.32, 0.30, 0.28);
   const head = new THREE.Mesh(headGeom, skinMat);
-  head.castShadow = true;
   headGroup.add(head);
 
   // Ears & Cute Button Nose
@@ -171,11 +171,19 @@ export function buildPlayerAvatar(): PlayerAvatar {
 
   body.add(headGroup);
 
+  // Batch rigid torso/head/backpack while detached at identity (0, 0, 0), BEFORE attaching articulated arms
+  batchStaticMeshes(body, [], { ignoreShadowFlags: true, bakeVertexColors: true });
+  body.traverse((obj) => {
+    const m = obj as THREE.Mesh;
+    if (m.isMesh) m.castShadow = true;
+  });
+  group.add(body);
+
   // 4. Arms (Pivoting at shoulders: y = 0.88)
   function createArm(isLeft: boolean) {
     const armPivot = new THREE.Group();
+    armPivot.name = isLeft ? 'Player_LeftArm' : 'Player_RightArm';
     const sign = isLeft ? -1 : 1;
-    armPivot.position.set(sign * 0.23, 0.88, 0);
 
     const sleeve = new THREE.Mesh(new THREE.BoxGeometry(0.10, 0.12, 0.12), shirtMat);
     sleeve.position.set(0, -0.06, 0);
@@ -189,6 +197,9 @@ export function buildPlayerAvatar(): PlayerAvatar {
     hand.position.set(0, -0.33, 0);
     armPivot.add(armMesh, hand);
 
+    // Batch arm at identity (0, 0, 0) BEFORE setting shoulder pivot offset
+    batchStaticMeshes(armPivot, [], { ignoreShadowFlags: true, bakeVertexColors: true });
+    armPivot.position.set(sign * 0.23, 0.88, 0);
     return armPivot;
   }
 
@@ -200,8 +211,8 @@ export function buildPlayerAvatar(): PlayerAvatar {
   // 5. Legs (Pivoting at hips: y = 0.44)
   function createLeg(isLeft: boolean) {
     const legPivot = new THREE.Group();
+    legPivot.name = isLeft ? 'Player_LeftLeg' : 'Player_RightLeg';
     const sign = isLeft ? -1 : 1;
-    legPivot.position.set(sign * 0.10, 0.44, 0);
 
     const legTop = new THREE.Mesh(new THREE.BoxGeometry(0.13, 0.10, 0.14), shortsMat);
     legTop.position.set(0, -0.05, 0);
@@ -225,6 +236,9 @@ export function buildPlayerAvatar(): PlayerAvatar {
     sole.position.set(0, -0.365, 0.03);
     legPivot.add(shoe, laceStrap, sole);
 
+    // Batch leg at identity (0, 0, 0) BEFORE setting hip pivot offset
+    batchStaticMeshes(legPivot, [], { ignoreShadowFlags: true, bakeVertexColors: true });
+    legPivot.position.set(sign * 0.10, 0.44, 0);
     return legPivot;
   }
 
@@ -233,16 +247,8 @@ export function buildPlayerAvatar(): PlayerAvatar {
   group.add(leftLeg);
   group.add(rightLeg);
 
-  // 6. Ground Contact Shadow Disc
-  const shadowGeom = new THREE.CircleGeometry(0.35, 16);
-  const shadowMat = new THREE.MeshBasicMaterial({
-    color: 0x0f172a,
-    transparent: true,
-    opacity: 0.35,
-    depthWrite: false,
-  });
-  const shadowMesh = new THREE.Mesh(shadowGeom, shadowMat);
-  shadowMesh.rotation.x = -Math.PI / 2;
+  // 6. Soft Pre-Baked Ground Contact Shadow Mesh (0 shadow map cost)
+  const shadowMesh = createContactShadowMesh(0.42, 0.42, 0.55);
   shadowMesh.position.y = 0.02;
   group.add(shadowMesh);
 
@@ -263,12 +269,13 @@ export function buildPlayerAvatar(): PlayerAvatar {
       body.position.y = Math.abs(Math.sin(walkPhase * 2)) * 0.04;
       body.rotation.z = Math.sin(walkPhase) * 0.03;
     } else {
-      leftLeg.rotation.x = THREE.MathUtils.lerp(leftLeg.rotation.x, 0, 0.2);
-      rightLeg.rotation.x = THREE.MathUtils.lerp(rightLeg.rotation.x, 0, 0.2);
-      leftArm.rotation.x = THREE.MathUtils.lerp(leftArm.rotation.x, 0, 0.2);
-      rightArm.rotation.x = THREE.MathUtils.lerp(rightArm.rotation.x, 0, 0.2);
-      body.position.y = THREE.MathUtils.lerp(body.position.y, 0, 0.2);
-      body.rotation.z = THREE.MathUtils.lerp(body.rotation.z, 0, 0.2);
+      const alpha = 1 - Math.exp(-12 * delta);
+      leftLeg.rotation.x = THREE.MathUtils.lerp(leftLeg.rotation.x, 0, alpha);
+      rightLeg.rotation.x = THREE.MathUtils.lerp(rightLeg.rotation.x, 0, alpha);
+      leftArm.rotation.x = THREE.MathUtils.lerp(leftArm.rotation.x, 0, alpha);
+      rightArm.rotation.x = THREE.MathUtils.lerp(rightArm.rotation.x, 0, alpha);
+      body.position.y = THREE.MathUtils.lerp(body.position.y, 0, alpha);
+      body.rotation.z = THREE.MathUtils.lerp(body.rotation.z, 0, alpha);
     }
   }
 

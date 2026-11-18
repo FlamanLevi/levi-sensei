@@ -9,11 +9,12 @@
  * classroom iPads, Chromebooks, and high-end teacher workstations) to configure
  * Three.js for a guaranteed, rock-solid 60 FPS without manual tuning.
  *
- * Enforces GEMINI.md §14 (Classroom 3D WebGL Performance Budget & Invariants).
+ * Enforces GEMINI.md §5 (Classroom 3D WebGL Performance Budget & Invariants).
  * ============================================================================
  */
 
 import * as THREE from 'three';
+import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 
 export type ClassroomGpuTier = 'LOW_POWER' | 'BALANCED' | 'HIGH_PERFORMANCE';
 
@@ -41,6 +42,12 @@ export interface Classroom3DOptions {
   cameraLookAt?: [number, number, number];
   enableDrs?: boolean; // Dynamic Resolution Scaling
   alpha?: boolean;
+  toneMapping?: THREE.ToneMapping;
+  toneMappingExposure?: number;
+  clearColor?: THREE.ColorRepresentation;
+  clearAlpha?: number;
+  onContextLost?: (event: Event) => void;
+  onContextRestored?: () => void;
 }
 
 export interface Classroom3DContext {
@@ -48,9 +55,17 @@ export interface Classroom3DContext {
   camera: THREE.PerspectiveCamera;
   gpuProfile: ClassroomGpuProfile;
   updateSize: () => void;
-  /** Pass the frame delta (in seconds) to enable real-time 60 FPS Dynamic Resolution Scaling */
+  /**
+   * Pass the raw (unclamped) frame delta in seconds to enable real-time 60 FPS
+   * Dynamic Resolution Scaling while safely ignoring tab-switch / stall pauses (>= 250ms).
+   */
   trackFrameRate: (deltaSeconds: number) => void;
   cleanup: () => void;
+}
+
+export interface RoomEnvironmentHandle {
+  texture: THREE.Texture;
+  dispose: () => void;
 }
 
 let cachedRendererString: string | null = null;
@@ -147,7 +162,7 @@ export function detectClassroomGpuProfile(
     isModernIpad,
     isIntegratedIntel,
     isLowPower,
-    // Dynamic shadow passes are strictly disabled on iPads & low-power Dynabooks (GEMINI.md §14)
+    // Dynamic shadow passes are strictly disabled on iPads & low-power Dynabooks (GEMINI.md §5)
     enableDynamicShadows: tier === 'HIGH_PERFORMANCE' && !isMobileOrTablet && !isStudentView,
     shadowMapRes: tier === 'HIGH_PERFORMANCE' ? 1024 : 512,
     // 1.25x pixel ratio on A14/A16 iPads provides crisp 1475x1025 rendering on Liquid Retina
@@ -166,7 +181,9 @@ let sharedContactShadowTex: THREE.CanvasTexture | null = null;
 export function getSharedContactShadowTexture(): THREE.CanvasTexture {
   if (sharedContactShadowTex) return sharedContactShadowTex;
   if (typeof document === 'undefined') {
-    return new THREE.CanvasTexture({} as HTMLCanvasElement);
+    const emptyTex = new THREE.CanvasTexture({} as HTMLCanvasElement);
+    emptyTex.userData = { isSharedResource: true };
+    return emptyTex;
   }
 
   const canvas = document.createElement('canvas');
@@ -191,6 +208,7 @@ export function getSharedContactShadowTexture(): THREE.CanvasTexture {
 
   const tex = new THREE.CanvasTexture(canvas);
   tex.colorSpace = THREE.SRGBColorSpace;
+  tex.userData = { isSharedResource: true };
   sharedContactShadowTex = tex;
   return tex;
 }
@@ -212,6 +230,130 @@ export function createContactShadowMesh(radiusX = 1.0, radiusZ = 1.0, opacity = 
   mesh.castShadow = false;
   mesh.receiveShadow = false;
   return mesh;
+}
+
+/**
+ * Returns hardware-appropriate texture anisotropy (1x on low-power GPUs, <= 4x otherwise).
+ */
+export function getCappedAnisotropy(
+  renderer: THREE.WebGLRenderer,
+  gpuProfile: ClassroomGpuProfile
+): number {
+  if (gpuProfile.isLowPower) return 1;
+  const maxAniso = renderer.capabilities?.getMaxAnisotropy
+    ? renderer.capabilities.getMaxAnisotropy()
+    : 4;
+  return Math.max(1, Math.min(4, maxAniso));
+}
+
+/**
+ * Generates a studio PBR RoomEnvironment PMREM texture and immediately disposes
+ * the temporary RoomEnvironment scene and PMREMGenerator so nothing leaks.
+ */
+export function createRoomEnvironmentPMREM(
+  renderer: THREE.WebGLRenderer,
+  sigma = 0.04
+): RoomEnvironmentHandle {
+  const pmremGenerator = new THREE.PMREMGenerator(renderer);
+  pmremGenerator.compileEquirectangularShader();
+  const roomEnv = new RoomEnvironment();
+  const envTarget = pmremGenerator.fromScene(roomEnv, sigma);
+  roomEnv.dispose();
+  pmremGenerator.dispose();
+  return {
+    texture: envTarget.texture,
+    dispose: () => {
+      envTarget.dispose();
+    },
+  };
+}
+
+const MATERIAL_TEXTURE_SLOTS = [
+  'map',
+  'emissiveMap',
+  'normalMap',
+  'roughnessMap',
+  'metalnessMap',
+  'aoMap',
+  'alphaMap',
+  'bumpMap',
+  'lightMap',
+  'specularMap',
+  'displacementMap',
+  'clearcoatMap',
+  'clearcoatRoughnessMap',
+  'clearcoatNormalMap',
+] as const;
+
+/**
+ * Safely disposes all non-shared GPU resources (geometries, InstancedMesh buffers,
+ * materials, PBR texture slots, and lights including shadow maps) under a root Object3D.
+ * Skips any geometry, material, or texture tagged with `userData.isSharedResource === true`
+ * (and preserves Three.js's global shared Sprite geometry).
+ */
+export function disposeObject3D(
+  root: THREE.Object3D,
+  options: { disposeShared?: boolean } = {}
+): void {
+  const disposeShared = options.disposeShared === true;
+  const geometries = new Set<THREE.BufferGeometry>();
+  const materials = new Set<THREE.Material>();
+  const textures = new Set<THREE.Texture>();
+  const instancedMeshes = new Set<THREE.InstancedMesh>();
+  const lights = new Set<THREE.Light>();
+
+  root.traverse((obj) => {
+    const anyObj = obj as unknown as {
+      isMesh?: boolean;
+      isPoints?: boolean;
+      isLine?: boolean;
+      isSprite?: boolean;
+      isInstancedMesh?: boolean;
+      isLight?: boolean;
+      geometry?: THREE.BufferGeometry;
+      material?: THREE.Material | THREE.Material[];
+    };
+
+    if (anyObj.isLight) {
+      lights.add(obj as THREE.Light);
+    }
+
+    if (anyObj.isInstancedMesh) {
+      instancedMeshes.add(obj as THREE.InstancedMesh);
+    }
+
+    if (anyObj.geometry && !anyObj.isSprite) {
+      if (disposeShared || !anyObj.geometry.userData?.isSharedResource) {
+        geometries.add(anyObj.geometry);
+      }
+    }
+
+    if (anyObj.material) {
+      const matList = Array.isArray(anyObj.material) ? anyObj.material : [anyObj.material];
+      for (let i = 0; i < matList.length; i++) {
+        const mat = matList[i];
+        if (!mat) continue;
+        if (!disposeShared && mat.userData?.isSharedResource) continue;
+        materials.add(mat);
+
+        const rec = mat as unknown as Record<string, unknown>;
+        for (let s = 0; s < MATERIAL_TEXTURE_SLOTS.length; s++) {
+          const tex = rec[MATERIAL_TEXTURE_SLOTS[s]] as THREE.Texture | undefined | null;
+          if (!tex || !tex.isTexture) continue;
+          if (!disposeShared && (tex.userData?.isSharedResource || tex === sharedContactShadowTex)) {
+            continue;
+          }
+          textures.add(tex);
+        }
+      }
+    }
+  });
+
+  instancedMeshes.forEach((inst) => inst.dispose());
+  geometries.forEach((geo) => geo.dispose());
+  textures.forEach((tex) => tex.dispose());
+  materials.forEach((mat) => mat.dispose());
+  lights.forEach((light) => light.dispose());
 }
 
 /**
@@ -242,8 +384,11 @@ export function createClassroomRenderer(
   renderer.setSize(width, height);
   renderer.shadowMap.enabled = gpuProfile.enableDynamicShadows;
   renderer.shadowMap.type = THREE.PCFShadowMap;
-  renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 0.95;
+  renderer.toneMapping = options.toneMapping ?? THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = options.toneMappingExposure ?? 0.95;
+  if (options.clearColor !== undefined) {
+    renderer.setClearColor(options.clearColor, options.clearAlpha ?? (options.alpha ? 0 : 1));
+  }
 
   container.appendChild(renderer.domElement);
 
@@ -255,11 +400,23 @@ export function createClassroomRenderer(
   const [lookX, lookY, lookZ] = options.cameraLookAt ?? [0, 2.0, 0];
   camera.lookAt(lookX, lookY, lookZ);
 
-  // Resize Listener
+  // WebGL context loss/restoration resilience
+  const handleContextLost = (event: Event) => {
+    event.preventDefault();
+    options.onContextLost?.(event);
+  };
+  const handleContextRestored = () => {
+    options.onContextRestored?.();
+  };
+  renderer.domElement.addEventListener('webglcontextlost', handleContextLost, false);
+  renderer.domElement.addEventListener('webglcontextrestored', handleContextRestored, false);
+
+  // Resize Listener (guarded against transient 0x0 hidden container dimensions)
   const handleResize = () => {
     if (!container) return;
-    const w = container.clientWidth || 960;
-    const h = container.clientHeight || 540;
+    const w = container.clientWidth;
+    const h = container.clientHeight;
+    if (w <= 0 || h <= 0) return;
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
     renderer.setSize(w, h);
@@ -301,6 +458,8 @@ export function createClassroomRenderer(
   const cleanup = () => {
     window.removeEventListener('resize', handleResize);
     resizeObserver?.disconnect();
+    renderer.domElement.removeEventListener('webglcontextlost', handleContextLost, false);
+    renderer.domElement.removeEventListener('webglcontextrestored', handleContextRestored, false);
     renderer.dispose();
     if (renderer.domElement && renderer.domElement.parentNode === container) {
       container.removeChild(renderer.domElement);

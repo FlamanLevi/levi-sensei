@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { getAsphaltRoadTexture } from './wallTextures';
 
 export type RoadTileType = 
   | 'STRAIGHT_Z' 
@@ -7,53 +8,30 @@ export type RoadTileType =
   | 'T_JUNCTION_NORTH' 
   | 'T_JUNCTION_SOUTH' 
   | 'T_JUNCTION_EAST' 
-  | 'T_JUNCTION_WEST'
-  | 'CORNER_NE'
-  | 'CORNER_NW'
-  | 'CORNER_SE'
-  | 'CORNER_SW'
-  | 'BOULEVARD_Z_WEST'
-  | 'BOULEVARD_Z_EAST'
-  | 'BOULEVARD_X_NORTH'
-  | 'BOULEVARD_X_SOUTH'
-  | 'BOULEVARD_CENTER_4WAY'
-  | 'BOULEVARD_JUNCTION_Z'
+  | 'T_JUNCTION_WEST' 
+  | 'CORNER_NE' 
+  | 'CORNER_NW' 
+  | 'CORNER_SE' 
+  | 'CORNER_SW' 
+  | 'BOULEVARD_Z_WEST' 
+  | 'BOULEVARD_Z_EAST' 
+  | 'BOULEVARD_X_NORTH' 
+  | 'BOULEVARD_X_SOUTH' 
+  | 'BOULEVARD_CENTER_4WAY' 
+  | 'BOULEVARD_JUNCTION_Z' 
   | 'BOULEVARD_JUNCTION_X';
 
 // ============================================================================
-// PROCEDURAL STREETSCAPE TEXTURES (Cached Singletons for Static Batching)
+// PROCEDURAL STREETSCAPE TEXTURES (Lazy Cached Singletons for Static Batching)
 // ============================================================================
 
-function createAsphaltTexture(): THREE.CanvasTexture | null {
-  if (typeof document === 'undefined') return null;
-  const canvas = document.createElement('canvas');
-  canvas.width = 256;
-  canvas.height = 256;
-  const ctx = canvas.getContext('2d');
-  if (!ctx) return null;
+let cachedRoadSidewalkTex: THREE.CanvasTexture | null = null;
+let cachedManholeTex: THREE.CanvasTexture | null = null;
+let cachedStreetBannerTex: THREE.CanvasTexture | null = null;
+let cachedPushButtonTex: THREE.CanvasTexture | null = null;
 
-  ctx.fillStyle = '#334155';
-  ctx.fillRect(0, 0, 256, 256);
-
-  const img = ctx.getImageData(0, 0, 256, 256);
-  const d = img.data;
-  for (let i = 0; i < d.length; i += 4) {
-    const grain = (Math.random() - 0.5) * 18;
-    d[i] = Math.min(255, Math.max(0, d[i] + grain));
-    d[i + 1] = Math.min(255, Math.max(0, d[i + 1] + grain));
-    d[i + 2] = Math.min(255, Math.max(0, d[i + 2] + grain));
-  }
-  ctx.putImageData(img, 0, 0);
-
-  const tex = new THREE.CanvasTexture(canvas);
-  tex.wrapS = THREE.RepeatWrapping;
-  tex.wrapT = THREE.RepeatWrapping;
-  tex.repeat.set(2, 2);
-  tex.colorSpace = THREE.SRGBColorSpace;
-  return tex;
-}
-
-function createSidewalkPaverTexture(): THREE.CanvasTexture | null {
+function getRoadSidewalkPaverTexture(): THREE.CanvasTexture | null {
+  if (cachedRoadSidewalkTex) return cachedRoadSidewalkTex;
   if (typeof document === 'undefined') return null;
   const canvas = document.createElement('canvas');
   canvas.width = 256;
@@ -87,10 +65,14 @@ function createSidewalkPaverTexture(): THREE.CanvasTexture | null {
   tex.wrapT = THREE.RepeatWrapping;
   tex.repeat.set(2, 2);
   tex.colorSpace = THREE.SRGBColorSpace;
+  tex.userData.isSharedResource = true;
+  tex.userData.isArchitecturalTex = true;
+  cachedRoadSidewalkTex = tex;
   return tex;
 }
 
-function createManholeTexture(): THREE.CanvasTexture | null {
+function getManholeTexture(): THREE.CanvasTexture | null {
+  if (cachedManholeTex) return cachedManholeTex;
   if (typeof document === 'undefined') return null;
   const canvas = document.createElement('canvas');
   canvas.width = 128;
@@ -135,10 +117,13 @@ function createManholeTexture(): THREE.CanvasTexture | null {
 
   const tex = new THREE.CanvasTexture(canvas);
   tex.colorSpace = THREE.SRGBColorSpace;
+  tex.userData.isSharedResource = true;
+  cachedManholeTex = tex;
   return tex;
 }
 
-function createStreetBannerTexture(): THREE.CanvasTexture | null {
+function getStreetBannerTexture(): THREE.CanvasTexture | null {
+  if (cachedStreetBannerTex) return cachedStreetBannerTex;
   if (typeof document === 'undefined') return null;
   const canvas = document.createElement('canvas');
   canvas.width = 128;
@@ -180,6 +165,8 @@ function createStreetBannerTexture(): THREE.CanvasTexture | null {
 
   const tex = new THREE.CanvasTexture(canvas);
   tex.colorSpace = THREE.SRGBColorSpace;
+  tex.userData.isSharedResource = true;
+  cachedStreetBannerTex = tex;
   return tex;
 }
 
@@ -224,6 +211,7 @@ export function createIntersectionNameplateTexture(
   const tex = new THREE.CanvasTexture(canvas);
   tex.colorSpace = THREE.SRGBColorSpace;
   tex.anisotropy = 4;
+  tex.userData.isSharedResource = true;
   return tex;
 }
 
@@ -242,12 +230,13 @@ export function getIntersectionPlateMaterial(
     map: texture,
     roughness: 0.35,
   });
-  mat.userData.batchUnique = true;
+  mat.userData.isSharedResource = true;
   plateMatCache.set(key, mat);
   return mat;
 }
 
-function createPushButtonBoxTexture(): THREE.CanvasTexture | null {
+function getPushButtonBoxTexture(): THREE.CanvasTexture | null {
+  if (cachedPushButtonTex) return cachedPushButtonTex;
   if (typeof document === 'undefined') return null;
   const canvas = document.createElement('canvas');
   canvas.width = 128;
@@ -289,88 +278,43 @@ function createPushButtonBoxTexture(): THREE.CanvasTexture | null {
 
   const tex = new THREE.CanvasTexture(canvas);
   tex.colorSpace = THREE.SRGBColorSpace;
+  tex.userData.isSharedResource = true;
+  cachedPushButtonTex = tex;
   return tex;
 }
 
-// Reusable standard road materials
-const asphaltMat = new THREE.MeshStandardMaterial({
-  color: 0xffffff,
-  map: createAsphaltTexture(),
-  roughness: 0.88,
-});
-const curbMat = new THREE.MeshStandardMaterial({ color: 0x94a3b8, roughness: 0.8 });
-const sidewalkMat = new THREE.MeshStandardMaterial({
-  color: 0xffffff,
-  map: createSidewalkPaverTexture(),
-  roughness: 0.78,
-});
-const whiteStripeMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.4 });
-const tactileYellowMat = new THREE.MeshStandardMaterial({ color: 0xfacc15, roughness: 0.55 });
-const grateDarkMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.7, roughness: 0.4 });
-const manholeMat = new THREE.MeshStandardMaterial({
-  map: createManholeTexture(),
-  transparent: true,
-  roughness: 0.5,
-  metalness: 0.6,
-});
-const medianTurfMat = new THREE.MeshStandardMaterial({ color: 0x22c55e, roughness: 0.85 });
-const medianHedgeMat = new THREE.MeshStandardMaterial({ color: 0x15803d, roughness: 0.9 });
+// Lazily initialized shared road materials (zero import-time canvas/GPU work)
+let roadResourcesReady = false;
+let asphaltMat!: THREE.MeshStandardMaterial;
+let curbMat!: THREE.MeshStandardMaterial;
+let sidewalkMat!: THREE.MeshStandardMaterial;
+let whiteStripeMat!: THREE.MeshStandardMaterial;
+let tactileYellowMat!: THREE.MeshStandardMaterial;
+let grateDarkMat!: THREE.MeshStandardMaterial;
+let manholeMat!: THREE.MeshStandardMaterial;
+let medianTurfMat!: THREE.MeshStandardMaterial;
+let medianHedgeMat!: THREE.MeshStandardMaterial;
 
 // Streetlight & Traffic Signal materials
-const poleMat = new THREE.MeshStandardMaterial({ color: 0x64748b, roughness: 0.45, metalness: 0.65 });
-const castIronMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.5, metalness: 0.5 });
-const controllerBoxMat = new THREE.MeshStandardMaterial({ color: 0x94a3b8, roughness: 0.5, metalness: 0.4 });
-const housingMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.65 });
-const speakerWhiteMat = new THREE.MeshStandardMaterial({ color: 0xf1f5f9, roughness: 0.5 });
-const yellowBoxMat = new THREE.MeshStandardMaterial({ color: 0xfacc15, roughness: 0.5 });
-const pushButtonFaceMat = new THREE.MeshStandardMaterial({
-  map: createPushButtonBoxTexture(),
-  roughness: 0.4,
-});
-const intersectionPlateMat = getIntersectionPlateMaterial('みどり町中央', 'Midori-machi Central');
-const streetBannerMat = new THREE.MeshStandardMaterial({
-  map: createStreetBannerTexture(),
-  roughness: 0.5,
-  side: THREE.DoubleSide,
-});
-const lampGlowMat = new THREE.MeshStandardMaterial({ 
-  color: 0xfef08a, 
-  emissive: 0xfde047, 
-  emissiveIntensity: 1.8, 
-  roughness: 0.15 
-});
-
-// Zero-shader-cost warm ground light pool beneath streetlights
-const lightPoolMat = new THREE.MeshBasicMaterial({
-  color: 0xfef08a,
-  transparent: true,
-  opacity: 0.16,
-  depthWrite: false,
-});
+let poleMat!: THREE.MeshStandardMaterial;
+let castIronMat!: THREE.MeshStandardMaterial;
+let controllerBoxMat!: THREE.MeshStandardMaterial;
+let housingMat!: THREE.MeshStandardMaterial;
+let speakerWhiteMat!: THREE.MeshStandardMaterial;
+let yellowBoxMat!: THREE.MeshStandardMaterial;
+let pushButtonFaceMat!: THREE.MeshStandardMaterial;
+let intersectionPlateMat!: THREE.MeshStandardMaterial;
+let streetBannerMat!: THREE.MeshStandardMaterial;
+let lampGlowMat!: THREE.MeshStandardMaterial;
+let lightPoolMat!: THREE.MeshBasicMaterial;
 
 // Luminous traffic light lenses (driven by updateTrafficSignals())
-const nsVehGreenMat = new THREE.MeshStandardMaterial({ 
-  color: 0x10b981, 
-  emissive: 0x10b981, 
-  emissiveIntensity: 1.8, 
-  roughness: 0.2 
-});
-const nsVehYellowMat = new THREE.MeshStandardMaterial({ 
-  color: 0xfacc15, 
-  emissive: 0xfacc15, 
-  emissiveIntensity: 0.4, 
-  roughness: 0.2 
-});
-const nsVehRedMat = new THREE.MeshStandardMaterial({ 
-  color: 0xef4444, 
-  emissive: 0xef4444, 
-  emissiveIntensity: 1.6, 
-  roughness: 0.2 
-});
-
-const ewVehGreenMat = nsVehGreenMat.clone();
-const ewVehYellowMat = nsVehYellowMat.clone();
-const ewVehRedMat = nsVehRedMat.clone();
+let nsVehGreenMat!: THREE.MeshStandardMaterial;
+let nsVehYellowMat!: THREE.MeshStandardMaterial;
+let nsVehRedMat!: THREE.MeshStandardMaterial;
+let ewVehGreenMat!: THREE.MeshStandardMaterial;
+let ewVehYellowMat!: THREE.MeshStandardMaterial;
+let ewVehRedMat!: THREE.MeshStandardMaterial;
 
 function drawRoundRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
   if (typeof (ctx as any).roundRect === 'function') {
@@ -487,7 +431,7 @@ class PedestrianCountdownDisplay {
   public texture: THREE.CanvasTexture | null = null;
   private canvas: HTMLCanvasElement | null = null;
   private ctx: CanvasRenderingContext2D | null = null;
-  private lastKey: string = '';
+  private lastKey: number = -1;
 
   constructor() {
     if (typeof document !== 'undefined') {
@@ -499,6 +443,7 @@ class PedestrianCountdownDisplay {
         this.texture = new THREE.CanvasTexture(this.canvas);
         this.texture.colorSpace = THREE.SRGBColorSpace;
         this.texture.anisotropy = 4;
+        this.texture.userData.isSharedResource = true;
       }
     }
     this.renderState(false, false, false, 0, 7);
@@ -511,7 +456,9 @@ class PedestrianCountdownDisplay {
     greenBars: number,
     redBars: number
   ) {
-    const key = `${isWalk ? 1 : 0}_${isFlashing ? 1 : 0}_${flashOn ? 1 : 0}_${greenBars}_${redBars}`;
+    const phaseCode = isWalk ? 2 : isFlashing ? 1 : 0;
+    const bars = isWalk ? greenBars : !isFlashing ? redBars : 0;
+    const key = (phaseCode << 5) | ((bars & 0x0f) << 1) | (flashOn ? 1 : 0);
     if (key === this.lastKey) return;
     this.lastKey = key;
 
@@ -561,36 +508,141 @@ class PedestrianCountdownDisplay {
   }
 }
 
-const nsPedestrianDisplay = new PedestrianCountdownDisplay();
-const ewPedestrianDisplay = new PedestrianCountdownDisplay();
+let nsPedestrianDisplay!: PedestrianCountdownDisplay;
+let ewPedestrianDisplay!: PedestrianCountdownDisplay;
+let nsPedestrianMat!: THREE.MeshStandardMaterial;
+let ewPedestrianMat!: THREE.MeshStandardMaterial;
 
-const nsPedestrianMat = new THREE.MeshStandardMaterial({
-  map: nsPedestrianDisplay.texture,
-  emissive: 0xffffff,
-  emissiveMap: nsPedestrianDisplay.texture,
-  emissiveIntensity: 1.6,
-  roughness: 0.15,
-});
+function ensureRoadResources(): void {
+  if (roadResourcesReady) return;
+  roadResourcesReady = true;
 
-const ewPedestrianMat = new THREE.MeshStandardMaterial({
-  map: ewPedestrianDisplay.texture,
-  emissive: 0xffffff,
-  emissiveMap: ewPedestrianDisplay.texture,
-  emissiveIntensity: 1.6,
-  roughness: 0.15,
-});
+  asphaltMat = new THREE.MeshStandardMaterial({
+    color: 0x475569,
+    map: getAsphaltRoadTexture(),
+    roughness: 0.86,
+  });
+  asphaltMat.userData.batchUnique = true;
+  asphaltMat.userData.noVertexColorBake = true;
 
-// Animated materials must never be value-merged with static building materials
-[
-  lampGlowMat, lightPoolMat,
-  nsVehGreenMat, nsVehYellowMat, nsVehRedMat,
-  ewVehGreenMat, ewVehYellowMat, ewVehRedMat,
-  nsPedestrianMat, ewPedestrianMat,
-].forEach((m) => {
-  m.userData.batchUnique = true;
-});
-lightPoolMat.userData.batchGlobal = true;
-manholeMat.userData.batchGlobal = true;
+  curbMat = new THREE.MeshStandardMaterial({ color: 0x94a3b8, roughness: 0.8 });
+  sidewalkMat = new THREE.MeshStandardMaterial({
+    color: 0xffffff,
+    map: getRoadSidewalkPaverTexture(),
+    roughness: 0.78,
+  });
+  whiteStripeMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.4 });
+  tactileYellowMat = new THREE.MeshStandardMaterial({ color: 0xfacc15, roughness: 0.55 });
+  grateDarkMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.7, roughness: 0.4 });
+  manholeMat = new THREE.MeshStandardMaterial({
+    map: getManholeTexture(),
+    alphaTest: 0.5,
+    transparent: false,
+    roughness: 0.5,
+    metalness: 0.6,
+  });
+  medianTurfMat = new THREE.MeshStandardMaterial({ color: 0x22c55e, roughness: 0.85 });
+  medianHedgeMat = new THREE.MeshStandardMaterial({ color: 0x15803d, roughness: 0.9 });
+
+  poleMat = new THREE.MeshStandardMaterial({ color: 0x64748b, roughness: 0.45, metalness: 0.65 });
+  castIronMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.5, metalness: 0.5 });
+  controllerBoxMat = new THREE.MeshStandardMaterial({ color: 0x94a3b8, roughness: 0.5, metalness: 0.4 });
+  housingMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.65 });
+  speakerWhiteMat = new THREE.MeshStandardMaterial({ color: 0xf1f5f9, roughness: 0.5 });
+  yellowBoxMat = new THREE.MeshStandardMaterial({ color: 0xfacc15, roughness: 0.5 });
+  pushButtonFaceMat = new THREE.MeshStandardMaterial({
+    map: getPushButtonBoxTexture(),
+    roughness: 0.4,
+  });
+  intersectionPlateMat = getIntersectionPlateMaterial('みどり町中央', 'Midori-machi Central');
+  streetBannerMat = new THREE.MeshStandardMaterial({
+    map: getStreetBannerTexture(),
+    roughness: 0.5,
+    side: THREE.DoubleSide,
+  });
+  lampGlowMat = new THREE.MeshStandardMaterial({
+    color: 0xfef08a,
+    emissive: 0xfde047,
+    emissiveIntensity: 1.8,
+    roughness: 0.15,
+  });
+  lightPoolMat = new THREE.MeshBasicMaterial({
+    color: 0xfef08a,
+    transparent: true,
+    opacity: 0.16,
+    depthWrite: false,
+  });
+
+  nsVehGreenMat = new THREE.MeshStandardMaterial({
+    color: 0x10b981,
+    emissive: 0x10b981,
+    emissiveIntensity: 1.8,
+    roughness: 0.2,
+  });
+  nsVehYellowMat = new THREE.MeshStandardMaterial({
+    color: 0xfacc15,
+    emissive: 0xfacc15,
+    emissiveIntensity: 0.4,
+    roughness: 0.2,
+  });
+  nsVehRedMat = new THREE.MeshStandardMaterial({
+    color: 0xef4444,
+    emissive: 0xef4444,
+    emissiveIntensity: 1.6,
+    roughness: 0.2,
+  });
+
+  ewVehGreenMat = nsVehGreenMat.clone();
+  ewVehYellowMat = nsVehYellowMat.clone();
+  ewVehRedMat = nsVehRedMat.clone();
+
+  nsPedestrianDisplay = new PedestrianCountdownDisplay();
+  ewPedestrianDisplay = new PedestrianCountdownDisplay();
+
+  nsPedestrianMat = new THREE.MeshStandardMaterial({
+    map: nsPedestrianDisplay.texture,
+    emissive: 0xffffff,
+    emissiveMap: nsPedestrianDisplay.texture,
+    emissiveIntensity: 1.6,
+    roughness: 0.15,
+  });
+  ewPedestrianMat = new THREE.MeshStandardMaterial({
+    map: ewPedestrianDisplay.texture,
+    emissive: 0xffffff,
+    emissiveMap: ewPedestrianDisplay.texture,
+    emissiveIntensity: 1.6,
+    roughness: 0.15,
+  });
+
+  // Protect all module-level shared road materials from disposal on town regeneration
+  const allSharedRoadMats: THREE.Material[] = [
+    asphaltMat, curbMat, sidewalkMat, whiteStripeMat, tactileYellowMat,
+    grateDarkMat, manholeMat, medianTurfMat, medianHedgeMat,
+    poleMat, castIronMat, controllerBoxMat, housingMat, speakerWhiteMat,
+    yellowBoxMat, pushButtonFaceMat, intersectionPlateMat, streetBannerMat,
+    lampGlowMat, lightPoolMat,
+    nsVehGreenMat, nsVehYellowMat, nsVehRedMat,
+    ewVehGreenMat, ewVehYellowMat, ewVehRedMat,
+    nsPedestrianMat, ewPedestrianMat,
+  ];
+  allSharedRoadMats.forEach((m) => {
+    m.userData.isSharedResource = true;
+  });
+
+  // Animated materials must never be value-merged with static building materials
+  [
+    lampGlowMat, lightPoolMat,
+    nsVehGreenMat, nsVehYellowMat, nsVehRedMat,
+    ewVehGreenMat, ewVehYellowMat, ewVehRedMat,
+    nsPedestrianMat, ewPedestrianMat,
+  ].forEach((m) => {
+    m.userData.batchUnique = true;
+  });
+  lightPoolMat.userData.batchGlobal = true;
+  manholeMat.userData.batchGlobal = true;
+
+  updateTrafficSignals(0);
+}
 
 const SIGNAL_COLORS = {
   red: new THREE.Color(0xef4444),
@@ -608,6 +660,7 @@ function setLens(mat: THREE.MeshStandardMaterial, base: THREE.Color, on: boolean
  * Cycles every traffic signal in town with realistic two-phase Japanese intersection sequencing
  */
 export function updateTrafficSignals(elapsedSeconds: number): void {
+  ensureRoadResources();
   const cycleTime = 24;
   const t = elapsedSeconds % cycleTime;
 
@@ -670,13 +723,12 @@ export function updateTrafficSignals(elapsedSeconds: number): void {
  * Streetlights switch on at dusk and off by day
  */
 export function setStreetlightLevel(level: number): void {
+  ensureRoadResources();
   const l = THREE.MathUtils.clamp(level, 0, 1);
   lampGlowMat.emissiveIntensity = 0.15 + 1.65 * l;
   lightPoolMat.opacity = 0.18 * l;
   lightPoolMat.visible = l > 0.01;
 }
-
-updateTrafficSignals(0);
 
 /**
  * Builds an authentic Japanese Shopping-Avenue Curved Lamppost (*Gaitō*)
@@ -697,7 +749,7 @@ function buildStreetlight(facingDirection: 'EAST' | 'WEST' | 'NORTH' | 'SOUTH' =
   const poleGeo = new THREE.CylinderGeometry(0.055, 0.085, 4.1, 10);
   const pole = new THREE.Mesh(poleGeo, poleMat);
   pole.position.y = 2.25;
-  pole.castShadow = true;
+  pole.castShadow = false;
   lightGroup.add(pole);
 
   // Decorative Mid-Pole Ring & Vertical Town Avenue Banner Flag (*Gaitō Furaggu*)
@@ -873,7 +925,7 @@ function buildCornerTrafficSignal(
   const poleGeo = new THREE.CylinderGeometry(0.075, 0.095, 3.7, 10);
   const pole = new THREE.Mesh(poleGeo, poleMat);
   pole.position.y = 1.85;
-  pole.castShadow = true;
+  pole.castShadow = false;
   group.add(pole);
 
   // Grey Traffic Signal Controller Box (*Seigyoki*) lowered to base of pole (y = 0.50m)
@@ -992,6 +1044,7 @@ export function buildRoadTile(
   type: RoadTileType,
   intersectionInfo?: IntersectionInfo
 ): THREE.Group {
+  ensureRoadResources();
   const tile = new THREE.Group();
   tile.name = `RoadTile_${type}`;
 

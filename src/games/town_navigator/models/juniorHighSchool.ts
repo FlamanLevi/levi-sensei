@@ -66,6 +66,7 @@ function createClockTexture(): THREE.CanvasTexture {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
   cachedJhsClockTex = texture;
   return texture;
 }
@@ -97,6 +98,7 @@ function createGatePlaqueTexture(): THREE.CanvasTexture {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
   cachedJhsPlaqueTex = texture;
   return texture;
 }
@@ -136,6 +138,7 @@ function createClubBannerTexture(): THREE.CanvasTexture {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
   cachedJhsBannerTex = texture;
   return texture;
 }

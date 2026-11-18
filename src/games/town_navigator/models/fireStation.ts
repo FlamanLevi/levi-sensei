@@ -47,6 +47,7 @@ function createFireStationSignTexture(): THREE.CanvasTexture {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
   cachedFireStationSignTex = texture;
   return texture;
 }

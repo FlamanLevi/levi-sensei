@@ -46,6 +46,8 @@ export interface GenerateTownOptions {
   schoolId?: string;
   townNameJa?: string;
   townNameEn?: string;
+  enableDynamicShadows?: boolean;
+  lowPower?: boolean;
 }
 
 /**
@@ -188,6 +190,7 @@ export interface InstantiateModelCustomOptions {
   houseDna?: HouseDNA;
   apartmentDna?: ApartmentDNA;
   parkVariant?: EmptyLotVariant;
+  lowPower?: boolean;
 }
 
 /**
@@ -243,7 +246,7 @@ export function instantiateModelMesh(
 
     default: group = buildHouseMesh({ includeRoad: false, palette }); break;
   }
-  return enhanceBuildingGroup(group);
+  return enhanceBuildingGroup(group, { lowPower: custom?.lowPower });
 }
 
 /**
@@ -388,7 +391,10 @@ export function generateRandomTown(
     palette?: string,
     custom?: InstantiateModelCustomOptions
   ) {
-    const mesh = instantiateModelMesh(id, palette, custom);
+    const mesh = instantiateModelMesh(id, palette, {
+      ...custom,
+      lowPower: options?.lowPower,
+    });
     const widthMeters = wCells * cellSize;
     const depthMeters = dCells * cellSize;
 
@@ -727,8 +733,13 @@ export function generateRandomTown(
     }
   }
 
-  batchStaticMeshes(roadsGroup);
-  batchStaticMeshes(buildingsGroup, ['AmusementPark_WheelRotor', 'AmusementPark_CarouselRotor']);
+  const batchOpts = {
+    ignoreShadowFlags: !options?.enableDynamicShadows,
+    bakeVertexColors: true,
+    atlasUniqueTextMaps: true,
+  };
+  batchStaticMeshes(roadsGroup, [], batchOpts);
+  batchStaticMeshes(buildingsGroup, ['AmusementPark_WheelRotor', 'AmusementPark_CarouselRotor'], batchOpts);
 
   return {
     seed,

@@ -704,7 +704,11 @@ let cachedSplashRingTexture: THREE.CanvasTexture | null = null;
 
 function getSnowflakeSpriteTexture(): THREE.CanvasTexture {
   if (cachedSnowflakeTexture) return cachedSnowflakeTexture;
-  if (typeof document === 'undefined') return new THREE.Texture() as unknown as THREE.CanvasTexture;
+  if (typeof document === 'undefined') {
+    const dummy = new THREE.Texture() as unknown as THREE.CanvasTexture;
+    dummy.userData.isSharedResource = true;
+    return dummy;
+  }
 
   const canvas = document.createElement('canvas');
   canvas.width = 64;
@@ -732,13 +736,18 @@ function getSnowflakeSpriteTexture(): THREE.CanvasTexture {
 
   const tex = new THREE.CanvasTexture(canvas);
   tex.colorSpace = THREE.SRGBColorSpace;
+  tex.userData.isSharedResource = true;
   cachedSnowflakeTexture = tex;
   return tex;
 }
 
 function getSplashRingTexture(): THREE.CanvasTexture {
   if (cachedSplashRingTexture) return cachedSplashRingTexture;
-  if (typeof document === 'undefined') return new THREE.Texture() as unknown as THREE.CanvasTexture;
+  if (typeof document === 'undefined') {
+    const dummy = new THREE.Texture() as unknown as THREE.CanvasTexture;
+    dummy.userData.isSharedResource = true;
+    return dummy;
+  }
 
   const canvas = document.createElement('canvas');
   canvas.width = 64;
@@ -759,6 +768,7 @@ function getSplashRingTexture(): THREE.CanvasTexture {
 
   const tex = new THREE.CanvasTexture(canvas);
   tex.colorSpace = THREE.SRGBColorSpace;
+  tex.userData.isSharedResource = true;
   cachedSplashRingTexture = tex;
   return tex;
 }
@@ -862,12 +872,10 @@ export function createWeatherParticleController(
   // 3. SAKURA CHERRY BLOSSOM PETALS (3D Tumbling InstancedMesh)
   const maxSakura = 520;
   const sakuraGeo = buildSakuraPetalGeometry();
-  const sakuraMat = new THREE.MeshStandardMaterial({
+  const sakuraMat = new THREE.MeshLambertMaterial({
     color: 0xffffff,
     emissive: 0xfbcfe8,
     emissiveIntensity: 0.28,
-    roughness: 0.6,
-    metalness: 0.0,
     side: THREE.DoubleSide,
   });
   const sakuraInstanced = new THREE.InstancedMesh(sakuraGeo, sakuraMat, maxSakura);
@@ -997,10 +1005,12 @@ export function createWeatherParticleController(
   const dispose = () => {
     rainGeo.dispose();
     rainMat.dispose();
+    splashInstanced.dispose();
     splashGeo.dispose();
     splashMat.dispose();
     snowGeo.dispose();
     snowMat.dispose();
+    sakuraInstanced.dispose();
     sakuraGeo.dispose();
     sakuraMat.dispose();
   };
@@ -1070,6 +1080,7 @@ export function collectSceneWeatherMaterials(root: THREE.Object3D): SceneMateria
         mat.map &&
         mat.map !== winPaneTex &&
         mat.map !== roadTex &&
+        !mat.map.userData?.isArchitecturalTex &&
         !mat.bumpMap &&
         hex === 0xffffff &&
         mat.roughness <= 0.55
@@ -1109,9 +1120,11 @@ export function applyAtmosphereToMaterials(
     const mat = buckets.signageMaterials[i];
     if (atmos.signageGlowIntensity > 0.05) {
       mat.emissive.setHex(0xfffbeb);
-      mat.emissiveMap = mat.map;
+      if (mat.emissiveMap !== mat.map) {
+        mat.emissiveMap = mat.map;
+        mat.needsUpdate = true;
+      }
       mat.emissiveIntensity = atmos.signageGlowIntensity * 0.42;
-      mat.needsUpdate = true;
     } else {
       mat.emissive.setHex(0x000000);
       mat.emissiveIntensity = 0.0;

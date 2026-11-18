@@ -1,7 +1,10 @@
 import * as THREE from 'three';
 import { getConcretePanelTexture, addWrapAroundWindows } from './wallTextures';
 
+let cachedMuseumSignTex: THREE.CanvasTexture | null = null;
+
 function createMuseumSignTexture(): THREE.CanvasTexture {
+  if (cachedMuseumSignTex) return cachedMuseumSignTex;
   const canvas = document.createElement('canvas');
   canvas.width = 512;
   canvas.height = 128;
@@ -33,6 +36,8 @@ function createMuseumSignTexture(): THREE.CanvasTexture {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
+  cachedMuseumSignTex = texture;
   return texture;
 }
 

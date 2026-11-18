@@ -40,6 +40,7 @@ function createParkSignTexture(): THREE.CanvasTexture {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
   cachedParkSignTex = texture;
   return texture;
 }

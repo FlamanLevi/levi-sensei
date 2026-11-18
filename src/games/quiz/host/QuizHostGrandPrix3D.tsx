@@ -116,6 +116,7 @@ export const QuizHostGrandPrix3D: React.FC<QuizHostGrandPrix3DProps> = ({
   const raceActive = !isLobby && elapsedSinceStart >= 2400;
 
   useEffect(() => {
+    if (isLobby) return;
     // Dynamic refresh rate: 100ms during start lights countdown for crisp 400ms light changes,
     // switching to 500ms (2 Hz) once race is active to prevent React main-thread choking on host TV/iPad
     const intervalMs = raceActive ? 500 : 100;
@@ -123,7 +124,7 @@ export const QuizHostGrandPrix3D: React.FC<QuizHostGrandPrix3DProps> = ({
       setNowTime(getServerTime());
     }, intervalMs);
     return () => clearInterval(clock);
-  }, [raceActive]);
+  }, [isLobby, raceActive]);
 
   useEffect(() => {
     return () => {
@@ -461,7 +462,7 @@ export const QuizHostGrandPrix3D: React.FC<QuizHostGrandPrix3DProps> = ({
         {/* Top-Left & Top-Right Floating Camera & Start Lights Bar */}
         {!isLobby && (
           <div className="absolute top-3 left-3 right-3 z-20 flex items-center justify-between gap-2 pointer-events-none">
-            <div className="flex items-center flex-nowrap overflow-x-auto no-scrollbar max-w-full gap-1 p-1 rounded-xl bg-slate-950/88 backdrop-blur-md border border-slate-800 pointer-events-auto shadow-xl text-xs font-black">
+            <div className="flex items-center flex-nowrap overflow-x-auto no-scrollbar max-w-full gap-1 p-1 rounded-xl bg-slate-950/92 border border-slate-800 pointer-events-auto shadow-xl text-xs font-black">
               <span className="text-amber-400 px-2 flex items-center gap-1 shrink-0 whitespace-nowrap">
                 <Tv size={12} />
                 <span>{t('TV CAM:', 'TVカメラ:')}</span>
@@ -555,7 +556,7 @@ export const QuizHostGrandPrix3D: React.FC<QuizHostGrandPrix3DProps> = ({
             </div>
 
             {/* Start Lights Pill */}
-            <div className="px-3 py-1.5 rounded-xl bg-slate-950/85 backdrop-blur-md border border-slate-800 shadow-xl flex items-center gap-2 pointer-events-auto">
+            <div className="px-3 py-1.5 rounded-xl bg-slate-950/92 border border-slate-800 shadow-xl flex items-center gap-2 pointer-events-auto">
               <div className="flex items-center gap-1">
                 {[1, 2, 3, 4, 5].map((idx) => (
                   <div
@@ -592,13 +593,13 @@ export const QuizHostGrandPrix3D: React.FC<QuizHostGrandPrix3DProps> = ({
           timeTrialLimitSeconds={isTimeTrial ? timeLimitSeconds : undefined}
           hideSectorBadge={isLobby}
           performanceProfile={performanceProfile}
-          onTelemetryUpdate={setLiveTelemetry}
+          onTelemetryUpdate={isLobby ? undefined : setLiveTelemetry}
           className="flex-1 w-full h-full min-h-0"
         />
 
         {/* Live Broadcast Leaderboard Ticker (Bottom-Left) */}
         {!isLobby && (
-          <div className="absolute bottom-3 left-3 z-20 w-80 bg-slate-950/88 backdrop-blur-md border border-slate-800 rounded-2xl p-3 shadow-2xl pointer-events-none">
+          <div className="absolute bottom-3 left-3 z-20 w-80 bg-slate-950/92 border border-slate-800 rounded-2xl p-3 shadow-2xl pointer-events-none">
             <div className="flex items-center justify-between pb-1.5 border-b border-slate-800 mb-2 text-xs font-black">
               <span className="text-amber-400 flex items-center gap-1.5">
                 <Trophy size={13} />

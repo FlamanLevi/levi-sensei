@@ -45,6 +45,7 @@ function createGardenSignTexture(): THREE.CanvasTexture {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
   cachedGardenSignTex = texture;
   return texture;
 }

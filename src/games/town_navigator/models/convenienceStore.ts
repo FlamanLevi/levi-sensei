@@ -64,6 +64,7 @@ function createKonbiniFasciaTexture(): THREE.CanvasTexture {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
   cachedFasciaTex = texture;
   return texture;
 }
@@ -112,6 +113,7 @@ function createPylonSignTexture(): THREE.CanvasTexture {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
   cachedPylonSignTex = texture;
   return texture;
 }
@@ -149,6 +151,7 @@ function createInteriorShelvesTexture(): THREE.CanvasTexture {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
   cachedShelvesTex = texture;
   return texture;
 }
@@ -173,6 +176,7 @@ function createBikeParkingSignTexture(): THREE.CanvasTexture {
   sCtx.fillText('駐輪場', 128, 44);
   const signTexture = new THREE.CanvasTexture(signCanvas);
   signTexture.colorSpace = THREE.SRGBColorSpace;
+  signTexture.userData.isSharedResource = true;
   cachedBikeSignTex = signTexture;
   return signTexture;
 }

@@ -26,6 +26,7 @@ const _tmpBakeColor = new THREE.Color();
 
 export interface BakePartOptions {
   color?: number;
+  teamMask?: number;
   pos?: [number, number, number];
   rot?: [number, number, number];
   scale?: [number, number, number];
@@ -52,9 +53,9 @@ export function bakePartGeo(
   if (!opts.keepUv && g.attributes.uv) {
     g.deleteAttribute('uv');
   }
+  const vCount = g.attributes.position.count;
   if (opts.color !== undefined) {
     _tmpBakeColor.setHex(opts.color);
-    const vCount = g.attributes.position.count;
     const cols = new Float32Array(vCount * 3);
     for (let i = 0; i < vCount; i++) {
       cols[i * 3] = _tmpBakeColor.r;
@@ -62,6 +63,11 @@ export function bakePartGeo(
       cols[i * 3 + 2] = _tmpBakeColor.b;
     }
     g.setAttribute('color', new THREE.BufferAttribute(cols, 3));
+  }
+  if (opts.teamMask !== undefined) {
+    const masks = new Float32Array(vCount);
+    masks.fill(opts.teamMask);
+    g.setAttribute('aTeamMask', new THREE.BufferAttribute(masks, 1));
   }
   return g;
 }
@@ -87,6 +93,7 @@ export interface BasketAssembly {
   moundMesh: THREE.Mesh;
   rimPulseRing: THREE.Mesh;
   levelRingsInst: THREE.InstancedMesh;
+  lastRingMask: number;
   netMesh: THREE.Mesh;
   linerMesh: THREE.Mesh;
   hoopY: number;
@@ -334,6 +341,7 @@ export function buildTamaireBasketPole(
     moundMesh,
     rimPulseRing,
     levelRingsInst,
+    lastRingMask: -1,
     netMesh,
     linerMesh,
     hoopY: rimY,
@@ -739,7 +747,7 @@ export function buildUndokaiArenaEnvironment(
 
   const trackChalkMesh = new THREE.Mesh(
     mergeBakedGeos(trackChalkParts),
-    new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.85 })
+    new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.85, depthWrite: false })
   );
   scene.add(trackChalkMesh);
 
@@ -895,7 +903,8 @@ export function buildUndokaiArenaEnvironment(
 
       const cosY = Math.cos(yaw);
       const sinY = Math.sin(yaw);
-      [-0.24, 0.24].forEach((lx, pSide) => {
+      for (let pSide = 0; pSide < 2; pSide++) {
+        const lx = pSide === 0 ? -0.24 : 0.24;
         pomPos.set(
           sp.baseX + lx * cosY + 0.1 * sinY,
           0.95 + hopY,
@@ -903,7 +912,7 @@ export function buildUndokaiArenaEnvironment(
         );
         pomMatrix.makeTranslation(pomPos.x, pomPos.y, pomPos.z);
         specPomInst.setMatrixAt(i * 2 + pSide, pomMatrix);
-      });
+      }
     }
     specBodyInst.instanceMatrix.needsUpdate = true;
     specCapInst.instanceMatrix.needsUpdate = true;

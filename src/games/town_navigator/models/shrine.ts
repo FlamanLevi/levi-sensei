@@ -44,6 +44,7 @@ function createShrineSignTexture(): THREE.CanvasTexture {
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
   texture.anisotropy = 8;
+  texture.userData.isSharedResource = true;
   cachedShrineSignTex = texture;
   return texture;
 }
@@ -65,6 +66,7 @@ function createOmikujiSignTexture(): THREE.CanvasTexture {
   ctx.fillText('おみくじ', 64, 40);
   const tex = new THREE.CanvasTexture(canvas);
   tex.colorSpace = THREE.SRGBColorSpace;
+  tex.userData.isSharedResource = true;
   cachedOmikujiSignTex = tex;
   return tex;
 }

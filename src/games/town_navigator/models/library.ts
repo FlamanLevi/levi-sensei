@@ -46,6 +46,7 @@ function createLibrarySignTexture(): THREE.CanvasTexture {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
   cachedLibrarySignTex = texture;
   return texture;
 }
@@ -78,6 +79,7 @@ function createBookReturnTexture(): THREE.CanvasTexture {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
   cachedBookReturnTex = texture;
   return texture;
 }

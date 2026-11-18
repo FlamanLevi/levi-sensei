@@ -55,6 +55,7 @@ function createBookstoreSignTexture(): THREE.CanvasTexture {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
   cachedBookstoreSignTex = texture;
   return texture;
 }
@@ -90,6 +91,7 @@ function createBladeSignTexture(): THREE.CanvasTexture {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
   cachedBladeSignTex = texture;
   return texture;
 }
@@ -130,6 +132,7 @@ function createBookshelfTexture(): THREE.CanvasTexture {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
   cachedBookshelfTex = texture;
   return texture;
 }
@@ -160,6 +163,7 @@ function createSalePlacardTexture(): THREE.CanvasTexture {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
   cachedSalePlacardTex = texture;
   return texture;
 }

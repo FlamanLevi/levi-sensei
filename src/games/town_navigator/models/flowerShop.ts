@@ -50,6 +50,7 @@ function createFlowerShopSignTexture(): THREE.CanvasTexture {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
   cachedFlowerShopSignTex = texture;
   return texture;
 }
@@ -94,6 +95,7 @@ function createFloralInteriorTexture(): THREE.CanvasTexture {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
   cachedFloralInteriorTex = texture;
   return texture;
 }

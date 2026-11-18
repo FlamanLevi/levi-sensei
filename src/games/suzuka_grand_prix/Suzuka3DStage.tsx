@@ -1,7 +1,10 @@
 import React, { useRef, useEffect, useState } from 'react';
 import * as THREE from 'three';
-import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-import { createClassroomRenderer } from '@/utils/classroom3d';
+import {
+  createClassroomRenderer,
+  createRoomEnvironmentPMREM,
+  disposeObject3D,
+} from '@/utils/classroom3d';
 import {
   buildSuzuka3DTrack,
   SuzukaTrackWorld,
@@ -17,9 +20,13 @@ import {
   SUZUKA_SAFE_LANE_LIMIT_M,
   type LanePlannerRacerSnapshot,
   type LaneDecisionResult,
+  type KartVisualSteeringResult,
   type BattleCandidate,
 } from './engine/suzukaPhysics';
-import { buildMicroKart } from './engine/MicroKartBuilder.js';
+import {
+  SuzukaInstancedKartLayer,
+  type InstancedKartFrameState,
+} from './engine/SuzukaInstancedKartLayer';
 import { SuzukaSector } from './engine/SuzukaPathData';
 import {
   SuzukaTrackThemeId,
@@ -187,6 +194,7 @@ function getSharedSkyCloudNoiseTexture(): THREE.CanvasTexture {
   tex.minFilter = THREE.LinearFilter;
   tex.magFilter = THREE.LinearFilter;
   tex.generateMipmaps = false;
+  tex.userData = { isSharedResource: true };
   _sharedSkyCloudNoiseTex = tex;
   return tex;
 }
@@ -711,6 +719,9 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
   const onTelemetryRef = useRef(onTelemetryUpdate);
   onTelemetryRef.current = onTelemetryUpdate;
 
+  const sceneRef = useRef<THREE.Scene | null>(null);
+  const precipSystemRef = useRef<PrecipitationSystem | null>(null);
+
   const activeTheme = getTrackTheme(trackTheme);
 
   useEffect(() => {
@@ -718,11 +729,11 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
     if (!container) return;
 
     let isDisposed = false;
-    let frameId = 0;
+    let rafId = 0;
+    let timeoutId = 0;
 
     // Resolve biome/atmosphere theme configuration
     const theme = getTrackTheme(trackTheme);
-    const activePrecip = precipitation ?? theme.defaultPrecipitation;
 
     // Hardware profile detection & adaptive renderer setup (zero redundant temp canvases)
     const isStudentView = performanceProfile === 'MOBILE' || mode === 'STUDENT_COCKPIT';
@@ -731,16 +742,11 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(theme.sceneBackgroundHex);
     scene.fog = new THREE.FogExp2(theme.fogHex, theme.fogDensity);
+    sceneRef.current = scene;
 
     // Dynamic Skybox with dual-layer cloud animation & optional night starfield (1 draw call, <0.08ms GPU cost)
     const skyDome = createDynamicSkyDome(theme);
     scene.add(skyDome.mesh);
-
-    // 1-Draw-Call Camera-Anchored GPU Precipitation System (Rain / Snow)
-    const precipSystem = createPrecipitationSystem(activePrecip, isStudentView);
-    if (precipSystem) {
-      scene.add(precipSystem.mesh);
-    }
 
     const {
       renderer,
@@ -754,33 +760,27 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
       far: 3200.0,
       isStudentView,
       enableDrs: true,
+      toneMappingExposure: theme.exposure,
+      onContextLost: () => {
+        console.warn('[Suzuka3DStage] WebGL context lost; default prevented to allow GPU restoration.');
+      },
+      onContextRestored: () => {
+        console.info('[Suzuka3DStage] WebGL context restored; restarting 3D stage cleanly.');
+        setContextRestartKey((k) => k + 1);
+      },
     });
     const isSoftwareGl = gpuProfile.isSoftware;
 
     renderer.outputColorSpace = THREE.SRGBColorSpace;
-    renderer.toneMappingExposure = theme.exposure;
 
     const domElement = renderer.domElement;
     domElement.style.display = 'block';
     domElement.style.backgroundColor = '#020617';
 
-    const onContextLost = (e: Event) => {
-      e.preventDefault();
-      console.warn('[Suzuka3DStage] WebGL context lost; default prevented to allow GPU restoration.');
-    };
-    const onContextRestored = () => {
-      console.info('[Suzuka3DStage] WebGL context restored; restarting 3D stage cleanly.');
-      setContextRestartKey((k) => k + 1);
-    };
-    domElement.addEventListener('webglcontextlost', onContextLost, false);
-    domElement.addEventListener('webglcontextrestored', onContextRestored, false);
-
-    // Studio Environment Map (RoomEnvironment + PMREMGenerator) for metallic kart & visor reflections
-    const pmremGenerator = new THREE.PMREMGenerator(renderer);
-    const envTexture = pmremGenerator.fromScene(new RoomEnvironment(), 0.04).texture;
-    scene.environment = envTexture;
+    // Studio Environment Map via classroom3d helper (auto-disposes RoomEnvironment + PMREMGenerator)
+    const envHandle = createRoomEnvironmentPMREM(renderer, 0.04);
+    scene.environment = envHandle.texture;
     scene.environmentIntensity = 1.0;
-    pmremGenerator.dispose();
 
     // Biome-tuned Sunlight / Moonlight & Sky Ambient Contrast
     const hemiLight = new THREE.HemisphereLight(theme.hemiSkyHex, theme.hemiGroundHex, theme.hemiIntensity);
@@ -814,9 +814,11 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
     const fireworksSystem = createFireworksSystem(finishAnchor);
     scene.add(fireworksSystem.mesh);
 
-    // Karts Group
-    interface KartInstance {
-      kartObj: any;
+    // Unified 40-Kart Instanced Fleet (~8–12 draw calls total for all classroom karts!)
+    const kartLayer = new SuzukaInstancedKartLayer(40);
+    scene.add(kartLayer.root);
+
+    interface KartInstance extends InstancedKartFrameState {
       distanceMeters: number;
       speedKmh: number;
       laneOffset: number;
@@ -827,36 +829,33 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
       smoothedSteerInput: number;
       boxedInCapKmh: number;
       lastAuthoritativeDist?: number;
-      catchUpSpeedMs?: number;
-      lastColorHex?: number;
-      lastHelmetHex?: number;
+      catchUpSpeedMs: number;
     }
     const kartMap = new Map<string, KartInstance>();
-    const kartsRootGroup = new THREE.Group();
-    kartsRootGroup.name = 'AllKartsGroup';
-    scene.add(kartsRootGroup);
+    const _activeRacerIdSet = new Set<string>();
+    let lastSyncedRacers: RacerState[] | null = null;
 
-    const initialRacers = racersRef.current;
-    initialRacers.forEach((racer, index) => {
-      const isUser = racer.id === activeRacerIdRef.current;
-      const kartObj = buildMicroKart({
-        colorHex: racer.colorHex,
-        stripeHex: racer.stripeHex,
-        rimHex: racer.rimHex,
-        suitHex: racer.suitHex,
-        helmetHex: racer.helmetHex,
-        visorHex: racer.visorHex,
-        number: racer.number,
-        isUser,
-        labelText: isUser && mode === 'STUDENT_COCKPIT' ? '' : `#${racer.number} ${racer.name}`,
-      });
-      kartObj.kartRoot.scale.set(130, 130, 130);
-      kartsRootGroup.add(kartObj.kartRoot);
-
+    const createKartInstance = (racer: RacerState, index: number): KartInstance => {
       const gridOffset = -3.5 - index * 4.2;
       const gridLane = GRID_LANES_3WIDE[index % GRID_LANES_3WIDE.length];
-      kartMap.set(racer.id, {
-        kartObj,
+      return {
+        visible: true,
+        number: racer.number,
+        colorHex: racer.colorHex,
+        rimHex: racer.rimHex ?? 0xffbb44,
+        suitHex: racer.suitHex ?? 0xf0f4fa,
+        helmetHex: racer.helmetHex ?? 0xffffff,
+        position: new THREE.Vector3(),
+        quaternion: new THREE.Quaternion(),
+        speedMs: 0,
+        steerInput: 0,
+        driftAngle: 0,
+        isBoosting: false,
+        isBraking: false,
+        wheelSpinRad: 0,
+        frontSteerRad: 0,
+        chassisYawRad: 0,
+        chassisRollRad: 0,
         distanceMeters:
           racer.authoritativeDistanceMeters !== undefined
             ? racer.authoritativeDistanceMeters
@@ -871,10 +870,35 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
         boxedInCapKmh: 999,
         lastAuthoritativeDist: racer.authoritativeDistanceMeters,
         catchUpSpeedMs: 0,
-        lastColorHex: racer.colorHex,
-        lastHelmetHex: racer.helmetHex,
-      });
-    });
+      };
+    };
+
+    const syncKartRoster = (currentRacers: RacerState[]) => {
+      _activeRacerIdSet.clear();
+      for (let i = 0; i < currentRacers.length; i++) {
+        const racer = currentRacers[i];
+        _activeRacerIdSet.add(racer.id);
+        let inst = kartMap.get(racer.id);
+        if (!inst) {
+          inst = createKartInstance(racer, i);
+          kartMap.set(racer.id, inst);
+        } else {
+          inst.number = racer.number;
+          inst.colorHex = racer.colorHex;
+          inst.rimHex = racer.rimHex ?? 0xffbb44;
+          inst.suitHex = racer.suitHex ?? 0xf0f4fa;
+          inst.helmetHex = racer.helmetHex ?? 0xffffff;
+        }
+      }
+      for (const id of kartMap.keys()) {
+        if (!_activeRacerIdSet.has(id)) {
+          kartMap.delete(id);
+        }
+      }
+      lastSyncedRacers = currentRacers;
+    };
+
+    syncKartRoster(racersRef.current);
 
     // Pre-allocated scratch objects (0 GC inside 60Hz animation loop)
     const currentCamPos = new THREE.Vector3(0, 35, 90);
@@ -882,7 +906,9 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
     const currentCamLook = new THREE.Vector3(0, 0, 0);
     const targetCamLook = new THREE.Vector3();
     const _packCentroid = new THREE.Vector3();
+    const _telemetryPool: RacerTelemetry[] = [];
     const _sortedTelemetry: RacerTelemetry[] = [];
+    const _frameKarts: InstancedKartFrameState[] = [];
     const _plannerSnapshots: LanePlannerRacerSnapshot[] = [];
     const _plannerResult: LaneDecisionResult = {
       targetLane: 0,
@@ -890,8 +916,36 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
       isBoxedInAhead: false,
       blockingSpeedKmh: 180,
     };
+    const _laneInput = {
+      selfIndex: 0,
+      racers: _plannerSnapshots,
+      racerCount: 0,
+      circuitLengthMeters: totalCircuitLength,
+      signedCurvature: 0,
+      laneLockRemainingSec: 0,
+      outResult: _plannerResult,
+    };
+    const _repulsionInput = {
+      selfIndex: 0,
+      racers: _plannerSnapshots,
+      racerCount: 0,
+      circuitLengthMeters: totalCircuitLength,
+    };
+    const _steerResult: KartVisualSteeringResult = {
+      laneYawRad: 0,
+      steerInput: 0,
+      driftAngle: 0,
+    };
+    const _steerInput = {
+      speedKmh: 0,
+      lateralVelMs: 0,
+      signedCurvature: 0,
+      outResult: _steerResult,
+    };
     const _kartYawQuat = new THREE.Quaternion();
     const _kartUpAxis = new THREE.Vector3(0, 1, 0);
+    const compareTelemetryDesc = (a: RacerTelemetry, b: RacerTelemetry): number =>
+      b.distanceMeters - a.distanceMeters;
     camera.position.copy(currentCamPos);
 
     type LandmarkCamId =
@@ -942,7 +996,8 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
 
     function applyLandmarkCamera(
       landmarkId: LandmarkCamId,
-      telemetryList: RacerTelemetry[]
+      telemetryPool: RacerTelemetry[],
+      telemetryCount: number
     ): string {
       const spec = LANDMARK_CAM_SPECS[landmarkId] || LANDMARK_CAM_SPECS.BRIDGE;
       const sampleIdx = Math.floor(spec.t * trackWorld.samples.length) % trackWorld.samples.length;
@@ -956,7 +1011,8 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
 
       let closestRacer: RacerTelemetry | null = null;
       let minAbsDiff = 0.12;
-      for (const r of telemetryList) {
+      for (let i = 0; i < telemetryCount; i++) {
+        const r = telemetryPool[i];
         const diff = Math.abs(circularFractionDiff(r.progress, spec.t));
         if (diff < minAbsDiff) {
           minAbsDiff = diff;
@@ -999,6 +1055,7 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
     let lastCamMode: CameraViewMode | null = null;
     let lastBadgeText = '';
     let lastSectorId: number | null = null;
+    let lastLightsCount = -1;
     let frameCount = 0;
 
     const updateSectorDisplay = (sector: SuzukaSector | null) => {
@@ -1022,20 +1079,158 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
       }
     };
 
+    const frameBattleCamera = (battle: OvertakeBattle, angleIdx: number = 0): string => {
+      const chaserEval = trackWorld.evaluate(battle.chaser.progress, battle.chaser.laneOffset);
+      const aheadEval = trackWorld.evaluate(battle.ahead.progress, battle.ahead.laneOffset);
+      const midProgress =
+        ((((battle.chaser.distanceMeters + battle.ahead.distanceMeters) * 0.5) /
+          totalCircuitLength) %
+          1 +
+          1) %
+        1;
+      const midLane = (battle.chaser.laneOffset + battle.ahead.laneOffset) * 0.5;
+      const midEval = trackWorld.evaluate(midProgress, midLane);
+
+      let angleLabel = 'CHASE';
+
+      if (angleIdx === 1) {
+        targetCamPos
+          .copy(midEval.position)
+          .addScaledVector(midEval.right, -7.2)
+          .addScaledVector(midEval.tangent, -2.2);
+        targetCamPos.y += 2.3;
+        targetCamLook.copy(midEval.position).addScaledVector(midEval.tangent, 3.5);
+        targetCamLook.y += 1.1;
+        angleLabel = 'SIDE PROFILE (L)';
+      } else if (angleIdx === 2) {
+        targetCamPos
+          .copy(midEval.position)
+          .addScaledVector(midEval.right, 7.2)
+          .addScaledVector(midEval.tangent, -2.2);
+        targetCamPos.y += 2.3;
+        targetCamLook.copy(midEval.position).addScaledVector(midEval.tangent, 3.5);
+        targetCamLook.y += 1.1;
+        angleLabel = 'OUTSIDE CAM (R)';
+      } else if (angleIdx === 3) {
+        const headOnSide = battle.ahead.laneOffset > 0.8 ? -1.8 : 1.8;
+        targetCamPos
+          .copy(aheadEval.position)
+          .addScaledVector(aheadEval.tangent, 10.5)
+          .addScaledVector(aheadEval.right, headOnSide);
+        targetCamPos.y += 3.2;
+        targetCamLook.copy(chaserEval.position).addScaledVector(chaserEval.tangent, -5.0);
+        targetCamLook.y += 1.0;
+        angleLabel = 'HEAD-ON DEFENDER';
+      } else {
+        const backDist = 10.5 + Math.min(8.0, battle.gapMeters * 0.24);
+        const heightOffset = 3.9 + Math.min(3.2, battle.gapMeters * 0.08);
+        const safeSideOffset =
+          midLane > 0.8 ? -2.0 : midLane < -0.8 ? 2.0 : battle.chaser.laneOffset >= 0 ? -1.8 : 1.8;
+
+        targetCamPos
+          .copy(chaserEval.position)
+          .addScaledVector(chaserEval.tangent, -backDist)
+          .addScaledVector(chaserEval.right, safeSideOffset);
+        targetCamPos.y += heightOffset;
+
+        targetCamLook
+          .copy(aheadEval.position)
+          .lerp(chaserEval.position, 0.25)
+          .addScaledVector(aheadEval.tangent, 9.0);
+        targetCamLook.y += 1.15;
+        angleLabel = 'REAR CHASE';
+      }
+
+      updateSectorDisplay(aheadEval.sector);
+      return `⚔️ BATTLE CAM (${angleLabel}) · P${battle.rankAhead} #${battle.ahead.number} ${battle.ahead.name} vs P${battle.rankAhead + 1} #${battle.chaser.number} ${battle.chaser.name} (${Math.max(1, Math.round(battle.gapMeters))}m)`;
+    };
+
+    const frameLeaderCamera = (
+      leaderTelem: RacerTelemetry | undefined,
+      sortedTelemetry: RacerTelemetry[]
+    ): string => {
+      const leaderInst = leaderTelem ? kartMap.get(leaderTelem.id) : undefined;
+      if (leaderInst && leaderTelem) {
+        const evalRes = trackWorld.evaluate(leaderTelem.progress, leaderInst.laneOffset);
+        const p2 = sortedTelemetry[1];
+        const gapToP2 = p2
+          ? Math.max(1, Math.round(leaderTelem.distanceMeters - p2.distanceMeters))
+          : null;
+
+        targetCamPos
+          .copy(evalRes.position)
+          .addScaledVector(evalRes.tangent, 13.0)
+          .addScaledVector(evalRes.right, 2.2);
+        targetCamPos.y += 3.4;
+
+        targetCamLook.copy(evalRes.position).addScaledVector(evalRes.tangent, -16.0);
+        targetCamLook.y += 1.2;
+
+        updateSectorDisplay(evalRes.sector);
+
+        const gapText =
+          gapToP2 !== null ? ` · +${gapToP2}m ahead of P2 #${p2.number} ${p2.name}` : '';
+        return `🏎️ LEADER CAM · #${leaderTelem.number} ${leaderTelem.name} (${leaderTelem.speedKmh} km/h)${gapText}`;
+      }
+      return '🏎️ LEADER';
+    };
+
+    const framePackHelicopterCamera = (
+      sortedTelemetry: RacerTelemetry[],
+      elapsedTime: number
+    ): string => {
+      const packLen = Math.min(4, sortedTelemetry.length);
+      if (packLen > 0) {
+        _packCentroid.set(0, 0, 0);
+        for (let i = 0; i < packLen; i++) {
+          const tItem = sortedTelemetry[i];
+          const ev = trackWorld.evaluate(tItem.progress, tItem.laneOffset);
+          _packCentroid.add(ev.position);
+        }
+        _packCentroid.divideScalar(packLen);
+
+        const orbitAngle = elapsedTime * 0.22;
+        targetCamPos.set(
+          _packCentroid.x + Math.cos(orbitAngle) * 68,
+          _packCentroid.y + 44,
+          _packCentroid.z + Math.sin(orbitAngle) * 68
+        );
+        targetCamLook.copy(_packCentroid);
+        targetCamLook.y += 1.5;
+        const leadEval = trackWorld.evaluate(sortedTelemetry[0].progress, 0);
+        updateSectorDisplay(leadEval.sector);
+        return `🚁 HELICOPTER PACK CAM · Tracking Top ${packLen} Racers`;
+      }
+      targetCamPos.set(0, 320, 220);
+      targetCamLook.set(0, 0, 0);
+      return '🚁 HELICOPTER OVERVIEW';
+    };
+
     const clockStartTime = performance.now();
     let clockLastTime = clockStartTime;
     let telemetryTimer = 0;
+    let atmoThrottleTimer = 0;
     let greenFlagStartSec: number | null = null;
     let smoothedLeMansProgress = 0;
     let currentNightFactor = 0;
     let currentWeatherSprayMode: 'NONE' | 'RAIN' | 'SNOW' = 'NONE';
+    let lastAtmoTimeOfDay: SuzukaTimeOfDayId | undefined;
+    let lastAtmoCloudCover: SuzukaCloudCoverId | undefined;
+    let lastAtmoPrecip: SuzukaPrecipitationId | undefined;
 
     const applyEvaluatedAtmosphere = (leMansProgress01: number) => {
-      const curPrecip = precipitationRef.current ?? theme.defaultPrecipitation;
+      const curTimeOfDay = timeOfDayRef.current;
+      const curCloudCover = cloudCoverRef.current;
+      const curPrecipProp = precipitationRef.current;
+      lastAtmoTimeOfDay = curTimeOfDay;
+      lastAtmoCloudCover = curCloudCover;
+      lastAtmoPrecip = curPrecipProp;
+
+      const curPrecip = curPrecipProp ?? theme.defaultPrecipitation;
       const atmo = evaluateSuzukaAtmosphere({
         biome: theme.id,
-        timeOfDay: timeOfDayRef.current ?? 'NOON',
-        cloudCover: cloudCoverRef.current ?? theme.defaultCloudCover,
+        timeOfDay: curTimeOfDay ?? 'NOON',
+        cloudCover: curCloudCover ?? theme.defaultCloudCover,
         precipitation: curPrecip,
         leMansProgress: leMansProgress01,
       });
@@ -1097,15 +1292,15 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
           if (isDisposed) return;
           const state = sync && gl.getSyncParameter(sync, gl.SYNC_STATUS);
           if (state === gl.UNSIGNALED) {
-            frameId = window.setTimeout(poll, 5);
+            timeoutId = window.setTimeout(poll, 5);
           } else {
             if (sync) gl.deleteSync(sync);
-            frameId = window.setTimeout(cb, 80);
+            timeoutId = window.setTimeout(cb, 80);
           }
         };
-        frameId = window.setTimeout(poll, 5);
+        timeoutId = window.setTimeout(poll, 5);
       } else {
-        frameId = window.setTimeout(cb, 80);
+        timeoutId = window.setTimeout(cb, 80);
       }
     }
 
@@ -1117,105 +1312,50 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
       frameCount++;
 
       const nowMs = performance.now();
-      const elapsedDeltaSec = (nowMs - clockLastTime) / 1000;
-      const rawDelta = Math.min(0.2, elapsedDeltaSec);
+      const rawDt = (nowMs - clockLastTime) / 1000;
       clockLastTime = nowMs;
-      const dt = Math.min(0.05, Math.max(0.001, rawDelta));
+      const dt = Math.min(0.05, Math.max(0.001, Math.min(0.2, rawDt)));
       const elapsedTime = (nowMs - clockStartTime) / 1000;
 
-      // Adaptive Dynamic Resolution Scaling via shared classroom3d governor
-      trackFrameRate(elapsedDeltaSec);
+      // Adaptive Dynamic Resolution Scaling via shared classroom3d governor (unclamped rawDt!)
+      trackFrameRate(rawDt);
 
-      trackWorld.setStartLights(lightsCountRef.current);
+      const curLights = lightsCountRef.current;
+      if (curLights !== lastLightsCount) {
+        lastLightsCount = curLights;
+        trackWorld.setStartLights(curLights);
+      }
 
       const currentRacers = racersRef.current;
-      const isGreenFlag = lightsCountRef.current === 6;
+      const isGreenFlag = curLights === 6;
 
-      for (const [id, inst] of kartMap.entries()) {
-        if (!currentRacers.some((r) => r.id === id)) {
-          kartsRootGroup.remove(inst.kartObj.kartRoot);
-          inst.kartObj.disposeKart?.();
-          kartMap.delete(id);
-        }
+      // Sync active roster & livery colors only when the React racers array reference updates
+      if (currentRacers !== lastSyncedRacers) {
+        syncKartRoster(currentRacers);
       }
 
       const activeId =
         activeRacerIdRef.current || (currentRacers[0] ? currentRacers[0].id : undefined);
 
-      // 1A. Pass 1: Sync Instances, Advance Longitudinal Motion & Populate Zero-GC Planner Snapshots
-      for (let racerIdx = 0; racerIdx < currentRacers.length; racerIdx++) {
+      // 1A. Pass 1: Advance Longitudinal Motion & Populate Zero-GC Planner Snapshots
+      const racerCount = currentRacers.length;
+      for (let racerIdx = 0; racerIdx < racerCount; racerIdx++) {
         const racer = currentRacers[racerIdx];
-        let instance = kartMap.get(racer.id);
-        if (!instance) {
-          const isUser = racer.id === activeRacerIdRef.current;
-          const kartObj = buildMicroKart({
-            colorHex: racer.colorHex,
-            stripeHex: racer.stripeHex,
-            rimHex: racer.rimHex,
-            suitHex: racer.suitHex,
-            helmetHex: racer.helmetHex,
-            visorHex: racer.visorHex,
-            number: racer.number,
-            isUser,
-            labelText: isUser && mode === 'STUDENT_COCKPIT' ? '' : `#${racer.number} ${racer.name}`,
-          });
-          kartObj.kartRoot.scale.set(130, 130, 130);
-          kartsRootGroup.add(kartObj.kartRoot);
+        const instance = kartMap.get(racer.id);
+        if (!instance) continue;
 
-          const initialGridOffset = -3.5 - racerIdx * 4.2;
-          const initialGridLane = GRID_LANES_3WIDE[racerIdx % GRID_LANES_3WIDE.length];
-
-          instance = {
-            kartObj,
-            distanceMeters:
-              racer.authoritativeDistanceMeters !== undefined
-                ? racer.authoritativeDistanceMeters
-                : initialGridOffset,
-            speedKmh: 0,
-            laneOffset: initialGridLane,
-            targetLane: initialGridLane,
-            laneLockTimer: 0,
-            isOvertaking: false,
-            smoothedLatVel: 0,
-            smoothedSteerInput: 0,
-            boxedInCapKmh: 999,
-            lastAuthoritativeDist: racer.authoritativeDistanceMeters,
-            catchUpSpeedMs: 0,
-            lastColorHex: racer.colorHex,
-            lastHelmetHex: racer.helmetHex,
-          };
-          kartMap.set(racer.id, instance);
-        } else {
-          if (!isGreenFlag && racer.authoritativeDistanceMeters === undefined) {
-            const gridOffset = -3.5 - racerIdx * 4.2;
-            const gridLane = GRID_LANES_3WIDE[racerIdx % GRID_LANES_3WIDE.length];
-            instance.distanceMeters = gridOffset;
-            instance.targetLane = gridLane;
-            instance.laneOffset = gridLane;
-            instance.speedKmh = 0;
-            instance.laneLockTimer = 0;
-            instance.isOvertaking = false;
-            instance.smoothedLatVel = 0;
-            instance.smoothedSteerInput = 0;
-            instance.boxedInCapKmh = 999;
-          }
-          if (
-            instance.lastColorHex !== racer.colorHex ||
-            instance.lastHelmetHex !== racer.helmetHex
-          ) {
-            instance.lastColorHex = racer.colorHex;
-            instance.lastHelmetHex = racer.helmetHex;
-            if (instance.kartObj.updateColors) {
-              instance.kartObj.updateColors({
-                colorHex: racer.colorHex,
-                stripeHex: racer.stripeHex,
-                rimHex: racer.rimHex,
-                suitHex: racer.suitHex,
-                helmetHex: racer.helmetHex,
-                visorHex: racer.visorHex,
-              });
-            }
-          }
+        if (!isGreenFlag && racer.authoritativeDistanceMeters === undefined) {
+          const gridOffset = -3.5 - racerIdx * 4.2;
+          const gridLane = GRID_LANES_3WIDE[racerIdx % GRID_LANES_3WIDE.length];
+          instance.distanceMeters = gridOffset;
+          instance.targetLane = gridLane;
+          instance.laneOffset = gridLane;
+          instance.speedKmh = 0;
+          instance.laneLockTimer = 0;
+          instance.isOvertaking = false;
+          instance.smoothedLatVel = 0;
+          instance.smoothedSteerInput = 0;
+          instance.boxedInCapKmh = 999;
         }
 
         const preProgress =
@@ -1254,14 +1394,14 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
           }
         }
 
-        if (instance.catchUpSpeedMs !== undefined && Math.abs(instance.catchUpSpeedMs) > 0.01) {
+        if (Math.abs(instance.catchUpSpeedMs) > 0.01) {
           instance.catchUpSpeedMs += (0 - instance.catchUpSpeedMs) * Math.min(1.0, dt * 2.2);
         } else {
           instance.catchUpSpeedMs = 0;
         }
 
         const baseSpeedMs = instance.speedKmh / 3.6;
-        const effectiveSpeedMs = Math.max(0, baseSpeedMs + (instance.catchUpSpeedMs || 0));
+        const effectiveSpeedMs = Math.max(0, baseSpeedMs + instance.catchUpSpeedMs);
         instance.distanceMeters += effectiveSpeedMs * dt;
         instance.laneLockTimer = Math.max(0, instance.laneLockTimer - dt);
 
@@ -1289,7 +1429,9 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
       }
 
       // 1B. Pass 2: Staggered 15Hz Multi-Lane Gap Finder + 60Hz Smooth Anti-Clip Separation
-      for (let racerIdx = 0; racerIdx < currentRacers.length; racerIdx++) {
+      _laneInput.racerCount = racerCount;
+      _repulsionInput.racerCount = racerCount;
+      for (let racerIdx = 0; racerIdx < racerCount; racerIdx++) {
         const racer = currentRacers[racerIdx];
         const instance = kartMap.get(racer.id);
         if (!instance) continue;
@@ -1312,15 +1454,10 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
             shouldEvaluateLane &&
             (instance.speedKmh > 6 || racer.inPitStop || instance.distanceMeters > 0)
           ) {
-            selectBestPassingLane({
-              selfIndex: racerIdx,
-              racers: _plannerSnapshots,
-              racerCount: currentRacers.length,
-              circuitLengthMeters: totalCircuitLength,
-              signedCurvature,
-              laneLockRemainingSec: instance.laneLockTimer,
-              outResult: _plannerResult,
-            });
+            _laneInput.selfIndex = racerIdx;
+            _laneInput.signedCurvature = signedCurvature;
+            _laneInput.laneLockRemainingSec = instance.laneLockTimer;
+            selectBestPassingLane(_laneInput);
 
             if (Math.abs(_plannerResult.targetLane - instance.targetLane) > 0.35 && !racer.inPitStop) {
               instance.laneLockTimer = 0.45;
@@ -1344,12 +1481,8 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
                 : 999;
           }
 
-          const repulsionVel = computeLateralRepulsionVelocity({
-            selfIndex: racerIdx,
-            racers: _plannerSnapshots,
-            racerCount: currentRacers.length,
-            circuitLengthMeters: totalCircuitLength,
-          });
+          _repulsionInput.selfIndex = racerIdx;
+          const repulsionVel = computeLateralRepulsionVelocity(_repulsionInput);
 
           const lateralRate = instance.isOvertaking || racer.isBoosting ? 4.1 : 2.9;
           const desiredLatVel = (instance.targetLane - instance.laneOffset) * lateralRate + repulsionVel;
@@ -1369,12 +1502,14 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
         }
       }
 
-      // 2. Render Karts on Spline & Compile Telemetry
+      // 2. Evaluate Spline, Sync Unified Instanced Kart Layer & Populate Pooled Telemetry
       const currentCamMode = cameraModeRef.current || (mode === 'STUDENT_COCKPIT' ? 'COCKPIT' : 'DIRECTOR');
 
-      const telemetryList: RacerTelemetry[] = [];
+      let telemetryCount = 0;
+      let frameKartCount = 0;
 
-      for (const racer of currentRacers) {
+      for (let racerIdx = 0; racerIdx < racerCount; racerIdx++) {
+        const racer = currentRacers[racerIdx];
         const instance = kartMap.get(racer.id);
         if (!instance) continue;
 
@@ -1386,105 +1521,106 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
         const continuousProgress = Math.max(0, instance.distanceMeters / totalCircuitLength);
 
         const evalRes = trackWorld.evaluate(normalizedProgress, instance.laneOffset);
-        const root = instance.kartObj.kartRoot;
 
         // In pure bumper camera mode, hide the active player's own kart to ensure 100% unobstructed road view
         const isUser = racer.id === activeId;
-        if (isUser && currentCamMode === 'FIRST_PERSON') {
-          root.visible = false;
-        } else {
-          root.visible = true;
-        }
+        instance.visible = !(isUser && currentCamMode === 'FIRST_PERSON');
 
-        root.position.copy(evalRes.position);
+        instance.position.copy(evalRes.position);
         if (racer.inPitStop) {
-          root.position.x += (Math.random() - 0.5) * 0.15;
-          root.position.y += 0.25;
-          root.position.z += (Math.random() - 0.5) * 0.15;
+          instance.position.x += (Math.random() - 0.5) * 0.15;
+          instance.position.y += 0.25;
+          instance.position.z += (Math.random() - 0.5) * 0.15;
         } else {
-          root.position.y += 0.25;
-        }
-
-        if (instance.kartObj.setLabelVisible) {
-          const distToCam = camera.position.distanceTo(root.position);
-          instance.kartObj.setLabelVisible(distToCam < 90.0);
+          instance.position.y += 0.25;
         }
 
         const signedCurvNow = getSuzukaSignedCurvature(normalizedProgress);
-        const visSteer = computeKartVisualSteering({
-          speedKmh: instance.speedKmh,
-          lateralVelMs: instance.smoothedLatVel,
-          signedCurvature: signedCurvNow,
-        });
-        instance.smoothedSteerInput +=
-          (visSteer.steerInput - instance.smoothedSteerInput) * Math.min(1.0, dt * 12.0);
+        _steerInput.speedKmh = instance.speedKmh;
+        _steerInput.lateralVelMs = instance.smoothedLatVel;
+        _steerInput.signedCurvature = signedCurvNow;
+        computeKartVisualSteering(_steerInput);
 
-        _kartYawQuat.setFromAxisAngle(_kartUpAxis, visSteer.laneYawRad);
-        root.quaternion.copy(evalRes.quaternion).multiply(_kartYawQuat);
+        instance.smoothedSteerInput +=
+          (_steerResult.steerInput - instance.smoothedSteerInput) * Math.min(1.0, dt * 12.0);
+
+        _kartYawQuat.setFromAxisAngle(_kartUpAxis, _steerResult.laneYawRad);
+        instance.quaternion.copy(evalRes.quaternion).multiply(_kartYawQuat);
 
         const cornerLimit = getSuzukaCornerSpeedLimit(normalizedProgress);
-        const isBoosting = !!racer.isBoosting || racer.streak >= 3;
-        const isBraking =
+        instance.speedMs = instance.speedKmh / 3.6;
+        instance.steerInput = instance.smoothedSteerInput;
+        instance.driftAngle = _steerResult.driftAngle;
+        instance.isBoosting = !!racer.isBoosting || racer.streak >= 3;
+        instance.isBraking =
           !!racer.inPitStop || (cornerLimit < 175 && instance.speedKmh > cornerLimit * 0.82);
-        const isDrifting =
-          Math.abs(signedCurvNow) > 0.35 && instance.speedKmh > 85 && !racer.inPitStop;
-        const curbRumble =
-          Math.abs(instance.laneOffset) > 2.75 &&
-          Math.abs(signedCurvNow) > 0.28 &&
-          instance.speedKmh > 55
-            ? Math.min(0.45, Math.abs(signedCurvNow) * 0.4)
-            : 0;
 
-        if (instance.kartObj.updateKartVisuals) {
-          instance.kartObj.updateKartVisuals(dt, {
-            speed: instance.speedKmh / 3.6,
-            steerInput: instance.smoothedSteerInput,
-            driftAngle: visSteer.driftAngle,
-            isDrifting,
-            curbRumble,
-            suppressSteerSparks: true,
-            boostActive: isBoosting ? 1 : 0,
-            nightFactor: currentNightFactor,
-            isBraking,
-            weatherSprayMode: currentWeatherSprayMode,
-            tangent: evalRes.tangent,
-            normal: evalRes.normal,
-            right: evalRes.right,
-          });
+        _frameKarts[frameKartCount++] = instance;
+
+        // Populate pooled telemetry object in-place (0 allocations at 60 Hz)
+        const isPassing = instance.isOvertaking || Math.abs(instance.smoothedLatVel) > 0.75;
+        let tObj = _telemetryPool[telemetryCount];
+        if (!tObj) {
+          tObj = {
+            id: racer.id,
+            name: racer.name,
+            number: racer.number,
+            colorHex: racer.colorHex,
+            progress: continuousProgress,
+            speedKmh: Math.round(instance.speedKmh),
+            cornerSpeedLimit: cornerLimit,
+            lap: currentLap,
+            distanceMeters: instance.distanceMeters,
+            laneOffset: instance.laneOffset,
+            isPassingLane: isPassing,
+          };
+          _telemetryPool[telemetryCount] = tObj;
+        } else {
+          tObj.id = racer.id;
+          tObj.name = racer.name;
+          tObj.number = racer.number;
+          tObj.colorHex = racer.colorHex;
+          tObj.progress = continuousProgress;
+          tObj.speedKmh = Math.round(instance.speedKmh);
+          tObj.cornerSpeedLimit = cornerLimit;
+          tObj.lap = currentLap;
+          tObj.distanceMeters = instance.distanceMeters;
+          tObj.laneOffset = instance.laneOffset;
+          tObj.isPassingLane = isPassing;
         }
-
-        telemetryList.push({
-          id: racer.id,
-          name: racer.name,
-          number: racer.number,
-          colorHex: racer.colorHex,
-          progress: continuousProgress,
-          speedKmh: Math.round(instance.speedKmh),
-          cornerSpeedLimit: cornerLimit,
-          lap: currentLap,
-          distanceMeters: instance.distanceMeters,
-          laneOffset: instance.laneOffset,
-          isPassingLane: instance.isOvertaking || Math.abs(instance.smoothedLatVel) > 0.75,
-        });
+        telemetryCount++;
       }
 
-      // Throttled 2 Hz React telemetry sync (prevents main-thread choking)
+      kartLayer.syncFrame(
+        _frameKarts,
+        dt,
+        elapsedTime,
+        currentNightFactor,
+        currentWeatherSprayMode,
+        frameKartCount
+      );
+
+      // Throttled ~2.2 Hz React telemetry sync (snapshots shallow copies only when callback is mounted)
       telemetryTimer += dt;
       if (telemetryTimer > 0.45) {
         telemetryTimer = 0;
         if (onTelemetryRef.current) {
-          onTelemetryRef.current(telemetryList);
+          const snapshot: RacerTelemetry[] = new Array(telemetryCount);
+          for (let i = 0; i < telemetryCount; i++) {
+            snapshot[i] = { ..._telemetryPool[i] };
+          }
+          onTelemetryRef.current(snapshot);
         }
       }
 
       // 3. Steadicam Camera Damping & Smart Overtake-Aware F1 Director
       const activeInstance = activeId ? kartMap.get(activeId) : undefined;
 
-      _sortedTelemetry.length = 0;
-      for (let i = 0; i < telemetryList.length; i++) {
-        _sortedTelemetry.push(telemetryList[i]);
+      _sortedTelemetry.length = telemetryCount;
+      for (let i = 0; i < telemetryCount; i++) {
+        _sortedTelemetry[i] = _telemetryPool[i];
       }
-      _sortedTelemetry.sort((a, b) => b.distanceMeters - a.distanceMeters);
+      _sortedTelemetry.sort(compareTelemetryDesc);
       const sortedTelemetry = _sortedTelemetry;
       const leaderTelem = sortedTelemetry[0];
 
@@ -1492,8 +1628,13 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
 
       if (battleLock) {
         const lock = battleLock;
-        const aheadTelem = telemetryList.find((r) => r.id === lock.aheadId);
-        const chaserTelem = telemetryList.find((r) => r.id === lock.chaserId);
+        let aheadTelem: RacerTelemetry | undefined;
+        let chaserTelem: RacerTelemetry | undefined;
+        for (let i = 0; i < telemetryCount; i++) {
+          const tItem = _telemetryPool[i];
+          if (tItem.id === lock.aheadId) aheadTelem = tItem;
+          else if (tItem.id === lock.chaserId) chaserTelem = tItem;
+        }
 
         if (
           !aheadTelem ||
@@ -1510,7 +1651,13 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
           const isChaserAhead = dChaser > dAhead;
           const realAhead = isChaserAhead ? chaserTelem : aheadTelem;
           const realChaser = isChaserAhead ? aheadTelem : chaserTelem;
-          const aheadRank = sortedTelemetry.findIndex((r) => r.id === realAhead.id) + 1;
+          let aheadRank = 1;
+          for (let i = 0; i < sortedTelemetry.length; i++) {
+            if (sortedTelemetry[i].id === realAhead.id) {
+              aheadRank = i + 1;
+              break;
+            }
+          }
 
           const isTightDuel =
             currentGap < 4.5 && realAhead.speedKmh > 25 && realChaser.speedKmh > 25;
@@ -1577,126 +1724,6 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
       }
 
       let nextBadgeText = '';
-
-      const frameBattleCamera = (battle: OvertakeBattle, angleIdx: number = 0) => {
-        const chaserEval = trackWorld.evaluate(battle.chaser.progress, battle.chaser.laneOffset);
-        const aheadEval = trackWorld.evaluate(battle.ahead.progress, battle.ahead.laneOffset);
-        const midProgress =
-          ((((battle.chaser.distanceMeters + battle.ahead.distanceMeters) * 0.5) /
-            totalCircuitLength) %
-            1 +
-            1) %
-          1;
-        const midLane = (battle.chaser.laneOffset + battle.ahead.laneOffset) / 2;
-        const midEval = trackWorld.evaluate(midProgress, midLane);
-
-        let angleLabel = 'CHASE';
-
-        if (angleIdx === 1) {
-          targetCamPos
-            .copy(midEval.position)
-            .addScaledVector(midEval.right, -7.2)
-            .addScaledVector(midEval.tangent, -2.2);
-          targetCamPos.y += 2.3;
-          targetCamLook.copy(midEval.position).addScaledVector(midEval.tangent, 3.5);
-          targetCamLook.y += 1.1;
-          angleLabel = 'SIDE PROFILE (L)';
-        } else if (angleIdx === 2) {
-          targetCamPos
-            .copy(midEval.position)
-            .addScaledVector(midEval.right, 7.2)
-            .addScaledVector(midEval.tangent, -2.2);
-          targetCamPos.y += 2.3;
-          targetCamLook.copy(midEval.position).addScaledVector(midEval.tangent, 3.5);
-          targetCamLook.y += 1.1;
-          angleLabel = 'OUTSIDE CAM (R)';
-        } else if (angleIdx === 3) {
-          const headOnSide = battle.ahead.laneOffset > 0.8 ? -1.8 : 1.8;
-          targetCamPos
-            .copy(aheadEval.position)
-            .addScaledVector(aheadEval.tangent, 10.5)
-            .addScaledVector(aheadEval.right, headOnSide);
-          targetCamPos.y += 3.2;
-          targetCamLook.copy(chaserEval.position).addScaledVector(chaserEval.tangent, -5.0);
-          targetCamLook.y += 1.0;
-          angleLabel = 'HEAD-ON DEFENDER';
-        } else {
-          const backDist = 10.5 + Math.min(8.0, battle.gapMeters * 0.24);
-          const heightOffset = 3.9 + Math.min(3.2, battle.gapMeters * 0.08);
-          const safeSideOffset =
-            midLane > 0.8 ? -2.0 : midLane < -0.8 ? 2.0 : battle.chaser.laneOffset >= 0 ? -1.8 : 1.8;
-
-          targetCamPos
-            .copy(chaserEval.position)
-            .addScaledVector(chaserEval.tangent, -backDist)
-            .addScaledVector(chaserEval.right, safeSideOffset);
-          targetCamPos.y += heightOffset;
-
-          targetCamLook
-            .copy(aheadEval.position)
-            .lerp(chaserEval.position, 0.25)
-            .addScaledVector(aheadEval.tangent, 9.0);
-          targetCamLook.y += 1.15;
-          angleLabel = 'REAR CHASE';
-        }
-
-        updateSectorDisplay(aheadEval.sector);
-        return `⚔️ BATTLE CAM (${angleLabel}) · P${battle.rankAhead} #${battle.ahead.number} ${battle.ahead.name} vs P${battle.rankAhead + 1} #${battle.chaser.number} ${battle.chaser.name} (${Math.max(1, Math.round(battle.gapMeters))}m)`;
-      };
-
-      const frameLeaderCamera = () => {
-        const leaderInst = leaderTelem ? kartMap.get(leaderTelem.id) : undefined;
-        if (leaderInst && leaderTelem) {
-          const evalRes = trackWorld.evaluate(leaderTelem.progress, leaderInst.laneOffset);
-          const p2 = sortedTelemetry[1];
-          const gapToP2 = p2
-            ? Math.max(1, Math.round(leaderTelem.distanceMeters - p2.distanceMeters))
-            : null;
-
-          targetCamPos
-            .copy(evalRes.position)
-            .addScaledVector(evalRes.tangent, 13.0)
-            .addScaledVector(evalRes.right, 2.2);
-          targetCamPos.y += 3.4;
-
-          targetCamLook.copy(evalRes.position).addScaledVector(evalRes.tangent, -16.0);
-          targetCamLook.y += 1.2;
-
-          updateSectorDisplay(evalRes.sector);
-
-          const gapText =
-            gapToP2 !== null ? ` · +${gapToP2}m ahead of P2 #${p2.number} ${p2.name}` : '';
-          return `🏎️ LEADER CAM · #${leaderTelem.number} ${leaderTelem.name} (${leaderTelem.speedKmh} km/h)${gapText}`;
-        }
-        return '🏎️ LEADER';
-      };
-
-      const framePackHelicopterCamera = () => {
-        const topPack = sortedTelemetry.slice(0, Math.min(4, sortedTelemetry.length));
-        if (topPack.length > 0) {
-          _packCentroid.set(0, 0, 0);
-          topPack.forEach((tItem) => {
-            const ev = trackWorld.evaluate(tItem.progress, tItem.laneOffset);
-            _packCentroid.add(ev.position);
-          });
-          _packCentroid.divideScalar(topPack.length);
-
-          const orbitAngle = elapsedTime * 0.22;
-          targetCamPos.set(
-            _packCentroid.x + Math.cos(orbitAngle) * 68,
-            _packCentroid.y + 44,
-            _packCentroid.z + Math.sin(orbitAngle) * 68
-          );
-          targetCamLook.copy(_packCentroid);
-          targetCamLook.y += 1.5;
-          const leadEval = trackWorld.evaluate(topPack[0].progress, 0);
-          updateSectorDisplay(leadEval.sector);
-          return `🚁 HELICOPTER PACK CAM · Tracking Top ${topPack.length} Racers`;
-        }
-        targetCamPos.set(0, 320, 220);
-        targetCamLook.set(0, 0, 0);
-        return '🚁 HELICOPTER OVERVIEW';
-      };
 
       if (currentCamMode === 'COCKPIT') {
         if (activeInstance) {
@@ -1850,13 +1877,13 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
         camera.lookAt(currentCamLook);
         nextBadgeText = '🗺️ FULL CIRCUIT OVERHEAD';
       } else if (currentCamMode === 'DRONE') {
-        nextBadgeText = framePackHelicopterCamera();
+        nextBadgeText = framePackHelicopterCamera(sortedTelemetry, elapsedTime);
         currentCamPos.lerp(targetCamPos, 0.08);
         currentCamLook.lerp(targetCamLook, 0.08);
         camera.position.copy(currentCamPos);
         camera.lookAt(currentCamLook);
       } else if (currentCamMode === 'LEADER') {
-        nextBadgeText = frameLeaderCamera();
+        nextBadgeText = frameLeaderCamera(leaderTelem, sortedTelemetry);
         const posDecay = Math.min(1.0, 1.0 - Math.exp(-6.5 * dt));
         const lookDecay = Math.min(1.0, 1.0 - Math.exp(-9.0 * dt));
         if (currentCamPos.distanceTo(targetCamPos) > 35.0) {
@@ -1873,7 +1900,7 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
         if (activeBattle) {
           nextBadgeText = frameBattleCamera(activeBattle, angleIdx);
         } else {
-          nextBadgeText = frameLeaderCamera();
+          nextBadgeText = frameLeaderCamera(leaderTelem, sortedTelemetry);
         }
         const posDecay = Math.min(1.0, 1.0 - Math.exp(-6.5 * dt));
         const lookDecay = Math.min(1.0, 1.0 - Math.exp(-9.0 * dt));
@@ -1888,7 +1915,7 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
         camera.lookAt(currentCamLook);
       } else if (currentCamMode in LANDMARK_CAM_SPECS) {
         const lmId = currentCamMode as LandmarkCamId;
-        nextBadgeText = `📹 FIXED CAM: ${applyLandmarkCamera(lmId, telemetryList)}`;
+        nextBadgeText = `📹 FIXED CAM: ${applyLandmarkCamera(lmId, _telemetryPool, telemetryCount)}`;
         const spec = LANDMARK_CAM_SPECS[lmId];
         const sample =
           trackWorld.samples[
@@ -1929,14 +1956,14 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
         } else if (directorPhaseIndex === 1 && leaderTelem) {
           const focusProgress = activeBattle ? activeBattle.ahead.progress : leaderTelem.progress;
           const activeLandmark = findNearestLandmark(focusProgress);
-          const lmDesc = applyLandmarkCamera(activeLandmark, telemetryList);
+          const lmDesc = applyLandmarkCamera(activeLandmark, _telemetryPool, telemetryCount);
           const lmEval = trackWorld.evaluate(focusProgress, 0);
           updateSectorDisplay(lmEval.sector);
           nextBadgeText = `🎬 AI DIRECTOR · ${lmDesc}`;
         } else if (directorPhaseIndex === 3 && sortedTelemetry.length > 1) {
-          nextBadgeText = `🎬 AI DIRECTOR · ${framePackHelicopterCamera()}`;
+          nextBadgeText = `🎬 AI DIRECTOR · ${framePackHelicopterCamera(sortedTelemetry, elapsedTime)}`;
         } else {
-          nextBadgeText = `🎬 AI DIRECTOR · ${frameLeaderCamera()}`;
+          nextBadgeText = `🎬 AI DIRECTOR · ${frameLeaderCamera(leaderTelem, sortedTelemetry)}`;
         }
 
         const posDecay = Math.min(1.0, 1.0 - Math.exp(-6.0 * dt));
@@ -1980,8 +2007,17 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
           (targetLeMansProgress - smoothedLeMansProgress) * Math.min(1.0, dt * 1.8);
       }
 
-      // Throttle full material/light atmosphere evaluation to every 2nd frame (~30Hz) or when not Le Mans
-      if (frameCount % 2 === 1 || timeOfDayRef.current === 'LE_MANS_CYCLE') {
+      // Evaluate atmosphere only when props change in static modes, or at ~15 Hz during LE_MANS_CYCLE
+      atmoThrottleTimer += dt;
+      const atmoPropsDirty =
+        timeOfDayRef.current !== lastAtmoTimeOfDay ||
+        cloudCoverRef.current !== lastAtmoCloudCover ||
+        precipitationRef.current !== lastAtmoPrecip;
+      if (
+        atmoPropsDirty ||
+        (timeOfDayRef.current === 'LE_MANS_CYCLE' && atmoThrottleTimer >= 0.066)
+      ) {
+        atmoThrottleTimer = 0;
         applyEvaluatedAtmosphere(smoothedLeMansProgress);
       }
 
@@ -2014,9 +2050,10 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
       skyDome.uniforms.uTime.value = elapsedTime;
       skyDome.mesh.position.copy(camera.position);
 
-      if (precipSystem) {
-        precipSystem.uniforms.uTime.value = elapsedTime;
-        precipSystem.uniforms.uCameraPos.value.copy(camera.position);
+      const activePrecip = precipSystemRef.current;
+      if (activePrecip) {
+        activePrecip.uniforms.uTime.value = elapsedTime;
+        activePrecip.uniforms.uCameraPos.value.copy(camera.position);
       }
 
       // Celebration Fireworks over Main Straight on green flag launch, lap crossings, final lap & finish
@@ -2028,9 +2065,17 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
         !!leaderTelem &&
         leaderTelem.lap >= targetLapCount &&
         leaderTelem.progress > 0.65;
-      const lapCrossingSalute = telemetryList.some(
-        (t) => t.distanceMeters > totalCircuitLength * 0.92 && (t.progress < 0.09 || t.progress > 0.92)
-      );
+      let lapCrossingSalute = false;
+      for (let i = 0; i < telemetryCount; i++) {
+        const t = _telemetryPool[i];
+        if (
+          t.distanceMeters > totalCircuitLength * 0.92 &&
+          (t.progress < 0.09 || t.progress > 0.92)
+        ) {
+          lapCrossingSalute = true;
+          break;
+        }
+      }
       const greenFlagSalute =
         greenFlagStartSec !== null && elapsedTime - greenFlagStartSec < 5.5;
       const leMansFinale =
@@ -2053,7 +2098,7 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
       if (isSoftwareGl) {
         afterDraw(tick);
       } else {
-        frameId = requestAnimationFrame(tick);
+        rafId = requestAnimationFrame(tick);
       }
     }
 
@@ -2061,48 +2106,58 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
 
     return () => {
       isDisposed = true;
-      cancelAnimationFrame(frameId);
-      clearTimeout(frameId);
-      domElement.removeEventListener('webglcontextlost', onContextLost);
-      domElement.removeEventListener('webglcontextrestored', onContextRestored);
+      cancelAnimationFrame(rafId);
+      clearTimeout(timeoutId);
 
-      for (const inst of kartMap.values()) {
-        inst.kartObj.disposeKart?.();
-      }
       kartMap.clear();
+      kartLayer.dispose();
 
-      // Dispose all track geometries and non-shared materials/textures
-      for (const group of [trackWorld.root, kartsRootGroup]) {
-        group.traverse((obj) => {
-          if ((obj as THREE.Mesh).isMesh || (obj as THREE.Sprite).isSprite) {
-            const mesh = obj as THREE.Mesh;
-            if (mesh.geometry && !mesh.geometry.userData?.isSharedResource) {
-              mesh.geometry.dispose();
-            }
-            const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
-            mats.forEach((m) => {
-              if (!m || m.userData?.isSharedResource) return;
-              if ((obj as THREE.Sprite).isSprite) {
-                const spMap = (m as THREE.SpriteMaterial).map;
-                if (spMap && !spMap.userData?.isSharedResource) {
-                  spMap.dispose();
-                }
-              }
-              m.dispose();
-            });
-          }
-        });
+      if (precipSystemRef.current) {
+        scene.remove(precipSystemRef.current.mesh);
+        precipSystemRef.current.dispose();
+        precipSystemRef.current = null;
       }
 
-      precipSystem?.dispose();
       fireworksSystem.dispose();
       skyDome.geometry.dispose();
       skyDome.material.dispose();
-      envTexture.dispose();
+      disposeObject3D(trackWorld.root);
+      disposeObject3D(scene);
+      envHandle.dispose();
       scene.clear();
+      sceneRef.current = null;
       cleanupClassroomRenderer();
     };
-  }, [performanceProfile, mode, trackTheme, precipitation, contextRestartKey]);
+  }, [performanceProfile, mode, trackTheme, contextRestartKey]);
+
+  // Swap 1-draw-call rain/snow particle system without rebuilding the WebGLRenderer or track
+  useEffect(() => {
+    const scene = sceneRef.current;
+    if (!scene) return;
+
+    if (precipSystemRef.current) {
+      scene.remove(precipSystemRef.current.mesh);
+      precipSystemRef.current.dispose();
+      precipSystemRef.current = null;
+    }
+
+    const theme = getTrackTheme(trackTheme);
+    const activePrecip = precipitation ?? theme.defaultPrecipitation;
+    const isStudentView = performanceProfile === 'MOBILE' || mode === 'STUDENT_COCKPIT';
+    const nextPrecip = createPrecipitationSystem(activePrecip, isStudentView);
+    if (nextPrecip) {
+      scene.add(nextPrecip.mesh);
+      precipSystemRef.current = nextPrecip;
+    }
+
+    return () => {
+      if (precipSystemRef.current) {
+        scene.remove(precipSystemRef.current.mesh);
+        precipSystemRef.current.dispose();
+        precipSystemRef.current = null;
+      }
+    };
+  }, [precipitation, trackTheme, performanceProfile, mode, contextRestartKey]);
 
   return (
     <div className={`relative w-full h-full overflow-hidden select-none bg-slate-950 ${className}`}>

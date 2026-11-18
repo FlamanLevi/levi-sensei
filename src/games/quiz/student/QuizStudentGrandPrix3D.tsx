@@ -830,7 +830,7 @@ export const QuizStudentGrandPrix3D: React.FC<QuizStudentGrandPrix3DProps> = ({
             <button
               type="button"
               onClick={onLeave}
-              className="p-1.5 rounded-full bg-slate-950/85 backdrop-blur-md border border-slate-700 text-slate-400 hover:text-rose-400 cursor-pointer shadow-lg"
+              className="p-1.5 rounded-full bg-slate-950/92 border border-slate-700 text-slate-400 hover:text-rose-400 cursor-pointer shadow-lg"
               title={t('Leave Race', '退出')}
             >
               <LogOut size={14} />
@@ -841,7 +841,7 @@ export const QuizStudentGrandPrix3D: React.FC<QuizStudentGrandPrix3DProps> = ({
         {/* Top Student Race Metrics HUD: Flush in top-left corner with Position+Gap, Track %, and Points */}
         {!isLobby && (
           <div className="absolute top-2.5 left-3 z-30 flex flex-nowrap items-center gap-1.5 sm:gap-2 pointer-events-none whitespace-nowrap">
-            <div className="px-3 py-1 rounded-full bg-slate-950/85 backdrop-blur-md border border-slate-700 text-white font-black text-xs flex items-center gap-1.5 shadow-lg pointer-events-auto shrink-0">
+            <div className="px-3 py-1 rounded-full bg-slate-950/92 border border-slate-700 text-white font-black text-xs flex items-center gap-1.5 shadow-lg pointer-events-auto shrink-0">
               <span className="text-amber-400">POS:</span>
               <span className="font-mono text-sm text-emerald-400">P{studentRank}</span>
               <span className="text-slate-400 text-[10px]">/ {allRacers3D.length}</span>
@@ -860,7 +860,7 @@ export const QuizStudentGrandPrix3D: React.FC<QuizStudentGrandPrix3DProps> = ({
             </div>
 
             {!isTimeTrial && (
-              <div className="px-3 py-1 rounded-full bg-slate-950/85 backdrop-blur-md border border-slate-700 text-cyan-400 font-mono font-black text-xs shadow-lg flex items-center gap-1 pointer-events-auto shrink-0">
+              <div className="px-3 py-1 rounded-full bg-slate-950/92 border border-slate-700 text-cyan-400 font-mono font-black text-xs shadow-lg flex items-center gap-1 pointer-events-auto shrink-0">
                 <Flag size={11} />
                 <span>
                   {targetLaps === 1
@@ -871,12 +871,12 @@ export const QuizStudentGrandPrix3D: React.FC<QuizStudentGrandPrix3DProps> = ({
             )}
 
             {/* Points counter unified right next to Position & Lap */}
-            <div className="px-3 py-1 rounded-full bg-slate-950/85 backdrop-blur-md border border-slate-700 text-emerald-400 font-mono font-black text-xs shadow-lg pointer-events-auto shrink-0">
+            <div className="px-3 py-1 rounded-full bg-slate-950/92 border border-slate-700 text-emerald-400 font-mono font-black text-xs shadow-lg pointer-events-auto shrink-0">
               {localScore.toLocaleString()} PTS
             </div>
 
             {currentQuestion?.promptType === 'AUDIO_ONLY' && !localIsFinished && (
-              <div className="px-3 py-1 rounded-full bg-blue-600/90 backdrop-blur-md border border-white/40 text-white font-black text-xs shadow-lg flex items-center gap-1 pointer-events-auto shrink-0 animate-pulse">
+              <div className="px-3 py-1 rounded-full bg-blue-600/95 border border-white/40 text-white font-black text-xs shadow-lg flex items-center gap-1 pointer-events-auto shrink-0 animate-pulse">
                 <Volume2 size={12} />
                 <span>{t('Volume UP!', 'おとを おおきく！')}</span>
               </div>
@@ -905,12 +905,12 @@ export const QuizStudentGrandPrix3D: React.FC<QuizStudentGrandPrix3DProps> = ({
           targetLaps={targetLaps}
           timeTrialLimitSeconds={isTimeTrial ? (sprintSettings?.timeLimitSeconds || 60) : undefined}
           performanceProfile="MOBILE"
-          onTelemetryUpdate={handleTelemetryUpdate}
+          onTelemetryUpdate={isLobby ? undefined : handleTelemetryUpdate}
           className="w-full h-full"
           hideSectorBadge={true}
         />
 
-        {/* Floating Glassmorphic Telemetry HUD over bottom edge of 3D Track (Fixed height, no wrapping shifts) */}
+        {/* Floating Telemetry HUD over bottom edge of 3D Track (Fixed height, no wrapping shifts) */}
         {!isLobby && (
           <div className="absolute bottom-2 sm:bottom-2.5 left-3 right-3 z-30 pointer-events-none flex items-center justify-between gap-2 sm:gap-3">
             {!localIsFinished && currentQuestion?.promptType === 'AUDIO_ONLY' && (
@@ -918,13 +918,13 @@ export const QuizStudentGrandPrix3D: React.FC<QuizStudentGrandPrix3DProps> = ({
                 type="button"
                 onClick={() => playWordAudio(currentQuestion.promptSound, currentQuestion.targetWordEnglish)}
                 aria-label={t('Listen to prompt audio again', '英語の音声をもういちど聞く')}
-                className="h-[64px] px-4 sm:px-5 rounded-2xl bg-blue-600/90 hover:bg-blue-500 backdrop-blur-md border-2 border-white/45 text-white shadow-2xl flex items-center gap-2 text-sm sm:text-base font-black active:scale-95 transition-all cursor-pointer touch-manipulation pointer-events-auto shrink-0"
+                className="h-[64px] px-4 sm:px-5 rounded-2xl bg-blue-600/95 hover:bg-blue-500 border-2 border-white/45 text-white shadow-2xl flex items-center gap-2 text-sm sm:text-base font-black active:scale-95 transition-all cursor-pointer touch-manipulation pointer-events-auto shrink-0"
               >
                 <Volume2 size={22} />
                 <span>{t('Listen Again', 'もういちど きく')}</span>
               </button>
             )}
-            <div className="w-full max-w-2xl mx-auto bg-slate-950/85 backdrop-blur-md border border-white/20 rounded-2xl px-3 py-1.5 shadow-2xl flex flex-col gap-1 pointer-events-auto h-[58px] justify-center">
+            <div className="w-full max-w-2xl mx-auto bg-slate-950/92 border border-white/20 rounded-2xl px-3 py-1.5 shadow-2xl flex flex-col gap-1 pointer-events-auto h-[58px] justify-center">
               {/* Row 1: Race Telemetry & Nitro Streak (Fixed single row, never wraps) */}
               <div className="flex items-center justify-between gap-2 flex-nowrap shrink-0">
                 <div className="flex items-center gap-1.5 sm:gap-2 flex-nowrap min-w-0">
@@ -1013,7 +1013,7 @@ export const QuizStudentGrandPrix3D: React.FC<QuizStudentGrandPrix3DProps> = ({
                 type="button"
                 onClick={() => playWordAudio(currentQuestion.promptSound, currentQuestion.targetWordEnglish)}
                 aria-label={t('Listen to prompt audio again', '英語の音声をもういちど聞く')}
-                className="h-[64px] px-4 sm:px-5 rounded-2xl bg-blue-600/90 hover:bg-blue-500 backdrop-blur-md border-2 border-white/45 text-white shadow-2xl flex items-center gap-2 text-sm sm:text-base font-black active:scale-95 transition-all cursor-pointer touch-manipulation pointer-events-auto shrink-0"
+                className="h-[64px] px-4 sm:px-5 rounded-2xl bg-blue-600/95 hover:bg-blue-500 border-2 border-white/45 text-white shadow-2xl flex items-center gap-2 text-sm sm:text-base font-black active:scale-95 transition-all cursor-pointer touch-manipulation pointer-events-auto shrink-0"
               >
                 <Volume2 size={22} />
                 <span>{t('Listen Again', 'もういちど きく')}</span>

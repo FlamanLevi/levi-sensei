@@ -44,6 +44,7 @@ function createAquariumSignTexture(): THREE.CanvasTexture {
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
   texture.anisotropy = 8;
+  texture.userData.isSharedResource = true;
   cachedAquariumSignTex = texture;
   return texture;
 }

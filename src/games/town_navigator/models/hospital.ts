@@ -48,6 +48,7 @@ function createHospitalSignTexture(): THREE.CanvasTexture {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
   cachedHospitalSignTex = texture;
   return texture;
 }
@@ -77,6 +78,7 @@ function createEmergencyBannerTexture(): THREE.CanvasTexture {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
   cachedEmergencyBannerTex = texture;
   return texture;
 }

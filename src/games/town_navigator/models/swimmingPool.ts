@@ -37,6 +37,7 @@ function createPoolSignTexture(): THREE.CanvasTexture {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
   cachedPoolSignTex = texture;
   return texture;
 }
@@ -67,6 +68,7 @@ function createTempBoardTexture(): THREE.CanvasTexture {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
   cachedTempBoardTex = texture;
   return texture;
 }

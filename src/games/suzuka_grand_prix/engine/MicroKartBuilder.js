@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 
 // =========================================================================
 // MODULE-LEVEL SINGLETON GEOMETRIES & TEXTURES (0ms kart instantiation!)
@@ -266,9 +267,51 @@ export function getNumberPlateTexture(racerNumber = 87) {
   return texture;
 }
 
+function mergeNormalizedGeos(entries, keepUv = false) {
+  const parts = [];
+  const mat4 = new THREE.Matrix4();
+  const pos = new THREE.Vector3();
+  const quat = new THREE.Quaternion();
+  const euler = new THREE.Euler();
+  const scl = new THREE.Vector3(1, 1, 1);
+
+  for (const entry of entries) {
+    const src = entry.geo;
+    const g = src.index ? src.toNonIndexed() : src.clone();
+    if (entry.pos || entry.rot || entry.scale) {
+      if (entry.pos) pos.set(entry.pos[0], entry.pos[1], entry.pos[2]);
+      else pos.set(0, 0, 0);
+      if (entry.rot) {
+        euler.set(entry.rot[0], entry.rot[1], entry.rot[2], 'XYZ');
+        quat.setFromEuler(euler);
+      } else {
+        quat.identity();
+      }
+      if (entry.scale) scl.set(entry.scale[0], entry.scale[1], entry.scale[2]);
+      else scl.set(1, 1, 1);
+      mat4.compose(pos, quat, scl);
+      g.applyMatrix4(mat4);
+    }
+    if (!g.attributes.normal) {
+      g.computeVertexNormals();
+    }
+    if (!keepUv && g.attributes.uv) {
+      g.deleteAttribute('uv');
+    }
+    parts.push(g);
+  }
+
+  const merged = mergeGeometries(parts, false);
+  for (const p of parts) {
+    p.dispose();
+  }
+  return merged;
+}
+
 let _sharedKartGeos = null;
 function getSharedKartGeos() {
   if (!_sharedKartGeos) {
+    // 1. Merged 5-part volumetric exhaust flame plume -> 1 draw call per pipe
     const outerCone = new THREE.CylinderGeometry(0.00072, 0.00022, 0.0052, 16, 8, true);
     outerCone.rotateX(Math.PI / 2);
     outerCone.translate(0, 0, -0.0026);
@@ -291,12 +334,31 @@ function getSharedKartGeos() {
     nozzleDisc.rotateY(Math.PI);
     nozzleDisc.translate(0, 0, -0.00025);
 
-    // Pro Racing Slick Tires with beveled shoulders & chrome hubcaps
+    const mergedFlamePlume = mergeNormalizedGeos([
+      { geo: outerCone },
+      { geo: innerCore },
+      { geo: finA },
+      { geo: finB },
+      { geo: nozzleDisc },
+    ], false);
+    outerCone.dispose();
+    innerCore.dispose();
+    finA.dispose();
+    finB.dispose();
+    nozzleDisc.dispose();
+
+    // 2. Pro Racing Slick Tires (3 parts merged -> 1 geometry per wheel) + rims & hubcaps
     const frontTire = new THREE.CylinderGeometry(0.0019, 0.0019, 0.0018, 22);
     frontTire.rotateZ(Math.PI / 2);
-
     const frontTireShoulder = new THREE.TorusGeometry(0.00148, 0.00042, 10, 20);
     frontTireShoulder.rotateY(Math.PI / 2);
+    const frontTireMerged = mergeNormalizedGeos([
+      { geo: frontTire },
+      { geo: frontTireShoulder, pos: [-0.00065, 0, 0] },
+      { geo: frontTireShoulder, pos: [0.00065, 0, 0] },
+    ], false);
+    frontTire.dispose();
+    frontTireShoulder.dispose();
 
     const frontRim = new THREE.CylinderGeometry(0.0019 * 0.62, 0.0019 * 0.62, 0.0018 * 1.05, 16);
     frontRim.rotateZ(Math.PI / 2);
@@ -306,9 +368,15 @@ function getSharedKartGeos() {
 
     const rearTire = new THREE.CylinderGeometry(0.00225, 0.00225, 0.0024, 22);
     rearTire.rotateZ(Math.PI / 2);
-
     const rearTireShoulder = new THREE.TorusGeometry(0.00175, 0.0005, 10, 20);
     rearTireShoulder.rotateY(Math.PI / 2);
+    const rearTireMerged = mergeNormalizedGeos([
+      { geo: rearTire },
+      { geo: rearTireShoulder, pos: [-0.00085, 0, 0] },
+      { geo: rearTireShoulder, pos: [0.00085, 0, 0] },
+    ], false);
+    rearTire.dispose();
+    rearTireShoulder.dispose();
 
     const rearRim = new THREE.CylinderGeometry(0.00225 * 0.62, 0.00225 * 0.62, 0.0024 * 1.05, 16);
     rearRim.rotateZ(Math.PI / 2);
@@ -316,15 +384,48 @@ function getSharedKartGeos() {
     const rearHubCap = new THREE.CylinderGeometry(0.00056, 0.00056, 0.0027, 10);
     rearHubCap.rotateZ(Math.PI / 2);
 
+    // 3. Static same-material body assemblies (carbon -> 1, fairing -> 1, chrome -> 1, plates -> 1)
     const floorPan = new THREE.BoxGeometry(0.0082, 0.0009, 0.0155);
+    const rearWing = new THREE.BoxGeometry(0.0096, 0.0007, 0.0024);
+    const seat = new THREE.BoxGeometry(0.0042, 0.0044, 0.0038);
+    const carbonBodyMerged = mergeNormalizedGeos([
+      { geo: floorPan, pos: [0, 0.0014, 0] },
+      { geo: rearWing, pos: [0, 0.0068, -0.0076], rot: [-0.18, 0, 0] },
+      { geo: seat, pos: [0, 0.0036, -0.0015], rot: [-0.22, 0, 0] },
+    ], false);
+    floorPan.dispose();
+    rearWing.dispose();
+    seat.dispose();
+
     const noseCone = new THREE.BoxGeometry(0.0086, 0.0021, 0.0044);
+    const sidePod = new THREE.BoxGeometry(0.0024, 0.0024, 0.0076);
+    const fairingBodyMerged = mergeNormalizedGeos([
+      { geo: noseCone, pos: [0, 0.0023, 0.0068], rot: [0.22, 0, 0] },
+      { geo: sidePod, pos: [-0.0044, 0.0024, -0.0004] },
+      { geo: sidePod, pos: [0.0044, 0.0024, -0.0004] },
+    ], false);
+    noseCone.dispose();
+    sidePod.dispose();
+
+    const engineBlock = new THREE.BoxGeometry(0.0034, 0.0036, 0.0042);
+    const pipe = new THREE.CylinderGeometry(0.00056, 0.00062, 0.0032, 16);
+    const chromeBodyMerged = mergeNormalizedGeos([
+      { geo: engineBlock, pos: [0.0022, 0.0036, -0.0048] },
+      { geo: pipe, pos: [-0.00108, 0.00215, -0.0076], rot: [Math.PI / 2 + 0.12, 0, 0] },
+      { geo: pipe, pos: [0.00108, 0.00215, -0.0076], rot: [Math.PI / 2 + 0.12, 0, 0] },
+    ], false);
+    engineBlock.dispose();
+    pipe.dispose();
+
     const numberPlate = new THREE.PlaneGeometry(0.0052, 0.0032);
     const rearNumberPlate = new THREE.PlaneGeometry(0.0044, 0.0018);
-    const sidePod = new THREE.BoxGeometry(0.0024, 0.0024, 0.0076);
-    const engineBlock = new THREE.BoxGeometry(0.0034, 0.0036, 0.0042);
-    const rearWing = new THREE.BoxGeometry(0.0096, 0.0007, 0.0024);
-    const pipe = new THREE.CylinderGeometry(0.00056, 0.00062, 0.0032, 16);
-    const seat = new THREE.BoxGeometry(0.0042, 0.0044, 0.0038);
+    const numberPlatesMerged = mergeNormalizedGeos([
+      { geo: numberPlate, pos: [0, 0.00345, 0.0066], rot: [-Math.PI / 2 + 0.22, 0, 0] },
+      { geo: rearNumberPlate, pos: [0, 0.0068, -0.00885], rot: [0, Math.PI, 0] },
+    ], true);
+    numberPlate.dispose();
+    rearNumberPlate.dispose();
+
     const torso = new THREE.BoxGeometry(0.0036, 0.0038, 0.0028);
     const helmetShell = new THREE.SphereGeometry(0.0022, 20, 18);
     const visor = new THREE.SphereGeometry(0.00225, 16, 12, -0.9, 1.8, 1.05, 0.75);
@@ -332,9 +433,21 @@ function getSharedKartGeos() {
     const shadowQuad = new THREE.PlaneGeometry(0.0175, 0.0240);
     const tailGlow = new THREE.PlaneGeometry(0.0038, 0.0024);
 
-    // 3D Headlight & Taillight Lenses + Ground Projection Beams & Volumetric Light Cones
+    // 3D Headlight & Taillight Lenses (merged pairs) + Ground Projection Beams & Volumetric Light Cones
     const headlightLens = new THREE.SphereGeometry(0.00065, 10, 8);
+    const headlightLensesMerged = mergeNormalizedGeos([
+      { geo: headlightLens, pos: [-0.0026, 0.00225, 0.00875], scale: [1.15, 0.78, 0.65] },
+      { geo: headlightLens, pos: [0.0026, 0.00225, 0.00875], scale: [1.15, 0.78, 0.65] },
+    ], false);
+    headlightLens.dispose();
+
     const taillightLens = new THREE.BoxGeometry(0.0020, 0.00072, 0.00048);
+    const taillightLensesMerged = mergeNormalizedGeos([
+      { geo: taillightLens, pos: [-0.00320, 0.00275, -0.00875] },
+      { geo: taillightLens, pos: [0.00320, 0.00275, -0.00875] },
+    ], false);
+    taillightLens.dispose();
+
     const headlightGroundBeam = new THREE.PlaneGeometry(0.024, 0.056);
     const taillightGroundBeam = new THREE.PlaneGeometry(0.018, 0.028);
 
@@ -365,17 +478,14 @@ function getSharedKartGeos() {
     tireSprayCone.translate(0, -0.011, 0);
     tireSprayCone.rotateX(Math.PI / 2); // extends along -Z behind rear tire
 
-    const jetGeos = { outerCone, innerCore, finA, finB, nozzleDisc };
-
     _sharedKartGeos = {
-      jetGeos,
-      outerCone, innerCore, finA, finB, nozzleDisc,
-      frontTire, frontTireShoulder, frontRim, wheelHubCap,
-      rearTire, rearTireShoulder, rearRim, rearHubCap,
-      floorPan, noseCone, numberPlate, rearNumberPlate, sidePod, engineBlock, rearWing, pipe,
-      seat, torso, helmetShell, visor, steeringWheel,
+      mergedFlamePlume,
+      frontTireMerged, frontRim, wheelHubCap,
+      rearTireMerged, rearRim, rearHubCap,
+      carbonBodyMerged, fairingBodyMerged, chromeBodyMerged, numberPlatesMerged,
+      torso, helmetShell, visor, steeringWheel,
       shadowQuad, tailGlow,
-      headlightLens, taillightLens,
+      headlightLensesMerged, taillightLensesMerged,
       headlightGroundBeam, taillightGroundBeam,
       headlightVolCone, taillightVolCone,
       tireSprayCone,
@@ -392,7 +502,6 @@ function getSharedKartGeos() {
 let _sharedCarbonMat = null;
 let _sharedChromeMat = null;
 let _sharedTireRubberMat = null;
-let _sharedTailGlowMat = null;
 let _sharedShadowMat = null;
 let _sharedHeadlightLensMat = null;
 let _sharedTaillightLensMat = null;
@@ -417,19 +526,6 @@ function getSharedMaterials() {
       metalness: 0.05,
     });
     _sharedTireRubberMat.userData = { isSharedResource: true };
-    _sharedTailGlowMat = new THREE.MeshBasicMaterial({
-      map: getSharedTailGlowTexture(),
-      transparent: true,
-      opacity: 0.90,
-      blending: THREE.AdditiveBlending,
-      depthWrite: false,
-      toneMapped: false,
-      side: THREE.DoubleSide,
-      polygonOffset: true,
-      polygonOffsetFactor: -4,
-      polygonOffsetUnits: -4,
-    });
-    _sharedTailGlowMat.userData = { isSharedResource: true };
     _sharedShadowMat = new THREE.MeshBasicMaterial({
       map: getSharedShadowTexture(),
       transparent: true,
@@ -443,7 +539,7 @@ function getSharedMaterials() {
     _sharedHeadlightLensMat = new THREE.MeshStandardMaterial({
       color: 0xffffff,
       emissive: 0xfff4d4,
-      emissiveIntensity: 2.6,
+      emissiveIntensity: 1.6,
       roughness: 0.08,
       toneMapped: false,
     });
@@ -451,7 +547,7 @@ function getSharedMaterials() {
     _sharedTaillightLensMat = new THREE.MeshStandardMaterial({
       color: 0xff0a24,
       emissive: 0xff0820,
-      emissiveIntensity: 2.8,
+      emissiveIntensity: 1.4,
       roughness: 0.1,
       toneMapped: false,
     });
@@ -461,7 +557,6 @@ function getSharedMaterials() {
     carbonMat: _sharedCarbonMat,
     chromeMat: _sharedChromeMat,
     tireRubberMat: _sharedTireRubberMat,
-    tailGlowMat: _sharedTailGlowMat,
     shadowMat: _sharedShadowMat,
     headlightLensMat: _sharedHeadlightLensMat,
     taillightLensMat: _sharedTaillightLensMat,
@@ -473,9 +568,6 @@ export function prewarmMicroKartAssets() {
   getSharedTailGlowTexture();
   getSharedHeadlightBeamTexture();
   getSharedTaillightBeamTexture();
-  for (let n = 1; n <= 40; n++) {
-    getNumberPlateTexture(n);
-  }
   getSharedKartGeos();
   getSharedMaterials();
 }
@@ -483,17 +575,20 @@ export function prewarmMicroKartAssets() {
 /**
  * Builds the 1:87 HO Micro-Coaster Racing Go-Kart (18mm x 12mm x 8mm)
  * with 4 steerable/spinning wheels, helmeted driver, steering wheel,
- * twin turbo exhaust flames, headlights, and a 120-particle drift spark emitter.
+ * twin turbo exhaust flames, and optional dynamic lights / drift spark emitter.
  */
 export function buildMicroKart(options = {}) {
   const sharedGeos = getSharedKartGeos();
   const sharedMats = getSharedMaterials();
 
+  const enableFireLight = options.enableFireLight === true;
+  const enableDynamicHeadlight = options.enableDynamicHeadlight === true;
+  const enableSparks = options.enableSparks === true;
+
   const kartRoot = new THREE.Group();
   kartRoot.name = 'Kart1to87Root';
 
   const fairingColor = options.colorHex !== undefined ? options.colorHex : 0xff2b1e;
-  const stripeColor = options.stripeHex !== undefined ? options.stripeHex : 0xf7f9fc;
   const rimColor = options.rimHex !== undefined ? options.rimHex : 0xffbb44;
   const suitColor = options.suitHex !== undefined ? options.suitHex : 0xf0f4fa;
   const helmetColor = options.helmetHex !== undefined ? options.helmetHex : 0xffffff;
@@ -508,12 +603,6 @@ export function buildMicroKart(options = {}) {
     color: fairingColor,
     roughness: 0.22,
     metalness: 0.35,
-  });
-
-  const whiteStripeMat = new THREE.MeshStandardMaterial({
-    color: stripeColor,
-    roughness: 0.25,
-    metalness: 0.1,
   });
 
   const goldRimMat = new THREE.MeshStandardMaterial({
@@ -535,22 +624,25 @@ export function buildMicroKart(options = {}) {
   kartRoot.add(kartShadowQuad);
 
   // -------------------------------------------------------------------------
-  // 1. FLOOR PAN, TUBULAR FRAME, NOSE CONE & SIDE PODS (18mm long x 12mm wide)
+  // 1. MERGED STATIC BODY ASSEMBLIES (18mm long x 12mm wide)
   //    Kart local forward is +Z (aligned with spline tangent)
   // -------------------------------------------------------------------------
-  const floorPan = new THREE.Mesh(sharedGeos.floorPan, carbonMat);
-  floorPan.position.set(0, 0.0014, 0);
-  floorPan.castShadow = false;
-  chassisGroup.add(floorPan);
+  // Carbon assembly: floor pan + rear wing + bucket seat -> 1 draw call
+  const carbonBody = new THREE.Mesh(sharedGeos.carbonBodyMerged, carbonMat);
+  carbonBody.castShadow = false;
+  chassisGroup.add(carbonBody);
 
-  // Front aerodynamic nose fairing (+Z front)
-  const noseCone = new THREE.Mesh(sharedGeos.noseCone, redFairingMat);
-  noseCone.position.set(0, 0.0023, 0.0068);
-  noseCone.rotation.x = 0.22;
-  noseCone.castShadow = false;
-  chassisGroup.add(noseCone);
+  // Painted fairing assembly: nose cone + left/right side pods -> 1 draw call
+  const fairingBody = new THREE.Mesh(sharedGeos.fairingBodyMerged, redFairingMat);
+  fairingBody.castShadow = false;
+  chassisGroup.add(fairingBody);
 
-  // Dynamic Attendance/Racer Number Plates
+  // Chrome assembly: engine block + twin rear exhaust pipes -> 1 draw call
+  const chromeBody = new THREE.Mesh(sharedGeos.chromeBodyMerged, chromeMat);
+  chromeBody.castShadow = false;
+  chassisGroup.add(chromeBody);
+
+  // Dynamic Attendance/Racer Number Plates (front + rear merged -> 1 draw call)
   const racerNumber = options.number !== undefined ? options.number : 87;
   const numberPlateTex = getNumberPlateTexture(racerNumber);
   const numberPlateMat = new THREE.MeshStandardMaterial({
@@ -562,44 +654,11 @@ export function buildMicroKart(options = {}) {
     polygonOffsetUnits: -2,
   });
 
-  // 1. Front Nose Number Plate (Decal flush fit on sloping nose cone)
-  const numberPlate = new THREE.Mesh(sharedGeos.numberPlate, numberPlateMat);
-  numberPlate.position.set(0, 0.00345, 0.0066);
-  numberPlate.rotation.x = -Math.PI / 2 + 0.22;
-  numberPlate.castShadow = false;
-  chassisGroup.add(numberPlate);
+  const numberPlatesMesh = new THREE.Mesh(sharedGeos.numberPlatesMerged, numberPlateMat);
+  numberPlatesMesh.castShadow = false;
+  chassisGroup.add(numberPlatesMesh);
 
-  // Left & Right Side Pods
-  for (const sx of [-0.0044, 0.0044]) {
-    const sidePod = new THREE.Mesh(sharedGeos.sidePod, redFairingMat);
-    sidePod.position.set(sx, 0.0024, -0.0004);
-    sidePod.castShadow = false;
-    chassisGroup.add(sidePod);
-  }
-
-  // Rear Engine Block (right-rear kart motor + cooling fins) & Rear Wing
-  const engineBlock = new THREE.Mesh(sharedGeos.engineBlock, chromeMat);
-  engineBlock.position.set(0.0022, 0.0036, -0.0048);
-  engineBlock.castShadow = false;
-  chassisGroup.add(engineBlock);
-
-  const rearWing = new THREE.Mesh(sharedGeos.rearWing, carbonMat);
-  rearWing.position.set(0, 0.0068, -0.0076);
-  rearWing.rotation.x = -0.18;
-  rearWing.castShadow = false;
-  chassisGroup.add(rearWing);
-
-  // 2. Rear Wing Number Plate (faces backward towards 3rd-person student chase camera)
-  if (sharedGeos.rearNumberPlate) {
-    const rearPlate = new THREE.Mesh(sharedGeos.rearNumberPlate, numberPlateMat);
-    rearPlate.position.set(0, 0.0068, -0.00885);
-    rearPlate.rotation.y = Math.PI;
-    rearPlate.castShadow = false;
-    chassisGroup.add(rearPlate);
-  }
-
-  // Twin Rear Exhaust Pipes + Realistic Volumetric Mach-Diamond Afterburner Jet
-  // Plumes (Zero FPS impact!)
+  // Twin Rear Exhaust Volumetric Mach-Diamond Afterburner Jet Plumes (1 merged mesh per pipe)
   function createExhaustFlameMaterial(pipePhase) {
     return new THREE.ShaderMaterial({
       uniforms: {
@@ -651,32 +710,23 @@ export function buildMicroKart(options = {}) {
         void main() {
           float u = clamp(vPlumeU, 0.0, 1.0);
 
-          // Coaxial-safe radial core falloff so the flame stays vivid from 1P Chase Cam directly behind the car
-          // while still having a soft Gaussian outer edge with zero hard cone/egg silhouette
           vec3 viewDir = normalize(vViewPos);
           float ndotv = abs(dot(normalize(vViewNormal), viewDir));
           float viewWeight = 0.58 + 0.42 * sqrt(clamp(ndotv, 0.0, 1.0));
           float radialCore = exp(-vRadialR * vRadialR * (2.1 + u * 2.4));
           float radialMask = radialCore * viewWeight;
 
-          // High-frequency advected combustion turbulence & Mach shock diamonds
           float angle = atan(vLocalPos.y, vLocalPos.x);
           float turb1 = sin(u * 22.0 - uTime * 56.0 + angle * 2.0 + uPhase);
           float turb2 = cos(u * 35.0 - uTime * 74.0 - angle * 3.0 + uPhase * 1.3);
           float turbulence = 0.82 + 0.18 * (turb1 * 0.6 + turb2 * 0.4);
 
-          // Crisp internal Mach shock diamond nodes near the nozzle & mid-plume
           float machWave = max(0.0, cos(u * 15.5 - uTime * 34.0 + uPhase * 0.5));
           float machDiamond = pow(machWave, 3.2) * smoothstep(0.85, 0.04, u) * exp(-vRadialR * vRadialR * 3.6);
 
-          // Longitudinal envelope: bright inside the nozzle bore (u=0) with shredded flame tongues at the tip
           float tipCut = clamp(1.0 - u + (turb1 * 0.11 + turb2 * 0.07) * u, 0.0, 1.0);
           float axialEnv = (0.35 + 0.65 * smoothstep(0.0, 0.08, u)) * pow(tipCut, 1.45);
 
-          // Physically inspired motorsport exhaust temperature gradient:
-          // 1. Nozzle ring (u = 0..0.22): hot butane-blue plasma + white-yellow Mach core
-          // 2. Mid-plume (u = 0.18..0.68): luminous golden-amber afterburner fire
-          // 3. Outer sheath & tail (u = 0.48..1.0): rich fiery orange-red
           vec3 butaneBlue = vec3(0.32, 0.76, 1.35);
           vec3 whiteHot = vec3(1.55, 1.38, 0.96);
           vec3 goldenAmber = vec3(1.45, 0.68, 0.12);
@@ -695,36 +745,17 @@ export function buildMicroKart(options = {}) {
     });
   }
 
-  const sharedJetGeos = sharedGeos.jetGeos || sharedGeos;
-
   const flameCones = [];
   for (let i = 0; i < 2; i++) {
     const ex = i === 0 ? -0.00108 : 0.00108;
-    const pipe = new THREE.Mesh(sharedGeos.pipe, chromeMat);
-    pipe.rotation.x = Math.PI / 2 + 0.12;
-    pipe.position.set(ex, 0.00215, -0.0076);
-    chassisGroup.add(pipe);
-
     const plumeGroup = new THREE.Group();
-    // Anchor right inside the hollow grey/aluminium muffler bore exit and angle
-    // slightly upward (+0.18 rad) to match the upswept hot-rod muffler tips so
-    // the flames shoot cleanly out of the barrels in 1P Chase Cam
     plumeGroup.position.set(ex, 0.00208, -0.00895);
     plumeGroup.rotation.x = 0.18;
     plumeGroup.visible = false;
 
     const jetMat = createExhaustFlameMaterial(i * 2.15);
-    for (const geo of [
-      sharedJetGeos.outerCone,
-      sharedJetGeos.innerCore,
-      sharedJetGeos.finA,
-      sharedJetGeos.finB,
-      sharedJetGeos.nozzleDisc,
-    ]) {
-      const m = new THREE.Mesh(geo, jetMat);
-      m.frustumCulled = false;
-      plumeGroup.add(m);
-    }
+    const mergedPlumeMesh = new THREE.Mesh(sharedGeos.mergedFlamePlume, jetMat);
+    plumeGroup.add(mergedPlumeMesh);
 
     plumeGroup.userData.jetMat = jetMat;
     plumeGroup.userData.pipeIndex = i;
@@ -732,32 +763,43 @@ export function buildMicroKart(options = {}) {
     flameCones.push(plumeGroup);
   }
 
-  // Soft additive ruby-red tail-light optical glow halo planes (tailGlowL & tailGlowR)
-  // Reuses shared singleton geometry and texture
+  // Twin Rear 3D LED Taillight Lenses (merged -> 1 draw call) + per-kart brake glow halo planes
+  const taillightLensesMesh = new THREE.Mesh(
+    sharedGeos.taillightLensesMerged,
+    sharedMats.taillightLensMat
+  );
+  taillightLensesMesh.castShadow = false;
+  chassisGroup.add(taillightLensesMesh);
+
+  const tailGlowMat = new THREE.MeshBasicMaterial({
+    map: getSharedTailGlowTexture(),
+    transparent: true,
+    opacity: 0.72,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+    toneMapped: false,
+    side: THREE.DoubleSide,
+  });
+
   const tailLightGlowPlanes = [];
   for (const tx of [-0.00320, 0.00320]) {
-    const tailLens = new THREE.Mesh(sharedGeos.taillightLens, sharedMats.taillightLensMat);
-    tailLens.position.set(tx, 0.00275, -0.00875);
-    tailLens.castShadow = false;
-    chassisGroup.add(tailLens);
-
-    const tailGlowPlane = new THREE.Mesh(sharedGeos.tailGlow, sharedMats.tailGlowMat);
+    const tailGlowPlane = new THREE.Mesh(sharedGeos.tailGlow, tailGlowMat);
     tailGlowPlane.position.set(tx, 0.00275, -0.00906);
     tailGlowPlane.rotation.y = Math.PI;
     tailGlowPlane.castShadow = false;
     tailGlowPlane.receiveShadow = false;
+    tailGlowPlane.visible = false;
     chassisGroup.add(tailGlowPlane);
     tailLightGlowPlanes.push(tailGlowPlane);
   }
 
-  // Twin Front 3D LED Headlight Lenses on Nose Fairing
-  for (const hx of [-0.0026, 0.0026]) {
-    const headLens = new THREE.Mesh(sharedGeos.headlightLens, sharedMats.headlightLensMat);
-    headLens.position.set(hx, 0.00225, 0.00875);
-    headLens.scale.set(1.15, 0.78, 0.65);
-    headLens.castShadow = false;
-    chassisGroup.add(headLens);
-  }
+  // Twin Front 3D LED Headlight Lenses on Nose Fairing (merged -> 1 draw call)
+  const headlightLensesMesh = new THREE.Mesh(
+    sharedGeos.headlightLensesMerged,
+    sharedMats.headlightLensMat
+  );
+  headlightLensesMesh.castShadow = false;
+  chassisGroup.add(headlightLensesMesh);
 
   // Per-Kart Forward Headlight Ground Beam & Twin 3D Volumetric Cones
   const headlightGroundMat = new THREE.MeshBasicMaterial({
@@ -774,7 +816,7 @@ export function buildMicroKart(options = {}) {
   const headlightGroundBeamMesh = new THREE.Mesh(sharedGeos.headlightGroundBeam, headlightGroundMat);
   headlightGroundBeamMesh.rotation.x = -Math.PI / 2;
   headlightGroundBeamMesh.position.set(0, -0.00162, 0.036);
-  headlightGroundBeamMesh.frustumCulled = false;
+  headlightGroundBeamMesh.visible = false;
   kartRoot.add(headlightGroundBeamMesh);
 
   const headlightConeMat = new THREE.MeshBasicMaterial({
@@ -791,7 +833,7 @@ export function buildMicroKart(options = {}) {
     const hCone = new THREE.Mesh(sharedGeos.headlightVolCone, headlightConeMat);
     hCone.position.set(hx, 0.00225, 0.0089);
     hCone.rotation.x = 0.068;
-    hCone.frustumCulled = false;
+    hCone.visible = false;
     chassisGroup.add(hCone);
     headlightVolCones.push(hCone);
   }
@@ -811,7 +853,7 @@ export function buildMicroKart(options = {}) {
   const taillightGroundBeamMesh = new THREE.Mesh(sharedGeos.taillightGroundBeam, taillightGroundMat);
   taillightGroundBeamMesh.rotation.x = -Math.PI / 2;
   taillightGroundBeamMesh.position.set(0, -0.00162, -0.022);
-  taillightGroundBeamMesh.frustumCulled = false;
+  taillightGroundBeamMesh.visible = false;
   kartRoot.add(taillightGroundBeamMesh);
 
   const taillightConeMat = new THREE.MeshBasicMaterial({
@@ -829,7 +871,7 @@ export function buildMicroKart(options = {}) {
     tCone.position.set(tx, 0.00275, -0.0089);
     tCone.rotation.y = Math.PI;
     tCone.rotation.x = -0.085;
-    tCone.frustumCulled = false;
+    tCone.visible = false;
     chassisGroup.add(tCone);
     taillightVolCones.push(tCone);
   }
@@ -888,16 +930,17 @@ export function buildMicroKart(options = {}) {
     const sprayMesh = new THREE.Mesh(sharedGeos.tireSprayCone, tireSprayMat);
     sprayMesh.position.set(sx, 0.0008, -0.0064);
     sprayMesh.visible = false;
-    sprayMesh.frustumCulled = false;
     chassisGroup.add(sprayMesh);
     tireSprayCones.push(sprayMesh);
   }
 
-  // Warm flickering fire light under rear exhaust/tires when sparks emit
-  // Controlled by the "Fire Downcast Light" slider in Settings (default 0.12x for subtle realism)
-  const sparkFireLight = new THREE.PointLight(0xff6818, 0.0, 0.045, 0.0);
-  sparkFireLight.position.set(0, 0.0028, -0.009);
-  chassisGroup.add(sparkFireLight);
+  // Optional warm flickering fire light under rear exhaust/tires (gated behind options.enableFireLight === true)
+  let sparkFireLight = null;
+  if (enableFireLight) {
+    sparkFireLight = new THREE.PointLight(0xff6818, 0.0, 0.045, 0.0);
+    sparkFireLight.position.set(0, 0.0028, -0.009);
+    chassisGroup.add(sparkFireLight);
+  }
 
   let fireLightMultiplier = 0.12;
   let fireLightPreviewTimer = 0.0;
@@ -911,12 +954,6 @@ export function buildMicroKart(options = {}) {
   // -------------------------------------------------------------------------
   // 2. 1:87 HELMETED DRIVER + STEERING WHEEL
   // -------------------------------------------------------------------------
-  const seat = new THREE.Mesh(sharedGeos.seat, carbonMat);
-  seat.position.set(0, 0.0036, -0.0015);
-  seat.rotation.x = -0.22;
-  chassisGroup.add(seat);
-
-  // Driver Torso in Racing Suit
   const suitMat = new THREE.MeshStandardMaterial({
     color: suitColor,
     roughness: 0.35,
@@ -975,27 +1012,11 @@ export function buildMicroKart(options = {}) {
     const wGroup = new THREE.Group();
 
     const tire = new THREE.Mesh(
-      isRear ? sharedGeos.rearTire : sharedGeos.frontTire,
+      isRear ? sharedGeos.rearTireMerged : sharedGeos.frontTireMerged,
       tireRubberMat
     );
     tire.castShadow = false;
     wGroup.add(tire);
-
-    const shoulderL = new THREE.Mesh(
-      isRear ? sharedGeos.rearTireShoulder : sharedGeos.frontTireShoulder,
-      tireRubberMat
-    );
-    shoulderL.position.x = isRear ? -0.00085 : -0.00065;
-    shoulderL.castShadow = false;
-    wGroup.add(shoulderL);
-
-    const shoulderR = new THREE.Mesh(
-      isRear ? sharedGeos.rearTireShoulder : sharedGeos.frontTireShoulder,
-      tireRubberMat
-    );
-    shoulderR.position.x = isRear ? 0.00085 : 0.00065;
-    shoulderR.castShadow = false;
-    wGroup.add(shoulderR);
 
     const rim = new THREE.Mesh(
       isRear ? sharedGeos.rearRim : sharedGeos.frontRim,
@@ -1032,11 +1053,10 @@ export function buildMicroKart(options = {}) {
   }
 
   // -------------------------------------------------------------------------
-  // 4. MICRO-KART HIGH-INTENSITY 3D LED HEADLIGHT BEAM
+  // 4. OPTIONAL MICRO-KART DYNAMIC SPOTLIGHT HEADLIGHT (gated behind options.enableDynamicHeadlight === true)
   // -------------------------------------------------------------------------
-  // Only add 3D SpotLight for the active cockpit user kart to prevent 40 lights hitting WebGL limits
   let headlight = null;
-  if (options.isUser) {
+  if (enableDynamicHeadlight) {
     const headlightTarget = new THREE.Object3D();
     headlightTarget.position.set(0, -0.008, 0.072);
     chassisGroup.add(headlightTarget);
@@ -1048,138 +1068,142 @@ export function buildMicroKart(options = {}) {
   }
 
   // -------------------------------------------------------------------------
-  // 5. REALISTIC GLOWING FIRE SPARKS EMITTER (Zero Lines, Soft Radial Fire Glow!)
+  // 5. OPTIONAL GLOWING FIRE SPARKS EMITTER (gated behind options.enableSparks === true)
   // -------------------------------------------------------------------------
   const sparkCount = 160;
-  const sparkPositions = new Float32Array(sparkCount * 3);
-  const sparkColors = new Float32Array(sparkCount * 3);
-  const sparkLifeAttr = new Float32Array(sparkCount); // 1.0 = fresh hot ember, 0.0 = expired
-  const sparkSizes = new Float32Array(sparkCount);
-  const sparkVelocities = [];
-  const sparkAges = new Float32Array(sparkCount);
-  const sparkMaxAges = new Float32Array(sparkCount);
+  let sparkPositions = null;
+  let sparkColors = null;
+  let sparkLifeAttr = null;
+  let sparkSizes = null;
+  let sparkVelocities = null;
+  let sparkAges = null;
+  let sparkMaxAges = null;
+  let sparkGeo = null;
+  let sparkMat = null;
+  let sparkPoints = null;
 
-  for (let i = 0; i < sparkCount; i++) {
-    sparkPositions[i * 3 + 1] = -10; // hidden initially
-    sparkVelocities.push(new THREE.Vector3());
-    sparkAges[i] = 999;
-    sparkMaxAges[i] = 0.30;
-    sparkLifeAttr[i] = 0.0;
-    sparkSizes[i] = 0.65 + Math.random() * 1.15;
-    sparkColors[i * 3 + 0] = 1.0;
-    sparkColors[i * 3 + 1] = 0.48;
-    sparkColors[i * 3 + 2] = 0.08;
+  if (enableSparks) {
+    sparkPositions = new Float32Array(sparkCount * 3);
+    sparkColors = new Float32Array(sparkCount * 3);
+    sparkLifeAttr = new Float32Array(sparkCount);
+    sparkSizes = new Float32Array(sparkCount);
+    sparkVelocities = [];
+    sparkAges = new Float32Array(sparkCount);
+    sparkMaxAges = new Float32Array(sparkCount);
+
+    for (let i = 0; i < sparkCount; i++) {
+      sparkPositions[i * 3 + 1] = -10;
+      sparkVelocities.push(new THREE.Vector3());
+      sparkAges[i] = 999;
+      sparkMaxAges[i] = 0.30;
+      sparkLifeAttr[i] = 0.0;
+      sparkSizes[i] = 0.65 + Math.random() * 1.15;
+      sparkColors[i * 3 + 0] = 1.0;
+      sparkColors[i * 3 + 1] = 0.48;
+      sparkColors[i * 3 + 2] = 0.08;
+    }
+
+    sparkGeo = new THREE.BufferGeometry();
+    sparkGeo.setAttribute('position', new THREE.BufferAttribute(sparkPositions, 3));
+    sparkGeo.setAttribute('color', new THREE.BufferAttribute(sparkColors, 3));
+    sparkGeo.setAttribute('aLife', new THREE.BufferAttribute(sparkLifeAttr, 1));
+    sparkGeo.setAttribute('aSize', new THREE.BufferAttribute(sparkSizes, 1));
+
+    sparkMat = new THREE.ShaderMaterial({
+      uniforms: {
+        uSparkScale: {value: 0.58},
+        tSceneDepth: {value: null},
+        uNearClip: {value: 0.0015},
+        uFarClip: {value: 12.0},
+        uFocus: {value: 0.12},
+        uAperture: {value: 0.0},
+        uMaxBlur: {value: 0.0},
+        uResolution: {value: new THREE.Vector2(1440, 900)},
+      },
+      transparent: true,
+      depthTest: false,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending,
+      vertexShader: /* glsl */ `
+        uniform float uSparkScale;
+        uniform float uFocus;
+        uniform float uAperture;
+        uniform float uMaxBlur;
+        uniform vec2 uResolution;
+        attribute vec3 color;
+        attribute float aLife;
+        attribute float aSize;
+        varying vec3 vColor;
+        varying float vLife;
+        varying float vViewZ;
+        varying float vDofFactor;
+        void main() {
+          vColor = color;
+          vLife = aLife;
+          vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+          vViewZ = mvPosition.z;
+          gl_Position = projectionMatrix * mvPosition;
+
+          float lifeScale = smoothstep(0.0, 0.12, aLife) * (0.38 + 0.62 * pow(aLife, 0.7));
+          float basePointSize = clamp((4.8 * uSparkScale * aSize * lifeScale) / max(0.05, -mvPosition.z), 0.0, 16.0);
+
+          float rawFactor = uFocus + mvPosition.z;
+          float deadzone = max(0.065, uFocus * 0.28);
+          float absDiff = max(0.0, abs(rawFactor) - deadzone);
+          float normScale = 1.0 / max(0.22, uFocus * 1.15);
+          float cocUv = clamp(absDiff * (0.42 + 0.16 * normScale) * uAperture, 0.0, uMaxBlur);
+          float cocPx = cocUv * uResolution.y * 0.50;
+          vDofFactor = clamp(cocPx / max(1.0, basePointSize), 0.0, 4.0);
+
+          gl_PointSize = aLife > 0.01 ? clamp(basePointSize + cocPx, 0.0, 26.0) : 0.0;
+        }
+      `,
+      fragmentShader: /* glsl */ `
+        #include <common>
+        #include <packing>
+        uniform sampler2D tSceneDepth;
+        uniform float uNearClip;
+        uniform float uFarClip;
+        uniform vec2 uResolution;
+        varying vec3 vColor;
+        varying float vLife;
+        varying float vViewZ;
+        varying float vDofFactor;
+        void main() {
+          if (vLife <= 0.01) discard;
+          vec2 uv = gl_PointCoord - vec2(0.5);
+          float d = length(uv);
+          if (d > 0.5) discard;
+
+          vec2 screenUv = gl_FragCoord.xy / max(vec2(1.0), uResolution);
+          float rawSceneDepth = texture2D(tSceneDepth, screenUv).x;
+          float sceneViewZ = perspectiveDepthToViewZ(rawSceneDepth, uNearClip, uFarClip);
+          if (sceneViewZ > vViewZ + 0.0015) discard;
+
+          float blurLerp = clamp(vDofFactor * 0.35, 0.0, 1.0);
+          float core = exp(-d * d * mix(34.0, 8.0, blurLerp));
+          float midFire = exp(-d * d * mix(10.5, 4.5, blurLerp)) * smoothstep(0.5, 0.08, d);
+          float outerHalo = pow(max(0.0, 1.0 - d * 2.0), mix(2.2, 1.3, blurLerp)) * 0.65;
+
+          vec3 deepEmber = vec3(0.92, 0.16, 0.02);
+          vec3 midFlame = mix(deepEmber, vColor, clamp(vLife * 1.25, 0.0, 1.0));
+          vec3 hotCenter = vec3(1.0, 0.96, 0.82);
+
+          vec3 emberColor = mix(midFlame, hotCenter, clamp(core * 1.2, 0.0, 1.0));
+          float energyNorm = 1.0 / (1.0 + vDofFactor * 0.85);
+          vec3 finalRgb = emberColor * (1.85 * core + 1.15 * midFire + 0.65 * outerHalo) * energyNorm;
+
+          float alpha = clamp((core * 1.1 + midFire * 0.85 + outerHalo * 0.55) * vLife * energyNorm, 0.0, 1.0);
+          if (alpha < 0.015) discard;
+          gl_FragColor = vec4(finalRgb, alpha);
+        }
+      `,
+    });
+
+    sparkPoints = new THREE.Points(sparkGeo, sparkMat);
+    sparkPoints.frustumCulled = false;
+    sparkPoints.name = 'KartDriftSparks';
   }
-
-  const sparkGeo = new THREE.BufferGeometry();
-  sparkGeo.setAttribute('position', new THREE.BufferAttribute(sparkPositions, 3));
-  sparkGeo.setAttribute('color', new THREE.BufferAttribute(sparkColors, 3));
-  sparkGeo.setAttribute('aLife', new THREE.BufferAttribute(sparkLifeAttr, 1));
-  sparkGeo.setAttribute('aSize', new THREE.BufferAttribute(sparkSizes, 1));
-
-  const sparkMat = new THREE.ShaderMaterial({
-    uniforms: {
-      uSparkScale: {value: 0.58},
-      tSceneDepth: {value: null},
-      uNearClip: {value: 0.0015},
-      uFarClip: {value: 12.0},
-      uFocus: {value: 0.12},
-      uAperture: {value: 0.0},
-      uMaxBlur: {value: 0.0},
-      uResolution: {value: new THREE.Vector2(1440, 900)},
-    },
-    transparent: true,
-    depthTest: false,
-    depthWrite: false,
-    blending: THREE.AdditiveBlending,
-    vertexShader: /* glsl */ `
-      uniform float uSparkScale;
-      uniform float uFocus;
-      uniform float uAperture;
-      uniform float uMaxBlur;
-      uniform vec2 uResolution;
-      attribute vec3 color;
-      attribute float aLife;
-      attribute float aSize;
-      varying vec3 vColor;
-      varying float vLife;
-      varying float vViewZ;
-      varying float vDofFactor;
-      void main() {
-        vColor = color;
-        vLife = aLife;
-        vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-        vViewZ = mvPosition.z;
-        gl_Position = projectionMatrix * mvPosition;
-
-        // Smooth ember size curve: blooms quickly then shrinks as the ember cools
-        float lifeScale = smoothstep(0.0, 0.12, aLife) * (0.38 + 0.62 * pow(aLife, 0.7));
-        float basePointSize = clamp((4.8 * uSparkScale * aSize * lifeScale) / max(0.05, -mvPosition.z), 0.0, 16.0);
-
-        // Evaluate optical Depth of Field from the spark's OWN 3D view-space depth (mvPosition.z)
-        // instead of the background wall behind it! Keep a generous 65mm in-focus sweet-spot around uFocus
-        // so whenever the car is in focus, the entire trailing spark plume stays 100% tack-sharp.
-        float rawFactor = uFocus + mvPosition.z;
-        float deadzone = max(0.065, uFocus * 0.28);
-        float absDiff = max(0.0, abs(rawFactor) - deadzone);
-        float normScale = 1.0 / max(0.22, uFocus * 1.15);
-        float cocUv = clamp(absDiff * (0.42 + 0.16 * normScale) * uAperture, 0.0, uMaxBlur);
-        float cocPx = cocUv * uResolution.y * 0.50;
-        vDofFactor = clamp(cocPx / max(1.0, basePointSize), 0.0, 4.0);
-
-        gl_PointSize = aLife > 0.01 ? clamp(basePointSize + cocPx, 0.0, 26.0) : 0.0;
-      }
-    `,
-    fragmentShader: /* glsl */ `
-      #include <common>
-      #include <packing>
-      uniform sampler2D tSceneDepth;
-      uniform float uNearClip;
-      uniform float uFarClip;
-      uniform vec2 uResolution;
-      varying vec3 vColor;
-      varying float vLife;
-      varying float vViewZ;
-      varying float vDofFactor;
-      void main() {
-        if (vLife <= 0.01) discard;
-        vec2 uv = gl_PointCoord - vec2(0.5);
-        float d = length(uv);
-        if (d > 0.5) discard;
-
-        // Hardware depth occlusion against closer opaque 3D geometry (kart body, track, lamp column)
-        vec2 screenUv = gl_FragCoord.xy / max(vec2(1.0), uResolution);
-        float rawSceneDepth = texture2D(tSceneDepth, screenUv).x;
-        float sceneViewZ = perspectiveDepthToViewZ(rawSceneDepth, uNearClip, uFarClip);
-        if (sceneViewZ > vViewZ + 0.0015) discard;
-
-        // Soft circular radial fire-ember profile:
-        // When in focus (vDofFactor == 0.0), renders a razor-sharp incandescent core + tight ember glow.
-        float blurLerp = clamp(vDofFactor * 0.35, 0.0, 1.0);
-        float core = exp(-d * d * mix(34.0, 8.0, blurLerp));
-        float midFire = exp(-d * d * mix(10.5, 4.5, blurLerp)) * smoothstep(0.5, 0.08, d);
-        float outerHalo = pow(max(0.0, 1.0 - d * 2.0), mix(2.2, 1.3, blurLerp)) * 0.65;
-
-        // Temperature color shift as the spark cools over its lifetime (white-yellow -> fiery orange -> deep ember red)
-        vec3 deepEmber = vec3(0.92, 0.16, 0.02);
-        vec3 midFlame = mix(deepEmber, vColor, clamp(vLife * 1.25, 0.0, 1.0));
-        vec3 hotCenter = vec3(1.0, 0.96, 0.82);
-
-        vec3 emberColor = mix(midFlame, hotCenter, clamp(core * 1.2, 0.0, 1.0));
-        float energyNorm = 1.0 / (1.0 + vDofFactor * 0.85);
-        // HDR intensity > 1.0 at center so UnrealBloomPass gives each spark a soft natural fire glow
-        vec3 finalRgb = emberColor * (1.85 * core + 1.15 * midFire + 0.65 * outerHalo) * energyNorm;
-
-        float alpha = clamp((core * 1.1 + midFire * 0.85 + outerHalo * 0.55) * vLife * energyNorm, 0.0, 1.0);
-        if (alpha < 0.015) discard;
-        gl_FragColor = vec4(finalRgb, alpha);
-      }
-    `,
-  });
-
-  const sparkPoints = new THREE.Points(sparkGeo, sparkMat);
-  sparkPoints.frustumCulled = false;
-  sparkPoints.name = 'KartDriftSparks';
 
   let nextSparkIdx = 0;
   let lastWheelUpdateTime = -1;
@@ -1192,12 +1216,12 @@ export function buildMicroKart(options = {}) {
    * Spins all 4 wheels proportional to forward velocity (`speed` in m/s)
    * and steers front wheel pivots to `steerAngle` (`+0.45` for Left `A`, `-0.45` for Right `D`).
    */
-  function updateWheels(dt, speed, steerAngle = 0.0) {
-    const now = performance.now();
-    if (Math.abs(now - lastWheelUpdateTime) < 1e-4) {
+  function updateWheels(dt, speed, steerAngle = 0.0, elapsedSec = undefined) {
+    const nowMs = elapsedSec !== undefined ? elapsedSec * 1000.0 : performance.now();
+    if (Math.abs(nowMs - lastWheelUpdateTime) < 1e-4) {
       return;
     }
-    lastWheelUpdateTime = now;
+    lastWheelUpdateTime = nowMs;
 
     const wheelSpinDelta = (speed / 0.002) * dt;
     for (const w of wheelMeshes) {
@@ -1214,12 +1238,13 @@ export function buildMicroKart(options = {}) {
   }
 
   function updateKartVisuals(dt, state) {
+    const tSec = state.elapsedSec !== undefined ? state.elapsedSec : performance.now() * 0.001;
     const steerAngle =
       state.steerAngle !== undefined
         ? state.steerAngle - (state.driftAngle || 0.0) * 0.35
         : -(state.steerInput || 0.0) * 0.45 - (state.driftAngle || 0.0) * 0.35;
 
-    updateWheels(dt, state.speed, steerAngle);
+    updateWheels(dt, state.speed, steerAngle, tSec);
 
     // 3. Apply drift slip-angle yaw + suspension roll/hop to chassisGroup
     chassisGroup.rotation.y = THREE.MathUtils.lerp(
@@ -1233,28 +1258,17 @@ export function buildMicroKart(options = {}) {
       Math.min(1, dt * 12)
     );
     const idleBob =
-      Math.abs(state.speed) > 0.005 ? Math.sin(performance.now() * 0.06) * 0.00018 : 0.0;
+      Math.abs(state.speed) > 0.005 ? Math.sin(tSec * 60.0) * 0.00018 : 0.0;
     chassisGroup.position.y = (state.hopHeight || 0.0) + idleBob;
 
-    // 4. Volumetric Mach-Diamond Exhaust Flames: active during turbo boost with
-    // independent left/right combustion crackle and high-frequency afterburner
-    // pulsing
+    // 4. Volumetric Mach-Diamond Exhaust Flames
     const isBoosting = state.boostActive > 0;
-    const tSec = performance.now() * 0.001;
 
-    // 4B. Dynamic Headlight & Taillight Beams + Rear Tire Weather Spray / Snow Rooster-Tails
-    // Lights stay completely OFF during Sunrise, Morning, Noon, and Afternoon (nightFactor === 0)
-    // and switch on late into the evening (Sunset -> Midnight).
+    // 4B. Dynamic Headlight & Taillight Beams + Per-Kart Brake Glow + Weather Spray
+    // Shared lens materials stay immutable; brake/night flares are driven via per-kart glow planes.
     const nightFactor = Math.max(0.0, Math.min(1.0, state.nightFactor ?? 0.0));
     const isBraking = Boolean(state.isBraking);
     const lightsOn = nightFactor > 0.02;
-
-    sharedMats.headlightLensMat.emissiveIntensity = lightsOn ? nightFactor * 2.8 : 0.0;
-    sharedMats.taillightLensMat.emissiveIntensity = lightsOn
-      ? nightFactor * 2.8 + (isBraking ? 1.0 : 0.0)
-      : isBraking
-      ? 1.5
-      : 0.12;
 
     headlightGroundBeamMesh.visible = lightsOn;
     taillightGroundBeamMesh.visible = lightsOn;
@@ -1274,10 +1288,16 @@ export function buildMicroKart(options = {}) {
       taillightConeMat.opacity = Math.min(0.95, nightFactor * 0.66 + brakeFlare * 0.8);
     }
 
+    const showTailGlow = lightsOn || isBraking;
+    if (showTailGlow) {
+      tailGlowMat.opacity = isBraking
+        ? Math.min(1.0, 0.85 + nightFactor * 0.15)
+        : Math.max(0.25, nightFactor * 0.78);
+    }
     for (const tPlane of tailLightGlowPlanes) {
-      tPlane.visible = lightsOn || isBraking;
-      if (tPlane.visible) {
-        const s = isBraking ? 1.38 : 0.85 + nightFactor * 0.4;
+      tPlane.visible = showTailGlow;
+      if (showTailGlow) {
+        const s = isBraking ? 1.42 : 0.85 + nightFactor * 0.4;
         tPlane.scale.set(s, s, 1.0);
       }
     }
@@ -1316,101 +1336,103 @@ export function buildMicroKart(options = {}) {
       }
     }
 
-    // 5. Emit & step realistic glowing fire sparks (scaled to 1:150 N-scale rear wheels!)
-    const kScale = kartRoot.scale.x || 0.58;
-    sparkMat.uniforms.uSparkScale.value = kScale;
+    // 5. Optional dynamic fire light & CPU drift spark emitter
+    if (sparkFireLight || sparkPoints) {
+      const isEmitting =
+        (state.isDrifting ||
+          isBoosting ||
+          state.curbRumble > 0.2 ||
+          (!state.suppressSteerSparks && Math.abs(state.steerInput || 0) > 0.32)) &&
+        Math.abs(state.speed) > 0.03;
 
-    const isEmitting =
-      (state.isDrifting ||
-        isBoosting ||
-        state.curbRumble > 0.2 ||
-        (!state.suppressSteerSparks && Math.abs(state.steerInput || 0) > 0.32)) &&
-      Math.abs(state.speed) > 0.03;
-    const emitCount = isEmitting ? 6 : 0;
-
-    // Flicker warm orange firelight onto the roadbed/desk when sparks are flying,
-    // scaled by the Settings "Fire Downcast Light" slider (fireLightMultiplier, default 0.12x)
-    if (fireLightPreviewTimer > 0) {
-      fireLightPreviewTimer = Math.max(0.0, fireLightPreviewTimer - dt);
-    }
-    const showFireLight = isEmitting || fireLightPreviewTimer > 0;
-    const baseFireIntensity = 0.35 + Math.random() * 0.20;
-    sparkFireLight.intensity = showFireLight
-      ? baseFireIntensity * fireLightMultiplier
-      : THREE.MathUtils.lerp(sparkFireLight.intensity, 0.0, Math.min(1, dt * 12));
-
-    if (emitCount > 0) {
-      kartRoot.getWorldPosition(_worldPos);
-      _backDir.copy(state.tangent).multiplyScalar(-1);
-
-      for (let e = 0; e < emitCount; e++) {
-        const idx = nextSparkIdx % sparkCount;
-        nextSparkIdx++;
-        const sideSign = e % 2 === 0 ? -1 : 1;
-        _spawnPos
-          .copy(_worldPos)
-          .addScaledVector(state.right, sideSign * (0.0044 + Math.random() * 0.0018) * kScale)
-          .addScaledVector(_backDir, (0.0060 + Math.random() * 0.0028) * kScale)
-          .addScaledVector(state.normal, (0.0009 + Math.random() * 0.0009) * kScale);
-
-        sparkPositions[idx * 3 + 0] = _spawnPos.x;
-        sparkPositions[idx * 3 + 1] = _spawnPos.y;
-        sparkPositions[idx * 3 + 2] = _spawnPos.z;
-
-        const vScale = 0.65 + 0.35 * kScale;
-        sparkVelocities[idx]
-          .copy(_backDir)
-          .multiplyScalar((0.12 + Math.random() * 0.22) * vScale)
-          .addScaledVector(state.normal, (0.045 + Math.random() * 0.11) * vScale)
-          .addScaledVector(state.right, (Math.random() - 0.5) * 0.12 * vScale);
-
-        sparkAges[idx] = 0.0;
-        sparkMaxAges[idx] = 0.20 + Math.random() * 0.18;
-        sparkLifeAttr[idx] = 1.0;
-        sparkSizes[idx] = 0.65 + Math.random() * 1.15;
-
-        // Warm Fire Spark Palette: incandescent gold-orange (#ffaa22) to fiery amber-red (#ff4e08)
-        sparkColors[idx * 3 + 0] = 1.0;
-        sparkColors[idx * 3 + 1] = 0.36 + Math.random() * 0.46;
-        sparkColors[idx * 3 + 2] = 0.04 + Math.random() * 0.14;
+      if (sparkFireLight) {
+        if (fireLightPreviewTimer > 0) {
+          fireLightPreviewTimer = Math.max(0.0, fireLightPreviewTimer - dt);
+        }
+        const showFireLight = isEmitting || fireLightPreviewTimer > 0;
+        const baseFireIntensity = 0.35 + Math.random() * 0.20;
+        sparkFireLight.intensity = showFireLight
+          ? baseFireIntensity * fireLightMultiplier
+          : THREE.MathUtils.lerp(sparkFireLight.intensity, 0.0, Math.min(1, dt * 12));
       }
-    }
 
-    let activeSparksNow = false;
-    if (emitCount > 0 || hadActiveSparks) {
-      for (let i = 0; i < sparkCount; i++) {
-        const maxAge = sparkMaxAges[i] || 0.28;
-        if (sparkAges[i] < maxAge) {
-          activeSparksNow = true;
-          sparkAges[i] += dt;
-          sparkLifeAttr[i] = Math.max(0.0, 1.0 - sparkAges[i] / maxAge);
+      if (sparkPoints && sparkGeo && sparkMat) {
+        const kScale = kartRoot.scale.x || 0.58;
+        sparkMat.uniforms.uSparkScale.value = kScale;
+        const emitCount = isEmitting ? 6 : 0;
 
-          sparkPositions[i * 3 + 0] += sparkVelocities[i].x * dt;
-          sparkPositions[i * 3 + 1] += sparkVelocities[i].y * dt;
-          sparkPositions[i * 3 + 2] += sparkVelocities[i].z * dt;
-          // Gentle air drag + micro-gravity + subtle turbulence flutter
-          sparkVelocities[i].multiplyScalar(Math.max(0.88, 1.0 - 2.4 * dt));
-          sparkVelocities[i].y -= 0.36 * dt;
-        } else {
-          sparkLifeAttr[i] = 0.0;
-          sparkPositions[i * 3 + 1] = -10.0;
+        if (emitCount > 0) {
+          kartRoot.getWorldPosition(_worldPos);
+          _backDir.copy(state.tangent).multiplyScalar(-1);
+
+          for (let e = 0; e < emitCount; e++) {
+            const idx = nextSparkIdx % sparkCount;
+            nextSparkIdx++;
+            const sideSign = e % 2 === 0 ? -1 : 1;
+            _spawnPos
+              .copy(_worldPos)
+              .addScaledVector(state.right, sideSign * (0.0044 + Math.random() * 0.0018) * kScale)
+              .addScaledVector(_backDir, (0.0060 + Math.random() * 0.0028) * kScale)
+              .addScaledVector(state.normal, (0.0009 + Math.random() * 0.0009) * kScale);
+
+            sparkPositions[idx * 3 + 0] = _spawnPos.x;
+            sparkPositions[idx * 3 + 1] = _spawnPos.y;
+            sparkPositions[idx * 3 + 2] = _spawnPos.z;
+
+            const vScale = 0.65 + 0.35 * kScale;
+            sparkVelocities[idx]
+              .copy(_backDir)
+              .multiplyScalar((0.12 + Math.random() * 0.22) * vScale)
+              .addScaledVector(state.normal, (0.045 + Math.random() * 0.11) * vScale)
+              .addScaledVector(state.right, (Math.random() - 0.5) * 0.12 * vScale);
+
+            sparkAges[idx] = 0.0;
+            sparkMaxAges[idx] = 0.20 + Math.random() * 0.18;
+            sparkLifeAttr[idx] = 1.0;
+            sparkSizes[idx] = 0.65 + Math.random() * 1.15;
+
+            sparkColors[idx * 3 + 0] = 1.0;
+            sparkColors[idx * 3 + 1] = 0.36 + Math.random() * 0.46;
+            sparkColors[idx * 3 + 2] = 0.04 + Math.random() * 0.14;
+          }
+        }
+
+        let activeSparksNow = false;
+        if (emitCount > 0 || hadActiveSparks) {
+          for (let i = 0; i < sparkCount; i++) {
+            const maxAge = sparkMaxAges[i] || 0.28;
+            if (sparkAges[i] < maxAge) {
+              activeSparksNow = true;
+              sparkAges[i] += dt;
+              sparkLifeAttr[i] = Math.max(0.0, 1.0 - sparkAges[i] / maxAge);
+
+              sparkPositions[i * 3 + 0] += sparkVelocities[i].x * dt;
+              sparkPositions[i * 3 + 1] += sparkVelocities[i].y * dt;
+              sparkPositions[i * 3 + 2] += sparkVelocities[i].z * dt;
+              sparkVelocities[i].multiplyScalar(Math.max(0.88, 1.0 - 2.4 * dt));
+              sparkVelocities[i].y -= 0.36 * dt;
+            } else {
+              sparkLifeAttr[i] = 0.0;
+              sparkPositions[i * 3 + 1] = -10.0;
+            }
+          }
+          sparkGeo.attributes.position.needsUpdate = true;
+          sparkGeo.attributes.color.needsUpdate = true;
+          sparkGeo.attributes.aLife.needsUpdate = true;
+          hadActiveSparks = activeSparksNow;
         }
       }
-      sparkGeo.attributes.position.needsUpdate = true;
-      sparkGeo.attributes.color.needsUpdate = true;
-      sparkGeo.attributes.aLife.needsUpdate = true;
-      hadActiveSparks = activeSparksNow;
     }
   }
 
   // Group holding the procedural meshes so they can be hidden cleanly when kart_1to87.glb attaches
   const proceduralParts = [
-    floorPan,
-    noseCone,
-    numberPlate,
-    engineBlock,
-    rearWing,
-    seat,
+    carbonBody,
+    fairingBody,
+    chromeBody,
+    numberPlatesMesh,
+    headlightLensesMesh,
+    taillightLensesMesh,
     torso,
     driverHead,
     steeringWheel,
@@ -1439,13 +1461,11 @@ export function buildMicroKart(options = {}) {
 
   function attachGlbKart(glbScene) {
     attachedGlbScene = glbScene;
-    // Ensure zero extra rotation on glbScene so +Z nose (Z_three = +0.0090) faces straight down +tangent
     glbScene.position.set(0, 0, 0);
     glbScene.rotation.set(0, 0, 0);
     glbScene.visible = !cockpitRoadOnly;
     kartShadowQuad.visible = !cockpitRoadOnly;
 
-    // Hide procedural body/wheels while keeping headlights, tail-light glow halo planes, and turbo flame cones
     for (const part of proceduralParts) {
       if (part) part.visible = false;
     }
@@ -1493,7 +1513,6 @@ export function buildMicroKart(options = {}) {
           if (!mat) continue;
           const mName = (mat.name || '').toLowerCase();
           if (mName.includes('visor')) {
-            // Unmistakable deep jet-black helmet visor shield & recessed exhaust bores
             if (mat.color) mat.color.setHex(0x050608);
             mat.roughness = 0.14;
             mat.metalness = 0.08;
@@ -1502,7 +1521,6 @@ export function buildMicroKart(options = {}) {
             mat.emissiveIntensity = 0.0;
             mat.needsUpdate = true;
           } else if (mName.includes('helmet') || mName.includes('white')) {
-            // Crisp Pearl White for the smooth full-face racing helmet, shoulder stripes, wing trailing-edge stripe & flush painted "4"
             if (mat.color) mat.color.setHex(0xf4f6fa);
             mat.roughness = 0.20;
             mat.metalness = 0.08;
@@ -1512,7 +1530,6 @@ export function buildMicroKart(options = {}) {
             attachKartReadabilityRimShader(mat, 'kart_white_rim_v1', 0.22, 0.28, 0.18);
             mat.needsUpdate = true;
           } else if (mName.includes('crimson') || mName.includes('red')) {
-            // Reflective metallic crimson racing body & constant-width helmet stripe with readability floor + grazing rim
             if (mat.color) mat.color.setHex(0xe01b24);
             mat.roughness = 0.20;
             mat.metalness = 0.48;
@@ -1520,7 +1537,6 @@ export function buildMicroKart(options = {}) {
             attachKartReadabilityRimShader(mat, 'kart_crimson_rim_v1', 0.28, 0.34, 0.26);
             mat.needsUpdate = true;
           } else if (mName.includes('gold')) {
-            // Warm racing gold shoulder stripes & brushed brass/gold central muffler cans
             if (mat.color) mat.color.setHex(0xf0be3c);
             mat.roughness = 0.24;
             mat.metalness = 0.78;
@@ -1528,7 +1544,6 @@ export function buildMicroKart(options = {}) {
             attachKartReadabilityRimShader(mat, 'kart_gold_rim_v1', 0.24, 0.30, 0.24);
             mat.needsUpdate = true;
           } else if (mName.includes('gunmetal')) {
-            // Lighter anodized titanium/silver-grey (#3e4756) for louvered engine cover, spoiler wing & headlamp bezels
             if (mat.color) mat.color.setHex(0x3e4756);
             mat.roughness = 0.26;
             mat.metalness = 0.58;
@@ -1578,7 +1593,6 @@ export function buildMicroKart(options = {}) {
               shader.fragmentShader = shader.fragmentShader.replace(
                 '#include <dithering_fragment>',
                 `
-                // Ruby-red segmented LED lens gradient: deep crimson bevel edge (#e60018) to hot ruby core (#ff2a44)
                 float ax = abs(vLedLocalPos.x);
                 float uCluster = clamp((ax - 0.00218) / 0.00212, 0.0, 1.0);
                 float segU = fract(uCluster * 3.0) - 0.5;
@@ -1615,7 +1629,6 @@ export function buildMicroKart(options = {}) {
     });
 
     chassisGroup.add(glbScene);
-    // Register GLB wheels for 60FPS spin & steering
     if (glbAllWheels.length > 0) {
       wheelMeshes.push(...glbAllWheels);
     }
@@ -1665,7 +1678,6 @@ export function buildMicroKart(options = {}) {
 
   function updateColors(theme = {}) {
     if (theme.colorHex !== undefined) redFairingMat.color.setHex(theme.colorHex);
-    if (theme.stripeHex !== undefined) whiteStripeMat.color.setHex(theme.stripeHex);
     if (theme.rimHex !== undefined) goldRimMat.color.setHex(theme.rimHex);
     if (theme.suitHex !== undefined) suitMat.color.setHex(theme.suitHex);
     if (theme.helmetHex !== undefined) helmetShell.material.color.setHex(theme.helmetHex);
@@ -1677,12 +1689,12 @@ export function buildMicroKart(options = {}) {
 
   function disposeKart() {
     redFairingMat.dispose();
-    whiteStripeMat.dispose();
     goldRimMat.dispose();
     suitMat.dispose();
     helmetShell.material.dispose();
     visor.material.dispose();
     numberPlateMat.dispose();
+    tailGlowMat.dispose();
     headlightGroundMat.dispose();
     headlightConeMat.dispose();
     taillightGroundMat.dispose();
@@ -1693,8 +1705,10 @@ export function buildMicroKart(options = {}) {
         pGroup.userData.jetMat.dispose();
       }
     }
-    sparkGeo.dispose();
-    sparkMat.dispose();
+    sparkGeo?.dispose();
+    sparkMat?.dispose();
+    sparkFireLight?.dispose();
+    headlight?.dispose();
     if (labelSprite) {
       kartRoot.remove(labelSprite);
       if (labelSprite.material.map && !labelSprite.material.map.userData?.isSharedResource) {

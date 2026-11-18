@@ -61,6 +61,7 @@ function createClockTexture(): THREE.CanvasTexture {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
   cachedSchoolClockTex = texture;
   return texture;
 }
@@ -94,6 +95,7 @@ function createSchoolPlaqueTexture(): THREE.CanvasTexture {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
   cachedSchoolPlaqueTex = texture;
   return texture;
 }
@@ -134,6 +136,7 @@ function createSchoolHeaderTexture(): THREE.CanvasTexture {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
   cachedSchoolHeaderTex = texture;
   return texture;
 }

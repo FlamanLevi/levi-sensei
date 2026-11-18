@@ -578,8 +578,9 @@ export function computeKartVisualSteering(params: {
   speedKmh: number;
   lateralVelMs: number;
   signedCurvature: number;
+  outResult?: KartVisualSteeringResult;
 }): KartVisualSteeringResult {
-  const { speedKmh, lateralVelMs, signedCurvature } = params;
+  const { speedKmh, lateralVelMs, signedCurvature, outResult } = params;
   const safeSpeedKmh = Math.max(0, speedKmh || 0);
   const forwardMs = Math.max(4.5, safeSpeedKmh / 3.6);
   const speedNorm = Math.min(1.0, safeSpeedKmh / 85.0);
@@ -602,6 +603,12 @@ export function computeKartVisualSteering(params: {
       ? Math.max(-0.14, Math.min(0.14, -signedCurvature * 0.12 * speedNorm))
       : 0;
 
+  if (outResult) {
+    outResult.laneYawRad = laneYawRad;
+    outResult.steerInput = steerInput;
+    outResult.driftAngle = driftAngle;
+    return outResult;
+  }
   return { laneYawRad, steerInput, driftAngle };
 }
 

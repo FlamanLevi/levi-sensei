@@ -1,7 +1,12 @@
 import React, { useRef, useEffect, useState, useCallback, useMemo } from 'react';
 import * as THREE from 'three';
-import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
-import { detectClassroomGpuProfile } from '@/utils/classroom3d';
+import {
+  createClassroomRenderer,
+  createRoomEnvironmentPMREM,
+  detectClassroomGpuProfile,
+  disposeObject3D,
+  ClassroomGpuProfile,
+} from '@/utils/classroom3d';
 import { generateRandomTown, TownMap, PlacedBuilding } from './townGenerator';
 import { buildPlayerAvatar, PlayerAvatar } from './models/playerAvatar';
 import { buildBicycleMesh } from './models/bicycle';
@@ -66,6 +71,10 @@ import {
   applyAtmosphereToMaterials,
 } from './weatherAndTimeSystem';
 
+const MAX_ROUTE_CHEVRONS = 120;
+const _camTarget = new THREE.Vector3();
+const _chevronDummy = new THREE.Object3D();
+
 interface TownNavigatorProps {
   onExit?: () => void;
   onSwitchToInspector?: () => void;
@@ -97,6 +106,8 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
 }) => {
   const mountRef = useRef<HTMLDivElement>(null);
   const { activeGrade, activeClassId, activeSchool } = useClassroom();
+  const gpuProfile = useMemo(() => detectClassroomGpuProfile(), []);
+  const gpuProfileRef = useRef<ClassroomGpuProfile>(gpuProfile);
 
   const initialGrade: 5 | 6 = useMemo(() => {
     if (activeGrade === 'ES_G6' || (activeClassId && activeClassId.startsWith('6'))) {
@@ -244,7 +255,6 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
   }, []);
 
   // Animation & Control references
-  const animFrameRef = useRef<number | null>(null);
   const keysPressed = useRef<Set<string>>(new Set());
   const touchForwardRef = useRef<number>(0);
   const touchTurnRef = useRef<number>(0);
@@ -260,9 +270,26 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
   const sceneRef = useRef<THREE.Scene | null>(null);
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
-  const routeMarkersGroupRef = useRef<THREE.Group | null>(null);
+  const routeInstancedRef = useRef<THREE.InstancedMesh | null>(null);
+  const routeChevronPointsRef = useRef<Array<{ x: number; z: number; angle: number }>>([]);
   const materialBucketsRef = useRef<SceneMaterialBuckets | null>(null);
   const weatherControllerRef = useRef<WeatherParticleController | null>(null);
+
+  // Decoupled town lifecycle & cached kinetic prop refs (zero getObjectByName per frame)
+  const townMapRef = useRef<TownMap | null>(null);
+  const mountedTownRef = useRef<TownMap | null>(null);
+  const wheelRotorRef = useRef<THREE.Object3D | null>(null);
+  const gondolasRef = useRef<THREE.Object3D[]>([]);
+  const carouselRotorRef = useRef<THREE.Object3D | null>(null);
+
+  // Deduplicated HUD & proximity state trackers (zero idle React re-renders)
+  const lastHudRef = useRef<{ x: number; z: number; heading: number }>({
+    x: Number.NaN,
+    z: Number.NaN,
+    heading: Number.NaN,
+  });
+  const lastNearbyIdRef = useRef<string | null>(null);
+  const lastNearbyDistRef = useRef<number>(-1);
 
   // Lights & Environment references
   const ambientLightRef = useRef<THREE.AmbientLight | null>(null);
@@ -320,7 +347,12 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
 
     const build = () => {
       if (cancelled) return;
-      const map = generateRandomTown(seed, { schoolId: activeSchool });
+      const activeGpu = gpuProfileRef.current ?? gpuProfile;
+      const map = generateRandomTown(seed, {
+        schoolId: activeSchool,
+        enableDynamicShadows: activeGpu.enableDynamicShadows,
+        lowPower: activeGpu.isLowPower,
+      });
       setTownMap(map);
       setCompletedQuestCount(0);
       setTravelMode('WALK');
@@ -357,7 +389,7 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
     }
 
     return () => { cancelled = true; };
-  }, [seed, activeSchool, getProgressiveQuestTarget, assignNewQuest]);
+  }, [seed, activeSchool, gpuProfile, getProgressiveQuestTarget, assignNewQuest]);
 
   // Audio Pronunciation Helper
   const speakBuildingName = useCallback((building: PlacedBuilding) => {
@@ -624,19 +656,109 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
     };
   }, [cycleCameraMode, setTimeOfDay, setWeather]);
 
-  // Three.js Scene Setup & Render Loop
-  useEffect(() => {
-    if (!mountRef.current || !townMap) return;
+  // Helper to attach/swap a generated TownMap inside the persistent Three.js scene without recreating WebGL
+  const attachTownMapToScene = useCallback((nextMap: TownMap) => {
+    const scene = sceneRef.current;
+    if (!scene) return;
+    if (mountedTownRef.current === nextMap) return;
 
+    const prevMap = mountedTownRef.current;
+    if (prevMap) {
+      scene.remove(prevMap.roadsGroup);
+      scene.remove(prevMap.buildingsGroup);
+      disposeObject3D(prevMap.roadsGroup);
+      disposeObject3D(prevMap.buildingsGroup);
+    }
+
+    scene.add(nextMap.roadsGroup);
+    scene.add(nextMap.buildingsGroup);
+    mountedTownRef.current = nextMap;
+
+    // Cache kinetic Amusement Park props once per town (zero getObjectByName in RAF)
+    const wheelRotor = nextMap.buildingsGroup.getObjectByName('AmusementPark_WheelRotor') ?? null;
+    wheelRotorRef.current = wheelRotor;
+    const gondolas: THREE.Object3D[] = [];
+    if (wheelRotor) {
+      for (let i = 0; i < 8; i++) {
+        const g = wheelRotor.getObjectByName(`Gondola_${i}`);
+        if (g) gondolas.push(g);
+      }
+    }
+    gondolasRef.current = gondolas;
+    carouselRotorRef.current = nextMap.buildingsGroup.getObjectByName('AmusementPark_CarouselRotor') ?? null;
+
+    // Re-collect scene weather materials & immediately apply active atmosphere
+    const atmos = getCompositeAtmosphere(timeOfDayRef.current, weatherRef.current);
+    const buckets = collectSceneWeatherMaterials(scene);
+    materialBucketsRef.current = buckets;
+    applyAtmosphereToMaterials(buckets, atmos);
+
+    // Snap player, lights, and camera to spawn so camera never lerps through buildings
+    const [spawnX, spawnY, spawnZ] = nextMap.spawnPoint;
+    const spawnHeading = nextMap.spawnHeading ?? 0;
+    playerPosRef.current.set(spawnX, spawnY, spawnZ);
+    playerRotRef.current = spawnHeading;
+
+    if (playerRef.current) {
+      playerRef.current.group.position.copy(playerPosRef.current);
+      playerRef.current.group.rotation.y = spawnHeading;
+      playerRef.current.resetAnimation();
+    }
+
+    if (cameraRef.current) {
+      cameraRef.current.position.set(
+        spawnX - Math.sin(spawnHeading) * 4.8,
+        spawnY + 2.4,
+        spawnZ - Math.cos(spawnHeading) * 4.8
+      );
+      cameraRef.current.lookAt(spawnX, spawnY + 1.3, spawnZ);
+    }
+
+    if (dirLightRef.current) {
+      dirLightRef.current.target.position.copy(playerPosRef.current);
+      dirLightRef.current.target.updateMatrixWorld();
+      dirLightRef.current.position.set(
+        spawnX + sunOffsetRef.current.x,
+        sunOffsetRef.current.y,
+        spawnZ + sunOffsetRef.current.z
+      );
+    }
+
+    if (playerLampRef.current) {
+      playerLampRef.current.position.set(spawnX, 5.2, spawnZ);
+    }
+
+    if (playerHeadlightRef.current) {
+      playerHeadlightRef.current.position.set(spawnX, 1.15, spawnZ);
+    }
+
+    lastHudRef.current = { x: spawnX, z: spawnZ, heading: spawnHeading };
+    lastNearbyIdRef.current = null;
+    lastNearbyDistRef.current = -1;
+    setNearbyBuilding(null);
+    setPlayerHudState({ x: spawnX, z: spawnZ, heading: spawnHeading });
+  }, []);
+
+  // Stable refs for callbacks invoked inside the mount-once RAF loop
+  const getProgressiveQuestTargetRef = useRef(getProgressiveQuestTarget);
+  useEffect(() => { getProgressiveQuestTargetRef.current = getProgressiveQuestTarget; }, [getProgressiveQuestTarget]);
+  const playFacilitySoundRef = useRef(playFacilitySound);
+  useEffect(() => { playFacilitySoundRef.current = playFacilitySound; }, [playFacilitySound]);
+  const assignNewQuestRef = useRef(assignNewQuest);
+  useEffect(() => { assignNewQuestRef.current = assignNewQuest; }, [assignNewQuest]);
+  const attachTownMapRef = useRef(attachTownMapToScene);
+  useEffect(() => { attachTownMapRef.current = attachTownMapToScene; }, [attachTownMapToScene]);
+
+  // Persistent Three.js Scene Setup & Render Loop (decoupled from townMap regeneration)
+  useEffect(() => {
     const container = mountRef.current;
-    const width = container.clientWidth || window.innerWidth;
-    const height = container.clientHeight || window.innerHeight;
+    if (!container) return;
+
+    const atmos = getCompositeAtmosphere(timeOfDayRef.current, weatherRef.current);
 
     // 1. Scene
     const scene = new THREE.Scene();
     sceneRef.current = scene;
-
-    const atmos = getCompositeAtmosphere(timeOfDayRef.current, weatherRef.current);
     scene.background = new THREE.Color(atmos.skyColor);
     scene.fog = new THREE.FogExp2(atmos.fogColor, atmos.fogDensity);
 
@@ -646,40 +768,29 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
     skyboxRef.current = skybox;
     scene.add(skybox);
 
-    // 2. Camera (Extended far plane so perimeter mountains, Mt. Fuji, and city skyline render cleanly)
-    const camera = new THREE.PerspectiveCamera(54, width / height, 0.2, 650);
-    cameraRef.current = camera;
-    camera.position.set(0, 4, -6);
-
-    // 3. Renderer & Classroom GPU Profile (Adaptive: 60 FPS on iPads & Dynabook laptops)
-    const renderer = new THREE.WebGLRenderer({
-      antialias: true,
-      alpha: false,
-      powerPreference: 'high-performance',
-      precision: 'highp',
-    });
-    rendererRef.current = renderer;
-
-    const gpu = detectClassroomGpuProfile(renderer.getContext());
-    const isTabletOrMobile = gpu.isMobileOrTablet;
-
-    renderer.outputColorSpace = THREE.SRGBColorSpace;
-    renderer.setSize(width, height);
-    renderer.setPixelRatio(gpu.targetPixelRatio);
-    renderer.shadowMap.enabled = gpu.enableDynamicShadows;
-    renderer.shadowMap.type = THREE.PCFShadowMap;
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = atmos.toneMappingExposure;
+    // 2. Centralized Classroom WebGL Renderer, Camera & Adaptive DRS
     container.innerHTML = '';
-    container.appendChild(renderer.domElement);
+    const ctx3d = createClassroomRenderer(container, {
+      fov: 54,
+      near: 0.2,
+      far: 650,
+      alpha: false,
+      cameraPosition: [0, 4, -6],
+      cameraLookAt: [0, 1.3, 0],
+      toneMapping: THREE.ACESFilmicToneMapping,
+      toneMappingExposure: atmos.toneMappingExposure,
+      enableDrs: true,
+    });
+    const { renderer, camera, gpuProfile: gpu } = ctx3d;
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    rendererRef.current = renderer;
+    cameraRef.current = camera;
+    gpuProfileRef.current = gpu;
 
-    // 3.5. Studio PBR Environment Reflections for glass, water, and metallic trim
-    const pmremGenerator = new THREE.PMREMGenerator(renderer);
-    pmremGenerator.compileEquirectangularShader();
-    const envTarget = pmremGenerator.fromScene(new RoomEnvironment(), 0.04);
-    scene.environment = envTarget.texture;
+    // 3. Studio PBR Environment Reflections (disposes temporary PMREM/RoomEnvironment immediately)
+    const envHandle = createRoomEnvironmentPMREM(renderer);
+    scene.environment = envHandle.texture;
     scene.environmentIntensity = atmos.environmentIntensity;
-    pmremGenerator.dispose();
 
     // 4. Lighting
     const ambientLight = new THREE.AmbientLight(atmos.ambientColor, atmos.ambientIntensity);
@@ -694,9 +805,9 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
     dirLightRef.current = dirLight;
     sunOffsetRef.current.set(...atmos.sunPosition);
     dirLight.position.set(
-      townMap.spawnPoint[0] + atmos.sunPosition[0],
+      playerPosRef.current.x + atmos.sunPosition[0],
       atmos.sunPosition[1],
-      townMap.spawnPoint[2] + atmos.sunPosition[2]
+      playerPosRef.current.z + atmos.sunPosition[2]
     );
     dirLight.castShadow = gpu.enableDynamicShadows;
     if (gpu.enableDynamicShadows) {
@@ -712,16 +823,19 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
       dirLight.shadow.bias = -0.0005;
     }
     scene.add(dirLight);
+    scene.add(dirLight.target);
 
     const playerLamp = new THREE.PointLight(0xfef08a, atmos.playerLampIntensity, 28.0, 1.2);
+    playerLamp.visible = atmos.playerLampIntensity > 0;
     playerLampRef.current = playerLamp;
-    playerLamp.position.set(townMap.spawnPoint[0], 5.0, townMap.spawnPoint[2]);
+    playerLamp.position.set(playerPosRef.current.x, 5.0, playerPosRef.current.z);
     scene.add(playerLamp);
 
     // 4.2. Forward Headlight Beam for Sunset/Night/Stormy Weather
     const playerHeadlight = new THREE.SpotLight(0xfffbeb, atmos.playerHeadlightIntensity, 26.0, Math.PI / 5.2, 0.55, 1.2);
+    playerHeadlight.visible = atmos.playerHeadlightIntensity > 0;
     playerHeadlightRef.current = playerHeadlight;
-    playerHeadlight.position.set(townMap.spawnPoint[0], 1.15, townMap.spawnPoint[2]);
+    playerHeadlight.position.set(playerPosRef.current.x, 1.15, playerPosRef.current.z);
     scene.add(playerHeadlight);
     scene.add(playerHeadlight.target);
 
@@ -740,44 +854,35 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
     updatePerimeterSceneryLighting(perimeterScenery, atmos.streetlightLevel, atmos.groundColor);
     scene.add(perimeterScenery);
 
-    // 6. Add Town Road Network & Buildings
-    scene.add(townMap.roadsGroup);
-    scene.add(townMap.buildingsGroup);
-
-    // Collect building windows, backlit storefront signboards, and road asphalt materials
-    const buckets = collectSceneWeatherMaterials(scene);
-    materialBucketsRef.current = buckets;
-    applyAtmosphereToMaterials(buckets, atmos);
-
     // 6.2. 3D Weather Particle System (Rain Streaks + Ground Splash Ripples, Snowflakes, 3D Sakura Petals)
     const weatherController = createWeatherParticleController(48, 22, 48);
     weatherController.setWeather(weatherRef.current);
     weatherControllerRef.current = weatherController;
     scene.add(weatherController.group);
 
-    // 6.5. 3D Road Route Chevron Arrows Group
-    const routeGroup = new THREE.Group();
-    routeGroup.name = 'RoadRouteChevrons';
-    scene.add(routeGroup);
-    routeMarkersGroupRef.current = routeGroup;
+    // 6.5. Pooled 3D Road Route Chevrons (1 InstancedMesh, 1 draw call, zero per-update leaks)
+    const chevronGeo = new THREE.ConeGeometry(0.42, 0.95, 3);
+    chevronGeo.rotateX(Math.PI / 2);
+    const chevronMat = new THREE.MeshBasicMaterial({
+      color: 0xfacc15,
+      transparent: true,
+      opacity: 0.85,
+      depthWrite: false,
+    });
+    const routeInstanced = new THREE.InstancedMesh(chevronGeo, chevronMat, MAX_ROUTE_CHEVRONS);
+    routeInstanced.name = 'RoadRouteChevrons';
+    routeInstanced.count = 0;
+    routeInstanced.visible = false;
+    routeInstanced.frustumCulled = false;
+    scene.add(routeInstanced);
+    routeInstancedRef.current = routeInstanced;
 
-    // 7. Add Player Avatar & Vehicles at Spawn Point
+    // 7. Add Player Avatar & Vehicles
     const player = buildPlayerAvatar();
     playerRef.current = player;
-    playerPosRef.current.set(townMap.spawnPoint[0], townMap.spawnPoint[1], townMap.spawnPoint[2]);
-    playerRotRef.current = townMap.spawnHeading ?? 0;
     player.group.position.copy(playerPosRef.current);
     player.group.rotation.y = playerRotRef.current;
     scene.add(player.group);
-
-    // Snap camera immediately behind player at spawn so it never lerps through buildings from (0, 4, -6)
-    const initAngle = playerRotRef.current;
-    camera.position.set(
-      playerPosRef.current.x - Math.sin(initAngle) * 4.8,
-      playerPosRef.current.y + 2.4,
-      playerPosRef.current.z - Math.cos(initAngle) * 4.8
-    );
-    camera.lookAt(playerPosRef.current.x, playerPosRef.current.y + 1.3, playerPosRef.current.z);
 
     // 7.1. 3D Mamachari City Bicycle (attaches to player group)
     const bike = buildBicycleMesh(0x0284c7);
@@ -798,20 +903,10 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
     kart.kartRoot.visible = false;
     player.group.add(kart.kartRoot);
 
-    // 8. Kinetic Props Lookup
-    const wheelRotor = townMap.buildingsGroup.getObjectByName('AmusementPark_WheelRotor');
-    const carouselRotor = townMap.buildingsGroup.getObjectByName('AmusementPark_CarouselRotor');
-
-    // 9. Resize Handler
-    const handleResize = () => {
-      if (!mountRef.current || !rendererRef.current || !cameraRef.current) return;
-      const nw = mountRef.current.clientWidth;
-      const nh = mountRef.current.clientHeight;
-      cameraRef.current.aspect = nw / nh;
-      cameraRef.current.updateProjectionMatrix();
-      rendererRef.current.setSize(nw, nh);
-    };
-    window.addEventListener('resize', handleResize);
+    // Attach already-generated townMap if present on mount (e.g. StrictMode remount)
+    if (townMapRef.current) {
+      attachTownMapRef.current(townMapRef.current);
+    }
 
     let lastHudUpdateTime = 0;
 
@@ -820,9 +915,12 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
       pos.x = THREE.MathUtils.clamp(pos.x, -38.0, 38.0);
       pos.z = THREE.MathUtils.clamp(pos.z, -38.0, 38.0);
 
+      const activeMap = townMapRef.current;
+      if (!activeMap) return;
+
       const pRadius = 0.35;
 
-      for (const b of townMap.buildingsList) {
+      for (const b of activeMap.buildingsList) {
         const isRot90 = Math.abs(Math.sin(b.rotationY)) > 0.5;
         const lotW = isRot90 ? b.depthMeters : b.widthMeters;
         const lotD = isRot90 ? b.widthMeters : b.depthMeters;
@@ -865,6 +963,8 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
     };
 
     let isDisposed = false;
+    let rafId = 0;
+    let timeoutId: number | null = null;
     let lastFrameTime = performance.now();
     const startTime = lastFrameTime;
     const gl = renderer.getContext() as WebGL2RenderingContext;
@@ -874,7 +974,7 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
           const sync = gl.fenceSync ? gl.fenceSync(gl.SYNC_GPU_COMMANDS_COMPLETE, 0) : null;
           gl.flush();
           if (!sync) {
-            animFrameRef.current = window.setTimeout(cb, 80);
+            timeoutId = window.setTimeout(cb, 80);
             return;
           }
           const poll = () => {
@@ -884,16 +984,16 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
             }
             const state = gl.getSyncParameter(sync, gl.SYNC_STATUS);
             if (state === gl.UNSIGNALED) {
-              animFrameRef.current = window.setTimeout(poll, 5);
+              timeoutId = window.setTimeout(poll, 5);
             } else {
               gl.deleteSync(sync);
-              animFrameRef.current = window.setTimeout(cb, 80);
+              timeoutId = window.setTimeout(cb, 80);
             }
           };
-          animFrameRef.current = window.setTimeout(poll, 5);
+          timeoutId = window.setTimeout(poll, 5);
         }
       : (cb: () => void) => {
-          if (!isDisposed) animFrameRef.current = requestAnimationFrame(cb);
+          if (!isDisposed) rafId = requestAnimationFrame(cb);
         };
 
     // 12. Main 60 FPS Render & Player-Relative Movement Loop
@@ -901,36 +1001,47 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
       if (isDisposed) return;
 
       const now = performance.now();
-      const delta = Math.min((now - lastFrameTime) * 0.001, 0.1);
+      const rawDt = (now - lastFrameTime) * 0.001;
+      const delta = Math.min(rawDt, 0.1);
       lastFrameTime = now;
       const elapsed = (now - startTime) * 0.001;
 
       if (viewRoleRef.current === 'DISPATCHER_2D' || document.body.dataset.state === 'paused') {
-        animFrameRef.current = window.setTimeout(animate, 120);
+        timeoutId = window.setTimeout(animate, 120);
         return;
       }
 
+      ctx3d.trackFrameRate(rawDt);
+
+      // Animate cached kinetic Amusement Park rotors (zero getObjectByName per frame)
+      const wheelRotor = wheelRotorRef.current;
       if (wheelRotor) {
         wheelRotor.rotation.z -= delta * 0.22;
-        for (let i = 0; i < 8; i++) {
-          const gondola = wheelRotor.getObjectByName(`Gondola_${i}`);
-          if (gondola) {
-            gondola.rotation.z = -wheelRotor.rotation.z;
-          }
+        const gondolas = gondolasRef.current;
+        for (let i = 0; i < gondolas.length; i++) {
+          gondolas[i].rotation.z = -wheelRotor.rotation.z;
         }
       }
+      const carouselRotor = carouselRotorRef.current;
       if (carouselRotor) {
         carouselRotor.rotation.y += delta * 0.85;
       }
 
-      // Pulse 3D Road Route Chevrons in a wave toward the destination
-      if (routeMarkersGroupRef.current && routeMarkersGroupRef.current.visible) {
-        const children = routeMarkersGroupRef.current.children;
-        for (let i = 0; i < children.length; i++) {
-          const chevron = children[i] as THREE.Mesh;
+      // Pulse pooled 3D Road Route Chevrons in-place (1 draw call, zero allocations)
+      const routeMesh = routeInstancedRef.current;
+      const chevronPts = routeChevronPointsRef.current;
+      if (routeMesh && routeMesh.visible && chevronPts.length > 0) {
+        for (let i = 0; i < chevronPts.length; i++) {
+          const pt = chevronPts[i];
           const wave = Math.sin(elapsed * 5.0 - i * 0.7) * 0.5 + 0.5;
-          chevron.scale.setScalar(0.85 + wave * 0.3);
+          const s = 0.85 + wave * 0.3;
+          _chevronDummy.position.set(pt.x, 0.12, pt.z);
+          _chevronDummy.rotation.set(0, pt.angle, 0);
+          _chevronDummy.scale.set(s, s * 0.22, s);
+          _chevronDummy.updateMatrix();
+          routeMesh.setMatrixAt(i, _chevronDummy.matrix);
         }
+        routeMesh.instanceMatrix.needsUpdate = true;
       }
 
       updateTrafficSignals(elapsed);
@@ -1001,10 +1112,12 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
       }
 
       player.updateAnimation(isMoving, delta, speedRatio);
-      playerLamp.position.set(playerPosRef.current.x, 5.2, playerPosRef.current.z);
+      if (playerLamp.visible) {
+        playerLamp.position.set(playerPosRef.current.x, 5.2, playerPosRef.current.z);
+      }
 
       // Update player forward headlight beam & 3D weather particles around the player
-      if (playerHeadlightRef.current) {
+      if (playerHeadlightRef.current && playerHeadlightRef.current.visible) {
         const hl = playerHeadlightRef.current;
         const yaw = playerRotRef.current;
         hl.position.set(
@@ -1054,11 +1167,12 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
           const camHeight = currentMode === 'KART' ? 3.0 : currentMode === 'BIKE' ? 2.7 : currentMode === 'RUN' ? 2.5 : 2.4;
           const angle = playerRotRef.current;
 
-          const targetCamX = playerPosRef.current.x - Math.sin(angle) * camDistance;
-          const targetCamY = playerPosRef.current.y + camHeight;
-          const targetCamZ = playerPosRef.current.z - Math.cos(angle) * camDistance;
-
-          camera.position.lerp(new THREE.Vector3(targetCamX, targetCamY, targetCamZ), 0.14);
+          _camTarget.set(
+            playerPosRef.current.x - Math.sin(angle) * camDistance,
+            playerPosRef.current.y + camHeight,
+            playerPosRef.current.z - Math.cos(angle) * camDistance
+          );
+          camera.position.lerp(_camTarget, 0.14);
 
           const pitch = cameraPitchRef.current;
           const lookTargetY = playerPosRef.current.y + 1.1 + Math.sin(pitch) * 2.5;
@@ -1067,11 +1181,12 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
           const isoDistance = 22.0;
           const isoHeight = 26.0;
 
-          const targetCamX = playerPosRef.current.x;
-          const targetCamY = isoHeight;
-          const targetCamZ = playerPosRef.current.z + isoDistance;
-
-          camera.position.lerp(new THREE.Vector3(targetCamX, targetCamY, targetCamZ), 0.10);
+          _camTarget.set(
+            playerPosRef.current.x,
+            isoHeight,
+            playerPosRef.current.z + isoDistance
+          );
+          camera.position.lerp(_camTarget, 0.10);
           camera.lookAt(playerPosRef.current.x, 0.4, playerPosRef.current.z);
         }
       }
@@ -1084,25 +1199,37 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
         playerPosRef.current.z + sunOffsetRef.current.z
       );
 
-      // 4. PROXIMITY DETECTION & MINIMAP (Throttled to 10 Hz)
-      if (now - lastHudUpdateTime > 100) {
+      // 4. PROXIMITY DETECTION & MINIMAP (Throttled to <=10 Hz, deduplicated so idle = 0 React re-renders)
+      const activeMap = townMapRef.current;
+      if (activeMap && now - lastHudUpdateTime > 100) {
         lastHudUpdateTime = now;
 
-        setPlayerHudState({
-          x: playerPosRef.current.x,
-          z: playerPosRef.current.z,
-          heading: playerRotRef.current,
-        });
+        const px = playerPosRef.current.x;
+        const pz = playerPosRef.current.z;
+        const ph = playerRotRef.current;
+        const prevHud = lastHudRef.current;
+
+        if (
+          Number.isNaN(prevHud.x) ||
+          Math.abs(px - prevHud.x) > 0.05 ||
+          Math.abs(pz - prevHud.z) > 0.05 ||
+          Math.abs(ph - prevHud.heading) > 0.02
+        ) {
+          prevHud.x = px;
+          prevHud.z = pz;
+          prevHud.heading = ph;
+          setPlayerHudState({ x: px, z: pz, heading: ph });
+        }
 
         let closestB: PlacedBuilding | null = null;
         let minDist = Infinity;
 
-        for (const b of townMap.buildingsList) {
+        for (const b of activeMap.buildingsList) {
           if (b.tier === 0) continue;
           if (selectedGradeRef.current === 5 && b.grade === 6) continue;
           const dist = Math.hypot(
-            playerPosRef.current.x - b.entrancePos[0],
-            playerPosRef.current.z - b.entrancePos[2]
+            px - b.entrancePos[0],
+            pz - b.entrancePos[2]
           );
           if (dist < minDist) {
             minDist = dist;
@@ -1113,19 +1240,32 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
         if (closestB) {
           const triggerDist = closestB.tier === 3 ? 11.5 : closestB.tier === 2 ? 8.5 : 6.0;
           if (minDist <= triggerDist) {
-            setNearbyBuilding(closestB);
-            setNearbyDistance(Math.round(minDist * 10) / 10);
-          } else {
+            const roundedDist = Math.round(minDist);
+            if (lastNearbyIdRef.current !== closestB.id) {
+              lastNearbyIdRef.current = closestB.id;
+              setNearbyBuilding(closestB);
+            }
+            if (lastNearbyDistRef.current !== roundedDist) {
+              lastNearbyDistRef.current = roundedDist;
+              setNearbyDistance(roundedDist);
+            }
+          } else if (lastNearbyIdRef.current !== null) {
+            lastNearbyIdRef.current = null;
+            lastNearbyDistRef.current = -1;
             setNearbyBuilding(null);
           }
+        } else if (lastNearbyIdRef.current !== null) {
+          lastNearbyIdRef.current = null;
+          lastNearbyDistRef.current = -1;
+          setNearbyBuilding(null);
         }
 
         // Quest Target Reached Detection
         const currentQuest = questTargetRef.current;
         if (currentQuest) {
           const qDist = Math.hypot(
-            playerPosRef.current.x - currentQuest.entrancePos[0],
-            playerPosRef.current.z - currentQuest.entrancePos[2]
+            px - currentQuest.entrancePos[0],
+            pz - currentQuest.entrancePos[2]
           );
           const qTrigger = currentQuest.tier === 3 ? 10.5 : currentQuest.tier === 2 ? 8.0 : 5.8;
           if (qDist <= qTrigger) {
@@ -1150,12 +1290,12 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
                   ? `🎉 Mystery Solved! You found the ${currentQuest.nameEn} (+2★)!`
                   : `🎉 Arrived at the ${currentQuest.nameEn} entrance! Fantastic!`
               );
-              if (!isMutedRef.current) playFacilitySound(currentQuest);
+              if (!isMutedRef.current) playFacilitySoundRef.current(currentQuest);
             }
 
             // Next chained quest origin is the CURRENT destination entrance
-            const nextTarget = getProgressiveQuestTarget(
-              townMap,
+            const nextTarget = getProgressiveQuestTargetRef.current(
+              activeMap,
               selectedGradeRef.current,
               currentQuest.entrancePos[0],
               currentQuest.entrancePos[2],
@@ -1164,11 +1304,11 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
             );
 
             if (nextTarget) {
-              assignNewQuest(
+              assignNewQuestRef.current(
                 nextTarget,
-                playerPosRef.current.x,
-                playerPosRef.current.z,
-                playerRotRef.current
+                px,
+                pz,
+                ph
               );
             }
           }
@@ -1183,27 +1323,55 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
 
     return () => {
       isDisposed = true;
-      if (animFrameRef.current) {
-        cancelAnimationFrame(animFrameRef.current);
-        clearTimeout(animFrameRef.current);
+      if (rafId) {
+        cancelAnimationFrame(rafId);
+        rafId = 0;
       }
-      window.removeEventListener('resize', handleResize);
+      if (timeoutId !== null) {
+        clearTimeout(timeoutId);
+        timeoutId = null;
+      }
       weatherController.dispose();
-      envTarget.dispose();
-      renderer.dispose();
-      if (container.contains(renderer.domElement)) {
-        container.removeChild(renderer.domElement);
-      }
+      envHandle.dispose();
+      disposeObject3D(scene);
+      ctx3d.cleanup();
+      mountedTownRef.current = null;
+      wheelRotorRef.current = null;
+      gondolasRef.current = [];
+      carouselRotorRef.current = null;
+      routeInstancedRef.current = null;
+      weatherControllerRef.current = null;
+      materialBucketsRef.current = null;
+      playerRef.current = null;
+      sceneRef.current = null;
+      cameraRef.current = null;
+      rendererRef.current = null;
     };
-  }, [townMap, getProgressiveQuestTarget, playFacilitySound, assignNewQuest]);
+  }, []);
+
+  // Swap town geometry inside the persistent scene whenever townMap regenerates
+  useEffect(() => {
+    townMapRef.current = townMap;
+    if (!townMap) return;
+    attachTownMapToScene(townMap);
+  }, [townMap, attachTownMapToScene]);
 
   // Update Time of Day & Weather Atmosphere dynamically in 0ms
   useEffect(() => {
     if (!sceneRef.current || !ambientLightRef.current || !dirLightRef.current) return;
     const atmos = getCompositeAtmosphere(timeOfDay, weather);
 
-    sceneRef.current.background = new THREE.Color(atmos.skyColor);
-    sceneRef.current.fog = new THREE.FogExp2(atmos.fogColor, atmos.fogDensity);
+    if (sceneRef.current.background instanceof THREE.Color) {
+      sceneRef.current.background.setHex(atmos.skyColor);
+    } else {
+      sceneRef.current.background = new THREE.Color(atmos.skyColor);
+    }
+    if (sceneRef.current.fog instanceof THREE.FogExp2) {
+      sceneRef.current.fog.color.setHex(atmos.fogColor);
+      sceneRef.current.fog.density = atmos.fogDensity;
+    } else {
+      sceneRef.current.fog = new THREE.FogExp2(atmos.fogColor, atmos.fogDensity);
+    }
     sceneRef.current.environmentIntensity = atmos.environmentIntensity;
 
     if (rendererRef.current) {
@@ -1230,10 +1398,12 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
 
     if (playerLampRef.current) {
       playerLampRef.current.intensity = atmos.playerLampIntensity;
+      playerLampRef.current.visible = atmos.playerLampIntensity > 0;
     }
 
     if (playerHeadlightRef.current) {
       playerHeadlightRef.current.intensity = atmos.playerHeadlightIntensity;
+      playerHeadlightRef.current.visible = atmos.playerHeadlightIntensity > 0;
     }
 
     if (groundMatRef.current) {
@@ -1270,6 +1440,8 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
   };
 
   const handleRegenerate = () => {
+    lastNearbyIdRef.current = null;
+    lastNearbyDistRef.current = -1;
     setSeed(Math.floor(Math.random() * 899999) + 100000);
     setNearbyBuilding(null);
   };
@@ -1353,31 +1525,24 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
     return { dist, directionCueEn, directionCueJa, sideWordEn, sideWordJa, path };
   }, [questTarget, playerHudState, questMode]);
 
-  // Rebuild 3D Glowing Road Route Chevrons along the Manhattan path
+  // Update pooled 3D Glowing Road Route Chevrons along the Manhattan path (1 InstancedMesh, 0 allocations/leaks)
   useEffect(() => {
-    const group = routeMarkersGroupRef.current;
-    if (!group) return;
+    const routeMesh = routeInstancedRef.current;
+    const pts = routeChevronPointsRef.current;
+    pts.length = 0;
 
-    while (group.children.length > 0) {
-      const child = group.children[0] as THREE.Mesh;
-      group.remove(child);
-      if (child.geometry) child.geometry.dispose();
+    const shouldShow = !!(showRoadArrows && questMode === 'GUIDED' && questNavigationHint?.path);
+    if (!shouldShow || !questNavigationHint) {
+      if (routeMesh) {
+        routeMesh.count = 0;
+        routeMesh.visible = false;
+      }
+      return;
     }
 
-    const shouldShow = showRoadArrows && questMode === 'GUIDED' && questNavigationHint?.path;
-    group.visible = !!shouldShow;
-    if (!shouldShow || !questNavigationHint) return;
-
     const path = questNavigationHint.path;
-    const chevronMat = new THREE.MeshBasicMaterial({
-      color: 0xfacc15,
-      transparent: true,
-      opacity: 0.85,
-      depthWrite: false,
-    });
-
     const spacing = 4.2;
-    for (let i = 0; i < path.length - 1; i++) {
+    for (let i = 0; i < path.length - 1 && pts.length < MAX_ROUTE_CHEVRONS; i++) {
       const a = path[i];
       const b = path[i + 1];
       const segDx = b.x - a.x;
@@ -1387,19 +1552,26 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
 
       const angle = Math.atan2(segDx, segDz);
       const steps = Math.max(1, Math.floor(segLen / spacing));
-      for (let s = 0; s < steps; s++) {
+      for (let s = 0; s < steps && pts.length < MAX_ROUTE_CHEVRONS; s++) {
         const t = (s + 0.5) / steps;
         const cx = a.x + segDx * t;
         const cz = a.z + segDz * t;
-
-        const coneGeo = new THREE.ConeGeometry(0.42, 0.95, 3);
-        coneGeo.rotateX(Math.PI / 2);
-        const mesh = new THREE.Mesh(coneGeo, chevronMat);
-        mesh.position.set(cx, 0.12, cz);
-        mesh.rotation.y = angle;
-        mesh.scale.set(1.0, 0.15, 1.0);
-        group.add(mesh);
+        pts.push({ x: cx, z: cz, angle });
       }
+    }
+
+    if (routeMesh) {
+      routeMesh.count = pts.length;
+      routeMesh.visible = pts.length > 0;
+      for (let i = 0; i < pts.length; i++) {
+        const pt = pts[i];
+        _chevronDummy.position.set(pt.x, 0.12, pt.z);
+        _chevronDummy.rotation.set(0, pt.angle, 0);
+        _chevronDummy.scale.set(1.0, 0.22, 1.0);
+        _chevronDummy.updateMatrix();
+        routeMesh.setMatrixAt(i, _chevronDummy.matrix);
+      }
+      routeMesh.instanceMatrix.needsUpdate = true;
     }
   }, [questNavigationHint, showRoadArrows, questMode]);
 

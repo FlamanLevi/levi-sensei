@@ -49,6 +49,7 @@ function createStationSignTexture(): THREE.CanvasTexture {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
   cachedStationSignTex = texture;
   return texture;
 }
@@ -80,6 +81,7 @@ function createPlatformSignTexture(): THREE.CanvasTexture {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
   cachedPlatformSignTex = texture;
   return texture;
 }
@@ -118,6 +120,7 @@ function createTicketMachineTexture(): THREE.CanvasTexture {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
   cachedTicketMachineTex = texture;
   return texture;
 }
@@ -146,6 +149,7 @@ function createDepartureBoardTexture(): THREE.CanvasTexture {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
   cachedDepartureBoardTex = texture;
   return texture;
 }

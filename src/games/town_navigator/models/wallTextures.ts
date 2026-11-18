@@ -22,6 +22,7 @@ let cachedInteriorBlindTexture: THREE.CanvasTexture | null = null;
 
 function createFallbackTexture(): THREE.CanvasTexture {
   const dummy = new THREE.Texture();
+  dummy.userData.isSharedResource = true;
   return dummy as unknown as THREE.CanvasTexture;
 }
 
@@ -59,6 +60,7 @@ export function getArchitecturalBumpMap(): THREE.CanvasTexture {
   tex.wrapS = THREE.RepeatWrapping;
   tex.wrapT = THREE.RepeatWrapping;
   tex.repeat.set(3, 3);
+  tex.userData.isSharedResource = true;
   cachedBumpTexture = tex;
   return tex;
 }
@@ -156,8 +158,10 @@ export function getLawnGrassTexture(): THREE.CanvasTexture {
   tex.wrapS = THREE.RepeatWrapping;
   tex.wrapT = THREE.RepeatWrapping;
   tex.repeat.set(3, 3);
-  tex.anisotropy = 8;
+  tex.anisotropy = 4;
   tex.colorSpace = THREE.SRGBColorSpace;
+  tex.userData.isSharedResource = true;
+  tex.userData.isArchitecturalTex = true;
   cachedLawnGrassTexture = tex;
   return tex;
 }
@@ -196,6 +200,7 @@ export function getGrassBumpMap(): THREE.CanvasTexture {
   tex.wrapS = THREE.RepeatWrapping;
   tex.wrapT = THREE.RepeatWrapping;
   tex.repeat.set(4, 4);
+  tex.userData.isSharedResource = true;
   cachedGrassBumpTexture = tex;
   return tex;
 }
@@ -250,8 +255,10 @@ export function getSidewalkPaverTexture(): THREE.CanvasTexture {
   tex.wrapS = THREE.RepeatWrapping;
   tex.wrapT = THREE.RepeatWrapping;
   tex.repeat.set(2, 2);
-  tex.anisotropy = 8;
+  tex.anisotropy = 4;
   tex.colorSpace = THREE.SRGBColorSpace;
+  tex.userData.isSharedResource = true;
+  tex.userData.isArchitecturalTex = true;
   cachedSidewalkPaverTexture = tex;
   return tex;
 }
@@ -289,8 +296,11 @@ export function getAsphaltRoadTexture(): THREE.CanvasTexture {
   tex.wrapS = THREE.RepeatWrapping;
   tex.wrapT = THREE.RepeatWrapping;
   tex.repeat.set(3, 2);
-  tex.anisotropy = 8;
+  tex.anisotropy = 4;
   tex.colorSpace = THREE.SRGBColorSpace;
+  tex.userData.isSharedResource = true;
+  tex.userData.isArchitecturalTex = true;
+  tex.userData.noVertexColorBake = true;
   cachedAsphaltRoadTexture = tex;
   return tex;
 }
@@ -356,6 +366,8 @@ export function getWindowPaneTexture(): THREE.CanvasTexture {
   const tex = new THREE.CanvasTexture(canvas);
   tex.colorSpace = THREE.SRGBColorSpace;
   tex.anisotropy = 4;
+  tex.userData.isSharedResource = true;
+  tex.userData.isArchitecturalTex = true;
   cachedInteriorBlindTexture = tex;
   return tex;
 }
@@ -430,8 +442,10 @@ export function getHorizontalSidingTexture(): THREE.CanvasTexture {
   texture.wrapS = THREE.RepeatWrapping;
   texture.wrapT = THREE.RepeatWrapping;
   texture.repeat.set(1, 1);
-  texture.anisotropy = 8;
+  texture.anisotropy = 4;
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
+  texture.userData.isArchitecturalTex = true;
   cachedSidingTexture = texture;
   return texture;
 }
@@ -494,8 +508,10 @@ export function getBrickTileTexture(): THREE.CanvasTexture {
   texture.wrapS = THREE.RepeatWrapping;
   texture.wrapT = THREE.RepeatWrapping;
   texture.repeat.set(2, 2);
-  texture.anisotropy = 8;
+  texture.anisotropy = 4;
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
+  texture.userData.isArchitecturalTex = true;
   cachedBrickTexture = texture;
   return texture;
 }
@@ -571,8 +587,10 @@ export function getConcretePanelTexture(): THREE.CanvasTexture {
   texture.wrapS = THREE.RepeatWrapping;
   texture.wrapT = THREE.RepeatWrapping;
   texture.repeat.set(1, 1);
-  texture.anisotropy = 8;
+  texture.anisotropy = 4;
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
+  texture.userData.isArchitecturalTex = true;
   cachedConcreteTexture = texture;
   return texture;
 }
@@ -614,8 +632,10 @@ export function getStuccoWallTexture(): THREE.CanvasTexture {
   texture.wrapS = THREE.RepeatWrapping;
   texture.wrapT = THREE.RepeatWrapping;
   texture.repeat.set(4, 4);
-  texture.anisotropy = 8;
+  texture.anisotropy = 4;
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
+  texture.userData.isArchitecturalTex = true;
   cachedStuccoTexture = texture;
   return texture;
 }
@@ -674,8 +694,10 @@ export function getKawaraTileTexture(): THREE.CanvasTexture {
   texture.wrapS = THREE.RepeatWrapping;
   texture.wrapT = THREE.RepeatWrapping;
   texture.repeat.set(3, 3);
-  texture.anisotropy = 8;
+  texture.anisotropy = 4;
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
+  texture.userData.isArchitecturalTex = true;
   cachedKawaraTexture = texture;
   return texture;
 }
@@ -732,8 +754,10 @@ export function getIshigakiStoneTexture(): THREE.CanvasTexture {
   texture.wrapS = THREE.RepeatWrapping;
   texture.wrapT = THREE.RepeatWrapping;
   texture.repeat.set(2, 2);
-  texture.anisotropy = 8;
+  texture.anisotropy = 4;
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
+  texture.userData.isArchitecturalTex = true;
   cachedIshigakiTexture = texture;
   return texture;
 }
@@ -974,7 +998,7 @@ export function buildPerimeterRailing(
       chillerGroup.position.set(0, 0, -halfD + 0.72);
       const cBox = new THREE.Mesh(new THREE.BoxGeometry(1.15, 0.52, 0.68), chillerBodyMat);
       cBox.position.y = 0.26;
-      cBox.castShadow = true;
+      cBox.castShadow = false;
       chillerGroup.add(cBox);
 
       [-0.28, 0.28].forEach((fx) => {
@@ -1001,7 +1025,7 @@ export function buildOutdoorAcUnit(): THREE.Group {
 
   const casing = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.48, 0.68), bodyMat);
   casing.position.y = 0.28;
-  casing.castShadow = true;
+  casing.castShadow = false;
 
   const fanGrille = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 0.03, 12), grilleMat);
   fanGrille.rotation.z = Math.PI / 2;
@@ -1187,16 +1211,27 @@ export function addWrapAroundWindows(options: {
  * 4. All textured masonry/siding/concrete/stucco/tile walls & roofs get `getArchitecturalBumpMap()`
  * 5. Building windows get multi-pane architectural sash textures + 3D sills, lintels & exterior cross-mullions
  */
-export function enhanceBuildingGroup(group: THREE.Group): THREE.Group {
+export function enhanceBuildingGroup(
+  group: THREE.Group,
+  options?: { lowPower?: boolean; maxAnisotropy?: number }
+): THREE.Group {
   if (group.userData.enhancedDetails) return group;
   group.userData.enhancedDetails = true;
 
+  const lowPower = options?.lowPower ?? false;
+  const maxAnisotropy = lowPower ? 1 : Math.min(4, Math.max(1, options?.maxAnisotropy ?? 4));
+
   const grassTex = getLawnGrassTexture();
-  const grassBump = getGrassBumpMap();
+  const grassBump = lowPower ? null : getGrassBumpMap();
   const paverTex = getSidewalkPaverTexture();
   const asphaltTex = getAsphaltRoadTexture();
-  const archBump = getArchitecturalBumpMap();
+  const archBump = lowPower ? null : getArchitecturalBumpMap();
   const winPaneTex = getWindowPaneTexture();
+
+  grassTex.anisotropy = Math.min(grassTex.anisotropy, maxAnisotropy);
+  paverTex.anisotropy = Math.min(paverTex.anisotropy, maxAnisotropy);
+  asphaltTex.anisotropy = Math.min(asphaltTex.anisotropy, maxAnisotropy);
+  winPaneTex.anisotropy = Math.min(winPaneTex.anisotropy, maxAnisotropy);
 
   const lintelMat = new THREE.MeshStandardMaterial({
     color: 0xcbd5e1,
@@ -1238,7 +1273,10 @@ export function enhanceBuildingGroup(group: THREE.Group): THREE.Group {
       !mesh.userData.skipWindowEnhance
     ) {
       const m = mesh.material as THREE.MeshStandardMaterial;
-      if (m.isMeshStandardMaterial && m.transparent && m.opacity >= 0.58 && m.opacity <= 0.88) {
+      if (
+        m.isMeshStandardMaterial &&
+        ((m.transparent && m.opacity >= 0.58 && m.opacity <= 0.88) || m.map === winPaneTex)
+      ) {
         frontWindowsToEnhance.push(mesh);
       }
     }
@@ -1248,6 +1286,10 @@ export function enhanceBuildingGroup(group: THREE.Group): THREE.Group {
       const mat = m as THREE.MeshStandardMaterial;
       if (!mat || !mat.isMeshStandardMaterial || processedMaterials.has(mat)) continue;
 
+      if (mat.map && mat.map.anisotropy > maxAnisotropy) {
+        mat.map.anisotropy = maxAnisotropy;
+      }
+
       const c = mat.color;
       if (!c) continue;
 
@@ -1255,8 +1297,10 @@ export function enhanceBuildingGroup(group: THREE.Group): THREE.Group {
       const isGreenTurf = c.g > 0.32 && c.g > c.r * 1.18 && c.g > c.b * 1.18 && !mat.transparent;
       if (!mat.map && isGreenTurf && isFlatGroundSlab) {
         mat.map = grassTex;
-        mat.bumpMap = grassBump;
-        mat.bumpScale = 0.025;
+        if (grassBump) {
+          mat.bumpMap = grassBump;
+          mat.bumpScale = 0.025;
+        }
         mat.roughness = 0.88;
         mat.needsUpdate = true;
         processedMaterials.add(mat);
@@ -1273,8 +1317,10 @@ export function enhanceBuildingGroup(group: THREE.Group): THREE.Group {
         mat.metalness < 0.25;
       if (!mat.map && isFlatGroundSlab && isNeutralLightGray && meshHeight >= 0.04) {
         mat.map = paverTex;
-        mat.bumpMap = archBump;
-        mat.bumpScale = 0.012;
+        if (archBump) {
+          mat.bumpMap = archBump;
+          mat.bumpScale = 0.012;
+        }
         mat.roughness = 0.78;
         mat.needsUpdate = true;
         processedMaterials.add(mat);
@@ -1291,31 +1337,54 @@ export function enhanceBuildingGroup(group: THREE.Group): THREE.Group {
         mat.roughness >= 0.8;
       if (!mat.map && isFlatGroundSlab && isDarkAsphalt && meshHeight <= 0.08) {
         mat.map = asphaltTex;
-        mat.bumpMap = archBump;
-        mat.bumpScale = 0.018;
+        mat.userData.noVertexColorBake = true;
+        if (archBump) {
+          mat.bumpMap = archBump;
+          mat.bumpScale = 0.018;
+        }
         mat.needsUpdate = true;
         processedMaterials.add(mat);
         continue;
       }
 
-      // 4. Add micro-relief bump mapping to all textured architectural walls & roofs
-      if (mat.map && !mat.bumpMap && !mat.emissiveMap) {
-        mat.bumpMap = archBump;
-        mat.bumpScale = 0.018;
-        mat.needsUpdate = true;
+      // 4. Add micro-relief bump mapping to repeating architectural walls & roofs (skip lowPower & flat signage)
+      if (
+        mat.map &&
+        !mat.bumpMap &&
+        !mat.emissiveMap &&
+        (mat.map.userData?.isArchitecturalTex || mat.map.wrapS === THREE.RepeatWrapping)
+      ) {
+        if (archBump) {
+          mat.bumpMap = archBump;
+          mat.bumpScale = 0.018;
+          mat.needsUpdate = true;
+        }
         processedMaterials.add(mat);
         continue;
       }
 
-      // 5. Enhance transparent building window glass with multi-pane sash & Venetian blind texture
+      // 5. Enhance exterior building window glass with opaque multi-pane sash & Venetian blind texture
+      // Making exterior panes opaque eliminates ~200 per-building transparent draw-call splits.
       if (mat.transparent && mat.opacity >= 0.58 && mat.opacity <= 0.74 && !mat.map) {
         mat.map = winPaneTex;
         mat.color.setHex(0xe0f2fe);
-        mat.opacity = 0.84;
+        mat.transparent = false;
+        mat.opacity = 1.0;
         mat.roughness = 0.12;
         mat.metalness = 0.22;
         mat.envMapIntensity = 1.35;
         mat.needsUpdate = true;
+        processedMaterials.add(mat);
+        continue;
+      }
+
+      // 6. Remaining truly transparent shopfront glass merges town-wide where safe
+      if (mat.transparent && !mat.userData?.batchUnique && mat.opacity >= 0.25 && mat.opacity <= 0.88) {
+        const hex = c.getHex();
+        const isPoolWater = !mat.map && (hex === 0x06b6d4 || hex === 0x0284c7 || hex === 0x0ea5e9);
+        if (!isPoolWater) {
+          mat.userData.batchGlobal = true;
+        }
         processedMaterials.add(mat);
       }
     }

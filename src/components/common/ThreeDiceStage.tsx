@@ -1,6 +1,11 @@
 import React, { useRef, useEffect } from 'react';
 import * as THREE from 'three';
-import { detectClassroomGpuProfile } from '@/utils/classroom3d';
+import {
+  createClassroomRenderer,
+  createContactShadowMesh,
+  disposeObject3D,
+  Classroom3DContext,
+} from '@/utils/classroom3d';
 import { DieType } from './DiceModal';
 
 export interface TrayDieState {
@@ -117,29 +122,50 @@ const DIE_STYLE_CONFIG: Record<DieType, DieStyleConfig> = {
   },
 };
 
-// Texture Cache
-const textureCache = new Map<string, THREE.CanvasTexture>();
+interface DieAtlasLayout {
+  cols: number;
+  rows: number;
+  width: number;
+  height: number;
+  numFaces: number;
+}
 
-function getFaceTexture(
+// Power-of-two single-atlas layouts per die type (collapses 4..20 materials/draw-calls -> 1!)
+const DIE_ATLAS_LAYOUTS: Record<DieType, DieAtlasLayout> = {
+  d4:  { cols: 2, rows: 2, width: 512,  height: 512,  numFaces: 4  },
+  d6:  { cols: 4, rows: 2, width: 1024, height: 512,  numFaces: 6  },
+  d8:  { cols: 4, rows: 2, width: 1024, height: 512,  numFaces: 8  },
+  d10: { cols: 4, rows: 4, width: 1024, height: 1024, numFaces: 10 },
+  d12: { cols: 4, rows: 4, width: 1024, height: 1024, numFaces: 12 },
+  d20: { cols: 5, rows: 4, width: 1024, height: 1024, numFaces: 20 },
+};
+
+function mapFaceUvToAtlas(
+  uLocal: number,
+  vLocal: number,
+  faceIdx: number,
+  layout: DieAtlasLayout
+): [number, number] {
+  const col = faceIdx % layout.cols;
+  const row = Math.floor(faceIdx / layout.cols);
+  const clampedU = Math.max(0.004, Math.min(0.996, uLocal));
+  const clampedV = Math.max(0.004, Math.min(0.996, vLocal));
+  return [
+    (col + clampedU) / layout.cols,
+    (layout.rows - 1 - row + clampedV) / layout.rows,
+  ];
+}
+
+// Shared Singleton Material & Geometry Caches (tagged isSharedResource: true)
+const dieMaterialCache = new Map<DieType, THREE.MeshStandardMaterial>();
+const dieGeometryCache = new Map<DieType, DieGeometryData>();
+
+function drawFaceCell(
+  ctx: CanvasRenderingContext2D,
   dieType: DieType,
   num: number,
   theme: DieTheme
-): THREE.CanvasTexture {
-  const cacheKey = `${dieType}-${num}-${theme.primary}`;
-  if (textureCache.has(cacheKey)) {
-    return textureCache.get(cacheKey)!;
-  }
-
-  const canvas = document.createElement('canvas');
-  canvas.width = 256;
-  canvas.height = 256;
-  const ctx = canvas.getContext('2d')!;
-
-  // Solid base fill to prevent any transparent mipmap black borders along polygon edges
-  ctx.fillStyle = theme.primary;
-  ctx.fillRect(0, 0, 256, 256);
-
-  // Background
+): void {
   const grad = ctx.createRadialGradient(128, 120, 20, 128, 128, 130);
   grad.addColorStop(0, theme.secondary);
   grad.addColorStop(1, theme.primary);
@@ -197,11 +223,50 @@ function getFaceTexture(
   ctx.fillStyle = theme.text;
   ctx.fillText(textStr, 128, cfg.yPos);
   ctx.shadowColor = 'transparent';
+}
+
+function getDieAtlasMaterial(dieType: DieType): THREE.MeshStandardMaterial {
+  const cached = dieMaterialCache.get(dieType);
+  if (cached) return cached;
+
+  const layout = DIE_ATLAS_LAYOUTS[dieType];
+  const theme = DIE_THEMES[dieType];
+  const canvas = document.createElement('canvas');
+  canvas.width = layout.width;
+  canvas.height = layout.height;
+  const ctx = canvas.getContext('2d')!;
+
+  // Solid base fill prevents transparent mipmap borders across atlas cell edges
+  ctx.fillStyle = theme.primary;
+  ctx.fillRect(0, 0, layout.width, layout.height);
+
+  const cellW = layout.width / layout.cols;
+  const cellH = layout.height / layout.rows;
+
+  for (let f = 0; f < layout.numFaces; f++) {
+    const col = f % layout.cols;
+    const row = Math.floor(f / layout.cols);
+    ctx.save();
+    ctx.translate(col * cellW, row * cellH);
+    ctx.scale(cellW / 256, cellH / 256);
+    drawFaceCell(ctx, dieType, f + 1, theme);
+    ctx.restore();
+  }
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.needsUpdate = true;
-  textureCache.set(cacheKey, texture);
-  return texture;
+  texture.userData = { isSharedResource: true };
+
+  const mat = new THREE.MeshStandardMaterial({
+    map: texture,
+    roughness: 0.14,
+    metalness: 0.08,
+    flatShading: true,
+  });
+  mat.userData = { isSharedResource: true };
+
+  dieMaterialCache.set(dieType, mat);
+  return mat;
 }
 
 // --- Global Upright Camera & Landing Basis Vectors ---
@@ -239,11 +304,13 @@ export interface DieGeometryData {
 
 /**
  * General helper for triangular polyhedra (D4, D8, D20):
- * Projects each triangular face onto the 2D texture canvas with sub-pixel precision,
+ * Projects each triangular face onto its atlas cell with sub-pixel precision,
  * choosing the natural top apex per face aligned with reference up.
  */
-function processTriangularPolyhedron(baseGeom: THREE.BufferGeometry): DieGeometryData {
-  const geom = baseGeom.clone();
+function processTriangularPolyhedron(
+  geom: THREE.BufferGeometry,
+  layout: DieAtlasLayout
+): DieGeometryData {
   const pos = geom.attributes.position;
   const numFaces = pos.count / 3;
   const uvs = new Float32Array(numFaces * 6);
@@ -289,31 +356,46 @@ function processTriangularPolyhedron(baseGeom: THREE.BufferGeometry): DieGeometr
       const rel = new THREE.Vector3().subVectors(v[vi], center);
       const x = rel.dot(faceRight);
       const y = rel.dot(faceUp);
-      const u = 0.5 + x * scale;
-      const valV = (102 / 256) + y * scale;
-      uvs[f * 6 + vi * 2] = u;
-      uvs[f * 6 + vi * 2 + 1] = valV;
+      const uLocal = 0.5 + x * scale;
+      const vLocal = (102 / 256) + y * scale;
+      const [au, av] = mapFaceUvToAtlas(uLocal, vLocal, f, layout);
+      uvs[f * 6 + vi * 2] = au;
+      uvs[f * 6 + vi * 2 + 1] = av;
     }
 
-    geom.addGroup(f * 3, 3, f);
     normals.push(normal);
     faceUps.push(faceUp);
   }
 
+  geom.clearGroups();
   geom.setAttribute('uv', new THREE.BufferAttribute(uvs, 2));
   geom.computeVertexNormals();
+  geom.userData = { isSharedResource: true };
 
   return { geom, normals, faceUps };
 }
 
 // 1. D4 Geometry Data
 function createD4Data(): DieGeometryData {
-  return processTriangularPolyhedron(new THREE.TetrahedronGeometry(1.25, 0));
+  return processTriangularPolyhedron(new THREE.TetrahedronGeometry(1.25, 0), DIE_ATLAS_LAYOUTS.d4);
 }
 
 // 2. D6 Geometry Data
 function createD6Data(): DieGeometryData {
   const geom = new THREE.BoxGeometry(1.5, 1.5, 1.5);
+  const layout = DIE_ATLAS_LAYOUTS.d6;
+  const uvAttr = geom.attributes.uv;
+  for (let f = 0; f < 6; f++) {
+    for (let k = 0; k < 4; k++) {
+      const vIdx = f * 4 + k;
+      const [au, av] = mapFaceUvToAtlas(uvAttr.getX(vIdx), uvAttr.getY(vIdx), f, layout);
+      uvAttr.setXY(vIdx, au, av);
+    }
+  }
+  uvAttr.needsUpdate = true;
+  geom.clearGroups();
+  geom.userData = { isSharedResource: true };
+
   const normals = [
     new THREE.Vector3(1, 0, 0),
     new THREE.Vector3(-1, 0, 0),
@@ -335,12 +417,13 @@ function createD6Data(): DieGeometryData {
 
 // 3. D8 Geometry Data
 function createD8Data(): DieGeometryData {
-  return processTriangularPolyhedron(new THREE.OctahedronGeometry(1.25, 0));
+  return processTriangularPolyhedron(new THREE.OctahedronGeometry(1.25, 0), DIE_ATLAS_LAYOUTS.d8);
 }
 
 // 4. D10 Geometry Data (Mathematically Exact Pentagonal Trapezohedron with 100% Planar Kites & Planar UVs)
 function createD10Data(radius = 1.3): DieGeometryData {
   const geom = new THREE.BufferGeometry();
+  const layout = DIE_ATLAS_LAYOUTS.d10;
   const H = radius * 1.35;
   const R = radius * 0.95;
   const h = H * Math.pow(Math.tan(Math.PI / 10), 2); // Exact tan^2(18 deg) * H ensures 100.000% planar kites
@@ -401,12 +484,14 @@ function createD10Data(radius = 1.3): DieGeometryData {
     const axisX = new THREE.Vector3().crossVectors(axisY, normal).normalize();
     const origin = new THREE.Vector3().addVectors(kite.apexPole, kite.apexEquator).multiplyScalar(0.5);
 
-    const getUV = (v: THREE.Vector3) => {
+    const getUV = (v: THREE.Vector3): [number, number] => {
       const rel = new THREE.Vector3().subVectors(v, origin);
-      return [
+      return mapFaceUvToAtlas(
         0.5 + rel.dot(axisX) * scale,
         0.5 + rel.dot(axisY) * scale,
-      ];
+        fIdx,
+        layout
+      );
     };
 
     // Tri 1: v0 -> v1 -> v2
@@ -421,7 +506,6 @@ function createD10Data(radius = 1.3): DieGeometryData {
     const uv3 = getUV(v3);
     uvs.push(uv0[0], uv0[1], uv2[0], uv2[1], uv3[0], uv3[1]);
 
-    geom.addGroup(fIdx * 6, 6, fIdx);
     normals.push(normal);
     faceUps.push(axisY);
   });
@@ -429,6 +513,7 @@ function createD10Data(radius = 1.3): DieGeometryData {
   geom.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
   geom.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
   geom.computeVertexNormals();
+  geom.userData = { isSharedResource: true };
   return { geom, normals, faceUps };
 }
 
@@ -437,6 +522,7 @@ const PHI = (1 + Math.sqrt(5)) / 2;
 const INV_PHI = 1 / PHI;
 
 function createD12Data(radius = 1.2): DieGeometryData {
+  const layout = DIE_ATLAS_LAYOUTS.d12;
   const rawVerts = [
     [-1, -1, -1], [-1, -1, 1], [-1, 1, -1], [-1, 1, 1],
     [1, -1, -1],  [1, -1, 1],  [1, 1, -1],  [1, 1, 1],
@@ -475,7 +561,7 @@ function createD12Data(radius = 1.2): DieGeometryData {
     const v0 = rawVerts[face[0]];
     const v1 = rawVerts[face[1]];
     const v2 = rawVerts[face[2]];
-    let normal = new THREE.Vector3()
+    const normal = new THREE.Vector3()
       .crossVectors(new THREE.Vector3().subVectors(v1, v0), new THREE.Vector3().subVectors(v2, v0))
       .normalize();
     if (normal.dot(center) < 0) {
@@ -495,13 +581,16 @@ function createD12Data(radius = 1.2): DieGeometryData {
         positions.push(vert.x, vert.y, vert.z);
 
         const rel = new THREE.Vector3().subVectors(vert, center);
-        const u = 0.5 + rel.dot(faceRight) * scale;
-        const v = 0.5 + rel.dot(faceUp) * scale;
-        uvs.push(u, v);
+        const [au, av] = mapFaceUvToAtlas(
+          0.5 + rel.dot(faceRight) * scale,
+          0.5 + rel.dot(faceUp) * scale,
+          fIdx,
+          layout
+        );
+        uvs.push(au, av);
       });
     });
 
-    geom.addGroup(fIdx * 9, 9, fIdx);
     normals.push(normal);
     faceUps.push(faceUp);
   });
@@ -509,12 +598,29 @@ function createD12Data(radius = 1.2): DieGeometryData {
   geom.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
   geom.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
   geom.computeVertexNormals();
+  geom.userData = { isSharedResource: true };
   return { geom, normals, faceUps };
 }
 
 // 6. D20 Geometry Data
 function createD20Data(): DieGeometryData {
-  return processTriangularPolyhedron(new THREE.IcosahedronGeometry(1.3, 0));
+  return processTriangularPolyhedron(new THREE.IcosahedronGeometry(1.3, 0), DIE_ATLAS_LAYOUTS.d20);
+}
+
+function getDieGeometryData(dieType: DieType): DieGeometryData {
+  const cached = dieGeometryCache.get(dieType);
+  if (cached) return cached;
+
+  let data: DieGeometryData;
+  if (dieType === 'd4') data = createD4Data();
+  else if (dieType === 'd6') data = createD6Data();
+  else if (dieType === 'd8') data = createD8Data();
+  else if (dieType === 'd10') data = createD10Data();
+  else if (dieType === 'd12') data = createD12Data();
+  else data = createD20Data();
+
+  dieGeometryCache.set(dieType, data);
+  return data;
 }
 
 interface Die3DInstance {
@@ -522,6 +628,8 @@ interface Die3DInstance {
   type: DieType;
   value: number;
   mesh: THREE.Mesh;
+  shadowMesh: THREE.Mesh | null;
+  dieScale: number;
   normals: THREE.Vector3[];
   faceUps: THREE.Vector3[];
   targetQuat: THREE.Quaternion;
@@ -531,6 +639,11 @@ interface Die3DInstance {
   spinAxis: THREE.Vector3;
   spinSpeed: number;
 }
+
+const CONTACT_SHADOW_BASE_OPACITY = 0.65;
+const FLOOR_Y = -1.45;
+const SHADOW_Y = FLOOR_Y + 0.015;
+const ROLL_DURATION_MS = 950;
 
 export const ThreeDiceStage: React.FC<ThreeDiceStageProps> = ({
   dice,
@@ -542,38 +655,51 @@ export const ThreeDiceStage: React.FC<ThreeDiceStageProps> = ({
   const mountRef = useRef<HTMLDivElement | null>(null);
   const instancesRef = useRef<Die3DInstance[]>([]);
   const sceneRef = useRef<THREE.Scene | null>(null);
+  const ctx3dRef = useRef<Classroom3DContext | null>(null);
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
-  const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
   const animFrameRef = useRef<number | null>(null);
   const raycasterRef = useRef(new THREE.Raycaster());
   const mouseRef = useRef(new THREE.Vector2());
 
-  // Initialize Scene
+  const isRollingRef = useRef(isRolling);
+  const onRollCompleteRef = useRef(onRollComplete);
+  const rollCompletionDispatchedRef = useRef(false);
+
+  useEffect(() => {
+    isRollingRef.current = isRolling;
+    if (!isRolling) {
+      rollCompletionDispatchedRef.current = false;
+    }
+  }, [isRolling]);
+
+  useEffect(() => {
+    onRollCompleteRef.current = onRollComplete;
+  }, [onRollComplete]);
+
+  // Initialize Classroom 3D Scene & Single Persistent RAF Loop
   useEffect(() => {
     const mount = mountRef.current;
     if (!mount) return;
 
-    const width = mount.clientWidth || 400;
-    const height = mount.clientHeight || 260;
-
     const scene = new THREE.Scene();
     sceneRef.current = scene;
 
-    // Steeper classroom camera calibrated for large expansive felt
-    const camera = new THREE.PerspectiveCamera(36, width / height, 0.1, 100);
-    camera.position.set(0, 6.2, 7.6);
-    camera.lookAt(0, -0.2, 0);
-    cameraRef.current = camera;
+    // Steeper classroom camera calibrated for large expansive felt via centralized factory
+    const ctx3d = createClassroomRenderer(mount, {
+      fov: 36,
+      near: 0.1,
+      far: 100,
+      cameraPosition: [0, 6.2, 7.6],
+      cameraLookAt: [0, -0.2, 0],
+      alpha: false,
+      toneMapping: THREE.NoToneMapping,
+      clearColor: 0x0f5132,
+      enableDrs: true,
+    });
+    ctx3dRef.current = ctx3d;
+    cameraRef.current = ctx3d.camera;
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
-    const gpu = detectClassroomGpuProfile(renderer.getContext());
-    renderer.setClearColor(0x0f5132, 1);
-    renderer.setSize(width, height);
-    renderer.setPixelRatio(gpu.targetPixelRatio);
-    renderer.shadowMap.enabled = gpu.enableDynamicShadows;
-    renderer.shadowMap.type = THREE.PCFShadowMap;
-    rendererRef.current = renderer;
-    mount.appendChild(renderer.domElement);
+    const { renderer, camera, gpuProfile, trackFrameRate, cleanup } = ctx3d;
 
     // Studio Classroom Lighting
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.95);
@@ -581,10 +707,10 @@ export const ThreeDiceStage: React.FC<ThreeDiceStageProps> = ({
 
     const dirLight = new THREE.DirectionalLight(0xffffff, 1.4);
     dirLight.position.set(-6, 14, 8);
-    dirLight.castShadow = gpu.enableDynamicShadows;
-    if (gpu.enableDynamicShadows) {
-      dirLight.shadow.mapSize.width = gpu.shadowMapRes;
-      dirLight.shadow.mapSize.height = gpu.shadowMapRes;
+    dirLight.castShadow = gpuProfile.enableDynamicShadows;
+    if (gpuProfile.enableDynamicShadows) {
+      dirLight.shadow.mapSize.width = gpuProfile.shadowMapRes;
+      dirLight.shadow.mapSize.height = gpuProfile.shadowMapRes;
     }
     scene.add(dirLight);
 
@@ -606,60 +732,125 @@ export const ThreeDiceStage: React.FC<ThreeDiceStageProps> = ({
     });
     const floor = new THREE.Mesh(floorGeo, floorMat);
     floor.rotation.x = -Math.PI / 2;
-    floor.position.y = -1.45;
-    floor.receiveShadow = true;
+    floor.position.y = FLOOR_Y;
+    floor.receiveShadow = gpuProfile.enableDynamicShadows;
     scene.add(floor);
 
-    const handleResize = () => {
-      if (!mount || !renderer || !camera) return;
-      const w = mount.clientWidth;
-      const h = mount.clientHeight;
-      if (w === 0 || h === 0) return;
-      camera.aspect = w / h;
-      camera.updateProjectionMatrix();
-      renderer.setSize(w, h);
-    };
-    window.addEventListener('resize', handleResize);
+    // Pre-allocated scratch quaternion (0 per-frame GC allocations)
+    const scratchDeltaRot = new THREE.Quaternion();
+    let lastFrameMs = performance.now();
+    let isDisposed = false;
 
-    const resizeObserver = new ResizeObserver(() => {
-      handleResize();
-    });
-    resizeObserver.observe(mount);
+    const animate = () => {
+      if (isDisposed) return;
+      animFrameRef.current = requestAnimationFrame(animate);
+
+      const now = performance.now();
+      const rawDt = (now - lastFrameMs) * 0.001;
+      lastFrameMs = now;
+      trackFrameRate(rawDt);
+
+      let anyStillRolling = false;
+      const instances = instancesRef.current;
+
+      for (let i = 0; i < instances.length; i++) {
+        const inst = instances[i];
+        if (!inst.isRolling) continue;
+
+        const elapsed = now - inst.rollStartTime;
+        const progress = Math.min(1, Math.max(0, elapsed / ROLL_DURATION_MS));
+
+        // Parabolic Hop + Damped Table Bounces
+        let yOffset = 0;
+        if (progress < 0.45) {
+          const p = progress / 0.45;
+          yOffset = Math.sin(p * Math.PI) * 3.2;
+        } else if (progress < 0.75) {
+          const p = (progress - 0.45) / 0.3;
+          yOffset = Math.sin(p * Math.PI) * 1.1;
+        } else if (progress < 0.92) {
+          const p = (progress - 0.75) / 0.17;
+          yOffset = Math.sin(p * Math.PI) * 0.35;
+        }
+
+        inst.mesh.position.set(inst.targetPos.x, inst.targetPos.y + yOffset, inst.targetPos.z);
+
+        if (inst.shadowMesh) {
+          const shadowScale = inst.dieScale * Math.max(0.45, 1 / (1 + yOffset * 0.24));
+          inst.shadowMesh.scale.set(shadowScale, 1, shadowScale);
+          (inst.shadowMesh.material as THREE.MeshBasicMaterial).opacity =
+            CONTACT_SHADOW_BASE_OPACITY * Math.max(0.2, 1 / (1 + yOffset * 0.35));
+        }
+
+        // 3D Tumbling Rotation
+        if (progress < 0.85) {
+          scratchDeltaRot.setFromAxisAngle(inst.spinAxis, (1 - progress * 0.6) * 0.28);
+          inst.mesh.quaternion.multiply(scratchDeltaRot);
+        } else {
+          const snapProgress = (progress - 0.85) / 0.15;
+          const ease = 1 - Math.pow(1 - snapProgress, 3);
+          inst.mesh.quaternion.slerp(inst.targetQuat, ease);
+        }
+
+        if (progress < 1) {
+          anyStillRolling = true;
+        } else {
+          inst.isRolling = false;
+          inst.mesh.position.copy(inst.targetPos);
+          inst.mesh.quaternion.copy(inst.targetQuat);
+          if (inst.shadowMesh) {
+            inst.shadowMesh.scale.set(inst.dieScale, 1, inst.dieScale);
+            (inst.shadowMesh.material as THREE.MeshBasicMaterial).opacity = CONTACT_SHADOW_BASE_OPACITY;
+          }
+        }
+      }
+
+      if (
+        !anyStillRolling &&
+        isRollingRef.current &&
+        !rollCompletionDispatchedRef.current &&
+        onRollCompleteRef.current
+      ) {
+        rollCompletionDispatchedRef.current = true;
+        onRollCompleteRef.current();
+      }
+
+      renderer.render(scene, camera);
+    };
+
+    animFrameRef.current = requestAnimationFrame(animate);
 
     return () => {
-      window.removeEventListener('resize', handleResize);
-      resizeObserver.disconnect();
-      if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
-      if (renderer.domElement && mount.contains(renderer.domElement)) {
-        mount.removeChild(renderer.domElement);
+      isDisposed = true;
+      if (animFrameRef.current !== null) {
+        cancelAnimationFrame(animFrameRef.current);
+        animFrameRef.current = null;
       }
-      renderer.dispose();
-      textureCache.forEach(tex => tex.dispose());
-      textureCache.clear();
+      instancesRef.current = [];
+      disposeObject3D(scene);
+      cleanup();
+      sceneRef.current = null;
+      ctx3dRef.current = null;
+      cameraRef.current = null;
     };
   }, []);
 
-  // Update Dice Meshes & Layout
+  // Reconcile Dice Meshes & Layout In-Place (zero geometry/material rebuild on value rolls)
   useEffect(() => {
     const scene = sceneRef.current;
-    if (!scene) return;
+    const ctx3d = ctx3dRef.current;
+    if (!scene || !ctx3d) return;
 
-    instancesRef.current.forEach(inst => {
-      scene.remove(inst.mesh);
-      inst.mesh.geometry.dispose();
-      if (Array.isArray(inst.mesh.material)) {
-        inst.mesh.material.forEach(m => m.dispose());
-      } else {
-        inst.mesh.material.dispose();
-      }
-    });
+    const enableDynamicShadows = ctx3d.gpuProfile.enableDynamicShadows;
+    const prevById = new Map<string, Die3DInstance>();
+    for (let i = 0; i < instancesRef.current.length; i++) {
+      const prev = instancesRef.current[i];
+      prevById.set(prev.id, prev);
+    }
 
     const newInstances: Die3DInstance[] = [];
+    const keptIds = new Set<string>();
     const count = dice.length;
-    if (count === 0) {
-      instancesRef.current = [];
-      return;
-    }
 
     // Dynamic die scale: calibrated larger for high visibility on classroom projectors & iPad folios
     const dieScale = count === 1 ? 1.65 : count === 2 ? 1.5 : count <= 4 ? 1.38 : 1.25;
@@ -669,7 +860,8 @@ export const ThreeDiceStage: React.FC<ThreeDiceStageProps> = ({
     const cols = isSingleRow ? count : Math.ceil(count / 2);
     const spacingX = count === 1 ? 0 : Math.min(3.4, 9.8 / Math.max(1, cols - 1));
 
-    dice.forEach((die, idx) => {
+    for (let idx = 0; idx < count; idx++) {
+      const die = dice[idx];
       let row = 0;
       let col = idx;
       if (!isSingleRow) {
@@ -681,64 +873,74 @@ export const ThreeDiceStage: React.FC<ThreeDiceStageProps> = ({
       const staggerOffset = !isSingleRow && row === 0 ? spacingX * 0.45 : 0;
       const xOffset = (col - (cols - 1) / 2) * spacingX + staggerOffset;
       const zOffset = isSingleRow ? 0 : row === 0 ? -1.65 : 1.45;
+
+      const existing = prevById.get(die.id);
+      if (existing && existing.type === die.type) {
+        keptIds.add(die.id);
+        existing.value = die.value;
+        existing.dieScale = dieScale;
+        existing.targetPos.set(xOffset, 0, zOffset);
+        existing.mesh.scale.setScalar(dieScale);
+
+        const faceIdx = Math.max(0, Math.min(existing.normals.length - 1, die.value - 1));
+        if (existing.normals[faceIdx] && existing.faceUps[faceIdx]) {
+          existing.targetQuat.copy(
+            getUprightLandingQuaternion(existing.normals[faceIdx], existing.faceUps[faceIdx])
+          );
+        }
+
+        if (!existing.isRolling) {
+          existing.mesh.position.copy(existing.targetPos);
+          existing.mesh.quaternion.copy(existing.targetQuat);
+        }
+
+        if (existing.shadowMesh) {
+          existing.shadowMesh.position.set(xOffset, SHADOW_Y, zOffset);
+          if (!existing.isRolling) {
+            existing.shadowMesh.scale.set(dieScale, 1, dieScale);
+            (existing.shadowMesh.material as THREE.MeshBasicMaterial).opacity = CONTACT_SHADOW_BASE_OPACITY;
+          }
+        }
+
+        newInstances.push(existing);
+        continue;
+      }
+
       const targetPos = new THREE.Vector3(xOffset, 0, zOffset);
+      const { geom, normals, faceUps } = getDieGeometryData(die.type);
+      const material = getDieAtlasMaterial(die.type);
 
-      // Create Geometry & Normals with Upright Vectors
-      let dieData: DieGeometryData;
-      const numFaces = die.type === 'd4' ? 4 : die.type === 'd6' ? 6 : die.type === 'd8' ? 8 : die.type === 'd10' ? 10 : die.type === 'd12' ? 12 : 20;
-
-      if (die.type === 'd4') {
-        dieData = createD4Data();
-      } else if (die.type === 'd6') {
-        dieData = createD6Data();
-      } else if (die.type === 'd8') {
-        dieData = createD8Data();
-      } else if (die.type === 'd10') {
-        dieData = createD10Data();
-      } else if (die.type === 'd12') {
-        dieData = createD12Data();
-      } else {
-        dieData = createD20Data();
-      }
-
-      const { geom, normals, faceUps } = dieData;
-
-      // Create Materials with Face Textures
-      const theme = DIE_THEMES[die.type];
-      const materials: THREE.MeshStandardMaterial[] = [];
-      for (let f = 1; f <= numFaces; f++) {
-        const tex = getFaceTexture(die.type, f, theme);
-        materials.push(
-          new THREE.MeshStandardMaterial({
-            map: tex,
-            roughness: 0.14,
-            metalness: 0.08,
-            flatShading: true,
-          })
-        );
-      }
-
-      const mesh = new THREE.Mesh(geom, materials);
-      mesh.scale.set(dieScale, dieScale, dieScale);
-      mesh.castShadow = true;
+      const mesh = new THREE.Mesh(geom, material);
+      mesh.scale.setScalar(dieScale);
+      mesh.castShadow = enableDynamicShadows;
       mesh.receiveShadow = false;
       mesh.position.copy(targetPos);
 
       // Winning Face alignment quaternion (Dual-constrained: normal -> VIEW_DIR, faceUp -> targetUp)
       const targetQuat = new THREE.Quaternion();
-      const faceIdx = Math.max(0, Math.min(numFaces - 1, die.value - 1));
+      const faceIdx = Math.max(0, Math.min(normals.length - 1, die.value - 1));
       if (normals[faceIdx] && faceUps[faceIdx]) {
         targetQuat.copy(getUprightLandingQuaternion(normals[faceIdx], faceUps[faceIdx]));
       }
       mesh.quaternion.copy(targetQuat);
-
       scene.add(mesh);
+
+      // Lightweight pre-baked contact shadow on Tier 1/2 (iPads & Dynabooks)
+      let shadowMesh: THREE.Mesh | null = null;
+      if (!enableDynamicShadows) {
+        shadowMesh = createContactShadowMesh(0.95, 0.95, CONTACT_SHADOW_BASE_OPACITY);
+        shadowMesh.position.set(xOffset, SHADOW_Y, zOffset);
+        shadowMesh.scale.set(dieScale, 1, dieScale);
+        scene.add(shadowMesh);
+      }
 
       newInstances.push({
         id: die.id,
         type: die.type,
         value: die.value,
         mesh,
+        shadowMesh,
+        dieScale,
         normals,
         faceUps,
         targetQuat,
@@ -748,6 +950,16 @@ export const ThreeDiceStage: React.FC<ThreeDiceStageProps> = ({
         spinAxis: new THREE.Vector3(Math.random() - 0.5, 1, Math.random() - 0.5).normalize(),
         spinSpeed: 18 + Math.random() * 8,
       });
+    }
+
+    // Remove & dispose any discarded die instances (shared die geo/material remain cached)
+    prevById.forEach((inst, id) => {
+      if (keptIds.has(id)) return;
+      scene.remove(inst.mesh);
+      if (inst.shadowMesh) {
+        scene.remove(inst.shadowMesh);
+        disposeObject3D(inst.shadowMesh);
+      }
     });
 
     instancesRef.current = newInstances;
@@ -756,11 +968,14 @@ export const ThreeDiceStage: React.FC<ThreeDiceStageProps> = ({
   // Handle Roll Trigger
   useEffect(() => {
     if (isRolling) {
+      rollCompletionDispatchedRef.current = false;
       const now = performance.now();
-      instancesRef.current.forEach(inst => {
+      const instances = instancesRef.current;
+      for (let i = 0; i < instances.length; i++) {
+        const inst = instances[i];
         inst.isRolling = true;
         inst.rollStartTime = now;
-        inst.spinAxis = new THREE.Vector3(
+        inst.spinAxis.set(
           (Math.random() - 0.5) * 2,
           1 + Math.random(),
           (Math.random() - 0.5) * 2
@@ -771,77 +986,9 @@ export const ThreeDiceStage: React.FC<ThreeDiceStageProps> = ({
         if (inst.normals[faceIdx] && inst.faceUps[faceIdx]) {
           inst.targetQuat.copy(getUprightLandingQuaternion(inst.normals[faceIdx], inst.faceUps[faceIdx]));
         }
-      });
+      }
     }
   }, [isRolling, dice]);
-
-  // Render Loop (Snappy 950ms Procedural Hop & 3D Tumble onto Felt)
-  useEffect(() => {
-    const rollDuration = 950; // ms
-
-    const animate = (time: number) => {
-      animFrameRef.current = requestAnimationFrame(animate);
-
-      let anyStillRolling = false;
-
-      instancesRef.current.forEach(inst => {
-        if (inst.isRolling) {
-          const elapsed = time - inst.rollStartTime;
-          const progress = Math.min(1, elapsed / rollDuration);
-
-          // Parabolic Hop + Damped Table Bounces
-          let yOffset = 0;
-          if (progress < 0.45) {
-            const p = progress / 0.45;
-            yOffset = Math.sin(p * Math.PI) * 3.2;
-          } else if (progress < 0.75) {
-            const p = (progress - 0.45) / 0.3;
-            yOffset = Math.sin(p * Math.PI) * 1.1;
-          } else if (progress < 0.92) {
-            const p = (progress - 0.75) / 0.17;
-            yOffset = Math.sin(p * Math.PI) * 0.35;
-          }
-
-          inst.mesh.position.set(inst.targetPos.x, inst.targetPos.y + yOffset, inst.targetPos.z);
-
-          // 3D Tumbling Rotation
-          if (progress < 0.85) {
-            const deltaRot = new THREE.Quaternion().setFromAxisAngle(
-              inst.spinAxis,
-              (1 - progress * 0.6) * 0.28
-            );
-            inst.mesh.quaternion.multiply(deltaRot);
-          } else {
-            const snapProgress = (progress - 0.85) / 0.15;
-            const ease = 1 - Math.pow(1 - snapProgress, 3);
-            inst.mesh.quaternion.slerp(inst.targetQuat, ease);
-          }
-
-          if (progress < 1) {
-            anyStillRolling = true;
-          } else {
-            inst.isRolling = false;
-            inst.mesh.position.copy(inst.targetPos);
-            inst.mesh.quaternion.copy(inst.targetQuat);
-          }
-        }
-      });
-
-      if (!anyStillRolling && isRolling && onRollComplete) {
-        onRollComplete();
-      }
-
-      if (rendererRef.current && sceneRef.current && cameraRef.current) {
-        rendererRef.current.render(sceneRef.current, cameraRef.current);
-      }
-    };
-
-    animFrameRef.current = requestAnimationFrame(animate);
-
-    return () => {
-      if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
-    };
-  }, [isRolling, onRollComplete]);
 
   // Touch / Pointer Gesture Tracking for "Flick to Toss" vs Tap Die
   const pointerStartRef = useRef<{ x: number; y: number; time: number } | null>(null);

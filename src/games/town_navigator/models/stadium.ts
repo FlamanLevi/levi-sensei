@@ -61,6 +61,7 @@ function createScoreboardTexture(): THREE.CanvasTexture {
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
   texture.anisotropy = 8;
+  texture.userData.isSharedResource = true;
   cachedScoreboardTex = texture;
   return texture;
 }
@@ -93,6 +94,7 @@ function createEntranceBannerTexture(): THREE.CanvasTexture {
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
   texture.anisotropy = 8;
+  texture.userData.isSharedResource = true;
   cachedEntranceBannerTex = texture;
   return texture;
 }

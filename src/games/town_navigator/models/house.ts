@@ -416,6 +416,8 @@ function createRoofTileTexture(tileColorHex: number, accentColorHex: number): TH
   texture.wrapT = THREE.RepeatWrapping;
   texture.repeat.set(2, 3);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
+  texture.userData.isArchitecturalTex = true;
   tileTextureCache.set(cacheKey, texture);
   return texture;
 }

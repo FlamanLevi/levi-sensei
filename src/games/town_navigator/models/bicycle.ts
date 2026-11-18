@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { batchStaticMeshes } from '../staticBatcher';
 
 export interface BicycleMesh {
   group: THREE.Group;
@@ -16,28 +17,30 @@ export function buildBicycleMesh(colorHex: number = 0x0ea5e9): BicycleMesh {
   const group = new THREE.Group();
   group.name = 'Vehicle_Bicycle';
 
+  // Harmonized PBR roughness/metalness tiers so vertex-color batching collapses
+  // the 39 bicycle meshes into ~7-9 draw calls while keeping chrome, enamel, rubber, and lights distinct.
   const frameMat = new THREE.MeshStandardMaterial({
     color: colorHex,
-    roughness: 0.28,
+    roughness: 0.30,
     metalness: 0.35,
   });
   const chromeMat = new THREE.MeshStandardMaterial({
     color: 0xe2e8f0,
-    roughness: 0.18,
-    metalness: 0.88,
+    roughness: 0.20,
+    metalness: 0.85,
   });
-  const tireMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.85 });
-  const spokeMat = new THREE.MeshBasicMaterial({ color: 0x94a3b8 });
-  const saddleMat = new THREE.MeshStandardMaterial({ color: 0x451a03, roughness: 0.6 });
+  const tireMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.75, metalness: 0.0 });
+  const spokeMat = new THREE.MeshStandardMaterial({ color: 0x94a3b8, roughness: 0.20, metalness: 0.85 });
+  const saddleMat = new THREE.MeshStandardMaterial({ color: 0x451a03, roughness: 0.75, metalness: 0.0 });
   const basketMat = new THREE.MeshStandardMaterial({
     color: 0xcfd8dc,
-    roughness: 0.35,
-    metalness: 0.65,
+    roughness: 0.20,
+    metalness: 0.85,
   });
   const bellMat = new THREE.MeshStandardMaterial({
     color: 0xfbbf24,
-    roughness: 0.2,
-    metalness: 0.9,
+    roughness: 0.20,
+    metalness: 0.85,
   });
   const lampGlowMat = new THREE.MeshStandardMaterial({
     color: 0xfef08a,
@@ -50,12 +53,12 @@ export function buildBicycleMesh(colorHex: number = 0x0ea5e9): BicycleMesh {
     emissiveIntensity: 0.8,
   });
 
-  function buildWheel(): THREE.Group {
+  function buildWheel(name: string): THREE.Group {
     const wheel = new THREE.Group();
+    wheel.name = name;
 
     const tireGeom = new THREE.TorusGeometry(0.32, 0.045, 10, 24);
     const tire = new THREE.Mesh(tireGeom, tireMat);
-    tire.castShadow = true;
     wheel.add(tire);
 
     const rimGeom = new THREE.TorusGeometry(0.28, 0.02, 8, 24);
@@ -75,18 +78,21 @@ export function buildBicycleMesh(colorHex: number = 0x0ea5e9): BicycleMesh {
       wheel.add(spoke);
     }
 
+    // Batch wheel while detached at identity (0, 0, 0) BEFORE setting axle offset
+    batchStaticMeshes(wheel, [], { ignoreShadowFlags: true, bakeVertexColors: true });
     return wheel;
   }
 
-  const rearWheel = buildWheel();
+  const rearWheel = buildWheel('Bicycle_RearWheel');
   rearWheel.position.set(0, 0.32, -0.52);
   group.add(rearWheel);
 
-  const frontWheel = buildWheel();
+  const frontWheel = buildWheel('Bicycle_FrontWheel');
   frontWheel.position.set(0, 0.32, 0.52);
   group.add(frontWheel);
 
   const frameGroup = new THREE.Group();
+  frameGroup.name = 'Bicycle_Frame';
 
   // Bottom bracket / crankset & pedals
   const bottomBracketGeom = new THREE.CylinderGeometry(0.038, 0.038, 0.14, 12);
@@ -190,7 +196,6 @@ export function buildBicycleMesh(colorHex: number = 0x0ea5e9): BicycleMesh {
   const saddleGeom = new THREE.BoxGeometry(0.18, 0.07, 0.26);
   const saddle = new THREE.Mesh(saddleGeom, saddleMat);
   saddle.position.set(0, 0.72, -0.14);
-  saddle.castShadow = true;
   frameGroup.add(saddle);
 
   // Rear Luggage Carrier Rack (*Rear Kyaria*) & Red Tail Reflector
@@ -212,6 +217,8 @@ export function buildBicycleMesh(colorHex: number = 0x0ea5e9): BicycleMesh {
   frontFender.position.set(0, 0.32, 0.52);
   frameGroup.add(rearFender, frontFender);
 
+  // Batch rigid frame while detached at identity (0, 0, 0)
+  batchStaticMeshes(frameGroup, [], { ignoreShadowFlags: true, bakeVertexColors: true });
   group.add(frameGroup);
 
   const updateAnimation = (isMoving: boolean, delta: number, speed: number) => {

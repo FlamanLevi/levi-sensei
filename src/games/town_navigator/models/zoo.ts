@@ -36,6 +36,7 @@ function createZooEntranceBannerTexture(): THREE.CanvasTexture {
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
   texture.anisotropy = 8;
+  texture.userData.isSharedResource = true;
   cachedZooBannerTex = texture;
   return texture;
 }

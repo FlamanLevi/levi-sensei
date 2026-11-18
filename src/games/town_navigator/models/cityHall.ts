@@ -57,6 +57,7 @@ function createTowerClockTexture(): THREE.CanvasTexture {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
   cachedTowerClockTex = texture;
   return texture;
 }
@@ -101,6 +102,7 @@ function createCityHallSignTexture(): THREE.CanvasTexture {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
   cachedCityHallSignTex = texture;
   return texture;
 }
@@ -136,6 +138,7 @@ function createCivicNoticeTexture(): THREE.CanvasTexture {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
   cachedCivicNoticeTex = texture;
   return texture;
 }

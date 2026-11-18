@@ -14,9 +14,9 @@ import {
   injectWiiSatinRimShader,
   applyInstancedAtlasMaterial,
   getFaceAtlasTexture,
-  getFaceAtlasRect,
+  writeFaceAtlasRect,
   getZekkenBibAtlasTexture,
-  getZekkenAtlasRect,
+  writeZekkenAtlasRect,
   getBeanBagAtlasRect,
 } from './tamaireTextures';
 import { bakePartGeo, mergeBakedGeos } from './tamaireArenaBuilder';
@@ -41,6 +41,8 @@ export function createCalloutSpritePool(scene: THREE.Scene, maxSlots = 4) {
     const ctx = canvas.getContext('2d');
     const tex = new THREE.CanvasTexture(canvas);
     tex.colorSpace = THREE.SRGBColorSpace;
+    tex.generateMipmaps = false;
+    tex.minFilter = THREE.LinearFilter;
     const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: false });
     const sprite = new THREE.Sprite(mat);
     sprite.scale.set(1.65, 0.39, 1);
@@ -58,10 +60,23 @@ export function createCalloutSpritePool(scene: THREE.Scene, maxSlots = 4) {
     isGold = false,
     isMiss = false
   ) => {
-    const slot =
-      slots.find((s) => s.ownerId === ownerId) ||
-      slots.find((s) => !s.sprite.visible || s.timer <= 0) ||
-      slots.reduce((lowest, cur) => (cur.timer < lowest.timer ? cur : lowest), slots[0]);
+    let slot: CalloutSlot | null = null;
+    let freeSlot: CalloutSlot | null = null;
+    let lowestSlot = slots[0];
+    for (let i = 0; i < slots.length; i++) {
+      const s = slots[i];
+      if (s.ownerId === ownerId) {
+        slot = s;
+        break;
+      }
+      if (!freeSlot && (!s.sprite.visible || s.timer <= 0)) {
+        freeSlot = s;
+      }
+      if (s.timer < lowestSlot.timer) {
+        lowestSlot = s;
+      }
+    }
+    if (!slot) slot = freeSlot || lowestSlot;
 
     const shortName = nickname.length > 10 ? `${nickname.slice(0, 9)}…` : nickname;
     const key = `${shortName}|${team}|${isGold ? 1 : 0}|${isMiss ? 1 : 0}`;
@@ -357,9 +372,11 @@ export function createThrowerBatchPool(
   bagAtlasTex: THREE.Texture | null,
   enableShadows: boolean
 ) {
-  const MAX_STUDENTS = 40;
-  const MAX_TEAM = 40;
+  const MAX_TEAM = 20;
+  const MAX_STUDENTS = MAX_TEAM * 2;
   const whiteColor = new THREE.Color(0xffffff);
+  const redTeamColor = new THREE.Color(0xe11d48);
+  const whiteTeamColor = new THREE.Color(0x2563eb);
   const ownedGeos: THREE.BufferGeometry[] = [];
   const ownedMats: THREE.Material[] = [];
   const ownedInsts: THREE.InstancedMesh[] = [];
@@ -376,6 +393,37 @@ export function createThrowerBatchPool(
     return inst;
   };
 
+  // Unified team-tinted Wii satin rim material: aTeamMask=0 uses fixed vertex color, aTeamMask=1 uses instanceColor
+  const teamTintRimMat = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.48 });
+  teamTintRimMat.userData = { wiiRimInjected: true };
+  (teamTintRimMat as unknown as { customProgramCacheKey: () => string }).customProgramCacheKey = () =>
+    'wii_tamaire_team_tint_rim_0.30_0.12';
+  teamTintRimMat.onBeforeCompile = (shader) => {
+    shader.vertexShader = shader.vertexShader
+      .replace('#include <color_pars_vertex>', '#include <color_pars_vertex>\nattribute float aTeamMask;')
+      .replace(
+        '#include <color_vertex>',
+        `#include <color_vertex>
+#if defined( USE_COLOR ) && defined( USE_INSTANCING_COLOR )
+  vColor.rgb = mix( color.rgb, instanceColor.rgb, aTeamMask );
+#endif`
+      );
+    shader.fragmentShader = shader.fragmentShader.replace(
+      '#include <opaque_fragment>',
+      `
+      vec3 wiiViewDir = normalize( vViewPosition );
+      vec3 wiiNormal = normalize( vNormal );
+      float wiiRim = pow( 1.0 - max( dot( wiiNormal, wiiViewDir ), 0.0 ), 2.5 ) * 0.300;
+      float wiiHemiTop = clamp( wiiNormal.y * 0.5 + 0.5, 0.0, 1.0 ) * 0.120;
+      vec3 wiiRimTint = vec3( 1.0, 0.985, 0.93 );
+      outgoingLight += wiiRimTint * wiiRim + diffuseColor.rgb * wiiHemiTop;
+      #include <opaque_fragment>
+      `
+    );
+  };
+  teamTintRimMat.needsUpdate = true;
+  ownedMats.push(teamTintRimMat);
+
   // 1. Contact shadows
   const shadowGeo = new THREE.PlaneGeometry(0.92, 0.92);
   ownedGeos.push(shadowGeo);
@@ -389,44 +437,44 @@ export function createThrowerBatchPool(
   ownedMats.push(shadowMat);
   const shadowInst = registerInst(new THREE.InstancedMesh(shadowGeo, shadowMat, MAX_STUDENTS), MAX_STUDENTS);
 
-  // 2. Red & White Torso
-  const buildTorsoGeo = (teamColor: number) => {
-    const g = mergeBakedGeos([
-      bakePartGeo(new THREE.SphereGeometry(0.21, 12, 10), {
-        color: 0x1e293b,
-        pos: [0, 0.37, 0],
-        scale: [1.02, 0.62, 0.88],
-      }),
-      bakePartGeo(new THREE.CylinderGeometry(0.185, 0.215, 0.44, 16), {
-        color: 0xffffff,
-        pos: [0, 0.58, 0],
-        scale: [1.06, 1, 0.86],
-      }),
-      bakePartGeo(new THREE.SphereGeometry(0.088, 10, 8), { color: 0xffffff, pos: [-0.21, 0.74, 0] }),
-      bakePartGeo(new THREE.SphereGeometry(0.088, 10, 8), { color: 0xffffff, pos: [0.21, 0.74, 0] }),
-      bakePartGeo(new THREE.TorusGeometry(0.138, 0.03, 8, 18), {
-        color: teamColor,
-        pos: [0, 0.79, 0],
-        rot: [Math.PI / 2, 0, 0],
-      }),
-    ]);
-    ownedGeos.push(g);
-    return g;
-  };
-  const vertexRimMat = injectWiiSatinRimShader(
-    new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.48 })
+  // 2. Unified Torso (both Red & White teams via aTeamMask + instanceColor)
+  const torsoGeo = mergeBakedGeos([
+    bakePartGeo(new THREE.SphereGeometry(0.21, 12, 10), {
+      color: 0x1e293b,
+      teamMask: 0,
+      pos: [0, 0.37, 0],
+      scale: [1.02, 0.62, 0.88],
+    }),
+    bakePartGeo(new THREE.CylinderGeometry(0.185, 0.215, 0.44, 16), {
+      color: 0xffffff,
+      teamMask: 0,
+      pos: [0, 0.58, 0],
+      scale: [1.06, 1, 0.86],
+    }),
+    bakePartGeo(new THREE.SphereGeometry(0.088, 10, 8), {
+      color: 0xffffff,
+      teamMask: 0,
+      pos: [-0.21, 0.74, 0],
+    }),
+    bakePartGeo(new THREE.SphereGeometry(0.088, 10, 8), {
+      color: 0xffffff,
+      teamMask: 0,
+      pos: [0.21, 0.74, 0],
+    }),
+    bakePartGeo(new THREE.TorusGeometry(0.138, 0.03, 8, 18), {
+      color: 0xffffff,
+      teamMask: 1,
+      pos: [0, 0.79, 0],
+      rot: [Math.PI / 2, 0, 0],
+    }),
+  ]);
+  ownedGeos.push(torsoGeo);
+  const torsoInst = registerInst(
+    new THREE.InstancedMesh(torsoGeo, teamTintRimMat, MAX_STUDENTS),
+    MAX_STUDENTS,
+    true
   );
-  ownedMats.push(vertexRimMat);
-  const torsoRedInst = registerInst(
-    new THREE.InstancedMesh(buildTorsoGeo(0xe11d48), vertexRimMat, MAX_TEAM),
-    MAX_TEAM
-  );
-  torsoRedInst.castShadow = enableShadows;
-  const torsoWhiteInst = registerInst(
-    new THREE.InstancedMesh(buildTorsoGeo(0x2563eb), vertexRimMat, MAX_TEAM),
-    MAX_TEAM
-  );
-  torsoWhiteInst.castShadow = enableShadows;
+  torsoInst.castShadow = enableShadows;
 
   // 3. Zekken Bibs
   const bibTex = getZekkenBibAtlasTexture();
@@ -449,46 +497,44 @@ export function createThrowerBatchPool(
   ownedMats.push(bibMat);
   const bibInst = registerInst(new THREE.InstancedMesh(bibGeo, bibMat, MAX_STUDENTS), MAX_STUDENTS);
 
-  // 4. Red & White Legs
-  const buildLegGeo = (teamColor: number) => {
-    const g = mergeBakedGeos([
-      bakePartGeo(new THREE.CylinderGeometry(0.095, 0.086, 0.16, 12), {
-        color: 0x1e293b,
-        pos: [0, -0.06, 0],
-      }),
-      bakePartGeo(new THREE.CylinderGeometry(0.066, 0.058, 0.14, 10), {
-        color: 0xffffff,
-        pos: [0, -0.24, 0],
-      }),
-      bakePartGeo(new THREE.TorusGeometry(0.064, 0.01, 6, 14), {
-        color: teamColor,
-        pos: [0, -0.19, 0],
-        rot: [Math.PI / 2, 0, 0],
-      }),
-      bakePartGeo(new THREE.SphereGeometry(0.075, 10, 8), {
-        color: teamColor,
-        pos: [0, -0.32, 0.03],
-        scale: [0.95, 0.65, 1.45],
-      }),
-      bakePartGeo(new THREE.CylinderGeometry(0.072, 0.075, 0.032, 10), {
-        color: 0xf8fafc,
-        pos: [0, -0.35, 0.03],
-        scale: [0.95, 1, 1.45],
-      }),
-    ]);
-    ownedGeos.push(g);
-    return g;
-  };
-  const legRedInst = registerInst(
-    new THREE.InstancedMesh(buildLegGeo(0xe11d48), vertexRimMat, MAX_TEAM * 2),
-    MAX_TEAM * 2
+  // 4. Unified Legs (both Red & White teams via aTeamMask + instanceColor)
+  const legGeo = mergeBakedGeos([
+    bakePartGeo(new THREE.CylinderGeometry(0.095, 0.086, 0.16, 12), {
+      color: 0x1e293b,
+      teamMask: 0,
+      pos: [0, -0.06, 0],
+    }),
+    bakePartGeo(new THREE.CylinderGeometry(0.066, 0.058, 0.14, 10), {
+      color: 0xffffff,
+      teamMask: 0,
+      pos: [0, -0.24, 0],
+    }),
+    bakePartGeo(new THREE.TorusGeometry(0.064, 0.01, 6, 14), {
+      color: 0xffffff,
+      teamMask: 1,
+      pos: [0, -0.19, 0],
+      rot: [Math.PI / 2, 0, 0],
+    }),
+    bakePartGeo(new THREE.SphereGeometry(0.075, 10, 8), {
+      color: 0xffffff,
+      teamMask: 1,
+      pos: [0, -0.32, 0.03],
+      scale: [0.95, 0.65, 1.45],
+    }),
+    bakePartGeo(new THREE.CylinderGeometry(0.072, 0.075, 0.032, 10), {
+      color: 0xf8fafc,
+      teamMask: 0,
+      pos: [0, -0.35, 0.03],
+      scale: [0.95, 1, 1.45],
+    }),
+  ]);
+  ownedGeos.push(legGeo);
+  const legInst = registerInst(
+    new THREE.InstancedMesh(legGeo, teamTintRimMat, MAX_STUDENTS * 2),
+    MAX_STUDENTS * 2,
+    true
   );
-  legRedInst.castShadow = enableShadows;
-  const legWhiteInst = registerInst(
-    new THREE.InstancedMesh(buildLegGeo(0x2563eb), vertexRimMat, MAX_TEAM * 2),
-    MAX_TEAM * 2
-  );
-  legWhiteInst.castShadow = enableShadows;
+  legInst.castShadow = enableShadows;
 
   // 5. Shared Skin Spheres (knees + ears)
   const skinMat = injectWiiSatinRimShader(new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.42 }));
@@ -501,29 +547,25 @@ export function createThrowerBatchPool(
     true
   );
 
-  // 6. Arm Sleeves + Forearm/Hand Skin
-  const buildSleeveGeo = (teamColor: number) => {
-    const g = mergeBakedGeos([
-      bakePartGeo(new THREE.CylinderGeometry(0.074, 0.068, 0.15, 10), {
-        color: 0xffffff,
-        pos: [0, -0.05, 0],
-      }),
-      bakePartGeo(new THREE.TorusGeometry(0.068, 0.012, 6, 14), {
-        color: teamColor,
-        pos: [0, -0.12, 0],
-        rot: [Math.PI / 2, 0, 0],
-      }),
-    ]);
-    ownedGeos.push(g);
-    return g;
-  };
-  const sleeveRedInst = registerInst(
-    new THREE.InstancedMesh(buildSleeveGeo(0xe11d48), vertexRimMat, MAX_TEAM * 2),
-    MAX_TEAM * 2
-  );
-  const sleeveWhiteInst = registerInst(
-    new THREE.InstancedMesh(buildSleeveGeo(0x2563eb), vertexRimMat, MAX_TEAM * 2),
-    MAX_TEAM * 2
+  // 6. Unified Arm Sleeves + Forearm/Hand Skin
+  const sleeveGeo = mergeBakedGeos([
+    bakePartGeo(new THREE.CylinderGeometry(0.074, 0.068, 0.15, 10), {
+      color: 0xffffff,
+      teamMask: 0,
+      pos: [0, -0.05, 0],
+    }),
+    bakePartGeo(new THREE.TorusGeometry(0.068, 0.012, 6, 14), {
+      color: 0xffffff,
+      teamMask: 1,
+      pos: [0, -0.12, 0],
+      rot: [Math.PI / 2, 0, 0],
+    }),
+  ]);
+  ownedGeos.push(sleeveGeo);
+  const sleeveInst = registerInst(
+    new THREE.InstancedMesh(sleeveGeo, teamTintRimMat, MAX_STUDENTS * 2),
+    MAX_STUDENTS * 2,
+    true
   );
 
   const armSkinGeo = mergeBakedGeos([
@@ -651,30 +693,46 @@ export function createThrowerBatchPool(
 
   const redBagRect = getBeanBagAtlasRect('red');
   const whiteBagRect = getBeanBagAtlasRect('white');
-  const writeRect = (arr: Float32Array, idx: number, r: [number, number, number, number]) => {
+  const writeRectIfChanged = (
+    arr: Float32Array,
+    idx: number,
+    r: [number, number, number, number]
+  ): boolean => {
     const o = idx * 4;
+    if (
+      arr[o] === r[0] &&
+      arr[o + 1] === r[1] &&
+      arr[o + 2] === r[2] &&
+      arr[o + 3] === r[3]
+    ) {
+      return false;
+    }
     arr[o] = r[0];
     arr[o + 1] = r[1];
     arr[o + 2] = r[2];
     arr[o + 3] = r[3];
+    return true;
   };
 
   let appearanceDirty = true;
+  let prevFirstPersonHero: ThrowerAvatarRig | undefined = undefined;
+  let prevHeldBagCount = -1;
   const markDirty = () => {
     appearanceDirty = true;
   };
 
   const sync = (rigs: ThrowerAvatarRig[], firstPersonHero: ThrowerAvatarRig | undefined) => {
     const count = Math.min(MAX_STUDENTS, rigs.length);
-    let redBodyC = 0;
-    let whiteBodyC = 0;
-    let redLegC = 0;
-    let whiteLegC = 0;
+    const firstPersonChanged = firstPersonHero !== prevFirstPersonHero;
+    const headOrColorDirty = appearanceDirty || firstPersonChanged;
+    prevFirstPersonHero = firstPersonHero;
+
+    let legC = 0;
     let skinSphereC = 0;
     let armSkinC = 0;
-    let redSleeveC = 0;
-    let whiteSleeveC = 0;
+    let sleeveC = 0;
     let heldBagC = 0;
+    let heldBagAtlasDirty = false;
     let headC = 0;
     let hairBaseC = 0;
     let hairTuftC = 0;
@@ -686,33 +744,37 @@ export function createThrowerBatchPool(
       const rig = rigs[i];
       rig.root.updateMatrixWorld(true);
       const isFpsHero = firstPersonHero === rig;
+      const teamCol = rig.team === 'red' ? redTeamColor : whiteTeamColor;
 
       shadowInst.setMatrixAt(i, rig.shadowAnchor.matrixWorld);
 
-      if (rig.team === 'red') {
-        torsoRedInst.setMatrixAt(redBodyC++, rig.bodyPivot.matrixWorld);
-        legRedInst.setMatrixAt(redLegC++, rig.legL.matrixWorld);
-        legRedInst.setMatrixAt(redLegC++, rig.legR.matrixWorld);
-        sleeveRedInst.setMatrixAt(redSleeveC++, rig.armL.matrixWorld);
-        sleeveRedInst.setMatrixAt(redSleeveC++, rig.armR.matrixWorld);
-      } else {
-        torsoWhiteInst.setMatrixAt(whiteBodyC++, rig.bodyPivot.matrixWorld);
-        legWhiteInst.setMatrixAt(whiteLegC++, rig.legL.matrixWorld);
-        legWhiteInst.setMatrixAt(whiteLegC++, rig.legR.matrixWorld);
-        sleeveWhiteInst.setMatrixAt(whiteSleeveC++, rig.armL.matrixWorld);
-        sleeveWhiteInst.setMatrixAt(whiteSleeveC++, rig.armR.matrixWorld);
-      }
+      torsoInst.setMatrixAt(i, rig.bodyPivot.matrixWorld);
+      if (appearanceDirty) torsoInst.setColorAt(i, teamCol);
+
+      legInst.setMatrixAt(legC, rig.legL.matrixWorld);
+      if (appearanceDirty) legInst.setColorAt(legC, teamCol);
+      legC++;
+      legInst.setMatrixAt(legC, rig.legR.matrixWorld);
+      if (appearanceDirty) legInst.setColorAt(legC, teamCol);
+      legC++;
+
+      sleeveInst.setMatrixAt(sleeveC, rig.armL.matrixWorld);
+      if (appearanceDirty) sleeveInst.setColorAt(sleeveC, teamCol);
+      sleeveC++;
+      sleeveInst.setMatrixAt(sleeveC, rig.armR.matrixWorld);
+      if (appearanceDirty) sleeveInst.setColorAt(sleeveC, teamCol);
+      sleeveC++;
 
       bibInst.setMatrixAt(i, rig.bodyPivot.matrixWorld);
       if (appearanceDirty) {
-        writeRect(bibAtlasData, i, getZekkenAtlasRect(rig.team, rig.bibIndex));
+        writeZekkenAtlasRect(bibAtlasData, i * 4, rig.team, rig.bibIndex);
       }
 
       skinSphereInst.setMatrixAt(skinSphereC, rig.kneeLAnchor.matrixWorld);
-      skinSphereInst.setColorAt(skinSphereC, rig.skinColor);
+      if (headOrColorDirty) skinSphereInst.setColorAt(skinSphereC, rig.skinColor);
       skinSphereC++;
       skinSphereInst.setMatrixAt(skinSphereC, rig.kneeRAnchor.matrixWorld);
-      skinSphereInst.setColorAt(skinSphereC, rig.skinColor);
+      if (headOrColorDirty) skinSphereInst.setColorAt(skinSphereC, rig.skinColor);
       skinSphereC++;
 
       armSkinInst.setMatrixAt(armSkinC, rig.armL.matrixWorld);
@@ -724,44 +786,48 @@ export function createThrowerBatchPool(
 
       if (rig.heldBagVisible) {
         heldBagInst.setMatrixAt(heldBagC, rig.heldBagAnchor.matrixWorld);
-        writeRect(heldBagAtlasData, heldBagC, rig.team === 'red' ? redBagRect : whiteBagRect);
+        if (writeRectIfChanged(heldBagAtlasData, heldBagC, rig.team === 'red' ? redBagRect : whiteBagRect)) {
+          heldBagAtlasDirty = true;
+        }
         heldBagC++;
       }
 
       if (!isFpsHero) {
         headInst.setMatrixAt(headC, rig.headGroup.matrixWorld);
-        writeRect(headAtlasData, headC, getFaceAtlasRect(rig.skinIndex, rig.exprIndex));
+        if (headOrColorDirty) {
+          writeFaceAtlasRect(headAtlasData, headC * 4, rig.skinIndex, rig.exprIndex);
+        }
         headC++;
 
         skinSphereInst.setMatrixAt(skinSphereC, rig.earLAnchor.matrixWorld);
-        skinSphereInst.setColorAt(skinSphereC, rig.skinColor);
+        if (headOrColorDirty) skinSphereInst.setColorAt(skinSphereC, rig.skinColor);
         skinSphereC++;
         skinSphereInst.setMatrixAt(skinSphereC, rig.earRAnchor.matrixWorld);
-        skinSphereInst.setColorAt(skinSphereC, rig.skinColor);
+        if (headOrColorDirty) skinSphereInst.setColorAt(skinSphereC, rig.skinColor);
         skinSphereC++;
 
         hairBaseInst.setMatrixAt(hairBaseC, rig.headGroup.matrixWorld);
-        hairBaseInst.setColorAt(hairBaseC, rig.hairColor);
+        if (headOrColorDirty) hairBaseInst.setColorAt(hairBaseC, rig.hairColor);
         hairBaseC++;
 
         for (let t = 0; t < rig.hairTuftAnchors.length; t++) {
           hairTuftInst.setMatrixAt(hairTuftC, rig.hairTuftAnchors[t].matrixWorld);
-          hairTuftInst.setColorAt(hairTuftC, rig.hairColor);
+          if (headOrColorDirty) hairTuftInst.setColorAt(hairTuftC, rig.hairColor);
           hairTuftC++;
         }
         for (let t = 0; t < rig.hairTieAnchors.length; t++) {
           hairTieInst.setMatrixAt(hairTieC, rig.hairTieAnchors[t].matrixWorld);
-          hairTieInst.setColorAt(hairTieC, rig.hairTieColor);
+          if (headOrColorDirty) hairTieInst.setColorAt(hairTieC, rig.hairTieColor);
           hairTieC++;
         }
 
         if (rig.usesCap) {
           capInst.setMatrixAt(capC, rig.headGroup.matrixWorld);
-          capInst.setColorAt(capC, rig.capColor);
+          if (headOrColorDirty) capInst.setColorAt(capC, rig.capColor);
           capC++;
         } else {
           hachimakiInst.setMatrixAt(hachiC, rig.headGroup.matrixWorld);
-          hachimakiInst.setColorAt(hachiC, rig.capColor);
+          if (headOrColorDirty) hachimakiInst.setColorAt(hachiC, rig.capColor);
           hachiC++;
         }
       }
@@ -770,28 +836,25 @@ export function createThrowerBatchPool(
     shadowInst.count = count;
     shadowInst.instanceMatrix.needsUpdate = true;
 
-    torsoRedInst.count = redBodyC;
-    torsoRedInst.instanceMatrix.needsUpdate = true;
-    torsoWhiteInst.count = whiteBodyC;
-    torsoWhiteInst.instanceMatrix.needsUpdate = true;
+    torsoInst.count = count;
+    torsoInst.instanceMatrix.needsUpdate = true;
+    if (appearanceDirty && torsoInst.instanceColor) torsoInst.instanceColor.needsUpdate = true;
 
     bibInst.count = count;
     bibInst.instanceMatrix.needsUpdate = true;
     if (appearanceDirty) bibAtlasAttr.needsUpdate = true;
 
-    legRedInst.count = redLegC;
-    legRedInst.instanceMatrix.needsUpdate = true;
-    legWhiteInst.count = whiteLegC;
-    legWhiteInst.instanceMatrix.needsUpdate = true;
+    legInst.count = legC;
+    legInst.instanceMatrix.needsUpdate = true;
+    if (appearanceDirty && legInst.instanceColor) legInst.instanceColor.needsUpdate = true;
 
     skinSphereInst.count = skinSphereC;
     skinSphereInst.instanceMatrix.needsUpdate = true;
-    if (skinSphereInst.instanceColor) skinSphereInst.instanceColor.needsUpdate = true;
+    if (headOrColorDirty && skinSphereInst.instanceColor) skinSphereInst.instanceColor.needsUpdate = true;
 
-    sleeveRedInst.count = redSleeveC;
-    sleeveRedInst.instanceMatrix.needsUpdate = true;
-    sleeveWhiteInst.count = whiteSleeveC;
-    sleeveWhiteInst.instanceMatrix.needsUpdate = true;
+    sleeveInst.count = sleeveC;
+    sleeveInst.instanceMatrix.needsUpdate = true;
+    if (appearanceDirty && sleeveInst.instanceColor) sleeveInst.instanceColor.needsUpdate = true;
 
     armSkinInst.count = armSkinC;
     armSkinInst.instanceMatrix.needsUpdate = true;
@@ -799,36 +862,41 @@ export function createThrowerBatchPool(
 
     heldBagInst.count = heldBagC;
     heldBagInst.visible = heldBagC > 0;
-    heldBagInst.instanceMatrix.needsUpdate = true;
-    heldBagAtlasAttr.needsUpdate = true;
+    if (heldBagC > 0) {
+      heldBagInst.instanceMatrix.needsUpdate = true;
+    }
+    if (heldBagAtlasDirty || heldBagC !== prevHeldBagCount) {
+      prevHeldBagCount = heldBagC;
+      heldBagAtlasAttr.needsUpdate = true;
+    }
 
     headInst.count = headC;
     headInst.instanceMatrix.needsUpdate = true;
-    headAtlasAttr.needsUpdate = true;
+    if (headOrColorDirty) headAtlasAttr.needsUpdate = true;
 
     hairBaseInst.count = hairBaseC;
     hairBaseInst.instanceMatrix.needsUpdate = true;
-    if (hairBaseInst.instanceColor) hairBaseInst.instanceColor.needsUpdate = true;
+    if (headOrColorDirty && hairBaseInst.instanceColor) hairBaseInst.instanceColor.needsUpdate = true;
 
     hairTuftInst.count = hairTuftC;
     hairTuftInst.visible = hairTuftC > 0;
-    hairTuftInst.instanceMatrix.needsUpdate = true;
-    if (hairTuftInst.instanceColor) hairTuftInst.instanceColor.needsUpdate = true;
+    if (hairTuftC > 0) hairTuftInst.instanceMatrix.needsUpdate = true;
+    if (headOrColorDirty && hairTuftInst.instanceColor) hairTuftInst.instanceColor.needsUpdate = true;
 
     hairTieInst.count = hairTieC;
     hairTieInst.visible = hairTieC > 0;
-    hairTieInst.instanceMatrix.needsUpdate = true;
-    if (hairTieInst.instanceColor) hairTieInst.instanceColor.needsUpdate = true;
+    if (hairTieC > 0) hairTieInst.instanceMatrix.needsUpdate = true;
+    if (headOrColorDirty && hairTieInst.instanceColor) hairTieInst.instanceColor.needsUpdate = true;
 
     capInst.count = capC;
     capInst.visible = capC > 0;
-    capInst.instanceMatrix.needsUpdate = true;
-    if (capInst.instanceColor) capInst.instanceColor.needsUpdate = true;
+    if (capC > 0) capInst.instanceMatrix.needsUpdate = true;
+    if (headOrColorDirty && capInst.instanceColor) capInst.instanceColor.needsUpdate = true;
 
     hachimakiInst.count = hachiC;
     hachimakiInst.visible = hachiC > 0;
-    hachimakiInst.instanceMatrix.needsUpdate = true;
-    if (hachimakiInst.instanceColor) hachimakiInst.instanceColor.needsUpdate = true;
+    if (hachiC > 0) hachimakiInst.instanceMatrix.needsUpdate = true;
+    if (headOrColorDirty && hachimakiInst.instanceColor) hachimakiInst.instanceColor.needsUpdate = true;
 
     appearanceDirty = false;
   };

@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { getBrickTileTexture, getArchitecturalBumpMap } from './wallTextures';
+import { batchStaticMeshes } from '../staticBatcher';
 
 export interface AmusementParkOptions {
   includeRoad?: boolean;
@@ -43,7 +44,8 @@ function createAmusementParkBannerTexture(): THREE.CanvasTexture {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
-  texture.anisotropy = 8;
+  texture.anisotropy = 4;
+  texture.userData.isSharedResource = true;
   cachedParkBannerTex = texture;
   return texture;
 }
@@ -204,15 +206,14 @@ export function buildAmusementParkMesh(options: AmusementParkOptions = {}): THRE
   });
 
   // Central Rotating Rotor Group (Name preserved for 60 FPS animation!)
+  // Kept detached at (0, 0, 0) while batching so local vertices are not offset before positioning.
   const wheelRotorGroup = new THREE.Group();
   wheelRotorGroup.name = 'AmusementPark_WheelRotor';
-  wheelRotorGroup.position.set(0, axleY, 0);
 
   // Central Hub Axle & Glowing Star Medallions
   const hubGeo = new THREE.CylinderGeometry(0.68, 0.68, 3.4, 16);
   hubGeo.rotateX(Math.PI / 2);
   const hub = new THREE.Mesh(hubGeo, goldStarMat);
-  hub.castShadow = true;
   wheelRotorGroup.add(hub);
 
   const hubGlowRing = new THREE.Mesh(new THREE.CylinderGeometry(0.98, 0.98, 3.55, 16), neonGoldGlowMat);
@@ -224,7 +225,6 @@ export function buildAmusementParkMesh(options: AmusementParkOptions = {}): THRE
     const rimGeo = new THREE.TorusGeometry(wheelRadius, 0.13, 10, 36);
     const rim = new THREE.Mesh(rimGeo, wheelRimMat);
     rim.position.set(0, 0, rz);
-    rim.castShadow = true;
     wheelRotorGroup.add(rim);
 
     // Neon Pink Illuminated Outer Ring
@@ -257,6 +257,13 @@ export function buildAmusementParkMesh(options: AmusementParkOptions = {}): THRE
     0x8b5cf6, // Violet
     0xec4899, // Pink
   ];
+  // Opaque glossy sky-tinted glazing harmonized with wheelRimMat so each Gondola_i batches into 1 mesh
+  const gondolaGlassMat = new THREE.MeshStandardMaterial({
+    color: 0xbae6fd,
+    roughness: 0.25,
+    metalness: 0.2,
+  });
+  const gondolaNames: string[] = [];
 
   for (let i = 0; i < 8; i++) {
     const angle = (i * Math.PI * 2) / 8;
@@ -278,24 +285,24 @@ export function buildAmusementParkMesh(options: AmusementParkOptions = {}): THRE
     wheelRotorGroup.add(crossBar);
 
     // Enclosed Glazed Gondola Cabin (Counter-rotates by name Gondola_0..7!)
+    const gondolaName = `Gondola_${i}`;
+    gondolaNames.push(gondolaName);
     const gondolaGroup = new THREE.Group();
-    gondolaGroup.name = `Gondola_${i}`;
-    gondolaGroup.position.set(gx, gy - 0.55, 0);
+    gondolaGroup.name = gondolaName;
 
     const hanger = new THREE.Mesh(new THREE.CylinderGeometry(0.032, 0.032, 0.55, 6), wheelRimMat);
     hanger.position.set(0, 0.45, 0);
     gondolaGroup.add(hanger);
 
-    const cabinMat = new THREE.MeshStandardMaterial({ color: gondolaColors[i], roughness: 0.3, metalness: 0.15 });
+    const cabinMat = new THREE.MeshStandardMaterial({ color: gondolaColors[i], roughness: 0.25, metalness: 0.2 });
     const cabinLower = new THREE.Mesh(new THREE.BoxGeometry(1.02, 0.54, 1.26), cabinMat);
     cabinLower.position.set(0, -0.22, 0);
-    cabinLower.castShadow = true;
 
     const cabinStripe = new THREE.Mesh(new THREE.BoxGeometry(1.04, 0.08, 1.28), wheelRimMat);
     cabinStripe.position.set(0, -0.02, 0);
 
     // Panoramic Wrap-Around Glass Windows on Gondola
-    const cabinGlass = new THREE.Mesh(new THREE.BoxGeometry(0.94, 0.48, 1.18), glassMat);
+    const cabinGlass = new THREE.Mesh(new THREE.BoxGeometry(0.94, 0.48, 1.18), gondolaGlassMat);
     cabinGlass.position.set(0, 0.22, 0);
 
     const capGeo = new THREE.CylinderGeometry(0.52, 0.52, 1.28, 12, 1, false, 0, Math.PI);
@@ -304,9 +311,15 @@ export function buildAmusementParkMesh(options: AmusementParkOptions = {}): THRE
     cap.position.set(0, 0.44, 0);
 
     gondolaGroup.add(cabinLower, cabinStripe, cabinGlass, cap);
+    // Batch gondola while detached at identity (0, 0, 0) BEFORE placing on the wheel rim
+    batchStaticMeshes(gondolaGroup, [], { ignoreShadowFlags: true, bakeVertexColors: true });
+    gondolaGroup.position.set(gx, gy - 0.55, 0);
     wheelRotorGroup.add(gondolaGroup);
   }
 
+  // Batch rigid Ferris wheel frame while detached at identity (0, 0, 0), preserving Gondola_0..7
+  batchStaticMeshes(wheelRotorGroup, gondolaNames, { ignoreShadowFlags: true, bakeVertexColors: true });
+  wheelRotorGroup.position.set(0, axleY, 0);
   wheelGroup.add(wheelRotorGroup);
   park.add(wheelGroup);
 
@@ -510,14 +523,19 @@ export function buildAmusementParkMesh(options: AmusementParkOptions = {}): THRE
   carouselGroup.position.set(-3.4, 0.18, 3.6);
 
   // Carousel Rotating Rotor (Name preserved for 60 FPS animation!)
+  // Kept detached at (0, 0, 0) while batching, then attached to carouselGroup.
   const carouselRotor = new THREE.Group();
   carouselRotor.name = 'AmusementPark_CarouselRotor';
+
+  const carouselCanopyMat = new THREE.MeshStandardMaterial({ color: 0xf472b6, roughness: 0.3, metalness: 0.15 });
+  const carouselCenterMat = new THREE.MeshStandardMaterial({ color: 0x9333ea, roughness: 0.3, metalness: 0.15 });
+  const carouselSaddleMat = new THREE.MeshStandardMaterial({ color: 0xef4444, roughness: 0.3, metalness: 0.15 });
 
   const cDeck = new THREE.Mesh(new THREE.CylinderGeometry(1.8, 1.95, 0.26, 24), goldStarMat);
   cDeck.position.y = 0.13;
   carouselRotor.add(cDeck);
 
-  const cRoof = new THREE.Mesh(new THREE.ConeGeometry(1.95, 1.3, 18), castlePinkMat);
+  const cRoof = new THREE.Mesh(new THREE.ConeGeometry(1.95, 1.3, 18), carouselCanopyMat);
   cRoof.position.y = 2.48;
   const cLightRim = new THREE.Mesh(new THREE.CylinderGeometry(1.96, 1.96, 0.16, 18), neonGoldGlowMat);
   cLightRim.position.y = 1.86;
@@ -527,7 +545,7 @@ export function buildAmusementParkMesh(options: AmusementParkOptions = {}): THRE
   cStar.position.y = 3.22;
   carouselRotor.add(cStar);
 
-  const cCenter = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.42, 2.2, 14), castlePurpleMat);
+  const cCenter = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.42, 2.2, 14), carouselCenterMat);
   cCenter.position.y = 1.1;
   carouselRotor.add(cCenter);
 
@@ -545,20 +563,21 @@ export function buildAmusementParkMesh(options: AmusementParkOptions = {}): THRE
     horse.position.set(hx, 0.72 + (h % 2) * 0.22, hz);
     horse.rotation.y = hAngle + Math.PI / 2;
 
-    const hMat = new THREE.MeshStandardMaterial({ color: horseColors[h], roughness: 0.3 });
+    const hMat = new THREE.MeshStandardMaterial({ color: horseColors[h], roughness: 0.3, metalness: 0.15 });
     const hBody = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.26, 0.54), hMat);
     const hNeck = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.28, 0.16), hMat);
     hNeck.position.set(0, 0.20, 0.22);
     hNeck.rotation.x = 0.35;
     const hHead = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.14, 0.24), hMat);
     hHead.position.set(0, 0.32, 0.32);
-    const saddle = new THREE.Mesh(new THREE.BoxGeometry(0.25, 0.09, 0.24), coasterRailMat);
+    const saddle = new THREE.Mesh(new THREE.BoxGeometry(0.25, 0.09, 0.24), carouselSaddleMat);
     saddle.position.set(0, 0.14, 0);
 
     horse.add(hBody, hNeck, hHead, saddle);
     carouselRotor.add(pole, horse);
   }
 
+  batchStaticMeshes(carouselRotor, [], { ignoreShadowFlags: true, bakeVertexColors: true });
   carouselGroup.add(carouselRotor);
   park.add(carouselGroup);
   park.add(gateGroup);

@@ -67,6 +67,7 @@ function createBusSignTexture(): THREE.CanvasTexture {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
   cachedBusSignTex = texture;
   return texture;
 }
@@ -123,6 +124,7 @@ function createTimetableTexture(): THREE.CanvasTexture {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
   cachedTimetableTex = texture;
   return texture;
 }
@@ -182,6 +184,7 @@ function createRouteMapTexture(): THREE.CanvasTexture {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
   cachedRouteMapTex = texture;
   return texture;
 }
@@ -213,6 +216,7 @@ function createLedArrivalTexture(): THREE.CanvasTexture {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
   cachedLedArrivalTex = texture;
   return texture;
 }
@@ -295,6 +299,7 @@ function createVendingMachineTexture(): THREE.CanvasTexture {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
   cachedVendingTex = texture;
   return texture;
 }
@@ -347,6 +352,7 @@ function createRecycleLabelTexture(): THREE.CanvasTexture {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
   cachedRecycleTex = texture;
   return texture;
 }

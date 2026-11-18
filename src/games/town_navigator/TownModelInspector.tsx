@@ -1,8 +1,13 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
-import { detectClassroomGpuProfile } from '@/utils/classroom3d';
+import {
+  createClassroomRenderer,
+  createRoomEnvironmentPMREM,
+  disposeObject3D,
+  ClassroomGpuProfile,
+} from '@/utils/classroom3d';
+import { batchStaticMeshes } from './staticBatcher';
 import { townAudio } from './townAudio';
 
 // --- Tier 1 (6m × 6m × 6m) Model Builders ---
@@ -1239,15 +1244,10 @@ const AMBIENT_SOUND_LABELS: Partial<Record<ActiveModel, string>> = {
 };
 
 /**
- * Safely disposes geometries on removed preview groups so switching tabs never leaks GPU buffers.
+ * Safely disposes geometries, non-shared materials, and textures on removed preview groups so switching tabs never leaks GPU buffers.
  */
 function disposeModelGroup(group: THREE.Group) {
-  group.traverse((obj) => {
-    const mesh = obj as THREE.Mesh;
-    if (mesh.isMesh && mesh.geometry) {
-      mesh.geometry.dispose();
-    }
-  });
+  disposeObject3D(group);
 }
 
 /**
@@ -1335,8 +1335,15 @@ export const TownModelInspector: React.FC<TownModelInspectorProps> = ({ onExit }
   const sceneRef = useRef<THREE.Scene | null>(null);
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
+  const gpuProfileRef = useRef<ClassroomGpuProfile | null>(null);
   const controlsRef = useRef<OrbitControls | null>(null);
   const modelGroupRef = useRef<THREE.Group | null>(null);
+
+  // Cached kinetic props (resolved once on model swap, zero getObjectByName in RAF)
+  const wheelRotorRef = useRef<THREE.Object3D | null>(null);
+  const gondolasRef = useRef<THREE.Object3D[]>([]);
+  const carouselRotorRef = useRef<THREE.Object3D | null>(null);
+  const mantaRayRef = useRef<THREE.Object3D | null>(null);
 
   // Lighting refs
   const sunLightRef = useRef<THREE.DirectionalLight | null>(null);
@@ -1761,8 +1768,17 @@ export const TownModelInspector: React.FC<TownModelInspectorProps> = ({ onExit }
       weather
     );
 
-    scene.background = new THREE.Color(atmos.skyColor);
-    scene.fog = new THREE.FogExp2(atmos.skyColor, atmos.fogDensity);
+    if (scene.background instanceof THREE.Color) {
+      scene.background.setHex(atmos.skyColor);
+    } else {
+      scene.background = new THREE.Color(atmos.skyColor);
+    }
+    if (scene.fog instanceof THREE.FogExp2) {
+      scene.fog.color.setHex(atmos.skyColor);
+      scene.fog.density = atmos.fogDensity;
+    } else {
+      scene.fog = new THREE.FogExp2(atmos.skyColor, atmos.fogDensity);
+    }
 
     hemi.color.setHex(atmos.ambientColor);
     hemi.groundColor.setHex(atmos.groundColor);
@@ -1774,6 +1790,7 @@ export const TownModelInspector: React.FC<TownModelInspectorProps> = ({ onExit }
 
     if (nightLight) {
       nightLight.intensity = atmos.playerLampIntensity;
+      nightLight.visible = atmos.playerLampIntensity > 0;
       if (activeModel === 'POLICE_BOX' && lightingMode === 'MIDNIGHT') {
         nightLight.position.set(-0.5, 2.8, 2.0);
         nightLight.color.setHex(0xff4444);
@@ -1810,6 +1827,10 @@ export const TownModelInspector: React.FC<TownModelInspectorProps> = ({ onExit }
     if (modelGroupRef.current) {
       scene.remove(modelGroupRef.current);
       disposeModelGroup(modelGroupRef.current);
+      wheelRotorRef.current = null;
+      gondolasRef.current = [];
+      carouselRotorRef.current = null;
+      mantaRayRef.current = null;
     }
 
     let newModel: THREE.Group;
@@ -2117,7 +2138,33 @@ export const TownModelInspector: React.FC<TownModelInspectorProps> = ({ onExit }
       newModel = lotGroup;
     }
 
-    enhanceBuildingGroup(newModel);
+    const activeGpu = gpuProfileRef.current;
+    enhanceBuildingGroup(newModel, { lowPower: activeGpu?.isLowPower });
+
+    // Batch static geometry & atlas single-use signs while preserving kinetic subtrees
+    batchStaticMeshes(
+      newModel,
+      ['AmusementPark_WheelRotor', 'AmusementPark_CarouselRotor', 'MantaRay'],
+      {
+        ignoreShadowFlags: !(activeGpu?.enableDynamicShadows ?? false),
+        bakeVertexColors: true,
+        atlasUniqueTextMaps: true,
+      }
+    );
+
+    // Cache kinetic props once per model swap (0 getObjectByName in 60Hz RAF loop)
+    const wheelRotor = newModel.getObjectByName('AmusementPark_WheelRotor') ?? null;
+    wheelRotorRef.current = wheelRotor;
+    const gondolas: THREE.Object3D[] = [];
+    if (wheelRotor) {
+      for (let i = 0; i < 8; i++) {
+        const g = wheelRotor.getObjectByName(`Gondola_${i}`);
+        if (g) gondolas.push(g);
+      }
+    }
+    gondolasRef.current = gondolas;
+    carouselRotorRef.current = newModel.getObjectByName('AmusementPark_CarouselRotor') ?? null;
+    mantaRayRef.current = newModel.getObjectByName('MantaRay') ?? null;
 
     if (showWireframe) {
       newModel.traverse((child) => {
@@ -2151,27 +2198,31 @@ export const TownModelInspector: React.FC<TownModelInspectorProps> = ({ onExit }
     const container = containerRef.current;
     if (!container) return;
 
-    const width = container.clientWidth || window.innerWidth;
-    const height = container.clientHeight || window.innerHeight;
-
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0xbae6fd);
     sceneRef.current = scene;
 
-    const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 260);
-    camera.position.set(0, 14.0, 56.0);
+    container.innerHTML = '';
+    const {
+      renderer,
+      camera,
+      gpuProfile: gpu,
+      trackFrameRate,
+      cleanup: cleanupClassroomRenderer,
+    } = createClassroomRenderer(container, {
+      fov: 40,
+      near: 0.1,
+      far: 260,
+      alpha: false,
+      cameraPosition: [0, 14.0, 56.0],
+      toneMapping: THREE.ACESFilmicToneMapping,
+      toneMappingExposure: 1.05,
+      enableDrs: true,
+    });
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
     cameraRef.current = camera;
-
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
-    const gpu = detectClassroomGpuProfile(renderer.getContext());
-    renderer.setSize(width, height);
-    renderer.setPixelRatio(gpu.targetPixelRatio);
-    renderer.shadowMap.enabled = gpu.enableDynamicShadows;
-    renderer.shadowMap.type = THREE.PCFShadowMap;
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.05;
     rendererRef.current = renderer;
-    container.appendChild(renderer.domElement);
+    gpuProfileRef.current = gpu;
 
     // 1. 360° Atmospheric Skybox Dome
     const skybox = buildAtmosphericSkybox('NOON', 320);
@@ -2190,11 +2241,9 @@ export const TownModelInspector: React.FC<TownModelInspectorProps> = ({ onExit }
     perimeterSceneryRef.current = perimeterScenery;
     scene.add(perimeterScenery);
 
-    // Studio Environment Reflection (RoomEnvironment)
-    const pmremGenerator = new THREE.PMREMGenerator(renderer);
-    const envTex = pmremGenerator.fromScene(new RoomEnvironment(), 0.04).texture;
-    scene.environment = envTex;
-    pmremGenerator.dispose();
+    // Studio Environment Reflection (RoomEnvironment via classroom3d helper)
+    const envHandle = createRoomEnvironmentPMREM(renderer, 0.04);
+    scene.environment = envHandle.texture;
 
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
@@ -2230,6 +2279,7 @@ export const TownModelInspector: React.FC<TownModelInspectorProps> = ({ onExit }
 
     const nightPointLight = new THREE.PointLight(0xfef08a, 0, 45, 2);
     nightPointLight.position.set(0, 5.0, 4.0);
+    nightPointLight.visible = false;
     scene.add(nightPointLight);
     nightPointLightRef.current = nightPointLight;
 
@@ -2241,49 +2291,38 @@ export const TownModelInspector: React.FC<TownModelInspectorProps> = ({ onExit }
 
     setIsSceneReady(true);
 
-    const handleResize = () => {
-      if (!container || !renderer || !camera) return;
-      const w = container.clientWidth;
-      const h = container.clientHeight;
-      camera.aspect = w / h;
-      camera.updateProjectionMatrix();
-      renderer.setSize(w, h);
-    };
-    window.addEventListener('resize', handleResize);
-
-    let animId: number;
+    let animId = 0;
     const clockStartTime = performance.now();
     let clockLastTime = clockStartTime;
 
     const animate = () => {
       animId = requestAnimationFrame(animate);
       const nowMs = performance.now();
-      const delta = Math.min(0.1, (nowMs - clockLastTime) / 1000);
+      const rawDt = (nowMs - clockLastTime) / 1000;
+      const delta = Math.min(0.1, rawDt);
       clockLastTime = nowMs;
       const elapsed = (nowMs - clockStartTime) / 1000;
 
-      if (modelGroupRef.current) {
-        const wheelRotor = modelGroupRef.current.getObjectByName('AmusementPark_WheelRotor');
-        if (wheelRotor) {
-          wheelRotor.rotation.z -= delta * 0.22;
-          for (let i = 0; i < 8; i++) {
-            const gondola = wheelRotor.getObjectByName(`Gondola_${i}`);
-            if (gondola) {
-              gondola.rotation.z = -wheelRotor.rotation.z;
-            }
-          }
-        }
+      trackFrameRate(rawDt);
 
-        const carouselRotor = modelGroupRef.current.getObjectByName('AmusementPark_CarouselRotor');
-        if (carouselRotor) {
-          carouselRotor.rotation.y += delta * 0.85;
+      const wheelRotor = wheelRotorRef.current;
+      if (wheelRotor) {
+        wheelRotor.rotation.z -= delta * 0.22;
+        const gondolas = gondolasRef.current;
+        for (let i = 0; i < gondolas.length; i++) {
+          gondolas[i].rotation.z = -wheelRotor.rotation.z;
         }
+      }
 
-        const mantaRay = modelGroupRef.current.getObjectByName('MantaRay');
-        if (mantaRay) {
-          mantaRay.position.y = 3.8 + Math.sin(elapsed * 1.6) * 0.25;
-          mantaRay.rotation.x = 0.2 + Math.cos(elapsed * 1.6) * 0.08;
-        }
+      const carouselRotor = carouselRotorRef.current;
+      if (carouselRotor) {
+        carouselRotor.rotation.y += delta * 0.85;
+      }
+
+      const mantaRay = mantaRayRef.current;
+      if (mantaRay) {
+        mantaRay.position.y = 3.8 + Math.sin(elapsed * 1.6) * 0.25;
+        mantaRay.rotation.x = 0.2 + Math.cos(elapsed * 1.6) * 0.08;
       }
 
       if (weatherControllerRef.current) {
@@ -2301,15 +2340,22 @@ export const TownModelInspector: React.FC<TownModelInspectorProps> = ({ onExit }
     return () => {
       setIsSceneReady(false);
       cancelAnimationFrame(animId);
-      window.removeEventListener('resize', handleResize);
       if (weatherControllerRef.current) {
         weatherControllerRef.current.dispose();
+        weatherControllerRef.current = null;
       }
       controls.dispose();
-      renderer.dispose();
-      if (container && renderer.domElement) {
-        container.removeChild(renderer.domElement);
-      }
+      envHandle.dispose();
+      disposeObject3D(scene);
+      cleanupClassroomRenderer();
+      wheelRotorRef.current = null;
+      gondolasRef.current = [];
+      carouselRotorRef.current = null;
+      mantaRayRef.current = null;
+      modelGroupRef.current = null;
+      sceneRef.current = null;
+      cameraRef.current = null;
+      rendererRef.current = null;
     };
   }, []);
 

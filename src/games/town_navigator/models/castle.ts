@@ -44,6 +44,7 @@ function createCastleMonumentTexture(): THREE.CanvasTexture {
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
   texture.anisotropy = 8;
+  texture.userData.isSharedResource = true;
   cachedCastleMonumentTex = texture;
   return texture;
 }

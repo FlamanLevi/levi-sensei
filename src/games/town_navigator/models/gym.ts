@@ -43,6 +43,7 @@ function createGymSignTexture(): THREE.CanvasTexture {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
   cachedGymSignTex = texture;
   return texture;
 }
@@ -97,6 +98,7 @@ function createBasketballCourtTexture(): THREE.CanvasTexture {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
   cachedBasketballCourtTex = texture;
   return texture;
 }

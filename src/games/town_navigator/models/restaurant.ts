@@ -61,6 +61,7 @@ function createRestaurantSignTexture(): THREE.CanvasTexture {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
   cachedRestaurantSignTex = texture;
   return texture;
 }
@@ -101,6 +102,7 @@ function createBistroInteriorTexture(): THREE.CanvasTexture {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
   cachedBistroInteriorTex = texture;
   return texture;
 }
@@ -159,6 +161,7 @@ function createMenuBoardTexture(): THREE.CanvasTexture {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
   cachedMenuBoardTex = texture;
   return texture;
 }

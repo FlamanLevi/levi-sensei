@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { getLawnGrassTexture, getGrassBumpMap, getIshigakiStoneTexture } from './models/wallTextures';
+import { batchStaticMeshes } from './staticBatcher';
 
 export type SkyPreset = 'MORNING' | 'DAY' | 'SUNSET' | 'NIGHT' | 'SUNRISE' | 'NOON' | 'MIDNIGHT';
 
@@ -15,7 +16,7 @@ function normalizePreset(preset: SkyPreset): 'MORNING' | 'DAY' | 'SUNSET' | 'NIG
 }
 
 /**
- * Generates a high-resolution 2048x1024 equirectangular atmospheric skybox texture
+ * Generates a 1024x512 equirectangular atmospheric skybox texture
  * with Rayleigh/Mie sky gradients, sun/moon disc & corona, multi-layered cumulus & cirrus clouds,
  * and nighttime starfields.
  */
@@ -24,13 +25,16 @@ export function getSkyDomeTexture(preset: SkyPreset): THREE.CanvasTexture {
   if (cachedSkyTextures.has(key)) return cachedSkyTextures.get(key)!;
 
   if (typeof document === 'undefined') {
-    return new THREE.Texture() as unknown as THREE.CanvasTexture;
+    const dummy = new THREE.Texture() as unknown as THREE.CanvasTexture;
+    dummy.userData.isSharedResource = true;
+    return dummy;
   }
 
   const canvas = document.createElement('canvas');
-  canvas.width = 2048;
-  canvas.height = 1024;
+  canvas.width = 1024;
+  canvas.height = 512;
   const ctx = canvas.getContext('2d')!;
+  ctx.scale(0.5, 0.5);
 
   // 1. Zenith-to-Nadir Atmospheric Sky Gradient (Equirectangular Y=0 is Zenith, Y=512 is Horizon)
   const skyGrad = ctx.createLinearGradient(0, 0, 0, 620);
@@ -261,6 +265,9 @@ export function getSkyDomeTexture(preset: SkyPreset): THREE.CanvasTexture {
   tex.wrapS = THREE.RepeatWrapping;
   tex.wrapT = THREE.ClampToEdgeWrapping;
   tex.colorSpace = THREE.SRGBColorSpace;
+  tex.generateMipmaps = false;
+  tex.minFilter = THREE.LinearFilter;
+  tex.userData.isSharedResource = true;
   cachedSkyTextures.set(key, tex);
   return tex;
 }
@@ -296,7 +303,6 @@ export function updateAtmosphericSkybox(
   if (!mat) return;
   mat.map = getSkyDomeTexture(preset);
   mat.color.setHex(skyboxTintHex);
-  mat.needsUpdate = true;
 }
 
 /**
@@ -308,6 +314,7 @@ export function buildTexturedGroundPlane(size: number = 520, repeatCount: number
 } {
   const baseGrass = getLawnGrassTexture();
   const grassTex = baseGrass.clone();
+  grassTex.userData = {};
   grassTex.wrapS = THREE.RepeatWrapping;
   grassTex.wrapT = THREE.RepeatWrapping;
   grassTex.repeat.set(repeatCount, repeatCount);
@@ -315,6 +322,7 @@ export function buildTexturedGroundPlane(size: number = 520, repeatCount: number
 
   const baseBump = getGrassBumpMap();
   const bumpTex = baseBump.clone();
+  bumpTex.userData = {};
   bumpTex.wrapS = THREE.RepeatWrapping;
   bumpTex.wrapT = THREE.RepeatWrapping;
   bumpTex.repeat.set(repeatCount * 1.25, repeatCount * 1.25);
@@ -348,6 +356,7 @@ function getSkyscraperTextures(): { dayMap: THREE.CanvasTexture; nightEmissiveMa
   }
   if (typeof document === 'undefined') {
     const dummy = new THREE.Texture() as unknown as THREE.CanvasTexture;
+    dummy.userData.isSharedResource = true;
     return { dayMap: dummy, nightEmissiveMap: dummy };
   }
 
@@ -396,11 +405,13 @@ function getSkyscraperTextures(): { dayMap: THREE.CanvasTexture; nightEmissiveMa
   cachedSkyscraperDayTex.wrapS = THREE.RepeatWrapping;
   cachedSkyscraperDayTex.wrapT = THREE.RepeatWrapping;
   cachedSkyscraperDayTex.colorSpace = THREE.SRGBColorSpace;
+  cachedSkyscraperDayTex.userData.isSharedResource = true;
 
   cachedSkyscraperNightTex = new THREE.CanvasTexture(nightCanvas);
   cachedSkyscraperNightTex.wrapS = THREE.RepeatWrapping;
   cachedSkyscraperNightTex.wrapT = THREE.RepeatWrapping;
   cachedSkyscraperNightTex.colorSpace = THREE.SRGBColorSpace;
+  cachedSkyscraperNightTex.userData.isSharedResource = true;
 
   return { dayMap: cachedSkyscraperDayTex, nightEmissiveMap: cachedSkyscraperNightTex };
 }
@@ -436,6 +447,7 @@ export function buildPerimeterScenery(options: {
     bumpScale: 0.025,
     roughness: 0.88,
   });
+  grassHillMat.userData.batchUnique = true;
 
   const foothillMat = new THREE.MeshStandardMaterial({
     color: 0x14532d,
@@ -469,6 +481,7 @@ export function buildPerimeterScenery(options: {
     transparent: true,
     opacity: 0.72,
   });
+  cloudMat.userData.batchGlobal = true;
 
   const { dayMap, nightEmissiveMap } = getSkyscraperTextures();
   const skyscraperMatA = new THREE.MeshStandardMaterial({
@@ -480,6 +493,7 @@ export function buildPerimeterScenery(options: {
     roughness: 0.3,
     metalness: 0.45,
   });
+  skyscraperMatA.userData.batchUnique = true;
   const skyscraperMatB = new THREE.MeshStandardMaterial({
     color: 0xbae6fd,
     map: dayMap,
@@ -489,6 +503,7 @@ export function buildPerimeterScenery(options: {
     roughness: 0.22,
     metalness: 0.55,
   });
+  skyscraperMatB.userData.batchUnique = true;
   const towerRedMat = new THREE.MeshStandardMaterial({
     color: 0xef4444,
     emissive: 0x991b1b,
@@ -506,6 +521,7 @@ export function buildPerimeterScenery(options: {
     emissive: 0xff2222,
     emissiveIntensity: 1.4,
   });
+  beaconMat.userData.batchUnique = true;
 
   // Store emissive materials on userData for instant day/night switching
   scenery.userData.skyscraperMats = [skyscraperMatA, skyscraperMatB];
@@ -543,7 +559,7 @@ export function buildPerimeterScenery(options: {
       [-B, B].forEach((zPos) => {
         const curb = new THREE.Mesh(new THREE.BoxGeometry(segLen, 0.52, 0.55), boundaryStoneMat);
         curb.position.set(mid, 0.26, zPos);
-        curb.castShadow = true;
+        curb.castShadow = false;
         curb.receiveShadow = true;
         scenery.add(curb);
 
@@ -556,7 +572,7 @@ export function buildPerimeterScenery(options: {
       [-B, B].forEach((xPos) => {
         const curb = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.52, segLen), boundaryStoneMat);
         curb.position.set(xPos, 0.26, mid);
-        curb.castShadow = true;
+        curb.castShadow = false;
         curb.receiveShadow = true;
         scenery.add(curb);
 
@@ -632,7 +648,7 @@ export function buildPerimeterScenery(options: {
 
     const trunk = new THREE.Mesh(trunkGeo, trunkMat);
     trunk.position.y = 1.2;
-    trunk.castShadow = true;
+    trunk.castShadow = false;
     tree.add(trunk);
 
     if (i % 4 === 0) {
@@ -879,6 +895,7 @@ export function buildPerimeterScenery(options: {
   }
 
   scenery.add(mountainsGroup);
+  batchStaticMeshes(scenery, [], { ignoreShadowFlags: true, bakeVertexColors: true });
   return scenery;
 }
 

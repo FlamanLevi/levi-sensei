@@ -22,7 +22,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { TeamId } from '../types';
 import { buildTamaireSuspenseSchedule, TamaireSuspenseFrame } from '../core/quizEngine';
-import { createClassroomRenderer } from '@/utils/classroom3d';
+import { createClassroomRenderer, disposeObject3D } from '@/utils/classroom3d';
 import {
   createDoubleRingShadowTexture,
   createSchoolyardSandMaps,
@@ -50,6 +50,8 @@ import { playTamaireCeremonySound } from './tamaire/tamaireCeremonyAudio';
 import { DirectorCamPreset, TamaireDirectorOverlays } from './tamaire/TamaireDirectorOverlays';
 
 export { computeAdaptiveBasketFillRatio };
+
+const RING_THRESHOLDS = [0.2, 0.42, 0.65, 0.82] as const;
 
 export interface VolleyballPhaseChangeEvent {
   phase: string;
@@ -281,7 +283,9 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
     if (latestEvt && latestEvt.id !== lastAnswerEventIdRef.current) {
       lastAnswerEventIdRef.current = latestEvt.id;
       scorerPlayerId = latestEvt.playerId;
-      setLatestThrowBanner(latestEvt);
+      if (!isStudentChase) {
+        setLatestThrowBanner(latestEvt);
+      }
 
       if (
         latestEvt.stepAction === 'SCOOP' ||
@@ -327,7 +331,7 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
         enqueueThrowsRef.current('white', Math.min(4, whiteDelta), whiteDelta >= 2, scorerPlayerId, false);
       }
     }
-  }, [redScore, whiteScore, matchEnded, answerEvents]);
+  }, [redScore, whiteScore, matchEnded, answerEvents, isStudentChase]);
 
   // Reactively refresh the Undokai Stadium Wall Banner if activeSchool switches after mount
   useEffect(() => {
@@ -449,23 +453,19 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
       cameraPosition: [0, 4.4, 12.2],
       cameraLookAt: [0, 2.25, -0.5],
       alpha: false,
+      toneMappingExposure: 0.92,
+      onContextLost: () => {
+        console.warn('[Tamaire3DStage] WebGL context lost; waiting for restoration.');
+      },
+      onContextRestored: () => {
+        setContextRestartKey((k) => k + 1);
+      },
     });
     const { renderer, camera, gpuProfile, trackFrameRate, cleanup: cleanupRenderer } = classroom3d;
-    renderer.toneMappingExposure = 0.92;
-
-    const onContextLost = (e: Event) => {
-      e.preventDefault();
-      console.warn('[Tamaire3DStage] WebGL context lost; waiting for restoration.');
-    };
-    const onContextRestored = () => {
-      setContextRestartKey((k) => k + 1);
-    };
-    renderer.domElement.addEventListener('webglcontextlost', onContextLost, false);
-    renderer.domElement.addEventListener('webglcontextrestored', onContextRestored, false);
 
     // Crisp Japanese Autumn Undokai Sky Dome (deep azure zenith -> warm horizon)
     const skyCanvas = document.createElement('canvas');
-    skyCanvas.width = 64;
+    skyCanvas.width = 4;
     skyCanvas.height = 256;
     const skyCtx = skyCanvas.getContext('2d');
     if (skyCtx) {
@@ -475,7 +475,7 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
       skyGrad.addColorStop(0.75, '#bae6fd');
       skyGrad.addColorStop(1, '#fef3c7');
       skyCtx.fillStyle = skyGrad;
-      skyCtx.fillRect(0, 0, 64, 256);
+      skyCtx.fillRect(0, 0, 4, 256);
       const skyTex = new THREE.CanvasTexture(skyCanvas);
       skyTex.colorSpace = THREE.SRGBColorSpace;
       const skyDome = new THREE.Mesh(
@@ -666,6 +666,8 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
     // D. Dynamic 1-to-40 Student Thrower Roster (Zero-Allocation Rig State)
     // ------------------------------------------------------------------------
     let throwers: ThrowerAvatarRig[] = [];
+    const redThrowers: ThrowerAvatarRig[] = [];
+    const whiteThrowers: ThrowerAvatarRig[] = [];
     const throwerById = new Map<string, ThrowerAvatarRig>();
 
     const defaultRedNames = [
@@ -683,6 +685,8 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
 
     const rebuildThrowerAvatars = () => {
       throwers = [];
+      redThrowers.length = 0;
+      whiteThrowers.length = 0;
       throwerById.clear();
 
       const redList: TamaireStudentRosterItem[] = [];
@@ -783,6 +787,8 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
             idx
           );
           throwers.push(avatar);
+          if (team === 'red') redThrowers.push(avatar);
+          else whiteThrowers.push(avatar);
           throwerById.set(avatar.id, avatar);
         });
       };
@@ -804,6 +810,7 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
       color: 0xffffff,
       transparent: true,
       opacity: 0.78,
+      depthWrite: false,
     });
     const aimDotsInst = new THREE.InstancedMesh(aimDotGeo, aimDotMat, 14);
     aimDotsInst.frustumCulled = false;
@@ -828,6 +835,7 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
       transparent: true,
       opacity: 0.85,
       side: THREE.DoubleSide,
+      depthWrite: false,
     });
     const targetSandRingMesh = new THREE.Mesh(
       new THREE.RingGeometry(0.22, 0.29, 28),
@@ -955,6 +963,7 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
       color: 0xe7d3b0,
       transparent: true,
       opacity: 0.65,
+      depthWrite: false,
     });
     const dustInst = new THREE.InstancedMesh(dustGeo, dustMat, MAX_DUST);
     dustInst.frustumCulled = false;
@@ -962,15 +971,27 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
     dustInst.count = 0;
     scene.add(dustInst);
 
+    const _tmpSpawnPos = new THREE.Vector3();
+
     const spawnParticles = (origin: THREE.Vector3, team: 'red' | 'white', isGolden: boolean, isDust: boolean) => {
       const count = isDust ? 4 : isGolden ? 10 : 6;
       const pool = isDust ? dustParticles : starParticles;
+      const poolLen = pool.length;
       const starHex = isGolden ? 0xfbbf24 : team === 'red' ? 0xfb7185 : 0x38bdf8;
       for (let i = 0; i < count; i++) {
-        let slot = pool.find((item) => item.life <= 0);
-        if (!slot) {
-          slot = pool.reduce((oldest, cur) => (cur.life < oldest.life ? cur : oldest), pool[0]);
+        let slot: BurstParticle | null = null;
+        let oldest = pool[0];
+        for (let p = 0; p < poolLen; p++) {
+          const item = pool[p];
+          if (item.life <= 0) {
+            slot = item;
+            break;
+          }
+          if (item.life < oldest.life) {
+            oldest = item;
+          }
         }
+        if (!slot) slot = oldest;
         slot.isDust = isDust;
         slot.pos.copy(origin);
         slot.color.setHex(isDust ? 0xe7d3b0 : starHex);
@@ -991,11 +1012,14 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
     const resolveTeamThrower = (team: 'red' | 'white', playerId?: string) => {
       const byId = playerId ? throwerById.get(playerId) : undefined;
       if (byId && byId.team === team) return byId;
+      const teamList = team === 'red' ? redThrowers : whiteThrowers;
       const focusNick = stateRef.current.focusPlayer?.nickname;
-      return (
-        throwers.find((t) => t.team === team && focusNick && t.nickname === focusNick) ||
-        throwers.find((t) => t.team === team)
-      );
+      if (focusNick) {
+        for (let i = 0; i < teamList.length; i++) {
+          if (teamList[i].nickname === focusNick) return teamList[i];
+        }
+      }
+      return teamList.length > 0 ? teamList[0] : undefined;
     };
 
     const spawnThrow = (
@@ -1024,12 +1048,13 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
           if (isFumble) {
             calloutPool.trigger(actor.id, actor.nickname, actor.team, 1.05, false, true);
           }
+          _tmpSpawnPos.set(
+            actor.root.position.x + 0.18,
+            isFumble ? 0.12 : stepAction === 'SCOOP' ? 0.22 : 1.15,
+            actor.root.position.z - 0.25
+          );
           spawnParticles(
-            new THREE.Vector3(
-              actor.root.position.x + 0.18,
-              isFumble ? 0.12 : stepAction === 'SCOOP' ? 0.22 : 1.15,
-              actor.root.position.z - 0.25
-            ),
+            _tmpSpawnPos,
             team,
             stepAction === 'AIM',
             isFumble
@@ -1038,14 +1063,20 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
         return;
       }
 
-      const teamThrowers = throwers.filter((t) => t.team === team);
+      const teamThrowers = team === 'red' ? redThrowers : whiteThrowers;
       const totalToSpawn =
         ended || isMissThrow || (isChaseMode && Boolean(playerId)) ? count : count + 1;
 
       for (let c = 0; c < totalToSpawn; c++) {
         const isNearMiss =
           !ended && (isMissThrow || (c === totalToSpawn - 1 && totalToSpawn > count));
-        const slot = flyingBags.find((b) => !b.active);
+        let slot: FlyingBeanBag | null = null;
+        for (let b = 0; b < flyingBags.length; b++) {
+          if (!flyingBags[b].active) {
+            slot = flyingBags[b];
+            break;
+          }
+        }
         if (!slot) break;
 
         const matchedStudent =
@@ -1068,8 +1099,9 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
               false
             );
           }
+          _tmpSpawnPos.set(thrower.root.position.x, 0.08, thrower.root.position.z);
           spawnParticles(
-            new THREE.Vector3(thrower.root.position.x, 0.08, thrower.root.position.z),
+            _tmpSpawnPos,
             team,
             false,
             true
@@ -1178,10 +1210,146 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
       new THREE.Color(0xfbbf24),
     ];
 
+    const getThrowerPos = (ownerId: string): THREE.Vector3 | null =>
+      throwerById.get(ownerId)?.root.position ?? null;
+
+    const updateBasketState = (
+      basket: BasketAssembly,
+      score: number,
+      phase: number,
+      isRed: boolean,
+      dt: number,
+      elapsed: number,
+      ended: boolean,
+      cFrame: TamaireSuspenseFrame | null
+    ) => {
+      const isCliffhanger = ended && cFrame?.stage === 'CLIFFHANGER_RATTLE';
+      const visualBagCount =
+        ended && cFrame
+          ? isRed
+            ? cFrame.remainingRedVisual
+            : cFrame.remainingWhiteVisual
+          : score;
+
+      const targetFill = computeAdaptiveBasketFillRatio(visualBagCount, 20);
+      basket.displayFillRatio += (targetFill - basket.displayFillRatio) * Math.min(1, dt * 6.5);
+      const fillRatio = basket.displayFillRatio;
+
+      if (isCliffhanger) {
+        basket.hitSquash = 0.55 + Math.sin(elapsed * 38 + phase) * 0.35;
+        basket.springVelX += Math.sin(elapsed * 44 + phase) * 1.45 * dt * 15;
+        basket.springVelZ += Math.cos(elapsed * 39 + phase) * 1.45 * dt * 15;
+      } else {
+        basket.hitSquash = Math.max(0, basket.hitSquash - dt * 3.8);
+      }
+      const squashWave = Math.sin(basket.hitSquash * Math.PI);
+
+      // 3a. Mound Core
+      if (visualBagCount <= 0 && fillRatio < 0.01) {
+        basket.moundMesh.visible = false;
+      } else {
+        basket.moundMesh.visible = true;
+        const radialFit = 0.58 + fillRatio * 0.44 + squashWave * 0.08;
+        const heightFit = Math.max(0.06, fillRatio * 0.95 - squashWave * 0.06);
+        basket.moundMesh.scale.set(radialFit, heightFit, radialFit);
+      }
+
+      // 3b. Reveal & Jostle Instanced Inner Bean Bags
+      const visibleBags =
+        visualBagCount <= 12
+          ? visualBagCount
+          : Math.min(
+              basket.innerBagBaseTransforms.length,
+              Math.round(12 + ((fillRatio - computeAdaptiveBasketFillRatio(12, 20)) / 0.7) * 52)
+            );
+
+      basket.innerBagsInst.count = visibleBags;
+      basket.innerBagsInst.visible = visibleBags > 0;
+      if (visibleBags > 0 && squashWave > 0.01) {
+        for (let i = 0; i < visibleBags; i++) {
+          const base = basket.innerBagBaseTransforms[i];
+          _tmpBagObj.position.set(base.pos[0], base.pos[1], base.pos[2]);
+          _tmpBagObj.rotation.set(
+            base.rot[0],
+            base.rot[1],
+            Math.cos(i * 1.3 + elapsed * 18) * (0.35 + squashWave * 0.25)
+          );
+          _tmpBagObj.scale.set(1, 1, 1);
+          _tmpBagObj.updateMatrix();
+          basket.innerBagsInst.setMatrixAt(i, _tmpBagObj.matrix);
+        }
+        basket.innerBagsInst.instanceMatrix.needsUpdate = true;
+        basket.innerBagsNeedReset = true;
+      } else if (basket.innerBagsNeedReset) {
+        for (let i = 0; i < basket.innerBagBaseTransforms.length; i++) {
+          basket.innerBagsInst.setMatrixAt(i, basket.innerBagBaseTransforms[i].matrix);
+        }
+        basket.innerBagsInst.instanceMatrix.needsUpdate = true;
+        basket.innerBagsNeedReset = false;
+      }
+
+      // 3c. Net Belly Bulge + Hit Squash-and-Stretch Gulp
+      const bellyBulge = 1 + fillRatio * 0.22 + squashWave * 0.14;
+      const netSagY = 1 + fillRatio * 0.08 - squashWave * 0.09;
+      basket.netMesh.scale.set(bellyBulge, netSagY, bellyBulge);
+      basket.linerMesh.scale.set(bellyBulge * 0.98, netSagY, bellyBulge * 0.98);
+
+      // 3d. Illuminate the 4 Fullness Gauge Rings (dirty-checked InstancedMesh color upload)
+      let ringMask = isCliffhanger ? 16 : 0;
+      for (let r = 0; r < 4; r++) {
+        if (fillRatio >= RING_THRESHOLDS[r] || isCliffhanger) ringMask |= 1 << r;
+      }
+      if (ringMask !== basket.lastRingMask) {
+        basket.lastRingMask = ringMask;
+        const dimColor = isRed ? _redDimRingCol : _whiteDimRingCol;
+        for (let r = 0; r < 4; r++) {
+          const reached = (ringMask & (1 << r)) !== 0;
+          const col = reached
+            ? isCliffhanger || r === 3
+              ? _ringColorPalette[2]
+              : isRed
+                ? _ringColorPalette[0]
+                : _ringColorPalette[1]
+            : dimColor;
+          basket.levelRingsInst.setColorAt(r, col);
+        }
+        if (basket.levelRingsInst.instanceColor) basket.levelRingsInst.instanceColor.needsUpdate = true;
+      }
+
+      // 3e. Rim Shockwave Ring Expansion & Visibility
+      const pulseMat = basket.rimPulseRing.material as THREE.MeshBasicMaterial;
+      if (basket.hitSquash > 0.01) {
+        basket.rimPulseRing.visible = true;
+        const pScale = 1 + (1 - basket.hitSquash) * 0.48;
+        basket.rimPulseRing.scale.set(pScale, pScale, 1);
+        pulseMat.opacity = basket.hitSquash * 0.9;
+      } else {
+        basket.rimPulseRing.visible = false;
+        pulseMat.opacity = 0;
+      }
+
+      // 3f. Damped harmonic spring physics on the 4.3m pole!
+      const stiffness = 42.0;
+      const damping = 5.2;
+      const windX = Math.sin(elapsed * 2.1 + phase) * 0.008;
+      const windZ = Math.cos(elapsed * 1.7 + phase) * 0.008;
+
+      const accelX = -stiffness * (basket.springAngleX - windX) - damping * basket.springVelX;
+      const accelZ = -stiffness * (basket.springAngleZ - windZ) - damping * basket.springVelZ;
+      basket.springVelX += accelX * dt;
+      basket.springVelZ += accelZ * dt;
+      basket.springAngleX += basket.springVelX * dt;
+      basket.springAngleZ += basket.springVelZ * dt;
+
+      basket.swayPivot.rotation.x = basket.springAngleX;
+      basket.swayPivot.rotation.z = basket.springAngleZ;
+    };
+
     const tick = (now: number) => {
       if (isDisposed) return;
       animId = requestAnimationFrame(tick);
-      const dt = Math.min(0.05, Math.max(0.001, (now - prevTime) / 1000));
+      const rawDt = (now - prevTime) / 1000;
+      const dt = Math.min(0.05, Math.max(0.001, rawDt));
       prevTime = now;
       const elapsed = now * 0.001;
 
@@ -1204,13 +1372,27 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
 
       // Identify the focused student avatar in O(1) when in STUDENT_CHASE mode
       const focusTeam = fPlayer?.team || 'red';
-      const byFocusId = camMode === 'STUDENT_CHASE' && fPlayer?.id ? throwerById.get(fPlayer.id) : undefined;
-      const focusAvatar =
-        camMode === 'STUDENT_CHASE'
-          ? (byFocusId && byFocusId.team === focusTeam ? byFocusId : undefined) ||
-            throwers.find((t) => t.team === focusTeam && t.nickname === fPlayer?.nickname) ||
-            throwers.find((t) => t.team === focusTeam)
-          : undefined;
+      let focusAvatar: ThrowerAvatarRig | undefined;
+      if (camMode === 'STUDENT_CHASE') {
+        const byFocusId = fPlayer?.id ? throwerById.get(fPlayer.id) : undefined;
+        if (byFocusId && byFocusId.team === focusTeam) {
+          focusAvatar = byFocusId;
+        } else {
+          const teamList = focusTeam === 'red' ? redThrowers : whiteThrowers;
+          const focusNick = fPlayer?.nickname;
+          if (focusNick) {
+            for (let i = 0; i < teamList.length; i++) {
+              if (teamList[i].nickname === focusNick) {
+                focusAvatar = teamList[i];
+                break;
+              }
+            }
+          }
+          if (!focusAvatar && teamList.length > 0) {
+            focusAvatar = teamList[0];
+          }
+        }
+      }
 
       // Update 3D Target Sand Bean Bag & Instanced Parabolic Aiming Guide Arc
       if (camMode === 'STUDENT_CHASE' && !ended) {
@@ -1332,7 +1514,14 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
         const avatarZ = focusAvatar ? focusAvatar.root.position.z : ended ? 2.18 : 1.85;
 
         if (!ended) {
-          const activeTeamBag = flyingBags.find((b) => b.active && b.team === focusTeam);
+          let activeTeamBag: FlyingBeanBag | null = null;
+          for (let b = 0; b < flyingBags.length; b++) {
+            const candidate = flyingBags[b];
+            if (candidate.active && candidate.team === focusTeam) {
+              activeTeamBag = candidate;
+              break;
+            }
+          }
           const followPulse = activeTeamBag
             ? Math.sin(Math.min(1, activeTeamBag.progress) * Math.PI)
             : 0;
@@ -1461,129 +1650,8 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
       }
 
       // 3. Update Adaptive Non-Overflowing Basket Fill, Net Squash & Instanced Inner Bags/Gauge Rings
-      const updateBasketState = (
-        basket: BasketAssembly,
-        score: number,
-        phase: number,
-        isRed: boolean
-      ) => {
-        const isCliffhanger = ended && cFrame?.stage === 'CLIFFHANGER_RATTLE';
-        const visualBagCount =
-          ended && cFrame
-            ? isRed
-              ? cFrame.remainingRedVisual
-              : cFrame.remainingWhiteVisual
-            : score;
-
-        const targetFill = computeAdaptiveBasketFillRatio(visualBagCount, 20);
-        basket.displayFillRatio += (targetFill - basket.displayFillRatio) * Math.min(1, dt * 6.5);
-        const fillRatio = basket.displayFillRatio;
-
-        if (isCliffhanger) {
-          basket.hitSquash = 0.55 + Math.sin(elapsed * 38 + phase) * 0.35;
-          basket.springVelX += Math.sin(elapsed * 44 + phase) * 1.45 * dt * 15;
-          basket.springVelZ += Math.cos(elapsed * 39 + phase) * 1.45 * dt * 15;
-        } else {
-          basket.hitSquash = Math.max(0, basket.hitSquash - dt * 3.8);
-        }
-        const squashWave = Math.sin(basket.hitSquash * Math.PI);
-
-        // 3a. Mound Core
-        if (visualBagCount <= 0 && fillRatio < 0.01) {
-          basket.moundMesh.visible = false;
-        } else {
-          basket.moundMesh.visible = true;
-          const radialFit = 0.58 + fillRatio * 0.44 + squashWave * 0.08;
-          const heightFit = Math.max(0.06, fillRatio * 0.95 - squashWave * 0.06);
-          basket.moundMesh.scale.set(radialFit, heightFit, radialFit);
-        }
-
-        // 3b. Reveal & Jostle Instanced Inner Bean Bags
-        const visibleBags =
-          visualBagCount <= 12
-            ? visualBagCount
-            : Math.min(
-                basket.innerBagBaseTransforms.length,
-                Math.round(12 + ((fillRatio - computeAdaptiveBasketFillRatio(12, 20)) / 0.7) * 52)
-              );
-
-        basket.innerBagsInst.count = visibleBags;
-        basket.innerBagsInst.visible = visibleBags > 0;
-        if (visibleBags > 0 && squashWave > 0.01) {
-          for (let i = 0; i < visibleBags; i++) {
-            const base = basket.innerBagBaseTransforms[i];
-            _tmpBagObj.position.set(base.pos[0], base.pos[1], base.pos[2]);
-            _tmpBagObj.rotation.set(
-              base.rot[0],
-              base.rot[1],
-              Math.cos(i * 1.3 + elapsed * 18) * (0.35 + squashWave * 0.25)
-            );
-            _tmpBagObj.scale.set(1, 1, 1);
-            _tmpBagObj.updateMatrix();
-            basket.innerBagsInst.setMatrixAt(i, _tmpBagObj.matrix);
-          }
-          basket.innerBagsInst.instanceMatrix.needsUpdate = true;
-          basket.innerBagsNeedReset = true;
-        } else if (basket.innerBagsNeedReset) {
-          for (let i = 0; i < basket.innerBagBaseTransforms.length; i++) {
-            basket.innerBagsInst.setMatrixAt(i, basket.innerBagBaseTransforms[i].matrix);
-          }
-          basket.innerBagsInst.instanceMatrix.needsUpdate = true;
-          basket.innerBagsNeedReset = false;
-        }
-
-        // 3c. Net Belly Bulge + Hit Squash-and-Stretch Gulp
-        const bellyBulge = 1 + fillRatio * 0.22 + squashWave * 0.14;
-        const netSagY = 1 + fillRatio * 0.08 - squashWave * 0.09;
-        basket.netMesh.scale.set(bellyBulge, netSagY, bellyBulge);
-        basket.linerMesh.scale.set(bellyBulge * 0.98, netSagY, bellyBulge * 0.98);
-
-        // 3d. Illuminate the 4 Fullness Gauge Rings (InstancedMesh)
-        const ringThresholds = [0.2, 0.42, 0.65, 0.82];
-        const dimColor = isRed ? _redDimRingCol : _whiteDimRingCol;
-        for (let r = 0; r < 4; r++) {
-          const reached = fillRatio >= ringThresholds[r] || isCliffhanger;
-          const col = reached
-            ? isCliffhanger || r === 3
-              ? _ringColorPalette[2]
-              : isRed
-                ? _ringColorPalette[0]
-                : _ringColorPalette[1]
-            : dimColor;
-          basket.levelRingsInst.setColorAt(r, col);
-        }
-        if (basket.levelRingsInst.instanceColor) basket.levelRingsInst.instanceColor.needsUpdate = true;
-
-        // 3e. Rim Shockwave Ring Expansion & Visibility
-        const pulseMat = basket.rimPulseRing.material as THREE.MeshBasicMaterial;
-        if (basket.hitSquash > 0.01) {
-          basket.rimPulseRing.visible = true;
-          const pScale = 1 + (1 - basket.hitSquash) * 0.48;
-          basket.rimPulseRing.scale.set(pScale, pScale, 1);
-          pulseMat.opacity = basket.hitSquash * 0.9;
-        } else {
-          basket.rimPulseRing.visible = false;
-          pulseMat.opacity = 0;
-        }
-
-        // 3f. Damped harmonic spring physics on the 4.3m pole!
-        const stiffness = 42.0;
-        const damping = 5.2;
-        const windX = Math.sin(elapsed * 2.1 + phase) * 0.008;
-        const windZ = Math.cos(elapsed * 1.7 + phase) * 0.008;
-
-        const accelX = -stiffness * (basket.springAngleX - windX) - damping * basket.springVelX;
-        const accelZ = -stiffness * (basket.springAngleZ - windZ) - damping * basket.springVelZ;
-        basket.springVelX += accelX * dt;
-        basket.springVelZ += accelZ * dt;
-        basket.springAngleX += basket.springVelX * dt;
-        basket.springAngleZ += basket.springVelZ * dt;
-
-        basket.swayPivot.rotation.x = basket.springAngleX;
-        basket.swayPivot.rotation.z = basket.springAngleZ;
-      };
-      updateBasketState(redBasket, rScore, 0, true);
-      updateBasketState(whiteBasket, wScore, 1.8, false);
+      updateBasketState(redBasket, rScore, 0, true, dt, elapsed, ended, cFrame);
+      updateBasketState(whiteBasket, wScore, 1.8, false, dt, elapsed, ended, cFrame);
 
       // 4. Update & Batch Flying Bean Bags (InstancedMesh)
       let activeFlyingC = 0;
@@ -1662,7 +1730,7 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
         }
 
         _tmpQuat.setFromEuler(bag.rot);
-        _tmpScaleVec.set(1.22 * bag.scaleMult, 0.75 * bag.scaleMult, 1.02 * bag.scaleMult);
+        _tmpScaleVec.setScalar(bag.scaleMult);
         _tmpMat4.compose(bag.pos, _tmpQuat, _tmpScaleVec);
         flyingBagsInst.setMatrixAt(activeFlyingC, _tmpMat4);
         writeAtlasRect(
@@ -1921,14 +1989,14 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
       if (ended) {
         calloutPool.hideAll();
       } else {
-        calloutPool.update(dt, (ownerId) => throwerById.get(ownerId)?.root.position ?? null);
+        calloutPool.update(dt, getThrowerPos);
       }
 
       // 7. Animate Cheering Tent Spectators & Clouds + DRS Frame Tracking
       arenaEnv.animateSpectators(elapsed);
       arenaEnv.cloudsGroup.rotation.y = Math.sin(elapsed * 0.04) * 0.06;
 
-      trackFrameRate(dt);
+      trackFrameRate(rawDt);
       renderer.render(scene, camera);
     };
 
@@ -1937,36 +2005,13 @@ export const Tamaire3DStage: React.FC<Tamaire3DStageProps> = ({
     return () => {
       isDisposed = true;
       cancelAnimationFrame(animId);
-      renderer.domElement.removeEventListener('webglcontextlost', onContextLost);
-      renderer.domElement.removeEventListener('webglcontextrestored', onContextRestored);
       enqueueThrowsRef.current = null;
       rebuildRosterRef.current = null;
       undokaiBannerMatRef.current = null;
 
       calloutPool.dispose();
       throwerPool.dispose();
-
-      scene.traverse((obj) => {
-        if ((obj as THREE.InstancedMesh).isInstancedMesh) {
-          (obj as THREE.InstancedMesh).dispose();
-        }
-        if ((obj as THREE.Mesh).isMesh) {
-          const mesh = obj as THREE.Mesh;
-          if (mesh.geometry) mesh.geometry.dispose();
-          const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
-          mats.forEach((m) => {
-            if (!m) return;
-            const stdMat = m as THREE.MeshStandardMaterial;
-            if (stdMat.map && !stdMat.map.userData?.isSharedResource) {
-              stdMat.map.dispose();
-            }
-            if (stdMat.bumpMap && !stdMat.bumpMap.userData?.isSharedResource) {
-              stdMat.bumpMap.dispose();
-            }
-            m.dispose();
-          });
-        }
-      });
+      disposeObject3D(scene);
 
       scene.clear();
       cleanupRenderer();

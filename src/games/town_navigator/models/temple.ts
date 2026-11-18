@@ -48,6 +48,7 @@ function createTempleSignTexture(): THREE.CanvasTexture {
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
   texture.anisotropy = 8;
+  texture.userData.isSharedResource = true;
   cachedTempleSignTex = texture;
   return texture;
 }

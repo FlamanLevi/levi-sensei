@@ -386,7 +386,8 @@ function createHighContrastAsphaltTexture(
   tex.wrapS = THREE.ClampToEdgeWrapping;
   tex.wrapT = THREE.RepeatWrapping;
   tex.repeat.set(1, 1);
-  tex.anisotropy = 8;
+  tex.anisotropy = 4;
+  tex.userData = { isSharedResource: true };
 
   targetCache.set(theme.id, tex);
   return tex;
@@ -415,6 +416,7 @@ function createCheckeredStartLineTexture(): THREE.CanvasTexture {
   }
   const tex = new THREE.CanvasTexture(canvas);
   tex.colorSpace = THREE.SRGBColorSpace;
+  tex.userData = { isSharedResource: true };
   cachedCheckeredLineTex = tex;
   return tex;
 }
@@ -467,7 +469,8 @@ function createFiaKerbTexture(): THREE.CanvasTexture {
   tex.wrapS = THREE.ClampToEdgeWrapping;
   tex.wrapT = THREE.RepeatWrapping;
   tex.repeat.set(1, 1);
-  tex.anisotropy = 8;
+  tex.anisotropy = 4;
+  tex.userData = { isSharedResource: true };
   cachedFiaKerbTex = tex;
   return tex;
 }
@@ -502,8 +505,26 @@ function createRunoffVergeTexture(
   tex.wrapS = THREE.ClampToEdgeWrapping;
   tex.wrapT = THREE.RepeatWrapping;
   tex.anisotropy = 4;
+  tex.userData = { isSharedResource: true };
   cachedRunoffVergeTexs.set(theme.id, tex);
   return tex;
+}
+
+function safeRoundRect(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  r: number
+): void {
+  const radius = Math.min(r, w * 0.5, h * 0.5);
+  ctx.moveTo(x + radius, y);
+  ctx.arcTo(x + w, y, x + w, y + h, radius);
+  ctx.arcTo(x + w, y + h, x, y + h, radius);
+  ctx.arcTo(x, y + h, x, y, radius);
+  ctx.arcTo(x, y, x + w, y, radius);
+  ctx.closePath();
 }
 
 function fillFittedText(
@@ -578,13 +599,15 @@ function createBillboardAtlasTexture(signs: QueuedBillboardSign[]): {
   tex: THREE.CanvasTexture;
   rects: UvRect[];
 } {
-  const cols = 2;
-  const cellW = 512;
+  // Pack into a 1024x1024 POT atlas (4 cols x 8 rows of 256x128 cells -> up to 32 signs)
+  const cols = 4;
+  const cellW = 256;
   const cellH = 128;
-  const rows = Math.max(1, Math.ceil(signs.length / cols));
+  const minRows = Math.max(1, Math.ceil(signs.length / cols));
+  const rows = Math.max(8, Math.pow(2, Math.ceil(Math.log2(minRows))));
   const atlasW = cols * cellW;
   const atlasH = rows * cellH;
-  const key = `atlas_v3_${rows}::` + signs.map((s) => `${s.title}|${s.sub}|${s.bg}|${s.textCol}`).join(';');
+  const key = `atlas_pot_v4_${rows}::` + signs.map((s) => `${s.title}|${s.sub}|${s.bg}|${s.textCol}`).join(';');
 
   const padU = 2 / atlasW;
   const padV = 2 / atlasH;
@@ -618,23 +641,25 @@ function createBillboardAtlasTexture(signs: QueuedBillboardSign[]): {
   }
   const tex = new THREE.CanvasTexture(canvas);
   tex.colorSpace = THREE.SRGBColorSpace;
-  tex.anisotropy = 8;
+  tex.anisotropy = 4;
+  tex.userData = { isSharedResource: true };
   cachedBillboardTexs.set(key, tex);
   return { tex, rects };
 }
 
 /**
- * Unified 3-column texture atlas for 50m / 100m / 150m trackside brake marker boards (1 draw call).
+ * Unified 512x128 POT texture atlas for 50m / 100m / 150m trackside brake marker boards (1 draw call).
  */
 function createBrakeMarkerAtlasTexture(labels: string[]): {
   tex: THREE.CanvasTexture;
   rects: UvRect[];
 } {
-  const cellW = 256;
-  const cellH = 192;
-  const atlasW = labels.length * cellW;
-  const atlasH = cellH;
-  const key = `brake_atlas_v3__${labels.join('_')}`;
+  const slots = Math.max(4, Math.pow(2, Math.ceil(Math.log2(Math.max(1, labels.length)))));
+  const cellW = 128;
+  const cellH = 128;
+  const atlasW = slots * cellW; // 512 for 3 labels (POT)
+  const atlasH = cellH; // 128 (POT)
+  const key = `brake_atlas_pot_v4__${labels.join('_')}`;
 
   const padU = 2 / atlasW;
   const padV = 2 / atlasH;
@@ -653,12 +678,15 @@ function createBrakeMarkerAtlasTexture(labels: string[]): {
   canvas.height = atlasH;
   const ctx = canvas.getContext('2d');
   if (ctx) {
+    ctx.fillStyle = '#0f172a';
+    ctx.fillRect(0, 0, atlasW, atlasH);
     labels.forEach((distanceLabel, idx) => {
       const ox = idx * cellW;
       ctx.save();
       ctx.translate(ox, 0);
+      ctx.scale(cellW / 256, cellH / 192);
       ctx.fillStyle = '#0f172a';
-      ctx.fillRect(0, 0, cellW, cellH);
+      ctx.fillRect(0, 0, 256, 192);
 
       ctx.fillStyle = '#ef4444';
       ctx.fillRect(8, 8, 240, 38);
@@ -677,7 +705,8 @@ function createBrakeMarkerAtlasTexture(labels: string[]): {
   }
   const tex = new THREE.CanvasTexture(canvas);
   tex.colorSpace = THREE.SRGBColorSpace;
-  tex.anisotropy = 8;
+  tex.anisotropy = 4;
+  tex.userData = { isSharedResource: true };
   cachedBillboardTexs.set(key, tex);
   return { tex, rects };
 }
@@ -718,7 +747,8 @@ function createGrandstandSeatsTexture(): THREE.CanvasTexture {
   tex.wrapS = THREE.RepeatWrapping;
   tex.wrapT = THREE.RepeatWrapping;
   tex.repeat.set(8, 1);
-  tex.anisotropy = 8;
+  tex.anisotropy = 4;
+  tex.userData = { isSharedResource: true };
   cachedGrandstandSeatsTex = tex;
   return tex;
 }
@@ -729,10 +759,11 @@ function createControlTowerWindowsTexture(
   const existing = cachedControlTowerWindowsTexs.get(theme.id);
   if (existing) return existing;
   const canvas = document.createElement('canvas');
-  canvas.width = 256;
-  canvas.height = 512;
+  canvas.width = 128;
+  canvas.height = 256;
   const ctx = canvas.getContext('2d');
   if (ctx) {
+    ctx.scale(0.5, 0.5);
     ctx.fillStyle = theme.towerWindowBg;
     ctx.fillRect(0, 0, 256, 512);
     for (let r = 0; r < 14; r++) {
@@ -745,6 +776,7 @@ function createControlTowerWindowsTexture(
   }
   const tex = new THREE.CanvasTexture(canvas);
   tex.colorSpace = THREE.SRGBColorSpace;
+  tex.userData = { isSharedResource: true };
   cachedControlTowerWindowsTexs.set(theme.id, tex);
   return tex;
 }
@@ -775,6 +807,7 @@ function createHazardStripeTexture(): THREE.CanvasTexture {
   tex.wrapS = THREE.RepeatWrapping;
   tex.wrapT = THREE.RepeatWrapping;
   tex.repeat.set(3, 1);
+  tex.userData = { isSharedResource: true };
   cachedHazardStripeTex = tex;
   return tex;
 }
@@ -786,31 +819,35 @@ function createTurfTexture(
   if (existing) return existing;
 
   const grassCanvas = document.createElement('canvas');
-  grassCanvas.width = 512;
-  grassCanvas.height = 512;
+  grassCanvas.width = 256;
+  grassCanvas.height = 256;
   const gCtx = grassCanvas.getContext('2d');
   if (gCtx) {
     gCtx.fillStyle = theme.turfBgHex;
-    gCtx.fillRect(0, 0, 512, 512);
+    gCtx.fillRect(0, 0, 256, 256);
 
     const stripeCount = 4;
-    const stripeW = 512 / stripeCount;
+    const stripeW = 256 / stripeCount;
     for (let i = 0; i < stripeCount; i++) {
       gCtx.fillStyle = i % 2 === 0 ? theme.turfStripeA : theme.turfStripeB;
-      gCtx.fillRect(i * stripeW, 0, stripeW, 512);
+      gCtx.fillRect(i * stripeW, 0, stripeW, 256);
     }
 
     for (let j = 0; j < stripeCount; j++) {
       gCtx.fillStyle = j % 2 === 0 ? 'rgba(255, 255, 255, 0.038)' : 'rgba(0, 20, 5, 0.038)';
-      gCtx.fillRect(0, j * stripeW, 512, stripeW);
+      gCtx.fillRect(0, j * stripeW, 256, stripeW);
     }
 
-    for (let i = 0; i < 4500; i++) {
-      const gx = (i * 97) % 512;
-      const gy = (i * 181) % 512;
-      const shade = i % 3;
+    // Batch turf speckles into 3 path fills by shade instead of 4,500 individual fillRect calls
+    for (let shade = 0; shade < 3; shade++) {
       gCtx.fillStyle = theme.turfSpeckles[shade];
-      gCtx.fillRect(gx, gy, 2, 4);
+      gCtx.beginPath();
+      for (let i = shade; i < 1200; i += 3) {
+        const gx = (i * 97) % 256;
+        const gy = (i * 181) % 256;
+        gCtx.rect(gx, gy, 1, 2);
+      }
+      gCtx.fill();
     }
   }
 
@@ -819,7 +856,8 @@ function createTurfTexture(
   grassTex.wrapS = THREE.RepeatWrapping;
   grassTex.wrapT = THREE.RepeatWrapping;
   grassTex.repeat.set(64, 64);
-  grassTex.anisotropy = 8;
+  grassTex.anisotropy = 4;
+  grassTex.userData = { isSharedResource: true };
   cachedTurfTexs.set(theme.id, grassTex);
   return grassTex;
 }
@@ -843,6 +881,7 @@ function createTreeContactShadowTexture(): THREE.CanvasTexture {
   }
   const tex = new THREE.CanvasTexture(canvas);
   tex.colorSpace = THREE.SRGBColorSpace;
+  tex.userData = { isSharedResource: true };
   cachedTreeContactShadowTex = tex;
   return tex;
 }
@@ -861,19 +900,16 @@ function createLakeWaterTexture(
   if (ctx) {
     const grad = ctx.createRadialGradient(128, 128, 12, 128, 128, 126);
     if (theme.id === 'DESERT') {
-      // Crystal Turquoise-Emerald Desert Oasis Lagoon with warm sandy shallows
       grad.addColorStop(0.0, '#0f766e');
       grad.addColorStop(0.52, '#14b8a6');
       grad.addColorStop(0.84, '#5eead4');
       grad.addColorStop(1.0, '#fde68a');
     } else if (theme.id === 'SNOW') {
-      // Frozen Crystalline Alpine Ice Pond with frosted snow rim
       grad.addColorStop(0.0, '#38bdf8');
       grad.addColorStop(0.58, '#bae6fd');
       grad.addColorStop(0.88, '#e0f2fe');
       grad.addColorStop(1.0, '#f8fafc');
     } else {
-      // Shimmering Suzuka Sapphire-Azure Infield Lake
       grad.addColorStop(0.0, '#0369a1');
       grad.addColorStop(0.55, '#0284c7');
       grad.addColorStop(0.86, '#38bdf8');
@@ -883,7 +919,6 @@ function createLakeWaterTexture(
     ctx.fillRect(0, 0, 256, 256);
 
     if (theme.id === 'SNOW') {
-      // Subtle crystalline ice fracture lines & specular frost glints
       ctx.strokeStyle = 'rgba(255, 255, 255, 0.52)';
       ctx.lineWidth = 1.6;
       const cracks = [
@@ -899,7 +934,6 @@ function createLakeWaterTexture(
         ctx.stroke();
       }
     } else {
-      // Soft concentric water ripple rings
       ctx.strokeStyle = 'rgba(255, 255, 255, 0.16)';
       ctx.lineWidth = 1.5;
       for (const r of [38, 68, 96, 114]) {
@@ -911,12 +945,13 @@ function createLakeWaterTexture(
   }
   const tex = new THREE.CanvasTexture(canvas);
   tex.colorSpace = THREE.SRGBColorSpace;
+  tex.userData = { isSharedResource: true };
   cachedLakeWaterTexs.set(theme.id, tex);
   return tex;
 }
 
 /**
- * Builds a 1024x1024 Retina transparent RGBA Texture Atlas (4 columns x 2 rows = 8 cells, 256x512 each)
+ * Builds a 512x512 transparent RGBA Texture Atlas (4 columns x 2 rows = 8 cells, 128x256 each)
  * containing 8 distinct cheering Japanese elementary school student / spectator clusters
  * waving checkered flags, Uchiwa cheering fans, pom-poms, and English cheering signs.
  */
@@ -924,12 +959,11 @@ function createCheeringCrowdAtlasTexture(): THREE.CanvasTexture {
   if (cachedCheeringCrowdAtlasTex) return cachedCheeringCrowdAtlasTex;
 
   const canvas = document.createElement('canvas');
-  canvas.width = 1024;
-  canvas.height = 1024;
+  canvas.width = 512;
+  canvas.height = 512;
   const ctx = canvas.getContext('2d');
 
   if (ctx) {
-    ctx.scale(2, 2);
     ctx.clearRect(0, 0, 512, 512);
 
     const cellConfigs = [
@@ -995,14 +1029,12 @@ function createCheeringCrowdAtlasTexture(): THREE.CanvasTexture {
       ctx.save();
       ctx.translate(fx, fy);
       ctx.rotate(dir * 0.28);
-      // Flagpole
       ctx.strokeStyle = '#e2e8f0';
       ctx.lineWidth = 4;
       ctx.beginPath();
       ctx.moveTo(0, 28);
       ctx.lineTo(0, -34);
       ctx.stroke();
-      // Checkered cloth (4x3 grid)
       const cw = 8;
       const ch = 7;
       for (let r = 0; r < 3; r++) {
@@ -1029,16 +1061,13 @@ function createCheeringCrowdAtlasTexture(): THREE.CanvasTexture {
       ctx.translate(cx, baseY);
       ctx.scale(scale, scale);
 
-      // Raised Cheering Arms (behind torso)
       ctx.strokeStyle = '#0f172a';
       ctx.lineWidth = 13;
       ctx.lineCap = 'round';
-      // Left arm raised
       ctx.beginPath();
       ctx.moveTo(-18, -56);
       ctx.lineTo(-32, -96 - armPose * 8);
       ctx.stroke();
-      // Right arm raised
       ctx.beginPath();
       ctx.moveTo(18, -56);
       ctx.lineTo(32, -98 + armPose * 6);
@@ -1053,7 +1082,6 @@ function createCheeringCrowdAtlasTexture(): THREE.CanvasTexture {
       ctx.lineTo(32, -98 + armPose * 6);
       ctx.stroke();
 
-      // Hands
       ctx.fillStyle = '#fde68a';
       ctx.strokeStyle = '#0f172a';
       ctx.lineWidth = 2.5;
@@ -1067,28 +1095,24 @@ function createCheeringCrowdAtlasTexture(): THREE.CanvasTexture {
         ctx.stroke();
       }
 
-      // Torso / Team Jersey
       ctx.fillStyle = shirtColor;
       ctx.strokeStyle = '#0f172a';
       ctx.lineWidth = 3.5;
       ctx.beginPath();
-      ctx.roundRect(-22, -68, 44, 64, 14);
+      safeRoundRect(ctx, -22, -68, 44, 64, 14);
       ctx.fill();
       ctx.stroke();
 
-      // White Sport Collar & Stripe
       ctx.fillStyle = '#ffffff';
       ctx.fillRect(-10, -66, 20, 8);
       ctx.fillRect(-20, -34, 40, 7);
 
-      // Head
       ctx.fillStyle = '#fde68a';
       ctx.beginPath();
       ctx.arc(0, -90, 20, 0, Math.PI * 2);
       ctx.fill();
       ctx.stroke();
 
-      // Japanese Elementary Sports Cap (Akashiro-boshi)
       ctx.fillStyle = capColor;
       ctx.beginPath();
       ctx.arc(0, -94, 20.5, Math.PI, 0, false);
@@ -1096,13 +1120,11 @@ function createCheeringCrowdAtlasTexture(): THREE.CanvasTexture {
       ctx.fill();
       ctx.stroke();
 
-      // Cap Brim
       ctx.beginPath();
       ctx.ellipse(0, -94, 24, 5.5, 0, 0, Math.PI * 2);
       ctx.fill();
       ctx.stroke();
 
-      // Happy Cheering Eyes & Smile
       ctx.strokeStyle = '#0f172a';
       ctx.lineWidth = 2.5;
       ctx.beginPath();
@@ -1112,7 +1134,6 @@ function createCheeringCrowdAtlasTexture(): THREE.CanvasTexture {
       ctx.arc(7, -87, 3.2, Math.PI, 0, false);
       ctx.stroke();
 
-      // Open cheering mouth
       ctx.fillStyle = '#e11d48';
       ctx.beginPath();
       ctx.arc(0, -79, 4.5, 0, Math.PI, false);
@@ -1133,14 +1154,10 @@ function createCheeringCrowdAtlasTexture(): THREE.CanvasTexture {
       ctx.rect(x0, y0, 128, 256);
       ctx.clip();
 
-      // Back-left & back-right students in the cluster
       drawStudentFigure(x0 + 34, y0 + 244, 0.78, cfg.shirts[0], cfg.caps[0], -1);
       drawStudentFigure(x0 + 94, y0 + 244, 0.78, cfg.shirts[2], cfg.caps[2], 1);
-
-      // Center foreground student
       drawStudentFigure(x0 + 64, y0 + 252, 0.88, cfg.shirts[1], cfg.caps[1], 0);
 
-      // Cheering Props (Checkered Flag / Uchiwa Fan / English Cheer Sign / Pom-Poms)
       if (cfg.propType === 'FLAG') {
         drawCheckeredMiniFlag(x0 + 22, y0 + 132, -1);
         drawCheckeredMiniFlag(x0 + 102, y0 + 128, 1);
@@ -1159,12 +1176,11 @@ function createCheeringCrowdAtlasTexture(): THREE.CanvasTexture {
         }
       }
 
-      // High-Contrast English Cheer Sign / Uchiwa Banner held overhead
       ctx.fillStyle = cfg.badgeBg;
       ctx.strokeStyle = '#ffffff';
       ctx.lineWidth = 4;
       ctx.beginPath();
-      ctx.roundRect(x0 + 18, y0 + 36, 92, 38, 12);
+      safeRoundRect(ctx, x0 + 18, y0 + 36, 92, 38, 12);
       ctx.fill();
       ctx.stroke();
 
@@ -1181,9 +1197,11 @@ function createCheeringCrowdAtlasTexture(): THREE.CanvasTexture {
   const tex = new THREE.CanvasTexture(canvas);
   tex.colorSpace = THREE.SRGBColorSpace;
   tex.flipY = false;
-  tex.minFilter = THREE.LinearFilter;
+  tex.minFilter = THREE.LinearMipmapLinearFilter;
   tex.magFilter = THREE.LinearFilter;
-  tex.generateMipmaps = false;
+  tex.generateMipmaps = true;
+  tex.anisotropy = 4;
+  tex.userData = { isSharedResource: true };
   cachedCheeringCrowdAtlasTex = tex;
   return tex;
 }
@@ -1595,7 +1613,7 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
     color: 0xffffff,
     roughness: 0.62,
     metalness: 0.12,
-    side: THREE.DoubleSide,
+    side: THREE.FrontSide,
     emissive: theme.roadEmissiveHex,
     emissiveMap: roadTex,
     emissiveIntensity: theme.roadEmissiveIntensity,
@@ -1616,7 +1634,7 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
     color: 0xffffff,
     roughness: 0.66,
     metalness: 0.08,
-    side: THREE.DoubleSide,
+    side: THREE.FrontSide,
     emissive: theme.redRoadEmissiveHex,
     emissiveMap: redRoadTex,
     emissiveIntensity: theme.redRoadEmissiveIntensity,
@@ -1636,7 +1654,7 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
     color: 0xffffff,
     roughness: 0.85,
     metalness: 0.02,
-    side: THREE.DoubleSide,
+    side: THREE.FrontSide,
   });
   const vergeMesh = new THREE.Mesh(vergeGeo, vergeMat);
   vergeMesh.receiveShadow = true;
@@ -1702,18 +1720,12 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
   const mergedGridGeo = mergeStaticParts(gridParts);
   if (mergedGridGeo) {
     root.add(new THREE.Mesh(mergedGridGeo, gridPaintMat));
+  } else {
+    gridPaintMat.dispose();
   }
 
   // -------------------------------------------------------------------------
-  // 2B. High-Definition 3D Serrated FIA Kerb Segments (2 Draw Calls Total!)
-  //     Each 1.28m spline segment is extruded as a 3D faceted concrete block
-  //     with:
-  //       (1) 45° Raised Inner Bevel Lip (catches sunlight & defines track edge)
-  //       (2) Crowned Sawtooth Rumble Top Deck (+3.5cm serrated ramp per block)
-  //       (3) Vertical Sawtooth Front Riser Step between blocks
-  //       (4) Outer Vertical Curb Wall dropping to the verge
-  //     Alternating Crimson Red & Pure White per-block vertex colors guarantee
-  //     razor-sharp red-and-white contrast at all camera distances.
+  // 2B. High-Definition 3D Serrated FIA Kerb Segments (1 Merged Draw Call Total!)
   // -------------------------------------------------------------------------
   function build3DSerratedKerbGeometry(sideSign: -1 | 1): THREE.BufferGeometry {
     const pos: number[] = [];
@@ -1766,7 +1778,6 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
       const s0 = samples[i];
       const s1 = samples[(i + 1) % N];
 
-      // Alternate primary & secondary FIA kerb blocks every step (vivid emphasis in corners)
       const isPrimaryBlock = i % 2 === 0;
       const isCornerZone = cornerSpeedCaps[i] < 180;
       const kerbCol = isPrimaryBlock ? cKerbPrimary : cKerbSecondary;
@@ -1775,13 +1786,11 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
       const gCol = kerbCol.g * shadeMul;
       const bCol = kerbCol.b * shadeMul;
 
-      // Sawtooth 3D height profile: front edge of block is lower, rear edge ramps up +3.5cm
       const lipH0 = isCornerZone ? 0.13 : 0.10;
       const lipH1 = isCornerZone ? 0.165 : 0.13;
       const topH0 = isCornerZone ? 0.18 : 0.14;
       const topH1 = isCornerZone ? 0.225 : 0.175;
 
-      // Sample 0 cross-section points
       p0_in.copy(s0.position).addScaledVector(s0.right, sideSign * roadHalfWidth);
       p0_lip
         .copy(s0.position)
@@ -1796,7 +1805,6 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
         .addScaledVector(s0.right, sideSign * (roadHalfWidth + kerbWidth))
         .addScaledVector(s0.normal, -0.02);
 
-      // Sample 1 cross-section points (elevated rear of sawtooth block)
       p1_in.copy(s1.position).addScaledVector(s1.right, sideSign * roadHalfWidth);
       p1_lip
         .copy(s1.position)
@@ -1811,7 +1819,7 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
         .addScaledVector(s1.right, sideSign * (roadHalfWidth + kerbWidth))
         .addScaledVector(s1.normal, -0.02);
 
-      // 1) Inner 45° Bevel Lip (brightly catches sunlight along the asphalt boundary)
+      // 1) Inner 45° Bevel Lip
       pushQuad(p0_in, p0_lip, p1_lip, p1_in, rCol * 0.95, gCol * 0.95, bCol * 0.95, 0.0, 0.22);
 
       // 2) Crowned Sawtooth Rumble Top Deck
@@ -1820,7 +1828,7 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
       // 3) Outer Vertical Curb Wall
       pushQuad(p0_top, p0_out, p1_out, p1_top, rCol * 0.78, gCol * 0.78, bCol * 0.78, 0.88, 1.0);
 
-      // 4) Vertical Sawtooth Step Face at rear of block (gives physical 3D tooth depth)
+      // 4) Vertical Sawtooth Step Face at rear of block (outward +tangent winding for FrontSide)
       p1_lip_low
         .copy(s1.position)
         .addScaledVector(s1.right, sideSign * (roadHalfWidth + 0.24))
@@ -1829,7 +1837,7 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
         .copy(s1.position)
         .addScaledVector(s1.right, sideSign * (roadHalfWidth + 1.15))
         .addScaledVector(s1.normal, topH0);
-      pushQuad(p1_lip_low, p1_top_low, p1_top, p1_lip, rCol * 0.72, gCol * 0.72, bCol * 0.72, 0.22, 0.88);
+      pushQuad(p1_top_low, p1_lip_low, p1_lip, p1_top, rCol * 0.72, gCol * 0.72, bCol * 0.72, 0.22, 0.88);
     }
 
     const geo = new THREE.BufferGeometry();
@@ -1848,20 +1856,21 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
     vertexColors: true,
     roughness: 0.42,
     metalness: 0.06,
-    side: THREE.DoubleSide,
+    side: THREE.FrontSide,
   });
 
   const leftKerbGeo = build3DSerratedKerbGeometry(-1);
-  const leftKerbMesh = new THREE.Mesh(leftKerbGeo, kerbMat);
-  leftKerbMesh.castShadow = true;
-  leftKerbMesh.receiveShadow = true;
-  root.add(leftKerbMesh);
-
   const rightKerbGeo = build3DSerratedKerbGeometry(1);
-  const rightKerbMesh = new THREE.Mesh(rightKerbGeo, kerbMat);
-  rightKerbMesh.castShadow = true;
-  rightKerbMesh.receiveShadow = true;
-  root.add(rightKerbMesh);
+  const mergedKerbGeo = mergeGeometries([leftKerbGeo, rightKerbGeo], false) || leftKerbGeo;
+  if (mergedKerbGeo !== leftKerbGeo) leftKerbGeo.dispose();
+  rightKerbGeo.dispose();
+
+  const kerbMesh = new THREE.Mesh(mergedKerbGeo, kerbMat);
+  kerbMesh.castShadow = false;
+  kerbMesh.receiveShadow = true;
+  root.add(kerbMesh);
+  const leftKerbMesh = kerbMesh;
+  const rightKerbMesh = kerbMesh;
 
   // -------------------------------------------------------------------------
   // 3. Figure-8 Solid 3D Bridge Overpass & Viaduct Substructure
@@ -1873,7 +1882,7 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
     color: theme.concreteHex,
     roughness: 0.82,
     metalness: 0.1,
-    side: THREE.DoubleSide,
+    side: THREE.FrontSide,
   });
 
   const steelMat = new THREE.MeshStandardMaterial({
@@ -1945,24 +1954,30 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
       const prev = (stepIdx - 1) * 8;
       const curr = stepIdx * 8;
 
+      // All 7 bridge surfaces wound CCW outward for FrontSide culling
+      // Underside slab (-Y)
       bridgeDeckIndices.push(prev + 1, prev + 0, curr + 0);
       bridgeDeckIndices.push(prev + 1, curr + 0, curr + 1);
 
-      bridgeDeckIndices.push(prev + 0, curr + 0, curr + 4);
-      bridgeDeckIndices.push(prev + 0, curr + 4, prev + 4);
+      // Left outer parapet wall (-X)
+      bridgeDeckIndices.push(prev + 0, curr + 4, curr + 0);
+      bridgeDeckIndices.push(prev + 0, prev + 4, curr + 4);
 
-      bridgeDeckIndices.push(curr + 1, prev + 1, prev + 5);
-      bridgeDeckIndices.push(curr + 1, prev + 5, curr + 5);
+      // Right outer parapet wall (+X)
+      bridgeDeckIndices.push(curr + 1, prev + 5, prev + 1);
+      bridgeDeckIndices.push(curr + 1, curr + 5, prev + 5);
 
-      bridgeDeckIndices.push(prev + 4, curr + 4, curr + 6);
-      bridgeDeckIndices.push(prev + 4, curr + 6, prev + 6);
-      bridgeDeckIndices.push(prev + 6, curr + 6, curr + 2);
-      bridgeDeckIndices.push(prev + 6, curr + 2, prev + 2);
+      // Left parapet top (+Y) & inner wall (+X)
+      bridgeDeckIndices.push(prev + 4, curr + 6, curr + 4);
+      bridgeDeckIndices.push(prev + 4, prev + 6, curr + 6);
+      bridgeDeckIndices.push(prev + 6, curr + 2, curr + 6);
+      bridgeDeckIndices.push(prev + 6, prev + 2, curr + 2);
 
-      bridgeDeckIndices.push(curr + 5, prev + 5, prev + 7);
-      bridgeDeckIndices.push(curr + 5, prev + 7, curr + 7);
-      bridgeDeckIndices.push(curr + 7, prev + 7, prev + 3);
-      bridgeDeckIndices.push(curr + 7, prev + 3, curr + 3);
+      // Right parapet top (+Y) & inner wall (-X)
+      bridgeDeckIndices.push(curr + 5, prev + 7, prev + 5);
+      bridgeDeckIndices.push(curr + 5, curr + 7, prev + 7);
+      bridgeDeckIndices.push(curr + 7, prev + 3, prev + 7);
+      bridgeDeckIndices.push(curr + 7, curr + 3, prev + 3);
     }
   }
 
@@ -1970,11 +1985,8 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
   bridgeDeckGeo.setAttribute('position', new THREE.Float32BufferAttribute(bridgeDeckVerts, 3));
   bridgeDeckGeo.setIndex(bridgeDeckIndices);
   bridgeDeckGeo.computeVertexNormals();
-
-  const bridgeDeckMesh = new THREE.Mesh(bridgeDeckGeo, concreteMat);
-  bridgeDeckMesh.castShadow = true;
-  bridgeDeckMesh.receiveShadow = true;
-  bridgeGroup.add(bridgeDeckMesh);
+  const bridgeDeckNonIndexed = bridgeDeckGeo.toNonIndexed();
+  bridgeDeckGeo.dispose();
 
   function getDistToLowerRoad2D(x: number, z: number): number {
     let minSq = Infinity;
@@ -2010,7 +2022,7 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
     }
   }
 
-  const bridgeConcreteParts: THREE.BufferGeometry[] = [];
+  const bridgeConcreteParts: THREE.BufferGeometry[] = [bridgeDeckNonIndexed];
   const bridgeHazardParts: THREE.BufferGeometry[] = [];
   const bridgeMat4 = new THREE.Matrix4();
 
@@ -2069,15 +2081,11 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
   }
   sharedViaductCapGeo.dispose();
 
-  const mergedBridgeSubGeo = mergeStaticParts(bridgeConcreteParts);
-  if (mergedBridgeSubGeo) {
-    const bridgeSubMesh = new THREE.Mesh(mergedBridgeSubGeo, concreteMat);
-    bridgeSubMesh.receiveShadow = true;
-    bridgeGroup.add(bridgeSubMesh);
-  }
   const mergedBridgeHazardGeo = mergeStaticParts(bridgeHazardParts);
   if (mergedBridgeHazardGeo) {
     bridgeGroup.add(new THREE.Mesh(mergedBridgeHazardGeo, hazardMat));
+  } else {
+    hazardMat.dispose();
   }
 
   root.add(bridgeGroup);
@@ -2088,35 +2096,29 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
   const gantryGroup = new THREE.Group();
   gantryGroup.name = 'StartFinishGantry';
 
-  const gantrySteelParts: THREE.BufferGeometry[] = [];
-  const gantryBarGeo = new THREE.BoxGeometry(16.5, 0.9, 1.2);
-  const gantryBarPos = startSample.position.clone().add(new THREE.Vector3(0, 8.2, 0));
-  composeBakeMatrix(bridgeMat4, gantryBarPos, startSample.quaternion);
-  gantrySteelParts.push(bakeTransformedGeo(gantryBarGeo, bridgeMat4, { keepUv: false }));
-  gantryBarGeo.dispose();
-
-  const towerGeo = new THREE.BoxGeometry(0.8, 8.2, 0.8);
-  const towerLPos = startSample.position.clone().addScaledVector(startSample.right, -7.8).add(new THREE.Vector3(0, 4.1, 0));
-  composeBakeMatrix(bridgeMat4, towerLPos);
-  gantrySteelParts.push(bakeTransformedGeo(towerGeo, bridgeMat4, { keepUv: false }));
-  const towerRPos = startSample.position.clone().addScaledVector(startSample.right, 7.8).add(new THREE.Vector3(0, 4.1, 0));
-  composeBakeMatrix(bridgeMat4, towerRPos);
-  gantrySteelParts.push(bakeTransformedGeo(towerGeo, bridgeMat4, { keepUv: false }));
-  towerGeo.dispose();
-
   const sceneryBuckets: StaticSceneryBuckets = {
     seatParts: [],
-    concreteParts: [],
+    concreteParts: bridgeConcreteParts,
     steelParts: [],
     glassParts: [],
     paintedParts: [],
     signs: [],
   };
 
-  const mergedGantrySteelGeo = mergeStaticParts(gantrySteelParts);
-  if (mergedGantrySteelGeo) {
-    gantryGroup.add(new THREE.Mesh(mergedGantrySteelGeo, steelMat));
-  }
+  const gantryBarGeo = new THREE.BoxGeometry(16.5, 0.9, 1.2);
+  const gantryBarPos = startSample.position.clone().add(new THREE.Vector3(0, 8.2, 0));
+  composeBakeMatrix(bridgeMat4, gantryBarPos, startSample.quaternion);
+  sceneryBuckets.steelParts.push(bakeTransformedGeo(gantryBarGeo, bridgeMat4, { keepUv: false }));
+  gantryBarGeo.dispose();
+
+  const towerGeo = new THREE.BoxGeometry(0.8, 8.2, 0.8);
+  const towerLPos = startSample.position.clone().addScaledVector(startSample.right, -7.8).add(new THREE.Vector3(0, 4.1, 0));
+  composeBakeMatrix(bridgeMat4, towerLPos);
+  sceneryBuckets.steelParts.push(bakeTransformedGeo(towerGeo, bridgeMat4, { keepUv: false }));
+  const towerRPos = startSample.position.clone().addScaledVector(startSample.right, 7.8).add(new THREE.Vector3(0, 4.1, 0));
+  composeBakeMatrix(bridgeMat4, towerRPos);
+  sceneryBuckets.steelParts.push(bakeTransformedGeo(towerGeo, bridgeMat4, { keepUv: false }));
+  towerGeo.dispose();
 
   const gantryHeaderGroup = new THREE.Group();
   gantryHeaderGroup.position.copy(gantryBarPos);
@@ -2137,40 +2139,53 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
     textCol: '#f59e0b',
   });
 
-  const lightLamps: THREE.Mesh[] = [];
-  const sharedLampGeo = new THREE.SphereGeometry(0.32, 14, 14);
-  for (let l = 0; l < 5; l++) {
-    const lamp = new THREE.Mesh(
-      sharedLampGeo,
-      new THREE.MeshStandardMaterial({
-        color: 0x0f172a,
-        emissive: 0x000000,
-        emissiveIntensity: 0.0,
-      })
+  // 5 FIA Start Lights batched into 1 InstancedMesh draw call with emissive glow when lit
+  const sharedLampGeo = new THREE.SphereGeometry(0.32, 12, 12);
+  const startLightMat = new THREE.MeshStandardMaterial({
+    color: 0xffffff,
+    roughness: 0.25,
+    metalness: 0.2,
+  });
+  startLightMat.customProgramCacheKey = () => 'suzuka-start-lights-inst-v1';
+  startLightMat.onBeforeCompile = (shader) => {
+    shader.fragmentShader = shader.fragmentShader.replace(
+      '#include <emissivemap_fragment>',
+      `#include <emissivemap_fragment>
+      float startLampLum = max(diffuseColor.r, max(diffuseColor.g, diffuseColor.b));
+      totalEmissiveRadiance += diffuseColor.rgb * smoothstep(0.08, 0.25, startLampLum) * 2.2;`
     );
-    lamp.position.set(-2.8 + l * 1.4, -0.1, 0.7);
-    gantryHeaderGroup.add(lamp);
-    lightLamps.push(lamp);
+  };
+  const startLightsInst = new THREE.InstancedMesh(sharedLampGeo, startLightMat, 5);
+  const _lampOffCol = new THREE.Color(0x0f172a);
+  const _lampRedCol = new THREE.Color(0xef4444);
+  const _lampGreenCol = new THREE.Color(0x10b981);
+  for (let l = 0; l < 5; l++) {
+    composeBakeMatrix(bridgeMat4, [-2.8 + l * 1.4, -0.1, 0.7]);
+    startLightsInst.setMatrixAt(l, bridgeMat4);
+    startLightsInst.setColorAt(l, _lampOffCol);
   }
+  startLightsInst.instanceMatrix.needsUpdate = true;
+  if (startLightsInst.instanceColor) startLightsInst.instanceColor.needsUpdate = true;
+  startLightsInst.computeBoundingSphere();
+  gantryHeaderGroup.add(startLightsInst);
 
   root.add(gantryGroup);
 
+  let lastStartLightsCount = -1;
   function setStartLights(count: number) {
+    if (count === lastStartLightsCount) return;
+    lastStartLightsCount = count;
     for (let l = 0; l < 5; l++) {
-      const mat = lightLamps[l].material as THREE.MeshStandardMaterial;
       if (count === 6) {
-        mat.color.setHex(0x10b981);
-        mat.emissive.setHex(0x10b981);
-        mat.emissiveIntensity = 2.5;
+        startLightsInst.setColorAt(l, _lampGreenCol);
       } else if (count > l) {
-        mat.color.setHex(0xef4444);
-        mat.emissive.setHex(0xef4444);
-        mat.emissiveIntensity = 2.0;
+        startLightsInst.setColorAt(l, _lampRedCol);
       } else {
-        mat.color.setHex(0x0f172a);
-        mat.emissive.setHex(0x000000);
-        mat.emissiveIntensity = 0.0;
+        startLightsInst.setColorAt(l, _lampOffCol);
       }
+    }
+    if (startLightsInst.instanceColor) {
+      startLightsInst.instanceColor.needsUpdate = true;
     }
   }
 
@@ -2348,7 +2363,7 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
 
     const crowdBillboardMat = new THREE.ShaderMaterial({
       uniforms: crowdUniforms,
-      transparent: true,
+      transparent: false,
       depthWrite: true,
       side: THREE.DoubleSide,
       vertexShader: /* glsl */ `
@@ -2400,8 +2415,8 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
 
         void main() {
           vec4 texel = texture2D(uAtlasTex, vAtlasUv);
-          if (texel.a < 0.35) discard;
-          gl_FragColor = vec4(texel.rgb * uCrowdBrightness, texel.a);
+          if (texel.a < 0.5) discard;
+          gl_FragColor = vec4(texel.rgb * uCrowdBrightness, 1.0);
         }
       `,
     });
@@ -2736,6 +2751,8 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
   const mergedLegsGeo = mergeStaticParts(ferrisLegParts);
   if (mergedLegsGeo) {
     ferrisWheelRoot.add(new THREE.Mesh(mergedLegsGeo, legMat));
+  } else {
+    legMat.dispose();
   }
 
   const ferrisWheelRotating = new THREE.Group();
@@ -2759,6 +2776,8 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
   const mergedRimsGeo = mergeStaticParts(ferrisRimParts);
   if (mergedRimsGeo) {
     ferrisWheelRotating.add(new THREE.Mesh(mergedRimsGeo, ferrisRimMat));
+  } else {
+    ferrisRimMat.dispose();
   }
 
   const gondolaColors = [0xef4444, 0x3b82f6, 0xf59e0b, 0x10b981, 0x8b5cf6, 0xec4899];
@@ -2784,6 +2803,8 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
   const mergedGondolasGeo = mergeStaticParts(gondolaParts);
   if (mergedGondolasGeo) {
     ferrisWheelRotating.add(new THREE.Mesh(mergedGondolasGeo, ferrisGondolaMat));
+  } else {
+    ferrisGondolaMat.dispose();
   }
   spokeGeo.dispose();
   sharedGondolaGeo.dispose();
@@ -2927,40 +2948,60 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
   cloudInstanced.computeBoundingSphere();
   sceneryGroup.add(cloudInstanced);
 
-  // 5 Animated Multi-Part Hot Air Balloons over the circuit
-  const hotAirBalloons: { group: THREE.Object3D; baseY: number; phase: number }[] = [];
+  // 5 Animated Multi-Part Hot Air Balloons over the circuit (1 InstancedMesh draw call!)
+  const balloonStates: { x: number; baseY: number; z: number; phase: number; rotY: number }[] = [];
   const balloonSpecs = [
-    { x: -75, y: 52, z: 45, color1: 0xef4444, color2: 0xf59e0b, phase: 0.0 },
-    { x: 115, y: 58, z: -95, color1: 0x06b6d4, color2: 0x3b82f6, phase: 1.6 },
-    { x: -165, y: 56, z: -185, color1: 0xec4899, color2: 0xa855f7, phase: 3.1 },
-    { x: 85, y: 50, z: 125, color1: 0x10b981, color2: 0xfacc15, phase: 4.5 },
-    { x: -35, y: 62, z: -260, color1: 0xf97316, color2: 0xef4444, phase: 5.4 },
+    { x: -75, y: 52, z: 45, color1: 0xef4444, phase: 0.0 },
+    { x: 115, y: 58, z: -95, color1: 0x06b6d4, phase: 1.6 },
+    { x: -165, y: 56, z: -185, color1: 0xec4899, phase: 3.1 },
+    { x: 85, y: 50, z: 125, color1: 0x10b981, phase: 4.5 },
+    { x: -35, y: 62, z: -260, color1: 0xf97316, phase: 5.4 },
   ];
   const balloonEnvGeo = new THREE.SphereGeometry(7.8, 16, 14);
   const balloonSkirtGeo = new THREE.CylinderGeometry(4.4, 2.1, 4.0, 12);
   const balloonBasketGeo = new THREE.BoxGeometry(2.5, 2.1, 2.5);
   const balloonVertexMat = createVertexEmissiveMaterial(theme.balloonEmissiveIntensity, 0.5, 0.08);
 
-  for (const bs of balloonSpecs) {
-    const bParts: THREE.BufferGeometry[] = [];
-    composeBakeMatrix(scLocalMat, [0, 6.0, 0], undefined, [1, 1.18, 1]);
-    bParts.push(bakeTransformedGeo(balloonEnvGeo, scLocalMat, { colorHex: bs.color1, keepUv: false }));
-    composeBakeMatrix(scLocalMat, [0, 0.2, 0]);
-    bParts.push(bakeTransformedGeo(balloonSkirtGeo, scLocalMat, { colorHex: bs.color2, keepUv: false }));
-    composeBakeMatrix(scLocalMat, [0, -3.8, 0]);
-    bParts.push(bakeTransformedGeo(balloonBasketGeo, scLocalMat, { colorHex: 0x92400e, keepUv: false }));
-
-    const mergedBalloonGeo = mergeStaticParts(bParts);
-    if (mergedBalloonGeo) {
-      const bMesh = new THREE.Mesh(mergedBalloonGeo, balloonVertexMat);
-      bMesh.position.set(bs.x, bs.y, bs.z);
-      sceneryGroup.add(bMesh);
-      hotAirBalloons.push({ group: bMesh, baseY: bs.y, phase: bs.phase });
-    }
-  }
+  const balloonTemplateParts: THREE.BufferGeometry[] = [];
+  composeBakeMatrix(scLocalMat, [0, 6.0, 0], undefined, [1, 1.18, 1]);
+  balloonTemplateParts.push(bakeTransformedGeo(balloonEnvGeo, scLocalMat, { colorHex: 0xffffff, keepUv: false }));
+  composeBakeMatrix(scLocalMat, [0, 0.2, 0]);
+  balloonTemplateParts.push(bakeTransformedGeo(balloonSkirtGeo, scLocalMat, { colorHex: 0xd8c8b4, keepUv: false }));
+  composeBakeMatrix(scLocalMat, [0, -3.8, 0]);
+  balloonTemplateParts.push(bakeTransformedGeo(balloonBasketGeo, scLocalMat, { colorHex: 0x4a2e16, keepUv: false }));
   balloonEnvGeo.dispose();
   balloonSkirtGeo.dispose();
   balloonBasketGeo.dispose();
+
+  const _balloonPos = new THREE.Vector3();
+  const _balloonQuat = new THREE.Quaternion();
+  const _balloonScale = new THREE.Vector3(1, 1, 1);
+  const _balloonMat4 = new THREE.Matrix4();
+  const _balloonAxisY = new THREE.Vector3(0, 1, 0);
+  const _balloonColor = new THREE.Color();
+
+  let balloonInstanced: THREE.InstancedMesh | null = null;
+  const mergedBalloonTemplateGeo = mergeStaticParts(balloonTemplateParts);
+  if (mergedBalloonTemplateGeo) {
+    balloonInstanced = new THREE.InstancedMesh(mergedBalloonTemplateGeo, balloonVertexMat, balloonSpecs.length);
+    balloonSpecs.forEach((bs, idx) => {
+      _balloonPos.set(bs.x, bs.y, bs.z);
+      _balloonQuat.identity();
+      _balloonMat4.compose(_balloonPos, _balloonQuat, _balloonScale);
+      balloonInstanced!.setMatrixAt(idx, _balloonMat4);
+      balloonInstanced!.setColorAt(idx, _balloonColor.setHex(bs.color1));
+      balloonStates.push({ x: bs.x, baseY: bs.y, z: bs.z, phase: bs.phase, rotY: 0 });
+    });
+    balloonInstanced.instanceMatrix.needsUpdate = true;
+    if (balloonInstanced.instanceColor) balloonInstanced.instanceColor.needsUpdate = true;
+    balloonInstanced.computeBoundingSphere();
+    if (balloonInstanced.boundingSphere) {
+      balloonInstanced.boundingSphere.radius += 4.0;
+    }
+    sceneryGroup.add(balloonInstanced);
+  } else {
+    balloonVertexMat.dispose();
+  }
 
   // H. Grounded Trackside Sponsor & Vocabulary Billboards (queued into unified billboard atlas)
   const billboardData = [
@@ -3042,13 +3083,11 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
   const mergedConcreteGeo = mergeStaticParts(sceneryBuckets.concreteParts);
   if (mergedConcreteGeo) {
     const staticConcreteMesh = new THREE.Mesh(mergedConcreteGeo, concreteMat);
+    staticConcreteMesh.castShadow = true;
     staticConcreteMesh.receiveShadow = true;
     sceneryGroup.add(staticConcreteMesh);
-  }
-
-  const mergedSteelGeo = mergeStaticParts(sceneryBuckets.steelParts);
-  if (mergedSteelGeo) {
-    sceneryGroup.add(new THREE.Mesh(mergedSteelGeo, steelMat));
+  } else {
+    concreteMat.dispose();
   }
 
   const mergedGlassGeo = mergeStaticParts(sceneryBuckets.glassParts);
@@ -3071,8 +3110,8 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
 
   // I. Batched InstancedMesh Trackside Details:
   //    1) Blue & White FIA Tire Barrier Stacks on Curve Run-offs
-  //    2) Japanese Nobori Racing Banner Flags along the Circuit
-  //    3) Tall Stadium Floodlight Towers
+  //    2) Japanese Nobori Racing Banner Flags along the Circuit (poles baked into static steel)
+  //    3) Tall Stadium Floodlight Towers (poles baked into static steel)
   const dummyObj = new THREE.Object3D();
 
   // 1) FIA Tire Barrier Stacks (2 stacked torus/cylinders per instance)
@@ -3113,6 +3152,9 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
     if (tireInstanced.instanceColor) tireInstanced.instanceColor.needsUpdate = true;
     tireInstanced.computeBoundingSphere();
     sceneryGroup.add(tireInstanced);
+  } else {
+    mergedTireStackGeo.dispose();
+    tireWallMat.dispose();
   }
 
   // 2) Japanese Nobori Festival Racing Flags along the Track Perimeter (with GPU wind wave shader)
@@ -3153,25 +3195,25 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
   }
 
   if (noboriPlacements.length > 0) {
-    const poleInst = new THREE.InstancedMesh(flagPoleInstGeo, steelMat, noboriPlacements.length);
     const clothInst = new THREE.InstancedMesh(flagBannerGeo, flagMat, noboriPlacements.length);
     noboriPlacements.forEach((np, idx) => {
       dummyObj.position.set(np.x, 0, np.z);
       dummyObj.rotation.set(0, np.rotY, 0);
       dummyObj.scale.setScalar(1);
       dummyObj.updateMatrix();
-      poleInst.setMatrixAt(idx, dummyObj.matrix);
+      sceneryBuckets.steelParts.push(bakeTransformedGeo(flagPoleInstGeo, dummyObj.matrix, { keepUv: false }));
       clothInst.setMatrixAt(idx, dummyObj.matrix);
       clothInst.setColorAt(idx, np.color);
     });
-    poleInst.instanceMatrix.needsUpdate = true;
     clothInst.instanceMatrix.needsUpdate = true;
     if (clothInst.instanceColor) clothInst.instanceColor.needsUpdate = true;
-    poleInst.computeBoundingSphere();
     clothInst.computeBoundingSphere();
-    sceneryGroup.add(poleInst);
     sceneryGroup.add(clothInst);
+  } else {
+    flagBannerGeo.dispose();
+    flagMat.dispose();
   }
+  flagPoleInstGeo.dispose();
 
   // 3) Tall Stadium Floodlight Towers + Volumetric Night Light Cones (InstancedMesh)
   const floodPoleGeo = new THREE.CylinderGeometry(0.24, 0.42, 18.0, 8);
@@ -3250,7 +3292,6 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
   }
 
   if (floodPlacements.length > 0) {
-    const floodPoleInst = new THREE.InstancedMesh(floodPoleGeo, steelMat, floodPlacements.length);
     const floodHeadInst = new THREE.InstancedMesh(floodHeadGeo, floodGlowMat, floodPlacements.length);
     floodConeInst = new THREE.InstancedMesh(floodConeGeo, floodConeMat, floodPlacements.length);
     floodConeInst.visible = false;
@@ -3259,19 +3300,30 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
       dummyObj.rotation.set(0, fp.rotY, 0);
       dummyObj.scale.setScalar(1);
       dummyObj.updateMatrix();
-      floodPoleInst.setMatrixAt(idx, dummyObj.matrix);
+      sceneryBuckets.steelParts.push(bakeTransformedGeo(floodPoleGeo, dummyObj.matrix, { keepUv: false }));
       floodHeadInst.setMatrixAt(idx, dummyObj.matrix);
       floodConeInst!.setMatrixAt(idx, dummyObj.matrix);
     });
-    floodPoleInst.instanceMatrix.needsUpdate = true;
     floodHeadInst.instanceMatrix.needsUpdate = true;
     floodConeInst.instanceMatrix.needsUpdate = true;
-    floodPoleInst.computeBoundingSphere();
     floodHeadInst.computeBoundingSphere();
     floodConeInst.computeBoundingSphere();
-    sceneryGroup.add(floodPoleInst);
     sceneryGroup.add(floodHeadInst);
     sceneryGroup.add(floodConeInst);
+  } else {
+    floodHeadGeo.dispose();
+    floodGlowMat.dispose();
+    floodConeGeo.dispose();
+    floodConeMat.dispose();
+  }
+  floodPoleGeo.dispose();
+
+  // Unified static steel draw call: gantry steel + building/billboard frames + nobori poles + floodlight poles
+  const mergedSteelGeo = mergeStaticParts(sceneryBuckets.steelParts);
+  if (mergedSteelGeo) {
+    sceneryGroup.add(new THREE.Mesh(mergedSteelGeo, steelMat));
+  } else if (!mergedFerrisSteelGeo) {
+    steelMat.dispose();
   }
 
   // J. Lush Multi-Tiered InstancedMesh Forest / Desert Cacti & Rock Outcrops (520+ items in 4 GPU draw calls!)
@@ -3357,13 +3409,13 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
       topBoost: 1.08,
     });
   } else {
-    const cedarTier1 = new THREE.IcosahedronGeometry(3.1, 2);
+    const cedarTier1 = new THREE.IcosahedronGeometry(3.1, 1);
     cedarTier1.scale(1.05, 0.82, 1.05);
     cedarTier1.translate(0, 4.3, 0);
-    const cedarTier2 = new THREE.IcosahedronGeometry(2.4, 2);
+    const cedarTier2 = new THREE.IcosahedronGeometry(2.4, 1);
     cedarTier2.scale(1.0, 0.85, 1.0);
     cedarTier2.translate(0.5, 6.2, 0.3);
-    const cedarTier3 = new THREE.IcosahedronGeometry(1.9, 2);
+    const cedarTier3 = new THREE.IcosahedronGeometry(1.9, 1);
     cedarTier3.translate(-0.4, 7.5, -0.3);
     cedarCanopyGeo = mergeSimpleGeometries([cedarTier1, cedarTier2, cedarTier3], {
       minY: 2.2,
@@ -3379,16 +3431,16 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
   });
 
   // 3) Sakura slot: Multi-puff Sakura Cherry Blossom Tree OR Desert Oasis Fan-Palm Crown
-  const sakPuff1 = new THREE.IcosahedronGeometry(2.8, 2);
+  const sakPuff1 = new THREE.IcosahedronGeometry(2.8, 1);
   sakPuff1.scale(isDesertBiome ? 1.35 : 1.12, isDesertBiome ? 0.48 : 0.78, isDesertBiome ? 1.35 : 1.12);
   sakPuff1.translate(0, 4.3, 0);
-  const sakPuff2 = new THREE.IcosahedronGeometry(2.2, 2);
+  const sakPuff2 = new THREE.IcosahedronGeometry(2.2, 1);
   sakPuff2.scale(isDesertBiome ? 1.25 : 1.08, isDesertBiome ? 0.45 : 0.8, isDesertBiome ? 1.25 : 1.08);
   sakPuff2.translate(1.45, 5.1, 0.65);
-  const sakPuff3 = new THREE.IcosahedronGeometry(2.1, 2);
+  const sakPuff3 = new THREE.IcosahedronGeometry(2.1, 1);
   sakPuff3.scale(isDesertBiome ? 1.25 : 1.08, isDesertBiome ? 0.45 : 0.8, isDesertBiome ? 1.25 : 1.08);
   sakPuff3.translate(-1.35, 4.9, -0.7);
-  const sakPuff4 = new THREE.IcosahedronGeometry(1.85, 2);
+  const sakPuff4 = new THREE.IcosahedronGeometry(1.85, 1);
   sakPuff4.scale(1.1, isDesertBiome ? 0.55 : 0.78, 1.1);
   sakPuff4.translate(0.1, 6.1, -0.2);
   const sakuraCanopyGeo = mergeSimpleGeometries([sakPuff1, sakPuff2, sakPuff3, sakPuff4], {
@@ -3511,6 +3563,9 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
         tint,
       });
     }
+  } else {
+    lakeShoreMat.dispose();
+    lakeWaterMat.dispose();
   }
 
   // L. 3D Rolling Terrain Hills / Desert Sand Dunes / Snowdrifts (1 InstancedMesh draw call)
@@ -3547,6 +3602,9 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
     hillInst.computeBoundingSphere();
     hillInst.receiveShadow = true;
     sceneryGroup.add(hillInst);
+  } else {
+    hillGeo.dispose();
+    hillMat.dispose();
   }
 
   // Continuous 360-degree circuit coverage (0.00 to 1.00) with both near-track and forest belts!
@@ -3622,6 +3680,9 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
     treeShadowInst.instanceMatrix.needsUpdate = true;
     treeShadowInst.computeBoundingSphere();
     sceneryGroup.add(treeShadowInst);
+  } else {
+    treeShadowGeo.dispose();
+    treeShadowMat.dispose();
   }
 
   const pinePlacements = placements.filter((p) => p.type === 'pine');
@@ -3642,10 +3703,17 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
     trunkInstanced.instanceMatrix.needsUpdate = true;
     trunkInstanced.computeBoundingSphere();
     sceneryGroup.add(trunkInstanced);
+  } else {
+    treeTrunkGeo.dispose();
+    trunkMat.dispose();
   }
 
   const buildCanopyInstanced = (geo: THREE.BufferGeometry, mat: THREE.Material, list: TreePlacement[]) => {
-    if (list.length === 0) return;
+    if (list.length === 0) {
+      geo.dispose();
+      mat.dispose();
+      return;
+    }
     const inst = new THREE.InstancedMesh(geo, mat, list.length);
     list.forEach((p, idx) => {
       dummyObj.position.set(p.x, 0, p.z);
@@ -3679,9 +3747,11 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
     roughness: 0.88,
     metalness: 0.02,
   });
-  hillMat.map = grassTex;
-  hillMat.color.setHex(0xffffff);
-  hillMat.needsUpdate = true;
+  if (hillPlacements.length > 0) {
+    hillMat.map = grassTex;
+    hillMat.color.setHex(0xffffff);
+    hillMat.needsUpdate = true;
+  }
 
   const grassMesh = new THREE.Mesh(new THREE.CircleGeometry(860, 64), grassMat);
   grassMesh.rotation.x = -Math.PI / 2;
@@ -3743,9 +3813,16 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
     if (cloudInstanced) {
       cloudInstanced.rotation.y += dt * 0.0045;
     }
-    for (const b of hotAirBalloons) {
-      b.group.position.y = b.baseY + Math.sin(sceneryClock * 0.7 + b.phase) * 2.2;
-      b.group.rotation.y += dt * 0.05;
+    if (balloonInstanced) {
+      for (let i = 0; i < balloonStates.length; i++) {
+        const b = balloonStates[i];
+        b.rotY += dt * 0.05;
+        _balloonPos.set(b.x, b.baseY + Math.sin(sceneryClock * 0.7 + b.phase) * 2.2, b.z);
+        _balloonQuat.setFromAxisAngle(_balloonAxisY, b.rotY);
+        _balloonMat4.compose(_balloonPos, _balloonQuat, _balloonScale);
+        balloonInstanced.setMatrixAt(i, _balloonMat4);
+      }
+      balloonInstanced.instanceMatrix.needsUpdate = true;
     }
   }
 

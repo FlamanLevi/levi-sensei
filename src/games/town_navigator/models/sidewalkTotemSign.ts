@@ -51,14 +51,16 @@ function getTotemTexture(id: string, nameEn: string, nameJa: string, tier: numbe
   if (cached) return cached;
 
   const canvas = document.createElement('canvas');
-  canvas.width = 512;
-  canvas.height = 768;
+  canvas.width = 256;
+  canvas.height = 384;
   const ctx = canvas.getContext('2d');
   if (!ctx) {
     const fallback = new THREE.CanvasTexture(canvas);
     fallback.colorSpace = THREE.SRGBColorSpace;
+    fallback.userData.isSharedResource = true;
     return fallback;
   }
+  ctx.scale(0.5, 0.5);
 
   ctx.fillStyle = '#0f172a';
   ctx.fillRect(0, 0, 512, 768);
@@ -142,7 +144,8 @@ function getTotemTexture(id: string, nameEn: string, nameJa: string, tier: numbe
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
-  texture.anisotropy = 8;
+  texture.anisotropy = 4;
+  texture.userData.isSharedResource = true;
   textureCache.set(cacheKey, texture);
   return texture;
 }
@@ -155,6 +158,9 @@ const beaconMat = new THREE.MeshStandardMaterial({
   emissive: 0xfef08a,
   emissiveIntensity: 0.95,
   roughness: 0.2,
+});
+[granitePlinthMat, metalMat, goldFinialMat, beaconMat].forEach((m) => {
+  m.userData.isSharedResource = true;
 });
 
 /**
@@ -194,7 +200,7 @@ export function buildSidewalkTotemSign(options: TotemSignOptions): THREE.Group {
   ];
   const pillar = new THREE.Mesh(pillarGeo, materials);
   pillar.position.set(0, 0.94, 0);
-  pillar.castShadow = true;
+  pillar.castShadow = false;
   group.add(pillar);
 
   // 3. Pitched Hip-Roof Eaves Cap, Warm Lantern Crown & Golden Finial

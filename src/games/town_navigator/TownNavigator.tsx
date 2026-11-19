@@ -46,8 +46,10 @@ import {
 import { 
   computeManhattanRoadPath, 
   buildMextStepByStepScript, 
-  Point2D 
+  Point2D,
+  getLeftHandLaneOffset,
 } from './navigationLogic';
+import { createLivingTownController, LivingTownController } from './livingTownSystem';
 import { TownNavigatorDispatcher } from './TownNavigatorDispatcher';
 import {
   buildAtmosphericSkybox,
@@ -281,6 +283,10 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
   const wheelRotorRef = useRef<THREE.Object3D | null>(null);
   const gondolasRef = useRef<THREE.Object3D[]>([]);
   const carouselRotorRef = useRef<THREE.Object3D | null>(null);
+  const swingSeat0Ref = useRef<THREE.Object3D | null>(null);
+  const swingSeat1Ref = useRef<THREE.Object3D | null>(null);
+  const livingTownRef = useRef<LivingTownController | null>(null);
+  const streetlightLevelRef = useRef<number>(0);
 
   // Deduplicated HUD & proximity state trackers (zero idle React re-renders)
   const lastHudRef = useRef<{ x: number; z: number; heading: number }>({
@@ -686,9 +692,29 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
     }
     gondolasRef.current = gondolas;
     carouselRotorRef.current = nextMap.buildingsGroup.getObjectByName('AmusementPark_CarouselRotor') ?? null;
+    swingSeat0Ref.current = nextMap.buildingsGroup.getObjectByName('Park_SwingSeat_0') ?? null;
+    swingSeat1Ref.current = nextMap.buildingsGroup.getObjectByName('Park_SwingSeat_1') ?? null;
+
+    // Mount Living Town Simulation (instanced traffic, pedestrians, 3D target beacon & confetti)
+    if (livingTownRef.current) {
+      scene.remove(livingTownRef.current.group);
+      livingTownRef.current.dispose();
+      livingTownRef.current = null;
+    }
+    const livingTown = createLivingTownController(nextMap.seed, {
+      lowPower: gpuProfileRef.current?.isLowPower ?? false,
+    });
+    scene.add(livingTown.group);
+    livingTownRef.current = livingTown;
+    const currentTarget = questTargetRef.current;
+    livingTown.setTargetBeacon(
+      currentTarget?.entrancePos ?? null,
+      questModeRef.current === 'GUIDED' && !!currentTarget
+    );
 
     // Re-collect scene weather materials & immediately apply active atmosphere
     const atmos = getCompositeAtmosphere(timeOfDayRef.current, weatherRef.current);
+    streetlightLevelRef.current = atmos.streetlightLevel;
     const buckets = collectSceneWeatherMaterials(scene);
     materialBucketsRef.current = buckets;
     applyAtmosphereToMaterials(buckets, atmos);
@@ -1026,6 +1052,14 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
       if (carouselRotor) {
         carouselRotor.rotation.y += delta * 0.85;
       }
+      if (swingSeat0Ref.current) {
+        swingSeat0Ref.current.rotation.x = Math.sin(elapsed * 2.1) * 0.36;
+      }
+      if (swingSeat1Ref.current) {
+        swingSeat1Ref.current.rotation.x = Math.sin(elapsed * 2.1 + 0.85) * 0.36;
+      }
+
+      livingTownRef.current?.update(delta, elapsed, playerPosRef.current, streetlightLevelRef.current);
 
       // Pulse pooled 3D Road Route Chevrons in-place (1 draw call, zero allocations)
       const routeMesh = routeInstancedRef.current;
@@ -1269,6 +1303,11 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
           );
           const qTrigger = currentQuest.tier === 3 ? 10.5 : currentQuest.tier === 2 ? 8.0 : 5.8;
           if (qDist <= qTrigger) {
+            livingTownRef.current?.triggerConfettiBurst(
+              currentQuest.entrancePos[0],
+              1.2,
+              currentQuest.entrancePos[2]
+            );
             const pts = questModeRef.current === 'MYSTERY' ? 2 : 1;
             const nextCount = completedQuestCountRef.current + 1;
             setCompletedQuestCount(nextCount);
@@ -1333,12 +1372,16 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
       }
       weatherController.dispose();
       envHandle.dispose();
+      livingTownRef.current?.dispose();
+      livingTownRef.current = null;
       disposeObject3D(scene);
       ctx3d.cleanup();
       mountedTownRef.current = null;
       wheelRotorRef.current = null;
       gondolasRef.current = [];
       carouselRotorRef.current = null;
+      swingSeat0Ref.current = null;
+      swingSeat1Ref.current = null;
       routeInstancedRef.current = null;
       weatherControllerRef.current = null;
       materialBucketsRef.current = null;
@@ -1360,6 +1403,7 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
   useEffect(() => {
     if (!sceneRef.current || !ambientLightRef.current || !dirLightRef.current) return;
     const atmos = getCompositeAtmosphere(timeOfDay, weather);
+    streetlightLevelRef.current = atmos.streetlightLevel;
 
     if (sceneRef.current.background instanceof THREE.Color) {
       sceneRef.current.background.setHex(atmos.skyColor);
@@ -1557,12 +1601,15 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
       const segLen = Math.hypot(segDx, segDz);
       if (segLen < 1.5) continue;
 
+      const isRoadSeg = i < path.length - 2 || Math.abs(segDx) < 0.5 || Math.abs(segDz) < 0.5;
+      const laneOff = isRoadSeg ? getLeftHandLaneOffset(a, b) : { x: 0, z: 0 };
+
       const angle = Math.atan2(segDx, segDz);
       const steps = Math.max(1, Math.floor(segLen / spacing));
       for (let s = 0; s < steps && pts.length < MAX_ROUTE_CHEVRONS; s++) {
         const t = (s + 0.5) / steps;
-        const cx = a.x + segDx * t;
-        const cz = a.z + segDz * t;
+        const cx = a.x + segDx * t + laneOff.x;
+        const cz = a.z + segDz * t + laneOff.z;
         pts.push({ x: cx, z: cz, angle });
       }
     }
@@ -1581,6 +1628,14 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
       routeMesh.instanceMatrix.needsUpdate = true;
     }
   }, [questNavigationHint, showRoadArrows, questMode]);
+
+  // Sync 3D pulsing destination beacon with active quest target & mode
+  useEffect(() => {
+    livingTownRef.current?.setTargetBeacon(
+      questTarget?.entrancePos ?? null,
+      questMode === 'GUIDED' && !!questTarget
+    );
+  }, [questTarget, questMode]);
 
   return (
     <div className="fixed inset-0 w-screen h-dvh overflow-hidden bg-slate-900 select-none font-sans z-50">

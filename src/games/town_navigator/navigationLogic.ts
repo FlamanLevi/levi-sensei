@@ -178,6 +178,26 @@ export function computeManhattanRoadPath(startX: number, startZ: number, target:
   return simplified;
 }
 
+/**
+ * Computes the Japanese left-hand lane offset for a road segment a -> b so 3D route
+ * chevrons sit on the left-hand driving lane and never clip into Grand Boulevard medians.
+ */
+export function getLeftHandLaneOffset(a: Point2D, b: Point2D): Point2D {
+  const dx = b.x - a.x;
+  const dz = b.z - a.z;
+  const len = Math.hypot(dx, dz);
+  if (len < 0.01) return { x: 0, z: 0 };
+
+  const ux = dx / len;
+  const uz = dz / len;
+  // Left-hand normal in Three.js (+X East, +Z South): (uz, -ux)
+  const isBoulevard =
+    (Math.abs(a.x) < 0.5 && Math.abs(b.x) < 0.5) ||
+    (Math.abs(a.z) < 0.5 && Math.abs(b.z) < 0.5);
+  const offset = isBoulevard ? 2.6 : 0.95;
+  return { x: uz * offset, z: -ux * offset };
+}
+
 export interface NavigationStep {
   stepIndex: number;
   type: 'STRAIGHT' | 'TURN' | 'ARRIVE';

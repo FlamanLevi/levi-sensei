@@ -304,23 +304,28 @@ function createHighContrastAsphaltTexture(
 
       // Twin dark rubber braking tire-skid streaks in left & right wheel tracks
       for (const skidX of [112, 168, 340, 396]) {
-        const skidGrad = ctx.createLinearGradient(skidX - 7, 0, skidX + 7, 0);
+        const skidGrad = ctx.createLinearGradient(skidX - 9, 0, skidX + 9, 0);
         skidGrad.addColorStop(0, 'rgba(8, 10, 14, 0)');
-        skidGrad.addColorStop(0.5, 'rgba(8, 10, 14, 0.36)');
+        skidGrad.addColorStop(0.5, 'rgba(8, 10, 14, 0.42)');
         skidGrad.addColorStop(1, 'rgba(8, 10, 14, 0)');
         ctx.fillStyle = skidGrad;
-        ctx.fillRect(skidX - 7, 0, 14, 512);
+        ctx.fillRect(skidX - 9, 0, 18, 512);
       }
 
-      for (let i = 0; i < 3600; i++) {
-        const gx = (i * 73) % 512;
-        const gy = (i * 197) % 512;
-        ctx.fillStyle = i % 2 === 0 ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.12)';
-        ctx.fillRect(gx, gy, 2, 2);
+      // Batched aggregate speckles (2 path fills instead of 3,600 fillRect calls)
+      for (let parity = 0; parity < 2; parity++) {
+        ctx.fillStyle = parity === 0 ? 'rgba(255, 255, 255, 0.055)' : 'rgba(0, 0, 0, 0.13)';
+        ctx.beginPath();
+        for (let i = parity; i < 3600; i += 2) {
+          const gx = (i * 73) % 512;
+          const gy = (i * 197) % 512;
+          ctx.rect(gx, gy, 2, 2);
+        }
+        ctx.fill();
       }
 
       // Corner Speed-Zone White Chevron Arrows in both lanes
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.22)';
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.24)';
       for (const laneCenterX of [142, 370]) {
         ctx.beginPath();
         ctx.moveTo(laneCenterX - 28, 320);
@@ -351,12 +356,26 @@ function createHighContrastAsphaltTexture(
       ctx.fillStyle = rightLaneGrad;
       ctx.fillRect(302, 0, 140, 512);
 
-      // Fine asphalt aggregate speckles
-      for (let i = 0; i < 3800; i++) {
-        const gx = (i * 79) % 512;
-        const gy = (i * 193) % 512;
-        ctx.fillStyle = i % 2 === 0 ? 'rgba(255, 255, 255, 0.045)' : 'rgba(0, 0, 0, 0.14)';
-        ctx.fillRect(gx, gy, 2, 2);
+      // Subtle rubberized wheel-track streaks in both racing lanes
+      for (const wheelX of [112, 168, 344, 400]) {
+        const trackGrad = ctx.createLinearGradient(wheelX - 8, 0, wheelX + 8, 0);
+        trackGrad.addColorStop(0, 'rgba(6, 8, 12, 0)');
+        trackGrad.addColorStop(0.5, 'rgba(6, 8, 12, 0.24)');
+        trackGrad.addColorStop(1, 'rgba(6, 8, 12, 0)');
+        ctx.fillStyle = trackGrad;
+        ctx.fillRect(wheelX - 8, 0, 16, 512);
+      }
+
+      // Batched fine asphalt aggregate speckles (2 path fills instead of 3,800 fillRect calls)
+      for (let parity = 0; parity < 2; parity++) {
+        ctx.fillStyle = parity === 0 ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.14)';
+        ctx.beginPath();
+        for (let i = parity; i < 3800; i += 2) {
+          const gx = (i * 79) % 512;
+          const gy = (i * 193) % 512;
+          ctx.rect(gx, gy, 2, 2);
+        }
+        ctx.fill();
       }
     }
 
@@ -3339,25 +3358,25 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
   let pineCanopyGeo: THREE.BufferGeometry;
   if (isDesertBiome) {
     // Sculpted 3D Saguaro Cactus (central trunk + left & right elbow arms, grounded at y=0)
-    const sagMain = new THREE.CylinderGeometry(0.52, 0.66, 6.8, 9);
+    const sagMain = new THREE.CylinderGeometry(0.52, 0.66, 6.8, 12);
     sagMain.translate(0, 3.4, 0);
-    const sagTop = new THREE.SphereGeometry(0.52, 8, 6);
+    const sagTop = new THREE.SphereGeometry(0.52, 10, 8);
     sagTop.translate(0, 6.8, 0);
 
-    const sagArmLHoriz = new THREE.CylinderGeometry(0.34, 0.38, 1.6, 8);
+    const sagArmLHoriz = new THREE.CylinderGeometry(0.34, 0.38, 1.6, 10);
     sagArmLHoriz.rotateZ(Math.PI / 2);
     sagArmLHoriz.translate(-0.95, 3.2, 0);
-    const sagArmLVert = new THREE.CylinderGeometry(0.32, 0.35, 2.5, 8);
+    const sagArmLVert = new THREE.CylinderGeometry(0.32, 0.35, 2.5, 10);
     sagArmLVert.translate(-1.65, 4.35, 0);
-    const sagArmLTop = new THREE.SphereGeometry(0.32, 7, 5);
+    const sagArmLTop = new THREE.SphereGeometry(0.32, 8, 6);
     sagArmLTop.translate(-1.65, 5.6, 0);
 
-    const sagArmRHoriz = new THREE.CylinderGeometry(0.32, 0.36, 1.45, 8);
+    const sagArmRHoriz = new THREE.CylinderGeometry(0.32, 0.36, 1.45, 10);
     sagArmRHoriz.rotateZ(-Math.PI / 2);
     sagArmRHoriz.translate(0.88, 4.1, 0);
-    const sagArmRVert = new THREE.CylinderGeometry(0.30, 0.33, 2.2, 8);
+    const sagArmRVert = new THREE.CylinderGeometry(0.30, 0.33, 2.2, 10);
     sagArmRVert.translate(1.5, 5.1, 0);
-    const sagArmRTop = new THREE.SphereGeometry(0.30, 7, 5);
+    const sagArmRTop = new THREE.SphereGeometry(0.30, 8, 6);
     sagArmRTop.translate(1.5, 6.2, 0);
 
     pineCanopyGeo = mergeSimpleGeometries(
@@ -3370,17 +3389,19 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
       }
     );
   } else {
-    const pineTier1 = new THREE.ConeGeometry(3.2, 3.8, 9);
-    pineTier1.translate(0, 3.8, 0);
-    const pineTier2 = new THREE.ConeGeometry(2.5, 3.4, 9);
-    pineTier2.translate(0, 5.8, 0);
-    const pineTier3 = new THREE.ConeGeometry(1.7, 2.8, 9);
-    pineTier3.translate(0, 7.6, 0);
-    pineCanopyGeo = mergeSimpleGeometries([pineTier1, pineTier2, pineTier3], {
-      minY: 1.9,
-      maxY: 9.0,
-      bottomShade: 0.62,
-      topBoost: 1.08,
+    const pineTier1 = new THREE.ConeGeometry(3.35, 3.6, 14);
+    pineTier1.translate(0, 3.6, 0);
+    const pineTier2 = new THREE.ConeGeometry(2.75, 3.3, 14);
+    pineTier2.translate(0, 5.2, 0);
+    const pineTier3 = new THREE.ConeGeometry(2.05, 2.9, 14);
+    pineTier3.translate(0, 6.7, 0);
+    const pineTier4 = new THREE.ConeGeometry(1.35, 2.3, 12);
+    pineTier4.translate(0, 8.0, 0);
+    pineCanopyGeo = mergeSimpleGeometries([pineTier1, pineTier2, pineTier3, pineTier4], {
+      minY: 1.8,
+      maxY: 9.2,
+      bottomShade: 0.60,
+      topBoost: 1.10,
     });
   }
   const pineMat = new THREE.MeshStandardMaterial({
@@ -3409,19 +3430,22 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
       topBoost: 1.08,
     });
   } else {
-    const cedarTier1 = new THREE.IcosahedronGeometry(3.1, 1);
-    cedarTier1.scale(1.05, 0.82, 1.05);
-    cedarTier1.translate(0, 4.3, 0);
-    const cedarTier2 = new THREE.IcosahedronGeometry(2.4, 1);
-    cedarTier2.scale(1.0, 0.85, 1.0);
-    cedarTier2.translate(0.5, 6.2, 0.3);
-    const cedarTier3 = new THREE.IcosahedronGeometry(1.9, 1);
-    cedarTier3.translate(-0.4, 7.5, -0.3);
-    cedarCanopyGeo = mergeSimpleGeometries([cedarTier1, cedarTier2, cedarTier3], {
-      minY: 2.2,
-      maxY: 9.2,
-      bottomShade: 0.64,
-      topBoost: 1.06,
+    const cedarTier1 = new THREE.IcosahedronGeometry(3.05, 2);
+    cedarTier1.scale(1.06, 0.80, 1.06);
+    cedarTier1.translate(0, 4.2, 0);
+    const cedarTier2 = new THREE.IcosahedronGeometry(2.45, 2);
+    cedarTier2.scale(1.02, 0.84, 1.02);
+    cedarTier2.translate(0.55, 5.9, 0.35);
+    const cedarTier3 = new THREE.IcosahedronGeometry(2.15, 2);
+    cedarTier3.scale(0.98, 0.84, 0.98);
+    cedarTier3.translate(-0.6, 6.2, -0.4);
+    const cedarTier4 = new THREE.IcosahedronGeometry(1.75, 2);
+    cedarTier4.translate(0.05, 7.6, -0.1);
+    cedarCanopyGeo = mergeSimpleGeometries([cedarTier1, cedarTier2, cedarTier3, cedarTier4], {
+      minY: 2.1,
+      maxY: 9.3,
+      bottomShade: 0.62,
+      topBoost: 1.08,
     });
   }
   const cedarMat = new THREE.MeshStandardMaterial({
@@ -3431,23 +3455,26 @@ export function buildSuzuka3DTrack(themeId?: SuzukaTrackThemeId): SuzukaTrackWor
   });
 
   // 3) Sakura slot: Multi-puff Sakura Cherry Blossom Tree OR Desert Oasis Fan-Palm Crown
-  const sakPuff1 = new THREE.IcosahedronGeometry(2.8, 1);
-  sakPuff1.scale(isDesertBiome ? 1.35 : 1.12, isDesertBiome ? 0.48 : 0.78, isDesertBiome ? 1.35 : 1.12);
-  sakPuff1.translate(0, 4.3, 0);
-  const sakPuff2 = new THREE.IcosahedronGeometry(2.2, 1);
-  sakPuff2.scale(isDesertBiome ? 1.25 : 1.08, isDesertBiome ? 0.45 : 0.8, isDesertBiome ? 1.25 : 1.08);
-  sakPuff2.translate(1.45, 5.1, 0.65);
-  const sakPuff3 = new THREE.IcosahedronGeometry(2.1, 1);
-  sakPuff3.scale(isDesertBiome ? 1.25 : 1.08, isDesertBiome ? 0.45 : 0.8, isDesertBiome ? 1.25 : 1.08);
-  sakPuff3.translate(-1.35, 4.9, -0.7);
-  const sakPuff4 = new THREE.IcosahedronGeometry(1.85, 1);
-  sakPuff4.scale(1.1, isDesertBiome ? 0.55 : 0.78, 1.1);
-  sakPuff4.translate(0.1, 6.1, -0.2);
-  const sakuraCanopyGeo = mergeSimpleGeometries([sakPuff1, sakPuff2, sakPuff3, sakPuff4], {
-    minY: 2.4,
-    maxY: 7.6,
-    bottomShade: 0.66,
-    topBoost: 1.04,
+  const sakPuff1 = new THREE.IcosahedronGeometry(2.8, 2);
+  sakPuff1.scale(isDesertBiome ? 1.35 : 1.15, isDesertBiome ? 0.48 : 0.76, isDesertBiome ? 1.35 : 1.15);
+  sakPuff1.translate(0, 4.25, 0);
+  const sakPuff2 = new THREE.IcosahedronGeometry(2.25, 2);
+  sakPuff2.scale(isDesertBiome ? 1.25 : 1.10, isDesertBiome ? 0.45 : 0.78, isDesertBiome ? 1.25 : 1.10);
+  sakPuff2.translate(1.5, 5.05, 0.65);
+  const sakPuff3 = new THREE.IcosahedronGeometry(2.15, 2);
+  sakPuff3.scale(isDesertBiome ? 1.25 : 1.10, isDesertBiome ? 0.45 : 0.78, isDesertBiome ? 1.25 : 1.10);
+  sakPuff3.translate(-1.4, 4.9, -0.7);
+  const sakPuff4 = new THREE.IcosahedronGeometry(1.9, 2);
+  sakPuff4.scale(1.08, isDesertBiome ? 0.48 : 0.76, 1.08);
+  sakPuff4.translate(-0.2, 5.1, 1.35);
+  const sakPuff5 = new THREE.IcosahedronGeometry(1.85, 2);
+  sakPuff5.scale(1.12, isDesertBiome ? 0.55 : 0.80, 1.12);
+  sakPuff5.translate(0.1, 6.15, -0.2);
+  const sakuraCanopyGeo = mergeSimpleGeometries([sakPuff1, sakPuff2, sakPuff3, sakPuff4, sakPuff5], {
+    minY: 2.3,
+    maxY: 7.7,
+    bottomShade: 0.64,
+    topBoost: 1.06,
   });
   const sakuraMat = new THREE.MeshStandardMaterial({
     color: 0xffffff,

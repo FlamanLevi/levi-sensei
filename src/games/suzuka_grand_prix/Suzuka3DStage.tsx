@@ -842,9 +842,11 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
         visible: true,
         number: racer.number,
         colorHex: racer.colorHex,
+        stripeHex: racer.stripeHex ?? 0xffffff,
         rimHex: racer.rimHex ?? 0xffbb44,
         suitHex: racer.suitHex ?? 0xf0f4fa,
         helmetHex: racer.helmetHex ?? 0xffffff,
+        visorHex: racer.visorHex ?? 0x1e6bff,
         position: new THREE.Vector3(),
         quaternion: new THREE.Quaternion(),
         speedMs: 0,
@@ -885,9 +887,11 @@ const Suzuka3DStageComponent: React.FC<Suzuka3DStageProps> = ({
         } else {
           inst.number = racer.number;
           inst.colorHex = racer.colorHex;
+          inst.stripeHex = racer.stripeHex ?? 0xffffff;
           inst.rimHex = racer.rimHex ?? 0xffbb44;
           inst.suitHex = racer.suitHex ?? 0xf0f4fa;
           inst.helmetHex = racer.helmetHex ?? 0xffffff;
+          inst.visorHex = racer.visorHex ?? 0x1e6bff;
         }
       }
       for (const id of kartMap.keys()) {

@@ -33,9 +33,11 @@ export interface InstancedKartFrameState {
   visible: boolean;
   number: number;
   colorHex: number;
+  stripeHex?: number;
   rimHex: number;
   suitHex: number;
   helmetHex: number;
+  visorHex?: number;
   position: THREE.Vector3;
   quaternion: THREE.Quaternion;
   speedMs: number;
@@ -57,6 +59,7 @@ interface BakePartSpec {
   scale?: [number, number, number];
   colorHex?: number;
   lensGlow?: number;
+  partMask?: number;
 }
 
 function safeRoundRect(
@@ -250,11 +253,17 @@ function getSharedTailGlowTexture(): THREE.CanvasTexture {
 // =========================================================================
 function mergeScaledParts(
   specs: BakePartSpec[],
-  options: { keepUv?: boolean; vertexColors?: boolean; lensGlowAttr?: boolean } = {}
+  options: {
+    keepUv?: boolean;
+    vertexColors?: boolean;
+    lensGlowAttr?: boolean;
+    partMaskAttr?: boolean;
+  } = {}
 ): THREE.BufferGeometry {
   const keepUv = options.keepUv === true;
   const useVCol = options.vertexColors === true;
   const useGlow = options.lensGlowAttr === true;
+  const useMask = options.partMaskAttr === true;
 
   const mat4 = new THREE.Matrix4();
   const pos = new THREE.Vector3();
@@ -315,6 +324,12 @@ function mergeScaledParts(
       if (glowVal !== 0) glows.fill(glowVal);
       g.setAttribute('aLensGlow', new THREE.BufferAttribute(glows, 1));
     }
+    if (useMask) {
+      const maskVal = spec.partMask ?? 0.0;
+      const masks = new Float32Array(vCount);
+      if (maskVal !== 0) masks.fill(maskVal);
+      g.setAttribute('aPartMask', new THREE.BufferAttribute(masks, 1));
+    }
     parts.push(g);
   }
 
@@ -366,10 +381,13 @@ export class SuzukaInstancedKartLayer {
   // Conditional pooled FX layers (0 draw calls when count === 0 / visible === false)
   private readonly boostFlameInst: THREE.InstancedMesh;
   private readonly headlightBeamInst: THREE.InstancedMesh;
+  private readonly volumetricLightConeInst: THREE.InstancedMesh;
   private readonly taillightGlowInst: THREE.InstancedMesh;
   private readonly tireSprayInst: THREE.InstancedMesh;
 
   // Instanced attributes & shader uniforms
+  private readonly stripeColorAttr: THREE.InstancedBufferAttribute;
+  private readonly visorColorAttr: THREE.InstancedBufferAttribute;
   private readonly plateRectAttr: THREE.InstancedBufferAttribute;
   private readonly flamePhaseAttr: THREE.InstancedBufferAttribute;
   private readonly flameIntensityAttr: THREE.InstancedBufferAttribute;
@@ -379,12 +397,15 @@ export class SuzukaInstancedKartLayer {
   private readonly boostUniforms: { uTime: { value: number } };
   private readonly sprayUniforms: { uTime: { value: number }; uIsSnow: { value: number } };
   private readonly headlightBeamMat: THREE.MeshBasicMaterial;
+  private readonly volumetricLightConeMat: THREE.MeshBasicMaterial;
   private readonly contactShadowMat: THREE.MeshBasicMaterial;
 
   // Dirty-tracking caches for static per-slot livery & plate atlas indices
   private readonly lastFairingHex: Int32Array;
+  private readonly lastStripeHex: Int32Array;
   private readonly lastSuitHex: Int32Array;
   private readonly lastHelmetHex: Int32Array;
+  private readonly lastVisorHex: Int32Array;
   private readonly lastRimHex: Int32Array;
   private readonly lastPlateNum: Int32Array;
 
@@ -422,95 +443,292 @@ export class SuzukaInstancedKartLayer {
     this._disposables = { geometries, materials, meshes };
 
     // -----------------------------------------------------------------------
-    // 1. Fairing / Chassis Body (nose cone + side pods)
+    // 1. Sculpted Aero Fairing + Secondary Racing Stripe Livery (1 draw call)
+    //    partMask = 0.0 -> primary body paint (instanceColor / colorHex)
+    //    partMask = 1.0 -> secondary racing stripes, front/rear wing endplates & trim (aStripeColor / stripeHex)
     // -----------------------------------------------------------------------
-    const noseCone = new THREE.BoxGeometry(0.0086, 0.0021, 0.0044);
-    const sidePod = new THREE.BoxGeometry(0.0024, 0.0024, 0.0076);
-    const fairingGeo = mergeScaledParts([
-      { geo: noseCone, pos: [0, 0.0023, 0.0068], rot: [0.22, 0, 0] },
-      { geo: sidePod, pos: [-0.0044, 0.0024, -0.0004] },
-      { geo: sidePod, pos: [0.0044, 0.0024, -0.0004] },
-    ]);
+    const noseCone = new THREE.BoxGeometry(0.0084, 0.0020, 0.0046);
+    const noseBridge = new THREE.BoxGeometry(0.0038, 0.0014, 0.0040);
+    const frontWingMain = new THREE.BoxGeometry(0.0098, 0.00048, 0.0017);
+    const frontWingEndplate = new THREE.BoxGeometry(0.00044, 0.00135, 0.0022);
+    const noseStripe = new THREE.BoxGeometry(0.00058, 0.00022, 0.0044);
+    const sidePod = new THREE.BoxGeometry(0.0025, 0.0024, 0.0078);
+    const sidePodUpperPanel = new THREE.BoxGeometry(0.0016, 0.00032, 0.0072);
+    const sidePodCowlLip = new THREE.BoxGeometry(0.0026, 0.00042, 0.0007);
+    const engineCover = new THREE.BoxGeometry(0.0028, 0.0022, 0.0036);
+    const rearAeroFin = new THREE.BoxGeometry(0.00042, 0.0018, 0.0032);
+    const rearWingEndplate = new THREE.BoxGeometry(0.00045, 0.0022, 0.0028);
+
+    const fairingGeo = mergeScaledParts(
+      [
+        // Primary body panels (partMask = 0.0)
+        { geo: noseCone, pos: [0, 0.0023, 0.0068], rot: [0.22, 0, 0], partMask: 0.0 },
+        { geo: noseBridge, pos: [0, 0.0034, 0.0042], rot: [0.28, 0, 0], partMask: 0.0 },
+        { geo: frontWingMain, pos: [0, 0.00118, 0.0085], rot: [0.08, 0, 0], partMask: 0.0 },
+        { geo: sidePod, pos: [-0.0044, 0.0024, -0.0004], partMask: 0.0 },
+        { geo: sidePod, pos: [0.0044, 0.0024, -0.0004], partMask: 0.0 },
+        { geo: engineCover, pos: [0, 0.0036, -0.0048], rot: [-0.14, 0, 0], partMask: 0.0 },
+        // Secondary stripe & aero trim panels (partMask = 1.0)
+        { geo: noseStripe, pos: [-0.00062, 0.00338, 0.0068], rot: [0.22, 0, 0], partMask: 1.0 },
+        { geo: noseStripe, pos: [0.00062, 0.00338, 0.0068], rot: [0.22, 0, 0], partMask: 1.0 },
+        { geo: frontWingEndplate, pos: [-0.0050, 0.00155, 0.0084], partMask: 1.0 },
+        { geo: frontWingEndplate, pos: [0.0050, 0.00155, 0.0084], partMask: 1.0 },
+        { geo: sidePodUpperPanel, pos: [-0.0044, 0.00368, -0.0004], partMask: 1.0 },
+        { geo: sidePodUpperPanel, pos: [0.0044, 0.00368, -0.0004], partMask: 1.0 },
+        { geo: sidePodCowlLip, pos: [-0.0044, 0.00345, 0.0034], partMask: 1.0 },
+        { geo: sidePodCowlLip, pos: [0.0044, 0.00345, 0.0034], partMask: 1.0 },
+        { geo: rearAeroFin, pos: [0, 0.0050, -0.0054], partMask: 1.0 },
+        { geo: rearWingEndplate, pos: [-0.0049, 0.0067, -0.0076], partMask: 1.0 },
+        { geo: rearWingEndplate, pos: [0.0049, 0.0067, -0.0076], partMask: 1.0 },
+      ],
+      { partMaskAttr: true }
+    );
     noseCone.dispose();
+    noseBridge.dispose();
+    frontWingMain.dispose();
+    frontWingEndplate.dispose();
+    noseStripe.dispose();
     sidePod.dispose();
+    sidePodUpperPanel.dispose();
+    sidePodCowlLip.dispose();
+    engineCover.dispose();
+    rearAeroFin.dispose();
+    rearWingEndplate.dispose();
+
+    const stripeColorArr = new Float32Array(capacity * 3);
+    stripeColorArr.fill(1.0);
+    this.stripeColorAttr = new THREE.InstancedBufferAttribute(stripeColorArr, 3);
+    this.stripeColorAttr.setUsage(THREE.DynamicDrawUsage);
+    fairingGeo.setAttribute('aStripeColor', this.stripeColorAttr);
+
     const fairingMat = new THREE.MeshStandardMaterial({
       color: 0xffffff,
-      roughness: 0.22,
-      metalness: 0.35,
+      roughness: 0.18,
+      metalness: 0.36,
     });
+    fairingMat.customProgramCacheKey = () => 'suzuka-inst-kart-fairing-livery-v2';
+    fairingMat.onBeforeCompile = (shader) => {
+      shader.vertexShader =
+        `attribute float aPartMask;\nattribute vec3 aStripeColor;\nvarying float vPartMask;\nvarying vec3 vStripeColor;\n` +
+        shader.vertexShader.replace(
+          '#include <begin_vertex>',
+          `#include <begin_vertex>\nvPartMask = aPartMask;\nvStripeColor = aStripeColor;`
+        );
+      shader.fragmentShader =
+        `varying float vPartMask;\nvarying vec3 vStripeColor;\n` +
+        shader.fragmentShader.replace(
+          '#include <color_fragment>',
+          `#include <color_fragment>
+          if (vPartMask > 0.5) {
+            diffuseColor.rgb = vStripeColor;
+          }`
+        );
+    };
     this.fairingInst = this.makeInstanced(fairingGeo, fairingMat, capacity, true);
 
     // -----------------------------------------------------------------------
-    // 2. Carbon Assembly (floor pan + rear wing + bucket seat + steering wheel)
+    // 2. Sculpted Carbon Assembly (floor pan, front splitter, radiator grilles,
+    //    rear diffuser strakes, rear wing + twin pylons, bucket seat, roll hoop,
+    //    steering column & wheel) — 1 draw call
     // -----------------------------------------------------------------------
     const floorPan = new THREE.BoxGeometry(0.0082, 0.0009, 0.0155);
-    const rearWing = new THREE.BoxGeometry(0.0096, 0.0007, 0.0024);
+    const frontSplitter = new THREE.BoxGeometry(0.0092, 0.00038, 0.0022);
+    const radiatorGrille = new THREE.BoxGeometry(0.0019, 0.0017, 0.00045);
+    const rearDiffuser = new THREE.BoxGeometry(0.0068, 0.0010, 0.0022);
+    const rearWing = new THREE.BoxGeometry(0.0096, 0.00065, 0.0024);
+    const rearWingFlap = new THREE.BoxGeometry(0.0094, 0.00042, 0.0012);
+    const wingPylon = new THREE.BoxGeometry(0.00038, 0.0036, 0.0011);
     const seat = new THREE.BoxGeometry(0.0042, 0.0044, 0.0038);
+    const seatBolster = new THREE.BoxGeometry(0.00065, 0.0032, 0.0036);
+    const rollHoop = new THREE.TorusGeometry(0.00145, 0.00034, 8, 14, Math.PI);
+    const steeringCol = new THREE.CylinderGeometry(0.00028, 0.00032, 0.0038, 8);
     const steeringWheel = new THREE.TorusGeometry(0.0014, 0.00032, 8, 16);
     const carbonGeo = mergeScaledParts([
       { geo: floorPan, pos: [0, 0.0014, 0] },
-      { geo: rearWing, pos: [0, 0.0068, -0.0076], rot: [-0.18, 0, 0] },
+      { geo: frontSplitter, pos: [0, 0.0010, 0.0083] },
+      { geo: radiatorGrille, pos: [-0.0044, 0.00235, 0.00355] },
+      { geo: radiatorGrille, pos: [0.0044, 0.00235, 0.00355] },
+      { geo: rearDiffuser, pos: [0, 0.00135, -0.0079], rot: [0.16, 0, 0] },
+      { geo: rearWing, pos: [0, 0.0067, -0.0075], rot: [-0.16, 0, 0] },
+      { geo: rearWingFlap, pos: [0, 0.00725, -0.0083], rot: [-0.34, 0, 0] },
+      { geo: wingPylon, pos: [-0.0016, 0.0049, -0.0072], rot: [-0.14, 0, 0] },
+      { geo: wingPylon, pos: [0.0016, 0.0049, -0.0072], rot: [-0.14, 0, 0] },
       { geo: seat, pos: [0, 0.0036, -0.0015], rot: [-0.22, 0, 0] },
+      { geo: seatBolster, pos: [-0.0021, 0.0034, -0.0012], rot: [-0.12, 0, 0] },
+      { geo: seatBolster, pos: [0.0021, 0.0034, -0.0012], rot: [-0.12, 0, 0] },
+      { geo: rollHoop, pos: [0, 0.0060, -0.0026] },
+      { geo: steeringCol, pos: [0, 0.0038, 0.0037], rot: [-0.82, 0, 0] },
       { geo: steeringWheel, pos: [0, 0.0054, 0.0028], rot: [-0.55, 0, 0] },
     ]);
     floorPan.dispose();
+    frontSplitter.dispose();
+    radiatorGrille.dispose();
+    rearDiffuser.dispose();
     rearWing.dispose();
+    rearWingFlap.dispose();
+    wingPylon.dispose();
     seat.dispose();
+    seatBolster.dispose();
+    rollHoop.dispose();
+    steeringCol.dispose();
     steeringWheel.dispose();
+
     const carbonMat = new THREE.MeshStandardMaterial({
       color: 0x181b22,
-      roughness: 0.42,
-      metalness: 0.45,
+      roughness: 0.40,
+      metalness: 0.48,
     });
     this.carbonInst = this.makeInstanced(carbonGeo, carbonMat, capacity, false);
 
     // -----------------------------------------------------------------------
-    // 3. Driver Suit Torso
+    // 3. Driver Suit Torso + Shoulders + Arms + Racing Gloves & Collar (1 draw call)
+    //    partMask = 0.0 -> racing suit color (instanceColor / suitHex)
+    //    partMask = 1.0 -> dark carbon-anthracite racing gloves & neck HANS collar
     // -----------------------------------------------------------------------
     const torso = new THREE.BoxGeometry(0.0036, 0.0038, 0.0028);
-    const suitGeo = mergeScaledParts([
-      { geo: torso, pos: [0, 0.0048, -0.0008], rot: [0.14, 0, 0] },
-    ]);
+    const shoulder = new THREE.SphereGeometry(0.0011, 10, 8);
+    const upperArm = new THREE.CylinderGeometry(0.00072, 0.00065, 0.0024, 8);
+    const forearm = new THREE.CylinderGeometry(0.00062, 0.00055, 0.0024, 8);
+    const glove = new THREE.SphereGeometry(0.00068, 8, 8);
+    const neckCollar = new THREE.TorusGeometry(0.00125, 0.00042, 8, 12);
+
+    const suitGeo = mergeScaledParts(
+      [
+        { geo: torso, pos: [0, 0.0048, -0.0008], rot: [0.14, 0, 0], partMask: 0.0 },
+        { geo: shoulder, pos: [-0.0021, 0.0061, -0.0006], scale: [1.0, 0.88, 1.0], partMask: 0.0 },
+        { geo: shoulder, pos: [0.0021, 0.0061, -0.0006], scale: [1.0, 0.88, 1.0], partMask: 0.0 },
+        { geo: upperArm, pos: [-0.0022, 0.0055, 0.0005], rot: [1.05, 0, -0.18], partMask: 0.0 },
+        { geo: upperArm, pos: [0.0022, 0.0055, 0.0005], rot: [1.05, 0, 0.18], partMask: 0.0 },
+        { geo: forearm, pos: [-0.0018, 0.0053, 0.0019], rot: [1.42, 0, 0.24], partMask: 0.0 },
+        { geo: forearm, pos: [0.0018, 0.0053, 0.0019], rot: [1.42, 0, -0.24], partMask: 0.0 },
+        // Racing gloves gripping 9 & 3 o'clock on the steering wheel + HANS collar (partMask = 1.0)
+        { geo: glove, pos: [-0.00138, 0.0054, 0.0028], scale: [0.9, 1.0, 1.15], partMask: 1.0 },
+        { geo: glove, pos: [0.00138, 0.0054, 0.0028], scale: [0.9, 1.0, 1.15], partMask: 1.0 },
+        { geo: neckCollar, pos: [0, 0.00655, -0.0005], rot: [Math.PI / 2 + 0.1, 0, 0], partMask: 1.0 },
+      ],
+      { partMaskAttr: true }
+    );
     torso.dispose();
+    shoulder.dispose();
+    upperArm.dispose();
+    forearm.dispose();
+    glove.dispose();
+    neckCollar.dispose();
+
     const suitMat = new THREE.MeshStandardMaterial({
       color: 0xffffff,
-      roughness: 0.35,
+      roughness: 0.34,
       metalness: 0.08,
     });
+    suitMat.customProgramCacheKey = () => 'suzuka-inst-kart-suit-gloves-v2';
+    suitMat.onBeforeCompile = (shader) => {
+      shader.vertexShader =
+        `attribute float aPartMask;\nvarying float vPartMask;\n` +
+        shader.vertexShader.replace(
+          '#include <begin_vertex>',
+          `#include <begin_vertex>\nvPartMask = aPartMask;`
+        );
+      shader.fragmentShader =
+        `varying float vPartMask;\n` +
+        shader.fragmentShader.replace(
+          '#include <color_fragment>',
+          `#include <color_fragment>
+          if (vPartMask > 0.5) {
+            diffuseColor.rgb = vec3(0.11, 0.13, 0.17);
+          }`
+        );
+    };
     this.suitInst = this.makeInstanced(suitGeo, suitMat, capacity, true);
 
     // -----------------------------------------------------------------------
-    // 4. Articulated Driver Helmet + Dark Glossy Visor (tilts into corners)
+    // 4. Articulated Driver Helmet + Custom Iridium Visor + Aero Crown Spoiler (1 draw call)
+    //    partMask = 0.0 -> painted helmet shell & rear aero fin (instanceColor / helmetHex)
+    //    partMask = 1.0 -> mirror-gloss iridium wrap-around visor (aVisorColor / visorHex)
+    //    partMask = 2.0 -> dark carbon chin bar air vent
     // -----------------------------------------------------------------------
     const helmetShell = new THREE.SphereGeometry(0.0022, 16, 14);
-    const visor = new THREE.SphereGeometry(0.00225, 14, 10, -0.9, 1.8, 1.05, 0.75);
+    const visor = new THREE.SphereGeometry(0.00227, 14, 10, -0.95, 1.9, 1.02, 0.76);
+    const helmetAeroFin = new THREE.BoxGeometry(0.0013, 0.00055, 0.0018);
+    const helmetChinVent = new THREE.BoxGeometry(0.0011, 0.00042, 0.0006);
+
     const helmetGeo = mergeScaledParts(
       [
-        { geo: helmetShell, scale: [0.95, 1.0, 1.08], colorHex: 0xffffff },
-        { geo: visor, rot: [0, Math.PI / 2, 0], colorHex: 0x121826 },
+        { geo: helmetShell, scale: [0.95, 1.0, 1.08], partMask: 0.0 },
+        { geo: helmetAeroFin, pos: [0, 0.00145, -0.00135], rot: [-0.28, 0, 0], partMask: 0.0 },
+        { geo: visor, rot: [0, Math.PI / 2, 0], partMask: 1.0 },
+        { geo: helmetChinVent, pos: [0, -0.00095, 0.00215], partMask: 2.0 },
       ],
-      { vertexColors: true }
+      { partMaskAttr: true }
     );
     helmetShell.dispose();
     visor.dispose();
+    helmetAeroFin.dispose();
+    helmetChinVent.dispose();
+
+    const visorColorArr = new Float32Array(capacity * 3);
+    for (let i = 0; i < capacity; i++) {
+      visorColorArr[i * 3 + 0] = 0.12;
+      visorColorArr[i * 3 + 1] = 0.42;
+      visorColorArr[i * 3 + 2] = 1.0;
+    }
+    this.visorColorAttr = new THREE.InstancedBufferAttribute(visorColorArr, 3);
+    this.visorColorAttr.setUsage(THREE.DynamicDrawUsage);
+    helmetGeo.setAttribute('aVisorColor', this.visorColorAttr);
+
     const helmetMat = new THREE.MeshStandardMaterial({
       color: 0xffffff,
-      vertexColors: true,
       roughness: 0.14,
       metalness: 0.25,
     });
+    helmetMat.customProgramCacheKey = () => 'suzuka-inst-kart-helmet-visor-v2';
+    helmetMat.onBeforeCompile = (shader) => {
+      shader.vertexShader =
+        `attribute float aPartMask;\nattribute vec3 aVisorColor;\nvarying float vPartMask;\nvarying vec3 vVisorColor;\n` +
+        shader.vertexShader.replace(
+          '#include <begin_vertex>',
+          `#include <begin_vertex>\nvPartMask = aPartMask;\nvVisorColor = aVisorColor;`
+        );
+      shader.fragmentShader =
+        `varying float vPartMask;\nvarying vec3 vVisorColor;\n` +
+        shader.fragmentShader
+          .replace(
+            '#include <color_fragment>',
+            `#include <color_fragment>
+            if (vPartMask > 1.5) {
+              diffuseColor.rgb = vec3(0.08, 0.10, 0.14);
+            } else if (vPartMask > 0.5) {
+              diffuseColor.rgb = vVisorColor;
+            }`
+          )
+          .replace(
+            '#include <roughnessmap_fragment>',
+            `#include <roughnessmap_fragment>
+            if (vPartMask > 0.5 && vPartMask < 1.5) {
+              roughnessFactor = 0.05;
+            }`
+          )
+          .replace(
+            '#include <metalnessmap_fragment>',
+            `#include <metalnessmap_fragment>
+            if (vPartMask > 0.5 && vPartMask < 1.5) {
+              metalnessFactor = 0.72;
+            }`
+          );
+    };
     this.helmetInst = this.makeInstanced(helmetGeo, helmetMat, capacity, true);
 
     // -----------------------------------------------------------------------
     // 5. Chrome Engine/Exhaust + Emissive Headlight/Taillight Lenses (1 draw call)
     // -----------------------------------------------------------------------
     const engineBlock = new THREE.BoxGeometry(0.0034, 0.0036, 0.0042);
+    const cylinderHead = new THREE.BoxGeometry(0.0028, 0.0012, 0.0034);
     const pipe = new THREE.CylinderGeometry(0.00056, 0.00062, 0.0032, 12);
     const headlightLens = new THREE.SphereGeometry(0.00065, 10, 8);
     const taillightLens = new THREE.BoxGeometry(0.002, 0.00072, 0.00048);
     const chromeTrimGeo = mergeScaledParts(
       [
-        { geo: engineBlock, pos: [0.0022, 0.0036, -0.0048], colorHex: 0xdce4f0, lensGlow: 0.0 },
+        { geo: engineBlock, pos: [0.0022, 0.0034, -0.0048], colorHex: 0xdce4f0, lensGlow: 0.0 },
+        { geo: cylinderHead, pos: [0.0022, 0.0053, -0.0048], colorHex: 0xf1f5f9, lensGlow: 0.0 },
         { geo: pipe, pos: [-0.00108, 0.00215, -0.0076], rot: [Math.PI / 2 + 0.12, 0, 0], colorHex: 0xdce4f0, lensGlow: 0.0 },
         { geo: pipe, pos: [0.00108, 0.00215, -0.0076], rot: [Math.PI / 2 + 0.12, 0, 0], colorHex: 0xdce4f0, lensGlow: 0.0 },
         { geo: headlightLens, pos: [-0.0026, 0.00225, 0.00875], scale: [1.15, 0.78, 0.65], colorHex: 0xfff4d4, lensGlow: 1.5 },
@@ -521,6 +739,7 @@ export class SuzukaInstancedKartLayer {
       { vertexColors: true, lensGlowAttr: true }
     );
     engineBlock.dispose();
+    cylinderHead.dispose();
     pipe.dispose();
     headlightLens.dispose();
     taillightLens.dispose();
@@ -549,38 +768,102 @@ export class SuzukaInstancedKartLayer {
     this.chromeTrimInst = this.makeInstanced(chromeTrimGeo, chromeTrimMat, capacity, false);
 
     // -----------------------------------------------------------------------
-    // 6. All 4 Steerable & Spinning Slick Wheels (40 × 4 = 160 instances)
+    // 6. All 4 Steerable & Spinning Slick Wheels with 5-Spoke Metallic Rims
+    //    (40 × 4 = 160 instances, 1 draw call)
+    //    partMask = 0.0 -> deep matte black rubber slick tire (NEVER tinted by rimHex!)
+    //    partMask = 1.0 -> metallic alloy rim barrel & 5 sculpted spokes (tinted by instanceColor / rimHex)
+    //    partMask = 2.0 -> bright chrome center hubcap & wheel nut
     // -----------------------------------------------------------------------
-    const tireCyl = new THREE.CylinderGeometry(0.0019, 0.0019, 0.0018, 16);
+    const tireCyl = new THREE.CylinderGeometry(0.0019, 0.0019, 0.0018, 18);
     tireCyl.rotateZ(Math.PI / 2);
-    const tireShoulder = new THREE.TorusGeometry(0.00148, 0.00042, 8, 16);
+    const tireShoulder = new THREE.TorusGeometry(0.00148, 0.00042, 10, 18);
     tireShoulder.rotateY(Math.PI / 2);
-    const rimCyl = new THREE.CylinderGeometry(0.0019 * 0.62, 0.0019 * 0.62, 0.0018 * 1.05, 12);
-    rimCyl.rotateZ(Math.PI / 2);
-    const hubCyl = new THREE.CylinderGeometry(0.00048, 0.00048, 0.0021, 8);
+    const rimBarrel = new THREE.CylinderGeometry(0.00122, 0.00122, 0.0019, 14);
+    rimBarrel.rotateZ(Math.PI / 2);
+    const rimLip = new THREE.TorusGeometry(0.00120, 0.00015, 8, 16);
+    rimLip.rotateY(Math.PI / 2);
+    const rimSpoke = new THREE.BoxGeometry(0.00198, 0.00032, 0.00215);
+    const hubCyl = new THREE.CylinderGeometry(0.00046, 0.00046, 0.00216, 10);
     hubCyl.rotateZ(Math.PI / 2);
 
-    const wheelGeo = mergeScaledParts(
-      [
-        { geo: tireCyl, colorHex: 0x16181e },
-        { geo: tireShoulder, pos: [-0.00065, 0, 0], colorHex: 0x16181e },
-        { geo: tireShoulder, pos: [0.00065, 0, 0], colorHex: 0x16181e },
-        { geo: rimCyl, colorHex: 0xffffff },
-        { geo: hubCyl, colorHex: 0xc8d2e0 },
-      ],
-      { vertexColors: true }
-    );
+    const wheelSpecs: BakePartSpec[] = [
+      // Matte black rubber tire & rounded sidewalls (partMask = 0.0)
+      { geo: tireCyl, partMask: 0.0 },
+      { geo: tireShoulder, pos: [-0.00065, 0, 0], partMask: 0.0 },
+      { geo: tireShoulder, pos: [0.00065, 0, 0], partMask: 0.0 },
+      // Metallic painted rim barrel, outer/inner lips & 5 star spokes (partMask = 1.0)
+      { geo: rimBarrel, partMask: 1.0 },
+      { geo: rimLip, pos: [-0.00086, 0, 0], partMask: 1.0 },
+      { geo: rimLip, pos: [0.00086, 0, 0], partMask: 1.0 },
+    ];
+    for (let sp = 0; sp < 5; sp++) {
+      wheelSpecs.push({
+        geo: rimSpoke,
+        rot: [(sp * Math.PI) / 5, 0, 0],
+        partMask: 1.0,
+      });
+    }
+    // Chrome center lock nut / hub (partMask = 2.0)
+    wheelSpecs.push({ geo: hubCyl, partMask: 2.0 });
+
+    const wheelGeo = mergeScaledParts(wheelSpecs, { partMaskAttr: true });
     tireCyl.dispose();
     tireShoulder.dispose();
-    rimCyl.dispose();
+    rimBarrel.dispose();
+    rimLip.dispose();
+    rimSpoke.dispose();
     hubCyl.dispose();
 
     const wheelMat = new THREE.MeshStandardMaterial({
       color: 0xffffff,
-      vertexColors: true,
-      roughness: 0.64,
+      roughness: 0.5,
       metalness: 0.3,
     });
+    wheelMat.customProgramCacheKey = () => 'suzuka-inst-kart-wheels-masked-v2';
+    wheelMat.onBeforeCompile = (shader) => {
+      shader.vertexShader =
+        `attribute float aPartMask;\nvarying float vPartMask;\n` +
+        shader.vertexShader.replace(
+          '#include <begin_vertex>',
+          `#include <begin_vertex>\nvPartMask = aPartMask;`
+        );
+      shader.fragmentShader =
+        `varying float vPartMask;\n` +
+        shader.fragmentShader
+          .replace(
+            '#include <color_fragment>',
+            `#include <color_fragment>
+            if (vPartMask < 0.5) {
+              // Deep matte black racing slick rubber (overrides instanceColor so rimHex never bleeds onto tire!)
+              diffuseColor.rgb = vec3(0.065, 0.075, 0.095);
+            } else if (vPartMask > 1.5) {
+              // Bright chrome center lock hubcap
+              diffuseColor.rgb = vec3(0.84, 0.88, 0.94);
+            }`
+          )
+          .replace(
+            '#include <roughnessmap_fragment>',
+            `#include <roughnessmap_fragment>
+            if (vPartMask < 0.5) {
+              roughnessFactor = 0.84;
+            } else if (vPartMask < 1.5) {
+              roughnessFactor = 0.20;
+            } else {
+              roughnessFactor = 0.14;
+            }`
+          )
+          .replace(
+            '#include <metalnessmap_fragment>',
+            `#include <metalnessmap_fragment>
+            if (vPartMask < 0.5) {
+              metalnessFactor = 0.05;
+            } else if (vPartMask < 1.5) {
+              metalnessFactor = 0.86;
+            } else {
+              metalnessFactor = 0.92;
+            }`
+          );
+    };
     this.wheelsInst = this.makeInstanced(wheelGeo, wheelMat, capacity * 4, true);
 
     // -----------------------------------------------------------------------
@@ -610,8 +893,8 @@ export class SuzukaInstancedKartLayer {
     const rearPlate = new THREE.PlaneGeometry(0.0044, 0.0018);
     const numberPlateGeo = mergeScaledParts(
       [
-        { geo: frontPlate, pos: [0, 0.00345, 0.0066], rot: [-Math.PI / 2 + 0.22, 0, 0] },
-        { geo: rearPlate, pos: [0, 0.0068, -0.00885], rot: [0, Math.PI, 0] },
+        { geo: frontPlate, pos: [0, 0.00348, 0.0066], rot: [-Math.PI / 2 + 0.22, 0, 0] },
+        { geo: rearPlate, pos: [0, 0.00675, -0.00885], rot: [0, Math.PI, 0] },
       ],
       { keepUv: true }
     );
@@ -803,7 +1086,68 @@ export class SuzukaInstancedKartLayer {
     this.headlightBeamInst.visible = false;
 
     // -----------------------------------------------------------------------
-    // 10B. Taillight / Brake Glow Halos (0 draw calls when daylight & not braking)
+    // 10B. Night 3D Volumetric Headlight & Taillight Air Cones (0 draw calls in daylight)
+    // -----------------------------------------------------------------------
+    const makeBakedVolumetricCone = (
+      topR: number,
+      botR: number,
+      len: number,
+      r: number,
+      g: number,
+      b: number
+    ): THREE.BufferGeometry => {
+      const cone = new THREE.CylinderGeometry(topR, botR, len, 12, 1, true);
+      const nonIdx = cone.index ? cone.toNonIndexed() : cone.clone();
+      cone.dispose();
+      const posAttr = nonIdx.getAttribute('position');
+      const colors = new Float32Array(posAttr.count * 3);
+      for (let v = 0; v < posAttr.count; v++) {
+        // y is +len/2 at lens apex and -len/2 at far end
+        const t = Math.max(0, Math.min(1, (posAttr.getY(v) + len * 0.5) / len));
+        const fade = Math.pow(t, 1.5);
+        colors[v * 3 + 0] = r * fade;
+        colors[v * 3 + 1] = g * fade;
+        colors[v * 3 + 2] = b * fade;
+      }
+      nonIdx.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+      // Translate so apex sits at origin and cone extends along +Z
+      nonIdx.translate(0, -len * 0.5, 0);
+      nonIdx.rotateX(-Math.PI / 2);
+      return nonIdx;
+    };
+
+    const headVolCone = makeBakedVolumetricCone(0.00052, 0.0044, 0.028, 1.0, 0.95, 0.80);
+    const tailVolCone = makeBakedVolumetricCone(0.00048, 0.0018, 0.0046, 0.95, 0.05, 0.14);
+    const volumetricConeGeo = mergeScaledParts([
+      { geo: headVolCone, pos: [-0.0026, 0.0022, 0.0089], rot: [0.075, 0.03, 0] },
+      { geo: headVolCone, pos: [0.0026, 0.0022, 0.0089], rot: [0.075, -0.03, 0] },
+      { geo: tailVolCone, pos: [-0.0032, 0.00275, -0.0089], rot: [0, Math.PI, 0] },
+      { geo: tailVolCone, pos: [0.0032, 0.00275, -0.0089], rot: [0, Math.PI, 0] },
+    ]);
+    headVolCone.dispose();
+    tailVolCone.dispose();
+
+    this.volumetricLightConeMat = new THREE.MeshBasicMaterial({
+      color: 0xffffff,
+      vertexColors: true,
+      transparent: true,
+      opacity: 0.0,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+      toneMapped: false,
+      side: THREE.DoubleSide,
+    });
+    this.volumetricLightConeInst = this.makeInstanced(
+      volumetricConeGeo,
+      this.volumetricLightConeMat,
+      capacity,
+      false
+    );
+    this.volumetricLightConeInst.count = 0;
+    this.volumetricLightConeInst.visible = false;
+
+    // -----------------------------------------------------------------------
+    // 10C. Taillight / Brake Glow Halos (0 draw calls when daylight & not braking)
     // -----------------------------------------------------------------------
     const tailQuad = new THREE.PlaneGeometry(0.0044, 0.0028);
     const taillightGlowGeo = mergeScaledParts(
@@ -905,8 +1249,10 @@ export class SuzukaInstancedKartLayer {
 
     // Initialize dirty-tracking arrays with sentinel -1 so first frame populates colors/rects
     this.lastFairingHex = new Int32Array(capacity).fill(-1);
+    this.lastStripeHex = new Int32Array(capacity).fill(-1);
     this.lastSuitHex = new Int32Array(capacity).fill(-1);
     this.lastHelmetHex = new Int32Array(capacity).fill(-1);
+    this.lastVisorHex = new Int32Array(capacity).fill(-1);
     this.lastRimHex = new Int32Array(capacity).fill(-1);
     this.lastPlateNum = new Int32Array(capacity).fill(-1);
   }
@@ -971,15 +1317,20 @@ export class SuzukaInstancedKartLayer {
     let wheelIdx = 0;
     let boostIdx = 0;
     let headBeamIdx = 0;
+    let volConeIdx = 0;
     let tailGlowIdx = 0;
     let sprayIdx = 0;
 
     let fairingColorsDirty = false;
+    let stripeColorsDirty = false;
     let suitColorsDirty = false;
     let helmetColorsDirty = false;
+    let visorColorsDirty = false;
     let rimColorsDirty = false;
     let platesDirty = false;
 
+    const stripeColorArr = this.stripeColorAttr.array as Float32Array;
+    const visorColorArr = this.visorColorAttr.array as Float32Array;
     const plateRectArr = this.plateRectAttr.array as Float32Array;
     const flamePhaseArr = this.flamePhaseAttr.array as Float32Array;
     const flameIntArr = this.flameIntensityAttr.array as Float32Array;
@@ -1029,11 +1380,24 @@ export class SuzukaInstancedKartLayer {
       this.chromeTrimInst.setMatrixAt(slot, this._chassisWorldMat4);
       this.numberPlateInst.setMatrixAt(slot, this._chassisWorldMat4);
 
+      if (lightsOn) {
+        this.volumetricLightConeInst.setMatrixAt(volConeIdx++, this._chassisWorldMat4);
+      }
+
       // Dirty-checked per-slot livery colors & number plate atlas rect
       if (this.lastFairingHex[slot] !== k.colorHex) {
         this.lastFairingHex[slot] = k.colorHex;
         this.fairingInst.setColorAt(slot, this._scratchColor.setHex(k.colorHex));
         fairingColorsDirty = true;
+      }
+      const stripeHex = k.stripeHex ?? 0xffffff;
+      if (this.lastStripeHex[slot] !== stripeHex) {
+        this.lastStripeHex[slot] = stripeHex;
+        this._scratchColor.setHex(stripeHex);
+        stripeColorArr[slot * 3 + 0] = this._scratchColor.r;
+        stripeColorArr[slot * 3 + 1] = this._scratchColor.g;
+        stripeColorArr[slot * 3 + 2] = this._scratchColor.b;
+        stripeColorsDirty = true;
       }
       if (this.lastSuitHex[slot] !== k.suitHex) {
         this.lastSuitHex[slot] = k.suitHex;
@@ -1044,6 +1408,15 @@ export class SuzukaInstancedKartLayer {
         this.lastHelmetHex[slot] = k.helmetHex;
         this.helmetInst.setColorAt(slot, this._scratchColor.setHex(k.helmetHex));
         helmetColorsDirty = true;
+      }
+      const visorHex = k.visorHex ?? 0x1e6bff;
+      if (this.lastVisorHex[slot] !== visorHex) {
+        this.lastVisorHex[slot] = visorHex;
+        this._scratchColor.setHex(visorHex);
+        visorColorArr[slot * 3 + 0] = this._scratchColor.r;
+        visorColorArr[slot * 3 + 1] = this._scratchColor.g;
+        visorColorArr[slot * 3 + 2] = this._scratchColor.b;
+        visorColorsDirty = true;
       }
       if (this.lastPlateNum[slot] !== k.number) {
         this.lastPlateNum[slot] = k.number;
@@ -1090,7 +1463,7 @@ export class SuzukaInstancedKartLayer {
       wheelIdx++;
 
       // Rear-Left (spin only, wider/taller slick scale)
-      this._scratchPos.set(-0.0059 * KART_WORLD_SCALE, 0.00215 * KART_WORLD_SCALE, -0.0054 * KART_WORLD_SCALE);
+      this._scratchPos.set(-0.0061 * KART_WORLD_SCALE, 0.00215 * KART_WORLD_SCALE, -0.0054 * KART_WORLD_SCALE);
       this._subLocalMat4.compose(this._scratchPos, this._scratchQuat2, this._rearWheelScale);
       this._subWorldMat4.multiplyMatrices(this._chassisWorldMat4, this._subLocalMat4);
       this.wheelsInst.setMatrixAt(wheelIdx, this._subWorldMat4);
@@ -1098,7 +1471,7 @@ export class SuzukaInstancedKartLayer {
       wheelIdx++;
 
       // Rear-Right
-      this._scratchPos.set(0.0059 * KART_WORLD_SCALE, 0.00215 * KART_WORLD_SCALE, -0.0054 * KART_WORLD_SCALE);
+      this._scratchPos.set(0.0061 * KART_WORLD_SCALE, 0.00215 * KART_WORLD_SCALE, -0.0054 * KART_WORLD_SCALE);
       this._subLocalMat4.compose(this._scratchPos, this._scratchQuat2, this._rearWheelScale);
       this._subWorldMat4.multiplyMatrices(this._chassisWorldMat4, this._subLocalMat4);
       this.wheelsInst.setMatrixAt(wheelIdx, this._subWorldMat4);
@@ -1149,7 +1522,7 @@ export class SuzukaInstancedKartLayer {
           this._scratchScale.set(sWid, sWid, sLen);
 
           for (let s = 0; s < 2; s++) {
-            const sx = s === 0 ? -0.0059 * KART_WORLD_SCALE : 0.0059 * KART_WORLD_SCALE;
+            const sx = s === 0 ? -0.0061 * KART_WORLD_SCALE : 0.0061 * KART_WORLD_SCALE;
             this._scratchPos.set(sx, 0.0008 * KART_WORLD_SCALE, -0.0064 * KART_WORLD_SCALE);
             this._subLocalMat4.compose(this._scratchPos, this._scratchQuat, this._scratchScale);
             this._subWorldMat4.multiplyMatrices(this._chassisWorldMat4, this._subLocalMat4);
@@ -1196,11 +1569,17 @@ export class SuzukaInstancedKartLayer {
       if (fairingColorsDirty && this.fairingInst.instanceColor) {
         this.fairingInst.instanceColor.needsUpdate = true;
       }
+      if (stripeColorsDirty) {
+        this.stripeColorAttr.needsUpdate = true;
+      }
       if (suitColorsDirty && this.suitInst.instanceColor) {
         this.suitInst.instanceColor.needsUpdate = true;
       }
       if (helmetColorsDirty && this.helmetInst.instanceColor) {
         this.helmetInst.instanceColor.needsUpdate = true;
+      }
+      if (visorColorsDirty) {
+        this.visorColorAttr.needsUpdate = true;
       }
       if (rimColorsDirty && this.wheelsInst.instanceColor) {
         this.wheelsInst.instanceColor.needsUpdate = true;
@@ -1229,6 +1608,14 @@ export class SuzukaInstancedKartLayer {
     if (headBeamIdx > 0) {
       this.headlightBeamMat.opacity = nightFactor * 0.94;
       this.headlightBeamInst.instanceMatrix.needsUpdate = true;
+    }
+
+    // Commit conditional night 3D volumetric headlight/taillight air cones (0 draw calls in daylight)
+    this.volumetricLightConeInst.count = volConeIdx;
+    this.volumetricLightConeInst.visible = volConeIdx > 0;
+    if (volConeIdx > 0) {
+      this.volumetricLightConeMat.opacity = nightFactor * 0.44;
+      this.volumetricLightConeInst.instanceMatrix.needsUpdate = true;
     }
 
     // Commit conditional taillight night/brake glow (0 draw calls when daylight & no braking)

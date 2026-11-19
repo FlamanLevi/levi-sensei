@@ -250,7 +250,7 @@ export function instantiateModelMesh(
 }
 
 /**
- * Procedurally generates a living 13x13 grid town (78m x 78m) where:
+ * Procedurally generates a living 24x24 grid town (144m x 144m) where:
  * - Every T1, T2, and T3 vocabulary facility appears at most once and directly fronts a road.
  * - Every House, Apartment, and Pocket Park is dealt from a shuffled non-repeating DNA deck so no two are alike!
  */

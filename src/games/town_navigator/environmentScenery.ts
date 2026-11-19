@@ -593,15 +593,16 @@ export function buildPerimeterScenery(options: {
   const ginkgoGoldMat = new THREE.MeshStandardMaterial({ color: 0xfacc15, roughness: 0.8 });
 
   // Rolling grassy meadow mounds outside the 4 sides of town
+  const hScale = boundaryHalfSize > 50 ? boundaryHalfSize / 40.5 : 1.0;
   const hillConfigs = [
-    { x: -64, z: -62, rx: 18, ry: 2.2, rz: 14 },
-    { x: 0, z: -68, rx: 24, ry: 2.4, rz: 13 },
-    { x: 64, z: -62, rx: 16, ry: 2.0, rz: 14 },
-    { x: -68, z: 0, rx: 14, ry: 2.4, rz: 22 },
-    { x: -64, z: 62, rx: 18, ry: 2.3, rz: 16 },
-    { x: 0, z: 68, rx: 22, ry: 2.1, rz: 13 },
-    { x: 64, z: 62, rx: 17, ry: 2.0, rz: 15 },
-    { x: 68, z: 12, rx: 12, ry: 1.8, rz: 18 },
+    { x: -64 * hScale, z: -62 * hScale, rx: 18, ry: 2.2, rz: 14 },
+    { x: 0, z: -68 * hScale, rx: 24, ry: 2.4, rz: 13 },
+    { x: 64 * hScale, z: -62 * hScale, rx: 16, ry: 2.0, rz: 14 },
+    { x: -68 * hScale, z: 0, rx: 14, ry: 2.4, rz: 22 },
+    { x: -64 * hScale, z: 62 * hScale, rx: 18, ry: 2.3, rz: 16 },
+    { x: 0, z: 68 * hScale, rx: 22, ry: 2.1, rz: 13 },
+    { x: 64 * hScale, z: 62 * hScale, rx: 17, ry: 2.0, rz: 15 },
+    { x: 68 * hScale, z: 12 * hScale, rx: 12, ry: 1.8, rz: 18 },
   ];
 
   const moundGeo = new THREE.SphereGeometry(1, 16, 10, 0, Math.PI * 2, 0, Math.PI * 0.5);

@@ -184,10 +184,17 @@ export interface NavigationStep {
   instructionEn: string;
   instructionJa: string;
   action: 'straight' | 'turn_left' | 'turn_right';
-  blocks?: 1 | 2;
+  blocks?: 1 | 2 | 3 | 4;
   landmark?: string;
   side?: 'left' | 'right';
 }
+
+const BLOCK_COUNT_EN: Record<number, string> = {
+  1: 'one block',
+  2: 'two blocks',
+  3: 'three blocks',
+  4: 'four blocks',
+};
 
 /**
  * Converts a road path and initial heading into MEXT elementary English step-by-step instructions.
@@ -235,9 +242,9 @@ export function buildMextStepByStepScript(
     while (diff > Math.PI) diff -= Math.PI * 2;
     while (diff < -Math.PI) diff += Math.PI * 2;
 
-    const blocks = Math.max(1, Math.round(segLen / 28)) as 1 | 2;
-    const blocksEn = blocks >= 2 ? 'two blocks' : 'one block';
-    const blocksJa = blocks >= 2 ? '2ブロック' : '1ブロック';
+    const blocks = Math.min(4, Math.max(1, Math.round(segLen / 30))) as 1 | 2 | 3 | 4;
+    const blocksEn = BLOCK_COUNT_EN[blocks] || `${blocks} blocks`;
+    const blocksJa = `${blocks}ブロック`;
 
     if (i === 0) {
       if (Math.abs(diff) > 2.35) {

@@ -912,8 +912,8 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
 
     // 11. Physics Collision Solver
     const solveCollisions = (pos: THREE.Vector3) => {
-      pos.x = THREE.MathUtils.clamp(pos.x, -38.0, 38.0);
-      pos.z = THREE.MathUtils.clamp(pos.z, -38.0, 38.0);
+      pos.x = THREE.MathUtils.clamp(pos.x, -71.2, 71.2);
+      pos.z = THREE.MathUtils.clamp(pos.z, -71.2, 71.2);
 
       const activeMap = townMapRef.current;
       if (!activeMap) return;
@@ -1488,8 +1488,15 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
     const isLeft = entRelAngle > 0;
     const sideWordEn = isLeft ? 'left' : 'right';
     const sideWordJa = isLeft ? '左' : '右';
-    const blocksWordEn = legLength > 36 ? 'two blocks' : 'one block';
-    const blocksWordJa = legLength > 36 ? '2ブロック' : '1ブロック';
+    const legBlocks = Math.min(4, Math.max(1, Math.round(legLength / 30)));
+    const BLOCK_WORDS_EN: Record<number, string> = {
+      1: 'one block',
+      2: 'two blocks',
+      3: 'three blocks',
+      4: 'four blocks',
+    };
+    const blocksWordEn = BLOCK_WORDS_EN[legBlocks] || `${legBlocks} blocks`;
+    const blocksWordJa = `${legBlocks}ブロック`;
 
     const targetLabelEn = questMode === 'MYSTERY' ? 'destination' : questTarget.nameEn;
     const targetLabelJa = questMode === 'MYSTERY' ? '目的地' : questTarget.nameJa;
@@ -1849,7 +1856,7 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
                 </span>
               ) : completedQuestCount < 4 ? (
                 <span className="text-sky-400 flex items-center gap-1">
-                  <span>🚲</span> Stage 2: District Cruiser (≤68m)
+                  <span>🚲</span> Stage 2: District Cruiser (≤75m)
                 </span>
               ) : (
                 <span className="text-rose-400 flex items-center gap-1">

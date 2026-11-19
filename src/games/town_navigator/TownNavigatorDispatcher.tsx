@@ -67,7 +67,7 @@ export const TownNavigatorDispatcher: React.FC<DispatcherProps> = ({
 
   // Student's interactive word-chip selections
   const [selectedAction, setSelectedAction] = useState<'straight' | 'turn_left' | 'turn_right'>('straight');
-  const [selectedBlocks, setSelectedBlocks] = useState<1 | 2>(1);
+  const [selectedBlocks, setSelectedBlocks] = useState<1 | 2 | 3 | 4>(1);
   const [selectedLandmark, setSelectedLandmark] = useState<'corner' | 'traffic_light'>('corner');
   const [selectedSide, setSelectedSide] = useState<'left' | 'right'>('right');
 
@@ -97,8 +97,14 @@ export const TownNavigatorDispatcher: React.FC<DispatcherProps> = ({
     }
 
     if (selectedAction === 'straight') {
-      const bEn = selectedBlocks === 2 ? 'two blocks' : 'one block';
-      const bJa = selectedBlocks === 2 ? '2ブロック' : '1ブロック';
+      const BLOCK_EN: Record<number, string> = {
+        1: 'one block',
+        2: 'two blocks',
+        3: 'three blocks',
+        4: 'four blocks',
+      };
+      const bEn = BLOCK_EN[selectedBlocks] || `${selectedBlocks} blocks`;
+      const bJa = `${selectedBlocks}ブロック`;
       return {
         en: `Go straight for ${bEn}.`,
         ja: `${bJa}まっすぐ進もう。`,
@@ -514,27 +520,20 @@ export const TownNavigatorDispatcher: React.FC<DispatcherProps> = ({
                   {selectedAction === 'straight' ? (
                     <div>
                       <p className="text-xs text-slate-400 mb-1.5">2. Distance (何ブロック進む？)</p>
-                      <div className="grid grid-cols-2 gap-2">
-                        <button
-                          onClick={() => setSelectedBlocks(1)}
-                          className={`py-2 px-3 rounded-xl font-bold text-xs sm:text-sm transition cursor-pointer ${
-                            selectedBlocks === 1
-                              ? 'bg-indigo-600 text-white shadow-md'
-                              : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
-                          }`}
-                        >
-                          1 block (1ブロック)
-                        </button>
-                        <button
-                          onClick={() => setSelectedBlocks(2)}
-                          className={`py-2 px-3 rounded-xl font-bold text-xs sm:text-sm transition cursor-pointer ${
-                            selectedBlocks === 2
-                              ? 'bg-indigo-600 text-white shadow-md'
-                              : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
-                          }`}
-                        >
-                          2 blocks (2ブロック)
-                        </button>
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                        {([1, 2, 3, 4] as const).map((bCount) => (
+                          <button
+                            key={bCount}
+                            onClick={() => setSelectedBlocks(bCount)}
+                            className={`py-2 px-2.5 rounded-xl font-bold text-xs transition cursor-pointer ${
+                              selectedBlocks === bCount
+                                ? 'bg-indigo-600 text-white shadow-md'
+                                : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+                            }`}
+                          >
+                            {bCount} {bCount === 1 ? 'block' : 'blocks'} ({bCount}区画)
+                          </button>
+                        ))}
                       </div>
                     </div>
                   ) : (

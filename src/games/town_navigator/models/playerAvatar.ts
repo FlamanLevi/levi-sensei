@@ -20,25 +20,32 @@ export interface PlayerAvatar {
   resetAnimation: () => void;
 }
 
+export interface PlayerAvatarColors {
+  shirtColor?: string | number;
+  capColor?: string | number;
+  randoColor?: string | number;
+  hairColor?: string | number;
+}
+
 /**
  * Builds a high-detail procedural 3D Japanese Elementary School Student
  * complete with leather Randoseru backpack, brass buckles, safety whistle charm,
  * collared polo shirt, yellow school cap (*Tsūgaku-bō*), and walking cycle articulation.
  * Height: ~1.4 meters (Grade 5 standard).
  */
-export function buildPlayerAvatar(): PlayerAvatar {
+export function buildPlayerAvatar(colors?: PlayerAvatarColors): PlayerAvatar {
   const group = new THREE.Group();
   group.name = 'Player_Student';
 
   // Calibrated PBR Materials harmonized into tight roughness/metalness tiers so
   // vertex-color batching collapses 58 avatar meshes down to ~8 draw calls total.
   const skinMat = new THREE.MeshStandardMaterial({ color: 0xffdbac, roughness: 0.65, metalness: 0.0 });
-  const hairMat = new THREE.MeshStandardMaterial({ color: 0x1e1b4b, roughness: 0.65, metalness: 0.0 });
-  const capMat = new THREE.MeshStandardMaterial({ color: 0xfacc15, roughness: 0.65, metalness: 0.0 });
-  const shirtMat = new THREE.MeshStandardMaterial({ color: 0x2563eb, roughness: 0.65, metalness: 0.0 });
+  const hairMat = new THREE.MeshStandardMaterial({ color: colors?.hairColor ?? 0x1e1b4b, roughness: 0.65, metalness: 0.0 });
+  const capMat = new THREE.MeshStandardMaterial({ color: colors?.capColor ?? 0xfacc15, roughness: 0.65, metalness: 0.0 });
+  const shirtMat = new THREE.MeshStandardMaterial({ color: colors?.shirtColor ?? 0x2563eb, roughness: 0.65, metalness: 0.0 });
   const collarWhiteMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.65, metalness: 0.0 });
   const shortsMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.65, metalness: 0.0 });
-  const randoMat = new THREE.MeshStandardMaterial({ color: 0xb91c1c, roughness: 0.30, metalness: 0.10 });
+  const randoMat = new THREE.MeshStandardMaterial({ color: colors?.randoColor ?? 0xb91c1c, roughness: 0.30, metalness: 0.10 });
   const randoBackPadMat = new THREE.MeshStandardMaterial({ color: 0xfef2f2, roughness: 0.65, metalness: 0.0 });
   const brassMat = new THREE.MeshStandardMaterial({ color: 0xfbbf24, roughness: 0.20, metalness: 0.85 });
   const sockMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.65, metalness: 0.0 });

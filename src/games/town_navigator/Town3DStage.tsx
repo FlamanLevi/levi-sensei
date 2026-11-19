@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { createClassroomRenderer } from '../../utils/classroom3d';
 import { generateRandomTown, TownMap } from './townGenerator';
+import { buildPlayerAvatar } from './models/playerAvatar';
 import { ROAD_COORDS } from './navigationLogic';
 import type { TownCameraMode, TownReplayRecording, TownReplayFrame } from './multiplayer/types';
 
@@ -243,29 +244,24 @@ export const Town3DStage: React.FC<Town3DStageProps> = ({
     });
     scene.add(town.buildingsGroup);
 
-    // Local student avatar (visible in STUDENT_DRIVE)
-    const studentGroup = new THREE.Group();
-    const bodyGeo = new THREE.CylinderGeometry(0.42, 0.52, 1.35, 10);
-    const headGeo = new THREE.SphereGeometry(0.42, 10, 10);
-    const localBodyMat = new THREE.MeshLambertMaterial({ color: '#2563eb' });
-    const localHeadMat = new THREE.MeshLambertMaterial({ color: '#fde68a' });
-    const localBody = new THREE.Mesh(bodyGeo, localBodyMat);
-    localBody.position.y = 0.72;
-    const localHead = new THREE.Mesh(headGeo, localHeadMat);
-    localHead.position.y = 1.72;
-    const visorMesh = new THREE.Mesh(
-      new THREE.BoxGeometry(0.5, 0.16, 0.25),
-      new THREE.MeshBasicMaterial({ color: '#0f172a' })
-    );
-    visorMesh.position.set(0, 1.76, 0.34);
-    studentGroup.add(localBody, localHead, visorMesh);
-    scene.add(studentGroup);
+    // Detailed articulated student avatar (used for local player in STUDENT_DRIVE & Gold winner in HOST_REPLAY)
+    const detailedAvatar = buildPlayerAvatar();
+    detailedAvatar.group.scale.set(1.25, 1.25, 1.25);
+    scene.add(detailedAvatar.group);
 
     // Pooled InstancedMesh pair for all 30–40 multiplayer avatars (2 draw calls total!)
+    const bodyGeo = new THREE.CylinderGeometry(0.36, 0.44, 1.15, 10);
+    const headGeo = new THREE.SphereGeometry(0.38, 10, 10);
     const instBodyMat = new THREE.MeshLambertMaterial({ color: '#ffffff' });
-    const instHeadMat = new THREE.MeshLambertMaterial({ color: '#fde68a' });
+    const instHeadMat = new THREE.MeshLambertMaterial({ color: '#ffdbac' });
     const instBodies = new THREE.InstancedMesh(bodyGeo, instBodyMat, MAX_INSTANCED_PLAYERS);
     const instHeads = new THREE.InstancedMesh(headGeo, instHeadMat, MAX_INSTANCED_PLAYERS);
+    // Pre-initialize instanceColor buffer before first render so Three.js compiles USE_INSTANCING_COLOR
+    const initColor = new THREE.Color('#3b82f6');
+    for (let i = 0; i < MAX_INSTANCED_PLAYERS; i++) {
+      instBodies.setColorAt(i, initColor);
+    }
+    if (instBodies.instanceColor) instBodies.instanceColor.needsUpdate = true;
     instBodies.count = 0;
     instHeads.count = 0;
     instBodies.frustumCulled = false;
@@ -351,13 +347,14 @@ export const Town3DStage: React.FC<Town3DStageProps> = ({
       const activeMode = modeRef.current;
 
       if (activeMode === 'STUDENT_DRIVE') {
-        studentGroup.visible = true;
+        detailedAvatar.group.visible = true;
         instBodies.count = 0;
         instHeads.count = 0;
         goldRing.visible = false;
         targetBeacon.visible = false;
 
         const pose = localPoseRef.current;
+        let isMoving = false;
         if (!controlsLockedRef.current) {
           let forward = 0;
           let turn = 0;
@@ -377,6 +374,7 @@ export const Town3DStage: React.FC<Town3DStageProps> = ({
 
           pose.yaw += turn * TURN_SPEED * dt;
           if (Math.abs(forward) > 0.01) {
+            isMoving = true;
             const nextX = pose.x + Math.sin(pose.yaw) * forward * MOVE_SPEED * dt;
             const nextZ = pose.z + Math.cos(pose.yaw) * forward * MOVE_SPEED * dt;
             const [clampedX, clampedZ] = clampToWalkableCorridor(nextX, nextZ);
@@ -385,8 +383,9 @@ export const Town3DStage: React.FC<Town3DStageProps> = ({
           }
         }
 
-        studentGroup.position.set(pose.x, 0, pose.z);
-        studentGroup.rotation.y = pose.yaw;
+        detailedAvatar.group.position.set(pose.x, 0, pose.z);
+        detailedAvatar.group.rotation.y = pose.yaw;
+        detailedAvatar.updateAnimation(isMoving, dt, 1.35, 'RUN');
         onLocalPoseRef.current?.(pose.x, pose.z, pose.yaw);
 
         // Smooth 3rd-person follow camera behind student
@@ -405,7 +404,7 @@ export const Town3DStage: React.FC<Town3DStageProps> = ({
         );
         camera.lookAt(camLookTarget);
       } else if (activeMode === 'HOST_BROADCAST') {
-        studentGroup.visible = false;
+        detailedAvatar.group.visible = false;
         goldRing.visible = false;
         targetBeacon.visible = false;
 
@@ -459,7 +458,6 @@ export const Town3DStage: React.FC<Town3DStageProps> = ({
           camera.lookAt(0, 0, 0);
         }
       } else if (activeMode === 'HOST_REPLAY') {
-        studentGroup.visible = false;
         const rec = replayRecordingRef.current;
         const targetPos = revealedTargetRef.current;
 
@@ -481,53 +479,62 @@ export const Town3DStage: React.FC<Town3DStageProps> = ({
 
           const speed = inPhotoFinishWindow ? 0.5 : 2.2;
           replayClockMsRef.current += dt * 1000 * speed;
-          const totalDur = Math.max(2000, rec.durationMs + 1500);
+          const totalDur = Math.max(2500, rec.durationMs + 1500);
           if (replayClockMsRef.current > totalDur) {
             replayClockMsRef.current = 0; // Loop smoothly
           }
 
-          const count = Math.min(MAX_INSTANCED_PLAYERS, rec.tracks.length);
-          instBodies.count = count;
-          instHeads.count = count;
-
+          const trackedId = rec.goldPlayerId ?? rec.tracks[0].playerId;
           let goldX = targetPos ? targetPos[0] : 0;
           let goldZ = targetPos ? targetPos[2] : 0;
+          let goldYaw = 0;
           let foundGold = false;
+          let instIdx = 0;
 
-          for (let i = 0; i < count; i++) {
+          for (let i = 0; i < rec.tracks.length && instIdx < MAX_INSTANCED_PLAYERS; i++) {
             const track = rec.tracks[i];
             const [x, z, yaw] = sampleTrackAt(track.frames, replayClockMsRef.current);
-            const isGold = track.playerId === rec.goldPlayerId;
+            const isGold = track.playerId === trackedId;
 
             if (isGold) {
               goldX = x;
               goldZ = z;
+              goldYaw = yaw;
               foundGold = true;
+              continue; // Render Gold winner with the detailed articulated avatar!
             }
 
-            const scale = isGold ? 1.55 : 1.25;
+            const scale = 1.25;
             dummy.position.set(x, 0.72 * scale, z);
             dummy.rotation.set(0, yaw, 0);
             dummy.scale.set(scale, scale, scale);
             dummy.updateMatrix();
-            instBodies.setMatrixAt(i, dummy.matrix);
-            colorScratch.set(isGold ? '#facc15' : track.color || '#3b82f6');
-            instBodies.setColorAt(i, colorScratch);
+            instBodies.setMatrixAt(instIdx, dummy.matrix);
+            colorScratch.set(track.color || '#3b82f6');
+            instBodies.setColorAt(instIdx, colorScratch);
 
             dummy.position.set(x, 1.55 * scale, z);
             dummy.scale.set(scale, scale, scale);
             dummy.updateMatrix();
-            instHeads.setMatrixAt(i, dummy.matrix);
+            instHeads.setMatrixAt(instIdx, dummy.matrix);
+            instIdx++;
           }
 
+          instBodies.count = instIdx;
+          instHeads.count = instIdx;
           instBodies.instanceMatrix.needsUpdate = true;
           if (instBodies.instanceColor) instBodies.instanceColor.needsUpdate = true;
           instHeads.instanceMatrix.needsUpdate = true;
 
           if (foundGold) {
+            detailedAvatar.group.visible = true;
+            detailedAvatar.group.position.set(goldX, 0, goldZ);
+            detailedAvatar.group.rotation.y = goldYaw;
+            detailedAvatar.updateAnimation(true, dt * speed, 1.4, 'RUN');
             goldRing.visible = true;
             goldRing.position.set(goldX, 0.14, goldZ);
           } else {
+            detailedAvatar.group.visible = false;
             goldRing.visible = false;
           }
 
@@ -539,6 +546,7 @@ export const Town3DStage: React.FC<Town3DStageProps> = ({
             camera.lookAt(camLookTarget);
           }
         } else {
+          detailedAvatar.group.visible = false;
           instBodies.count = 0;
           instHeads.count = 0;
           goldRing.visible = false;

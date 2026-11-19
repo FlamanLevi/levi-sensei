@@ -343,7 +343,7 @@ export function useTownRoom({
     setReplayRecording({
       roundIndex: plan.roundIndex,
       durationMs: raceElapsedMs,
-      goldPlayerId: goldEntry?.playerId,
+      goldPlayerId: goldEntry?.playerId ?? sortedScores[0]?.playerId,
       goldFinishMs: goldEntry?.finishMs,
       silverFinishMs: silverEntry?.finishMs,
       isPhotoFinish: isPhotoFinish(podium),

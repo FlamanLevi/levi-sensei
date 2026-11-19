@@ -50,6 +50,7 @@ import {
   getLeftHandLaneOffset,
 } from './navigationLogic';
 import { createLivingTownController, LivingTownController } from './livingTownSystem';
+import { VirtualJoystickPad } from './VirtualJoystickPad';
 import { TownNavigatorDispatcher } from './TownNavigatorDispatcher';
 import {
   buildAtmosphericSkybox,
@@ -75,7 +76,86 @@ import {
 
 const MAX_ROUTE_CHEVRONS = 120;
 const _camTarget = new THREE.Vector3();
+const _camResolved = new THREE.Vector3();
 const _chevronDummy = new THREE.Object3D();
+
+function isInsideJunctionWindow(v: number): boolean {
+  return Math.abs(v) < 6.4 || Math.abs(Math.abs(v) - 33) < 3.4 || Math.abs(Math.abs(v) - 63) < 3.4;
+}
+
+function shortestAngleDiff(from: number, to: number): number {
+  let diff = ((to - from + Math.PI) % (Math.PI * 2)) - Math.PI;
+  if (diff < -Math.PI) diff += Math.PI * 2;
+  return diff;
+}
+
+function resolveCameraWallCollision(
+  origin: THREE.Vector3,
+  desired: THREE.Vector3,
+  buildings: PlacedBuilding[],
+  out: THREE.Vector3
+): void {
+  out.copy(desired);
+  const dx = desired.x - origin.x;
+  const dz = desired.z - origin.z;
+  const fullDist = Math.hypot(dx, dz);
+  if (fullDist < 0.1 || buildings.length === 0) return;
+
+  let bestT = 1.0;
+
+  for (let i = 0; i < buildings.length; i++) {
+    const b = buildings[i];
+    const bDx = b.worldPos[0] - origin.x;
+    const bDz = b.worldPos[2] - origin.z;
+    if (bDx * bDx + bDz * bDz > 25 * 25) continue;
+
+    const isRot90 = Math.abs(Math.sin(b.rotationY)) > 0.5;
+    const halfW = (isRot90 ? b.depthMeters : b.widthMeters) / 2 - 0.35;
+    const halfD = (isRot90 ? b.widthMeters : b.depthMeters) / 2 - 0.35;
+    const minX = b.worldPos[0] - halfW;
+    const maxX = b.worldPos[0] + halfW;
+    const minZ = b.worldPos[2] - halfD;
+    const maxZ = b.worldPos[2] + halfD;
+
+    let tmin = 0.0;
+    let tmax = 1.0;
+
+    if (Math.abs(dx) < 1e-6) {
+      if (origin.x < minX || origin.x > maxX) continue;
+    } else {
+      const invDx = 1.0 / dx;
+      let t1 = (minX - origin.x) * invDx;
+      let t2 = (maxX - origin.x) * invDx;
+      if (t1 > t2) { const tmp = t1; t1 = t2; t2 = tmp; }
+      tmin = Math.max(tmin, t1);
+      tmax = Math.min(tmax, t2);
+      if (tmin > tmax) continue;
+    }
+
+    if (Math.abs(dz) < 1e-6) {
+      if (origin.z < minZ || origin.z > maxZ) continue;
+    } else {
+      const invDz = 1.0 / dz;
+      let t1 = (minZ - origin.z) * invDz;
+      let t2 = (maxZ - origin.z) * invDz;
+      if (t1 > t2) { const tmp = t1; t1 = t2; t2 = tmp; }
+      tmin = Math.max(tmin, t1);
+      tmax = Math.min(tmax, t2);
+      if (tmin > tmax) continue;
+    }
+
+    if (tmin > 0.05 && tmin < bestT) {
+      bestT = tmin;
+    }
+  }
+
+  if (bestT < 1.0) {
+    const clampedDist = Math.max(1.6, bestT * fullDist - 0.45);
+    const scale = clampedDist / fullDist;
+    out.x = origin.x + dx * scale;
+    out.z = origin.z + dz * scale;
+  }
+}
 
 interface TownNavigatorProps {
   onExit?: () => void;
@@ -260,6 +340,18 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
   const keysPressed = useRef<Set<string>>(new Set());
   const touchForwardRef = useRef<number>(0);
   const touchTurnRef = useRef<number>(0);
+  const velForwardRef = useRef<number>(0);
+  const velTurnRef = useRef<number>(0);
+  const snapTargetYawRef = useRef<number | null>(null);
+
+  const triggerSnapTurn = useCallback((direction: 'LEFT' | 'RIGHT') => {
+    const baseYaw = snapTargetYawRef.current ?? playerRotRef.current;
+    const step = Math.PI / 2;
+    const snapped = Math.round(baseYaw / step) * step;
+    snapTargetYawRef.current = snapped + (direction === 'LEFT' ? step : -step);
+  }, []);
+  const triggerSnapTurnRef = useRef(triggerSnapTurn);
+  useEffect(() => { triggerSnapTurnRef.current = triggerSnapTurn; }, [triggerSnapTurn]);
 
   const playerRef = useRef<PlayerAvatar | null>(null);
   const playerPosRef = useRef<THREE.Vector3>(new THREE.Vector3(0, 0.15, 0));
@@ -604,6 +696,12 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
       if (key === 'k') {
         const nextIdx = (WEATHER_MODE_ORDER.indexOf(weatherRef.current) + 1) % WEATHER_MODE_ORDER.length;
         setWeather(WEATHER_MODE_ORDER[nextIdx]);
+      }
+
+      if (key === 'q') {
+        triggerSnapTurnRef.current('LEFT');
+      } else if (key === 'e') {
+        triggerSnapTurnRef.current('RIGHT');
       }
     };
 
@@ -986,6 +1084,14 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
           }
         }
       }
+
+      // Grand Boulevard raised median curb collision (cross at zebra crosswalks)
+      if (!isInsideJunctionWindow(pos.z) && Math.abs(pos.x) < 0.72) {
+        pos.x = pos.x >= 0 ? 0.72 : -0.72;
+      }
+      if (!isInsideJunctionWindow(pos.x) && Math.abs(pos.z) < 0.72) {
+        pos.z = pos.z >= 0 ? 0.72 : -0.72;
+      }
     };
 
     let isDisposed = false;
@@ -1080,16 +1186,31 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
 
       updateTrafficSignals(elapsed);
 
-      // 1. TURNING (YAW ROTATION)
-      let turn = 0;
-      if (keysPressed.current.has('a') || keysPressed.current.has('arrowleft')) turn += 1;
-      if (keysPressed.current.has('d') || keysPressed.current.has('arrowright')) turn -= 1;
-      if (touchTurnRef.current !== 0) turn += touchTurnRef.current;
+      // 1. TURNING (SMOOTHED YAW ROTATION + 90-DEGREE SNAP-TURN TWEEN)
+      let targetTurn = 0;
+      if (keysPressed.current.has('a') || keysPressed.current.has('arrowleft')) targetTurn += 1;
+      if (keysPressed.current.has('d') || keysPressed.current.has('arrowright')) targetTurn -= 1;
+      if (touchTurnRef.current !== 0) targetTurn += touchTurnRef.current;
+
+      if (Math.abs(targetTurn) > 0.25) {
+        snapTargetYawRef.current = null;
+      }
+
+      velTurnRef.current += (targetTurn - velTurnRef.current) * Math.min(1, delta * 12.0);
+      if (Math.abs(velTurnRef.current) < 0.002 && targetTurn === 0) velTurnRef.current = 0;
 
       const currentMode = travelModeRef.current;
       const turnSpeed = currentMode === 'KART' ? 3.3 : currentMode === 'BIKE' ? 3.0 : currentMode === 'RUN' ? 2.8 : 2.6;
-      if (turn !== 0) {
-        playerRotRef.current += turn * turnSpeed * delta;
+      if (snapTargetYawRef.current !== null) {
+        const diff = shortestAngleDiff(playerRotRef.current, snapTargetYawRef.current);
+        if (Math.abs(diff) < 0.015) {
+          playerRotRef.current = snapTargetYawRef.current;
+          snapTargetYawRef.current = null;
+        } else {
+          playerRotRef.current += diff * Math.min(1, delta * 14.0);
+        }
+      } else if (velTurnRef.current !== 0) {
+        playerRotRef.current += velTurnRef.current * turnSpeed * delta;
       }
 
       if (keysPressed.current.has('r') || keysPressed.current.has('pageup')) {
@@ -1100,19 +1221,25 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
       }
       cameraPitchRef.current = THREE.MathUtils.clamp(cameraPitchRef.current, -0.65, 0.75);
 
-      // 2. FORWARD / BACKWARD MOVEMENT (Grid-calibrated speeds: 6m, 12m, 18m, 24m)
-      let forward = 0;
-      if (keysPressed.current.has('w') || keysPressed.current.has('arrowup')) forward += 1;
-      if (keysPressed.current.has('s') || keysPressed.current.has('arrowdown')) forward -= 0.6;
-      if (touchForwardRef.current !== 0) forward += touchForwardRef.current;
+      // 2. FORWARD / BACKWARD MOVEMENT (Smoothed acceleration & Grid-calibrated speeds: 6m, 12m, 18m, 24m)
+      let targetForward = 0;
+      if (keysPressed.current.has('w') || keysPressed.current.has('arrowup')) targetForward += 1;
+      if (keysPressed.current.has('s') || keysPressed.current.has('arrowdown')) targetForward -= 0.6;
+      if (touchForwardRef.current !== 0) targetForward += touchForwardRef.current;
 
-      const isMoving = Math.abs(forward) > 0.05 || Math.abs(turn) > 0.05;
+      velForwardRef.current += (targetForward - velForwardRef.current) * Math.min(1, delta * 10.5);
+      if (Math.abs(velForwardRef.current) < 0.002 && targetForward === 0) velForwardRef.current = 0;
+
+      const isMoving =
+        Math.abs(velForwardRef.current) > 0.05 ||
+        Math.abs(velTurnRef.current) > 0.05 ||
+        snapTargetYawRef.current !== null;
       const baseSpeed = TRAVEL_SPEEDS[currentMode];
       const speedRatio = currentMode === 'KART' ? 3.5 : currentMode === 'BIKE' ? 2.5 : currentMode === 'RUN' ? 2.0 : 1.0;
 
-      if (forward !== 0) {
+      if (Math.abs(velForwardRef.current) > 0.005) {
         const angle = playerRotRef.current;
-        const moveStep = forward * baseSpeed * delta;
+        const moveStep = velForwardRef.current * baseSpeed * delta;
         playerPosRef.current.x += Math.sin(angle) * moveStep;
         playerPosRef.current.z += Math.cos(angle) * moveStep;
 
@@ -1121,6 +1248,8 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
       }
 
       player.group.rotation.y = playerRotRef.current;
+      player.group.rotation.z =
+        -velTurnRef.current * (currentMode === 'BIKE' ? 0.14 : currentMode === 'KART' ? 0.06 : 0);
 
       // Update 3D Vehicle & Avatar attachment postures
       if (currentMode === 'KART') {
@@ -1176,7 +1305,7 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
         );
       }
 
-      // 3. DYNAMIC CAMERA TRACKING MODES (Auto-pulls back for high speeds)
+      // 3. DYNAMIC CAMERA TRACKING MODES (Auto-pulls back for high speeds + anti-clipping spring)
       const activeCamMode = cameraModeRef.current;
       if (activeCamMode === 'FIRST_PERSON') {
         player.group.visible = false;
@@ -1206,7 +1335,13 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
             playerPosRef.current.y + camHeight,
             playerPosRef.current.z - Math.cos(angle) * camDistance
           );
-          camera.position.lerp(_camTarget, 0.14);
+          resolveCameraWallCollision(
+            playerPosRef.current,
+            _camTarget,
+            townMapRef.current?.buildingsList ?? [],
+            _camResolved
+          );
+          camera.position.lerp(_camResolved, 0.14);
 
           const pitch = cameraPitchRef.current;
           const lookTargetY = playerPosRef.current.y + 1.1 + Math.sin(pitch) * 2.5;
@@ -2230,156 +2365,34 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
         </div>
       )}
 
-      {/* TOUCH CONTROLLER D-PAD (BOTTOM-LEFT - RESPONSIVE FOR PHONES & TABLETS) */}
-      <div className="absolute bottom-2 left-2 sm:bottom-5 sm:left-5 z-20 flex flex-col items-center select-none scale-75 sm:scale-90 md:scale-100 origin-bottom-left">
-        <div className="relative w-36 h-36 bg-slate-950/90 rounded-full border-2 border-slate-700/80 shadow-2xl p-2 flex items-center justify-center">
-          <button
-            onTouchStart={() => setTouchForward(1)}
-            onTouchEnd={() => setTouchForward(0)}
-            onTouchCancel={() => setTouchForward(0)}
-            onMouseDown={() => setTouchForward(1)}
-            onMouseUp={() => setTouchForward(0)}
-            onMouseLeave={() => setTouchForward(0)}
-            className="absolute top-1.5 w-11 h-11 rounded-xl bg-slate-800/90 active:bg-amber-500 active:text-slate-950 text-slate-200 border border-slate-700 flex flex-col items-center justify-center font-black shadow-md transition"
-            title="Move Forward (W)"
-          >
-            <span>▲</span>
-            <span className="text-[8px] leading-none opacity-60">FWD</span>
-          </button>
+      {/* DUAL-HAND VIRTUAL JOYSTICK, SPEED PILL, BELL & 90° MEXT SNAP-TURN DECK */}
+      <VirtualJoystickPad
+        onMoveVector={(fwd, trn) => {
+          touchForwardRef.current = fwd;
+          touchTurnRef.current = trn;
+        }}
+        onSnapTurn={triggerSnapTurn}
+        onRingBell={() => {
+          if (!isMutedRef.current) townAudio.playBicycleBell();
+        }}
+        travelMode={travelMode}
+        completedQuestCount={completedQuestCount}
+        onSelectTravelMode={(mode) => {
+          setTravelMode(mode);
+          if (mode === 'BIKE' && !isMutedRef.current) townAudio.playBicycleBell();
+          if (mode === 'KART') soundEffects.playCorrect();
+        }}
+        language="en"
+      />
 
-          <button
-            onTouchStart={() => setTouchTurn(1)}
-            onTouchEnd={() => setTouchTurn(0)}
-            onTouchCancel={() => setTouchTurn(0)}
-            onMouseDown={() => setTouchTurn(1)}
-            onMouseUp={() => setTouchTurn(0)}
-            onMouseLeave={() => setTouchTurn(0)}
-            className="absolute left-1.5 w-11 h-11 rounded-xl bg-slate-800/90 active:bg-amber-500 active:text-slate-950 text-slate-200 border border-slate-700 flex flex-col items-center justify-center font-black shadow-md transition"
-            title="Turn Left (A)"
-          >
-            <span>◀</span>
-            <span className="text-[8px] leading-none opacity-60">LEFT</span>
-          </button>
-
-          <button
-            onClick={() => { if (!isMuted) townAudio.playBicycleBell(); }}
-            className="w-10 h-10 rounded-full bg-amber-500/80 active:bg-amber-400 text-slate-950 flex items-center justify-center shadow-lg transition"
-            title="Ring Bicycle Bell / ベルを鳴らす"
-          >
-            <Bell className="w-4 h-4" />
-          </button>
-
-          <button
-            onTouchStart={() => setTouchTurn(-1)}
-            onTouchEnd={() => setTouchTurn(0)}
-            onTouchCancel={() => setTouchTurn(0)}
-            onMouseDown={() => setTouchTurn(-1)}
-            onMouseUp={() => setTouchTurn(0)}
-            onMouseLeave={() => setTouchTurn(0)}
-            className="absolute right-1.5 w-11 h-11 rounded-xl bg-slate-800/90 active:bg-amber-500 active:text-slate-950 text-slate-200 border border-slate-700 flex flex-col items-center justify-center font-black shadow-md transition"
-            title="Turn Right (D)"
-          >
-            <span>▶</span>
-            <span className="text-[8px] leading-none opacity-60">RIGHT</span>
-          </button>
-
-          <button
-            onTouchStart={() => setTouchForward(-0.6)}
-            onTouchEnd={() => setTouchForward(0)}
-            onTouchCancel={() => setTouchForward(0)}
-            onMouseDown={() => setTouchForward(-0.6)}
-            onMouseUp={() => setTouchForward(0)}
-            onMouseLeave={() => setTouchForward(0)}
-            className="absolute bottom-1.5 w-11 h-11 rounded-xl bg-slate-800/90 active:bg-amber-500 active:text-slate-950 text-slate-200 border border-slate-700 flex flex-col items-center justify-center font-black shadow-md transition"
-            title="Move Backward (S)"
-          >
-            <span className="text-[8px] leading-none opacity-60">BACK</span>
-            <span>▼</span>
-          </button>
-        </div>
-
-        {/* PROGRESSIVE TRANSPORTATION SPEED SELECTOR (6m, 12m, 18m, 24m) */}
-        <div className="mt-2.5 flex items-center gap-1 bg-slate-900/95 p-1 rounded-2xl border border-slate-700/80 shadow-md">
-          {/* WALK (6 m/s) */}
-          <button
-            onClick={() => setTravelMode('WALK')}
-            className={`px-2.5 py-1.5 rounded-xl text-xs font-black flex items-center gap-1 transition ${
-              travelMode === 'WALK'
-                ? 'bg-emerald-500 text-slate-950 shadow-sm'
-                : 'text-slate-300 hover:bg-slate-800'
-            }`}
-            title="Walk (6 m/s - 1 cell/sec)"
-          >
-            <span>🚶</span>
-            <span className="text-[10px]">6m</span>
-          </button>
-
-          {/* RUN (12 m/s) */}
-          <button
-            onClick={() => setTravelMode('RUN')}
-            className={`px-2.5 py-1.5 rounded-xl text-xs font-black flex items-center gap-1 transition ${
-              travelMode === 'RUN'
-                ? 'bg-amber-500 text-slate-950 shadow-sm'
-                : 'text-slate-300 hover:bg-slate-800'
-            }`}
-            title="Run (12 m/s - 2 cells/sec)"
-          >
-            <span>🏃</span>
-            <span className="text-[10px]">12m</span>
-          </button>
-
-          {/* BICYCLE (18 m/s - Unlocked at 2 destinations) */}
-          <button
-            onClick={() => {
-              if (completedQuestCount >= 2) {
-                setTravelMode('BIKE');
-                if (!isMutedRef.current) townAudio.playBicycleBell();
-              }
-            }}
-            disabled={completedQuestCount < 2}
-            className={`px-2.5 py-1.5 rounded-xl text-xs font-black flex items-center gap-1 transition ${
-              completedQuestCount < 2
-                ? 'opacity-40 cursor-not-allowed text-slate-500'
-                : travelMode === 'BIKE'
-                ? 'bg-sky-400 text-slate-950 shadow-sm'
-                : 'text-slate-300 hover:bg-slate-800'
-            }`}
-            title={completedQuestCount < 2 ? '🔒 Reach 2 destinations to unlock City Bicycle!' : 'City Bicycle (18 m/s - 3 cells/sec)'}
-          >
-            <span>{completedQuestCount < 2 ? '🔒' : '🚲'}</span>
-            <span className="text-[10px]">18m</span>
-          </button>
-
-          {/* SUZUKA KART (24 m/s - Unlocked at 4 destinations) */}
-          <button
-            onClick={() => {
-              if (completedQuestCount >= 4) {
-                setTravelMode('KART');
-                soundEffects.playCorrect();
-              }
-            }}
-            disabled={completedQuestCount < 4}
-            className={`px-2.5 py-1.5 rounded-xl text-xs font-black flex items-center gap-1 transition ${
-              completedQuestCount < 4
-                ? 'opacity-40 cursor-not-allowed text-slate-500'
-                : travelMode === 'KART'
-                ? 'bg-rose-500 text-white shadow-sm'
-                : 'text-slate-300 hover:bg-slate-800'
-            }`}
-            title={completedQuestCount < 4 ? '🔒 Reach 4 destinations to unlock Suzuka Micro-Kart!' : 'Suzuka Micro-Kart (24 m/s - 4 cells/sec)'}
-          >
-            <span>{completedQuestCount < 4 ? '🔒' : '🏎️'}</span>
-            <span className="text-[10px]">24m</span>
-          </button>
-        </div>
-      </div>
-
-      {/* DESKTOP KEYBOARD HINTS PILL (BOTTOM-RIGHT) */}
-      <div className="hidden xl:flex flex-col gap-1 absolute bottom-5 right-5 z-20 bg-slate-950/95 px-3.5 py-2.5 rounded-2xl border border-slate-800 text-slate-400 text-[11px] font-medium shadow-lg">
+      {/* DESKTOP KEYBOARD HINTS PILL (ABOVE RIGHT-HAND SNAP-TURN DECK) */}
+      <div className="hidden xl:flex flex-col gap-1 absolute bottom-36 right-5 z-20 bg-slate-950/95 px-3.5 py-2.5 rounded-2xl border border-slate-800 text-slate-400 text-[11px] font-medium shadow-lg">
         <div className="flex items-center gap-2">
           <span><kbd className="px-1.5 py-0.5 rounded bg-slate-800 text-slate-200 border border-slate-700 font-mono text-[10px]">W/S</kbd> Move</span>
           <span>•</span>
           <span><kbd className="px-1.5 py-0.5 rounded bg-slate-800 text-slate-200 border border-slate-700 font-mono text-[10px]">A/D</kbd> Turn</span>
+          <span>•</span>
+          <span><kbd className="px-1.5 py-0.5 rounded bg-slate-800 text-slate-200 border border-slate-700 font-mono text-[10px]">Q/E</kbd> 90°</span>
           <span>•</span>
           <span><kbd className="px-1.5 py-0.5 rounded bg-slate-800 text-slate-200 border border-slate-700 font-mono text-[10px]">1-4</kbd> Speed</span>
         </div>

@@ -52,14 +52,45 @@ export interface GenerateTownOptions {
 }
 
 /**
- * Computes authentic Japanese Intersection Sign names (*Kōsaten Meishō*) for the 3x3 grid
- * based on the active school/neighborhood and cardinal compass direction.
+ * Authentic Japanese landmark intersection suffixes (*Kōsaten Meishō*) for facilities placed adjacent to intersections.
+ * Ranked by civic prominence (Tier 3 > Tier 2 > Tier 1/Kōban).
  */
-export function getIntersectionDirectionInfo(
-  gx: number,
-  gz: number,
-  options?: GenerateTownOptions
-): IntersectionInfo {
+const LANDMARK_INTERSECTION_LABELS: Partial<Record<ActiveModel, { ja: string; en: string; priority: number }>> = {
+  // Tier 3 Mega-Landmarks
+  CASTLE: { ja: 'お城前', en: 'Castle', priority: 100 },
+  STADIUM: { ja: 'スタジアム前', en: 'Stadium', priority: 98 },
+  AMUSEMENT_PARK: { ja: '遊園地前', en: 'Amusement Park', priority: 96 },
+  AQUARIUM: { ja: '水族館前', en: 'Aquarium', priority: 95 },
+  ZOO: { ja: '動物園前', en: 'Zoo', priority: 94 },
+  // Tier 2 Civic & Commercial Facilities
+  STATION: { ja: '駅前', en: 'Station', priority: 92 },
+  CITY_HALL: { ja: '市役所前', en: 'City Hall', priority: 90 },
+  HOSPITAL: { ja: '病院前', en: 'Hospital', priority: 88 },
+  SCHOOL: { ja: '小学校前', en: 'Elementary School', priority: 86 },
+  JUNIOR_HIGH_SCHOOL: { ja: '中学校前', en: 'Jr. High School', priority: 85 },
+  DEPARTMENT_STORE: { ja: 'デパート前', en: 'Dept. Store', priority: 84 },
+  SHRINE: { ja: '神社前', en: 'Shrine', priority: 82 },
+  TEMPLE: { ja: 'お寺前', en: 'Temple', priority: 81 },
+  POLICE_STATION: { ja: '警察署前', en: 'Police Station', priority: 80 },
+  FIRE_STATION: { ja: '消防署前', en: 'Fire Station', priority: 79 },
+  MUSEUM: { ja: '博物館前', en: 'Museum', priority: 78 },
+  LIBRARY: { ja: '図書館前', en: 'Library', priority: 77 },
+  SUPERMARKET: { ja: 'スーパー前', en: 'Supermarket', priority: 75 },
+  GYM: { ja: '体育館前', en: 'Gym', priority: 74 },
+  SWIMMING_POOL: { ja: 'プール前', en: 'Swimming Pool', priority: 73 },
+  PARK: { ja: '中央公園前', en: 'Central Park', priority: 72 },
+  GARDEN: { ja: '日本庭園前', en: 'Japanese Garden', priority: 71 },
+  // Tier 1 Unique Shops & Kōban
+  POST_OFFICE: { ja: '郵便局前', en: 'Post Office', priority: 64 },
+  POLICE_BOX: { ja: '交番前', en: 'Koban', priority: 62 },
+  BUS_STOP: { ja: 'バス停前', en: 'Bus Stop', priority: 60 },
+  BOOKSTORE: { ja: '書店前', en: 'Bookstore', priority: 58 },
+  FLOWER_SHOP: { ja: '花屋前', en: 'Flower Shop', priority: 56 },
+  RESTAURANT: { ja: 'レストラン前', en: 'Restaurant', priority: 54 },
+  CONVENIENCE_STORE: { ja: 'コンビニ前', en: 'Convenience Store', priority: 52 },
+};
+
+function resolveTownBaseNames(options?: GenerateTownOptions): { baseJa: string; baseEn: string } {
   let baseJa = 'みどり町';
   let baseEn = 'Midori-machi';
 
@@ -74,45 +105,189 @@ export function getIntersectionDirectionInfo(
     baseJa = options.townNameJa;
     baseEn = options.townNameEn;
   }
+  return { baseJa, baseEn };
+}
 
-  // 5x5 Road Grid with 12m Grand Boulevard at gx ∈ {11, 12}, gz ∈ {11, 12}
-  // Central Boulevard Crossroads
-  if ((gx === 11 || gx === 12) && (gz === 11 || gz === 12)) {
-    return {
-      jaName: `${baseJa}中央大通り`,
-      enName: `${baseEn} Grand Boulevard`,
-    };
+function getJunctionSlotIndex(g: number): number {
+  if (g <= 1) return 0;
+  if (g <= 6) return 1;
+  if (g <= 12) return 2; // Grand Boulevard pair (11 & 12 share junction slot 2)
+  if (g <= 17) return 3;
+  return 4;
+}
+
+const JUNCTION_WORLD_COORDS = [-63, -33, 0, 33, 63];
+
+/**
+ * Fallback authentic Chōme & Tree-Lined Avenue intersection names (*Kōsaten Meishō*)
+ * for the 5x5 logical junction grid when no unique landmark claims a junction,
+ * completely eliminating long artificial compound strings like "東外郭南中".
+ */
+function getFallbackJunctionName(
+  ix: number,
+  iz: number,
+  baseJa: string,
+  baseEn: string
+): IntersectionInfo {
+  const table: Array<Array<{ ja: string; en: string }>> = [
+    // iz = 0 (North Perimeter Road, gz = 1)
+    [
+      { ja: `${baseJa}一丁目北`, en: `${baseEn} 1-chome N.` },
+      { ja: 'さくら通り北', en: 'Sakura Ave. North' },
+      { ja: `${baseJa}大通り北`, en: `${baseEn} Blvd. North` },
+      { ja: 'けやき通り北', en: 'Keyaki Ave. North' },
+      { ja: `${baseJa}二丁目北`, en: `${baseEn} 2-chome N.` },
+    ],
+    // iz = 1 (North Inner Avenue, gz = 6)
+    [
+      { ja: 'いちょう通り西', en: 'Ginkgo Ave. West' },
+      { ja: `${baseJa}一丁目`, en: `${baseEn} 1-chome` },
+      { ja: `${baseJa}北交差点`, en: `${baseEn} North` },
+      { ja: `${baseJa}二丁目`, en: `${baseEn} 2-chome` },
+      { ja: 'いちょう通り東', en: 'Ginkgo Ave. East' },
+    ],
+    // iz = 2 (East-West Grand Boulevard, gz = 11..12)
+    [
+      { ja: `${baseJa}大通り西`, en: `${baseEn} Blvd. West` },
+      { ja: `${baseJa}西交差点`, en: `${baseEn} West` },
+      { ja: `${baseJa}中央`, en: `${baseEn} Central` },
+      { ja: `${baseJa}東交差点`, en: `${baseEn} East` },
+      { ja: `${baseJa}大通り東`, en: `${baseEn} Blvd. East` },
+    ],
+    // iz = 3 (South Inner Avenue, gz = 17)
+    [
+      { ja: 'かえで通り西', en: 'Maple Ave. West' },
+      { ja: `${baseJa}三丁目`, en: `${baseEn} 3-chome` },
+      { ja: `${baseJa}南交差点`, en: `${baseEn} South` },
+      { ja: `${baseJa}四丁目`, en: `${baseEn} 4-chome` },
+      { ja: 'かえで通り東', en: 'Maple Ave. East' },
+    ],
+    // iz = 4 (South Perimeter Road, gz = 22)
+    [
+      { ja: `${baseJa}三丁目南`, en: `${baseEn} 3-chome S.` },
+      { ja: 'さくら通り南', en: 'Sakura Ave. South' },
+      { ja: `${baseJa}大通り南`, en: `${baseEn} Blvd. South` },
+      { ja: 'けやき通り南', en: 'Keyaki Ave. South' },
+      { ja: `${baseJa}四丁目南`, en: `${baseEn} 4-chome S.` },
+    ],
+  ];
+
+  const entry = table[iz]?.[ix] ?? { ja: `${baseJa}中央`, en: `${baseEn} Central` };
+  return { jaName: entry.ja, enName: entry.en };
+}
+
+/**
+ * Option D Hybrid Intersection Naming:
+ * 1. Central Grand Crossroads (`ix=2, iz=2`) is always `{baseJa}中央` (`{baseEn} Central`).
+ * 2. Landmark-anchored intersections (`駅前`, `市役所前`, `病院前`, `お城前`, `水族館前`, etc.)
+ *    are greedily assigned to the closest corner junction (1 unique landmark per junction).
+ * 3. Remaining residential/perimeter junctions receive clean *Chōme* (`一丁目`–`四丁目`)
+ *    or tree-avenue (`さくら通り`, `けやき通り`, `いちょう通り`, `かえで通り`) names.
+ */
+function buildTownIntersectionNameMap(
+  options?: GenerateTownOptions,
+  buildingsList?: PlacedBuilding[]
+): Map<string, IntersectionInfo> {
+  const { baseJa, baseEn } = resolveTownBaseNames(options);
+  const map = new Map<string, IntersectionInfo>();
+
+  // Reserve the central 4-way boulevard crossroads first
+  map.set('2_2', {
+    jaName: `${baseJa}中央`,
+    enName: `${baseEn} Central`,
+  });
+
+  if (buildingsList && buildingsList.length > 0) {
+    interface CandidateMatch {
+      junctionKey: string;
+      buildingId: ActiveModel;
+      jaName: string;
+      enName: string;
+      score: number;
+    }
+    const candidates: CandidateMatch[] = [];
+
+    for (const b of buildingsList) {
+      const label = LANDMARK_INTERSECTION_LABELS[b.id];
+      if (!label) continue;
+
+      const bx = b.worldPos[0];
+      const bz = b.worldPos[2];
+      const ex = b.entrancePos[0];
+      const ez = b.entrancePos[2];
+
+      // Max distance from junction center to building center (~19.5m covers 3x3, 2x2, and corner 1x1 lots)
+      const maxCornerDist = b.tier === 3 ? 21.5 : b.tier === 2 ? 18.5 : 13.5;
+
+      for (let ix = 0; ix < 5; ix++) {
+        for (let iz = 0; iz < 5; iz++) {
+          if (ix === 2 && iz === 2) continue; // Keep Central crossroads as {baseJa}中央
+          const jx = JUNCTION_WORLD_COORDS[ix];
+          const jz = JUNCTION_WORLD_COORDS[iz];
+          const centerDist = Math.hypot(bx - jx, bz - jz);
+          if (centerDist > maxCornerDist) continue;
+
+          const entranceDist = Math.hypot(ex - jx, ez - jz);
+          // Higher priority facility + closer entrance to intersection wins
+          const score = label.priority * 10 - entranceDist * 1.4 - centerDist * 0.6;
+          candidates.push({
+            junctionKey: `${ix}_${iz}`,
+            buildingId: b.id,
+            jaName: label.ja,
+            enName: label.en,
+            score,
+          });
+        }
+      }
+    }
+
+    candidates.sort((a, b) => b.score - a.score);
+    const usedBuildings = new Set<ActiveModel>();
+
+    for (const cand of candidates) {
+      if (map.has(cand.junctionKey)) continue;
+      if (usedBuildings.has(cand.buildingId)) continue;
+      map.set(cand.junctionKey, {
+        jaName: cand.jaName,
+        enName: cand.enName,
+      });
+      usedBuildings.add(cand.buildingId);
+    }
   }
 
-  let suffixJa = '';
-  let suffixEn = '';
-
-  if (gx <= 6) {
-    suffixJa += gx <= 1 ? '西外郭' : '中央西';
-    suffixEn += gx <= 1 ? 'West Outer ' : 'Mid-West ';
-  } else if (gx >= 17) {
-    suffixJa += gx >= 22 ? '東外郭' : '中央東';
-    suffixEn += gx >= 22 ? 'East Outer ' : 'Mid-East ';
-  } else {
-    suffixJa += '大通り';
-    suffixEn += 'Boulevard ';
+  // Fill any remaining junctions with authentic Chōme & tree-lined avenue names
+  for (let ix = 0; ix < 5; ix++) {
+    for (let iz = 0; iz < 5; iz++) {
+      const key = `${ix}_${iz}`;
+      if (!map.has(key)) {
+        map.set(key, getFallbackJunctionName(ix, iz, baseJa, baseEn));
+      }
+    }
   }
 
-  if (gz <= 6) {
-    suffixJa += gz <= 1 ? '北' : '北中';
-    suffixEn += gz <= 1 ? 'North' : 'Mid-North';
-  } else if (gz >= 17) {
-    suffixJa += gz >= 22 ? '南' : '南中';
-    suffixEn += gz >= 22 ? 'South' : 'Mid-South';
-  } else {
-    suffixJa += '通り';
-    suffixEn += 'Crossing';
-  }
+  return map;
+}
 
-  return {
-    jaName: `${baseJa}${suffixJa}`,
-    enName: `${baseEn} ${suffixEn.trim()}`,
-  };
+/**
+ * Computes authentic Japanese Intersection Sign names (*Kōsaten Meishō*) for any road intersection
+ * `(gx, gz)` using the Option D hybrid landmark + Chōme naming system.
+ */
+export function getIntersectionDirectionInfo(
+  gx: number,
+  gz: number,
+  options?: GenerateTownOptions,
+  buildingsList?: PlacedBuilding[],
+  precomputedMap?: Map<string, IntersectionInfo>
+): IntersectionInfo {
+  const ix = getJunctionSlotIndex(gx);
+  const iz = getJunctionSlotIndex(gz);
+  const key = `${ix}_${iz}`;
+
+  if (precomputedMap && precomputedMap.has(key)) {
+    return precomputedMap.get(key)!;
+  }
+  const map = buildTownIntersectionNameMap(options, buildingsList);
+  return map.get(key) ?? getFallbackJunctionName(ix, iz, resolveTownBaseNames(options).baseJa, resolveTownBaseNames(options).baseEn);
 }
 
 export type Tier0Model = 'HOUSE' | 'EMPTY_LOT';
@@ -276,90 +451,7 @@ export function generateRandomTown(
   const roadIndicesX = new Set([1, 6, 11, 12, 17, 22]);
   const roadIndicesZ = new Set([1, 6, 11, 12, 17, 22]);
 
-  // 1. GENERATE ROAD NETWORK
-  for (let gx = 0; gx < gridSize; gx++) {
-    for (let gz = 0; gz < gridSize; gz++) {
-      const isRoadX = roadIndicesX.has(gx);
-      const isRoadZ = roadIndicesZ.has(gz);
-
-      if (isRoadX || isRoadZ) {
-        let type: RoadTileType;
-        let intersectionInfo: IntersectionInfo | undefined;
-        let boulevardPart: RoadTileOptions['boulevardPart'];
-        let includeMedianTree = false;
-
-        if (isRoadX && isRoadZ) {
-          intersectionInfo = getIntersectionDirectionInfo(gx, gz, options);
-          if ((gx === 11 || gx === 12) && (gz === 11 || gz === 12)) {
-            type = 'BOULEVARD_CENTER_4WAY';
-            boulevardPart =
-              gx === 11 && gz === 11
-                ? 'NW'
-                : gx === 12 && gz === 11
-                ? 'NE'
-                : gx === 11 && gz === 12
-                ? 'SW'
-                : 'SE';
-          } else if (gx === 11 || gx === 12) {
-            type = 'BOULEVARD_JUNCTION_Z';
-            boulevardPart = gx === 11 ? 'W' : 'E';
-          } else if (gz === 11 || gz === 12) {
-            type = 'BOULEVARD_JUNCTION_X';
-            boulevardPart = gz === 11 ? 'N' : 'S';
-          } else {
-            type = 'INTERSECTION_4WAY';
-          }
-        } else if (isRoadX) {
-          if (gx === 11) {
-            type = 'BOULEVARD_Z_WEST';
-            includeMedianTree =
-              (gx + gz) % 2 === 0 && !roadIndicesZ.has(gz - 1) && !roadIndicesZ.has(gz + 1);
-          } else if (gx === 12) {
-            type = 'BOULEVARD_Z_EAST';
-          } else {
-            type = 'STRAIGHT_Z';
-          }
-        } else {
-          if (gz === 11) {
-            type = 'BOULEVARD_X_NORTH';
-            includeMedianTree =
-              (gx + gz) % 2 === 0 && !roadIndicesX.has(gx - 1) && !roadIndicesX.has(gx + 1);
-          } else if (gz === 12) {
-            type = 'BOULEVARD_X_SOUTH';
-          } else {
-            type = 'STRAIGHT_X';
-          }
-        }
-
-        const isZRoad = isRoadX && !isRoadZ;
-        const nearIntersectionNeg = isZRoad
-          ? roadIndicesZ.has(gz - 1)
-          : roadIndicesX.has(gx - 1);
-        const nearIntersectionPos = isZRoad
-          ? roadIndicesZ.has(gz + 1)
-          : roadIndicesX.has(gx + 1);
-        const includeBikeMark = (gx + gz) % 2 === 0;
-        const includeManhole = (gx + gz) % 3 === 0;
-
-        const tile = buildRoadTile(type, {
-          intersectionInfo,
-          boulevardPart,
-          includeMedianTree,
-          nearIntersectionNeg,
-          nearIntersectionPos,
-          includeBikeMark,
-          includeManhole,
-          lowPower: options?.lowPower,
-        });
-        const wx = (gx - halfGrid) * cellSize;
-        const wz = (gz - halfGrid) * cellSize;
-        tile.position.set(wx, 0, wz);
-        roadsGroup.add(tile);
-      }
-    }
-  }
-
-  // 2. OCCUPIED GRID MATRIX
+  // 1. OCCUPIED GRID MATRIX
   const occupied: boolean[][] = Array(gridSize).fill(false).map(() => Array(gridSize).fill(false));
   for (let gx = 0; gx < gridSize; gx++) {
     for (let gz = 0; gz < gridSize; gz++) {
@@ -766,6 +858,91 @@ export function generateRandomTown(
       spawnHeading = rz > 0 ? Math.PI : 0;
     } else {
       spawnHeading = rx > 0 ? -Math.PI / 2 : Math.PI / 2;
+    }
+  }
+
+  // 7. GENERATE ROAD NETWORK WITH OPTION D LANDMARK-ANCHORED INTERSECTION SIGNS
+  const intersectionNameMap = buildTownIntersectionNameMap(options, buildingsList);
+
+  for (let gx = 0; gx < gridSize; gx++) {
+    for (let gz = 0; gz < gridSize; gz++) {
+      const isRoadX = roadIndicesX.has(gx);
+      const isRoadZ = roadIndicesZ.has(gz);
+
+      if (isRoadX || isRoadZ) {
+        let type: RoadTileType;
+        let intersectionInfo: IntersectionInfo | undefined;
+        let boulevardPart: RoadTileOptions['boulevardPart'];
+        let includeMedianTree = false;
+
+        if (isRoadX && isRoadZ) {
+          intersectionInfo = getIntersectionDirectionInfo(gx, gz, options, buildingsList, intersectionNameMap);
+          if ((gx === 11 || gx === 12) && (gz === 11 || gz === 12)) {
+            type = 'BOULEVARD_CENTER_4WAY';
+            boulevardPart =
+              gx === 11 && gz === 11
+                ? 'NW'
+                : gx === 12 && gz === 11
+                ? 'NE'
+                : gx === 11 && gz === 12
+                ? 'SW'
+                : 'SE';
+          } else if (gx === 11 || gx === 12) {
+            type = 'BOULEVARD_JUNCTION_Z';
+            boulevardPart = gx === 11 ? 'W' : 'E';
+          } else if (gz === 11 || gz === 12) {
+            type = 'BOULEVARD_JUNCTION_X';
+            boulevardPart = gz === 11 ? 'N' : 'S';
+          } else {
+            type = 'INTERSECTION_4WAY';
+          }
+        } else if (isRoadX) {
+          if (gx === 11) {
+            type = 'BOULEVARD_Z_WEST';
+            includeMedianTree =
+              (gx + gz) % 2 === 0 && !roadIndicesZ.has(gz - 1) && !roadIndicesZ.has(gz + 1);
+          } else if (gx === 12) {
+            type = 'BOULEVARD_Z_EAST';
+          } else {
+            type = 'STRAIGHT_Z';
+          }
+        } else {
+          if (gz === 11) {
+            type = 'BOULEVARD_X_NORTH';
+            includeMedianTree =
+              (gx + gz) % 2 === 0 && !roadIndicesX.has(gx - 1) && !roadIndicesX.has(gx + 1);
+          } else if (gz === 12) {
+            type = 'BOULEVARD_X_SOUTH';
+          } else {
+            type = 'STRAIGHT_X';
+          }
+        }
+
+        const isZRoad = isRoadX && !isRoadZ;
+        const nearIntersectionNeg = isZRoad
+          ? roadIndicesZ.has(gz - 1)
+          : roadIndicesX.has(gx - 1);
+        const nearIntersectionPos = isZRoad
+          ? roadIndicesZ.has(gz + 1)
+          : roadIndicesX.has(gx + 1);
+        const includeBikeMark = (gx + gz) % 2 === 0;
+        const includeManhole = (gx + gz) % 3 === 0;
+
+        const tile = buildRoadTile(type, {
+          intersectionInfo,
+          boulevardPart,
+          includeMedianTree,
+          nearIntersectionNeg,
+          nearIntersectionPos,
+          includeBikeMark,
+          includeManhole,
+          lowPower: options?.lowPower,
+        });
+        const wx = (gx - halfGrid) * cellSize;
+        const wz = (gz - halfGrid) * cellSize;
+        tile.position.set(wx, 0, wz);
+        roadsGroup.add(tile);
+      }
     }
   }
 

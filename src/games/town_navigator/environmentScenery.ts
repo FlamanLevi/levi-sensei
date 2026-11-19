@@ -16,7 +16,7 @@ function normalizePreset(preset: SkyPreset): 'MORNING' | 'DAY' | 'SUNSET' | 'NIG
 }
 
 /**
- * Generates a 1024x512 equirectangular atmospheric skybox texture
+ * Generates a 2048x1024 equirectangular atmospheric skybox texture
  * with Rayleigh/Mie sky gradients, sun/moon disc & corona, multi-layered cumulus & cirrus clouds,
  * and nighttime starfields.
  */
@@ -31,10 +31,9 @@ export function getSkyDomeTexture(preset: SkyPreset): THREE.CanvasTexture {
   }
 
   const canvas = document.createElement('canvas');
-  canvas.width = 1024;
-  canvas.height = 512;
+  canvas.width = 2048;
+  canvas.height = 1024;
   const ctx = canvas.getContext('2d')!;
-  ctx.scale(0.5, 0.5);
 
   // 1. Zenith-to-Nadir Atmospheric Sky Gradient (Equirectangular Y=0 is Zenith, Y=512 is Horizon)
   const skyGrad = ctx.createLinearGradient(0, 0, 0, 620);
@@ -348,7 +347,10 @@ export function buildTexturedGroundPlane(size: number = 520, repeatCount: number
 }
 
 /**
- * Procedural Skyscraper Curtain-Wall Window Grid Texture (Day & Night Emissive)
+ * High-Resolution Procedural Skyscraper Curtain-Wall Window Grid Texture (1024x1024 Day & Night Emissive).
+ * Depicts a 16-column by 16-floor (24m x 32m physical tile) modern Japanese office curtain wall
+ * with anodized aluminum spandrel beams, structural piers, window mullions, subtle sky reflection gradients,
+ * interior office blind variations, and a mechanical louver floor.
  */
 function getSkyscraperTextures(): { dayMap: THREE.CanvasTexture; nightEmissiveMap: THREE.CanvasTexture } {
   if (cachedSkyscraperDayTex && cachedSkyscraperNightTex) {
@@ -360,60 +362,236 @@ function getSkyscraperTextures(): { dayMap: THREE.CanvasTexture; nightEmissiveMa
     return { dayMap: dummy, nightEmissiveMap: dummy };
   }
 
+  const W = 1024;
+  const H = 1024;
+
   // Day curtain-wall facade
   const dayCanvas = document.createElement('canvas');
-  dayCanvas.width = 256;
-  dayCanvas.height = 512;
+  dayCanvas.width = W;
+  dayCanvas.height = H;
   const dCtx = dayCanvas.getContext('2d')!;
-  dCtx.fillStyle = '#334155';
-  dCtx.fillRect(0, 0, 256, 512);
+  dCtx.fillStyle = '#1e293b';
+  dCtx.fillRect(0, 0, W, H);
 
   // Night emissive window mask
   const nightCanvas = document.createElement('canvas');
-  nightCanvas.width = 256;
-  nightCanvas.height = 512;
+  nightCanvas.width = W;
+  nightCanvas.height = H;
   const nCtx = nightCanvas.getContext('2d')!;
   nCtx.fillStyle = '#000000';
-  nCtx.fillRect(0, 0, 256, 512);
+  nCtx.fillRect(0, 0, W, H);
 
-  const cols = 8;
-  const rows = 24;
-  const cw = 256 / cols;
-  const rh = 512 / rows;
+  const cols = 16; // 1.5m window bay width -> 24m total repeat width
+  const rows = 16; // 2.0m story height -> 32m total repeat height
+  const cw = W / cols; // 64px per bay
+  const rh = H / rows; // 64px per floor
+
+  let seed = 7331;
+  const rand = () => {
+    seed = (seed * 16807) % 2147483647;
+    return (seed - 1) / 2147483646;
+  };
 
   for (let r = 0; r < rows; r++) {
+    const y0 = r * rh;
+    const isMechanicalFloor = r === 7; // Mid-tower refuge / HVAC louver level
+
+    // Horizontal architectural spandrel slab & shadow line at top of each floor
+    const spandrelH = 14;
+    const spandrelGrad = dCtx.createLinearGradient(0, y0, 0, y0 + spandrelH);
+    spandrelGrad.addColorStop(0.0, '#0f172a');
+    spandrelGrad.addColorStop(0.25, '#334155');
+    spandrelGrad.addColorStop(0.85, '#475569');
+    spandrelGrad.addColorStop(1.0, '#1e293b');
+    dCtx.fillStyle = spandrelGrad;
+    dCtx.fillRect(0, y0, W, spandrelH);
+
+    // Crisp aluminum sill trim line
+    dCtx.fillStyle = '#64748b';
+    dCtx.fillRect(0, y0 + spandrelH - 2, W, 2);
+
+    // Suite-level nighttime lighting coherence (offices light up in multi-window runs)
+    let suiteLit = rand() < 0.62;
+    let suiteTint = '#fef08a';
+
     for (let c = 0; c < cols; c++) {
-      const x = c * cw + 3;
-      const y = r * rh + 3;
-      const w = cw - 6;
-      const h = rh - 6;
+      if (c % 3 === 0) {
+        suiteLit = rand() < 0.64;
+        const tRoll = rand();
+        suiteTint =
+          tRoll < 0.45
+            ? '#fef08a' // Warm LED office white
+            : tRoll < 0.75
+            ? '#fde68a' // Golden halogen warm
+            : tRoll < 0.92
+            ? '#e0f2fe' // Cool daylight fluorescent
+            : '#fed7aa'; // Executive amber
+      }
 
-      const hash = (r * 31 + c * 17) % 19;
-      // Reflective blue-slate window pane in daylight
-      dCtx.fillStyle = hash % 3 === 0 ? '#64748b' : hash % 2 === 0 ? '#475569' : '#93c5fd';
-      dCtx.fillRect(x, y, w, h);
+      const x0 = c * cw;
+      const isStructuralColumn = c % 4 === 0;
+      const leftMargin = isStructuralColumn ? 7 : 4;
+      const rightMargin = 4;
+      const paneX = x0 + leftMargin;
+      const paneY = y0 + spandrelH + 2;
+      const paneW = cw - leftMargin - rightMargin;
+      const paneH = rh - spandrelH - 4;
 
-      // ~60% of skyscraper offices stay lit at sunset/night
-      if (hash < 11) {
-        nCtx.fillStyle = hash % 4 === 0 ? '#fef08a' : hash % 3 === 0 ? '#bae6fd' : '#fde68a';
-        nCtx.fillRect(x, y, w, h);
+      if (isMechanicalFloor) {
+        // Horizontal architectural HVAC intake louvers on mechanical floor
+        dCtx.fillStyle = '#1e293b';
+        dCtx.fillRect(paneX, paneY, paneW, paneH);
+        dCtx.fillStyle = '#334155';
+        for (let ly = paneY + 3; ly < paneY + paneH - 3; ly += 6) {
+          dCtx.fillRect(paneX + 2, ly, paneW - 4, 3);
+        }
+        continue;
+      }
+
+      // Daylight curtain-wall insulated glass unit (IGU) with sky reflection gradient
+      const roll = rand();
+      const glassGrad = dCtx.createLinearGradient(paneX, paneY, paneX + paneW * 0.5, paneY + paneH);
+      if (roll < 0.35) {
+        glassGrad.addColorStop(0.0, '#93c5fd');
+        glassGrad.addColorStop(0.55, '#60a5fa');
+        glassGrad.addColorStop(1.0, '#1e3a8a');
+      } else if (roll < 0.72) {
+        glassGrad.addColorStop(0.0, '#7dd3fc');
+        glassGrad.addColorStop(0.5, '#38bdf8');
+        glassGrad.addColorStop(1.0, '#1e293b');
+      } else {
+        glassGrad.addColorStop(0.0, '#64748b');
+        glassGrad.addColorStop(0.5, '#475569');
+        glassGrad.addColorStop(1.0, '#0f172a');
+      }
+      dCtx.fillStyle = glassGrad;
+      dCtx.fillRect(paneX, paneY, paneW, paneH);
+
+      // Subtle interior venetian blind / ceiling drop highlight in upper third of pane
+      if (rand() < 0.45) {
+        const blindH = Math.floor(paneH * (0.22 + rand() * 0.25));
+        dCtx.fillStyle = 'rgba(226, 232, 240, 0.24)';
+        dCtx.fillRect(paneX + 2, paneY + 2, paneW - 4, blindH);
+      }
+
+      // Center vertical transom sub-mullion inside each double-glazed bay
+      dCtx.fillStyle = 'rgba(15, 23, 42, 0.55)';
+      dCtx.fillRect(paneX + Math.floor(paneW / 2) - 1, paneY, 2, paneH);
+
+      // Specular glass edge highlight (top and left inner frame)
+      dCtx.fillStyle = 'rgba(224, 242, 254, 0.28)';
+      dCtx.fillRect(paneX, paneY, paneW, 2);
+      dCtx.fillRect(paneX, paneY, 2, paneH);
+
+      // Nighttime lit office window with realistic ceiling glow & desk silhouette
+      if (suiteLit && rand() < 0.86) {
+        nCtx.fillStyle = suiteTint;
+        nCtx.fillRect(paneX + 1, paneY + 1, paneW - 2, paneH - 2);
+        // Dark lower sill desk/partition silhouette for depth
+        nCtx.fillStyle = 'rgba(15, 23, 42, 0.35)';
+        nCtx.fillRect(paneX + 1, paneY + paneH - 9, paneW - 2, 8);
+        // Sub-mullion bar in night mask
+        nCtx.fillStyle = '#000000';
+        nCtx.fillRect(paneX + Math.floor(paneW / 2) - 1, paneY, 2, paneH);
       }
     }
+  }
+
+  // Vertical structural mega-columns every 4 bays (6.0m spacing)
+  for (let c = 0; c < cols; c += 4) {
+    const x0 = c * cw;
+    const colGrad = dCtx.createLinearGradient(x0, 0, x0 + 7, 0);
+    colGrad.addColorStop(0.0, '#0f172a');
+    colGrad.addColorStop(0.5, '#64748b');
+    colGrad.addColorStop(1.0, '#1e293b');
+    dCtx.fillStyle = colGrad;
+    dCtx.fillRect(x0, 0, 7, H);
   }
 
   cachedSkyscraperDayTex = new THREE.CanvasTexture(dayCanvas);
   cachedSkyscraperDayTex.wrapS = THREE.RepeatWrapping;
   cachedSkyscraperDayTex.wrapT = THREE.RepeatWrapping;
   cachedSkyscraperDayTex.colorSpace = THREE.SRGBColorSpace;
+  cachedSkyscraperDayTex.anisotropy = 8;
   cachedSkyscraperDayTex.userData.isSharedResource = true;
 
   cachedSkyscraperNightTex = new THREE.CanvasTexture(nightCanvas);
   cachedSkyscraperNightTex.wrapS = THREE.RepeatWrapping;
   cachedSkyscraperNightTex.wrapT = THREE.RepeatWrapping;
   cachedSkyscraperNightTex.colorSpace = THREE.SRGBColorSpace;
+  cachedSkyscraperNightTex.anisotropy = 8;
   cachedSkyscraperNightTex.userData.isSharedResource = true;
 
   return { dayMap: cachedSkyscraperDayTex, nightEmissiveMap: cachedSkyscraperNightTex };
+}
+
+/**
+ * Creates a BoxGeometry for a horizon skyscraper with physical-meter UV scaling so every
+ * window bay is a crisp, uniformly proportioned 1.5m x 2.0m story regardless of tower width or height,
+ * and remaps the top/bottom roof faces to a dark spandrel strip so roofs never show window grids.
+ */
+function createSkyscraperBoxGeometry(w: number, h: number, d: number, uvPhase: number = 0): THREE.BoxGeometry {
+  const geo = new THREE.BoxGeometry(w, h, d);
+  const uv = geo.attributes.uv;
+  if (!uv) return geo;
+
+  // 1.0 UV tile = 24m horizontal (16 bays * 1.5m) x 32m vertical (16 stories * 2.0m)
+  const tileW = 24.0;
+  const tileH = 32.0;
+  const uSpanX = Math.max(1, Math.round((w / tileW) * 16)) / 16;
+  const uSpanZ = Math.max(1, Math.round((d / tileW) * 16)) / 16;
+  const vSpanY = Math.max(1, Math.round((h / tileH) * 16)) / 16;
+  const uOffset = ((uvPhase * 3) % 16) / 16;
+
+  // BoxGeometry face order: 0:+X (depth d), 1:-X (depth d), 2:+Y (top), 3:-Y (bottom), 4:+Z (width w), 5:-Z (width w)
+  for (let face = 0; face < 6; face++) {
+    const base = face * 4;
+    if (face === 2 || face === 3) {
+      // Top & bottom faces: clamp to a solid dark spandrel pixel near top of texture
+      for (let i = 0; i < 4; i++) {
+        uv.setXY(base + i, 0.02, 0.995);
+      }
+    } else {
+      const uSpan = face === 0 || face === 1 ? uSpanZ : uSpanX;
+      for (let i = 0; i < 4; i++) {
+        const u0 = uv.getX(base + i);
+        const v0 = uv.getY(base + i);
+        uv.setXY(base + i, uOffset + u0 * uSpan, v0 * vSpanY);
+      }
+    }
+  }
+  uv.needsUpdate = true;
+  return geo;
+}
+
+/**
+ * Creates a cylindrical/octagonal skyscraper geometry with physical-meter UV scaling around its circumference
+ * and dark spandrel roof caps.
+ */
+function createSkyscraperCylinderGeometry(
+  rTop: number,
+  rBot: number,
+  h: number,
+  radialSegments: number = 8
+): THREE.CylinderGeometry {
+  const geo = new THREE.CylinderGeometry(rTop, rBot, h, radialSegments);
+  const uv = geo.attributes.uv;
+  const norm = geo.attributes.normal;
+  if (!uv || !norm) return geo;
+
+  const avgCircumference = Math.PI * (rTop + rBot);
+  const uSpan = Math.max(1, Math.round((avgCircumference / 24.0) * 16)) / 16;
+  const vSpan = Math.max(1, Math.round((h / 32.0) * 16)) / 16;
+
+  for (let i = 0; i < uv.count; i++) {
+    if (Math.abs(norm.getY(i)) > 0.85) {
+      uv.setXY(i, 0.02, 0.995);
+    } else {
+      uv.setXY(i, uv.getX(i) * uSpan, uv.getY(i) * vSpan);
+    }
+  }
+  uv.needsUpdate = true;
+  return geo;
 }
 
 /**
@@ -826,8 +1004,11 @@ export function buildPerimeterScenery(options: {
   skylineGroup.name = 'DistantCitySkyline';
 
   // Place 26 high-rise towers strictly in the East / South-East sector (angles -0.52 rad to +0.92 rad)
+  // across 5 distinct Japanese metropolitan high-rise architectural archetypes
   const numSkyscrapers = 26;
-  const trimRoofMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.5, metalness: 0.5 });
+  const trimRoofMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.45, metalness: 0.55 });
+  const trimLightFrameMat = new THREE.MeshStandardMaterial({ color: 0xcbd5e1, roughness: 0.35, metalness: 0.4 });
+  const helipadYellowMat = new THREE.MeshStandardMaterial({ color: 0xfacc15, roughness: 0.4 });
 
   for (let i = 0; i < numSkyscrapers; i++) {
     const t = i / (numSkyscrapers - 1);
@@ -837,35 +1018,173 @@ export function buildPerimeterScenery(options: {
     const sx = Math.cos(angle) * radius;
     const sz = Math.sin(angle) * radius;
 
-    const w = 6.0 + ((i * 7) % 6) * 1.1;
-    const d = 6.0 + ((i * 11) % 5) * 1.1;
-    const h = 18.0 + ((i * 17) % 11) * 3.4;
+    const w = 7.2 + ((i * 7) % 6) * 1.1;
+    const d = 7.2 + ((i * 11) % 5) * 1.1;
+    const h = 22.0 + ((i * 17) % 11) * 3.5;
 
     const mat = i % 2 === 0 ? skyscraperMatA : skyscraperMatB;
+    const altMat = i % 2 === 0 ? skyscraperMatB : skyscraperMatA;
     const tower = new THREE.Group();
     tower.position.set(sx, 0, sz);
-    tower.rotation.y = -angle;
+    tower.rotation.y = -angle + ((i % 3) - 1) * 0.14;
 
-    const body = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat);
-    body.position.y = h / 2;
-    tower.add(body);
+    const archetype = i % 5;
+    let totalTopY = h;
 
-    // Architectural stepped crown / mechanical penthouse
-    const crownW = w * 0.72;
-    const crownD = d * 0.72;
-    const crownH = 2.6 + (i % 3) * 1.2;
-    const crown = new THREE.Mesh(new THREE.BoxGeometry(crownW, crownH, crownD), mat);
-    crown.position.y = h + crownH / 2;
-    const roofCap = new THREE.Mesh(new THREE.BoxGeometry(crownW + 0.4, 0.45, crownD + 0.4), trimRoofMat);
-    roofCap.position.y = h + crownH + 0.22;
-    tower.add(crown, roofCap);
+    if (archetype === 0) {
+      // Archetype 0: Multi-Tier Stepped Setback Tower (Yokohama Landmark / Roppongi Hills style)
+      const h1 = h * 0.52;
+      const h2 = h * 0.31;
+      const h3 = h * 0.17;
+      const tier1 = new THREE.Mesh(createSkyscraperBoxGeometry(w * 1.15, h1, d * 1.15, i), mat);
+      tier1.position.y = h1 / 2;
+      const ledge1 = new THREE.Mesh(new THREE.BoxGeometry(w * 1.18, 0.45, d * 1.18), trimLightFrameMat);
+      ledge1.position.y = h1;
 
-    // Spire & red aircraft warning beacon on tall signature skyscrapers
+      const tier2 = new THREE.Mesh(createSkyscraperBoxGeometry(w * 0.92, h2, d * 0.92, i + 2), mat);
+      tier2.position.y = h1 + h2 / 2;
+      const ledge2 = new THREE.Mesh(new THREE.BoxGeometry(w * 0.95, 0.4, d * 0.95), trimLightFrameMat);
+      ledge2.position.y = h1 + h2;
+
+      const tier3 = new THREE.Mesh(createSkyscraperBoxGeometry(w * 0.7, h3, d * 0.7, i + 4), altMat);
+      tier3.position.y = h1 + h2 + h3 / 2;
+
+      // Corner structural fin pilasters
+      const finW = 0.45;
+      for (const sxSign of [-1, 1]) {
+        for (const szSign of [-1, 1]) {
+          const fin = new THREE.Mesh(new THREE.BoxGeometry(finW, h1 + h2, finW), trimLightFrameMat);
+          fin.position.set(sxSign * (w * 0.46), (h1 + h2) / 2, szSign * (d * 0.46));
+          tower.add(fin);
+        }
+      }
+
+      const crownH = 2.4;
+      const crown = new THREE.Mesh(new THREE.BoxGeometry(w * 0.52, crownH, d * 0.52), trimRoofMat);
+      crown.position.y = h + crownH / 2;
+      tower.add(tier1, ledge1, tier2, ledge2, tier3, crown);
+      totalTopY = h + crownH;
+    } else if (archetype === 1) {
+      // Archetype 1: Split Twin-Crown High-Rise (Tokyo Metropolitan Govt / Tochō style)
+      const podiumH = h * 0.24;
+      const shaftH = h * 0.5;
+      const twinH = h * 0.26;
+      const podium = new THREE.Mesh(createSkyscraperBoxGeometry(w * 1.3, podiumH, d * 1.15, i), altMat);
+      podium.position.y = podiumH / 2;
+      const shaft = new THREE.Mesh(createSkyscraperBoxGeometry(w * 1.05, shaftH, d * 0.95, i + 1), mat);
+      shaft.position.y = podiumH + shaftH / 2;
+
+      // Skybridge & Twin Upper Towers
+      const wingW = w * 0.38;
+      const wingOffset = w * 0.31;
+      const leftWing = new THREE.Mesh(createSkyscraperBoxGeometry(wingW, twinH, d * 0.88, i + 3), mat);
+      leftWing.position.set(-wingOffset, podiumH + shaftH + twinH / 2, 0);
+      const rightWing = new THREE.Mesh(createSkyscraperBoxGeometry(wingW, twinH, d * 0.88, i + 5), mat);
+      rightWing.position.set(wingOffset, podiumH + shaftH + twinH / 2, 0);
+
+      const skyBridge = new THREE.Mesh(createSkyscraperBoxGeometry(w * 0.32, twinH * 0.28, d * 0.55, i + 2), altMat);
+      skyBridge.position.set(0, podiumH + shaftH + twinH * 0.52, 0);
+
+      const leftCap = new THREE.Mesh(new THREE.BoxGeometry(wingW + 0.3, 0.5, d * 0.9), trimRoofMat);
+      leftCap.position.set(-wingOffset, h + 0.25, 0);
+      const rightCap = new THREE.Mesh(new THREE.BoxGeometry(wingW + 0.3, 0.5, d * 0.9), trimRoofMat);
+      rightCap.position.set(wingOffset, h + 0.25, 0);
+
+      tower.add(podium, shaft, leftWing, rightWing, skyBridge, leftCap, rightCap);
+      totalTopY = h + 0.5;
+    } else if (archetype === 2) {
+      // Archetype 2: Sleek Curtain-Wall Tower with Vertical Exo-Mullions & Rooftop Helipad
+      const body = new THREE.Mesh(createSkyscraperBoxGeometry(w, h, d, i), mat);
+      body.position.y = h / 2;
+      tower.add(body);
+
+      // Full-height exterior structural mullion ribs along front/back faces
+      for (const frac of [-0.36, 0, 0.36]) {
+        const rib = new THREE.Mesh(new THREE.BoxGeometry(0.35, h, d + 0.32), trimLightFrameMat);
+        rib.position.set(w * frac, h / 2, 0);
+        tower.add(rib);
+      }
+      // Mid-height mechanical refuge belt
+      const belt = new THREE.Mesh(new THREE.BoxGeometry(w + 0.4, 1.1, d + 0.4), trimRoofMat);
+      belt.position.y = h * 0.56;
+      tower.add(belt);
+
+      // Mechanical penthouse + circular rooftop helipad
+      const pentW = w * 0.68;
+      const pentD = d * 0.68;
+      const pentH = 2.6;
+      const pent = new THREE.Mesh(createSkyscraperBoxGeometry(pentW, pentH, pentD, i + 4), altMat);
+      pent.position.y = h + pentH / 2;
+      const heliPad = new THREE.Mesh(new THREE.CylinderGeometry(Math.min(pentW, pentD) * 0.44, Math.min(pentW, pentD) * 0.48, 0.35, 12), trimRoofMat);
+      heliPad.position.y = h + pentH + 0.18;
+      const heliRing = new THREE.Mesh(new THREE.CylinderGeometry(Math.min(pentW, pentD) * 0.32, Math.min(pentW, pentD) * 0.32, 0.38, 12), helipadYellowMat);
+      heliRing.position.y = h + pentH + 0.19;
+      tower.add(pent, heliPad, heliRing);
+      totalTopY = h + pentH + 0.35;
+    } else if (archetype === 3) {
+      // Archetype 3: Tapered Octagonal / Cylindrical Glass Landmark Tower (Shinagawa / Shiodome style)
+      const baseH = 5.5;
+      const basePodium = new THREE.Mesh(createSkyscraperBoxGeometry(w * 1.15, baseH, d * 1.15, i), altMat);
+      basePodium.position.y = baseH / 2;
+
+      const rBot = Math.max(w, d) * 0.54;
+      const rTop = rBot * 0.78;
+      const cylH = h - baseH;
+      const cylBody = new THREE.Mesh(createSkyscraperCylinderGeometry(rTop, rBot, cylH, 8), mat);
+      cylBody.position.y = baseH + cylH / 2;
+      cylBody.rotation.y = Math.PI / 8;
+
+      const crownDrum = new THREE.Mesh(createSkyscraperCylinderGeometry(rTop * 0.68, rTop * 0.74, 3.2, 8), altMat);
+      crownDrum.position.y = h + 1.6;
+      crownDrum.rotation.y = Math.PI / 8;
+
+      const domeCap = new THREE.Mesh(new THREE.CylinderGeometry(rTop * 0.45, rTop * 0.7, 1.1, 8), trimLightFrameMat);
+      domeCap.position.y = h + 3.75;
+      domeCap.rotation.y = Math.PI / 8;
+
+      tower.add(basePodium, cylBody, crownDrum, domeCap);
+      totalTopY = h + 4.3;
+    } else {
+      // Archetype 4: Modern Podium + Cantilevered Asymmetric High-Rise with Slanted Crown
+      const podH = 6.4;
+      const pod = new THREE.Mesh(createSkyscraperBoxGeometry(w * 1.35, podH, d * 1.2, i), altMat);
+      pod.position.set(w * 0.12, podH / 2, 0);
+      const podRoof = new THREE.Mesh(new THREE.BoxGeometry(w * 1.38, 0.4, d * 1.24), trimRoofMat);
+      podRoof.position.set(w * 0.12, podH + 0.2, 0);
+
+      const mainH = h - podH;
+      const mainBody = new THREE.Mesh(createSkyscraperBoxGeometry(w * 0.94, mainH, d * 0.94, i + 2), mat);
+      mainBody.position.y = podH + mainH / 2;
+
+      // Stepped mechanical crown Frame
+      const crownH = 3.2;
+      const crown = new THREE.Mesh(createSkyscraperBoxGeometry(w * 0.72, crownH, d * 0.72, i + 6), altMat);
+      crown.position.y = h + crownH / 2;
+      const roofFrame = new THREE.Mesh(new THREE.BoxGeometry(w * 0.86, 0.55, d * 0.86), trimLightFrameMat);
+      roofFrame.position.y = h + crownH + 0.25;
+
+      tower.add(pod, podRoof, mainBody, crown, roofFrame);
+      totalTopY = h + crownH + 0.55;
+    }
+
+    // Companion mid-rise urban annex block at the base of every second tower so the skyline has a dense urban foothills layer
+    if (i % 2 === 0) {
+      const annexW = w * 0.85;
+      const annexD = d * 0.78;
+      const annexH = 10.0 + (i % 4) * 2.8;
+      const annex = new THREE.Mesh(createSkyscraperBoxGeometry(annexW, annexH, annexD, i + 5), altMat);
+      annex.position.set(w * 0.65, annexH / 2, (i % 4 === 0 ? 1 : -1) * d * 0.45);
+      const annexCap = new THREE.Mesh(new THREE.BoxGeometry(annexW + 0.3, 0.38, annexD + 0.3), trimRoofMat);
+      annexCap.position.set(annex.position.x, annexH + 0.19, annex.position.z);
+      tower.add(annex, annexCap);
+    }
+
+    // Dual antenna spire & red aircraft warning beacon on tall signature skyscrapers
     if (h >= 34) {
-      const spire = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.22, 6.5, 6), trimRoofMat);
-      spire.position.y = h + crownH + 3.25;
-      const beacon = new THREE.Mesh(new THREE.SphereGeometry(0.32, 8, 8), beaconMat);
-      beacon.position.y = h + crownH + 6.6;
+      const spire = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.24, 6.8, 6), trimLightFrameMat);
+      spire.position.y = totalTopY + 3.4;
+      const beacon = new THREE.Mesh(new THREE.SphereGeometry(0.34, 8, 8), beaconMat);
+      beacon.position.y = totalTopY + 6.9;
       tower.add(spire, beacon);
     }
 
@@ -892,9 +1211,9 @@ export function buildPerimeterScenery(options: {
     obsTower.add(seg);
   }
   // Main & Top Observation Decks
-  const mainDeck = new THREE.Mesh(new THREE.BoxGeometry(7.6, 2.4, 7.6), skyscraperMatB);
+  const mainDeck = new THREE.Mesh(createSkyscraperBoxGeometry(7.6, 2.4, 7.6, 1), skyscraperMatB);
   mainDeck.position.y = 15.5;
-  const upperDeck = new THREE.Mesh(new THREE.CylinderGeometry(2.4, 2.4, 1.8, 12), skyscraperMatB);
+  const upperDeck = new THREE.Mesh(createSkyscraperCylinderGeometry(2.4, 2.4, 1.8, 12), skyscraperMatB);
   upperDeck.position.y = 31.5;
   const topBeacon = new THREE.Mesh(new THREE.SphereGeometry(0.6, 10, 10), beaconMat);
   topBeacon.position.y = 51.4;

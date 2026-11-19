@@ -321,36 +321,51 @@ export function createIntersectionNameplateTexture(
 ): THREE.CanvasTexture | null {
   if (typeof document === 'undefined') return null;
   const canvas = document.createElement('canvas');
-  canvas.width = 256;
-  canvas.height = 64;
+  canvas.width = 512;
+  canvas.height = 128;
   const ctx = canvas.getContext('2d');
   if (!ctx) return null;
 
+  // High-contrast reflective white police intersection signboard (*Kōsaten Meishō Hyōshiki*)
   ctx.fillStyle = '#f8fafc';
-  ctx.fillRect(0, 0, 256, 64);
-  ctx.strokeStyle = '#1d4ed8';
-  ctx.lineWidth = 5;
-  ctx.strokeRect(3, 3, 250, 58);
+  ctx.fillRect(0, 0, 512, 128);
 
-  // Japanese Kanji / Katakana title in MEXT textbook font
+  // Outer metallic bezel & inner rounded highway-blue border
+  ctx.strokeStyle = '#cbd5e1';
+  ctx.lineWidth = 3;
+  ctx.strokeRect(1.5, 1.5, 509, 125);
+
+  ctx.strokeStyle = '#1d4ed8';
+  ctx.lineWidth = 8;
+  ctx.beginPath();
+  ctx.roundRect(10, 10, 492, 108, 12);
+  ctx.stroke();
+
+  // Japanese Kanji / Katakana title in MEXT textbook font with adaptive auto-fitting
   ctx.fillStyle = '#1e3a8a';
   ctx.textAlign = 'center';
-  ctx.font = '900 20px "BIZ UDPGothic", "UD Digi Kyokasho NP-R", sans-serif';
-  ctx.fillText(jaText, 128, 27);
+  ctx.textBaseline = 'alphabetic';
+  let jaFontSize = 44;
+  ctx.font = `900 ${jaFontSize}px "BIZ UDPGothic", "UD Digi Kyokasho NP-R", sans-serif`;
+  while (ctx.measureText(jaText).width > 456 && jaFontSize > 26) {
+    jaFontSize -= 2;
+    ctx.font = `900 ${jaFontSize}px "BIZ UDPGothic", "UD Digi Kyokasho NP-R", sans-serif`;
+  }
+  ctx.fillText(jaText, 256, 60);
 
   // English translation / Romaji line with adaptive auto-fitting
-  ctx.fillStyle = '#2563eb';
-  let enFontSize = 13;
-  ctx.font = `bold ${enFontSize}px sans-serif`;
-  while (ctx.measureText(enText).width > 232 && enFontSize > 9) {
+  ctx.fillStyle = '#1d4ed8';
+  let enFontSize = 27;
+  ctx.font = `bold ${enFontSize}px "BIZ UDPGothic", sans-serif`;
+  while (ctx.measureText(enText).width > 456 && enFontSize > 18) {
     enFontSize -= 1;
-    ctx.font = `bold ${enFontSize}px sans-serif`;
+    ctx.font = `bold ${enFontSize}px "BIZ UDPGothic", sans-serif`;
   }
-  ctx.fillText(enText, 128, 49);
+  ctx.fillText(enText, 256, 100);
 
   const tex = new THREE.CanvasTexture(canvas);
   tex.colorSpace = THREE.SRGBColorSpace;
-  tex.anisotropy = 4;
+  tex.anisotropy = 8;
   tex.userData.isSharedResource = true;
   return tex;
 }

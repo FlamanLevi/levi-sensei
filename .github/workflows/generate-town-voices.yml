@@ -1,0 +1,37 @@
+name: Generate Town Direction Azure Voices
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  generate-voices:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install edge-tts
+        run: pip install --upgrade edge-tts
+
+      - name: Generate US & Canadian Azure Neural MP3 phrase packs
+        run: python3 scripts/generate_town_direction_voices.py
+
+      - name: Commit and push generated voice packs
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/media/town_directions/
+          if git diff --cached --quiet; then
+            echo "No new voice files to commit."
+          else
+            git commit -m "chore(town-navigator): generate US & Canadian Azure Neural direction voice packs"
+            git push origin HEAD:main
+          fi

@@ -22,6 +22,7 @@ import { DEFAULT_TOWN_SETTINGS, TownCameraMode, TownGameSettings } from './multi
 import { Town3DStage, LiveAvatarPose } from './Town3DStage';
 import { Town2DMap, Town2DPlayerMarker } from './Town2DMap';
 import { TownNavigatorSettingsModal } from './TownNavigatorSettingsModal';
+import { speakDirectionSuite, stopDirectionVoice } from './directionVoicePlayer';
 
 interface TownNavigatorHostContainerProps {
   onExit: () => void;
@@ -74,20 +75,22 @@ export const TownNavigatorHostContainer: React.FC<TownNavigatorHostContainerProp
     return () => window.clearInterval(id);
   }, []);
 
-  // TTS read-aloud of directions when a new BRIEFING starts
+  // Stop any playing voice on unmount
+  useEffect(() => () => stopDirectionVoice(), []);
+
+  // Azure Neural TTS read-aloud of directions (consistent voice per round!)
   const lastSpokenRoundRef = useRef<number>(-1);
-  const speakDirections = (startNameEn: string, stepsEn: string[]) => {
-    if (isMuted || typeof window === 'undefined' || !('speechSynthesis' in window)) return;
-    try {
-      window.speechSynthesis.cancel();
-      const text = `Start at the ${startNameEn}. ${stepsEn.join(' ')}`;
-      const utter = new SpeechSynthesisUtterance(text);
-      utter.lang = 'en-US';
-      utter.rate = 0.92;
-      window.speechSynthesis.speak(utter);
-    } catch {
-      // Ignore speech synthesis errors on restricted browsers
-    }
+  const roundVoiceRef = useRef<string | undefined>(undefined);
+  const speakDirections = (startBuildingId: string, startNameEn: string, stepsEn: string[], reuseRoundVoice = false) => {
+    speakDirectionSuite({
+      startBuildingId,
+      startNameEn,
+      stepsEn,
+      isMuted,
+      voiceId: reuseRoundVoice ? roundVoiceRef.current : undefined,
+    }).then((usedVoice) => {
+      if (usedVoice) roundVoiceRef.current = usedVoice;
+    });
   };
 
   useEffect(() => {
@@ -97,7 +100,13 @@ export const TownNavigatorHostContainer: React.FC<TownNavigatorHostContainerProp
       lastSpokenRoundRef.current !== townState.currentRound.roundIndex
     ) {
       lastSpokenRoundRef.current = townState.currentRound.roundIndex;
-      speakDirections(townState.currentRound.startNameEn, townState.currentRound.stepsEn);
+      roundVoiceRef.current = undefined;
+      speakDirections(
+        townState.currentRound.startBuildingId,
+        townState.currentRound.startNameEn,
+        townState.currentRound.stepsEn,
+        false
+      );
     }
   }, [townState?.phase, townState?.currentRound?.roundIndex]);
 
@@ -500,7 +509,7 @@ export const TownNavigatorHostContainer: React.FC<TownNavigatorHostContainerProp
                   </div>
                 </div>
                 <button
-                  onClick={() => speakDirections(cr.startNameEn, cr.stepsEn)}
+                  onClick={() => speakDirections(cr.startBuildingId, cr.startNameEn, cr.stepsEn, true)}
                   className="p-2.5 rounded-2xl bg-indigo-100 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-200 shrink-0"
                   title="Read Directions Aloud"
                 >

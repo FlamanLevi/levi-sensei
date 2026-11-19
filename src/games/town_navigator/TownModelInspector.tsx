@@ -8,7 +8,8 @@ import {
   ClassroomGpuProfile,
 } from '@/utils/classroom3d';
 import { batchStaticMeshes } from './staticBatcher';
-import { townAudio } from './townAudio';
+import { townAudio, BUILDING_SOUND_LABELS } from './townAudio';
+import { useAudio } from '@/context/AudioContext';
 
 // --- Tier 1 (6m × 6m × 6m) Model Builders ---
 import { buildHouseMesh, HOUSE_PALETTES } from './models/house';
@@ -552,7 +553,7 @@ export const TIER2_CATALOG: Record<Exclude<Tier2Model, 'BOULEVARD_13'>, Building
     nameEn: 'Junior High School',
     nameJa: '中学校',
     rubyName: <ruby>中学校<rt>ちゅうがっこう</rt></ruby>,
-    audioPath: '',
+    audioPath: '/sound_suite/hwg/word_0172/hwg_word_0172_junior_high_school_jenny.mp3',
     illustWebp: '/cards/illustration/hwg6_u09_20_junior_high_school_illust.png',
     illustPng: '/cards/illustration/hwg6_u09_20_junior_high_school_illust.png',
     icon: GraduationCap,
@@ -584,7 +585,7 @@ export const TIER2_CATALOG: Record<Exclude<Tier2Model, 'BOULEVARD_13'>, Building
     nameEn: 'Department Store',
     nameJa: 'デパート (百貨店)',
     rubyName: <ruby>百貨店<rt>デパート</rt></ruby>,
-    audioPath: '',
+    audioPath: '/sound_suite/hwg/word_0629/hwg_word_0629_department_store_jenny.mp3',
     illustWebp: '/cards/illustration/hwg6_u09_21_department_store_illust.png',
     illustPng: '/cards/illustration/hwg6_u09_21_department_store_illust.png',
     icon: ShoppingBag,
@@ -616,7 +617,7 @@ export const TIER2_CATALOG: Record<Exclude<Tier2Model, 'BOULEVARD_13'>, Building
     nameEn: 'Swimming Pool',
     nameJa: 'プール',
     rubyName: <ruby>水泳場<rt>プール</rt></ruby>,
-    audioPath: '',
+    audioPath: '/sound_suite/hwg/word_0336/hwg_word_0336_swimming_pool_jenny.mp3',
     illustWebp: '/cards/illustration/hwg6_u09_22_swimming_pool_illust.png',
     illustPng: '/cards/illustration/hwg6_u09_22_swimming_pool_illust.png',
     icon: Waves,
@@ -1209,39 +1210,8 @@ export const TIER3_CATALOG: Record<Exclude<Tier3Model, 'ESPLANADE_5'>, BuildingD
   }
 };
 
-// Complete map of ambient SFX labels for all models
-const AMBIENT_SOUND_LABELS: Partial<Record<ActiveModel, string>> = {
-  BUS_STOP: 'Air Brake & Chime 🚏',
-  POST_OFFICE: 'Stamp & Bell 📮',
-  CONVENIENCE_STORE: 'Store Chime 🏪',
-  POLICE_BOX: 'Police Whistle 👮',
-  POLICE_STATION: 'Police Whistle 👮',
-  BOOKSTORE: 'Page & Chord 📖',
-  FLOWER_SHOP: 'Wind Chime 🎐',
-  RESTAURANT: 'Grill & Bell 🍽️',
-  EMPTY_LOT: 'Water Fountain 💧',
-  SCHOOL: 'School Chime 🔔',
-  JUNIOR_HIGH_SCHOOL: 'Homeroom Bell 🏫',
-  DEPARTMENT_STORE: 'Elevator Chime 🛍️',
-  SWIMMING_POOL: 'Whistle & Splash 🏊',
-  FIRE_STATION: 'Emergency Siren 🚨',
-  HOSPITAL: 'Clinic Chime 🏥',
-  CITY_HALL: '5 PM Chime 🏛️',
-  STATION: 'Eki-Mero 🚆',
-  LIBRARY: 'Library Celesta 📚',
-  SUPERMARKET: 'Scanner Beep 🛒',
-  GYM: 'Court Buzzer 🏀',
-  MUSEUM: 'Hall Gong 🏛️',
-  TEMPLE: 'Bonshō Bell 🔔',
-  SHRINE: 'Clappers & Bell ⛩️',
-  PARK: 'Bamboo Fountain 🎋',
-  GARDEN: 'Shishi-odoshi 🎋',
-  STADIUM: 'Match Cheer ⚽',
-  ZOO: 'Safari Fanfare 🦁',
-  AQUARIUM: 'Sonar & Bubbles 🐬',
-  CASTLE: 'Taiko Drums 🏯',
-  AMUSEMENT_PARK: 'Carousel Music 🎡',
-};
+// Complete map of ambient SFX labels for all models (shared from townAudio)
+const AMBIENT_SOUND_LABELS: Partial<Record<ActiveModel, string>> = BUILDING_SOUND_LABELS;
 
 /**
  * Safely disposes geometries, non-shared materials, and textures on removed preview groups so switching tabs never leaks GPU buffers.
@@ -1331,6 +1301,7 @@ function buildScaleFigure(height: number = 1.35): THREE.Group {
 }
 
 export const TownModelInspector: React.FC<TownModelInspectorProps> = ({ onExit }) => {
+  const { isMuted } = useAudio();
   const containerRef = useRef<HTMLDivElement>(null);
   const sceneRef = useRef<THREE.Scene | null>(null);
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
@@ -1403,6 +1374,8 @@ export const TownModelInspector: React.FC<TownModelInspectorProps> = ({ onExit }
 
   // Play official voice recording
   const playVoice = useCallback(() => {
+    if (isMuted) return;
+
     if (activeModel === 'AVENUE_8') {
       const sentence = "Welcome to our town! Go straight and turn right at the corner.";
       if ('speechSynthesis' in window) {
@@ -1459,100 +1432,13 @@ export const TownModelInspector: React.FC<TownModelInspectorProps> = ({ onExit }
     } else {
       speakFallback();
     }
-  }, [activeModel, activeTier]);
+  }, [activeModel, activeTier, isMuted]);
 
-  // Play all 28 authentic Japanese atmospheric sound effects
+  // Play all 32 authentic Japanese atmospheric sound effects via centralized townAudio dispatcher
   const playAmbientSFX = useCallback(() => {
-    switch (activeModel) {
-      case 'SCHOOL':
-        townAudio.playSchoolBell();
-        break;
-      case 'JUNIOR_HIGH_SCHOOL':
-        townAudio.playJuniorHighBell();
-        break;
-      case 'DEPARTMENT_STORE':
-        townAudio.playDepartmentStoreChime();
-        break;
-      case 'SWIMMING_POOL':
-        townAudio.playSwimmingPoolSound();
-        break;
-      case 'STATION':
-        townAudio.playStationMelody();
-        break;
-      case 'STADIUM':
-        townAudio.playStadiumCheer();
-        break;
-      case 'CONVENIENCE_STORE':
-        townAudio.playConvenienceStoreChime();
-        break;
-      case 'POST_OFFICE':
-        townAudio.playPostOfficeChime();
-        break;
-      case 'POLICE_BOX':
-      case 'POLICE_STATION':
-        townAudio.playPoliceWhistle();
-        break;
-      case 'HOSPITAL':
-        townAudio.playHospitalChime();
-        break;
-      case 'FIRE_STATION':
-        townAudio.playEmergencySiren();
-        break;
-      case 'SUPERMARKET':
-        townAudio.playSupermarketChime();
-        break;
-      case 'RESTAURANT':
-        townAudio.playRestaurantChime();
-        break;
-      case 'BOOKSTORE':
-        townAudio.playBookstoreChime();
-        break;
-      case 'FLOWER_SHOP':
-        townAudio.playFlowerShopChime();
-        break;
-      case 'BUS_STOP':
-        townAudio.playBusStopChime();
-        break;
-      case 'CITY_HALL':
-        townAudio.playCityHallChime();
-        break;
-      case 'LIBRARY':
-        townAudio.playLibraryChime();
-        break;
-      case 'GYM':
-        townAudio.playGymBuzzer();
-        break;
-      case 'MUSEUM':
-        townAudio.playMuseumChime();
-        break;
-      case 'TEMPLE':
-        townAudio.playTempleBell();
-        break;
-      case 'SHRINE':
-        townAudio.playShrineChime();
-        break;
-      case 'PARK':
-      case 'GARDEN':
-      case 'EMPTY_LOT':
-        townAudio.playParkFountain();
-        break;
-      case 'CASTLE':
-        townAudio.playCastleDrums();
-        break;
-      case 'AMUSEMENT_PARK':
-        townAudio.playAmusementParkMusic();
-        break;
-      case 'AQUARIUM':
-        townAudio.playAquariumSonar();
-        break;
-      case 'ZOO':
-        townAudio.playZooCall();
-        break;
-      default:
-        townAudio.playBicycleBell();
-        break;
-    }
-  }, [activeModel]);
+    if (isMuted) return;
+    townAudio.playForBuilding(activeModel);
+  }, [activeModel, isMuted]);
 
   // Set camera angle smoothly
   const setCameraView = useCallback((angle: CameraAngle) => {

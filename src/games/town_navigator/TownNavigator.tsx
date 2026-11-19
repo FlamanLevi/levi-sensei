@@ -12,7 +12,7 @@ import { buildPlayerAvatar, PlayerAvatar } from './models/playerAvatar';
 import { buildBicycleMesh } from './models/bicycle';
 import { buildMicroKart } from '../suzuka_grand_prix/engine/MicroKartBuilder.js';
 import { updateTrafficSignals, setStreetlightLevel } from './models/roadTiles';
-import { townAudio } from './townAudio';
+import { townAudio, BUILDING_SOUND_LABELS } from './townAudio';
 import { soundEffects } from '@/services/soundEffects';
 import { useAudio } from '@/context/AudioContext';
 import { useClassroom } from '@/context/ClassroomContext';
@@ -526,97 +526,10 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
     }
   }, []);
 
-  // Procedural Sound FX Helper
+  // Procedural Sound FX Helper (delegates to centralized townAudio dispatcher)
   const playFacilitySound = useCallback((building: PlacedBuilding) => {
     if (isMutedRef.current) return;
-
-    switch (building.id) {
-      case 'SCHOOL':
-        townAudio.playSchoolBell();
-        break;
-      case 'JUNIOR_HIGH_SCHOOL':
-        townAudio.playJuniorHighBell();
-        break;
-      case 'DEPARTMENT_STORE':
-        townAudio.playDepartmentStoreChime();
-        break;
-      case 'SWIMMING_POOL':
-        townAudio.playSwimmingPoolSound();
-        break;
-      case 'STATION':
-        townAudio.playStationMelody();
-        break;
-      case 'STADIUM':
-        townAudio.playStadiumCheer();
-        break;
-      case 'CONVENIENCE_STORE':
-        townAudio.playConvenienceStoreChime();
-        break;
-      case 'POST_OFFICE':
-        townAudio.playPostOfficeChime();
-        break;
-      case 'POLICE_STATION':
-        townAudio.playPoliceWhistle();
-        break;
-      case 'HOSPITAL':
-        townAudio.playHospitalChime();
-        break;
-      case 'FIRE_STATION':
-        townAudio.playEmergencySiren();
-        break;
-      case 'SUPERMARKET':
-        townAudio.playSupermarketChime();
-        break;
-      case 'RESTAURANT':
-        townAudio.playRestaurantChime();
-        break;
-      case 'BOOKSTORE':
-        townAudio.playBookstoreChime();
-        break;
-      case 'FLOWER_SHOP':
-        townAudio.playFlowerShopChime();
-        break;
-      case 'BUS_STOP':
-        townAudio.playBusStopChime();
-        break;
-      case 'CITY_HALL':
-        townAudio.playCityHallChime();
-        break;
-      case 'LIBRARY':
-        townAudio.playLibraryChime();
-        break;
-      case 'GYM':
-        townAudio.playGymBuzzer();
-        break;
-      case 'MUSEUM':
-        townAudio.playMuseumChime();
-        break;
-      case 'TEMPLE':
-        townAudio.playTempleBell();
-        break;
-      case 'SHRINE':
-        townAudio.playShrineChime();
-        break;
-      case 'PARK':
-      case 'GARDEN':
-        townAudio.playParkFountain();
-        break;
-      case 'CASTLE':
-        townAudio.playCastleDrums();
-        break;
-      case 'AMUSEMENT_PARK':
-        townAudio.playAmusementParkMusic();
-        break;
-      case 'AQUARIUM':
-        townAudio.playAquariumSonar();
-        break;
-      case 'ZOO':
-        townAudio.playZooCall();
-        break;
-      default:
-        townAudio.playBicycleBell();
-        break;
-    }
+    townAudio.playForBuilding(building.id);
   }, []);
 
   const cycleCameraMode = useCallback(() => {
@@ -1480,7 +1393,7 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
             // Progressive transportation unlock celebrations
             if (nextCount === 2) {
               soundEffects.playFanfare();
-              townAudio.playBicycleBell();
+              if (!isMutedRef.current) townAudio.playBicycleBell();
               setQuestCompletedToast(`🎉 Level Up! 🚲 Bicycle Unlocked (18 m/s)! Press 3 or tap 🚲`);
               setTravelMode('BIKE');
             } else if (nextCount === 4) {
@@ -2396,7 +2309,7 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
                 title="Play environmental sound / 施設の音を再生"
               >
                 <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                <span>Play Sound</span>
+                <span>{BUILDING_SOUND_LABELS[nearbyBuilding.id] ?? 'Play Sound'}</span>
               </button>
             </div>
           </div>

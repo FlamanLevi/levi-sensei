@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { soundEffects } from '@/services/soundEffects';
+import { townAudio } from '@/games/town_navigator/townAudio';
 import { speechService } from '@/services/speechService';
 
 interface AudioContextType {
@@ -36,6 +37,7 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const setQuietClassroomMode = useCallback((quiet: boolean) => {
     setIsQuietClassroomModeState(quiet);
     soundEffects.setQuietClassroomMode(quiet);
+    townAudio.setQuietClassroomMode(quiet);
   }, []);
 
   // Initialize Web Audio API and Web Speech API on first user interaction to bypass iOS Safari autoplay restrictions
@@ -85,13 +87,15 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     };
   }, []);
 
-  // Sync soundEffects synthesizer with global mute and volume state
+  // Sync soundEffects and townAudio synthesizers with global mute and volume state
   useEffect(() => {
     soundEffects.setMuted(isMuted);
+    townAudio.setMuted(isMuted);
   }, [isMuted]);
 
   useEffect(() => {
     soundEffects.setVolume(volume);
+    townAudio.setVolume(volume);
   }, [volume]);
 
   const getAudioCtx = useCallback(() => {

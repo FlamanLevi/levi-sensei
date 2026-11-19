@@ -146,7 +146,7 @@ export function useTownRoom({
     async (settings: TownGameSettings = DEFAULT_TOWN_SETTINGS) => {
       setIsCreating(true);
       try {
-        await ensureAnonymousAuth();
+        const hostId = await ensureAnonymousAuth();
         const code = generateRoomCode();
         const now = getServerTime();
         const townSeed = Math.floor(Math.random() * 900000) + 100000;
@@ -163,7 +163,7 @@ export function useTownRoom({
         const roomData: Record<string, unknown> = {
           code,
           roomCode: code,
-          hostId: 'host',
+          hostId,
           status: 'LOBBY',
           gamePlayType: 'TOWN_NAVIGATOR',
           subject: 'ENGLISH',
@@ -182,13 +182,19 @@ export function useTownRoom({
         await safeSet(`rooms/${code}`, roomData);
         await safeConfigureOnDisconnectUpdate(`rooms/${code}`, { status: 'CLOSED' });
 
-        // Publish active classroom room pointer for Zero-PIN Auto-SSO
+        // Publish active classroom room pointer for Zero-PIN Auto-SSO (non-blocking)
         if (schoolId && classId) {
-          await safeSet(`activeClassroomRooms/${schoolId}/${classId}`, {
+          const pointer = {
+            pin: code,
             roomCode: code,
             gamePlayType: 'TOWN_NAVIGATOR',
+            hostId,
             updatedAt: now,
-          });
+          };
+          await Promise.all([
+            safeSet(`schools/${schoolId}/classes/${classId}/analyticsSummary/teacherRoom`, pointer).catch(() => {}),
+            safeSet(`schools/${schoolId}/classes/${classId}/analyticsSummary/activeRoom`, pointer).catch(() => {}),
+          ]);
         }
 
         usedTargetsRef.current.clear();
@@ -620,7 +626,10 @@ export function useTownRoom({
       updatedAt: getServerTime(),
     });
     if (schoolId && classId) {
-      await safeRemove(`activeClassroomRooms/${schoolId}/${classId}`);
+      await Promise.all([
+        safeRemove(`schools/${schoolId}/classes/${classId}/analyticsSummary/teacherRoom`).catch(() => {}),
+        safeRemove(`schools/${schoolId}/classes/${classId}/analyticsSummary/activeRoom`).catch(() => {}),
+      ]);
     }
   }, [roomCode, schoolId, classId]);
 

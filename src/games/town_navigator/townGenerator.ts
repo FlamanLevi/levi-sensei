@@ -309,6 +309,30 @@ export interface PlacedBuilding {
   grade?: 5 | 6;
 }
 
+export interface BuildingPlacementSpec {
+  id: ActiveModel;
+  tier: 0 | 1 | 2 | 3;
+  centerGx: number;
+  centerGz: number;
+  wCells: number;
+  dCells: number;
+  rotationY: number;
+  palette?: string;
+  custom?: InstantiateModelCustomOptions;
+}
+
+export interface TownLayout {
+  seed: number;
+  gridSize: number; // 24 cells (144m x 144m)
+  cellSize: number; // 6.0m
+  buildingsList: PlacedBuilding[];
+  placements: BuildingPlacementSpec[];
+  intersectionNameMap: Map<string, IntersectionInfo>;
+  spawnPoint: [number, number, number];
+  spawnHeading: number;
+  homeBuilding?: PlacedBuilding;
+}
+
 export interface TownMap {
   seed: number;
   gridSize: number; // 24 cells (144m x 144m)
@@ -426,27 +450,22 @@ export function instantiateModelMesh(
 }
 
 /**
- * Procedurally generates a living 24x24 grid town (144m x 144m) where:
- * - Every T1, T2, and T3 vocabulary facility appears at most once and directly fronts a road.
- * - Every House, Apartment, and Pocket Park is dealt from a shuffled non-repeating DNA deck so no two are alike!
+ * Pure-data deterministic town layout generator (zero WebGL / Three.js allocations).
+ * Produces the exact 24x24 grid placement of all landmarks, facilities, houses, parks,
+ * and intersection names for a given seed in <2ms, shared by both 2D and 3D views.
  */
-export function generateRandomTown(
+export function generateTownLayout(
   seed: number = Math.floor(Math.random() * 100000),
   options?: GenerateTownOptions
-): TownMap {
+): TownLayout {
   const rng = createRng(seed);
 
   const gridSize = 24;
   const cellSize = 6.0;
   const halfGrid = 11.5; // (gridSize - 1) / 2
 
-  const roadsGroup = new THREE.Group();
-  roadsGroup.name = 'Town_RoadNetwork';
-
-  const buildingsGroup = new THREE.Group();
-  buildingsGroup.name = 'Town_Buildings';
-
   const buildingsList: PlacedBuilding[] = [];
+  const placements: BuildingPlacementSpec[] = [];
 
   const roadIndicesX = new Set([1, 6, 11, 12, 17, 22]);
   const roadIndicesZ = new Set([1, 6, 11, 12, 17, 22]);
@@ -498,13 +517,14 @@ export function generateRandomTown(
   const guaranteedTier2 = [...TIER2_GRADE6_POOL, ...shuffledGrade5Tier2.slice(0, 4)];
   const activeTier2List = shuffle(guaranteedTier2);
   const shuffledTier1 = shuffle(TIER1_UNIQUE_POOL);
+  // Keep RNG consumption identical to prior generateRandomTown versions
+  void shuffledTier3;
+  void activeTier2List;
 
   const apartmentDeck = generateTownApartmentDeck(rng);
   const houseDeck = generateTownHouseDeck(rng, 48);
   const parkDeck = generateTownEmptyLotDeck(rng, 24);
 
-  let t3Idx = 0;
-  let t2Idx = 0;
   let houseDeckIdx = 0;
   let parkDeckIdx = 0;
 
@@ -519,19 +539,23 @@ export function generateRandomTown(
     palette?: string,
     custom?: InstantiateModelCustomOptions
   ) {
-    const mesh = instantiateModelMesh(id, palette, {
-      ...custom,
-      lowPower: options?.lowPower,
+    placements.push({
+      id,
+      tier,
+      centerGx,
+      centerGz,
+      wCells,
+      dCells,
+      rotationY,
+      palette,
+      custom,
     });
+
     const widthMeters = wCells * cellSize;
     const depthMeters = dCells * cellSize;
 
     const wx = (centerGx - halfGrid) * cellSize;
     const wz = (centerGz - halfGrid) * cellSize;
-
-    mesh.position.set(wx, 0, wz);
-    mesh.rotation.y = rotationY;
-    buildingsGroup.add(mesh);
 
     const startX = Math.round(centerGx - (wCells - 1) / 2);
     const startZ = Math.round(centerGz - (dCells - 1) / 2);
@@ -559,28 +583,6 @@ export function generateRandomTown(
       : TIER1_CATALOG[id as Exclude<Tier1Model, 'AVENUE_8'>];
 
     const grade = (def as any)?.grade ?? 5;
-
-    if (tier > 0) {
-      const totem = buildSidewalkTotemSign({
-        id,
-        nameEn: def.nameEn,
-        nameJa: def.nameJa,
-        tier,
-      });
-
-      const signFwd = depthMeters / 2 - 0.52;
-      const signSide = widthMeters / 2 - 0.65;
-      const tangentX = Math.cos(rotationY);
-      const tangentZ = -Math.sin(rotationY);
-
-      totem.position.set(
-        wx + Math.sin(rotationY) * signFwd + tangentX * signSide,
-        0,
-        wz + Math.cos(rotationY) * signFwd + tangentZ * signSide
-      );
-      totem.rotation.y = rotationY;
-      buildingsGroup.add(totem);
-    }
 
     const isApartment = id === 'APARTMENT';
     const modelWidthMeters = isApartment ? 6.0 : widthMeters;
@@ -861,8 +863,84 @@ export function generateRandomTown(
     }
   }
 
-  // 7. GENERATE ROAD NETWORK WITH OPTION D LANDMARK-ANCHORED INTERSECTION SIGNS
+  // 7. COMPUTE OPTION D LANDMARK-ANCHORED INTERSECTION NAMES
   const intersectionNameMap = buildTownIntersectionNameMap(options, buildingsList);
+
+  return {
+    seed,
+    gridSize,
+    cellSize,
+    buildingsList,
+    placements,
+    intersectionNameMap,
+    spawnPoint,
+    spawnHeading,
+    homeBuilding,
+  };
+}
+
+/**
+ * Procedurally generates a living 24x24 grid 3D town (144m x 144m) from a deterministic TownLayout:
+ * - Every T1, T2, and T3 vocabulary facility appears at most once and directly fronts a road.
+ * - Every House, Apartment, and Pocket Park is dealt from a shuffled non-repeating DNA deck so no two are alike!
+ */
+export function generateRandomTown(
+  seed: number = Math.floor(Math.random() * 100000),
+  options?: GenerateTownOptions
+): TownMap {
+  const layout = generateTownLayout(seed, options);
+  const { gridSize, cellSize, buildingsList, placements, intersectionNameMap, spawnPoint, spawnHeading, homeBuilding } = layout;
+  const halfGrid = 11.5;
+  const rng = createRng(seed ^ 0x5f3759df);
+
+  const roadsGroup = new THREE.Group();
+  roadsGroup.name = 'Town_RoadNetwork';
+
+  const buildingsGroup = new THREE.Group();
+  buildingsGroup.name = 'Town_Buildings';
+
+  const roadIndicesX = new Set([1, 6, 11, 12, 17, 22]);
+  const roadIndicesZ = new Set([1, 6, 11, 12, 17, 22]);
+
+  // Instantiate 3D building meshes + sidewalk totem signs from the pure-data layout
+  for (let i = 0; i < placements.length; i++) {
+    const spec = placements[i];
+    const bInfo = buildingsList[i];
+    const mesh = instantiateModelMesh(spec.id, spec.palette, {
+      ...spec.custom,
+      lowPower: options?.lowPower,
+    });
+    const widthMeters = spec.wCells * cellSize;
+    const depthMeters = spec.dCells * cellSize;
+    const wx = (spec.centerGx - halfGrid) * cellSize;
+    const wz = (spec.centerGz - halfGrid) * cellSize;
+
+    mesh.position.set(wx, 0, wz);
+    mesh.rotation.y = spec.rotationY;
+    buildingsGroup.add(mesh);
+
+    if (spec.tier > 0 && bInfo) {
+      const totem = buildSidewalkTotemSign({
+        id: spec.id,
+        nameEn: bInfo.nameEn,
+        nameJa: bInfo.nameJa,
+        tier: spec.tier,
+      });
+
+      const signFwd = depthMeters / 2 - 0.52;
+      const signSide = widthMeters / 2 - 0.65;
+      const tangentX = Math.cos(spec.rotationY);
+      const tangentZ = -Math.sin(spec.rotationY);
+
+      totem.position.set(
+        wx + Math.sin(spec.rotationY) * signFwd + tangentX * signSide,
+        0,
+        wz + Math.cos(spec.rotationY) * signFwd + tangentZ * signSide
+      );
+      totem.rotation.y = spec.rotationY;
+      buildingsGroup.add(totem);
+    }
+  }
 
   for (let gx = 0; gx < gridSize; gx++) {
     for (let gz = 0; gz < gridSize; gz++) {

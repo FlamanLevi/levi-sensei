@@ -11,6 +11,7 @@ import { QuizStudentGrandPrix3D } from './QuizStudentGrandPrix3D';
 import { QuizStudentTugOfWar } from './QuizStudentTugOfWar';
 import { QuizStudentTamaire } from './QuizStudentTamaire';
 import { AnticipationStudentContainer } from '@/games/anticipation';
+import { TownNavigatorStudentContainer } from '@/games/town_navigator/TownNavigatorStudentContainer';
 import { Trophy, ArrowLeft, AlertCircle } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 import { soundEffects } from '@/services/soundEffects';
@@ -351,7 +352,7 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
     );
   }
 
-  const isGameplayScreen = room.status === 'QUESTION' || room.status === 'REVEAL' || room.status === 'SPRINT_RACE' || room.status === 'GRAND_PRIX_3D' || room.status === 'TUG_OF_WAR' || room.status === 'TAMAIRE' || room.status === 'VOLLEYBALL' || room.status === 'ANTICIPATION';
+  const isGameplayScreen = room.status === 'QUESTION' || room.status === 'REVEAL' || room.status === 'SPRINT_RACE' || room.status === 'GRAND_PRIX_3D' || room.status === 'TUG_OF_WAR' || room.status === 'TAMAIRE' || room.status === 'VOLLEYBALL' || room.status === 'ANTICIPATION' || room.status === 'TOWN_NAVIGATOR';
 
   // ==========================================================================
   // [ANTIGRAVITY REFACTOR]: Unified Arcade Answer & Telemetry Adapter Callback
@@ -489,6 +490,16 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
         />
       )}
 
+      {/* 2c3. 3D Town Navigator Directions Race Mode */}
+      {room.status === 'TOWN_NAVIGATOR' && pin && playerId && (
+        <TownNavigatorStudentContainer
+          roomCode={pin}
+          playerId={playerId}
+          nickname={currentPlayer?.nickname || 'Student'}
+          onExit={handleLeave}
+        />
+      )}
+
       {/* 2d. Sprint/3D/Tug/Tamaire Loading Fallback */}
       {(room.status === 'SPRINT_RACE' || room.status === 'GRAND_PRIX_3D' || room.status === 'TUG_OF_WAR' || room.status === 'TAMAIRE' || room.status === 'VOLLEYBALL') && studentQuestions.length === 0 && (
         <div className="w-full max-w-md mx-auto p-6 text-center select-none animate-in fade-in duration-200">
@@ -599,7 +610,7 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
       )}
 
       {/* Fallback for unrecognized status to prevent blank screen */}
-      {!['LOBBY', 'SPRINT_RACE', 'GRAND_PRIX_3D', 'TUG_OF_WAR', 'TAMAIRE', 'VOLLEYBALL', 'ANTICIPATION', 'QUESTION', 'REVEAL', 'LEADERBOARD', 'GAME_OVER', 'CLOSED'].includes(room.status) && (
+      {!['LOBBY', 'SPRINT_RACE', 'GRAND_PRIX_3D', 'TUG_OF_WAR', 'TAMAIRE', 'VOLLEYBALL', 'ANTICIPATION', 'TOWN_NAVIGATOR', 'QUESTION', 'REVEAL', 'LEADERBOARD', 'GAME_OVER', 'CLOSED'].includes(room.status) && (
         <QuizStudentLobby
           roomCode={room.code}
           player={currentPlayer}

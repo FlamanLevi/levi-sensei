@@ -39,7 +39,7 @@ export type PromptType =
   | 'THREE_HINTS';
 export type EnglishReadingAid = 'SPELLING_ONLY' | 'WITH_KATAKANA';
 export type DistractorEliminationMode = 'OFF' | 'HALFWAY' | 'GRADUAL';
-export type GamePlayType = 'KAHOOT' | 'SPRINT_RACE' | 'GRAND_PRIX_3D' | 'TUG_OF_WAR' | 'TAMAIRE' | 'VOLLEYBALL';
+export type GamePlayType = 'KAHOOT' | 'SPRINT_RACE' | 'GRAND_PRIX_3D' | 'TUG_OF_WAR' | 'TAMAIRE' | 'VOLLEYBALL' | 'TOWN_NAVIGATOR';
 export type QuizStatus =
   | 'LOBBY'
   | 'QUESTION'
@@ -51,7 +51,8 @@ export type QuizStatus =
   | 'GRAND_PRIX_3D'
   | 'TUG_OF_WAR'
   | 'TAMAIRE'
-  | 'VOLLEYBALL';
+  | 'VOLLEYBALL'
+  | 'TOWN_NAVIGATOR';
 
 export type TeamId =
   | 'team_red'
@@ -1382,6 +1383,23 @@ export const GAME_MODE_STRATEGIES: Record<GamePlayType, MiniGameStrategyDescript
       raceDurationSeconds: durationSeconds,
       tamaireFinished: false,
       volleyballFinished: false,
+    }),
+  },
+  TOWN_NAVIGATOR: {
+    gamePlayType: 'TOWN_NAVIGATOR',
+    activeStatus: 'TOWN_NAVIGATOR',
+    labelEn: '3D Town Navigator Race',
+    labelJa: '3D タウンナビゲーターレース',
+    greenFlagOffsetMs: 0,
+    requiresTwoTeams: false,
+    preWarmInLobby: false,
+    studentSpokeSubscription: 'SELF_ONLY',
+    maxClientWriteHz: 5,
+    defaultLockoutSeconds: 2.5,
+    resolveInitialRoomPatch: (nowServerMs, durationSeconds) => ({
+      status: 'TOWN_NAVIGATOR',
+      raceStartTime: nowServerMs,
+      raceDurationSeconds: durationSeconds,
     }),
   },
 };

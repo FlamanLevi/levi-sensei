@@ -13,6 +13,7 @@ import { buildBicycleMesh } from './models/bicycle';
 import { buildMicroKart } from '../suzuka_grand_prix/engine/MicroKartBuilder.js';
 import { updateTrafficSignals, setStreetlightLevel } from './models/roadTiles';
 import { townAudio, BUILDING_SOUND_LABELS } from './townAudio';
+import { TownNavigatorHostContainer } from './TownNavigatorHostContainer';
 import { soundEffects } from '@/services/soundEffects';
 import { useAudio } from '@/context/AudioContext';
 import { useClassroom } from '@/context/ClassroomContext';
@@ -208,6 +209,7 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
   const [weather, setWeatherState] = useState<WeatherMode>(initialWeather);
   const [travelMode, setTravelMode] = useState<TravelMode>('WALK');
   const [completedQuestCount, setCompletedQuestCount] = useState<number>(0);
+  const [hostRaceMode, setHostRaceMode] = useState<boolean>(false);
   const { isMuted, toggleMute } = useAudio();
 
   const setTimeOfDay = useCallback((next: TimeOfDay) => {
@@ -1793,7 +1795,22 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
               <span className="hidden md:inline">Co-Op Dispatcher</span>
               <span className="md:hidden">Dispatcher</span>
             </button>
+            <button
+              onClick={() => setHostRaceMode(true)}
+              className="flex items-center gap-1 px-2.5 sm:px-3 py-1 rounded-lg text-xs font-black bg-indigo-600 hover:bg-indigo-500 text-white shadow-sm transition cursor-pointer"
+              title="Host Multi-iPad Directions Race (Stream B) / クラス全員で3D道案内レース"
+            >
+              <span>🏁</span>
+              <span className="hidden md:inline">Multi-iPad Race</span>
+              <span className="md:hidden">Race</span>
+            </button>
           </div>
+
+          {hostRaceMode && (
+            <div className="fixed inset-0 z-[100] bg-slate-950">
+              <TownNavigatorHostContainer onExit={() => setHostRaceMode(false)} />
+            </div>
+          )}
 
           {/* Grade Selector Segmented Control (5th vs 6th Grade Curriculum) */}
           <div className="flex items-center bg-slate-950/80 p-0.5 rounded-xl border border-slate-700/80">

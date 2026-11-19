@@ -52,9 +52,9 @@ export type IpadDisplayMode = 'EYES_UP' | 'MIRRORED';
 
 export type DeliveryStream = 'STREAM_B_MULTIPLAYER';
 
-export type QuizStatus = 'LOBBY' | 'QUESTION' | 'REVEAL' | 'LEADERBOARD' | 'GAME_OVER' | 'CLOSED' | 'SPRINT_RACE' | 'GRAND_PRIX_3D' | 'TUG_OF_WAR' | 'TAMAIRE' | 'VOLLEYBALL' | 'ANTICIPATION';
+export type QuizStatus = 'LOBBY' | 'QUESTION' | 'REVEAL' | 'LEADERBOARD' | 'GAME_OVER' | 'CLOSED' | 'SPRINT_RACE' | 'GRAND_PRIX_3D' | 'TUG_OF_WAR' | 'TAMAIRE' | 'VOLLEYBALL' | 'ANTICIPATION' | 'TOWN_NAVIGATOR';
 
-export type GamePlayType = 'KAHOOT' | 'SPRINT_RACE' | 'GRAND_PRIX_3D' | 'TUG_OF_WAR' | 'TAMAIRE' | 'VOLLEYBALL' | 'ANTICIPATION';
+export type GamePlayType = 'KAHOOT' | 'SPRINT_RACE' | 'GRAND_PRIX_3D' | 'TUG_OF_WAR' | 'TAMAIRE' | 'VOLLEYBALL' | 'ANTICIPATION' | 'TOWN_NAVIGATOR';
 
 export type RecallDelaySeconds = 0 | 3 | 5;
 

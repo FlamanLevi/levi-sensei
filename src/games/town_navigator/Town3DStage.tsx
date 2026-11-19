@@ -43,6 +43,8 @@ export interface Town3DStageProps {
   replayRecording?: TownReplayRecording | null;
   /** Increment to restart HOST_REPLAY from t=0 */
   replayTrigger?: number;
+  /** Increment to teleport local student back to spawnPos & spawnHeading */
+  respawnTrigger?: number;
   /** Split-screen camera layout for HOST_REPLAY ('1' | '2' | '4', default '2') */
   replayLayout?: '1' | '2' | '4';
   /** Called if WebGL context is lost or student iPad FPS drops critically */
@@ -153,6 +155,7 @@ export const Town3DStage: React.FC<Town3DStageProps> = ({
   revealedTargetPos,
   replayRecording,
   replayTrigger = 0,
+  respawnTrigger = 0,
   replayLayout = '2',
   onRequest2DFallback,
   className = '',
@@ -184,10 +187,10 @@ export const Town3DStage: React.FC<Town3DStageProps> = ({
   const localPoseRef = useRef({ x: spawnPos[0], z: spawnPos[1], yaw: spawnHeading });
   const replayClockMsRef = useRef(0);
 
-  // Reset local avatar when spawn changes (new round!)
+  // Reset local avatar when spawn changes (new round!) or student taps "Back to Start"
   useEffect(() => {
     localPoseRef.current = { x: spawnPos[0], z: spawnPos[1], yaw: spawnHeading };
-  }, [spawnPos[0], spawnPos[1], spawnHeading]);
+  }, [spawnPos[0], spawnPos[1], spawnHeading, respawnTrigger]);
 
   // Reset replay clock whenever replayTrigger or recording changes
   useEffect(() => {

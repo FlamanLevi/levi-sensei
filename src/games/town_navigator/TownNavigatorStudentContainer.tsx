@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { CheckCircle2, Map as MapIcon, MapPin, Lock, Trophy } from 'lucide-react';
+import { CheckCircle2, Map as MapIcon, MapPin, Lock, RotateCcw, Trophy } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 import { soundEffects } from '@/services/soundEffects';
 import { getServerTime } from '@/services/rtdbSafe';
@@ -35,6 +35,7 @@ export const TownNavigatorStudentContainer: React.FC<TownNavigatorStudentContain
   const [checkedSteps, setCheckedSteps] = useState<Set<number>>(new Set());
   const [nearbyBuilding, setNearbyBuilding] = useState<PlacedBuilding | null>(null);
   const [lockoutUntil, setLockoutUntil] = useState<number>(0);
+  const [respawnTrigger, setRespawnTrigger] = useState<number>(0);
   const [nowMs, setNowMs] = useState(() => getServerTime());
   const [local2DPose, setLocal2DPose] = useState({ x: 0, z: 33, yaw: 0 });
 
@@ -270,13 +271,33 @@ export const TownNavigatorStudentContainer: React.FC<TownNavigatorStudentContain
           </span>
         </div>
 
-        <button
-          onClick={() => setRenderMode((m) => (m === '3D' ? '2D' : '3D'))}
-          className="px-3 py-1 rounded-xl bg-slate-800 hover:bg-slate-700 font-black text-xs flex items-center gap-1.5 shrink-0"
-        >
-          <MapIcon className="w-3.5 h-3.5" />
-          {renderMode}
-        </button>
+        <div className="flex items-center gap-1.5 shrink-0 flex-nowrap">
+          {isActive && !myPodium && (
+            <button
+              onClick={() => {
+                const [sx, sz] = cr.spawnPos;
+                const sh = cr.spawnHeading;
+                localPoseRef.current = { x: sx, z: sz, yaw: sh };
+                setLocal2DPose({ x: sx, z: sz, yaw: sh });
+                setCheckedSteps(new Set());
+                setRespawnTrigger((n) => n + 1);
+                pushTelemetry(sx, sz, sh);
+              }}
+              className="px-3 py-1 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-400/40 text-amber-300 font-black text-xs flex items-center gap-1.5 shrink-0"
+              title="Teleport back to starting intersection"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+              {lang === 'ja' ? 'スタートに戻る' : 'Back to Start'}
+            </button>
+          )}
+          <button
+            onClick={() => setRenderMode((m) => (m === '3D' ? '2D' : '3D'))}
+            className="px-3 py-1 rounded-xl bg-slate-800 hover:bg-slate-700 font-black text-xs flex items-center gap-1.5 shrink-0"
+          >
+            <MapIcon className="w-3.5 h-3.5" />
+            {renderMode}
+          </button>
+        </div>
       </header>
 
       {/* Landscape Split: Viewport + Directions Checklist */}
@@ -290,6 +311,7 @@ export const TownNavigatorStudentContainer: React.FC<TownNavigatorStudentContain
               lowPower={true}
               spawnPos={cr.spawnPos}
               spawnHeading={cr.spawnHeading}
+              respawnTrigger={respawnTrigger}
               controlsLocked={controlsLocked}
               joystickRef={joystickRef}
               onLocalPoseChange={handleLocalPoseChange}
@@ -389,6 +411,23 @@ export const TownNavigatorStudentContainer: React.FC<TownNavigatorStudentContain
         <aside className="md:col-span-4 bg-slate-900 border-l border-slate-800 p-3 flex flex-col min-h-0 overflow-y-auto space-y-2">
           <div className="text-[11px] font-black uppercase tracking-wider text-indigo-400">
             {lang === 'ja' ? '道案内ステップ' : 'DIRECTIONS'}
+          </div>
+
+          {/* Persistent Step 0: Starting Point */}
+          <div className="p-2.5 rounded-2xl bg-indigo-950/60 border border-indigo-500/40 flex items-start gap-2">
+            <span className="w-5 h-5 rounded-full bg-amber-400 text-slate-950 font-black text-[11px] flex items-center justify-center shrink-0 mt-0.5">
+              ★
+            </span>
+            <div className="min-w-0">
+              <div className="font-black text-sm text-amber-300 leading-snug">
+                Start at the {cr.startNameEn}.
+              </div>
+              {townState.settings.showJapaneseHints && (
+                <div className="text-[11px] text-indigo-200/80 mt-0.5">
+                  「{cr.startNameJa}」からスタート！
+                </div>
+              )}
+            </div>
           </div>
           {cr.stepsEn.map((step, idx) => {
             const done = checkedSteps.has(idx);

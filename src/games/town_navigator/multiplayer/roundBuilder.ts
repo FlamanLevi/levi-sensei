@@ -3,6 +3,7 @@ import {
   computeManhattanRoadPath,
   getBuildingRoadAccessPoint,
   buildMextStepByStepScript,
+  snapToRoadCoord,
 } from '../navigationLogic';
 import type {
   HostSecretRoundPlan,
@@ -178,7 +179,13 @@ export function buildRaceRoundPlan(
   const shuffledTargets = [...targetPool].sort(() => rng() - 0.5).slice(0, 12);
 
   for (const start of shuffledStarts) {
-    const startRoad = getBuildingRoadAccessPoint(start);
+    const rawStartRoad = getBuildingRoadAccessPoint(start);
+    // Snap spawn to the exact intersection nearest the starting building so
+    // "Go straight for 2 blocks" unambiguously means turning at the 2nd intersection!
+    const startRoad = {
+      x: snapToRoadCoord(rawStartRoad.x),
+      z: snapToRoadCoord(rawStartRoad.z),
+    };
     for (const target of shuffledTargets) {
       if (start.id === target.id) continue;
       const path = computeManhattanRoadPath(startRoad.x, startRoad.z, target);

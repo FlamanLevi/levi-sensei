@@ -193,6 +193,44 @@ async function main() {
   }
   console.log(`   Hashed ${localFiles.length} local dist/ files. Total manifest size: ${Object.keys(mergedFiles).length} files.`);
 
+  console.log('4.5. Pruning old non-live Firebase Hosting versions to stay within storage quota...');
+  try {
+    let verPageToken = '';
+    const toDelete = [];
+    do {
+      const verUrl = new URL(`https://firebasehosting.googleapis.com/v1beta1/sites/${SITE_ID}/versions`);
+      verUrl.searchParams.set('pageSize', '100');
+      if (verPageToken) verUrl.searchParams.set('pageToken', verPageToken);
+      const verPage = await apiFetch(verUrl.toString(), token);
+      for (const v of verPage.versions || []) {
+        if (v.name && v.name !== liveVersionName && v.status !== 'DELETED' && v.status !== 'EXPIRED') {
+          toDelete.push(v);
+        }
+      }
+      verPageToken = verPage.nextPageToken || '';
+    } while (verPageToken);
+
+    if (toDelete.length > 0) {
+      console.log(`   Found ${toDelete.length} old non-live version(s) to prune...`);
+      let deletedCount = 0;
+      for (const v of toDelete) {
+        try {
+          await apiFetch(`https://firebasehosting.googleapis.com/v1beta1/${v.name}`, token, {
+            method: 'DELETE'
+          });
+          deletedCount++;
+        } catch (delErr) {
+          console.warn(`   Skipping delete for ${v.name}: ${delErr.message || delErr}`);
+        }
+      }
+      console.log(`   Pruned ${deletedCount}/${toDelete.length} old version(s).`);
+    } else {
+      console.log('   No old non-live versions to prune.');
+    }
+  } catch (pruneErr) {
+    console.warn(`   Warning: could not list/prune old versions: ${pruneErr.message || pruneErr}`);
+  }
+
   console.log('5. Creating new Firebase Hosting version...');
   const newVersion = await apiFetch(
     `https://firebasehosting.googleapis.com/v1beta1/sites/${SITE_ID}/versions`,

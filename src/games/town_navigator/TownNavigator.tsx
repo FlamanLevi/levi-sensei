@@ -1760,40 +1760,13 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
 
           {/* Mode Switcher Segmented Control */}
           <div className="flex items-center bg-slate-950/80 p-0.5 rounded-xl border border-slate-700/80">
-            {onSwitchToInspector && (
-              <button
-                onClick={onSwitchToInspector}
-                className="flex items-center gap-1 px-2.5 sm:px-3 py-1 rounded-lg text-xs font-bold text-slate-300 hover:text-white transition cursor-pointer"
-              >
-                <Layers className="w-3.5 h-3.5" />
-                <span className="hidden md:inline">Model Inspector</span>
-                <span className="md:hidden">Inspector</span>
-              </button>
-            )}
             <button
               onClick={() => setViewRole('TRAVELER_3D')}
-              className={`flex items-center gap-1 px-2.5 sm:px-3 py-1 rounded-lg text-xs font-bold transition cursor-pointer ${
-                viewRole === 'TRAVELER_3D'
-                  ? 'bg-amber-500 text-slate-950 shadow-sm'
-                  : 'text-slate-300 hover:text-white'
-              }`}
+              className="flex items-center gap-1 px-2.5 sm:px-3 py-1 rounded-lg text-xs font-bold bg-amber-500 text-slate-950 shadow-sm transition cursor-pointer"
             >
               <Compass className="w-3.5 h-3.5" />
               <span className="hidden md:inline">Town Navigator</span>
               <span className="md:hidden">Navigator</span>
-            </button>
-            <button
-              onClick={() => setViewRole('DISPATCHER_2D')}
-              className={`flex items-center gap-1 px-2.5 sm:px-3 py-1 rounded-lg text-xs font-bold transition cursor-pointer ${
-                viewRole === 'DISPATCHER_2D'
-                  ? 'bg-sky-500 text-white shadow-sm'
-                  : 'text-slate-300 hover:text-white'
-              }`}
-              title="2D Mission Control Dispatcher Console / 案内係モード"
-            >
-              <Radio className="w-3.5 h-3.5 text-sky-400" />
-              <span className="hidden md:inline">Co-Op Dispatcher</span>
-              <span className="md:hidden">Dispatcher</span>
             </button>
             <button
               onClick={() => setHostRaceMode(true)}

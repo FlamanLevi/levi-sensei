@@ -43,6 +43,8 @@ export interface Town3DStageProps {
   replayRecording?: TownReplayRecording | null;
   /** Increment to restart HOST_REPLAY from t=0 */
   replayTrigger?: number;
+  /** Split-screen camera layout for HOST_REPLAY ('1' | '2' | '4', default '2') */
+  replayLayout?: '1' | '2' | '4';
   /** Called if WebGL context is lost or student iPad FPS drops critically */
   onRequest2DFallback?: () => void;
   className?: string;
@@ -151,6 +153,7 @@ export const Town3DStage: React.FC<Town3DStageProps> = ({
   revealedTargetPos,
   replayRecording,
   replayTrigger = 0,
+  replayLayout = '2',
   onRequest2DFallback,
   className = '',
 }) => {
@@ -163,6 +166,7 @@ export const Town3DStage: React.FC<Town3DStageProps> = ({
   const leaderIdRef = useRef(leaderPlayerId);
   const revealedTargetRef = useRef(revealedTargetPos);
   const replayRecordingRef = useRef(replayRecording);
+  const replayLayoutRef = useRef(replayLayout);
   const onLocalPoseRef = useRef(onLocalPoseChange);
   const onFallbackRef = useRef(onRequest2DFallback);
 
@@ -172,6 +176,7 @@ export const Town3DStage: React.FC<Town3DStageProps> = ({
   leaderIdRef.current = leaderPlayerId;
   revealedTargetRef.current = revealedTargetPos;
   replayRecordingRef.current = replayRecording;
+  replayLayoutRef.current = replayLayout;
   onLocalPoseRef.current = onLocalPoseChange;
   onFallbackRef.current = onRequest2DFallback;
 
@@ -215,12 +220,11 @@ export const Town3DStage: React.FC<Town3DStageProps> = ({
     scene.background = new THREE.Color('#bae6fd');
     scene.fog = new THREE.Fog('#bae6fd', 95, 230);
 
-    const camera = new THREE.PerspectiveCamera(
-      52,
-      (container.clientWidth || 640) / Math.max(1, container.clientHeight || 360),
-      0.5,
-      360
-    );
+    const initAspect = (container.clientWidth || 640) / Math.max(1, container.clientHeight || 360);
+    const camera = new THREE.PerspectiveCamera(52, initAspect, 0.5, 360);
+    const birdCam = new THREE.PerspectiveCamera(50, initAspect, 1.0, 420);
+    const finishCam = new THREE.PerspectiveCamera(54, initAspect, 0.5, 320);
+    const actionCam = new THREE.PerspectiveCamera(58, initAspect, 0.4, 280);
 
     const hemi = new THREE.HemisphereLight('#ffffff', '#86efac', 1.15);
     scene.add(hemi);
@@ -538,19 +542,105 @@ export const Town3DStage: React.FC<Town3DStageProps> = ({
             goldRing.visible = false;
           }
 
-          // Hovering camera directly in the air above the destination, tracking the Gold winner!
+          // 1. CHASE DRONE (Primary camera): steep ~60° isometric follow behind Gold (never blocked by buildings!)
+          camTargetPos.set(goldX - 13, 24, goldZ + 14);
+          camera.position.lerp(camTargetPos, 1 - Math.exp(-5 * dt));
+          camLookTarget.set(goldX, 1.4, goldZ);
+          camera.lookAt(camLookTarget);
+
+          // 2. BIRD'S-EYE DRONE: wide aerial view of all 30-40 students across town
+          birdCam.position.set(0, 125, 18);
+          birdCam.lookAt(0, 0, 0);
+
+          // 3. FINISH LINE CAM: street-level hover right in front of destination waiting for finishers
           if (targetPos) {
-            const dx = goldX - targetPos[0];
-            const dz = goldZ - targetPos[2];
-            const dist = Math.hypot(dx, dz);
-            // Keep camera directly above the destination with a tiny 4m pullback away from the runner to avoid gimbal lock at arrival
-            const pullX = dist > 0.5 ? -(dx / dist) * 4.5 : 4.5;
-            const pullZ = dist > 0.5 ? -(dz / dist) * 4.5 : 4.5;
-            camTargetPos.set(targetPos[0] + pullX, 20, targetPos[2] + pullZ);
-            camera.position.lerp(camTargetPos, 1 - Math.exp(-5 * dt));
-            camLookTarget.set(goldX, 1.5, goldZ);
-            camera.lookAt(camLookTarget);
+            finishCam.position.set(targetPos[0] + 10, 7.5, targetPos[2] + 11);
+            finishCam.lookAt(targetPos[0], 1.8, targetPos[2]);
           }
+
+          // 4. ACTION CAM: tight over-the-shoulder chase behind Gold
+          actionCam.position.set(
+            goldX - Math.sin(goldYaw) * 6.5,
+            3.8,
+            goldZ - Math.cos(goldYaw) * 6.5
+          );
+          actionCam.lookAt(
+            goldX + Math.sin(goldYaw) * 8,
+            1.6,
+            goldZ + Math.cos(goldYaw) * 8
+          );
+
+          const w = container.clientWidth || 640;
+          const h = container.clientHeight || 360;
+          const layout = replayLayoutRef.current;
+
+          if (layout === '2') {
+            const halfW = Math.floor(w / 2);
+            renderer.setScissorTest(true);
+
+            // Left: Chase Drone (Gold)
+            camera.aspect = halfW / Math.max(1, h);
+            camera.updateProjectionMatrix();
+            renderer.setViewport(0, 0, halfW, h);
+            renderer.setScissor(0, 0, halfW, h);
+            renderer.render(scene, camera);
+
+            // Right: Full-Town Bird's-Eye
+            birdCam.aspect = (w - halfW) / Math.max(1, h);
+            birdCam.updateProjectionMatrix();
+            renderer.setViewport(halfW, 0, w - halfW, h);
+            renderer.setScissor(halfW, 0, w - halfW, h);
+            renderer.render(scene, birdCam);
+
+            renderer.setScissorTest(false);
+            return;
+          }
+
+          if (layout === '4') {
+            const halfW = Math.floor(w / 2);
+            const halfH = Math.floor(h / 2);
+            const qAspect = halfW / Math.max(1, halfH);
+            renderer.setScissorTest(true);
+
+            // Top-Left: Chase Drone (Gold)
+            camera.aspect = qAspect;
+            camera.updateProjectionMatrix();
+            renderer.setViewport(0, halfH, halfW, h - halfH);
+            renderer.setScissor(0, halfH, halfW, h - halfH);
+            renderer.render(scene, camera);
+
+            // Top-Right: Full-Town Bird's-Eye
+            birdCam.aspect = qAspect;
+            birdCam.updateProjectionMatrix();
+            renderer.setViewport(halfW, halfH, w - halfW, h - halfH);
+            renderer.setScissor(halfW, halfH, w - halfW, h - halfH);
+            renderer.render(scene, birdCam);
+
+            // Bottom-Left: Finish Line Street Cam
+            finishCam.aspect = qAspect;
+            finishCam.updateProjectionMatrix();
+            renderer.setViewport(0, 0, halfW, halfH);
+            renderer.setScissor(0, 0, halfW, halfH);
+            renderer.render(scene, finishCam);
+
+            // Bottom-Right: Over-the-Shoulder Action Cam (Gold)
+            actionCam.aspect = qAspect;
+            actionCam.updateProjectionMatrix();
+            renderer.setViewport(halfW, 0, w - halfW, halfH);
+            renderer.setScissor(halfW, 0, w - halfW, halfH);
+            renderer.render(scene, actionCam);
+
+            renderer.setScissorTest(false);
+            return;
+          }
+
+          // '1' Single full-screen Chase Drone
+          camera.aspect = w / Math.max(1, h);
+          camera.updateProjectionMatrix();
+          renderer.setScissorTest(false);
+          renderer.setViewport(0, 0, w, h);
+          renderer.render(scene, camera);
+          return;
         } else {
           detailedAvatar.group.visible = false;
           instBodies.count = 0;
@@ -563,6 +653,12 @@ export const Town3DStage: React.FC<Town3DStageProps> = ({
         }
       }
 
+      const fullW = container.clientWidth || 640;
+      const fullH = container.clientHeight || 360;
+      camera.aspect = fullW / Math.max(1, fullH);
+      camera.updateProjectionMatrix();
+      renderer.setScissorTest(false);
+      renderer.setViewport(0, 0, fullW, fullH);
       renderer.render(scene, camera);
     };
 
@@ -579,5 +675,41 @@ export const Town3DStage: React.FC<Town3DStageProps> = ({
     };
   }, [townSeed, schoolId, lowPower]);
 
-  return <div ref={containerRef} className={`w-full h-full relative overflow-hidden ${className}`} />;
+  return (
+    <div className={`w-full h-full relative overflow-hidden ${className}`}>
+      <div ref={containerRef} className="w-full h-full" />
+
+      {/* Broadcast Split-Screen Dividers & Camera Labels during HOST_REPLAY */}
+      {mode === 'HOST_REPLAY' && replayLayout === '2' && (
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute inset-y-0 left-1/2 w-0.5 bg-white/50 shadow" />
+          <span className="absolute bottom-2.5 left-3 px-2.5 py-1 rounded-lg bg-slate-950/75 text-white text-[11px] font-black tracking-wide backdrop-blur">
+            🚁 CHASE DRONE (🥇 1ST)
+          </span>
+          <span className="absolute bottom-2.5 left-[calc(50%+12px)] px-2.5 py-1 rounded-lg bg-slate-950/75 text-white text-[11px] font-black tracking-wide backdrop-blur">
+            🦅 TOWN BIRD&apos;S-EYE
+          </span>
+        </div>
+      )}
+
+      {mode === 'HOST_REPLAY' && replayLayout === '4' && (
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute inset-y-0 left-1/2 w-0.5 bg-white/50 shadow" />
+          <div className="absolute inset-x-0 top-1/2 h-0.5 bg-white/50 shadow" />
+          <span className="absolute bottom-[calc(50%+8px)] left-3 px-2 py-0.5 rounded-lg bg-slate-950/75 text-white text-[10px] font-black backdrop-blur">
+            🚁 CHASE DRONE (🥇 1ST)
+          </span>
+          <span className="absolute bottom-[calc(50%+8px)] left-[calc(50%+10px)] px-2 py-0.5 rounded-lg bg-slate-950/75 text-white text-[10px] font-black backdrop-blur">
+            🦅 TOWN BIRD&apos;S-EYE
+          </span>
+          <span className="absolute bottom-2 left-3 px-2 py-0.5 rounded-lg bg-slate-950/75 text-white text-[10px] font-black backdrop-blur">
+            🏁 FINISH LINE CAM
+          </span>
+          <span className="absolute bottom-2 left-[calc(50%+10px)] px-2 py-0.5 rounded-lg bg-slate-950/75 text-white text-[10px] font-black backdrop-blur">
+            🏃 ACTION CAM (🥇 1ST)
+          </span>
+        </div>
+      )}
+    </div>
+  );
 };

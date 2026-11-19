@@ -56,6 +56,7 @@ export const TownNavigatorHostContainer: React.FC<TownNavigatorHostContainerProp
 
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [replayTrigger, setReplayTrigger] = useState(0);
+  const [replayLayout, setReplayLayout] = useState<'1' | '2' | '4'>('2');
   const [nowMs, setNowMs] = useState(() => getServerTime());
 
   // Auto-create room on mount
@@ -404,6 +405,7 @@ export const TownNavigatorHostContainer: React.FC<TownNavigatorHostContainerProp
               revealedTargetPos={cr?.revealedTarget?.worldPos}
               replayRecording={replayRecording}
               replayTrigger={replayTrigger}
+              replayLayout={replayLayout}
             />
           ) : (
             layout && (
@@ -439,7 +441,7 @@ export const TownNavigatorHostContainer: React.FC<TownNavigatorHostContainerProp
               </div>
             )}
             {isReveal && (
-              <div className="flex items-center gap-2 pointer-events-auto">
+              <div className="flex items-center gap-2 pointer-events-auto flex-wrap">
                 <div className="px-4 py-2 rounded-2xl bg-indigo-600/95 text-white font-black text-sm shadow-xl flex items-center gap-2">
                   🎬 {lang === 'ja' ? '全員リプレイ再生中' : 'ALL-PLAYER INSTANT REPLAY'}
                 </div>
@@ -456,6 +458,23 @@ export const TownNavigatorHostContainer: React.FC<TownNavigatorHostContainerProp
                   <RotateCcw className="w-3.5 h-3.5" />
                   {lang === 'ja' ? 'リプレイ' : 'Replay'}
                 </button>
+                {settings.tvRenderMode === '3D' && (
+                  <div className="flex items-center bg-slate-950/85 p-1 rounded-2xl shadow-xl backdrop-blur border border-white/15">
+                    {(['1', '2', '4'] as const).map((camCount) => (
+                      <button
+                        key={camCount}
+                        onClick={() => setReplayLayout(camCount)}
+                        className={`px-2.5 py-1 rounded-xl font-black text-xs transition-all ${
+                          replayLayout === camCount
+                            ? 'bg-indigo-500 text-white shadow'
+                            : 'text-slate-300 hover:text-white'
+                        }`}
+                      >
+                        {camCount}-Cam
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
           </div>

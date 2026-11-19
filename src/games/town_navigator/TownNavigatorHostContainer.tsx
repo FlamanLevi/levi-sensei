@@ -141,13 +141,13 @@ export const TownNavigatorHostContainer: React.FC<TownNavigatorHostContainerProp
 
   const handleKickPlayer = async (pid: string) => {
     if (!roomCode) return;
-    await safeRemove(`roomPlayers/${roomCode}/${pid}`);
+    await safeRemove(`rooms/${roomCode}/players/${pid}`);
   };
 
   const handleClearBots = async () => {
     if (!roomCode) return;
     const botIds = Object.keys(players).filter((id) => id.startsWith('bot_'));
-    await Promise.all(botIds.map((id) => safeRemove(`roomPlayers/${roomCode}/${id}`)));
+    await Promise.all(botIds.map((id) => safeRemove(`rooms/${roomCode}/players/${id}`)));
   };
 
   if (!roomCode || !townState) {

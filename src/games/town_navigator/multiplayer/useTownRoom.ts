@@ -120,7 +120,7 @@ export function useTownRoom({
     );
 
     const unsubPlayers = safeSubscribe<Record<string, QuizPlayer>>(
-      `roomPlayers/${roomCode}`,
+      `rooms/${roomCode}/players`,
       (val) => setPlayers(val ?? {})
     );
 
@@ -351,7 +351,7 @@ export function useTownRoom({
     });
 
     if (Object.keys(playerScoreUpdates).length > 0) {
-      await safeUpdate(`roomPlayers/${roomCode}`, playerScoreUpdates);
+      await safeUpdate(`rooms/${roomCode}/players`, playerScoreUpdates);
     }
 
     await safeUpdate(`rooms/${roomCode}/townState`, {
@@ -486,7 +486,7 @@ export function useTownRoom({
           joinedAt: getServerTime(),
         };
       }
-      await safeUpdate(`roomPlayers/${roomCode}`, updates);
+      await safeUpdate(`rooms/${roomCode}/players`, updates);
     },
     [roomCode]
   );

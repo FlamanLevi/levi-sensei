@@ -538,10 +538,16 @@ export const Town3DStage: React.FC<Town3DStageProps> = ({
             goldRing.visible = false;
           }
 
-          // Hovering camera in the air above the destination, tracking the Gold winner!
+          // Hovering camera directly in the air above the destination, tracking the Gold winner!
           if (targetPos) {
-            camTargetPos.set(targetPos[0] + 14, 28, targetPos[2] + 22);
-            camera.position.lerp(camTargetPos, 1 - Math.exp(-4 * dt));
+            const dx = goldX - targetPos[0];
+            const dz = goldZ - targetPos[2];
+            const dist = Math.hypot(dx, dz);
+            // Keep camera directly above the destination with a tiny 4m pullback away from the runner to avoid gimbal lock at arrival
+            const pullX = dist > 0.5 ? -(dx / dist) * 4.5 : 4.5;
+            const pullZ = dist > 0.5 ? -(dz / dist) * 4.5 : 4.5;
+            camTargetPos.set(targetPos[0] + pullX, 20, targetPos[2] + pullZ);
+            camera.position.lerp(camTargetPos, 1 - Math.exp(-5 * dt));
             camLookTarget.set(goldX, 1.5, goldZ);
             camera.lookAt(camLookTarget);
           }

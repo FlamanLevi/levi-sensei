@@ -413,8 +413,9 @@ class TownAudioSynthesizer {
   }
 
   // =========================================================================
-  // 3. CONVENIENCE STORE (コンビニ): Iconic 11-Note Door Chime (Panasonic EC5227WP)
-  //    Authentic D-major 11-note melody in relaxed 3/4 time (~88 BPM, ~0.34s per eighth note)
+  // 3. CONVENIENCE STORE (コンビニ): Iconic 2-Voice Polyphonic Door Chime
+  //    Yasushi Inada — Melody Chime No. 1 in D Major, Op. 17 "Daiseikyō" (大盛況)
+  //    Panasonic EC5227WP dual-oscillator counterpoint in 3/4 time
   // =========================================================================
   playConvenienceStoreChime() {
     const ctx = this.getContext();
@@ -422,31 +423,53 @@ class TownAudioSynthesizer {
     const out = this.beginJingleBus(ctx);
     const t0 = ctx.currentTime;
 
-    // Phrase 1 (6 notes): F#5, D5, A4, D5, E5, A5 (3-beat dotted-half hold over D5 harmony)
-    // Phrase 2 (5 notes): E5, F#5, E5, A4, D5 (final hold over F#4/A4 harmony)
+    // 1 beat (quarter note in 3/4) = 0.34s (~88 BPM)
     const step = 0.34;
-    const notes = [
-      { f: 739.99, d: 0.44, t: 0 * step }, // F#5 (0.00s)
-      { f: 587.33, d: 0.44, t: 1 * step }, // D5  (0.34s)
-      { f: 440.00, d: 0.44, t: 2 * step }, // A4  (0.68s)
-      { f: 587.33, d: 0.44, t: 3 * step }, // D5  (1.02s)
-      { f: 659.25, d: 0.44, t: 4 * step }, // E5  (1.36s)
-      { f: 880.00, d: 1.05, t: 5 * step }, // A5  (1.70s - held for 3 eighth-note beats)
 
-      { f: 659.25, d: 0.44, t: 8 * step },  // E5  (2.72s)
-      { f: 739.99, d: 0.44, t: 9 * step },  // F#5 (3.06s)
-      { f: 659.25, d: 0.44, t: 10 * step }, // E5  (3.40s)
-      { f: 440.00, d: 0.44, t: 11 * step }, // A4  (3.74s)
-      { f: 587.33, d: 1.15, t: 12 * step }, // D5  (4.08s - final hold)
+    // Upper Voice (Melody):
+    // Pickup: F#5 (1), D5 (1)
+    // Bar 1:  A4 (1), D5 (1), E5 (1)
+    // Bar 2:  A5 (2-beat hold), E5 (1)
+    // Bar 3:  F#5 (1), E5 (1), A4 (1)
+    // Bar 4:  D5 (3-beat dotted-half hold)
+    const upperVoice = [
+      { f: 739.99, t: 0 * step,  d: 0.45 }, // Step 0:  F#5 (pickup)
+      { f: 587.33, t: 1 * step,  d: 0.45 }, // Step 1:  D5  (pickup)
+      { f: 440.00, t: 2 * step,  d: 0.45 }, // Step 2:  A4  (Bar 1, beat 1)
+      { f: 587.33, t: 3 * step,  d: 0.45 }, // Step 3:  D5  (Bar 1, beat 2)
+      { f: 659.25, t: 4 * step,  d: 0.45 }, // Step 4:  E5  (Bar 1, beat 3)
+      { f: 880.00, t: 5 * step,  d: 0.82 }, // Step 5:  A5  (Bar 2, beats 1-2 hold)
+      { f: 659.25, t: 7 * step,  d: 0.45 }, // Step 7:  E5  (Bar 2, beat 3 pickup)
+      { f: 739.99, t: 8 * step,  d: 0.45 }, // Step 8:  F#5 (Bar 3, beat 1)
+      { f: 659.25, t: 9 * step,  d: 0.45 }, // Step 9:  E5  (Bar 3, beat 2)
+      { f: 440.00, t: 10 * step, d: 0.45 }, // Step 10: A4  (Bar 3, beat 3)
+      { f: 587.33, t: 11 * step, d: 1.15 }, // Step 11: D5  (Bar 4, beats 1-3 resolution)
     ];
 
-    notes.forEach(({ f, d, t }) => {
-      this.scheduleBellNote(ctx, out, f, t0 + t, d, 0.22, 2.0, 0.18, 'triangle');
+    // Lower Voice (Counterpoint):
+    // Pickup: rest (2 beats)
+    // Bar 1:  F#4 (2-beat hold under A4->D5), C#5 (beat 3 under E5)
+    // Bar 2:  E4 (beat 1 under A5), A4 (beats 2-3 hold — bounces on beat 2 under held A5!)
+    // Bar 3:  D5 (beat 1 under F#5), A4 (beat 2 under E5), C#5 (beat 3 with A4)
+    // Bar 4:  F#4 (3-beat dotted-half hold under D5)
+    const lowerVoice = [
+      { f: 369.99, t: 2 * step,  d: 0.78 }, // Step 2:  F#4 (Bar 1, beats 1-2)
+      { f: 554.37, t: 4 * step,  d: 0.45 }, // Step 4:  C#5 (Bar 1, beat 3)
+      { f: 329.63, t: 5 * step,  d: 0.45 }, // Step 5:  E4  (Bar 2, beat 1)
+      { f: 440.00, t: 6 * step,  d: 0.78 }, // Step 6:  A4  (Bar 2, beats 2-3)
+      { f: 587.33, t: 8 * step,  d: 0.45 }, // Step 8:  D5  (Bar 3, beat 1)
+      { f: 440.00, t: 9 * step,  d: 0.45 }, // Step 9:  A4  (Bar 3, beat 2)
+      { f: 554.37, t: 10 * step, d: 0.45 }, // Step 10: C#5 (Bar 3, beat 3)
+      { f: 369.99, t: 11 * step, d: 1.15 }, // Step 11: F#4 (Bar 4, beats 1-3 resolution)
+    ];
+
+    upperVoice.forEach(({ f, d, t }) => {
+      this.scheduleBellNote(ctx, out, f, t0 + t, d, 0.21, 2.0, 0.20, 'triangle');
     });
 
-    // Subtle lower-harmony accompaniment on the two phrase resolutions
-    this.scheduleBellNote(ctx, out, 587.33, t0 + 5 * step, 1.00, 0.09, 2.0, 0.1, 'sine');  // D5 under A5
-    this.scheduleBellNote(ctx, out, 369.99, t0 + 12 * step, 1.10, 0.09, 2.0, 0.1, 'sine'); // F#4 under D5
+    lowerVoice.forEach(({ f, d, t }) => {
+      this.scheduleBellNote(ctx, out, f, t0 + t, d, 0.16, 2.0, 0.15, 'triangle');
+    });
   }
 
   // =========================================================================

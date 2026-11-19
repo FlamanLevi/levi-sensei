@@ -414,7 +414,7 @@ class TownAudioSynthesizer {
 
   // =========================================================================
   // 3. CONVENIENCE STORE (コンビニ): Iconic 11-Note Door Chime (Panasonic EC5227WP)
-  //    Authentic D-major 11-note melody without the duplicate A5 stutter
+  //    Authentic D-major 11-note melody in relaxed 3/4 time (~88 BPM, ~0.34s per eighth note)
   // =========================================================================
   playConvenienceStoreChime() {
     const ctx = this.getContext();
@@ -422,21 +422,22 @@ class TownAudioSynthesizer {
     const out = this.beginJingleBus(ctx);
     const t0 = ctx.currentTime;
 
-    // Phrase 1 (6 notes): F#5, D5, A4, D5, E5, A5 (held over D5 harmony)
-    // Phrase 2 (5 notes): E5, F#5, E5, A4, D5 (held over F#4/A4 harmony)
+    // Phrase 1 (6 notes): F#5, D5, A4, D5, E5, A5 (3-beat dotted-half hold over D5 harmony)
+    // Phrase 2 (5 notes): E5, F#5, E5, A4, D5 (final hold over F#4/A4 harmony)
+    const step = 0.34;
     const notes = [
-      { f: 739.99, d: 0.24, t: 0.00 }, // F#5
-      { f: 587.33, d: 0.24, t: 0.18 }, // D5
-      { f: 440.00, d: 0.24, t: 0.36 }, // A4
-      { f: 587.33, d: 0.24, t: 0.54 }, // D5
-      { f: 659.25, d: 0.24, t: 0.72 }, // E5
-      { f: 880.00, d: 0.52, t: 0.90 }, // A5 (hold)
+      { f: 739.99, d: 0.44, t: 0 * step }, // F#5 (0.00s)
+      { f: 587.33, d: 0.44, t: 1 * step }, // D5  (0.34s)
+      { f: 440.00, d: 0.44, t: 2 * step }, // A4  (0.68s)
+      { f: 587.33, d: 0.44, t: 3 * step }, // D5  (1.02s)
+      { f: 659.25, d: 0.44, t: 4 * step }, // E5  (1.36s)
+      { f: 880.00, d: 1.05, t: 5 * step }, // A5  (1.70s - held for 3 eighth-note beats)
 
-      { f: 659.25, d: 0.24, t: 1.42 }, // E5
-      { f: 739.99, d: 0.24, t: 1.60 }, // F#5
-      { f: 659.25, d: 0.24, t: 1.78 }, // E5
-      { f: 440.00, d: 0.24, t: 1.96 }, // A4
-      { f: 587.33, d: 0.60, t: 2.14 }, // D5 (final hold)
+      { f: 659.25, d: 0.44, t: 8 * step },  // E5  (2.72s)
+      { f: 739.99, d: 0.44, t: 9 * step },  // F#5 (3.06s)
+      { f: 659.25, d: 0.44, t: 10 * step }, // E5  (3.40s)
+      { f: 440.00, d: 0.44, t: 11 * step }, // A4  (3.74s)
+      { f: 587.33, d: 1.15, t: 12 * step }, // D5  (4.08s - final hold)
     ];
 
     notes.forEach(({ f, d, t }) => {
@@ -444,8 +445,8 @@ class TownAudioSynthesizer {
     });
 
     // Subtle lower-harmony accompaniment on the two phrase resolutions
-    this.scheduleBellNote(ctx, out, 587.33, t0 + 0.90, 0.50, 0.09, 2.0, 0.1, 'sine'); // D5 under A5
-    this.scheduleBellNote(ctx, out, 369.99, t0 + 2.14, 0.58, 0.09, 2.0, 0.1, 'sine'); // F#4 under D5
+    this.scheduleBellNote(ctx, out, 587.33, t0 + 5 * step, 1.00, 0.09, 2.0, 0.1, 'sine');  // D5 under A5
+    this.scheduleBellNote(ctx, out, 369.99, t0 + 12 * step, 1.10, 0.09, 2.0, 0.1, 'sine'); // F#4 under D5
   }
 
   // =========================================================================

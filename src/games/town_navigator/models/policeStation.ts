@@ -4,6 +4,8 @@ import {
   getBrickTileTexture,
   buildPerimeterRailing,
   addWrapAroundWindows,
+  getClearShowcaseGlassMaterial,
+  buildOutdoorAcUnit,
 } from './wallTextures';
 
 let cachedPoliceStationSignTex: THREE.CanvasTexture | null = null;
@@ -320,6 +322,7 @@ export function buildPoliceStationMesh(options: PoliceStationOptions = {}): THRE
     transparent: true,
     opacity: 0.7,
   });
+  const clearGlassMat = getClearShowcaseGlassMaterial();
 
   const lotSize = 12.0;
 
@@ -330,9 +333,10 @@ export function buildPoliceStationMesh(options: PoliceStationOptions = {}): THRE
   lawn.receiveShadow = true;
   group.add(lawn);
 
-  const apronGeo = new THREE.BoxGeometry(lotSize, 0.152, 1.5);
+  // Full paved forecourt driveway (Z in [+1.8, +4.5]) so patrol car & shirobai park on pavement
+  const apronGeo = new THREE.BoxGeometry(lotSize, 0.152, 2.7);
   const apron = new THREE.Mesh(apronGeo, foundationMat);
-  apron.position.set(0, 0.076, 3.75);
+  apron.position.set(0, 0.076, 3.15);
   apron.receiveShadow = true;
   group.add(apron);
 
@@ -364,7 +368,7 @@ export function buildPoliceStationMesh(options: PoliceStationOptions = {}): THRE
 
   // 2. MAIN 3-STORY POLICE HEADQUARTERS BUILDING (9.8m wide × 6.6m deep × 8.5m tall)
   const hqGroup = new THREE.Group();
-  hqGroup.position.set(0, 0.15, -0.8);
+  hqGroup.position.set(0, 0.15, -1.2);
 
   const bW = 9.8;
   const bD = 6.6;
@@ -380,6 +384,15 @@ export function buildPoliceStationMesh(options: PoliceStationOptions = {}): THRE
   bodyMesh.receiveShadow = true;
   hqGroup.add(bodyMesh);
 
+  // Vertical Corner Pilasters
+  [-bW / 2 - 0.03, bW / 2 + 0.03].forEach((px) => {
+    [-bD / 2 - 0.03, bD / 2 + 0.03].forEach((pz) => {
+      const pilaster = new THREE.Mesh(new THREE.BoxGeometry(0.28, bH, 0.28), navyTrimMat);
+      pilaster.position.set(px, bH / 2, pz);
+      hqGroup.add(pilaster);
+    });
+  });
+
   // Navy Horizontal Floor Bands & Crown Parapet
   [2.8, 5.6, bH + 0.18].forEach((by, idx) => {
     const band = new THREE.Mesh(
@@ -390,10 +403,16 @@ export function buildPoliceStationMesh(options: PoliceStationOptions = {}): THRE
     hqGroup.add(band);
   });
 
-  // Open Rooftop Safety Railing
+  // Open Rooftop Safety Railing & Stair Penthouse
   const roofRail = buildPerimeterRailing(bW - 0.2, bD - 0.2, 0.75, steelMat, 1.6);
   roofRail.position.set(0, bH + 0.36, 0);
   hqGroup.add(roofRail);
+
+  const pent = new THREE.Mesh(new THREE.BoxGeometry(2.6, 1.5, 2.2), wallMat);
+  pent.position.set(-2.4, bH + 0.36 + 0.75, -0.8);
+  const pentCap = new THREE.Mesh(new THREE.BoxGeometry(2.74, 0.16, 2.34), navyTrimMat);
+  pentCap.position.set(-2.4, bH + 0.36 + 1.58, -0.8);
+  hqGroup.add(pent, pentCap);
 
   // 360° Side & Rear Windows
   addWrapAroundWindows({
@@ -412,21 +431,30 @@ export function buildPoliceStationMesh(options: PoliceStationOptions = {}): THRE
   // Front Upper Windows (2F & 3F)
   [4.2, 7.0].forEach((wy) => {
     [-3.6, -1.8, 0.0, 1.8, 3.6].forEach((wx) => {
-      const frame = new THREE.Mesh(new THREE.BoxGeometry(1.28, 1.35, 0.07), darkMetalMat);
+      const frame = new THREE.Mesh(new THREE.BoxGeometry(1.28, 1.35, 0.05), darkMetalMat);
       frame.position.set(wx, wy, bD / 2 + 0.02);
-      const win = new THREE.Mesh(new THREE.BoxGeometry(1.18, 1.25, 0.05), glassMat);
+      const win = new THREE.Mesh(new THREE.BoxGeometry(1.18, 1.25, 0.04), glassMat);
       win.position.set(wx, wy, bD / 2 + 0.04);
       hqGroup.add(frame, win);
     });
   });
 
-  // Giant Golden Asahi-shō (旭日章) Police Sunburst Crest on Upper Facade
-  const crestDisc = new THREE.Mesh(new THREE.CylinderGeometry(0.48, 0.48, 0.08, 24), goldMat);
+  // 3D Starburst Golden Asahi-shō (旭日章) Police Crest Mounted on Crown Parapet (clear of 3F windows)
+  const crestGroup = new THREE.Group();
+  crestGroup.position.set(0, bH + 0.48, bD / 2 + 0.14);
+  const crestDisc = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.32, 0.08, 20), goldMat);
   crestDisc.rotateX(Math.PI / 2);
-  crestDisc.position.set(0, 7.6, bD / 2 + 0.12);
-  hqGroup.add(crestDisc);
+  crestGroup.add(crestDisc);
+  for (let i = 0; i < 8; i++) {
+    const ray = new THREE.Mesh(new THREE.BoxGeometry(0.10, 0.26, 0.06), goldMat);
+    const a = (i * Math.PI) / 4;
+    ray.position.set(Math.cos(a) * 0.38, Math.sin(a) * 0.38, 0);
+    ray.rotation.z = a - Math.PI / 2;
+    crestGroup.add(ray);
+  }
+  hqGroup.add(crestGroup);
 
-  // Prominent "POLICE STATION / 警察署" Header Signboard
+  // Prominent "POLICE STATION / 警察署" Header Signboard (centered on 2F/3F spandrel)
   const signTex = createPoliceStationSignTexture();
   const signMat = new THREE.MeshStandardMaterial({
     map: signTex,
@@ -438,17 +466,25 @@ export function buildPoliceStationMesh(options: PoliceStationOptions = {}): THRE
   const signMesh = new THREE.Mesh(new THREE.BoxGeometry(5.2, 0.9, 0.14), [
     navyTrimMat, navyTrimMat, navyTrimMat, navyTrimMat, signMat, navyTrimMat,
   ]);
-  signMesh.position.set(0, 5.9, bD / 2 + 0.14);
+  signMesh.position.set(0, 5.65, bD / 2 + 0.14);
   hqGroup.add(signMesh);
 
-  // Ground Floor Left: Covered Patrol Car Garage Bay
-  const garageFrame = new THREE.Mesh(new THREE.BoxGeometry(3.6, 3.1, 0.2), navyTrimMat);
-  garageFrame.position.set(-2.6, 1.55, bD / 2 + 0.05);
-  const garageCavity = new THREE.Mesh(new THREE.BoxGeometry(3.2, 2.8, 0.12), darkMetalMat);
-  garageCavity.position.set(-2.6, 1.4, bD / 2 + 0.02);
+  // Ground Floor Left: Covered Patrol Car Garage Bay (cavity proud of frame + rolled shutter slats)
+  const garageFrame = new THREE.Mesh(new THREE.BoxGeometry(3.6, 3.1, 0.16), navyTrimMat);
+  garageFrame.position.set(-2.6, 1.55, bD / 2 + 0.04);
+  const garageCavity = new THREE.Mesh(new THREE.BoxGeometry(3.2, 2.8, 0.08), darkMetalMat);
+  garageCavity.position.set(-2.6, 1.4, bD / 2 + 0.10);
   hqGroup.add(garageFrame, garageCavity);
+  [2.5, 2.66, 2.82].forEach((sy) => {
+    const slat = new THREE.Mesh(new THREE.BoxGeometry(3.16, 0.08, 0.04), steelMat);
+    slat.position.set(-2.6, sy, bD / 2 + 0.14);
+    hqGroup.add(slat);
+  });
+  const garageBeacon = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.12, 0.12), redBeaconMat);
+  garageBeacon.position.set(-2.6, 3.22, bD / 2 + 0.12);
+  hqGroup.add(garageBeacon);
 
-  // Ground Floor Right: Main Public Entrance Canopy, Twin Red Lanterns & Sliding Glass Doors
+  // Ground Floor Right: Main Public Entrance Canopy, Twin Red Lanterns & Clear Sliding Glass Doors
   const canopy = new THREE.Mesh(new THREE.BoxGeometry(4.2, 0.22, 1.6), navyTrimMat);
   canopy.position.set(2.0, 2.8, bD / 2 + 0.8);
   canopy.castShadow = true;
@@ -462,9 +498,13 @@ export function buildPoliceStationMesh(options: PoliceStationOptions = {}): THRE
     hqGroup.add(col, redGlobe);
   });
 
-  const entryDoors = new THREE.Mesh(new THREE.BoxGeometry(2.4, 2.3, 0.06), glassMat);
-  entryDoors.position.set(2.0, 1.15, bD / 2 + 0.04);
-  hqGroup.add(entryDoors);
+  const entryDoors = new THREE.Mesh(new THREE.BoxGeometry(2.4, 2.3, 0.05), clearGlassMat);
+  entryDoors.position.set(2.0, 1.22, bD / 2 + 0.04);
+  const doorMullion = new THREE.Mesh(new THREE.BoxGeometry(0.06, 2.3, 0.08), darkMetalMat);
+  doorMullion.position.set(2.0, 1.22, bD / 2 + 0.04);
+  const entryStoop = new THREE.Mesh(new THREE.BoxGeometry(2.8, 0.1, 0.6), foundationMat);
+  entryStoop.position.set(2.0, 0.05, bD / 2 + 0.3);
+  hqGroup.add(entryDoors, doorMullion, entryStoop);
 
   // 3. ROOFTOP POLICE RADIO COMMUNICATIONS TOWER & MICROWAVE DISHES (Reaches 11.8m <= 12.0m)
   const radioTower = new THREE.Group();
@@ -497,17 +537,27 @@ export function buildPoliceStationMesh(options: PoliceStationOptions = {}): THRE
   hqGroup.add(radioTower);
   group.add(hqGroup);
 
-  // 4. EMERGENCY VEHICLES ON FRONT DEPLOYMENT APRON
-  // 4a. Black-and-White Japanese Police Patrol Car (パトカー at X = -2.6m, Z = 2.2m)
+  // 4. EMERGENCY VEHICLES ON PAVED FORECOURT APRON (No wall clipping!)
   const patrolCar = buildJapanesePatrolCar();
-  patrolCar.position.set(-2.6, 0.15, 2.2);
+  patrolCar.position.set(-2.6, 0.15, 3.05);
+  patrolCar.rotation.y = 0.22;
   group.add(patrolCar);
 
-  // 4b. White Police Motorcycle (白バイ / Shirobai at X = +3.2m, Z = 3.5m)
   const shirobai = buildPoliceMotorcycle();
   shirobai.position.set(3.2, 0.15, 3.5);
   shirobai.rotation.y = -0.25;
   group.add(shirobai);
+
+  if (options.includeLandscaping !== false) {
+    const hedgeMat = new THREE.MeshStandardMaterial({ color: 0x15803d, roughness: 0.9 });
+    [-4.8, 4.8].forEach((hx) => {
+      const planter = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.25, 0.7), foundationMat);
+      planter.position.set(hx, 0.275, 4.0);
+      const hedge = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.32, 0.52), hedgeMat);
+      hedge.position.set(hx, 0.56, 4.0);
+      group.add(planter, hedge);
+    });
+  }
 
   if (scale !== 1.0) {
     group.scale.setScalar(scale);
@@ -630,7 +680,8 @@ export function buildPoliceBoxMesh(options: PoliceStationOptions = {}): THREE.Gr
     roughness: 0.65,
   });
 
-  const foundationMat = new THREE.MeshStandardMaterial({ color: 0xcbd5e1, roughness: 0.85 });
+  const foundationMat = new THREE.MeshStandardMaterial({ color: 0xdbe2ea, roughness: 0.85 });
+  const clearGlassMat = getClearShowcaseGlassMaterial();
   const blueTrimMat = new THREE.MeshStandardMaterial({ color: 0x1e3a8a, roughness: 0.5 });
   const redBeaconMat = new THREE.MeshStandardMaterial({
     color: 0xef4444,
@@ -717,6 +768,19 @@ export function buildPoliceBoxMesh(options: PoliceStationOptions = {}): THREE.Gr
   parapet.castShadow = true;
   kGroup.add(parapet);
 
+  // Rooftop Safety Railing, Police Radio Whip Antenna & HVAC
+  const roofRail = buildPerimeterRailing(kW - 0.18, kD - 0.18, 0.42, metalMat, 1.4);
+  roofRail.position.set(0, kH + 0.28, 0);
+  kGroup.add(roofRail);
+
+  const radioMast = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.025, 1.25, 6), metalMat);
+  radioMast.position.set(1.35, kH + 0.28 + 0.625, -0.85);
+  kGroup.add(radioMast);
+
+  const kobanAc = buildOutdoorAcUnit();
+  kobanAc.position.set(-1.15, kH + 0.28, 0.35);
+  kGroup.add(kobanAc);
+
   const midBand = new THREE.Mesh(new THREE.BoxGeometry(kW + 0.04, 0.12, kD + 0.04), blueTrimMat);
   midBand.position.y = 2.45;
   kGroup.add(midBand);
@@ -742,6 +806,27 @@ export function buildPoliceBoxMesh(options: PoliceStationOptions = {}): THREE.Gr
   canopy.castShadow = true;
   kGroup.add(canopy);
 
+  // Cantilevered canopy tie-rods
+  [-1.45, 0.45].forEach((tx) => {
+    const tieRod = new THREE.Mesh(new THREE.CylinderGeometry(0.014, 0.014, 0.85, 6), metalMat);
+    tieRod.rotation.x = 0.78;
+    tieRod.position.set(tx, 2.82, kD / 2 + 0.35);
+    kGroup.add(tieRod);
+  });
+
+  // Glowing vertical corner "交番" lightbox on left front corner
+  const cornerLightboxMat = new THREE.MeshStandardMaterial({
+    color: 0xfef08a,
+    emissive: 0xfde047,
+    emissiveIntensity: 0.65,
+    roughness: 0.3,
+  });
+  const cornerLightbox = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.85, 0.24), cornerLightboxMat);
+  cornerLightbox.position.set(-kW / 2 - 0.14, 2.05, kD / 2 - 0.08);
+  const cornerCap = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.06, 0.28), blueTrimMat);
+  cornerCap.position.set(-kW / 2 - 0.14, 2.50, kD / 2 - 0.08);
+  kGroup.add(cornerLightbox, cornerCap);
+
   const redLight = new THREE.Mesh(new THREE.SphereGeometry(0.12, 16, 12), redBeaconMat);
   redLight.position.set(-0.5, 2.8, kD / 2 + canopyD - 0.15);
   kGroup.add(redLight);
@@ -750,80 +835,124 @@ export function buildPoliceBoxMesh(options: PoliceStationOptions = {}): THREE.Gr
   lightStem.position.set(-0.5, 2.65, kD / 2 + canopyD - 0.15);
   kGroup.add(lightStem);
 
-  const emblemGeo = new THREE.CylinderGeometry(0.18, 0.18, 0.04, 24);
-  emblemGeo.rotateX(Math.PI / 2);
-  const emblem = new THREE.Mesh(emblemGeo, goldMat);
-  emblem.position.set(-0.5, 3.0, kD / 2 + 0.03);
-  kGroup.add(emblem);
+  // 3D Starburst Asahi-shō Gold Police Crest
+  const emblemRing = new THREE.Mesh(new THREE.TorusGeometry(0.16, 0.025, 8, 20), goldMat);
+  emblemRing.position.set(-0.5, 3.06, kD / 2 + 0.04);
+  kGroup.add(emblemRing);
+  for (let r = 0; r < 5; r++) {
+    const ray = new THREE.Mesh(new THREE.ConeGeometry(0.04, 0.16, 4), goldMat);
+    const ang = (r * Math.PI * 2) / 5;
+    ray.position.set(-0.5 + Math.sin(ang) * 0.09, 3.06 + Math.cos(ang) * 0.09, kD / 2 + 0.045);
+    ray.rotation.z = -ang;
+    kGroup.add(ray);
+  }
 
+  // Emissive Kōban Signboard seated cleanly between canopy (y=2.58) and 2F windows (y>=2.95)
+  const kobanTex = createKobanSignTexture();
   const signMat = new THREE.MeshStandardMaterial({
-    map: createKobanSignTexture(),
+    map: kobanTex,
+    emissive: 0xffffff,
+    emissiveMap: kobanTex,
+    emissiveIntensity: 0.45,
     roughness: 0.4,
   });
-  const signBoard = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.48, 0.04), [
+  const signBoard = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.34, 0.04), [
     blueTrimMat, blueTrimMat, blueTrimMat, blueTrimMat, signMat, blueTrimMat
   ]);
-  signBoard.position.set(-0.5, 3.65, kD / 2 + 0.03);
+  signBoard.position.set(-0.5, 2.76, kD / 2 + 0.04);
   kGroup.add(signBoard);
+
+  // Entry Stoop + Illuminated Reception Counter behind Clear 1F Glass
+  const doorStoop = new THREE.Mesh(new THREE.BoxGeometry(1.9, 0.07, 0.48), foundationMat);
+  doorStoop.position.set(-0.5, 0.035, kD / 2 + 0.24);
+  kGroup.add(doorStoop);
+
+  const warmLobbyMat = new THREE.MeshStandardMaterial({
+    color: 0xfef3c7,
+    emissive: 0xfde047,
+    emissiveIntensity: 0.45,
+    roughness: 0.5,
+  });
+  const lobbyBack = new THREE.Mesh(new THREE.PlaneGeometry(3.2, 1.9), warmLobbyMat);
+  lobbyBack.position.set(0.25, 1.15, kD / 2 + 0.008);
+  const deskCounter = new THREE.Mesh(
+    new THREE.BoxGeometry(1.1, 0.72, 0.08),
+    new THREE.MeshStandardMaterial({ color: 0x78350f, roughness: 0.6 })
+  );
+  deskCounter.position.set(1.2, 0.50, kD / 2 + 0.02);
+  kGroup.add(lobbyBack, deskCounter);
 
   const doorW = 1.6;
   const doorH = 2.15;
-  const doorFrame = new THREE.Mesh(new THREE.BoxGeometry(doorW + 0.08, doorH + 0.06, 0.06), blueTrimMat);
+  const doorFrame = new THREE.Mesh(new THREE.BoxGeometry(doorW + 0.08, doorH + 0.06, 0.04), blueTrimMat);
   doorFrame.position.set(-0.5, doorH / 2 + 0.03, kD / 2 + 0.02);
-  const doorGlass = new THREE.Mesh(new THREE.BoxGeometry(doorW, doorH, 0.02), glassMat);
-  doorGlass.position.set(-0.5, doorH / 2 + 0.03, kD / 2 + 0.03);
-  kGroup.add(doorFrame, doorGlass);
+  const doorGlass = new THREE.Mesh(new THREE.BoxGeometry(doorW, doorH, 0.02), clearGlassMat);
+  doorGlass.userData.skipWindowEnhance = true;
+  doorGlass.position.set(-0.5, doorH / 2 + 0.03, kD / 2 + 0.052);
+  const doorMull = new THREE.Mesh(new THREE.BoxGeometry(0.04, doorH, 0.03), blueTrimMat);
+  doorMull.position.set(-0.5, doorH / 2 + 0.03, kD / 2 + 0.06);
+  kGroup.add(doorFrame, doorGlass, doorMull);
 
   const winW = 1.2;
   const winH = 1.1;
-  const winGlass = new THREE.Mesh(new THREE.BoxGeometry(winW, winH, 0.02), glassMat);
-  winGlass.position.set(1.2, 1.45, kD / 2 + 0.01);
-  const winFrame = new THREE.Mesh(new THREE.BoxGeometry(winW + 0.08, winH + 0.08, 0.05), blueTrimMat);
+  const winFrame = new THREE.Mesh(new THREE.BoxGeometry(winW + 0.08, winH + 0.08, 0.04), blueTrimMat);
   winFrame.position.set(1.2, 1.45, kD / 2 + 0.02);
+  const winGlass = new THREE.Mesh(new THREE.BoxGeometry(winW, winH, 0.02), clearGlassMat);
+  winGlass.userData.skipWindowEnhance = true;
+  winGlass.position.set(1.2, 1.45, kD / 2 + 0.048);
   kGroup.add(winFrame, winGlass);
 
   for (let i = 0; i < 2; i++) {
     const uWinX = -0.7 + i * 1.5;
-    const uGlass = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.8, 0.02), glassMat);
-    uGlass.position.set(uWinX, 3.35, kD / 2 + 0.01);
-    const uFrame = new THREE.Mesh(new THREE.BoxGeometry(0.98, 0.88, 0.05), blueTrimMat);
+    const uFrame = new THREE.Mesh(new THREE.BoxGeometry(0.98, 0.88, 0.04), blueTrimMat);
     uFrame.position.set(uWinX, 3.35, kD / 2 + 0.02);
+    const uGlass = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.8, 0.02), glassMat);
+    uGlass.position.set(uWinX, 3.35, kD / 2 + 0.048);
     kGroup.add(uFrame, uGlass);
   }
 
   group.add(kGroup);
 
-  // White Police Patrol Bicycle (Shiro-Chari)
+  // White Police Patrol Bicycle (Shiro-Chari) with Torus Wheels & Rear Police Cargo Box
   const bikeGroup = new THREE.Group();
   bikeGroup.position.set(1.8, 0.15, 1.25);
   bikeGroup.rotation.y = -0.2;
 
-  const bWheelGeo = new THREE.CylinderGeometry(0.24, 0.24, 0.05, 16);
-  bWheelGeo.rotateZ(Math.PI / 2);
+  const bWheelGeo = new THREE.TorusGeometry(0.23, 0.024, 8, 20);
+  bWheelGeo.rotateY(Math.PI / 2);
   const bTireMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.85 });
 
   const bWheelF = new THREE.Mesh(bWheelGeo, bTireMat);
-  bWheelF.position.set(0, 0.24, 0.45);
+  bWheelF.position.set(0, 0.25, 0.45);
   const bWheelR = new THREE.Mesh(bWheelGeo, bTireMat);
-  bWheelR.position.set(0, 0.24, -0.45);
+  bWheelR.position.set(0, 0.25, -0.45);
   bikeGroup.add(bWheelF, bWheelR);
 
   const bikeWhiteMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.4 });
-  const frameBar1 = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.65, 8), bikeWhiteMat);
-  frameBar1.position.set(0, 0.38, 0);
-  frameBar1.rotation.x = 0.55;
-  const frameBar2 = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.5, 8), bikeWhiteMat);
-  frameBar2.position.set(0, 0.45, -0.15);
+  const frameBar1 = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.018, 0.65, 8), bikeWhiteMat);
+  frameBar1.position.set(0, 0.40, 0.02);
+  frameBar1.rotation.x = 0.6;
+  const frameBar2 = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.018, 0.52, 8), bikeWhiteMat);
+  frameBar2.position.set(0, 0.46, -0.16);
+  const topTube = new THREE.Mesh(new THREE.CylinderGeometry(0.016, 0.016, 0.54, 8), bikeWhiteMat);
+  topTube.rotation.x = Math.PI / 2;
+  topTube.position.set(0, 0.58, 0.12);
+  const fork = new THREE.Mesh(new THREE.CylinderGeometry(0.016, 0.016, 0.56, 8), bikeWhiteMat);
+  fork.position.set(0, 0.52, 0.39);
+  fork.rotation.x = -0.18;
   const saddle = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.05, 0.22), blueTrimMat);
-  saddle.position.set(0, 0.72, -0.18);
-  const hBar = new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.03, 0.03), metalMat);
-  hBar.position.set(0, 0.85, 0.38);
+  saddle.position.set(0, 0.74, -0.18);
+  const hBar = new THREE.Mesh(new THREE.CylinderGeometry(0.014, 0.014, 0.42, 8), metalMat);
+  hBar.rotation.z = Math.PI / 2;
+  hBar.position.set(0, 0.82, 0.35);
   const basket = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.18, 0.22), metalMat);
-  basket.position.set(0, 0.65, 0.46);
-  bikeGroup.add(frameBar1, frameBar2, saddle, hBar, basket);
+  basket.position.set(0, 0.65, 0.48);
+  const rearCargo = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.22, 0.28), bikeWhiteMat);
+  rearCargo.position.set(0, 0.56, -0.45);
+  bikeGroup.add(frameBar1, frameBar2, topTube, fork, saddle, hBar, basket, rearCargo);
   group.add(bikeGroup);
 
-  // Police Bulletin Board (Keijiban)
+  // Police Bulletin Board (Keijiban) with Protective Mini-Roof (hisashi)
   const boardGroup = new THREE.Group();
   boardGroup.position.set(-1.8, 0.15, 1.25);
 
@@ -837,7 +966,10 @@ export function buildPoliceBoxMesh(options: PoliceStationOptions = {}): THREE.Gr
   ]);
   bPlate.position.y = 1.05;
   bPlate.castShadow = true;
-  boardGroup.add(bPlate);
+  const bRoof = new THREE.Mesh(new THREE.BoxGeometry(1.06, 0.06, 0.24), blueTrimMat);
+  bRoof.position.set(0, 1.44, 0.06);
+  bRoof.rotation.x = 0.15;
+  boardGroup.add(bPlate, bRoof);
 
   [-0.42, 0.42].forEach(px => {
     const post = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 1.1, 8), metalMat);
@@ -848,8 +980,9 @@ export function buildPoliceBoxMesh(options: PoliceStationOptions = {}): THREE.Gr
   group.add(boardGroup);
 
   if (includeLandscaping) {
+    const backWallMat = new THREE.MeshStandardMaterial({ color: 0xcbd5e1, roughness: 0.85 });
     const wallH = 1.2;
-    const backWall = new THREE.Mesh(new THREE.BoxGeometry(lotWidth, wallH, 0.08), foundationMat);
+    const backWall = new THREE.Mesh(new THREE.BoxGeometry(lotWidth, wallH, 0.08), backWallMat);
     backWall.position.set(0, 0.15 + wallH / 2, -2.85);
     backWall.receiveShadow = true;
     group.add(backWall);

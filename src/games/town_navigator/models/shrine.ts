@@ -78,7 +78,7 @@ export interface ShrineOptions {
 }
 
 export function buildShrineMesh(options: ShrineOptions = {}): THREE.Group {
-  const { includeRoad = true, scale = 1.0 } = options;
+  const { includeRoad = true, includeLandscaping = true, scale = 1.0 } = options;
 
   const group = new THREE.Group();
   group.name = 'Shrine_hwg5_u19_21';
@@ -89,6 +89,7 @@ export function buildShrineMesh(options: ShrineOptions = {}): THREE.Group {
   const toriiRedMat = new THREE.MeshStandardMaterial({ color: 0xdc2626, roughness: 0.35, metalness: 0.1 });
   const blackLacquerMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.38 });
   const woodHinokiMat = new THREE.MeshStandardMaterial({ color: 0xd97706, roughness: 0.58 });
+  const darkWoodMat = new THREE.MeshStandardMaterial({ color: 0x78350f, roughness: 0.72 });
   const copperRoofMat = new THREE.MeshStandardMaterial({
     color: 0x0d9488,
     map: getKawaraTileTexture(),
@@ -112,6 +113,15 @@ export function buildShrineMesh(options: ShrineOptions = {}): THREE.Group {
     emissiveIntensity: 1.25,
     roughness: 0.2,
   });
+  const waterMat = new THREE.MeshStandardMaterial({
+    color: 0x38bdf8,
+    roughness: 0.12,
+    metalness: 0.15,
+    transparent: true,
+    opacity: 0.75,
+  });
+  const bambooMat = new THREE.MeshStandardMaterial({ color: 0x65a30d, roughness: 0.5 });
+  const foliageMat = new THREE.MeshStandardMaterial({ color: 0x15803d, roughness: 0.85 });
   const gravelMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.9 });
   const curbMat = new THREE.MeshStandardMaterial({ color: 0x94a3b8, roughness: 0.9 });
   const asphaltMat = new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.9 });
@@ -186,15 +196,70 @@ export function buildShrineMesh(options: ShrineOptions = {}): THREE.Group {
   plinth.position.y = 0.225;
   haidenGroup.add(plinth);
 
+  // Wooden Entry Steps up the Plinth
+  for (let s = 0; s < 3; s++) {
+    const step = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.15, 0.32), woodHinokiMat);
+    step.position.set(0, 0.075 + s * 0.15, (bD + 0.8) / 2 + (2 - s) * 0.24);
+    haidenGroup.add(step);
+  }
+
+  // Veranda Rail with Centered Entry Gap
+  [-2.55, 2.55].forEach((rx) => {
+    const fRail = new THREE.Mesh(new THREE.BoxGeometry(2.7, 0.08, 0.08), toriiRedMat);
+    fRail.position.set(rx, 0.88, bD / 2 + 0.36);
+    haidenGroup.add(fRail);
+    [-1.25, 0, 1.25].forEach((px) => {
+      const post = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.45, 0.08), toriiRedMat);
+      post.position.set(rx + px, 0.67, bD / 2 + 0.36);
+      haidenGroup.add(post);
+    });
+  });
+
   const body = new THREE.Mesh(new THREE.BoxGeometry(bW, bH, bD), woodHinokiMat);
   body.position.y = bH / 2 + 0.45;
   body.castShadow = true;
   haidenGroup.add(body);
 
+  // Warm Golden Sanctuary Interior Altar Glow + Kōshi Lattice Doors
+  const altarGlow = new THREE.Mesh(new THREE.BoxGeometry(2.0, 2.3, 0.08), lanternGlowMat);
+  altarGlow.position.set(0, 1.65, bD / 2 + 0.01);
+  haidenGroup.add(altarGlow);
+  for (let bar = -4; bar <= 4; bar++) {
+    const koshiBar = new THREE.Mesh(new THREE.BoxGeometry(0.04, 2.3, 0.06), darkWoodMat);
+    koshiBar.position.set(bar * 0.22, 1.65, bD / 2 + 0.05);
+    haidenGroup.add(koshiBar);
+  }
+
+  // Front Vermilion Pillars
   [-3.8, -1.4, 1.4, 3.8].forEach((cx) => {
     const col = new THREE.Mesh(new THREE.BoxGeometry(0.22, bH, 0.22), toriiRedMat);
     col.position.set(cx, bH / 2 + 0.45, bD / 2 + 0.02);
     haidenGroup.add(col);
+  });
+
+  // Side & Rear Timber Pilasters & Lattice Shōji Screens
+  [-bD / 2 + 0.2, 0, bD / 2 - 0.2].forEach((sz) => {
+    [-1, 1].forEach((side) => {
+      const sCol = new THREE.Mesh(new THREE.BoxGeometry(0.16, bH, 0.16), toriiRedMat);
+      sCol.position.set(side * (bW / 2 + 0.01), bH / 2 + 0.45, sz);
+      haidenGroup.add(sCol);
+    });
+  });
+  [-1, 1].forEach((side) => {
+    [-1.3, 1.3].forEach((wz) => {
+      const sWin = new THREE.Mesh(new THREE.BoxGeometry(0.06, 1.35, 1.15), lanternGlowMat);
+      sWin.position.set(side * (bW / 2 + 0.02), 2.35, wz);
+      const sFrame = new THREE.Mesh(new THREE.BoxGeometry(0.08, 1.45, 1.25), darkWoodMat);
+      sFrame.position.set(side * (bW / 2 + 0.01), 2.35, wz);
+      haidenGroup.add(sFrame, sWin);
+    });
+  });
+  [-2.2, 0, 2.2].forEach((bx) => {
+    const bWin = new THREE.Mesh(new THREE.BoxGeometry(1.25, 1.35, 0.06), lanternGlowMat);
+    bWin.position.set(bx, 2.35, -bD / 2 - 0.02);
+    const bFrame = new THREE.Mesh(new THREE.BoxGeometry(1.35, 1.45, 0.08), darkWoodMat);
+    bFrame.position.set(bx, 2.35, -bD / 2 - 0.01);
+    haidenGroup.add(bFrame, bWin);
   });
 
   const copperRoof = buildJapaneseIrimoyaRoof({
@@ -209,7 +274,7 @@ export function buildShrineMesh(options: ShrineOptions = {}): THREE.Group {
   copperRoof.position.set(0, 0.45 + bH, 0);
   haidenGroup.add(copperRoof);
 
-  // Sacred Crossed Ridge Finials (*Chigi*) and Log Weights (*Katsuogi*) on Top Ridge
+  // Sacred Crossed Ridge Finials (*Chigi*) and Horizontal Log Weights (*Katsuogi*) on Top Ridge
   [-2.6, 2.6].forEach((cx) => {
     const chigi1 = new THREE.Mesh(new THREE.BoxGeometry(0.1, 1.25, 0.1), goldMat);
     chigi1.rotation.x = Math.PI / 5;
@@ -222,7 +287,8 @@ export function buildShrineMesh(options: ShrineOptions = {}): THREE.Group {
 
   for (let k = -1.6; k <= 1.6; k += 0.8) {
     const katsuogi = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.09, 0.65, 8), goldMat);
-    katsuogi.position.set(k, bH + 0.45 + 2.88, 0);
+    katsuogi.rotation.x = Math.PI / 2;
+    katsuogi.position.set(k, bH + 0.45 + 2.82, 0);
     haidenGroup.add(katsuogi);
   }
 
@@ -235,10 +301,17 @@ export function buildShrineMesh(options: ShrineOptions = {}): THREE.Group {
   suzuRope.position.set(0, 2.25, bD / 2 + 0.32);
   haidenGroup.add(saisen, suzuBell, suzuRope);
 
-  const rope = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.08, bW - 1.2, 12), woodHinokiMat);
-  rope.rotateZ(Math.PI / 2);
-  rope.position.set(0, 3.45, bD / 2 + 0.15);
-  haidenGroup.add(rope);
+  // Symmetrical Center-Bulged Shimenawa Sacred Rope
+  const ropeCenter = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.16, 2.4, 12), woodHinokiMat);
+  ropeCenter.rotateZ(Math.PI / 2);
+  ropeCenter.position.set(0, 3.45, bD / 2 + 0.15);
+  const ropeLeft = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.15, 2.1, 12), woodHinokiMat);
+  ropeLeft.rotateZ(Math.PI / 2);
+  ropeLeft.position.set(-2.25, 3.45, bD / 2 + 0.15);
+  const ropeRight = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.08, 2.1, 12), woodHinokiMat);
+  ropeRight.rotateZ(Math.PI / 2);
+  ropeRight.position.set(2.25, 3.45, bD / 2 + 0.15);
+  haidenGroup.add(ropeCenter, ropeLeft, ropeRight);
 
   [-1.8, -0.6, 0.6, 1.8].forEach((sx) => {
     const shide = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.42, 0.03), whitePaperMat);
@@ -255,7 +328,9 @@ export function buildShrineMesh(options: ShrineOptions = {}): THREE.Group {
     emissiveIntensity: 0.35,
     roughness: 0.4,
   });
-  const signMesh = new THREE.Mesh(new THREE.BoxGeometry(3.8, 0.85, 0.12), signMat);
+  const signMesh = new THREE.Mesh(new THREE.BoxGeometry(3.8, 0.85, 0.12), [
+    toriiRedMat, toriiRedMat, toriiRedMat, toriiRedMat, signMat, toriiRedMat,
+  ]);
   signMesh.position.set(0, 4.05, bD / 2 + 0.45);
   haidenGroup.add(signMesh);
 
@@ -284,7 +359,9 @@ export function buildShrineMesh(options: ShrineOptions = {}): THREE.Group {
   gakuzuka.position.set(0, tPostH - 0.4, 0);
   const shingaku = new THREE.Mesh(new THREE.BoxGeometry(0.48, 0.68, 0.24), blackLacquerMat);
   shingaku.position.set(0, tPostH - 0.38, 0.03);
-  toriiGroup.add(nuki, gakuzuka, shingaku);
+  const shingakuGold = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.48, 0.03), goldMat);
+  shingakuGold.position.set(0, tPostH - 0.38, 0.16);
+  toriiGroup.add(nuki, gakuzuka, shingaku, shingakuGold);
 
   const shimaki = new THREE.Mesh(new THREE.BoxGeometry(4.3, 0.20, 0.32), toriiRedMat);
   shimaki.position.set(0, tPostH + 0.02, 0);
@@ -300,6 +377,17 @@ export function buildShrineMesh(options: ShrineOptions = {}): THREE.Group {
   });
 
   group.add(toriiGroup);
+
+  // Red & White Shrine Nobori Banners flanking Approach
+  [-2.85, 2.85].forEach((nx) => {
+    const nPole = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 2.8, 6), bambooMat);
+    nPole.position.set(nx, 1.55, 2.5);
+    const nFlag = new THREE.Mesh(new THREE.BoxGeometry(0.55, 1.55, 0.03), toriiRedMat);
+    nFlag.position.set(nx + (nx < 0 ? 0.28 : -0.28), 2.1, 2.5);
+    const nStripe = new THREE.Mesh(new THREE.BoxGeometry(0.16, 1.55, 0.04), whitePaperMat);
+    nStripe.position.set(nx + (nx < 0 ? 0.28 : -0.28), 2.1, 2.5);
+    group.add(nPole, nFlag, nStripe);
+  });
 
   // 4. TWIN STONE GUARDIAN LION-DOGS (Komainu - Sculpted Torso, Head, Mane & Tail)
   [-2.1, 2.1].forEach((kx) => {
@@ -319,13 +407,18 @@ export function buildShrineMesh(options: ShrineOptions = {}): THREE.Group {
     group.add(komainu);
   });
 
-  // 5. WATER PURIFICATION PAVILION (Temizuya) with Bamboo Ladles (*Hishaku*)
+  // 5. WATER PURIFICATION PAVILION (Temizuya) with Translucent Water, Bamboo Spout & Ladles
   const temizuGroup = new THREE.Group();
   temizuGroup.position.set(-3.8, 0.15, 3.6);
 
   const basin = new THREE.Mesh(new THREE.BoxGeometry(1.15, 0.65, 0.75), stoneMat);
   basin.position.y = 0.325;
-  temizuGroup.add(basin);
+  const basinWater = new THREE.Mesh(new THREE.BoxGeometry(0.95, 0.04, 0.55), waterMat);
+  basinWater.position.set(0, 0.65, 0);
+  const kakehi = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 0.48, 8), bambooMat);
+  kakehi.rotation.z = Math.PI / 2;
+  kakehi.position.set(-0.35, 0.78, 0);
+  temizuGroup.add(basin, basinWater, kakehi);
 
   [-0.25, 0, 0.25].forEach((lx) => {
     const ladle = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 0.65, 6), woodHinokiMat);
@@ -371,9 +464,10 @@ export function buildShrineMesh(options: ShrineOptions = {}): THREE.Group {
   rung2.rotation.z = Math.PI / 2;
   rung2.position.set(0, 0.9, 0);
 
+  const omikujiMat = new THREE.MeshStandardMaterial({ map: createOmikujiSignTexture(), roughness: 0.5 });
   const omikujiHeader = new THREE.Mesh(
     new THREE.BoxGeometry(0.68, 0.28, 0.04),
-    new THREE.MeshStandardMaterial({ map: createOmikujiSignTexture(), roughness: 0.5 })
+    [woodHinokiMat, woodHinokiMat, woodHinokiMat, woodHinokiMat, omikujiMat, woodHinokiMat]
   );
   omikujiHeader.position.set(0, 1.95, 0);
 
@@ -397,6 +491,31 @@ export function buildShrineMesh(options: ShrineOptions = {}): THREE.Group {
   });
 
   group.add(emaGroup);
+
+  // 7. WOODEN TAMAGAKI PERIMETER FENCE & SACRED CEDAR (Goshinboku)
+  [-5.85, 5.85].forEach((fx) => {
+    const sideRail = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.72, 8.6), woodHinokiMat);
+    sideRail.position.set(fx, 0.51, -1.5);
+    group.add(sideRail);
+  });
+  const backTamagaki = new THREE.Mesh(new THREE.BoxGeometry(11.7, 0.72, 0.08), woodHinokiMat);
+  backTamagaki.position.set(0, 0.51, -5.85);
+  group.add(backTamagaki);
+
+  if (includeLandscaping) {
+    const cedar = new THREE.Group();
+    cedar.position.set(4.75, 0.15, -4.35);
+    const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.36, 2.8, 10), darkWoodMat);
+    trunk.position.y = 1.4;
+    const sacredBelt = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.32, 0.18, 12), woodHinokiMat);
+    sacredBelt.position.y = 1.15;
+    const crown1 = new THREE.Mesh(new THREE.ConeGeometry(1.15, 2.0, 10), foliageMat);
+    crown1.position.y = 3.1;
+    const crown2 = new THREE.Mesh(new THREE.ConeGeometry(0.85, 1.6, 10), foliageMat);
+    crown2.position.y = 4.1;
+    cedar.add(trunk, sacredBelt, crown1, crown2);
+    group.add(cedar);
+  }
 
   if (scale !== 1.0) {
     group.scale.setScalar(scale);

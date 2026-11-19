@@ -3,6 +3,7 @@ import {
   getBrickTileTexture,
   buildPerimeterRailing,
   addWrapAroundWindows,
+  getClearShowcaseGlassMaterial,
 } from './wallTextures';
 
 let cachedFireStationSignTex: THREE.CanvasTexture | null = null;
@@ -222,6 +223,7 @@ export function buildFireStationMesh(options: FireStationOptions = {}): THREE.Gr
     transparent: true,
     opacity: 0.7,
   });
+  const clearGlassMat = getClearShowcaseGlassMaterial();
   const sirenLightMat = new THREE.MeshStandardMaterial({
     color: 0xef4444,
     emissive: 0xff0000,
@@ -238,9 +240,10 @@ export function buildFireStationMesh(options: FireStationOptions = {}): THREE.Gr
   lawn.receiveShadow = true;
   group.add(lawn);
 
-  const apronGeo = new THREE.BoxGeometry(lotSize, 0.152, 1.5);
+  // Extended concrete driveway apron covering z = 1.9..4.5 so Fire Engine & Chief SUV park on pavement
+  const apronGeo = new THREE.BoxGeometry(lotSize, 0.152, 2.6);
   const apron = new THREE.Mesh(apronGeo, foundationMat);
-  apron.position.set(0, 0.076, 3.75);
+  apron.position.set(0, 0.076, 3.2);
   apron.receiveShadow = true;
   group.add(apron);
 
@@ -272,10 +275,10 @@ export function buildFireStationMesh(options: FireStationOptions = {}): THREE.Gr
 
   // 2. MAIN 2-STORY FIRE STATION & GARAGE BAYS
   const stationGroup = new THREE.Group();
-  stationGroup.position.set(-1.0, 0.15, -0.6);
+  stationGroup.position.set(-1.15, 0.15, -0.8);
 
-  const bW = 8.6;
-  const bD = 6.8;
+  const bW = 8.4;
+  const bD = 6.6;
   const bH = 6.8;
 
   const bodyMesh = new THREE.Mesh(new THREE.BoxGeometry(bW, bH, bD), concreteMat);
@@ -288,10 +291,14 @@ export function buildFireStationMesh(options: FireStationOptions = {}): THREE.Gr
   parapet.position.y = bH + 0.175;
   stationGroup.add(parapet);
 
-  // Open Rooftop Safety Railing
+  // Open Rooftop Safety Railing & Dispatch Radio Mast
   const roofRail = buildPerimeterRailing(bW - 0.2, bD - 0.2, 0.65, steelMat, 1.6);
   roofRail.position.set(0, bH + 0.35, 0);
   stationGroup.add(roofRail);
+
+  const radioMast = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.04, 2.2, 6), steelMat);
+  radioMast.position.set(-2.8, bH + 1.45, -1.6);
+  stationGroup.add(radioMast);
 
   // 360° Side & Rear Windows
   addWrapAroundWindows({
@@ -307,29 +314,42 @@ export function buildFireStationMesh(options: FireStationOptions = {}): THREE.Gr
     frameMat: darkMetalMat,
   });
 
-  // 2 Garage Bay Openings on Ground Floor
-  [-2.2, 1.8].forEach(gx => {
-    const frame = new THREE.Mesh(new THREE.BoxGeometry(3.5, 3.6, 0.15), redTrimMat);
+  // 2 Garage Bay Openings on Ground Floor (with rolled-up shutter slats + safety bollards)
+  [-2.1, 1.7].forEach(gx => {
+    const frame = new THREE.Mesh(new THREE.BoxGeometry(3.4, 3.6, 0.15), redTrimMat);
     frame.position.set(gx, 1.8, bD / 2 + 0.05);
     stationGroup.add(frame);
 
-    const hazard = new THREE.Mesh(new THREE.BoxGeometry(3.3, 0.18, 0.18), hazardYellowMat);
+    const hazard = new THREE.Mesh(new THREE.BoxGeometry(3.2, 0.18, 0.18), hazardYellowMat);
     hazard.position.set(gx, 3.55, bD / 2 + 0.06);
     stationGroup.add(hazard);
 
-    const cavity = new THREE.Mesh(new THREE.BoxGeometry(3.2, 3.4, 0.1), darkMetalMat);
-    cavity.position.set(gx, 1.7, bD / 2 + 0.02);
+    const cavity = new THREE.Mesh(new THREE.BoxGeometry(3.1, 3.4, 0.08), darkMetalMat);
+    cavity.position.set(gx, 1.7, bD / 2 + 0.10);
     stationGroup.add(cavity);
+
+    [2.9, 3.06, 3.22, 3.38].forEach((sy) => {
+      const slat = new THREE.Mesh(new THREE.BoxGeometry(3.04, 0.08, 0.04), steelMat);
+      slat.position.set(gx, sy, bD / 2 + 0.14);
+      stationGroup.add(slat);
+    });
 
     const beacon = new THREE.Mesh(new THREE.SphereGeometry(0.14, 12, 8), sirenLightMat);
     beacon.position.set(gx, 3.9, bD / 2 + 0.12);
     stationGroup.add(beacon);
+
+    // Corner yellow/black safety bollards
+    [-1.78, 1.78].forEach((bx) => {
+      const bollard = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.72, 8), hazardYellowMat);
+      bollard.position.set(gx + bx, 0.36, bD / 2 + 0.45);
+      stationGroup.add(bollard);
+    });
   });
 
   // Second Floor Administration Glass Windows (Now translucent glassMat so they glow at night!)
   for (let w = 0; w < 5; w++) {
     const wx = -3.2 + w * 1.6;
-    const frame = new THREE.Mesh(new THREE.BoxGeometry(1.18, 1.28, 0.06), darkMetalMat);
+    const frame = new THREE.Mesh(new THREE.BoxGeometry(1.18, 1.28, 0.05), darkMetalMat);
     frame.position.set(wx, 5.1, bD / 2 + 0.02);
     const win = new THREE.Mesh(new THREE.BoxGeometry(1.08, 1.18, 0.04), glassMat);
     win.position.set(wx, 5.1, bD / 2 + 0.04);
@@ -355,14 +375,14 @@ export function buildFireStationMesh(options: FireStationOptions = {}): THREE.Gr
   group.add(stationGroup);
 
   // 3. EMERGENCY VEHICLES & HYDRANT ON APRON
-  // 3a. Fire Engine in Bay 1 (detail1 at X = -3.2m, Z = 2.2m)
+  // 3a. Fire Engine in Bay 1 (detail1 at X = -3.25m, Z = 2.65m)
   const fireEngine = buildFireEngine();
-  fireEngine.position.set(-3.2, 0.15, 2.2);
+  fireEngine.position.set(-3.25, 0.15, 2.65);
   group.add(fireEngine);
 
   // 3b. Red Fire Chief Command SUV (Shiki-sha) in Bay 2
   const chiefCar = new THREE.Group();
-  chiefCar.position.set(0.8, 0.15, 2.4);
+  chiefCar.position.set(0.55, 0.15, 2.8);
 
   const carBody = new THREE.Mesh(new THREE.BoxGeometry(1.65, 0.65, 2.4), redTrimMat);
   carBody.position.y = 0.52;
@@ -374,7 +394,7 @@ export function buildFireStationMesh(options: FireStationOptions = {}): THREE.Gr
   );
   carCabin.position.set(0, 1.05, -0.1);
 
-  const carGlass = new THREE.Mesh(new THREE.BoxGeometry(1.52, 0.42, 1.35), glassMat);
+  const carGlass = new THREE.Mesh(new THREE.BoxGeometry(1.52, 0.42, 1.35), clearGlassMat);
   carGlass.position.set(0, 1.05, -0.1);
 
   const lightBar = new THREE.Mesh(new THREE.BoxGeometry(1.05, 0.12, 0.22), sirenLightMat);
@@ -396,19 +416,24 @@ export function buildFireStationMesh(options: FireStationOptions = {}): THREE.Gr
   chiefCar.add(carBody, carCabin, carGlass, lightBar);
   group.add(chiefCar);
 
-  // 3c. Japanese Red Fire Hydrant & Yellow Sign Pole on Apron (X = 2.6m, Z = 3.85m)
+  // 3c. Japanese Red Fire Hydrant & Yellow 消火栓 Sign Pole on Apron (X = 2.6m, Z = 3.85m)
   const hydrant = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.16, 0.68, 10), redTrimMat);
   hydrant.position.set(2.6, 0.49, 3.85);
   const hydrantCap = new THREE.Mesh(new THREE.SphereGeometry(0.15, 10, 8), redTrimMat);
   hydrantCap.position.set(2.6, 0.84, 3.85);
-  group.add(hydrant, hydrantCap);
+  const signPole = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 2.2, 8), hazardYellowMat);
+  signPole.position.set(3.05, 1.25, 3.85);
+  const signDisc = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.24, 0.04, 16), redTrimMat);
+  signDisc.rotation.x = Math.PI / 2;
+  signDisc.position.set(3.05, 2.25, 3.85);
+  group.add(hydrant, hydrantCap, signPole, signDisc);
 
-  // 4. TRAINING & HOSE DRYING TOWER (detail2: Height 11.4m <= 12m limit at X = 4.2m)
+  // 4. TRAINING & HOSE DRYING TOWER (detail2: Height 11.4m <= 12m limit, cleanly separated at X = 4.4m)
   const towerGroup = new THREE.Group();
-  towerGroup.position.set(4.2, 0.15, -0.6);
+  towerGroup.position.set(4.45, 0.15, -0.8);
 
-  const tW = 2.4;
-  const tD = 2.4;
+  const tW = 2.2;
+  const tD = 2.2;
   const tH = 10.6;
 
   const tower = new THREE.Mesh(new THREE.BoxGeometry(tW, tH, tD), concreteMat);
@@ -435,11 +460,23 @@ export function buildFireStationMesh(options: FireStationOptions = {}): THREE.Gr
     towerGroup.add(hose);
   });
 
-  // External Steel Training Ladder on Left Side of Tower
+  // External Steel Training Ladder with Vertical Side Rails & Safety Cage Hoops
+  [-0.22, 0.22].forEach((lz) => {
+    const rail = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 8.9, 6), steelMat);
+    rail.position.set(-tW / 2 - 0.12, 5.5, 0.5 + lz);
+    towerGroup.add(rail);
+  });
   for (let ly = 1.2; ly <= 9.8; ly += 0.45) {
-    const rung = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.04, 0.45), steelMat);
-    rung.position.set(-tW / 2 - 0.08, ly, 0.5);
+    const rung = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.04, 0.45), steelMat);
+    rung.position.set(-tW / 2 - 0.12, ly, 0.5);
     towerGroup.add(rung);
+    if (ly > 3.0 && Math.round(ly * 10) % 18 === 0) {
+      const hoop = new THREE.Mesh(new THREE.TorusGeometry(0.28, 0.015, 6, 12, Math.PI), steelMat);
+      hoop.rotation.x = Math.PI / 2;
+      hoop.rotation.z = Math.PI / 2;
+      hoop.position.set(-tW / 2 - 0.12, ly, 0.5);
+      towerGroup.add(hoop);
+    }
   }
 
   // 4-Directional Emergency Siren Horn Array on Tower Peak

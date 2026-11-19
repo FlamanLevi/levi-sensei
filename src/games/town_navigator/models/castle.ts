@@ -188,30 +188,53 @@ export function buildCastleMesh(options: CastleOptions = {}): THREE.Group {
     }
   }
 
-  // 2. WATER MOAT (*Hori*), STONE EMBANKMENT & VERMILION LACQUER BRIDGE (*Aka-bashi*)
+  // 2. WATER MOAT (*Hori*), GRANITE EMBANKMENTS & ARCHED VERMILION BRIDGE (*Aka-bashi*)
   const moatGeo = new THREE.BoxGeometry(17.6, 0.04, 2.8);
   const moat = new THREE.Mesh(moatGeo, moatWaterMat);
   moat.position.set(0, 0.19, 4.8);
   castle.add(moat);
 
-  const bridgeGeo = new THREE.BoxGeometry(3.0, 0.24, 3.2);
-  const bridge = new THREE.Mesh(bridgeGeo, redLacqueredMat);
-  bridge.position.set(0, 0.26, 4.8);
-  bridge.receiveShadow = true;
-  castle.add(bridge);
+  // Granite Embankment Coping Ledges along North & South Moat Banks
+  [3.38, 6.22].forEach((mz) => {
+    const coping = new THREE.Mesh(new THREE.BoxGeometry(17.8, 0.24, 0.28), rampartStoneMat);
+    coping.position.set(0, 0.22, mz);
+    castle.add(coping);
+  });
+
+  // Floating Lotus Pads in Moat
+  const lotusMat = new THREE.MeshStandardMaterial({ color: 0x16a34a, roughness: 0.7 });
+  [[-4.2, 4.5], [-3.6, 5.1], [3.8, 4.6], [4.5, 5.0]].forEach(([lx, lz]) => {
+    const pad = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.24, 0.02, 10), lotusMat);
+    pad.position.set(lx, 0.215, lz);
+    castle.add(pad);
+  });
+
+  // Gently Arched Aka-bashi Bridge with Open Balustrade & Stepped Giboshi Finials
+  for (let s = 0; s < 5; s++) {
+    const t = (s / 4) * 2 - 1;
+    const by = 0.28 + 0.16 * (1 - t * t);
+    const bz = 4.8 + t * 1.28;
+    const deckSeg = new THREE.Mesh(new THREE.BoxGeometry(3.0, 0.14, 0.68), redLacqueredMat);
+    deckSeg.position.set(0, by, bz);
+    deckSeg.rotation.x = -t * 0.18;
+    deckSeg.receiveShadow = true;
+    castle.add(deckSeg);
+  }
 
   [-1.4, 1.4].forEach((bx) => {
-    const railGeo = new THREE.BoxGeometry(0.12, 0.45, 3.2);
+    const railGeo = new THREE.BoxGeometry(0.10, 0.09, 3.2);
     const rail = new THREE.Mesh(railGeo, redLacqueredMat);
-    rail.position.set(bx, 0.52, 4.8);
+    rail.position.set(bx, 0.82, 4.8);
     rail.castShadow = true;
     castle.add(rail);
 
-    [-1.5, 0, 1.5].forEach((bz) => {
-      const gPost = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.65, 8), redLacqueredMat);
-      gPost.position.set(bx, 0.62, 4.8 + bz);
-      const giboshi = new THREE.Mesh(new THREE.SphereGeometry(0.095, 8, 8), goldFinialMat);
-      giboshi.position.set(bx, 0.98, 4.8 + bz);
+    [-1.5, -0.75, 0, 0.75, 1.5].forEach((bz) => {
+      const t = bz / 1.5;
+      const baseY = 0.28 + 0.16 * (1 - t * t);
+      const gPost = new THREE.Mesh(new THREE.CylinderGeometry(0.075, 0.075, 0.58, 8), redLacqueredMat);
+      gPost.position.set(bx, baseY + 0.29, 4.8 + bz);
+      const giboshi = new THREE.Mesh(new THREE.SphereGeometry(0.09, 8, 8), goldFinialMat);
+      giboshi.position.set(bx, baseY + 0.62, 4.8 + bz);
       castle.add(gPost, giboshi);
     });
   });
@@ -227,26 +250,66 @@ export function buildCastleMesh(options: CastleOptions = {}): THREE.Group {
     castle.add(lPed, lBox, lCap);
   });
 
-  // 3. STONE RAMPART FOUNDATION (*Ishigaki* Base: Y = 0.18 to 4.18m)
+  // 3. 2-TIER CONCAVE ŌGI-NO-KŌBAI ISHIGAKI RAMPART & DOBEI PARAPET (Y = 0.18 to 4.18m)
   const keepGroup = new THREE.Group();
   keepGroup.position.set(0, 0.18, -1.8);
 
-  const ishigakiGeo = new THREE.CylinderGeometry(9.0 * Math.SQRT1_2, 11.4 * Math.SQRT1_2, 4.0, 4);
-  ishigakiGeo.rotateY(Math.PI / 4);
-  const ishigaki = new THREE.Mesh(ishigakiGeo, rampartStoneMat);
-  ishigaki.position.set(0, 2.0, 0);
-  ishigaki.castShadow = true;
-  ishigaki.receiveShadow = true;
-  keepGroup.add(ishigaki);
+  const ishigakiLowGeo = new THREE.CylinderGeometry(9.85 * Math.SQRT1_2, 11.6 * Math.SQRT1_2, 2.0, 4);
+  ishigakiLowGeo.rotateY(Math.PI / 4);
+  const ishigakiLow = new THREE.Mesh(ishigakiLowGeo, rampartStoneMat);
+  ishigakiLow.position.set(0, 1.0, 0);
+  ishigakiLow.castShadow = true;
+  ishigakiLow.receiveShadow = true;
 
-  // Fortified Two-Story Timber Gate (*Ōtemon / Yagura-mon*) recessed into front ramparts
-  const gateArchGeo = new THREE.BoxGeometry(3.0, 2.8, 0.9);
-  const gateArch = new THREE.Mesh(gateArchGeo, darkTimberMat);
-  gateArch.position.set(0, 1.4, 5.1);
-  gateArch.castShadow = true;
-  const gateRoof = new THREE.Mesh(new THREE.BoxGeometry(3.6, 0.24, 1.3), roofTileMat);
-  gateRoof.position.set(0, 2.9, 5.1);
-  keepGroup.add(gateArch, gateRoof);
+  const ishigakiHighGeo = new THREE.CylinderGeometry(9.0 * Math.SQRT1_2, 9.85 * Math.SQRT1_2, 2.0, 4);
+  ishigakiHighGeo.rotateY(Math.PI / 4);
+  const ishigakiHigh = new THREE.Mesh(ishigakiHighGeo, rampartStoneMat);
+  ishigakiHigh.position.set(0, 3.0, 0);
+  ishigakiHigh.castShadow = true;
+  ishigakiHigh.receiveShadow = true;
+  keepGroup.add(ishigakiLow, ishigakiHigh);
+
+  // Perimeter White-Plaster Dobei Parapet Wall with Tile Coping around Ishigaki Top
+  [-2.9, 2.9].forEach((dx) => {
+    const fWall = new THREE.Mesh(new THREE.BoxGeometry(2.8, 0.55, 0.18), whitePlasterMat);
+    fWall.position.set(dx, 4.25, 4.42);
+    const fCoping = new THREE.Mesh(new THREE.BoxGeometry(2.9, 0.12, 0.28), roofTileMat);
+    fCoping.position.set(dx, 4.56, 4.42);
+    keepGroup.add(fWall, fCoping);
+  });
+  [-4.42, 4.42].forEach((sx) => {
+    const sWall = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.55, 8.8), whitePlasterMat);
+    sWall.position.set(sx, 4.25, 0);
+    const sCoping = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.12, 8.9), roofTileMat);
+    sCoping.position.set(sx, 4.56, 0);
+    keepGroup.add(sWall, sCoping);
+  });
+
+  // Authentic Two-Story Ōtemon Yagura-mon Gatehouse (Clear X=0 center corridor for detail2!)
+  [-1.35, 1.35].forEach((gx) => {
+    const pillar = new THREE.Mesh(new THREE.BoxGeometry(0.48, 2.4, 0.95), darkTimberMat);
+    pillar.position.set(gx, 1.2, 5.1);
+    const doorLeaf = new THREE.Mesh(new THREE.BoxGeometry(0.85, 2.1, 0.14), darkTimberMat);
+    doorLeaf.position.set(gx * 0.65, 1.05, 5.15);
+    const bossStud = new THREE.Mesh(new THREE.SphereGeometry(0.06, 6, 6), goldFinialMat);
+    bossStud.position.set(gx * 0.65, 1.25, 5.24);
+    keepGroup.add(pillar, doorLeaf, bossStud);
+  });
+  const yaguraGuard = new THREE.Mesh(new THREE.BoxGeometry(3.5, 1.05, 1.05), whitePlasterMat);
+  yaguraGuard.position.set(0, 2.88, 5.1);
+  const yaguraWin = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.42, 1.08), darkTimberMat);
+  yaguraWin.position.set(0, 2.88, 5.1);
+  const gateRoof = buildJapaneseIrimoyaRoof({
+    width: 4.1,
+    depth: 1.7,
+    height: 0.95,
+    roofMat: roofTileMat,
+    gableWallMat: whitePlasterMat,
+    trimMat: darkTimberMat,
+    goldMat: goldFinialMat,
+  });
+  gateRoof.position.set(0, 3.4, 5.1);
+  keepGroup.add(yaguraGuard, yaguraWin, gateRoof);
 
   // 4. CASTLE KEEP - TIER 1 (8.2m x 8.2m, Y = 4.0 to 7.4m)
   const tier1BodyGeo = new THREE.BoxGeometry(8.2, 3.2, 8.2);
@@ -283,13 +346,15 @@ export function buildCastleMesh(options: CastleOptions = {}): THREE.Group {
     keepGroup.add(frontSlit, backSlit, leftSlit, rightSlit);
   });
 
-  // Tier 1 Flared Hip Roof Eaves (10.2m x 10.2m overhang)
+  // Tier 1 Flared Hip Roof Eaves (10.2m x 10.2m overhang) + Eave Trim Fascia
   const tier1RoofGeo = new THREE.CylinderGeometry(6.6 * Math.SQRT1_2, 10.2 * Math.SQRT1_2, 1.25, 4);
   tier1RoofGeo.rotateY(Math.PI / 4);
   const tier1Roof = new THREE.Mesh(tier1RoofGeo, roofTileMat);
   tier1Roof.position.set(0, 7.6, 0);
   tier1Roof.castShadow = true;
-  keepGroup.add(tier1Roof);
+  const tier1Fascia = new THREE.Mesh(new THREE.BoxGeometry(10.25, 0.10, 10.25), darkTimberMat);
+  tier1Fascia.position.set(0, 7.0, 0);
+  keepGroup.add(tier1Roof, tier1Fascia);
 
   // Twin Chidori-hafu Triangular Dormer Gables on Tier 1 Front & Back Roofs
   [-2.1, 2.1].forEach((dx) => {
@@ -331,20 +396,41 @@ export function buildCastleMesh(options: CastleOptions = {}): THREE.Group {
   const tier2Roof = new THREE.Mesh(tier2RoofGeo, roofTileMat);
   tier2Roof.position.set(0, 11.55, 0);
   tier2Roof.castShadow = true;
-  keepGroup.add(tier2Roof);
+  const tier2Fascia = new THREE.Mesh(new THREE.BoxGeometry(8.05, 0.09, 8.05), darkTimberMat);
+  tier2Fascia.position.set(0, 11.0, 0);
+  keepGroup.add(tier2Roof, tier2Fascia);
 
-  // Central Grand Dormer Gable on Tier 2 Front, East & West Roofs
+  // Central Grand Dormer Gables on Tier 2 Front, East & West Roofs
   const centerDormer = buildChidoriHafuDormer(2.4, 1.15, 1.0, whitePlasterMat, roofTileMat, goldFinialMat);
   centerDormer.position.set(0, 11.3, 2.9);
-  keepGroup.add(centerDormer);
+  const eastDormer = buildChidoriHafuDormer(2.1, 1.0, 0.9, whitePlasterMat, roofTileMat, goldFinialMat);
+  eastDormer.position.set(2.9, 11.3, 0);
+  eastDormer.rotation.y = Math.PI / 2;
+  const westDormer = buildChidoriHafuDormer(2.1, 1.0, 0.9, whitePlasterMat, roofTileMat, goldFinialMat);
+  westDormer.position.set(-2.9, 11.3, 0);
+  westDormer.rotation.y = -Math.PI / 2;
+  keepGroup.add(centerDormer, eastDormer, westDormer);
 
-  // 6. CASTLE KEEP - TIER 3 / TOP KEEP & GOLDEN SHACHIHOKO (Y = 12.0 to 17.5m)
+  // 6. CASTLE KEEP - TIER 3 / TOP KEEP & SCULPTED GOLDEN SHACHIHOKO (Y = 12.0 to 17.5m)
   const tier3BodyGeo = new THREE.BoxGeometry(4.4, 2.6, 4.4);
   const tier3Body = new THREE.Mesh(tier3BodyGeo, whitePlasterMat);
   tier3Body.position.set(0, 13.3, 0);
   tier3Body.castShadow = true;
   tier3Body.receiveShadow = true;
   keepGroup.add(tier3Body);
+
+  // Warm Night-Glowing Shoji/Lattice Observation Windows on All 4 Faces of Tier 3
+  [-1.1, 0, 1.1].forEach((wo) => {
+    const t3F = new THREE.Mesh(new THREE.BoxGeometry(0.65, 1.05, 0.08), lanternGlowMat);
+    t3F.position.set(wo, 13.45, 2.22);
+    const t3B = new THREE.Mesh(new THREE.BoxGeometry(0.65, 1.05, 0.08), lanternGlowMat);
+    t3B.position.set(wo, 13.45, -2.22);
+    const t3L = new THREE.Mesh(new THREE.BoxGeometry(0.08, 1.05, 0.65), lanternGlowMat);
+    t3L.position.set(-2.22, 13.45, wo);
+    const t3R = new THREE.Mesh(new THREE.BoxGeometry(0.08, 1.05, 0.65), lanternGlowMat);
+    t3R.position.set(2.22, 13.45, wo);
+    keepGroup.add(t3F, t3B, t3L, t3R);
+  });
 
   // Open Vermilion-Red Observation Deck Balustrade (*Kōran*) around Tier 3
   const koranRailing = buildPerimeterRailing(5.0, 5.0, 0.65, redLacqueredMat, 1.0);
@@ -364,7 +450,7 @@ export function buildCastleMesh(options: CastleOptions = {}): THREE.Group {
   topRoof.position.set(0, 14.5, 0);
   keepGroup.add(topRoof);
 
-  // Twin Golden Shachihoko Finials (*Kinshachi* - Dragon Carps) crowning the main ridge at Y = 16.95m
+  // Sculpted Twin Golden Shachihoko Finials (*Kinshachi* - Dragon Carps, <= 18.0m)
   [-1.9, 1.9].forEach((sx) => {
     const shachiGroup = new THREE.Group();
     shachiGroup.position.set(sx, 16.95, 0);
@@ -373,16 +459,22 @@ export function buildCastleMesh(options: CastleOptions = {}): THREE.Group {
     const shachiGeo = new THREE.TorusGeometry(0.32, 0.11, 8, 16, Math.PI * 1.25);
     const shachi = new THREE.Mesh(shachiGeo, goldFinialMat);
     shachi.castShadow = true;
+    const dragonHead = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.20, 0.22), goldFinialMat);
+    dragonHead.position.set(0.30, -0.04, 0);
+    const horn = new THREE.Mesh(new THREE.ConeGeometry(0.04, 0.16, 5), goldFinialMat);
+    horn.position.set(0.32, 0.12, 0);
+    const dorsalFin = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.22, 0.04), goldFinialMat);
+    dorsalFin.position.set(0, 0.34, 0);
     const tailFin = new THREE.Mesh(new THREE.ConeGeometry(0.18, 0.35, 5), goldFinialMat);
     tailFin.position.set(-0.28, 0.38, 0);
-    shachiGroup.add(shachi, tailFin);
+    shachiGroup.add(shachi, dragonHead, horn, dorsalFin, tailFin);
 
     keepGroup.add(shachiGroup);
   });
 
   castle.add(keepGroup);
 
-  // 7. CIVIC FORECOURT PLAZA, MONUMENT & SAKURA/PINE TREES (Z in [+6.0, +7.5])
+  // 7. CIVIC FORECOURT PLAZA, GRANITE MONUMENT STELE & SAKURA/PINE TREES (Z in [+6.0, +7.5])
   const plazaGroup = new THREE.Group();
   plazaGroup.position.set(0, 0.18, 6.7);
 
@@ -391,13 +483,21 @@ export function buildCastleMesh(options: CastleOptions = {}): THREE.Group {
   monumentBase.position.set(4.2, 0.25, 0);
   monumentBase.castShadow = true;
 
-  const monumentSignGeo = new THREE.PlaneGeometry(3.4, 0.85);
-  const monumentSignMat = new THREE.MeshBasicMaterial({ map: createCastleMonumentTexture() });
-  const monumentSign = new THREE.Mesh(monumentSignGeo, monumentSignMat);
-  monumentSign.position.set(4.2, 0.75, 0.25);
-  monumentSign.rotation.x = -0.15;
+  const monumentSignTex = createCastleMonumentTexture();
+  const monumentSignMat = new THREE.MeshStandardMaterial({
+    map: monumentSignTex,
+    emissive: 0xffffff,
+    emissiveMap: monumentSignTex,
+    emissiveIntensity: 0.25,
+    roughness: 0.5,
+  });
+  const monumentStele = new THREE.Mesh(new THREE.BoxGeometry(3.45, 0.88, 0.22), [
+    rampartStoneMat, rampartStoneMat, rampartStoneMat, rampartStoneMat, monumentSignMat, rampartStoneMat,
+  ]);
+  monumentStele.position.set(4.2, 0.88, 0.05);
+  monumentStele.castShadow = true;
 
-  plazaGroup.add(monumentBase, monumentSign);
+  plazaGroup.add(monumentBase, monumentStele);
 
   if (includeLandscaping) {
     // Sculpted Black Pines (*Kuromatsu*) at Front Corners

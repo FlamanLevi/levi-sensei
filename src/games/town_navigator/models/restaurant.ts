@@ -3,6 +3,8 @@ import {
   getStuccoWallTexture,
   getBrickTileTexture,
   addWrapAroundWindows,
+  getTerracottaRoofTexture,
+  getClearShowcaseGlassMaterial,
 } from './wallTextures';
 
 let cachedRestaurantSignTex: THREE.CanvasTexture | null = null;
@@ -195,9 +197,12 @@ export function buildRestaurantMesh(options: RestaurantOptions = {}): THREE.Grou
     roughness: 0.8,
   });
 
+  const clearGlassMat = getClearShowcaseGlassMaterial();
+
   const roofTerracottaMat = new THREE.MeshStandardMaterial({
-    color: 0xc2410c,
-    roughness: 0.6,
+    color: 0xffffff,
+    map: getTerracottaRoofTexture(),
+    roughness: 0.65,
   });
 
   const woodTrimMat = new THREE.MeshStandardMaterial({
@@ -372,11 +377,25 @@ export function buildRestaurantMesh(options: RestaurantOptions = {}): THREE.Grou
   ridgeBeam.position.set(0, bEavesH + bPeakH + 0.06, 0);
   bGroup.add(ridgeBeam);
 
-  // Brick Chimney Stack on Left Roof Slope (<= 5.45m)
+  // Timber Gable Bargeboards along Front Eaves
+  const bargeGeo = new THREE.BoxGeometry(slopeHyp, 0.12, 0.05);
+  const leftBarge = new THREE.Mesh(bargeGeo, woodTrimMat);
+  leftBarge.position.set(-(bW / 4 + roofOverhang / 2), bEavesH + bPeakH / 2 - 0.02, bD / 2 + roofOverhang + 0.01);
+  leftBarge.rotation.z = roofAngle;
+  const rightBarge = new THREE.Mesh(bargeGeo, woodTrimMat);
+  rightBarge.position.set(bW / 4 + roofOverhang / 2, bEavesH + bPeakH / 2 - 0.02, bD / 2 + roofOverhang + 0.01);
+  rightBarge.rotation.z = -roofAngle;
+  bGroup.add(leftBarge, rightBarge);
+
+  // Brick Chimney Stack with Stone Cap & Flue Cowl on Left Roof Slope (<= 5.45m)
   const chimney = new THREE.Mesh(new THREE.BoxGeometry(0.48, 1.35, 0.48), brickMat);
   chimney.position.set(-1.35, bEavesH + 0.85, -0.65);
   chimney.castShadow = true;
-  bGroup.add(chimney);
+  const chimneyCap = new THREE.Mesh(new THREE.BoxGeometry(0.58, 0.08, 0.58), foundationMat);
+  chimneyCap.position.set(-1.35, bEavesH + 1.56, -0.65);
+  const chimneyFlue = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.12, 0.20, 10), woodTrimMat);
+  chimneyFlue.position.set(-1.35, bEavesH + 1.68, -0.65);
+  bGroup.add(chimney, chimneyCap, chimneyFlue);
 
   // 3. WARM BISTRO FABRIC AWNING
   const awningW = 3.2;
@@ -421,6 +440,29 @@ export function buildRestaurantMesh(options: RestaurantOptions = {}): THREE.Grou
   signBoard.castShadow = true;
   bGroup.add(signBoard);
 
+  // Shuttered 2F Bistro Window + Wrought-Iron Flower Box on Upper-Right Stucco Facade
+  const rWinX = 1.42;
+  const rWinY = 2.85;
+  const rWinFrame = new THREE.Mesh(new THREE.BoxGeometry(0.84, 0.84, 0.04), woodTrimMat);
+  rWinFrame.position.set(rWinX, rWinY, bD / 2 + 0.02);
+  const rWinGlass = new THREE.Mesh(new THREE.BoxGeometry(0.76, 0.76, 0.02), glassMat);
+  rWinGlass.position.set(rWinX, rWinY, bD / 2 + 0.036);
+  bGroup.add(rWinFrame, rWinGlass);
+  [-0.54, 0.54].forEach((sx) => {
+    const shutter = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.84, 0.03), awningOrangeMat);
+    shutter.position.set(rWinX + sx, rWinY, bD / 2 + 0.025);
+    bGroup.add(shutter);
+  });
+  const ironBoxMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.5 });
+  const rPlanter = new THREE.Mesh(new THREE.BoxGeometry(0.82, 0.13, 0.15), ironBoxMat);
+  rPlanter.position.set(rWinX, rWinY - 0.46, bD / 2 + 0.08);
+  const rFlowers = new THREE.Mesh(
+    new THREE.BoxGeometry(0.72, 0.09, 0.11),
+    new THREE.MeshStandardMaterial({ color: 0xef4444, roughness: 0.6 })
+  );
+  rFlowers.position.set(rWinX, rWinY - 0.37, bD / 2 + 0.08);
+  bGroup.add(rPlanter, rFlowers);
+
   // 4. ILLUMINATED DINING WINDOW, ENTRANCE DOOR & COACH LANTERNS
   const interiorTex = createBistroInteriorTexture();
   const interiorMat = new THREE.MeshStandardMaterial({
@@ -441,12 +483,16 @@ export function buildRestaurantMesh(options: RestaurantOptions = {}): THREE.Grou
   interiorPlane.position.set(-1.0, winH / 2 + 0.35, bD / 2 + 0.043);
   bGroup.add(interiorPlane);
 
-  const winGlass = new THREE.Mesh(new THREE.BoxGeometry(winW, winH, 0.015), glassMat);
+  const winGlass = new THREE.Mesh(new THREE.BoxGeometry(winW, winH, 0.015), clearGlassMat);
   winGlass.userData.skipWindowEnhance = true;
   winGlass.position.set(-1.0, winH / 2 + 0.35, bD / 2 + 0.054);
   bGroup.add(winGlass);
 
-  // Entrance Door (Right side) + Twin Glowing Coach Lanterns
+  // Stone Stoop + Entrance Door (Right side) + Brass Handle + Twin Glowing Coach Lanterns w/ Iron Cages
+  const doorStoop = new THREE.Mesh(new THREE.BoxGeometry(1.28, 0.07, 0.46), foundationMat);
+  doorStoop.position.set(1.25, 0.035, bD / 2 + 0.23);
+  bGroup.add(doorStoop);
+
   const doorW = 1.05;
   const doorH = 2.15;
   const doorFrame = new THREE.Mesh(new THREE.BoxGeometry(doorW + 0.08, doorH + 0.06, 0.04), woodTrimMat);
@@ -457,27 +503,39 @@ export function buildRestaurantMesh(options: RestaurantOptions = {}): THREE.Grou
   doorLeaf.position.set(1.25, doorH / 2 + 0.03, bD / 2 + 0.035);
   bGroup.add(doorLeaf);
 
-  const porthole = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 0.05, 20), glassMat);
+  const doorHandle = new THREE.Mesh(
+    new THREE.BoxGeometry(0.03, 0.22, 0.05),
+    new THREE.MeshStandardMaterial({ color: 0xfacc15, metalness: 0.75, roughness: 0.25 })
+  );
+  doorHandle.position.set(0.86, 1.05, bD / 2 + 0.07);
+  bGroup.add(doorHandle);
+
+  const porthole = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 0.05, 20), clearGlassMat);
   porthole.rotateX(Math.PI / 2);
   porthole.position.set(1.25, 1.45, bD / 2 + 0.055);
   bGroup.add(porthole);
 
   [0.62, 1.88].forEach((lx) => {
-    const coachLamp = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.22, 0.14), warmLampMat);
-    coachLamp.position.set(lx, 1.75, bD / 2 + 0.08);
-    bGroup.add(coachLamp);
+    const lBracket = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.04, 0.10), ironBoxMat);
+    lBracket.position.set(lx, 1.82, bD / 2 + 0.05);
+    const coachLamp = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.20, 0.12), warmLampMat);
+    coachLamp.position.set(lx, 1.75, bD / 2 + 0.10);
+    const lCap = new THREE.Mesh(new THREE.ConeGeometry(0.11, 0.08, 4), ironBoxMat);
+    lCap.rotation.y = Math.PI / 4;
+    lCap.position.set(lx, 1.88, bD / 2 + 0.10);
+    bGroup.add(lBracket, coachLamp, lCap);
   });
 
-  // Upper Gable Window (Round attic arch window)
-  const atticWin = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.35, 0.04, 24), glassMat);
-  atticWin.rotateX(Math.PI / 2);
-  atticWin.position.set(0, 4.05, bD / 2 + 0.02);
-  bGroup.add(atticWin);
-
-  const atticFrame = new THREE.Mesh(new THREE.CylinderGeometry(0.38, 0.38, 0.05, 24), woodTrimMat);
+  // Upper Gable Window (Round attic arch window - fixed z-fighting)
+  const atticFrame = new THREE.Mesh(new THREE.CylinderGeometry(0.38, 0.38, 0.04, 24), woodTrimMat);
   atticFrame.rotateX(Math.PI / 2);
   atticFrame.position.set(0, 4.05, bD / 2 + 0.015);
   bGroup.add(atticFrame);
+
+  const atticWin = new THREE.Mesh(new THREE.CylinderGeometry(0.33, 0.33, 0.025, 24), clearGlassMat);
+  atticWin.rotateX(Math.PI / 2);
+  atticWin.position.set(0, 4.05, bD / 2 + 0.032);
+  bGroup.add(atticWin);
 
   group.add(bGroup);
 
@@ -522,9 +580,18 @@ export function buildRestaurantMesh(options: RestaurantOptions = {}): THREE.Grou
   sampleGroup.add(sTable);
 
   const caseGeo = new THREE.BoxGeometry(0.72, 0.48, 0.44);
-  const caseGlass = new THREE.Mesh(caseGeo, glassMat);
+  const caseGlass = new THREE.Mesh(caseGeo, clearGlassMat);
   caseGlass.position.y = 0.62 + 0.24;
   sampleGroup.add(caseGlass);
+
+  // Corner mullions on food vitrine
+  [-0.35, 0.35].forEach((mx) => {
+    [-0.21, 0.21].forEach((mz) => {
+      const mull = new THREE.Mesh(new THREE.BoxGeometry(0.025, 0.48, 0.025), woodTrimMat);
+      mull.position.set(mx, 0.86, mz);
+      sampleGroup.add(mull);
+    });
+  });
 
   const caseCap = new THREE.Mesh(new THREE.BoxGeometry(0.76, 0.05, 0.48), woodTrimMat);
   caseCap.position.y = 1.12;
@@ -534,6 +601,7 @@ export function buildRestaurantMesh(options: RestaurantOptions = {}): THREE.Grou
   const foodPastaMat = new THREE.MeshStandardMaterial({ color: 0xea580c, roughness: 0.6 });
   const foodCurryMat = new THREE.MeshStandardMaterial({ color: 0x854d0e, roughness: 0.6 });
   const melonSodaMat = new THREE.MeshStandardMaterial({ color: 0x22c55e, roughness: 0.2 });
+  const cherryMat = new THREE.MeshStandardMaterial({ color: 0xdc2626, roughness: 0.3 });
 
   // Dish 1: Spaghetti Napolitan
   const plate1 = new THREE.Mesh(new THREE.CylinderGeometry(0.085, 0.075, 0.02, 12), plateMat);
@@ -545,18 +613,53 @@ export function buildRestaurantMesh(options: RestaurantOptions = {}): THREE.Grou
   // Dish 2: Japanese Curry Rice
   const plate2 = new THREE.Mesh(new THREE.CylinderGeometry(0.085, 0.075, 0.02, 12), plateMat);
   plate2.position.set(0.04, 0.64, 0);
-  const food2 = new THREE.Mesh(new THREE.SphereGeometry(0.055, 8, 8), foodCurryMat);
-  food2.position.set(0.04, 0.68, 0);
-  sampleGroup.add(plate2, food2);
+  const riceMound = new THREE.Mesh(new THREE.SphereGeometry(0.04, 8, 6), plateMat);
+  riceMound.position.set(0.015, 0.675, 0);
+  const food2 = new THREE.Mesh(new THREE.SphereGeometry(0.048, 8, 8), foodCurryMat);
+  food2.position.set(0.055, 0.675, 0);
+  sampleGroup.add(plate2, riceMound, food2);
 
   // Dish 3: Melon Cream Soda with Vanilla Scoop & Cherry
   const sodaGlass = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.025, 0.14, 10), melonSodaMat);
   sodaGlass.position.set(0.24, 0.70, 0);
   const iceCream = new THREE.Mesh(new THREE.SphereGeometry(0.032, 8, 8), plateMat);
   iceCream.position.set(0.24, 0.78, 0);
-  sampleGroup.add(sodaGlass, iceCream);
+  const cherry = new THREE.Mesh(new THREE.SphereGeometry(0.014, 6, 6), cherryMat);
+  cherry.position.set(0.24, 0.815, 0);
+  sampleGroup.add(sodaGlass, iceCream, cherry);
 
   group.add(sampleGroup);
+
+  // 5c. Sidewalk Café Bistro Table & 2 Chairs (X = +2.15m, Z = 1.25m)
+  const bistroGroup = new THREE.Group();
+  bistroGroup.position.set(2.15, 0.15, 1.25);
+
+  const tableTop = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.32, 0.035, 16), plateMat);
+  tableTop.position.y = 0.68;
+  tableTop.castShadow = true;
+  const tableLeg = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.03, 0.66, 8), ironBoxMat);
+  tableLeg.position.y = 0.33;
+  const tableBase = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.20, 0.03, 12), ironBoxMat);
+  tableBase.position.y = 0.015;
+  bistroGroup.add(tableTop, tableLeg, tableBase);
+
+  [-0.10, 0.10].forEach((cx) => {
+    const cup = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.022, 0.05, 8), plateMat);
+    cup.position.set(cx, 0.72, 0);
+    bistroGroup.add(cup);
+  });
+
+  [-0.44, 0.44].forEach((cx) => {
+    const cSeat = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.14, 0.03, 12), awningOrangeMat);
+    cSeat.position.set(cx, 0.42, 0);
+    const cLeg = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.42, 6), ironBoxMat);
+    cLeg.position.set(cx, 0.21, 0);
+    const cBack = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.32, 0.24), ironBoxMat);
+    cBack.position.set(cx + (cx < 0 ? -0.13 : 0.13), 0.58, 0);
+    bistroGroup.add(cSeat, cLeg, cBack);
+  });
+
+  group.add(bistroGroup);
 
   // 6. BACKYARD PERIMETER & LANDSCAPING
   if (includeLandscaping) {

@@ -195,9 +195,9 @@ export function buildCityHallMesh(options: CityHallOptions = {}): THREE.Group {
   lawn.receiveShadow = true;
   group.add(lawn);
 
-  const plazaGeo = new THREE.BoxGeometry(lotSize, 0.152, 1.5);
+  const plazaGeo = new THREE.BoxGeometry(lotSize, 0.152, 2.4);
   const plaza = new THREE.Mesh(plazaGeo, foundationMat);
-  plaza.position.set(0, 0.076, 3.75);
+  plaza.position.set(0, 0.076, 3.3);
   plaza.receiveShadow = true;
   group.add(plaza);
 
@@ -285,7 +285,7 @@ export function buildCityHallMesh(options: CityHallOptions = {}): THREE.Group {
 
       const frame = new THREE.Mesh(new THREE.BoxGeometry(1.08, 1.42, 0.05), stoneDarkMat);
       frame.position.set(wx, wy, bD / 2 + 0.015);
-      const win = new THREE.Mesh(new THREE.BoxGeometry(1.0, 1.35, 0.06), glassMat);
+      const win = new THREE.Mesh(new THREE.BoxGeometry(1.0, 1.35, 0.05), glassMat);
       win.position.set(wx, wy, bD / 2 + 0.03);
       hallGroup.add(frame, win);
     }
@@ -305,12 +305,21 @@ export function buildCityHallMesh(options: CityHallOptions = {}): THREE.Group {
   towerCornice.position.set(0, towerH + 0.11, 0);
   hallGroup.add(towerCornice);
 
-  // Verdigris Copper Dome Roof + 5 PM Municipal Broadcast Speaker Horns
+  // Verdigris Copper Dome Roof + Standing Ribs + 5 PM Municipal Broadcast Speaker Horns
   const domeMat = new THREE.MeshStandardMaterial({ color: 0x0d9488, roughness: 0.45 });
   const domeRoof = new THREE.Mesh(new THREE.ConeGeometry(1.5, 0.95, 16), domeMat);
   domeRoof.position.set(0, towerH + 0.68, 0);
   domeRoof.castShadow = true;
   hallGroup.add(domeRoof);
+
+  for (let r = 0; r < 8; r++) {
+    const rib = new THREE.Mesh(new THREE.BoxGeometry(0.05, 1.0, 0.05), darkMetalMat);
+    const a = (r * Math.PI) / 4;
+    rib.position.set(Math.cos(a) * 0.72, towerH + 0.68, Math.sin(a) * 0.72);
+    rib.rotation.y = -a;
+    rib.rotation.z = 0.72;
+    hallGroup.add(rib);
+  }
 
   const spire = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.03, 0.45, 8), goldMat);
   spire.position.set(0, towerH + 1.25, 0);
@@ -324,7 +333,7 @@ export function buildCityHallMesh(options: CityHallOptions = {}): THREE.Group {
     hallGroup.add(horn);
   });
 
-  // Illuminated Clock Faces on Front & Back of Tower
+  // Illuminated Clock Faces on ALL 4 SIDES (Front, Back, East, West)
   const clockTexture = createTowerClockTexture();
   const clockMat = new THREE.MeshStandardMaterial({
     map: clockTexture,
@@ -341,10 +350,18 @@ export function buildCityHallMesh(options: CityHallOptions = {}): THREE.Group {
     clockMesh.position.set(0, 9.5, cz);
     hallGroup.add(clockMesh);
   });
+  [-towerW / 2 - 0.02, towerW / 2 + 0.02].forEach((cx) => {
+    const clockMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.62, 0.62, 0.06, 24), [
+      darkMetalMat, clockMat, clockMat
+    ]);
+    clockMesh.rotateZ(Math.PI / 2);
+    clockMesh.position.set(cx, 9.5, 0);
+    hallGroup.add(clockMesh);
+  });
 
-  // 4. GRAND 4-COLUMN CLASSICAL PORTICO & EXTRUDED PEDIMENT (detail2)
+  // 4. GRAND 4-COLUMN CLASSICAL PORTICO & EXTRUDED PEDIMENT (Tightened depth so steps stay inside z<=4.45m)
   const porticoW = 3.8;
-  const porticoD = 1.6;
+  const porticoD = 1.25;
   const porticoH = 4.6;
 
   const architrave = new THREE.Mesh(new THREE.BoxGeometry(porticoW + 0.2, 0.32, porticoD + 0.2), stoneDarkMat);
@@ -383,17 +400,25 @@ export function buildCityHallMesh(options: CityHallOptions = {}): THREE.Group {
   });
 
   for (let s = 0; s < 3; s++) {
-    const step = new THREE.Mesh(new THREE.BoxGeometry(porticoW + 0.4 - s * 0.2, 0.12, porticoD + 0.6 - s * 0.2), stoneDarkMat);
+    const step = new THREE.Mesh(new THREE.BoxGeometry(porticoW + 0.4 - s * 0.2, 0.12, porticoD + 0.45 - s * 0.2), stoneDarkMat);
     step.position.set(0, (s + 0.5) * 0.12, bD / 2 + porticoD / 2 + (2 - s) * 0.1);
     step.receiveShadow = true;
     hallGroup.add(step);
   }
 
-  const doors = new THREE.Mesh(new THREE.BoxGeometry(2.0, 2.6, 0.06), glassMat);
+  // Wheelchair Accessibility Ramp alongside right of steps
+  const ramp = new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.12, 1.6), stoneDarkMat);
+  ramp.position.set(2.55, 0.18, bD / 2 + 0.75);
+  ramp.rotation.x = 0.22;
+  const rampRail = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.65, 1.6), metalPoleMat);
+  rampRail.position.set(3.08, 0.52, bD / 2 + 0.75);
+  hallGroup.add(ramp, rampRail);
+
+  const doors = new THREE.Mesh(new THREE.BoxGeometry(2.0, 2.6, 0.05), glassMat);
   doors.position.set(0, 1.6, bD / 2 + 0.04);
   hallGroup.add(doors);
 
-  // Prominent Header Signboard: "CITY HALL / 市役所"
+  // Prominent Header Signboard: "CITY HALL / 市役所" mounted cleanly on Cornice (clear of pediment & 3F windows!)
   const signTexture = createCityHallSignTexture();
   const signMat = new THREE.MeshStandardMaterial({
     map: signTexture,
@@ -402,15 +427,15 @@ export function buildCityHallMesh(options: CityHallOptions = {}): THREE.Group {
     emissiveIntensity: 0.35,
     roughness: 0.4,
   });
-  const signMesh = new THREE.Mesh(new THREE.BoxGeometry(4.8, 0.85, 0.12), [
+  const signMesh = new THREE.Mesh(new THREE.BoxGeometry(4.8, 0.85, 0.14), [
     darkMetalMat, darkMetalMat, darkMetalMat, darkMetalMat, signMat, darkMetalMat
   ]);
-  signMesh.position.set(0, 6.2, bD / 2 + 0.12);
+  signMesh.position.set(0, bH + 0.3, bD / 2 + 0.16);
   hallGroup.add(signMesh);
 
   group.add(hallGroup);
 
-  // 5. CIVIC PLAZA PROPS (Flagpoles & Municipal Notice Board at Z <= 4.2m)
+  // 5. CIVIC PLAZA PROPS (Flagpoles, Municipal Notice Board & Stone Planters at Z <= 4.2m)
   [-3.8, 3.8].forEach(fx => {
     const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.05, 6.5, 12), metalPoleMat);
     pole.position.set(fx, 3.25 + 0.15, 3.8);
@@ -423,6 +448,16 @@ export function buildCityHallMesh(options: CityHallOptions = {}): THREE.Group {
     );
     flag.position.set(fx + (fx < 0 ? -0.45 : 0.45), 6.0 + 0.15, 3.8);
     group.add(flag);
+  });
+
+  // Stone Planter Boxes & Plaza Bench
+  const hedgeMat = new THREE.MeshStandardMaterial({ color: 0x15803d, roughness: 0.9 });
+  [-4.9, 4.9].forEach((px) => {
+    const planter = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.28, 0.7), stoneDarkMat);
+    planter.position.set(px, 0.29, 3.9);
+    const hedge = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.34, 0.5), hedgeMat);
+    hedge.position.set(px, 0.58, 3.9);
+    group.add(planter, hedge);
   });
 
   // Municipal Notice Bulletin Board (市役所掲示板 at X = -2.6m, Z = 3.95m)

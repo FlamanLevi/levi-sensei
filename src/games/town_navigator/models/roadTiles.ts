@@ -1,5 +1,9 @@
 import * as THREE from 'three';
-import { getAsphaltRoadTexture } from './wallTextures';
+import {
+  getAsphaltRoadTexture,
+  getBoulevardPaverTexture,
+  getTactilePavingTexture,
+} from './wallTextures';
 
 export type RoadTileType = 
   | 'STRAIGHT_Z' 
@@ -29,6 +33,74 @@ let cachedRoadSidewalkTex: THREE.CanvasTexture | null = null;
 let cachedManholeTex: THREE.CanvasTexture | null = null;
 let cachedStreetBannerTex: THREE.CanvasTexture | null = null;
 let cachedPushButtonTex: THREE.CanvasTexture | null = null;
+let cachedRoadStencilTex: THREE.CanvasTexture | null = null;
+
+function getRoadStencilAtlasTexture(): THREE.CanvasTexture | null {
+  if (cachedRoadStencilTex) return cachedRoadStencilTex;
+  if (typeof document === 'undefined') return null;
+  const canvas = document.createElement('canvas');
+  canvas.width = 512;
+  canvas.height = 256;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return null;
+
+  ctx.clearRect(0, 0, 512, 256);
+
+  // Q1 (0,0)-(256,128): Straight Lane Arrow (↑)
+  ctx.fillStyle = '#f8fafc';
+  ctx.beginPath();
+  ctx.moveTo(128, 16);
+  ctx.lineTo(174, 64);
+  ctx.lineTo(146, 64);
+  ctx.lineTo(146, 114);
+  ctx.lineTo(110, 114);
+  ctx.lineTo(110, 64);
+  ctx.lineTo(82, 64);
+  ctx.closePath();
+  ctx.fill();
+
+  // Q2 (256,0)-(512,128): Japanese "止まれ" (STOP) road stencil
+  ctx.fillStyle = '#f8fafc';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.font = '900 54px "BIZ UDPGothic", "UD Digi Kyokasho NP-R", sans-serif';
+  ctx.fillText('止まれ', 384, 66);
+
+  // Q3 (0,128)-(256,256): Blue Bicycle Lane Sharrow Chevron
+  ctx.fillStyle = 'rgba(2, 132, 199, 0.86)';
+  ctx.fillRect(18, 138, 220, 108);
+  ctx.strokeStyle = '#ffffff';
+  ctx.lineWidth = 6;
+  ctx.strokeRect(24, 144, 208, 96);
+  // Chevron + bike wheels
+  ctx.beginPath();
+  ctx.moveTo(86, 178);
+  ctx.lineTo(128, 156);
+  ctx.lineTo(170, 178);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(104, 214, 14, 0, Math.PI * 2);
+  ctx.arc(152, 214, 14, 0, Math.PI * 2);
+  ctx.stroke();
+
+  // Q4 (256,128)-(512,256): "30" Zone Speed Stencil
+  ctx.strokeStyle = '#f8fafc';
+  ctx.lineWidth = 8;
+  ctx.beginPath();
+  ctx.arc(384, 192, 46, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.fillStyle = '#f8fafc';
+  ctx.font = '900 48px sans-serif';
+  ctx.fillText('30', 384, 194);
+
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.anisotropy = 4;
+  tex.userData.isSharedResource = true;
+  tex.userData.isArchitecturalTex = true;
+  cachedRoadStencilTex = tex;
+  return tex;
+}
 
 function getRoadSidewalkPaverTexture(): THREE.CanvasTexture | null {
   if (cachedRoadSidewalkTex) return cachedRoadSidewalkTex;
@@ -288,14 +360,23 @@ let roadResourcesReady = false;
 let asphaltMat!: THREE.MeshStandardMaterial;
 let curbMat!: THREE.MeshStandardMaterial;
 let sidewalkMat!: THREE.MeshStandardMaterial;
+let boulevardSidewalkMat!: THREE.MeshStandardMaterial;
 let whiteStripeMat!: THREE.MeshStandardMaterial;
 let tactileYellowMat!: THREE.MeshStandardMaterial;
+let roadStencilMat!: THREE.MeshStandardMaterial;
 let grateDarkMat!: THREE.MeshStandardMaterial;
 let manholeMat!: THREE.MeshStandardMaterial;
 let medianTurfMat!: THREE.MeshStandardMaterial;
 let medianHedgeMat!: THREE.MeshStandardMaterial;
+let medianFlowerPinkMat!: THREE.MeshStandardMaterial;
+let medianFlowerGoldMat!: THREE.MeshStandardMaterial;
 let medianTreeTrunkMat!: THREE.MeshStandardMaterial;
 let medianTreeLeafMat!: THREE.MeshStandardMaterial;
+let medianGinkgoMat!: THREE.MeshStandardMaterial;
+let medianSakuraMat!: THREE.MeshStandardMaterial;
+let hazardYellowMat!: THREE.MeshStandardMaterial;
+let backplateWhiteMat!: THREE.MeshStandardMaterial;
+let bronzePoleMat!: THREE.MeshStandardMaterial;
 
 // Streetlight & Traffic Signal materials
 let poleMat!: THREE.MeshStandardMaterial;
@@ -533,8 +614,23 @@ function ensureRoadResources(): void {
     map: getRoadSidewalkPaverTexture(),
     roughness: 0.78,
   });
+  boulevardSidewalkMat = new THREE.MeshStandardMaterial({
+    color: 0xffffff,
+    map: getBoulevardPaverTexture(),
+    roughness: 0.76,
+  });
   whiteStripeMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.4 });
-  tactileYellowMat = new THREE.MeshStandardMaterial({ color: 0xfacc15, roughness: 0.55 });
+  tactileYellowMat = new THREE.MeshStandardMaterial({
+    color: 0xffffff,
+    map: getTactilePavingTexture(),
+    roughness: 0.55,
+  });
+  roadStencilMat = new THREE.MeshStandardMaterial({
+    map: getRoadStencilAtlasTexture(),
+    alphaTest: 0.5,
+    transparent: false,
+    roughness: 0.65,
+  });
   grateDarkMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.7, roughness: 0.4 });
   manholeMat = new THREE.MeshStandardMaterial({
     map: getManholeTexture(),
@@ -543,10 +639,17 @@ function ensureRoadResources(): void {
     roughness: 0.5,
     metalness: 0.6,
   });
-  medianTurfMat = new THREE.MeshStandardMaterial({ color: 0x22c55e, roughness: 0.85 });
+  medianTurfMat = new THREE.MeshStandardMaterial({ color: 0x4d7c0f, roughness: 0.88 });
   medianHedgeMat = new THREE.MeshStandardMaterial({ color: 0x15803d, roughness: 0.9 });
+  medianFlowerPinkMat = new THREE.MeshStandardMaterial({ color: 0xf472b6, roughness: 0.75 });
+  medianFlowerGoldMat = new THREE.MeshStandardMaterial({ color: 0xfacc15, roughness: 0.75 });
   medianTreeTrunkMat = new THREE.MeshStandardMaterial({ color: 0x5c3a21, roughness: 0.9 });
   medianTreeLeafMat = new THREE.MeshStandardMaterial({ color: 0x22c55e, roughness: 0.85 });
+  medianGinkgoMat = new THREE.MeshStandardMaterial({ color: 0xeab308, roughness: 0.8 });
+  medianSakuraMat = new THREE.MeshStandardMaterial({ color: 0xf9a8d4, roughness: 0.78 });
+  hazardYellowMat = new THREE.MeshStandardMaterial({ color: 0xfacc15, roughness: 0.45 });
+  backplateWhiteMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.45 });
+  bronzePoleMat = new THREE.MeshStandardMaterial({ color: 0x292524, roughness: 0.42, metalness: 0.62 });
 
   poleMat = new THREE.MeshStandardMaterial({ color: 0x64748b, roughness: 0.45, metalness: 0.65 });
   castIronMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.5, metalness: 0.5 });
@@ -620,9 +723,10 @@ function ensureRoadResources(): void {
 
   // Protect all module-level shared road materials from disposal on town regeneration
   const allSharedRoadMats: THREE.Material[] = [
-    asphaltMat, curbMat, sidewalkMat, whiteStripeMat, tactileYellowMat,
-    grateDarkMat, manholeMat, medianTurfMat, medianHedgeMat,
-    medianTreeTrunkMat, medianTreeLeafMat,
+    asphaltMat, curbMat, sidewalkMat, boulevardSidewalkMat, whiteStripeMat, tactileYellowMat, roadStencilMat,
+    grateDarkMat, manholeMat, medianTurfMat, medianHedgeMat, medianFlowerPinkMat, medianFlowerGoldMat,
+    medianTreeTrunkMat, medianTreeLeafMat, medianGinkgoMat, medianSakuraMat,
+    hazardYellowMat, backplateWhiteMat, bronzePoleMat,
     poleMat, castIronMat, controllerBoxMat, housingMat, speakerWhiteMat,
     yellowBoxMat, pushButtonFaceMat, intersectionPlateMat, streetBannerMat,
     lampGlowMat, lightPoolMat,
@@ -645,6 +749,7 @@ function ensureRoadResources(): void {
   });
   lightPoolMat.userData.batchGlobal = true;
   manholeMat.userData.batchGlobal = true;
+  roadStencilMat.userData.batchGlobal = true;
 
   updateTrafficSignals(0);
 }
@@ -760,64 +865,138 @@ export function setStreetlightLevel(level: number): void {
   lightPoolMat.visible = l > 0.01;
 }
 
+function createRoadStencilDecal(
+  slot: 'ARROW' | 'TOMARE' | 'BIKE' | 'SPEED30',
+  w: number,
+  h: number
+): THREE.Mesh {
+  const geo = new THREE.PlaneGeometry(w, h);
+  const uv = geo.attributes.uv;
+  let u0 = 0;
+  let u1 = 0.5;
+  let v0 = 0.5;
+  let v1 = 1.0;
+  if (slot === 'TOMARE') {
+    u0 = 0.5; u1 = 1.0; v0 = 0.5; v1 = 1.0;
+  } else if (slot === 'BIKE') {
+    u0 = 0.0; u1 = 0.5; v0 = 0.0; v1 = 0.5;
+  } else if (slot === 'SPEED30') {
+    u0 = 0.5; u1 = 1.0; v0 = 0.0; v1 = 0.5;
+  }
+  for (let i = 0; i < uv.count; i++) {
+    const u = uv.getX(i);
+    const v = uv.getY(i);
+    uv.setXY(i, u0 + u * (u1 - u0), v0 + v * (v1 - v0));
+  }
+  uv.needsUpdate = true;
+  const mesh = new THREE.Mesh(geo, roadStencilMat);
+  mesh.rotation.x = -Math.PI / 2;
+  return mesh;
+}
+
 /**
- * Builds an authentic Japanese Shopping-Avenue Curved Lamppost (*Gaitō*)
- * with fluted cast-iron base, arched neck, scroll brace, and vertical street banner (*Gaitō Furaggu*).
+ * Builds an authentic Japanese Streetlight (*Gaitō*)
+ * - 'BOULEVARD': Ornate dark-bronze twin-arm Avenue Lamppost with globe lanterns, dual banners, and optional flower baskets.
+ * - 'SIDE_STREET': Clean galvanized silver municipal LED cobra-head streetlight.
  */
-function buildStreetlight(facingDirection: 'EAST' | 'WEST' | 'NORTH' | 'SOUTH' = 'EAST'): THREE.Group {
+function buildStreetlight(
+  facingDirection: 'EAST' | 'WEST' | 'NORTH' | 'SOUTH' = 'EAST',
+  variant: 'SIDE_STREET' | 'BOULEVARD' = 'SIDE_STREET',
+  lowPower = false
+): THREE.Group {
   const lightGroup = new THREE.Group();
   lightGroup.name = 'Streetlight';
 
-  // Stepped Fluted Cast-Iron Base Plinth & Decorative Collar
-  const basePlinth = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.22, 0.35, 10), castIronMat);
-  basePlinth.position.y = 0.175;
-  const baseCollar = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.14, 0.25, 10), castIronMat);
-  baseCollar.position.y = 0.45;
-  lightGroup.add(basePlinth, baseCollar);
+  if (variant === 'BOULEVARD') {
+    // Stepped Fluted Dark-Bronze Base Plinth & Collar
+    const basePlinth = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.23, 0.38, 10), bronzePoleMat);
+    basePlinth.position.y = 0.19;
+    const baseCollar = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.15, 0.26, 10), bronzePoleMat);
+    baseCollar.position.y = 0.48;
+    lightGroup.add(basePlinth, baseCollar);
 
-  // Main Vertical Pole (4.2m)
-  const poleGeo = new THREE.CylinderGeometry(0.055, 0.085, 4.1, 10);
-  const pole = new THREE.Mesh(poleGeo, poleMat);
-  pole.position.y = 2.25;
-  pole.castShadow = false;
-  lightGroup.add(pole);
+    // Tapered Bronze Pole (4.5m)
+    const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.058, 0.09, 4.4, 10), bronzePoleMat);
+    pole.position.y = 2.4;
+    lightGroup.add(pole);
 
-  // Decorative Mid-Pole Ring & Vertical Town Avenue Banner Flag (*Gaitō Furaggu*)
-  const midRing = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.08, 10), castIronMat);
-  midRing.position.y = 3.15;
-  const bannerArmTop = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.38, 6), castIronMat);
-  bannerArmTop.rotation.z = Math.PI / 2;
-  bannerArmTop.position.set(0.20, 3.05, 0);
-  const bannerArmBot = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.38, 6), castIronMat);
-  bannerArmBot.rotation.z = Math.PI / 2;
-  bannerArmBot.position.set(0.20, 2.35, 0);
-  const bannerFlag = new THREE.Mesh(new THREE.PlaneGeometry(0.32, 0.68), streetBannerMat);
-  bannerFlag.position.set(0.22, 2.70, 0);
-  lightGroup.add(midRing, bannerArmTop, bannerArmBot, bannerFlag);
+    // Mid-Pole Ring + Dual Seasonal Town Avenue Banner Flags (*Gaitō Furaggu*)
+    const midRing = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.09, 0.09, 10), castIronMat);
+    midRing.position.y = 3.25;
+    lightGroup.add(midRing);
 
-  // Arched Gooseneck Cantilever Arm + Diagonal Scroll Brace
-  const armGeo = new THREE.BoxGeometry(0.88, 0.055, 0.055);
-  const arm = new THREE.Mesh(armGeo, poleMat);
-  arm.position.set(0.38, 4.28, 0);
-  arm.rotation.z = -0.10;
-  const scrollBrace = new THREE.Mesh(new THREE.BoxGeometry(0.52, 0.035, 0.035), castIronMat);
-  scrollBrace.position.set(0.22, 4.02, 0);
-  scrollBrace.rotation.z = 0.55;
-  lightGroup.add(arm, scrollBrace);
+    [-1, 1].forEach((side) => {
+      const bTop = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.36, 6), bronzePoleMat);
+      bTop.rotation.z = Math.PI / 2;
+      bTop.position.set(side * 0.21, 3.15, 0);
+      const bBot = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.36, 6), bronzePoleMat);
+      bBot.rotation.z = Math.PI / 2;
+      bBot.position.set(side * 0.21, 2.45, 0);
+      const flag = new THREE.Mesh(new THREE.PlaneGeometry(0.30, 0.66), streetBannerMat);
+      flag.position.set(side * 0.23, 2.80, 0);
+      lightGroup.add(bTop, bBot, flag);
+    });
 
-  // Aerodynamic Lamp Luminaire Fixture Housing & Glowing Lens Globe
-  const fixtureGeo = new THREE.BoxGeometry(0.58, 0.12, 0.28);
-  const fixture = new THREE.Mesh(fixtureGeo, housingMat);
-  fixture.position.set(0.76, 4.30, 0);
-  lightGroup.add(fixture);
+    // Symmetrical Twin Swan-Neck Arms (projecting over road and sidewalk)
+    [-1, 1].forEach((side) => {
+      const arm = new THREE.Mesh(new THREE.BoxGeometry(0.76, 0.05, 0.05), bronzePoleMat);
+      arm.position.set(side * 0.34, 4.52, 0);
+      arm.rotation.z = side * -0.14;
+      const brace = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.03, 0.03), castIronMat);
+      brace.position.set(side * 0.19, 4.26, 0);
+      brace.rotation.z = side * 0.58;
 
-  const lensGeo = new THREE.BoxGeometry(0.50, 0.06, 0.22);
-  const lens = new THREE.Mesh(lensGeo, lampGlowMat);
-  lens.position.set(0.76, 4.22, 0);
-  lightGroup.add(lens);
+      // Frosted Globe Lantern with Dark Cap Hood
+      const cap = new THREE.Mesh(new THREE.ConeGeometry(0.20, 0.12, 10), bronzePoleMat);
+      cap.position.set(side * 0.68, 4.55, 0);
+      const globe = new THREE.Mesh(new THREE.SphereGeometry(0.14, 10, 8), lampGlowMat);
+      globe.position.set(side * 0.68, 4.38, 0);
+      lightGroup.add(arm, brace, cap, globe);
+    });
+
+    // Optional Hanging Flower Basket on Road Side
+    if (!lowPower) {
+      const basketPot = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.09, 0.14, 8), bronzePoleMat);
+      basketPot.position.set(0.32, 3.65, 0);
+      const basketFlowers = new THREE.Mesh(new THREE.DodecahedronGeometry(0.16, 0), medianFlowerPinkMat);
+      basketFlowers.scale.set(1.1, 0.65, 1.1);
+      basketFlowers.position.set(0.32, 3.74, 0);
+      lightGroup.add(basketPot, basketFlowers);
+    }
+
+    // Top Finial Cap
+    const finial = new THREE.Mesh(new THREE.SphereGeometry(0.075, 8, 6), castIronMat);
+    finial.position.y = 4.65;
+    lightGroup.add(finial);
+  } else {
+    // SIDE_STREET: Galvanized Municipal LED Cobra-Head Streetlight
+    const flange = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.17, 0.16, 10), castIronMat);
+    flange.position.y = 0.08;
+    const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.052, 0.082, 4.1, 10), poleMat);
+    pole.position.y = 2.13;
+    const hatch = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.22, 0.03), housingMat);
+    hatch.position.set(0, 0.72, 0.07);
+    lightGroup.add(flange, pole, hatch);
+
+    // Angled Cantilever Arm + Gusset Strut
+    const arm = new THREE.Mesh(new THREE.BoxGeometry(0.84, 0.05, 0.05), poleMat);
+    arm.position.set(0.38, 4.22, 0);
+    arm.rotation.z = 0.10;
+    const strut = new THREE.Mesh(new THREE.BoxGeometry(0.46, 0.03, 0.03), poleMat);
+    strut.position.set(0.20, 3.98, 0);
+    strut.rotation.z = 0.56;
+    lightGroup.add(arm, strut);
+
+    // Sleek Cobra-Head LED Fixture & Diffused Lens
+    const fixture = new THREE.Mesh(new THREE.BoxGeometry(0.54, 0.10, 0.24), housingMat);
+    fixture.position.set(0.76, 4.28, 0);
+    const lens = new THREE.Mesh(new THREE.BoxGeometry(0.46, 0.045, 0.18), lampGlowMat);
+    lens.position.set(0.76, 4.21, 0);
+    lightGroup.add(fixture, lens);
+  }
 
   // Warm Ground Light Pool on Pavement (Zero GPU light-loop cost!)
-  const poolGeo = new THREE.CircleGeometry(2.1, 16);
+  const poolGeo = new THREE.CircleGeometry(variant === 'BOULEVARD' ? 2.4 : 2.0, 14);
   const pool = new THREE.Mesh(poolGeo, lightPoolMat);
   pool.rotation.x = -Math.PI / 2;
   pool.position.set(0.85, -0.08, 0);
@@ -842,16 +1021,23 @@ function createVehicularHead(
   greenMat: THREE.Material,
   yellowMat: THREE.Material,
   redMat: THREE.Material,
-  plateMat: THREE.Material = intersectionPlateMat
+  plateMat: THREE.Material = intersectionPlateMat,
+  includeRightArrow = false
 ): THREE.Group {
   const head = new THREE.Group();
+
+  // Reflective White-Bordered Backplate for crisp sky/daytime contrast
+  const backplate = new THREE.Mesh(new THREE.BoxGeometry(1.02, 0.42, 0.03), backplateWhiteMat);
+  backplate.position.set(0, 0, -0.07);
+  head.add(backplate);
+
   const housingGeo = new THREE.BoxGeometry(0.92, 0.34, 0.16);
   const housing = new THREE.Mesh(housingGeo, housingMat);
   head.add(housing);
 
   const lensRadius = 0.098;
   // Cylinder thickness 0.08m shifted forward to z = +0.055 so it never pokes out the back (-Z) of the housing!
-  const lensGeo = new THREE.CylinderGeometry(lensRadius, lensRadius, 0.08, 14);
+  const lensGeo = new THREE.CylinderGeometry(lensRadius, lensRadius, 0.08, 12);
   lensGeo.rotateX(Math.PI / 2);
 
   // Curved top sun visor hood (*Hisashi*) over each lens
@@ -859,7 +1045,7 @@ function createVehicularHead(
     lensRadius + 0.015,
     lensRadius + 0.015,
     0.14,
-    12,
+    10,
     1,
     true,
     -Math.PI / 2,
@@ -881,12 +1067,29 @@ function createVehicularHead(
     head.add(lens, hood);
   });
 
-  // Bilingual Intersection Nameplate (*Kōsaten Meishō-ban*) mounted above the signal head
+  // 4th Auxiliary Right-Turn / Straight Arrow Signal Housing (Central Boulevard Crossroads)
+  if (includeRightArrow) {
+    const auxBox = new THREE.Mesh(new THREE.BoxGeometry(0.30, 0.26, 0.15), housingMat);
+    auxBox.position.set(0.28, -0.32, 0);
+    const auxLens = new THREE.Mesh(lensGeo, greenMat);
+    auxLens.scale.set(0.85, 0.85, 1);
+    auxLens.position.set(0.28, -0.32, 0.055);
+    const auxHood = new THREE.Mesh(hoodGeo, housingMat);
+    auxHood.scale.set(0.85, 0.85, 1);
+    auxHood.position.set(0.28, -0.31, 0.125);
+    head.add(auxBox, auxLens, auxHood);
+  }
+
+  // Bilingual Intersection Nameplate (*Kōsaten Meishō-ban*) with brushed aluminum rear housing
   const nameplate = new THREE.Mesh(new THREE.BoxGeometry(0.76, 0.20, 0.04), [
-    housingMat, housingMat, housingMat, housingMat, plateMat, housingMat,
+    housingMat, housingMat, housingMat, housingMat, plateMat, controllerBoxMat,
   ]);
   nameplate.position.set(0, 0.29, 0.02);
-  head.add(nameplate);
+  const bracketL = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.10, 0.04), poleMat);
+  bracketL.position.set(-0.24, 0.19, 0);
+  const bracketR = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.10, 0.04), poleMat);
+  bracketR.position.set(0.24, 0.19, 0);
+  head.add(nameplate, bracketL, bracketR);
 
   return head;
 }
@@ -941,7 +1144,8 @@ function createPedestrianBox(displayMat: THREE.Material): THREE.Group {
  */
 function buildCornerTrafficSignal(
   corner: 'NW' | 'NE' | 'SE' | 'SW',
-  plateMat: THREE.Material = intersectionPlateMat
+  plateMat: THREE.Material = intersectionPlateMat,
+  isBoulevardCenter = false
 ): THREE.Group {
   const group = new THREE.Group();
   group.name = `TrafficSignal_${corner}`;
@@ -958,10 +1162,24 @@ function buildCornerTrafficSignal(
   pole.castShadow = false;
   group.add(pole);
 
-  // Grey Traffic Signal Controller Box (*Seigyoki*) lowered to base of pole (y = 0.50m)
+  // Yellow-Black Reflective Hazard Bands on lower pole (y = 0.90m - 1.38m)
+  [0.92, 1.12, 1.32].forEach((hy, idx) => {
+    const band = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.098, 0.098, 0.10, 10),
+      idx % 2 === 0 ? hazardYellowMat : housingMat
+    );
+    band.position.y = hy;
+    group.add(band);
+  });
+
+  // Grey Traffic Signal Controller Box (*Seigyoki*) with concrete plinth & louver ribs
+  const ctrlPlinth = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.08, 0.20), curbMat);
+  ctrlPlinth.position.set(0, 0.22, -0.12);
   const ctrlBox = new THREE.Mesh(new THREE.BoxGeometry(0.20, 0.48, 0.16), controllerBoxMat);
   ctrlBox.position.set(0, 0.50, -0.12);
-  group.add(ctrlBox);
+  const ctrlLouver = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.10, 0.02), housingMat);
+  ctrlLouver.position.set(0, 0.36, -0.205);
+  group.add(ctrlPlinth, ctrlBox, ctrlLouver);
 
   const addArmAndHead = (
     dx: number,
@@ -971,20 +1189,22 @@ function buildCornerTrafficSignal(
     yMat: THREE.Material,
     rMat: THREE.Material
   ) => {
-    const armLen = 1.18;
+    const armLen = isBoulevardCenter ? 1.32 : 1.18;
     const isX = Math.abs(dx) > 0.5;
     const armGeo = isX ? new THREE.BoxGeometry(armLen, 0.055, 0.055) : new THREE.BoxGeometry(0.055, 0.055, armLen);
     const arm = new THREE.Mesh(armGeo, poleMat);
     // Vehicular signal mast lowered from y = 4.20m to y = 3.35m (world y = 3.50m)
     arm.position.set(dx * (armLen / 2), 3.35, dz * (armLen / 2));
 
-    // Upper support tie-bar bracket
+    // Mast-Arm Clamp Collar + Upper support tie-bar bracket
+    const collar = new THREE.Mesh(new THREE.CylinderGeometry(0.10, 0.10, 0.10, 10), castIronMat);
+    collar.position.set(0, 3.35, 0);
     const braceGeo = isX ? new THREE.BoxGeometry(armLen * 0.65, 0.035, 0.035) : new THREE.BoxGeometry(0.035, 0.035, armLen * 0.65);
     const brace = new THREE.Mesh(braceGeo, poleMat);
     brace.position.set(dx * (armLen * 0.32), 3.50, dz * (armLen * 0.32));
-    group.add(arm, brace);
+    group.add(arm, collar, brace);
 
-    const head = createVehicularHead(gMat, yMat, rMat, plateMat);
+    const head = createVehicularHead(gMat, yMat, rMat, plateMat, isBoulevardCenter);
     head.position.set(dx * armLen, 3.35, dz * armLen);
     head.rotation.y = facingAngleY;
     group.add(head);
@@ -1072,18 +1292,58 @@ export interface RoadTileOptions {
   boulevardPart?: 'NW' | 'NE' | 'SW' | 'SE' | 'W' | 'E' | 'N' | 'S';
   /** Add boulevard median shade tree on alternating straight boulevard tiles */
   includeMedianTree?: boolean;
+  /** Low-power hardware mode to skip optional micro-decorations */
+  lowPower?: boolean;
 }
 
-function buildBoulevardMedianTree(): THREE.Group {
+function buildBoulevardMedianTree(
+  species: 'GINKGO' | 'SAKURA' | 'ZELKOVA' = 'ZELKOVA',
+  lowPower = false
+): THREE.Group {
   const tree = new THREE.Group();
-  const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.12, 2.3, 7), medianTreeTrunkMat);
-  trunk.position.y = 1.3;
-  const c1 = new THREE.Mesh(new THREE.DodecahedronGeometry(0.85, 1), medianTreeLeafMat);
-  c1.position.set(0, 2.85, 0);
-  c1.scale.set(1.0, 1.15, 1.0);
-  const c2 = new THREE.Mesh(new THREE.DodecahedronGeometry(0.62, 1), medianTreeLeafMat);
-  c2.position.set(0.22, 3.55, -0.14);
-  tree.add(trunk, c1, c2);
+  // Cast-iron square tree grate at planter bed level
+  const grate = new THREE.Mesh(new THREE.BoxGeometry(0.56, 0.02, 0.56), castIronMat);
+  grate.position.y = 0.205;
+  tree.add(grate);
+
+  const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.13, 2.35, 7), medianTreeTrunkMat);
+  trunk.position.y = 1.32;
+  tree.add(trunk);
+
+  // Two angled structural limbs
+  const limbA = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.055, 0.9, 6), medianTreeTrunkMat);
+  limbA.position.set(0.24, 2.45, 0.12);
+  limbA.rotation.z = -0.58;
+  limbA.rotation.x = 0.25;
+  const limbB = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.055, 0.85, 6), medianTreeTrunkMat);
+  limbB.position.set(-0.22, 2.55, -0.14);
+  limbB.rotation.z = 0.55;
+  limbB.rotation.x = -0.22;
+  tree.add(limbA, limbB);
+
+  const leafMat =
+    species === 'GINKGO'
+      ? medianGinkgoMat
+      : species === 'SAKURA'
+        ? medianSakuraMat
+        : medianTreeLeafMat;
+
+  const crownMain = new THREE.Mesh(new THREE.DodecahedronGeometry(0.84, 1), leafMat);
+  crownMain.position.set(0, 2.95, 0);
+  crownMain.scale.set(1.05, 1.12, 1.05);
+  const crownTop = new THREE.Mesh(new THREE.DodecahedronGeometry(0.60, 1), leafMat);
+  crownTop.position.set(0.18, 3.65, -0.10);
+  const crownLeft = new THREE.Mesh(new THREE.DodecahedronGeometry(0.54, 0), leafMat);
+  crownLeft.position.set(-0.42, 2.82, -0.22);
+  tree.add(crownMain, crownTop, crownLeft);
+
+  if (!lowPower) {
+    const crownRight = new THREE.Mesh(new THREE.DodecahedronGeometry(0.52, 0), leafMat);
+    crownRight.position.set(0.45, 2.75, 0.22);
+    const crownFront = new THREE.Mesh(new THREE.DodecahedronGeometry(0.44, 0), leafMat);
+    crownFront.position.set(-0.10, 3.25, 0.40);
+    tree.add(crownRight, crownFront);
+  }
   return tree;
 }
 
@@ -1101,11 +1361,19 @@ export function buildRoadTile(
         ? { intersectionInfo: intersectionOrOptions }
         : intersectionOrOptions)
     : {};
-  const { intersectionInfo, boulevardPart, includeMedianTree } = opts;
+  const { intersectionInfo, boulevardPart, includeMedianTree, lowPower = false } = opts;
   const tile = new THREE.Group();
   tile.name = `RoadTile_${type}`;
 
   const tileSize = 6.0;
+
+  // Helper: Curb-cut pedestrian ramp wedge bridging sidewalk (y=0.15) to asphalt (y=0.05)
+  const addCurbRamp = (rx: number, rz: number, w: number, d: number, rotZ = 0, rotX = 0) => {
+    const ramp = new THREE.Mesh(new THREE.BoxGeometry(w, 0.08, d), sidewalkMat);
+    ramp.position.set(rx, 0.09, rz);
+    ramp.rotation.set(rotX, 0, rotZ);
+    tile.add(ramp);
+  };
 
   // Base Textured Asphalt Slab (6m x 6m x 0.05m)
   const asphaltGeo = new THREE.BoxGeometry(tileSize, 0.05, tileSize);
@@ -1127,11 +1395,13 @@ export function buildRoadTile(
       const curb = new THREE.Mesh(curbGeo, curbMat);
       curb.position.set(curbX, 0.115, 0);
 
-      // Curbside Storm Drain Grate (*Usui-masu*)
-      const grate = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.01, 0.55), grateDarkMat);
-      grate.position.set(sx < 0 ? curbX + 0.20 : curbX - 0.20, 0.055, 1.5);
+      // Concrete Storm-Drain Gutter Apron (*Sokukō*) + Slotted Grate
+      const gutter = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.015, tileSize), curbMat);
+      gutter.position.set(sx < 0 ? curbX + 0.19 : curbX - 0.19, 0.048, 0);
+      const grate = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.014, 0.55), grateDarkMat);
+      grate.position.set(sx < 0 ? curbX + 0.19 : curbX - 0.19, 0.056, 1.5);
 
-      tile.add(sw, curb, grate);
+      tile.add(sw, curb, gutter, grate);
     });
 
     // Dashed White Center Line along Z
@@ -1142,18 +1412,22 @@ export function buildRoadTile(
       tile.add(stripe);
     }
 
-    // Iconic Japanese White Road Diamond (◇) in lane + Cast-Iron Manhole Cover
+    // Iconic Japanese White Road Diamond (◇) + "30" Zone Stencil + Cast-Iron Manhole Cover
     const diamond = buildRoadDiamondMarking();
     diamond.position.set(-1.15, 0.056, 0);
     tile.add(diamond);
 
-    const manhole = new THREE.Mesh(new THREE.CircleGeometry(0.34, 16), manholeMat);
+    const speed30 = createRoadStencilDecal('SPEED30', 1.05, 1.05);
+    speed30.position.set(1.15, 0.057, 1.6);
+    tile.add(speed30);
+
+    const manhole = new THREE.Mesh(new THREE.CircleGeometry(0.34, 14), manholeMat);
     manhole.rotation.x = -Math.PI / 2;
     manhole.position.set(1.15, 0.056, -1.2);
     tile.add(manhole);
 
-    // Curbside Streetlight on West Sidewalk (X = -2.72m, Z = 0)
-    const streetLight = buildStreetlight('EAST');
+    // Curbside Municipal LED Streetlight on West Sidewalk (X = -2.72m, Z = 0)
+    const streetLight = buildStreetlight('EAST', 'SIDE_STREET', lowPower);
     streetLight.position.set(-2.72, 0.15, 0);
     tile.add(streetLight);
 
@@ -1170,10 +1444,12 @@ export function buildRoadTile(
       const curb = new THREE.Mesh(curbGeo, curbMat);
       curb.position.set(0, 0.115, curbZ);
 
-      const grate = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.01, 0.24), grateDarkMat);
-      grate.position.set(1.5, 0.055, sz < 0 ? curbZ + 0.20 : curbZ - 0.20);
+      const gutter = new THREE.Mesh(new THREE.BoxGeometry(tileSize, 0.015, 0.26), curbMat);
+      gutter.position.set(0, 0.048, sz < 0 ? curbZ + 0.19 : curbZ - 0.19);
+      const grate = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.014, 0.22), grateDarkMat);
+      grate.position.set(1.5, 0.056, sz < 0 ? curbZ + 0.19 : curbZ - 0.19);
 
-      tile.add(sw, curb, grate);
+      tile.add(sw, curb, gutter, grate);
     });
 
     // Dashed White Center Line along X
@@ -1184,19 +1460,24 @@ export function buildRoadTile(
       tile.add(stripe);
     }
 
-    // Iconic Japanese White Road Diamond (◇) in lane + Cast-Iron Manhole Cover
+    // Iconic Japanese White Road Diamond (◇) + "30" Zone Stencil + Cast-Iron Manhole Cover
     const diamond = buildRoadDiamondMarking();
     diamond.rotation.y = Math.PI / 2;
     diamond.position.set(0, 0.056, 1.15);
     tile.add(diamond);
 
-    const manhole = new THREE.Mesh(new THREE.CircleGeometry(0.34, 16), manholeMat);
+    const speed30 = createRoadStencilDecal('SPEED30', 1.05, 1.05);
+    speed30.rotation.z = Math.PI / 2;
+    speed30.position.set(1.6, 0.057, -1.15);
+    tile.add(speed30);
+
+    const manhole = new THREE.Mesh(new THREE.CircleGeometry(0.34, 14), manholeMat);
     manhole.rotation.x = -Math.PI / 2;
     manhole.position.set(-1.2, 0.056, -1.15);
     tile.add(manhole);
 
-    // Curbside Streetlight on North Sidewalk (X = 0, Z = -2.72m)
-    const streetLight = buildStreetlight('SOUTH');
+    // Curbside Municipal LED Streetlight on North Sidewalk (X = 0, Z = -2.72m)
+    const streetLight = buildStreetlight('SOUTH', 'SIDE_STREET', lowPower);
     streetLight.position.set(0, 0.15, -2.72);
     tile.add(streetLight);
 
@@ -1221,26 +1502,30 @@ export function buildRoadTile(
       // Corner Curb Edge Trim & Flush Yellow Tactile Crosswalk Warning Pads (*Tenji-Burokku*)
       const innerX = cx < 0 ? cx + 0.34 : cx - 0.34;
       const innerZ = cz < 0 ? cz + 0.34 : cz - 0.34;
-      const tacX = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.01, 0.45), tactileYellowMat);
+      const tacX = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.01, 0.45), tactileYellowMat);
       tacX.position.set(innerX, 0.178, cz);
-      const tacZ = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.01, 0.14), tactileYellowMat);
+      const tacZ = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.01, 0.16), tactileYellowMat);
       tacZ.position.set(cx, 0.178, innerZ);
+
+      // Curb-cut pedestrian ramps toward crosswalks
+      addCurbRamp(cx < 0 ? -2.20 : 2.20, cz, 0.22, 0.44, cx < 0 ? -0.28 : 0.28, 0);
+      addCurbRamp(cx, cz < 0 ? -2.20 : 2.20, 0.44, 0.22, 0, cz < 0 ? 0.28 : -0.28);
 
       tile.add(cornerMesh, tacX, tacZ);
 
       // Complete 4-Way Traffic Signal Post on EVERY corner with dynamic bilingual intersection nameplate
-      const signal = buildCornerTrafficSignal(corner, plateMat);
+      const signal = buildCornerTrafficSignal(corner, plateMat, false);
       signal.position.set(cx, 0.15, cz);
       tile.add(signal);
     });
 
     // Center Intersection Manhole Cover
-    const centerManhole = new THREE.Mesh(new THREE.CircleGeometry(0.38, 16), manholeMat);
+    const centerManhole = new THREE.Mesh(new THREE.CircleGeometry(0.38, 14), manholeMat);
     centerManhole.rotation.x = -Math.PI / 2;
     centerManhole.position.set(0, 0.056, 0);
     tile.add(centerManhole);
 
-    // Zebra Pedestrian Crossings (横断歩道) + White Stop Lines (停止線) on all 4 branches
+    // Zebra Pedestrian Crossings (横断歩道) + White Stop Lines (停止線) + "止まれ" stencils
     [-2.1, +2.1].forEach((cz) => {
       for (let s = -1.6; s <= 1.6; s += 0.8) {
         const zebraGeo = new THREE.BoxGeometry(0.45, 0.01, 0.68);
@@ -1249,7 +1534,7 @@ export function buildRoadTile(
         tile.add(zebra);
       }
       // Stop line before crosswalk for left-hand traffic
-      const stopLine = new THREE.Mesh(new THREE.BoxGeometry(1.75, 0.01, 0.22), whiteStripeMat);
+      const stopLine = new THREE.Mesh(new THREE.BoxGeometry(1.75, 0.01, 0.26), whiteStripeMat);
       stopLine.position.set(cz < 0 ? 1.1 : -1.1, 0.056, cz < 0 ? -2.78 : 2.78);
       tile.add(stopLine);
     });
@@ -1261,53 +1546,73 @@ export function buildRoadTile(
         zebra.position.set(cx, 0.056, s);
         tile.add(zebra);
       }
-      const stopLine = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.01, 1.75), whiteStripeMat);
+      const stopLine = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.01, 1.75), whiteStripeMat);
       stopLine.position.set(cx < 0 ? -2.78 : 2.78, 0.056, cx < 0 ? -1.1 : 1.1);
       tile.add(stopLine);
     });
   } else if (type === 'BOULEVARD_Z_WEST') {
     // 12m Grand Boulevard - West Half (North-South, 2 Southbound lanes)
-    // Outer West Sidewalk (X = -2.625)
     const swGeo = new THREE.BoxGeometry(0.75, 0.15, tileSize);
-    const sw = new THREE.Mesh(swGeo, sidewalkMat);
+    const sw = new THREE.Mesh(swGeo, boulevardSidewalkMat);
     sw.position.set(-2.625, 0.1, 0);
     sw.receiveShadow = true;
+
+    const tacStrip = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.008, tileSize), tactileYellowMat);
+    tacStrip.position.set(-2.48, 0.178, 0);
 
     const curbGeo = new THREE.BoxGeometry(0.12, 0.18, tileSize);
     const curb = new THREE.Mesh(curbGeo, curbMat);
     curb.position.set(-2.25, 0.115, 0);
 
-    const grate = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.01, 0.55), grateDarkMat);
-    grate.position.set(-2.05, 0.055, 1.5);
-    tile.add(sw, curb, grate);
+    const gutter = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.015, tileSize), curbMat);
+    gutter.position.set(-2.06, 0.048, 0);
+    const grate = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.014, 0.55), grateDarkMat);
+    grate.position.set(-2.06, 0.056, 1.5);
+    tile.add(sw, tacStrip, curb, gutter, grate);
 
-    const streetLight = buildStreetlight('EAST');
+    const streetLight = buildStreetlight('EAST', 'BOULEVARD', lowPower);
     streetLight.position.set(-2.72, 0.15, 0);
     tile.add(streetLight);
 
-    // Inner East Raised Median Strip (sitting flush against X = +3.0)
-    const medCurb = new THREE.Mesh(new THREE.BoxGeometry(0.40, 0.18, tileSize), curbMat);
-    medCurb.position.set(2.80, 0.115, 0);
-    const medTurf = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.16, tileSize), medianTurfMat);
-    medTurf.position.set(2.80, 0.12, 0);
-    [-1.8, 0, 1.8].forEach((hz) => {
-      const hedge = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.32, 1.0), medianHedgeMat);
+    // Inner East Raised Median Strip (flush against X = +3.0)
+    const medCurb = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.18, tileSize), curbMat);
+    medCurb.position.set(2.79, 0.115, 0);
+    const medTurf = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.16, tileSize), medianTurfMat);
+    medTurf.position.set(2.79, 0.12, 0);
+    [-1.8, 0, 1.8].forEach((hz, idx) => {
+      const hedge = new THREE.Mesh(new THREE.DodecahedronGeometry(0.26, 0), medianHedgeMat);
+      hedge.scale.set(0.85, 0.9, 1.6);
       hedge.position.set(2.80, 0.28, hz);
       tile.add(hedge);
+      if (!lowPower) {
+        const flower = new THREE.Mesh(
+          new THREE.BoxGeometry(0.16, 0.10, 0.48),
+          idx % 2 === 0 ? medianFlowerPinkMat : medianFlowerGoldMat
+        );
+        flower.position.set(2.74, 0.24, hz + 0.85);
+        tile.add(flower);
+      }
     });
     if (includeMedianTree) {
-      const tree = buildBoulevardMedianTree();
+      const tree = buildBoulevardMedianTree('GINKGO', lowPower);
       tree.position.set(3.0, 0, 0);
       tile.add(tree);
     }
     tile.add(medCurb, medTurf);
 
-    // Dashed White Lane Divider between the 2 lanes
+    // Dashed White Lane Divider + Southbound Arrow & Bike Sharrow
     for (let z = -2.0; z <= 2.0; z += 2.0) {
       const stripe = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.01, 1.2), whiteStripeMat);
       stripe.position.set(0.3, 0.056, z);
       tile.add(stripe);
     }
+    const sbArrow = createRoadStencilDecal('ARROW', 1.0, 1.2);
+    sbArrow.rotation.z = Math.PI;
+    sbArrow.position.set(1.45, 0.057, 1.4);
+    const sbBike = createRoadStencilDecal('BIKE', 0.85, 0.7);
+    sbBike.rotation.z = Math.PI;
+    sbBike.position.set(-1.55, 0.057, -1.6);
+    tile.add(sbArrow, sbBike);
 
     const diamond = buildRoadDiamondMarking();
     diamond.position.set(-0.9, 0.056, 0);
@@ -1315,42 +1620,58 @@ export function buildRoadTile(
 
   } else if (type === 'BOULEVARD_Z_EAST') {
     // 12m Grand Boulevard - East Half (North-South, 2 Northbound lanes)
-    // Inner West Raised Median Strip (sitting flush against X = -3.0)
-    const medCurb = new THREE.Mesh(new THREE.BoxGeometry(0.40, 0.18, tileSize), curbMat);
-    medCurb.position.set(-2.80, 0.115, 0);
-    const medTurf = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.16, tileSize), medianTurfMat);
-    medTurf.position.set(-2.80, 0.12, 0);
-    [-1.8, 0, 1.8].forEach((hz) => {
-      const hedge = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.32, 1.0), medianHedgeMat);
+    const medCurb = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.18, tileSize), curbMat);
+    medCurb.position.set(-2.79, 0.115, 0);
+    const medTurf = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.16, tileSize), medianTurfMat);
+    medTurf.position.set(-2.79, 0.12, 0);
+    [-1.8, 0, 1.8].forEach((hz, idx) => {
+      const hedge = new THREE.Mesh(new THREE.DodecahedronGeometry(0.26, 0), medianHedgeMat);
+      hedge.scale.set(0.85, 0.9, 1.6);
       hedge.position.set(-2.80, 0.28, hz);
       tile.add(hedge);
+      if (!lowPower) {
+        const flower = new THREE.Mesh(
+          new THREE.BoxGeometry(0.16, 0.10, 0.48),
+          idx % 2 === 0 ? medianFlowerGoldMat : medianFlowerPinkMat
+        );
+        flower.position.set(-2.74, 0.24, hz - 0.85);
+        tile.add(flower);
+      }
     });
     tile.add(medCurb, medTurf);
 
-    // Outer East Sidewalk (X = +2.625)
     const swGeo = new THREE.BoxGeometry(0.75, 0.15, tileSize);
-    const sw = new THREE.Mesh(swGeo, sidewalkMat);
+    const sw = new THREE.Mesh(swGeo, boulevardSidewalkMat);
     sw.position.set(2.625, 0.1, 0);
     sw.receiveShadow = true;
+
+    const tacStrip = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.008, tileSize), tactileYellowMat);
+    tacStrip.position.set(2.48, 0.178, 0);
 
     const curbGeo = new THREE.BoxGeometry(0.12, 0.18, tileSize);
     const curb = new THREE.Mesh(curbGeo, curbMat);
     curb.position.set(2.25, 0.115, 0);
 
-    const grate = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.01, 0.55), grateDarkMat);
-    grate.position.set(2.05, 0.055, 1.5);
-    tile.add(sw, curb, grate);
+    const gutter = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.015, tileSize), curbMat);
+    gutter.position.set(2.06, 0.048, 0);
+    const grate = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.014, 0.55), grateDarkMat);
+    grate.position.set(2.06, 0.056, 1.5);
+    tile.add(sw, tacStrip, curb, gutter, grate);
 
-    const streetLight = buildStreetlight('WEST');
+    const streetLight = buildStreetlight('WEST', 'BOULEVARD', lowPower);
     streetLight.position.set(2.72, 0.15, 0);
     tile.add(streetLight);
 
-    // Dashed White Lane Divider between the 2 lanes
     for (let z = -2.0; z <= 2.0; z += 2.0) {
       const stripe = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.01, 1.2), whiteStripeMat);
       stripe.position.set(-0.3, 0.056, z);
       tile.add(stripe);
     }
+    const nbArrow = createRoadStencilDecal('ARROW', 1.0, 1.2);
+    nbArrow.position.set(-1.45, 0.057, -1.4);
+    const nbBike = createRoadStencilDecal('BIKE', 0.85, 0.7);
+    nbBike.position.set(1.55, 0.057, 1.6);
+    tile.add(nbArrow, nbBike);
 
     const diamond = buildRoadDiamondMarking();
     diamond.position.set(0.9, 0.056, 0);
@@ -1358,35 +1679,48 @@ export function buildRoadTile(
 
   } else if (type === 'BOULEVARD_X_NORTH') {
     // 12m Grand Boulevard - North Half (East-West, 2 Westbound lanes)
-    // Outer North Sidewalk (Z = -2.625)
     const swGeo = new THREE.BoxGeometry(tileSize, 0.15, 0.75);
-    const sw = new THREE.Mesh(swGeo, sidewalkMat);
+    const sw = new THREE.Mesh(swGeo, boulevardSidewalkMat);
     sw.position.set(0, 0.1, -2.625);
     sw.receiveShadow = true;
+
+    const tacStrip = new THREE.Mesh(new THREE.BoxGeometry(tileSize, 0.008, 0.22), tactileYellowMat);
+    tacStrip.position.set(0, 0.178, -2.48);
 
     const curb = new THREE.Mesh(new THREE.BoxGeometry(tileSize, 0.18, 0.12), curbMat);
     curb.position.set(0, 0.115, -2.25);
 
-    const grate = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.01, 0.24), grateDarkMat);
-    grate.position.set(1.5, 0.055, -2.05);
-    tile.add(sw, curb, grate);
+    const gutter = new THREE.Mesh(new THREE.BoxGeometry(tileSize, 0.015, 0.26), curbMat);
+    gutter.position.set(0, 0.048, -2.06);
+    const grate = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.014, 0.22), grateDarkMat);
+    grate.position.set(1.5, 0.056, -2.06);
+    tile.add(sw, tacStrip, curb, gutter, grate);
 
-    const streetLight = buildStreetlight('SOUTH');
+    const streetLight = buildStreetlight('SOUTH', 'BOULEVARD', lowPower);
     streetLight.position.set(0, 0.15, -2.72);
     tile.add(streetLight);
 
     // Inner South Raised Median Strip (flush against Z = +3.0)
-    const medCurb = new THREE.Mesh(new THREE.BoxGeometry(tileSize, 0.18, 0.40), curbMat);
-    medCurb.position.set(0, 0.115, 2.80);
-    const medTurf = new THREE.Mesh(new THREE.BoxGeometry(tileSize, 0.16, 0.34), medianTurfMat);
-    medTurf.position.set(0, 0.12, 2.80);
-    [-1.8, 0, 1.8].forEach((hx) => {
-      const hedge = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.32, 0.26), medianHedgeMat);
+    const medCurb = new THREE.Mesh(new THREE.BoxGeometry(tileSize, 0.18, 0.42), curbMat);
+    medCurb.position.set(0, 0.115, 2.79);
+    const medTurf = new THREE.Mesh(new THREE.BoxGeometry(tileSize, 0.16, 0.32), medianTurfMat);
+    medTurf.position.set(0, 0.12, 2.79);
+    [-1.8, 0, 1.8].forEach((hx, idx) => {
+      const hedge = new THREE.Mesh(new THREE.DodecahedronGeometry(0.26, 0), medianHedgeMat);
+      hedge.scale.set(1.6, 0.9, 0.85);
       hedge.position.set(hx, 0.28, 2.80);
       tile.add(hedge);
+      if (!lowPower) {
+        const flower = new THREE.Mesh(
+          new THREE.BoxGeometry(0.48, 0.10, 0.16),
+          idx % 2 === 0 ? medianFlowerPinkMat : medianFlowerGoldMat
+        );
+        flower.position.set(hx + 0.85, 0.24, 2.74);
+        tile.add(flower);
+      }
     });
     if (includeMedianTree) {
-      const tree = buildBoulevardMedianTree();
+      const tree = buildBoulevardMedianTree('SAKURA', lowPower);
       tree.position.set(0, 0, 3.0);
       tile.add(tree);
     }
@@ -1397,35 +1731,54 @@ export function buildRoadTile(
       stripe.position.set(x, 0.056, 0.3);
       tile.add(stripe);
     }
+    const wbArrow = createRoadStencilDecal('ARROW', 1.0, 1.2);
+    wbArrow.rotation.z = Math.PI / 2;
+    wbArrow.position.set(-1.4, 0.057, 1.45);
+    const wbBike = createRoadStencilDecal('BIKE', 0.85, 0.7);
+    wbBike.rotation.z = Math.PI / 2;
+    wbBike.position.set(1.6, 0.057, -1.55);
+    tile.add(wbArrow, wbBike);
 
   } else if (type === 'BOULEVARD_X_SOUTH') {
     // 12m Grand Boulevard - South Half (East-West, 2 Eastbound lanes)
-    // Inner North Raised Median Strip (flush against Z = -3.0)
-    const medCurb = new THREE.Mesh(new THREE.BoxGeometry(tileSize, 0.18, 0.40), curbMat);
-    medCurb.position.set(0, 0.115, -2.80);
-    const medTurf = new THREE.Mesh(new THREE.BoxGeometry(tileSize, 0.16, 0.34), medianTurfMat);
-    medTurf.position.set(0, 0.12, -2.80);
-    [-1.8, 0, 1.8].forEach((hx) => {
-      const hedge = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.32, 0.26), medianHedgeMat);
+    const medCurb = new THREE.Mesh(new THREE.BoxGeometry(tileSize, 0.18, 0.42), curbMat);
+    medCurb.position.set(0, 0.115, -2.79);
+    const medTurf = new THREE.Mesh(new THREE.BoxGeometry(tileSize, 0.16, 0.32), medianTurfMat);
+    medTurf.position.set(0, 0.12, -2.79);
+    [-1.8, 0, 1.8].forEach((hx, idx) => {
+      const hedge = new THREE.Mesh(new THREE.DodecahedronGeometry(0.26, 0), medianHedgeMat);
+      hedge.scale.set(1.6, 0.9, 0.85);
       hedge.position.set(hx, 0.28, -2.80);
       tile.add(hedge);
+      if (!lowPower) {
+        const flower = new THREE.Mesh(
+          new THREE.BoxGeometry(0.48, 0.10, 0.16),
+          idx % 2 === 0 ? medianFlowerGoldMat : medianFlowerPinkMat
+        );
+        flower.position.set(hx - 0.85, 0.24, -2.74);
+        tile.add(flower);
+      }
     });
     tile.add(medCurb, medTurf);
 
-    // Outer South Sidewalk (Z = +2.625)
     const swGeo = new THREE.BoxGeometry(tileSize, 0.15, 0.75);
-    const sw = new THREE.Mesh(swGeo, sidewalkMat);
+    const sw = new THREE.Mesh(swGeo, boulevardSidewalkMat);
     sw.position.set(0, 0.1, 2.625);
     sw.receiveShadow = true;
+
+    const tacStrip = new THREE.Mesh(new THREE.BoxGeometry(tileSize, 0.008, 0.22), tactileYellowMat);
+    tacStrip.position.set(0, 0.178, 2.48);
 
     const curb = new THREE.Mesh(new THREE.BoxGeometry(tileSize, 0.18, 0.12), curbMat);
     curb.position.set(0, 0.115, 2.25);
 
-    const grate = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.01, 0.24), grateDarkMat);
-    grate.position.set(1.5, 0.055, 2.05);
-    tile.add(sw, curb, grate);
+    const gutter = new THREE.Mesh(new THREE.BoxGeometry(tileSize, 0.015, 0.26), curbMat);
+    gutter.position.set(0, 0.048, 2.06);
+    const grate = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.014, 0.22), grateDarkMat);
+    grate.position.set(1.5, 0.056, 2.06);
+    tile.add(sw, tacStrip, curb, gutter, grate);
 
-    const streetLight = buildStreetlight('NORTH');
+    const streetLight = buildStreetlight('NORTH', 'BOULEVARD', lowPower);
     streetLight.position.set(0, 0.15, 2.72);
     tile.add(streetLight);
 
@@ -1434,6 +1787,13 @@ export function buildRoadTile(
       stripe.position.set(x, 0.056, -0.3);
       tile.add(stripe);
     }
+    const ebArrow = createRoadStencilDecal('ARROW', 1.0, 1.2);
+    ebArrow.rotation.z = -Math.PI / 2;
+    ebArrow.position.set(1.4, 0.057, -1.45);
+    const ebBike = createRoadStencilDecal('BIKE', 0.85, 0.7);
+    ebBike.rotation.z = -Math.PI / 2;
+    ebBike.position.set(-1.6, 0.057, 1.55);
+    tile.add(ebArrow, ebBike);
 
   } else if (type === 'BOULEVARD_CENTER_4WAY' || type === 'BOULEVARD_JUNCTION_Z' || type === 'BOULEVARD_JUNCTION_X') {
     const plateMat = intersectionInfo
@@ -1447,22 +1807,37 @@ export function buildRoadTile(
       SW: { cx: -2.625, cz: +2.625 },
     };
 
+    const isCenter4Way = type === 'BOULEVARD_CENTER_4WAY';
+
     const addBoulevardCorner = (corner: 'NW' | 'NE' | 'SE' | 'SW') => {
       const { cx, cz } = cornerCoordMap[corner];
-      const cornerMesh = new THREE.Mesh(new THREE.BoxGeometry(0.75, 0.15, 0.75), sidewalkMat);
+      const cornerMesh = new THREE.Mesh(new THREE.BoxGeometry(0.75, 0.15, 0.75), boulevardSidewalkMat);
       cornerMesh.position.set(cx, 0.1, cz);
       cornerMesh.receiveShadow = true;
 
       const innerX = cx < 0 ? cx + 0.34 : cx - 0.34;
       const innerZ = cz < 0 ? cz + 0.34 : cz - 0.34;
-      const tacX = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.01, 0.45), tactileYellowMat);
+      const tacX = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.01, 0.45), tactileYellowMat);
       tacX.position.set(innerX, 0.178, cz);
-      const tacZ = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.01, 0.14), tactileYellowMat);
+      const tacZ = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.01, 0.16), tactileYellowMat);
       tacZ.position.set(cx, 0.178, innerZ);
 
-      const signal = buildCornerTrafficSignal(corner, plateMat);
+      addCurbRamp(cx < 0 ? -2.20 : 2.20, cz, 0.22, 0.44, cx < 0 ? -0.28 : 0.28, 0);
+      addCurbRamp(cx, cz < 0 ? -2.20 : 2.20, 0.44, 0.22, 0, cz < 0 ? 0.28 : -0.28);
+
+      const signal = buildCornerTrafficSignal(corner, plateMat, isCenter4Way);
       signal.position.set(cx, 0.15, cz);
       tile.add(cornerMesh, tacX, tacZ, signal);
+    };
+
+    const addMedianBollard = (bx: number, bz: number) => {
+      const bollard = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.075, 0.72, 8), bronzePoleMat);
+      bollard.position.set(bx, 0.36, bz);
+      const collar = new THREE.Mesh(new THREE.CylinderGeometry(0.065, 0.065, 0.12, 8), hazardYellowMat);
+      collar.position.set(bx, 0.56, bz);
+      const cap = new THREE.Mesh(new THREE.CylinderGeometry(0.062, 0.062, 0.06, 8), lampGlowMat);
+      cap.position.set(bx, 0.68, bz);
+      tile.add(bollard, collar, cap);
     };
 
     if (type === 'BOULEVARD_CENTER_4WAY') {
@@ -1494,25 +1869,24 @@ export function buildRoadTile(
         tile.add(zebra);
       }
 
+      // Reflective Median-Nose Bollard Lamps at outer edges of central crossing
+      addMedianBollard(isWest ? 2.75 : -2.75, isNorth ? -2.85 : 2.85);
+
       // Left-hand approach stop line (1 per outer quadrant approach)
       if (part === 'NW') {
-        // Southbound (+Z) approach on West half
-        const stopLine = new THREE.Mesh(new THREE.BoxGeometry(4.1, 0.01, 0.22), whiteStripeMat);
+        const stopLine = new THREE.Mesh(new THREE.BoxGeometry(4.1, 0.01, 0.28), whiteStripeMat);
         stopLine.position.set(0.25, 0.056, -2.78);
         tile.add(stopLine);
       } else if (part === 'SE') {
-        // Northbound (-Z) approach on East half
-        const stopLine = new THREE.Mesh(new THREE.BoxGeometry(4.1, 0.01, 0.22), whiteStripeMat);
+        const stopLine = new THREE.Mesh(new THREE.BoxGeometry(4.1, 0.01, 0.28), whiteStripeMat);
         stopLine.position.set(-0.25, 0.056, 2.78);
         tile.add(stopLine);
       } else if (part === 'NE') {
-        // Westbound (-X) approach on North half
-        const stopLine = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.01, 4.1), whiteStripeMat);
+        const stopLine = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.01, 4.1), whiteStripeMat);
         stopLine.position.set(2.78, 0.056, 0.25);
         tile.add(stopLine);
       } else if (part === 'SW') {
-        // Eastbound (+X) approach on South half
-        const stopLine = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.01, 4.1), whiteStripeMat);
+        const stopLine = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.01, 4.1), whiteStripeMat);
         stopLine.position.set(-2.78, 0.056, -0.25);
         tile.add(stopLine);
       }
@@ -1521,13 +1895,11 @@ export function buildRoadTile(
       if (part === 'W') {
         addBoulevardCorner('NW');
         addBoulevardCorner('SW');
-        // Full West side-street crosswalk
         for (let s = -1.6; s <= 1.61; s += 0.8) {
           const zebra = new THREE.Mesh(new THREE.BoxGeometry(0.68, 0.01, 0.45), whiteStripeMat);
           zebra.position.set(-2.1, 0.056, s);
           tile.add(zebra);
         }
-        // West half of North & South boulevard crosswalks
         [-2.1, +2.1].forEach((cz) => {
           for (let s = -1.6; s <= 2.41; s += 0.8) {
             const zebra = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.01, 0.68), whiteStripeMat);
@@ -1535,22 +1907,24 @@ export function buildRoadTile(
             tile.add(zebra);
           }
         });
-        // Southbound boulevard stop line + Eastbound side-street stop line
-        const sbStop = new THREE.Mesh(new THREE.BoxGeometry(4.1, 0.01, 0.22), whiteStripeMat);
+        addMedianBollard(2.75, -2.85);
+        addMedianBollard(2.75, 2.85);
+        const sbStop = new THREE.Mesh(new THREE.BoxGeometry(4.1, 0.01, 0.26), whiteStripeMat);
         sbStop.position.set(0.25, 0.056, -2.78);
-        const ebStop = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.01, 1.75), whiteStripeMat);
+        const ebStop = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.01, 1.75), whiteStripeMat);
         ebStop.position.set(-2.78, 0.056, 1.1);
-        tile.add(sbStop, ebStop);
+        const tomare = createRoadStencilDecal('TOMARE', 1.15, 0.75);
+        tomare.rotation.z = -Math.PI / 2;
+        tomare.position.set(-2.35, 0.057, 1.1);
+        tile.add(sbStop, ebStop, tomare);
       } else {
         addBoulevardCorner('NE');
         addBoulevardCorner('SE');
-        // Full East side-street crosswalk
         for (let s = -1.6; s <= 1.61; s += 0.8) {
           const zebra = new THREE.Mesh(new THREE.BoxGeometry(0.68, 0.01, 0.45), whiteStripeMat);
           zebra.position.set(2.1, 0.056, s);
           tile.add(zebra);
         }
-        // East half of North & South boulevard crosswalks
         [-2.1, +2.1].forEach((cz) => {
           for (let s = -2.4; s <= 1.61; s += 0.8) {
             const zebra = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.01, 0.68), whiteStripeMat);
@@ -1558,12 +1932,16 @@ export function buildRoadTile(
             tile.add(zebra);
           }
         });
-        // Northbound boulevard stop line + Westbound side-street stop line
-        const nbStop = new THREE.Mesh(new THREE.BoxGeometry(4.1, 0.01, 0.22), whiteStripeMat);
+        addMedianBollard(-2.75, -2.85);
+        addMedianBollard(-2.75, 2.85);
+        const nbStop = new THREE.Mesh(new THREE.BoxGeometry(4.1, 0.01, 0.26), whiteStripeMat);
         nbStop.position.set(-0.25, 0.056, 2.78);
-        const wbStop = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.01, 1.75), whiteStripeMat);
+        const wbStop = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.01, 1.75), whiteStripeMat);
         wbStop.position.set(2.78, 0.056, -1.1);
-        tile.add(nbStop, wbStop);
+        const tomare = createRoadStencilDecal('TOMARE', 1.15, 0.75);
+        tomare.rotation.z = Math.PI / 2;
+        tomare.position.set(2.35, 0.057, -1.1);
+        tile.add(nbStop, wbStop, tomare);
       }
     } else {
       // BOULEVARD_JUNCTION_X
@@ -1571,13 +1949,11 @@ export function buildRoadTile(
       if (part === 'N') {
         addBoulevardCorner('NW');
         addBoulevardCorner('NE');
-        // Full North side-street crosswalk
         for (let s = -1.6; s <= 1.61; s += 0.8) {
           const zebra = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.01, 0.68), whiteStripeMat);
           zebra.position.set(s, 0.056, -2.1);
           tile.add(zebra);
         }
-        // North half of West & East boulevard crosswalks
         [-2.1, +2.1].forEach((cx) => {
           for (let s = -1.6; s <= 2.41; s += 0.8) {
             const zebra = new THREE.Mesh(new THREE.BoxGeometry(0.68, 0.01, 0.45), whiteStripeMat);
@@ -1585,22 +1961,24 @@ export function buildRoadTile(
             tile.add(zebra);
           }
         });
-        // Westbound boulevard stop line + Southbound side-street stop line
-        const wbStop = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.01, 4.1), whiteStripeMat);
+        addMedianBollard(-2.85, 2.75);
+        addMedianBollard(2.85, 2.75);
+        const wbStop = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.01, 4.1), whiteStripeMat);
         wbStop.position.set(2.78, 0.056, 0.25);
-        const sbStop = new THREE.Mesh(new THREE.BoxGeometry(1.75, 0.01, 0.22), whiteStripeMat);
+        const sbStop = new THREE.Mesh(new THREE.BoxGeometry(1.75, 0.01, 0.26), whiteStripeMat);
         sbStop.position.set(1.1, 0.056, -2.78);
-        tile.add(wbStop, sbStop);
+        const tomare = createRoadStencilDecal('TOMARE', 1.15, 0.75);
+        tomare.rotation.z = Math.PI;
+        tomare.position.set(1.1, 0.057, -2.35);
+        tile.add(wbStop, sbStop, tomare);
       } else {
         addBoulevardCorner('SW');
         addBoulevardCorner('SE');
-        // Full South side-street crosswalk
         for (let s = -1.6; s <= 1.61; s += 0.8) {
           const zebra = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.01, 0.68), whiteStripeMat);
           zebra.position.set(s, 0.056, 2.1);
           tile.add(zebra);
         }
-        // South half of West & East boulevard crosswalks
         [-2.1, +2.1].forEach((cx) => {
           for (let s = -2.4; s <= 1.61; s += 0.8) {
             const zebra = new THREE.Mesh(new THREE.BoxGeometry(0.68, 0.01, 0.45), whiteStripeMat);
@@ -1608,12 +1986,15 @@ export function buildRoadTile(
             tile.add(zebra);
           }
         });
-        // Eastbound boulevard stop line + Northbound side-street stop line
-        const ebStop = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.01, 4.1), whiteStripeMat);
+        addMedianBollard(-2.85, -2.75);
+        addMedianBollard(2.85, -2.75);
+        const ebStop = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.01, 4.1), whiteStripeMat);
         ebStop.position.set(-2.78, 0.056, -0.25);
-        const nbStop = new THREE.Mesh(new THREE.BoxGeometry(1.75, 0.01, 0.22), whiteStripeMat);
+        const nbStop = new THREE.Mesh(new THREE.BoxGeometry(1.75, 0.01, 0.26), whiteStripeMat);
         nbStop.position.set(-1.1, 0.056, 2.78);
-        tile.add(ebStop, nbStop);
+        const tomare = createRoadStencilDecal('TOMARE', 1.15, 0.75);
+        tomare.position.set(-1.1, 0.057, 2.35);
+        tile.add(ebStop, nbStop, tomare);
       }
     }
   }

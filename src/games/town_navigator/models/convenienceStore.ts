@@ -1,10 +1,17 @@
 import * as THREE from 'three';
-import { getHorizontalSidingTexture, addWrapAroundWindows, buildPerimeterRailing } from './wallTextures';
+import {
+  getHorizontalSidingTexture,
+  addWrapAroundWindows,
+  buildPerimeterRailing,
+  getClearShowcaseGlassMaterial,
+  buildOutdoorAcUnit,
+} from './wallTextures';
 
 let cachedFasciaTex: THREE.CanvasTexture | null = null;
 let cachedShelvesTex: THREE.CanvasTexture | null = null;
 let cachedBikeSignTex: THREE.CanvasTexture | null = null;
 let cachedPylonSignTex: THREE.CanvasTexture | null = null;
+let cachedNoboriTex: THREE.CanvasTexture | null = null;
 
 /**
  * Procedural texture for Japanese Convenience Store (Konbini) fascia header sign
@@ -179,6 +186,38 @@ function createBikeParkingSignTexture(): THREE.CanvasTexture {
   signTexture.userData.isSharedResource = true;
   cachedBikeSignTex = signTexture;
   return signTexture;
+}
+
+function createNoboriBannerTexture(): THREE.CanvasTexture {
+  if (cachedNoboriTex) return cachedNoboriTex;
+  const canvas = document.createElement('canvas');
+  canvas.width = 64;
+  canvas.height = 192;
+  const ctx = canvas.getContext('2d')!;
+  ctx.fillStyle = '#f97316';
+  ctx.fillRect(0, 0, 64, 192);
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(6, 10, 52, 172);
+  ctx.fillStyle = '#ea580c';
+  ctx.fillRect(6, 10, 52, 34);
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 14px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('CAFE', 32, 27);
+  ctx.fillStyle = '#0f172a';
+  ctx.font = 'bold 20px "BIZ UDPGothic", sans-serif';
+  ['お', '弁', '当'].forEach((ch, idx) => {
+    ctx.fillText(ch, 32, 74 + idx * 32);
+  });
+  ctx.fillStyle = '#16a34a';
+  ctx.font = 'bold 12px sans-serif';
+  ctx.fillText('24H', 32, 168);
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.userData.isSharedResource = true;
+  cachedNoboriTex = tex;
+  return tex;
 }
 
 /**
@@ -458,7 +497,8 @@ export function buildConvenienceStoreMesh(options: ConvenienceStoreOptions = {})
     frameMat: darkMetalMat,
   });
 
-  // 4. FLOOR-TO-CEILING GLASS STOREFRONT & AUTOMATIC DOORS
+  // 4. FLOOR-TO-CEILING CLEAR GLASS STOREFRONT & AUTOMATIC DOORS
+  const clearGlassMat = getClearShowcaseGlassMaterial();
   const shelfTexture = createInteriorShelvesTexture();
   const shelfMat = new THREE.MeshStandardMaterial({
     map: shelfTexture,
@@ -474,14 +514,30 @@ export function buildConvenienceStoreMesh(options: ConvenienceStoreOptions = {})
 
   const frontGlassW = sW - 0.2;
   const frontGlassH = 2.45;
-  const frontGlassGeo = new THREE.BoxGeometry(frontGlassW, frontGlassH, 0.02);
-  const frontGlass = new THREE.Mesh(frontGlassGeo, glassMat);
-  frontGlass.userData.skipWindowEnhance = true;
-  frontGlass.position.set(0, frontGlassH / 2 + 0.09, sD / 2 + 0.035);
-  storeGroup.add(frontGlass);
-
   const numPanes = 4;
   const paneWidth = frontGlassW / numPanes;
+
+  // Split fixed glass panes around the automatic door opening so there is zero double-layer overlap
+  const leftFixedW = paneWidth * 2;
+  const leftFixedGlass = new THREE.Mesh(new THREE.BoxGeometry(leftFixedW, frontGlassH, 0.02), clearGlassMat);
+  leftFixedGlass.userData.skipWindowEnhance = true;
+  leftFixedGlass.position.set(-frontGlassW / 2 + leftFixedW / 2, frontGlassH / 2 + 0.09, sD / 2 + 0.035);
+  storeGroup.add(leftFixedGlass);
+
+  const rightFixedGlass = new THREE.Mesh(new THREE.BoxGeometry(paneWidth, frontGlassH, 0.02), clearGlassMat);
+  rightFixedGlass.userData.skipWindowEnhance = true;
+  rightFixedGlass.position.set(frontGlassW / 2 - paneWidth / 2, frontGlassH / 2 + 0.09, sD / 2 + 0.035);
+  storeGroup.add(rightFixedGlass);
+
+  // Lower-glass promo posters on left display panes
+  const posterMatA = new THREE.MeshStandardMaterial({ color: 0xef4444, roughness: 0.45 });
+  const posterMatB = new THREE.MeshStandardMaterial({ color: 0x16a34a, roughness: 0.45 });
+  const posterA = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.72, 0.015), posterMatA);
+  posterA.position.set(-frontGlassW / 2 + paneWidth * 0.5, 0.62, sD / 2 + 0.052);
+  const posterB = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.72, 0.015), posterMatB);
+  posterB.position.set(-frontGlassW / 2 + paneWidth * 1.5, 0.62, sD / 2 + 0.052);
+  storeGroup.add(posterA, posterB);
+
   for (let i = 0; i <= numPanes; i++) {
     const mullGeo = new THREE.BoxGeometry(0.06, frontGlassH, 0.06);
     const mull = new THREE.Mesh(mullGeo, darkMetalMat);
@@ -489,18 +545,40 @@ export function buildConvenienceStoreMesh(options: ConvenienceStoreOptions = {})
     storeGroup.add(mull);
   }
 
-  // Sliding automatic entrance door header & side stiles (open center glass so shelves & lobby are visible)
+  // Sliding automatic entrance door header, clear pane & welcome mat
   const doorHeader = new THREE.Mesh(new THREE.BoxGeometry(paneWidth + 0.06, 0.14, 0.08), darkMetalMat);
   doorHeader.position.set(paneWidth / 2, 2.18, sD / 2 + 0.05);
-  const doorGlassPane = new THREE.Mesh(new THREE.BoxGeometry(paneWidth - 0.06, 2.05, 0.02), glassMat);
+  const doorGlassPane = new THREE.Mesh(new THREE.BoxGeometry(paneWidth - 0.06, 2.05, 0.02), clearGlassMat);
   doorGlassPane.userData.skipWindowEnhance = true;
   doorGlassPane.position.set(paneWidth / 2, 1.12, sD / 2 + 0.052);
   storeGroup.add(doorHeader, doorGlassPane);
+
+  const welcomeMat = new THREE.Mesh(
+    new THREE.BoxGeometry(paneWidth - 0.08, 0.016, 0.52),
+    new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.95 })
+  );
+  welcomeMat.position.set(paneWidth / 2, 0.008, sD / 2 + 0.30);
+  storeGroup.add(welcomeMat);
 
   const sensorGeo = new THREE.BoxGeometry(0.5, 0.06, 0.06);
   const sensor = new THREE.Mesh(sensorGeo, darkMetalMat);
   sensor.position.set(paneWidth / 2, 2.30, sD / 2 + 0.09);
   storeGroup.add(sensor);
+
+  // Storefront overhang canopy with warm under-canopy strip light
+  const overhang = new THREE.Mesh(new THREE.BoxGeometry(sW + 0.1, 0.08, 0.45), darkMetalMat);
+  overhang.position.set(0, 2.66, sD / 2 + 0.225);
+  const soffitLight = new THREE.Mesh(
+    new THREE.BoxGeometry(sW - 0.3, 0.02, 0.08),
+    new THREE.MeshStandardMaterial({
+      color: 0xffffff,
+      emissive: 0xfef3c7,
+      emissiveIntensity: 0.85,
+      roughness: 0.3,
+    })
+  );
+  soffitLight.position.set(0, 2.615, sD / 2 + 0.26);
+  storeGroup.add(overhang, soffitLight);
 
   group.add(storeGroup);
 
@@ -514,33 +592,41 @@ export function buildConvenienceStoreMesh(options: ConvenienceStoreOptions = {})
   rackBase.position.y = 0.04;
   magRackGroup.add(rackBase);
 
-  const magCols = ['#ef4444', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6'];
+  const magMats = [0xef4444, 0x3b82f6, 0x10b981, 0xf59e0b, 0x8b5cf6].map(
+    (c) => new THREE.MeshStandardMaterial({ color: c, roughness: 0.5 })
+  );
+  const magGeo = new THREE.BoxGeometry(0.14, 0.22, 0.02);
+  const tierGeo = new THREE.BoxGeometry(0.72, 0.28, 0.06);
   for (let t = 0; t < 3; t++) {
-    const tierGeo = new THREE.BoxGeometry(0.72, 0.28, 0.06);
     const tier = new THREE.Mesh(tierGeo, darkMetalMat);
     tier.position.set(0, 0.25 + t * 0.28, -0.08 + t * 0.04);
     magRackGroup.add(tier);
 
     for (let m = 0; m < 4; m++) {
-      const magGeo = new THREE.BoxGeometry(0.14, 0.22, 0.02);
-      const magMat = new THREE.MeshStandardMaterial({
-        color: magCols[(t * 4 + m) % magCols.length],
-        roughness: 0.5,
-      });
-      const mag = new THREE.Mesh(magGeo, magMat);
+      const mag = new THREE.Mesh(magGeo, magMats[(t * 4 + m) % magMats.length]);
       mag.position.set(-0.25 + m * 0.17, 0.27 + t * 0.28, -0.05 + t * 0.04);
       magRackGroup.add(mag);
     }
   }
   group.add(magRackGroup);
 
-  // 5b. Storefront Stainless-Steel Recycling Bins beside Magazine Stand (X = -2.25m, Z = 1.22m)
+  // 5b. Storefront Stainless-Steel Dual-Slot Recycling Bins beside Magazine Stand
   const binSteelMat = new THREE.MeshStandardMaterial({ color: 0xcbd5e1, metalness: 0.6, roughness: 0.35 });
-  [-2.35, -2.12].forEach((bx) => {
-    const sBin = new THREE.Mesh(new THREE.BoxGeometry(0.20, 0.58, 0.26), binSteelMat);
-    sBin.position.set(bx, 0.44, 1.22);
+  const binHeaderMats = [
+    new THREE.MeshStandardMaterial({ color: 0x0284c7, roughness: 0.4 }),
+    new THREE.MeshStandardMaterial({ color: 0x16a34a, roughness: 0.4 }),
+  ];
+  [-2.35, -2.12].forEach((bx, idx) => {
+    const sBin = new THREE.Mesh(new THREE.BoxGeometry(0.20, 0.56, 0.26), binSteelMat);
+    sBin.position.set(bx, 0.43, 1.22);
     sBin.castShadow = true;
-    group.add(sBin);
+    const binTop = new THREE.Mesh(new THREE.BoxGeometry(0.21, 0.12, 0.27), binHeaderMats[idx]);
+    binTop.position.set(bx, 0.75, 1.22);
+    const binSlot = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.05, 0.02), darkMetalMat);
+    binSlot.position.set(bx, 0.75, 1.355);
+    const binLabel = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.16, 0.015), whiteLineMat);
+    binLabel.position.set(bx, 0.50, 1.352);
+    group.add(sBin, binTop, binSlot, binLabel);
   });
 
   // 5c. Bicycle Parking Rack (駐輪場) on right side of apron: X = +1.4m, Z = 1.25m
@@ -548,7 +634,7 @@ export function buildConvenienceStoreMesh(options: ConvenienceStoreOptions = {})
   bikeRack.position.set(1.4, 0.15, 1.25);
   group.add(bikeRack);
 
-  // 5d. Freestanding Illuminated Roadside Pylon Sign (ポール看板) at Left Side of Lot (X = -2.68m, Z = 0.85m, Height = 5.1m)
+  // 5d. Freestanding Illuminated Roadside Pylon Sign (ポール看板) at Left Side of Lot
   const pylonGroup = new THREE.Group();
   pylonGroup.position.set(-2.68, 0.15, 0.85);
 
@@ -573,41 +659,55 @@ export function buildConvenienceStoreMesh(options: ConvenienceStoreOptions = {})
   pylonGroup.add(pylonBox);
   group.add(pylonGroup);
 
-  // 5e. Fluttering Promotional Nobori Flags (のぼり旗) on Apron Corners
+  // 5e. Sculpted Promotional Nobori Flags (のぼり旗) with yokobō arm & water-weight stand
+  const noboriTex = createNoboriBannerTexture();
+  const noboriMat = new THREE.MeshStandardMaterial({ map: noboriTex, roughness: 0.55 });
+  const standBaseMat = new THREE.MeshStandardMaterial({ color: 0x94a3b8, roughness: 0.6 });
   [
-    { x: -2.65, z: 1.35, color: 0xf97316 },
-    { x: 2.55, z: 1.35, color: 0xef4444 },
-  ].forEach(({ x, z, color }) => {
-    const fPole = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 1.75, 6), whiteLineMat);
-    fPole.position.set(x, 1.02, z);
-    const fBanner = new THREE.Mesh(
-      new THREE.BoxGeometry(0.32, 1.15, 0.015),
-      new THREE.MeshStandardMaterial({ color, roughness: 0.5 })
-    );
-    fBanner.position.set(x + (x < 0 ? 0.17 : -0.17), 1.28, z);
-    group.add(fPole, fBanner);
+    { x: -2.65, z: 1.35 },
+    { x: 2.55, z: 1.35 },
+  ].forEach(({ x, z }) => {
+    const dir = x < 0 ? 1 : -1;
+    const stand = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.14, 0.24), standBaseMat);
+    stand.position.set(x, 0.22, z);
+    const fPole = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 1.85, 6), whiteLineMat);
+    fPole.position.set(x, 1.07, z);
+    const yokobo = new THREE.Mesh(new THREE.CylinderGeometry(0.009, 0.009, 0.36, 6), whiteLineMat);
+    yokobo.rotation.z = Math.PI / 2;
+    yokobo.position.set(x + dir * 0.18, 1.96, z);
+    const fBanner = new THREE.Mesh(new THREE.BoxGeometry(0.34, 1.15, 0.015), noboriMat);
+    fBanner.position.set(x + dir * 0.18, 1.38, z);
+    group.add(stand, fPole, yokobo, fBanner);
+  });
+
+  // Safety bollards at storefront apron corners
+  const bollardYellowMat = new THREE.MeshStandardMaterial({ color: 0xfacc15, roughness: 0.4 });
+  [-2.82, 2.82].forEach((bx) => {
+    const bollard = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.05, 0.55, 8), darkMetalMat);
+    bollard.position.set(bx, 0.425, 1.42);
+    const bBand = new THREE.Mesh(new THREE.CylinderGeometry(0.047, 0.047, 0.10, 8), bollardYellowMat);
+    bBand.position.set(bx, 0.58, 1.42);
+    group.add(bollard, bBand);
   });
 
   // 6. BACKYARD PERIMETER & ROOFTOP AC CHILLERS
   if (includeLandscaping) {
+    const backWallMat = new THREE.MeshStandardMaterial({ color: 0xcbd5e1, roughness: 0.85 });
     const wallH = 1.2;
     const backWallGeo = new THREE.BoxGeometry(lotWidth, wallH, 0.08);
-    const backWall = new THREE.Mesh(backWallGeo, foundationMat);
+    const backWall = new THREE.Mesh(backWallGeo, backWallMat);
     backWall.position.set(0, 0.15 + wallH / 2, -2.85);
     backWall.receiveShadow = true;
     group.add(backWall);
 
-    const acGeo = new THREE.BoxGeometry(0.9, 0.65, 0.55);
-    const acMat = new THREE.MeshStandardMaterial({ color: 0x94a3b8, roughness: 0.5 });
-    const acUnit1 = new THREE.Mesh(acGeo, acMat);
-    acUnit1.position.set(-1.2, 0.15 + sH + 0.35, -0.9);
-    acUnit1.castShadow = true;
-    group.add(acUnit1);
-
-    const acUnit2 = new THREE.Mesh(acGeo, acMat);
-    acUnit2.position.set(1.2, 0.15 + sH + 0.35, -0.9);
-    acUnit2.castShadow = true;
-    group.add(acUnit2);
+    // Relocate rooftop AC chillers forward of buildPerimeterRailing's rear solar panel
+    const ac1 = buildOutdoorAcUnit();
+    ac1.scale.setScalar(1.35);
+    ac1.position.set(-1.35, 0.15 + sH + 0.22, 0.25);
+    const ac2 = buildOutdoorAcUnit();
+    ac2.scale.setScalar(1.35);
+    ac2.position.set(1.35, 0.15 + sH + 0.22, 0.25);
+    group.add(ac1, ac2);
   }
 
   if (scale !== 1.0) {

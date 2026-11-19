@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { getBrickTileTexture } from './wallTextures';
+import { getBrickTileTexture, getClearShowcaseGlassMaterial } from './wallTextures';
 
 let cachedBusSignTex: THREE.CanvasTexture | null = null;
 let cachedTimetableTex: THREE.CanvasTexture | null = null;
@@ -557,9 +557,9 @@ export function buildBusStopMesh(options: BusStopOptions = {}): THREE.Group {
   const signGroup = new THREE.Group();
   signGroup.position.set(-0.85, 0.15, 1.35);
 
-  const signBaseGeo = new THREE.CylinderGeometry(0.2, 0.24, 0.04, 16);
-  const signBase = new THREE.Mesh(signBaseGeo, darkFrameMat);
-  signBase.position.y = 0.02;
+  const signBaseGeo = new THREE.BoxGeometry(0.42, 0.14, 0.42);
+  const signBase = new THREE.Mesh(signBaseGeo, curbMat);
+  signBase.position.y = 0.07;
   signGroup.add(signBase);
 
   const poleGeo = new THREE.CylinderGeometry(0.025, 0.025, 2.1, 12);
@@ -599,6 +599,7 @@ export function buildBusStopMesh(options: BusStopOptions = {}): THREE.Group {
   group.add(signGroup);
 
   // 3. WAITING SHELTER (Center X = 0.85m, Z = 0.85m on transit platform)
+  const clearGlassMat = getClearShowcaseGlassMaterial();
   const shelter = new THREE.Group();
   shelter.position.set(0.85, 0.15, 0.85);
 
@@ -620,13 +621,13 @@ export function buildBusStopMesh(options: BusStopOptions = {}): THREE.Group {
   backWallUpper.castShadow = true;
   shelter.add(backWallUpper);
 
-  // Back Window Glass & Frames (4 Panes)
+  // Back Window Clear Glass & Frames (4 Panes - commuters see azalea hedge behind!)
   const windowAreaW = shelterW - 0.2;
   const windowAreaH = 0.8;
   const windowAreaY = 1.25;
 
   const glassBackGeo = new THREE.BoxGeometry(windowAreaW, windowAreaH, 0.02);
-  const glassBack = new THREE.Mesh(glassBackGeo, glassMat);
+  const glassBack = new THREE.Mesh(glassBackGeo, clearGlassMat);
   glassBack.position.set(0, windowAreaY, -shelterD / 2);
   shelter.add(glassBack);
 
@@ -652,6 +653,13 @@ export function buildBusStopMesh(options: BusStopOptions = {}): THREE.Group {
   rightWall.castShadow = true;
   shelter.add(rightWall);
 
+  // Partial Left Glass Windbreak Panel
+  const leftWindbreak = new THREE.Mesh(new THREE.BoxGeometry(0.02, 1.65, 0.55), clearGlassMat);
+  leftWindbreak.position.set(-shelterW / 2 + 0.04, 1.05, -0.22);
+  const leftWindFrame = new THREE.Mesh(new THREE.BoxGeometry(0.04, 1.72, 0.04), pillarMat);
+  leftWindFrame.position.set(-shelterW / 2 + 0.04, 1.05, 0.06);
+  shelter.add(leftWindbreak, leftWindFrame);
+
   const routeMapTex = createRouteMapTexture();
   const routeMapMat = new THREE.MeshStandardMaterial({
     map: routeMapTex,
@@ -673,7 +681,7 @@ export function buildBusStopMesh(options: BusStopOptions = {}): THREE.Group {
   frontPillar.castShadow = true;
   shelter.add(frontPillar);
 
-  // Slanted Overhanging Roof
+  // Slanted Overhanging Roof + Rear Gutter Trim
   const roofW = shelterW + 0.3;
   const roofD = shelterD + 0.45;
   const roofGeo = new THREE.BoxGeometry(roofW, 0.08, roofD);
@@ -682,6 +690,10 @@ export function buildBusStopMesh(options: BusStopOptions = {}): THREE.Group {
   roof.position.set(0, shelterH + 0.06, 0.05);
   roof.castShadow = true;
   shelter.add(roof);
+
+  const rearGutter = new THREE.Mesh(new THREE.BoxGeometry(roofW, 0.06, 0.06), darkFrameMat);
+  rearGutter.position.set(0, shelterH - 0.01, -roofD / 2 + 0.05);
+  shelter.add(rearGutter);
 
   for (let i = -4; i <= 4; i++) {
     const ridgeGeo = new THREE.BoxGeometry(0.03, 0.03, roofD - 0.02);
@@ -768,6 +780,13 @@ export function buildBusStopMesh(options: BusStopOptions = {}): THREE.Group {
   vMesh.receiveShadow = true;
   vendingGroup.add(vMesh);
 
+  // Recessed pickup tray & aluminum frame trim on vending machine
+  const vTrim = new THREE.Mesh(new THREE.BoxGeometry(vW + 0.03, 0.04, vD + 0.02), metalMat);
+  vTrim.position.y = vH + 0.01;
+  const vTray = new THREE.Mesh(new THREE.BoxGeometry(0.56, 0.16, 0.06), darkFrameMat);
+  vTray.position.set(0, 0.34, vD / 2 + 0.01);
+  vendingGroup.add(vTrim, vTray);
+
   // Dual-Hole Beverage Recycling Bin
   const binGroup = new THREE.Group();
   binGroup.position.set(-0.65, 0, 0.05);
@@ -843,10 +862,10 @@ export function buildBusStopMesh(options: BusStopOptions = {}): THREE.Group {
   vendingGroup.add(binGroup);
   group.add(vendingGroup);
 
-  // 5. GREEN HEDGE, AZALEA SHRUBS & TREES
+  // 5. GREEN HEDGE (shifted north to z=0.04 clear of shelter back wall), REAR FENCE, BENCH & TREES
   if (includeHedge) {
     const hedgeGroup = new THREE.Group();
-    hedgeGroup.position.set(0, 0.15, 0.20);
+    hedgeGroup.position.set(0, 0.15, 0.04);
 
     const baseHedgeGeo = new THREE.BoxGeometry(lotWidth, 0.65, 0.22);
     const baseHedge = new THREE.Mesh(baseHedgeGeo, hedgeMat);
@@ -869,6 +888,25 @@ export function buildBusStopMesh(options: BusStopOptions = {}): THREE.Group {
     });
 
     group.add(hedgeGroup);
+
+    // Rear timber/brick backdrop fence
+    const rearFence = new THREE.Mesh(new THREE.BoxGeometry(lotWidth, 1.15, 0.10), wallMat);
+    rearFence.position.set(0, 0.15 + 0.575, -2.85);
+    rearFence.receiveShadow = true;
+    group.add(rearFence);
+
+    // Small rear park bench in grassy pocket behind shelter
+    const woodBenchMat = new THREE.MeshStandardMaterial({ color: 0x92400e, roughness: 0.7 });
+    const benchSeat = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.06, 0.38), woodBenchMat);
+    benchSeat.position.set(0.3, 0.52, -1.55);
+    const benchBack = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.30, 0.05), woodBenchMat);
+    benchBack.position.set(0.3, 0.72, -1.72);
+    [-0.18, 0.78].forEach((bx) => {
+      const bLeg = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.36, 0.34), darkFrameMat);
+      bLeg.position.set(bx, 0.33, -1.55);
+      group.add(bLeg);
+    });
+    group.add(benchSeat, benchBack);
 
     const buildTree = (x: number, z: number, totalH: number, scaleW: number): THREE.Group => {
       const tree = new THREE.Group();
@@ -897,10 +935,8 @@ export function buildBusStopMesh(options: BusStopOptions = {}): THREE.Group {
     };
 
     const tree1 = buildTree(-2.1, -1.8, 4.6, 1.0);
-    group.add(tree1);
-
     const tree2 = buildTree(2.1, -1.8, 4.8, 1.1);
-    group.add(tree2);
+    group.add(tree1, tree2);
   }
 
   if (scale !== 1.0) {

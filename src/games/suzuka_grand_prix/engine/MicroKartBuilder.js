@@ -387,15 +387,26 @@ function getSharedKartGeos() {
     // 3. Static same-material body assemblies (carbon -> 1, fairing -> 1, chrome -> 1, plates -> 1)
     const floorPan = new THREE.BoxGeometry(0.0082, 0.0009, 0.0155);
     const rearWing = new THREE.BoxGeometry(0.0096, 0.0007, 0.0024);
+    const wingPylon = new THREE.BoxGeometry(0.0005, 0.0052, 0.0014);
+    const wingEndplate = new THREE.BoxGeometry(0.0004, 0.0020, 0.0028);
     const seat = new THREE.BoxGeometry(0.0042, 0.0044, 0.0038);
+    const steeringCol = new THREE.CylinderGeometry(0.00032, 0.00038, 0.0046, 8);
     const carbonBodyMerged = mergeNormalizedGeos([
       { geo: floorPan, pos: [0, 0.0014, 0] },
       { geo: rearWing, pos: [0, 0.0068, -0.0076], rot: [-0.18, 0, 0] },
+      { geo: wingPylon, pos: [-0.0024, 0.0042, -0.0072], rot: [-0.14, 0, 0] },
+      { geo: wingPylon, pos: [0.0024, 0.0042, -0.0072], rot: [-0.14, 0, 0] },
+      { geo: wingEndplate, pos: [-0.0049, 0.0069, -0.0076], rot: [-0.18, 0, 0] },
+      { geo: wingEndplate, pos: [0.0049, 0.0069, -0.0076], rot: [-0.18, 0, 0] },
       { geo: seat, pos: [0, 0.0036, -0.0015], rot: [-0.22, 0, 0] },
+      { geo: steeringCol, pos: [0, 0.0042, 0.0035], rot: [0.55, 0, 0] },
     ], false);
     floorPan.dispose();
     rearWing.dispose();
+    wingPylon.dispose();
+    wingEndplate.dispose();
     seat.dispose();
+    steeringCol.dispose();
 
     const noseCone = new THREE.BoxGeometry(0.0086, 0.0021, 0.0044);
     const sidePod = new THREE.BoxGeometry(0.0024, 0.0024, 0.0076);

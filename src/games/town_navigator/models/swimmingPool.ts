@@ -141,12 +141,29 @@ export function buildSwimmingPoolMesh(options: SwimmingPoolOptions = {}): THREE.
 
   const lotSize = 12.0;
 
-  // 1. PROPERTY BASE (12m × 12m)
-  const deckGeo = new THREE.BoxGeometry(lotSize, 0.4, 10.5);
-  const deck = new THREE.Mesh(deckGeo, deckMat);
-  deck.position.set(0, 0.2, -0.75);
-  deck.receiveShadow = true;
-  group.add(deck);
+  // 1. PROPERTY BASE (12m × 12m) — 4 Perimeter Deck Slabs Framing Sunken Basin!
+  const poolW = 8.6;
+  const poolD = 7.0;
+  const poolZ = -1.6;
+
+  // Sub-slab under sunken pool floor so no void exists underneath
+  const subSlab = new THREE.Mesh(new THREE.BoxGeometry(poolW + 0.4, 0.05, poolD + 0.4), deckMat);
+  subSlab.position.set(0, 0.025, poolZ);
+  group.add(subSlab);
+
+  const northDeck = new THREE.Mesh(new THREE.BoxGeometry(lotSize, 0.4, 0.9), deckMat);
+  northDeck.position.set(0, 0.2, -5.55);
+  northDeck.receiveShadow = true;
+  const southDeck = new THREE.Mesh(new THREE.BoxGeometry(lotSize, 0.4, 2.6), deckMat);
+  southDeck.position.set(0, 0.2, 3.2);
+  southDeck.receiveShadow = true;
+  const westDeck = new THREE.Mesh(new THREE.BoxGeometry(1.7, 0.4, poolD), deckMat);
+  westDeck.position.set(-5.15, 0.2, poolZ);
+  westDeck.receiveShadow = true;
+  const eastDeck = new THREE.Mesh(new THREE.BoxGeometry(1.7, 0.4, poolD), deckMat);
+  eastDeck.position.set(5.15, 0.2, poolZ);
+  eastDeck.receiveShadow = true;
+  group.add(northDeck, southDeck, westDeck, eastDeck);
 
   // Sidewalk slab in front: 12.0m wide, 1.5m deep (Z in [+4.5, +6.0])
   const sidewalkGeo = new THREE.BoxGeometry(lotSize, 0.15, 1.5);
@@ -155,6 +172,13 @@ export function buildSwimmingPoolMesh(options: SwimmingPoolOptions = {}): THREE.
   sidewalk.receiveShadow = true;
   group.add(sidewalk);
 
+  // Concrete entrance steps from 0.15m sidewalk up to 0.40m south deck
+  const step1 = new THREE.Mesh(new THREE.BoxGeometry(3.2, 0.125, 0.38), deckMat);
+  step1.position.set(0, 0.212, 4.32);
+  const step2 = new THREE.Mesh(new THREE.BoxGeometry(3.2, 0.125, 0.24), deckMat);
+  step2.position.set(0, 0.337, 4.18);
+  group.add(step1, step2);
+
   const curbGeo = new THREE.BoxGeometry(lotSize, 0.18, 0.12);
   const curb = new THREE.Mesh(curbGeo, curbMat);
   curb.position.set(0, 0.09, 6.0);
@@ -162,13 +186,9 @@ export function buildSwimmingPoolMesh(options: SwimmingPoolOptions = {}): THREE.
   group.add(curb);
 
   // 2. SUNKEN CERAMIC TILE POOL BASIN & WATER (detail1 at Z = -1.6m)
-  const poolW = 8.6;
-  const poolD = 7.0;
-  const poolZ = -1.6;
-
   const floorGeo = new THREE.BoxGeometry(poolW, 0.05, poolD);
   const floor = new THREE.Mesh(floorGeo, poolTileMat);
-  floor.position.set(0, 0.05, poolZ);
+  floor.position.set(0, 0.07, poolZ);
   floor.receiveShadow = true;
   group.add(floor);
 
@@ -176,13 +196,13 @@ export function buildSwimmingPoolMesh(options: SwimmingPoolOptions = {}): THREE.
   const wallThick = 0.18;
 
   const rimNorth = new THREE.Mesh(new THREE.BoxGeometry(poolW + 0.36, wallH, wallThick), whiteMat);
-  rimNorth.position.set(0, 0.22, poolZ - poolD / 2 - wallThick / 2);
+  rimNorth.position.set(0, 0.24, poolZ - poolD / 2 - wallThick / 2);
   const rimSouth = new THREE.Mesh(new THREE.BoxGeometry(poolW + 0.36, wallH, wallThick), whiteMat);
-  rimSouth.position.set(0, 0.22, poolZ + poolD / 2 + wallThick / 2);
+  rimSouth.position.set(0, 0.24, poolZ + poolD / 2 + wallThick / 2);
   const rimWest = new THREE.Mesh(new THREE.BoxGeometry(wallThick, wallH, poolD), whiteMat);
-  rimWest.position.set(-poolW / 2 - wallThick / 2, 0.22, poolZ);
+  rimWest.position.set(-poolW / 2 - wallThick / 2, 0.24, poolZ);
   const rimEast = new THREE.Mesh(new THREE.BoxGeometry(wallThick, wallH, poolD), whiteMat);
-  rimEast.position.set(poolW / 2 + wallThick / 2, 0.22, poolZ);
+  rimEast.position.set(poolW / 2 + wallThick / 2, 0.24, poolZ);
   group.add(rimNorth, rimSouth, rimWest, rimEast);
 
   // 4 Chrome Poolside Access Ladders
@@ -207,11 +227,11 @@ export function buildSwimmingPoolMesh(options: SwimmingPoolOptions = {}): THREE.
   for (let l = 0; l < numLanes; l++) {
     const lx = -poolW / 2 + (l + 0.5) * laneW;
     const lLine = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.06, poolD - 0.9), laneLineMat);
-    lLine.position.set(lx, 0.08, poolZ);
+    lLine.position.set(lx, 0.1, poolZ);
     const tNorth = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.06, 0.14), laneLineMat);
-    tNorth.position.set(lx, 0.08, poolZ - poolD / 2 + 0.45);
+    tNorth.position.set(lx, 0.1, poolZ - poolD / 2 + 0.45);
     const tSouth = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.06, 0.14), laneLineMat);
-    tSouth.position.set(lx, 0.08, poolZ + poolD / 2 - 0.45);
+    tSouth.position.set(lx, 0.1, poolZ + poolD / 2 - 0.45);
     group.add(lLine, tNorth, tSouth);
   }
 
@@ -249,7 +269,10 @@ export function buildSwimmingPoolMesh(options: SwimmingPoolOptions = {}): THREE.
     topStep.rotation.x = -0.15;
     topStep.castShadow = true;
 
-    blockGroup.add(ped, topStep);
+    const grabBar = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.03, 0.04), chromeMat);
+    grabBar.position.set(0, 0.38, 0.28);
+
+    blockGroup.add(ped, topStep, grabBar);
     group.add(blockGroup);
   }
 
@@ -306,7 +329,7 @@ export function buildSwimmingPoolMesh(options: SwimmingPoolOptions = {}): THREE.
     }
   });
 
-  // 7. POOLSIDE SHOWER ARCH, SUN LOUNGERS & RESCUE RING (West Deck)
+  // 7. POOLSIDE SHOWER ARCH, CHANGING PAVILION (更衣室), FOOT-WASH TROUGH & ARTICULATED LOUNGERS
   const showerGroup = new THREE.Group();
   showerGroup.position.set(-poolW / 2 - 0.85, 0.4, 0.8);
 
@@ -323,12 +346,67 @@ export function buildSwimmingPoolMesh(options: SwimmingPoolOptions = {}): THREE.
   showerGroup.add(showerPipe, showerHead, buoy);
   group.add(showerGroup);
 
-  // 2 Poolside Blue Sun Loungers on West Deck
-  [-3.8, -1.8].forEach((lz) => {
-    const lounger = new THREE.Mesh(new THREE.BoxGeometry(0.65, 0.18, 1.35), floatBlueMat);
-    lounger.position.set(-poolW / 2 - 0.9, 0.49, lz);
-    lounger.castShadow = true;
-    group.add(lounger);
+  // Compact Changing Pavilion (更衣室) on West-North Deck
+  const cabin = new THREE.Group();
+  cabin.position.set(-5.15, 0.4, -4.1);
+  const cabinBody = new THREE.Mesh(new THREE.BoxGeometry(1.3, 2.1, 2.1), whiteMat);
+  cabinBody.position.y = 1.05;
+  cabinBody.castShadow = true;
+  const cabinRoof = new THREE.Mesh(new THREE.BoxGeometry(1.48, 0.14, 2.28), floatBlueMat);
+  cabinRoof.position.y = 2.17;
+  const cabinDoor = new THREE.Mesh(new THREE.BoxGeometry(0.06, 1.75, 0.72), floatBlueMat);
+  cabinDoor.position.set(0.66, 0.88, 0);
+  cabin.add(cabinBody, cabinRoof, cabinDoor);
+  group.add(cabin);
+
+  // Foot-Wash Trough (腰洗い槽) near South Entry
+  const washBasin = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.16, 0.75), whiteMat);
+  washBasin.position.set(-2.5, 0.48, 2.85);
+  const washWater = new THREE.Mesh(new THREE.BoxGeometry(2.0, 0.04, 0.56), poolWaterMat);
+  washWater.position.set(-2.5, 0.56, 2.85);
+  group.add(washBasin, washWater);
+
+  // 2 Articulated Blue Sun Loungers on West Deck (legs + angled backrest)
+  [-2.6, -0.8].forEach((lz) => {
+    const lg = new THREE.Group();
+    lg.position.set(-poolW / 2 - 0.9, 0.4, lz);
+    [-0.25, 0.25].forEach((lx) => {
+      [-0.5, 0.5].forEach((lzz) => {
+        const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.2, 6), whiteMat);
+        leg.position.set(lx, 0.1, lzz);
+        lg.add(leg);
+      });
+    });
+    const bed = new THREE.Mesh(new THREE.BoxGeometry(0.62, 0.08, 1.05), floatBlueMat);
+    bed.position.set(0, 0.22, 0.16);
+    const back = new THREE.Mesh(new THREE.BoxGeometry(0.62, 0.08, 0.52), floatBlueMat);
+    back.position.set(0, 0.36, -0.45);
+    back.rotation.x = 0.55;
+    lg.add(bed, back);
+    group.add(lg);
+  });
+
+  // 4 Corner LED Floodlight Poles for Night Illumination
+  const ledGlowMat = new THREE.MeshStandardMaterial({
+    color: 0xffffff,
+    emissive: 0xe0f2fe,
+    emissiveIntensity: 1.1,
+  });
+  [
+    [-5.5, -5.5],
+    [5.5, -5.5],
+    [-5.5, 3.6],
+    [5.5, 3.6],
+  ].forEach(([fx, fz]) => {
+    const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.07, 4.4, 8), darkMetalMat);
+    pole.position.set(fx, 0.4 + 2.2, fz);
+    const head = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.22, 0.18), darkMetalMat);
+    head.position.set(fx, 4.85, fz);
+    head.lookAt(0, 0.4, poolZ);
+    const lens = new THREE.Mesh(new THREE.PlaneGeometry(0.38, 0.16), ledGlowMat);
+    lens.position.set(0, 0, 0.1);
+    head.add(lens);
+    group.add(pole, head);
   });
 
   // 8. FRONT ENTRANCE RECEPTION ARCHWAY, SIGN & DIGITAL WATER TEMP BOARD (Z = +3.6m..+4.2m)
@@ -355,7 +433,7 @@ export function buildSwimmingPoolMesh(options: SwimmingPoolOptions = {}): THREE.
   signBeam.position.set(0, 2.75, 0);
   entryArch.add(signBeam);
 
-  // Digital Water & Air Temp Display Board on Right Gatepost
+  // Digital Water & Air Temp Display Board on Twin Steel Posts
   const tempMat = new THREE.MeshStandardMaterial({
     map: createTempBoardTexture(),
     emissive: 0xffffff,
@@ -368,18 +446,40 @@ export function buildSwimmingPoolMesh(options: SwimmingPoolOptions = {}): THREE.
   ]);
   tempBoard.position.set(2.6, 1.45, 0.15);
   entryArch.add(tempBoard);
+  [2.18, 3.02].forEach((tx) => {
+    const tPost = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 1.45, 8), darkMetalMat);
+    tPost.position.set(tx, 0.725, 0.15);
+    entryArch.add(tPost);
+  });
 
   group.add(entryArch);
 
-  // Perimeter Safety Fence
-  const fenceH = 1.6;
-  const fenceZFront = 4.2;
-
-  [-3.8, 3.8].forEach((fx) => {
-    const fPanel = new THREE.Mesh(new THREE.BoxGeometry(4.2, fenceH, 0.04), fenceMat);
-    fPanel.position.set(fx, 0.4 + fenceH / 2, fenceZFront);
-    group.add(fPanel);
-  });
+  // Open Tubular Perimeter Safety Fence (All 4 Sides, Leaving Central 3.2m Entrance Open)
+  const fenceH = 1.5;
+  const addTubularFence = (x1: number, z1: number, x2: number, z2: number, posts: number) => {
+    const dx = x2 - x1;
+    const dz = z2 - z1;
+    const len = Math.hypot(dx, dz);
+    const angle = Math.atan2(dx, dz);
+    [0.25, 0.85, 1.45].forEach((ry) => {
+      const rail = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, len, 6), fenceMat);
+      rail.rotation.x = Math.PI / 2;
+      rail.rotation.z = -angle;
+      rail.position.set((x1 + x2) / 2, 0.4 + ry, (z1 + z2) / 2);
+      group.add(rail);
+    });
+    for (let i = 0; i <= posts; i++) {
+      const t = i / posts;
+      const p = new THREE.Mesh(new THREE.CylinderGeometry(0.028, 0.028, fenceH, 6), fenceMat);
+      p.position.set(x1 + dx * t, 0.4 + fenceH / 2, z1 + dz * t);
+      group.add(p);
+    }
+  };
+  addTubularFence(-5.85, 4.15, -1.75, 4.15, 3);
+  addTubularFence(1.75, 4.15, 5.85, 4.15, 3);
+  addTubularFence(-5.85, -5.85, 5.85, -5.85, 6);
+  addTubularFence(-5.85, -5.85, -5.85, 4.15, 5);
+  addTubularFence(5.85, -5.85, 5.85, 4.15, 5);
 
   if (scale !== 1.0) {
     group.scale.setScalar(scale);

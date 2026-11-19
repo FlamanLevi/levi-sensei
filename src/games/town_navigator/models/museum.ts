@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { getConcretePanelTexture, addWrapAroundWindows } from './wallTextures';
+import { getConcretePanelTexture, addWrapAroundWindows, getClearShowcaseGlassMaterial, buildPerimeterRailing } from './wallTextures';
 
 let cachedMuseumSignTex: THREE.CanvasTexture | null = null;
 
@@ -123,6 +123,7 @@ export function buildMuseumMesh(options: MuseumOptions = {}): THREE.Group {
     transparent: true,
     opacity: 0.68,
   });
+  const clearGlassMat = getClearShowcaseGlassMaterial();
   const foundationMat = new THREE.MeshStandardMaterial({ color: 0xd8dde6, roughness: 0.85 });
   const curbMat = new THREE.MeshStandardMaterial({ color: 0x94a3b8, roughness: 0.9 });
   const asphaltMat = new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.9 });
@@ -138,9 +139,9 @@ export function buildMuseumMesh(options: MuseumOptions = {}): THREE.Group {
   lawn.receiveShadow = true;
   group.add(lawn);
 
-  const plazaGeo = new THREE.BoxGeometry(lotSize, 0.152, 1.5);
+  const plazaGeo = new THREE.BoxGeometry(lotSize, 0.152, 2.2);
   const plaza = new THREE.Mesh(plazaGeo, foundationMat);
-  plaza.position.set(0, 0.076, 3.75);
+  plaza.position.set(0, 0.076, 3.4);
   plaza.receiveShadow = true;
   group.add(plaza);
 
@@ -183,25 +184,43 @@ export function buildMuseumMesh(options: MuseumOptions = {}): THREE.Group {
   bodyMesh.receiveShadow = true;
   museumGroup.add(bodyMesh);
 
-  // Classical Entablature Cornice Trim around Roofline
+  // Classical Entablature Cornice Trim around Roofline + Stone Balustrade
   const cornice = new THREE.Mesh(new THREE.BoxGeometry(bW + 0.3, 0.42, bD + 0.3), darkStoneMat);
   cornice.position.y = bH + 0.21;
   museumGroup.add(cornice);
 
-  // Louvre-style Glass Rooftop Skylight Pyramid on the Gallery Roof
+  const roofRail = buildPerimeterRailing(bW - 0.2, bD - 0.2, 0.55, darkStoneMat, 1.6);
+  roofRail.position.set(0, bH + 0.42, 0);
+  museumGroup.add(roofRail);
+
+  // Louvre-style Clear Glass Rooftop Skylight Pyramid + Structural Mullion Ribs
   const skylightGeo = new THREE.ConeGeometry(2.6 * Math.SQRT1_2, 1.8, 4);
   skylightGeo.rotateY(Math.PI / 4);
-  const skylight = new THREE.Mesh(skylightGeo, glassMat);
+  const skylight = new THREE.Mesh(skylightGeo, clearGlassMat);
   skylight.position.set(0, bH + 0.42 + 0.9, -0.4);
   museumGroup.add(skylight);
+  [
+    [-1, -1],
+    [1, -1],
+    [-1, 1],
+    [1, 1],
+  ].forEach(([sx, sz]) => {
+    const rib = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 2.55, 6), darkStoneMat);
+    rib.position.set(sx * 0.65, bH + 0.42 + 0.9, -0.4 + sz * 0.65);
+    rib.rotation.z = sx * 0.62;
+    rib.rotation.x = -sz * 0.62;
+    museumGroup.add(rib);
+  });
 
-  // Tall Arched Front Gallery Windows flanking the portico
+  // Tall Clear Front Gallery Windows flanking the portico
   [-3.8, -2.8, 2.8, 3.8].forEach((wx) => {
     const winFrame = new THREE.Mesh(new THREE.BoxGeometry(0.78, 3.6, 0.08), darkStoneMat);
     winFrame.position.set(wx, 3.2, bD / 2 + 0.02);
-    const winGlass = new THREE.Mesh(new THREE.BoxGeometry(0.68, 3.4, 0.06), glassMat);
+    const winGlass = new THREE.Mesh(new THREE.BoxGeometry(0.68, 3.4, 0.05), clearGlassMat);
     winGlass.position.set(wx, 3.2, bD / 2 + 0.04);
-    museumGroup.add(winFrame, winGlass);
+    const transom = new THREE.Mesh(new THREE.BoxGeometry(0.72, 0.06, 0.07), darkStoneMat);
+    transom.position.set(wx, 3.9, bD / 2 + 0.04);
+    museumGroup.add(winFrame, winGlass, transom);
   });
 
   // Side & Rear Exhibition Hall Windows (for 360° street-corner detail)
@@ -263,17 +282,17 @@ export function buildMuseumMesh(options: MuseumOptions = {}): THREE.Group {
     }
   });
 
-  // Interior Display Vitrines behind Front Arched Windows
+  // Interior Display Vitrines Positioned Directly Behind Clear Gallery Windows (x = ±2.8)
   const vitrineGoldMat = new THREE.MeshStandardMaterial({ color: 0xfacc15, metalness: 0.75, roughness: 0.25 });
-  [-3.3, 3.3].forEach((vx) => {
-    const ped = new THREE.Mesh(new THREE.BoxGeometry(0.75, 1.35, 0.45), darkStoneMat);
-    ped.position.set(vx, 0.675, bD / 2 - 0.32);
+  [-2.8, 2.8].forEach((vx) => {
+    const ped = new THREE.Mesh(new THREE.BoxGeometry(0.62, 1.55, 0.42), darkStoneMat);
+    ped.position.set(vx, 0.775, bD / 2 - 0.28);
     const artifact = new THREE.Mesh(new THREE.OctahedronGeometry(0.24, 0), vitrineGoldMat);
-    artifact.position.set(vx, 1.7, bD / 2 - 0.32);
+    artifact.position.set(vx, 1.85, bD / 2 - 0.28);
     museumGroup.add(ped, artifact);
   });
 
-  // Vertical Exhibition Cloth Banners flanking the Portico
+  // Vertical Exhibition Cloth Banners with Brass Hanging Rods
   const bannerTex = createMuseumBannerTexture();
   const leftBannerGeo = new THREE.PlaneGeometry(0.64, 2.2);
   const uvL = leftBannerGeo.attributes.uv;
@@ -290,6 +309,12 @@ export function buildMuseumMesh(options: MuseumOptions = {}): THREE.Group {
   bannerL.position.set(-2.35, 3.1, bD / 2 + 0.12);
   const bannerR = new THREE.Mesh(rightBannerGeo, bannerMat);
   bannerR.position.set(2.35, 3.1, bD / 2 + 0.12);
+  [-2.35, 2.35].forEach((bx) => {
+    const rod = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 0.78, 8), bronzeMat);
+    rod.rotation.z = Math.PI / 2;
+    rod.position.set(bx, 4.22, bD / 2 + 0.12);
+    museumGroup.add(rod);
+  });
   museumGroup.add(bannerL, bannerR);
 
   // 4 Classical Columns with Bases, Capitals & Warm Portico Uplights
@@ -313,26 +338,26 @@ export function buildMuseumMesh(options: MuseumOptions = {}): THREE.Group {
     museumGroup.add(base, uplight, shaft, capital);
   });
 
-  // Bronze Museum Double Doors
+  // Bronze Museum Double Doors with Handles
   const doors = new THREE.Mesh(new THREE.BoxGeometry(2.2, 2.8, 0.08), bronzeMat);
   doors.position.set(0, 1.76, bD / 2 + 0.05);
   museumGroup.add(doors);
 
-  // Broad Entrance Steps
+  // Broad Entrance Steps (Tightened strictly inside z <= 4.45m)
   for (let s = 0; s < 3; s++) {
-    const step = new THREE.Mesh(new THREE.BoxGeometry(5.6 - s * 0.3, 0.12, 1.8 - s * 0.2), darkStoneMat);
-    step.position.set(0, (s + 0.5) * 0.12, bD / 2 + 0.8 + (2 - s) * 0.15);
+    const step = new THREE.Mesh(new THREE.BoxGeometry(5.6 - s * 0.3, 0.12, 1.4 - s * 0.2), darkStoneMat);
+    step.position.set(0, (s + 0.5) * 0.12, bD / 2 + 0.65 + (2 - s) * 0.12);
     step.receiveShadow = true;
     museumGroup.add(step);
   }
 
-  // Prominent Header Signboard: "MUSEUM / 博物館"
+  // Prominent Header Signboard: "MUSEUM / 博物館" anchored flush on stone entablature
   const signTexture = createMuseumSignTexture();
   const signMat = new THREE.MeshStandardMaterial({ map: signTexture, roughness: 0.4 });
-  const signMesh = new THREE.Mesh(new THREE.BoxGeometry(4.8, 0.85, 0.12), [
+  const signMesh = new THREE.Mesh(new THREE.BoxGeometry(4.8, 0.85, 0.14), [
     darkStoneMat, darkStoneMat, darkStoneMat, darkStoneMat, signMat, darkStoneMat
   ]);
-  signMesh.position.set(0, bH + 0.75, bD / 2 + 0.15);
+  signMesh.position.set(0, bH + 0.22, bD / 2 + 0.20);
   museumGroup.add(signMesh);
 
   group.add(museumGroup);

@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import {
   getKawaraTileTexture,
   getIshigakiStoneTexture,
+  getRakedGravelTexture,
   buildJapaneseIrimoyaRoof,
 } from './wallTextures';
 
@@ -145,6 +146,12 @@ export function buildGardenMesh(options: GardenOptions = {}): THREE.Group {
 
   // 2. KOI POND, LOTUS PADS & RED ARCHED DRUM BRIDGE (detail1 at X = 0, Z = 0.2m)
   const pondZ = 0.2;
+  const darkBedMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.95 });
+  const pondBed = new THREE.Mesh(new THREE.CylinderGeometry(3.18, 2.98, 0.06, 24), darkBedMat);
+  pondBed.scale.set(1.25, 1.0, 0.85);
+  pondBed.position.set(0, 0.09, pondZ);
+  group.add(pondBed);
+
   const pond = new THREE.Mesh(new THREE.CylinderGeometry(3.2, 3.0, 0.12, 24), waterMat);
   pond.scale.set(1.25, 1.0, 0.85);
   pond.position.set(0, 0.14, pondZ);
@@ -160,21 +167,28 @@ export function buildGardenMesh(options: GardenOptions = {}): THREE.Group {
     group.add(rock);
   }
 
-  // Swimming Golden & Red-White Nishikigoi Fish + Lotus Lily Pads
+  // Swimming Golden & Red-White Nishikigoi Fish with Tail Fins + Lotus Lily Pads
+  const koiMats = [
+    new THREE.MeshStandardMaterial({ color: 0xfacc15, roughness: 0.3 }),
+    new THREE.MeshStandardMaterial({ color: 0xef4444, roughness: 0.3 }),
+    new THREE.MeshStandardMaterial({ color: 0xf97316, roughness: 0.3 }),
+    new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.3 }),
+  ];
   [
-    { x: -1.6, z: pondZ + 0.5, col: 0xfacc15, rot: 0.5 },
-    { x: -1.2, z: pondZ - 0.6, col: 0xef4444, rot: -0.8 },
-    { x: 1.5, z: pondZ + 0.4, col: 0xf97316, rot: 2.1 },
-    { x: 1.8, z: pondZ - 0.5, col: 0xffffff, rot: -1.6 },
+    { x: -1.6, z: pondZ + 0.5, mIdx: 0, rot: 0.5 },
+    { x: -1.2, z: pondZ - 0.6, mIdx: 1, rot: -0.8 },
+    { x: 1.5, z: pondZ + 0.4, mIdx: 2, rot: 2.1 },
+    { x: 1.8, z: pondZ - 0.5, mIdx: 3, rot: -1.6 },
   ].forEach((koi) => {
-    const kBody = new THREE.Mesh(
-      new THREE.ConeGeometry(0.07, 0.32, 6),
-      new THREE.MeshStandardMaterial({ color: koi.col, roughness: 0.3 })
-    );
+    const kGroup = new THREE.Group();
+    kGroup.position.set(koi.x, 0.20, koi.z);
+    kGroup.rotation.y = koi.rot;
+    const kBody = new THREE.Mesh(new THREE.ConeGeometry(0.07, 0.30, 6), koiMats[koi.mIdx]);
     kBody.rotation.x = Math.PI / 2;
-    kBody.rotation.z = koi.rot;
-    kBody.position.set(koi.x, 0.20, koi.z);
-    group.add(kBody);
+    const kTail = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.02, 0.12), koiMats[koi.mIdx]);
+    kTail.position.set(0, 0, -0.18);
+    kGroup.add(kBody, kTail);
+    group.add(kGroup);
   });
 
   [
@@ -188,7 +202,7 @@ export function buildGardenMesh(options: GardenOptions = {}): THREE.Group {
     group.add(pad, lotus);
   });
 
-  // Red Lacquered Arched Drum Bridge (Taiko-Bashi) with Golden Giboshi Post Finials
+  // Red Lacquered Arched Drum Bridge (Taiko-Bashi) with Parabolic Curved Handrails & Seated Posts
   const bridgeGroup = new THREE.Group();
   bridgeGroup.position.set(0, 0.15, pondZ);
 
@@ -205,20 +219,40 @@ export function buildGardenMesh(options: GardenOptions = {}): THREE.Group {
   }
 
   [-0.72, 0.72].forEach(rx => {
-    const rail = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.06, 4.4), woodBridgeMat);
-    rail.position.set(rx, 0.80, 0);
-    bridgeGroup.add(rail);
-
-    for (let p = 0; p < 5; p++) {
-      const pz = -1.8 + p * 0.9;
-      const post = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.045, 0.82, 8), woodBridgeMat);
-      post.position.set(rx, 0.46, pz);
+    const postZ = [-1.8, -0.9, 0, 0.9, 1.8];
+    const postTopY = postZ.map((pz) => {
+      const t = pz / 2.2;
+      const deckY = 0.52 * (1 - t * t) + 0.12;
+      const postH = 0.52;
+      const post = new THREE.Mesh(new THREE.CylinderGeometry(0.042, 0.042, postH, 8), woodBridgeMat);
+      post.position.set(rx, deckY + postH / 2, pz);
       const giboshi = new THREE.Mesh(new THREE.SphereGeometry(0.055, 8, 8), goldMat);
-      giboshi.position.set(rx, 0.90, pz);
+      giboshi.position.set(rx, deckY + postH + 0.04, pz);
       bridgeGroup.add(post, giboshi);
+      return deckY + postH;
+    });
+    for (let i = 0; i < postZ.length - 1; i++) {
+      const dz = postZ[i + 1] - postZ[i];
+      const dy = postTopY[i + 1] - postTopY[i];
+      const segLen = Math.hypot(dz, dy);
+      const seg = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.06, segLen), woodBridgeMat);
+      seg.position.set(rx, (postTopY[i] + postTopY[i + 1]) / 2, (postZ[i] + postZ[i + 1]) / 2);
+      seg.rotation.x = -Math.atan2(dy, dz);
+      bridgeGroup.add(seg);
     }
   });
   group.add(bridgeGroup);
+
+  // Tobi-ishi Stepping Stones linking Entrance, Bridge, Azumaya & Shishi-odoshi
+  [
+    [0, 3.15], [0, 2.65],
+    [-1.4, -0.9], [-2.1, -1.3], [-2.7, -1.7],
+    [1.6, 1.35], [2.0, 1.5],
+  ].forEach(([sx, sz]) => {
+    const stepStone = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.26, 0.05, 8), stoneMat);
+    stepStone.position.set(sx, 0.165, sz);
+    group.add(stepStone);
+  });
 
   // 2b. Paired Stone Tōrō Lanterns flanking the Bridge Approach (X = ±1.45m, Z = 2.7m)
   [-1.45, 1.45].forEach((tx) => {
@@ -299,11 +333,14 @@ export function buildGardenMesh(options: GardenOptions = {}): THREE.Group {
   rockerTube.rotation.z = Math.PI / 3;
   rockerTube.position.set(0.15, 0.52, 0);
 
-  // Tall Bamboo Backdrop Stalks behind Shishi-odoshi
+  // Tall Bamboo Backdrop Stalks with Leafy Tips behind Shishi-odoshi
   [-0.25, 0.0, 0.25].forEach((bx, idx) => {
-    const stalk = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.045, 2.2 + idx * 0.3, 8), bambooMat);
-    stalk.position.set(bx, 1.1, -0.45);
-    shishi.add(stalk);
+    const h = 2.2 + idx * 0.3;
+    const stalk = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.045, h, 8), bambooMat);
+    stalk.position.set(bx, h / 2, -0.45);
+    const leafTip = new THREE.Mesh(new THREE.DodecahedronGeometry(0.22, 0), lilyPadMat);
+    leafTip.position.set(bx, h + 0.08, -0.45);
+    shishi.add(stalk, leafTip);
   });
 
   shishi.add(tsukubai, tsukubaiWater, pivotPosts, rockerTube);
@@ -335,13 +372,39 @@ export function buildGardenMesh(options: GardenOptions = {}): THREE.Group {
   teaRoof.position.set(0, 2.5, 0);
   azumaya.add(teaRoof);
 
-  // Red-Cloth Tea Bench (緋毛氈の縁台) inside Pavilion
+  // Hanging Chōchin Lantern + Red-Cloth Tea Bench + Nodategasa Tea Parasol
+  const chochin = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.14, 0.28, 10), lanternGlowMat);
+  chochin.position.set(0, 2.22, 0.85);
   const teaBench = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.36, 0.55), woodBridgeMat);
   teaBench.position.set(0, 0.42, 0);
-  azumaya.add(teaBench);
+  const parasolPole = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 1.75, 6), timberMat);
+  parasolPole.position.set(1.55, 0.875, 1.15);
+  const parasolTop = new THREE.Mesh(new THREE.ConeGeometry(0.85, 0.35, 12), woodBridgeMat);
+  parasolTop.position.set(1.55, 1.82, 1.15);
+  azumaya.add(chochin, teaBench, parasolPole, parasolTop);
   group.add(azumaya);
 
-  // 5. GARDEN ENTRANCE SIGN & AUTUMN MAPLE TREES (Z <= 4.2m)
+  // 4b. CORNER KARESANSUI RAKED GRAVEL ZEN GARDEN (X = +3.9m, Z = -4.0m)
+  const zenCurb = new THREE.Mesh(new THREE.BoxGeometry(2.8, 0.12, 2.4), stoneMat);
+  zenCurb.position.set(3.9, 0.21, -4.0);
+  const zenBedMat = new THREE.MeshStandardMaterial({ map: getRakedGravelTexture(), roughness: 0.9 });
+  const zenBed = new THREE.Mesh(new THREE.BoxGeometry(2.5, 0.14, 2.1), zenBedMat);
+  zenBed.position.set(3.9, 0.22, -4.0);
+  const zenRock = new THREE.Mesh(new THREE.DodecahedronGeometry(0.32, 0), stoneMat);
+  zenRock.position.set(3.6, 0.42, -4.1);
+  group.add(zenCurb, zenBed, zenRock);
+
+  // 4c. BAMBOO PERIMETER FENCE (Takegaki)
+  [-5.85, 5.85].forEach((fx) => {
+    const sideFence = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.85, 8.8), bambooMat);
+    sideFence.position.set(fx, 0.57, -1.5);
+    group.add(sideFence);
+  });
+  const backFence = new THREE.Mesh(new THREE.BoxGeometry(11.7, 0.85, 0.08), bambooMat);
+  backFence.position.set(0, 0.57, -5.85);
+  group.add(backFence);
+
+  // 5. GARDEN ENTRANCE SIGN ON TWIN CEDAR POSTS (Side-Mounted so Central Gate is Open!) & AUTUMN MAPLES
   const signTexture = createGardenSignTexture();
   const signMat = new THREE.MeshStandardMaterial({
     map: signTexture,
@@ -350,27 +413,36 @@ export function buildGardenMesh(options: GardenOptions = {}): THREE.Group {
     emissiveIntensity: 0.3,
     roughness: 0.4,
   });
-  const signMesh = new THREE.Mesh(new THREE.BoxGeometry(4.2, 0.85, 0.12), [
+  [-4.85, -2.15].forEach((px) => {
+    const sPost = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.08, 1.95, 8), timberMat);
+    sPost.position.set(px, 1.12, 4.05);
+    group.add(sPost);
+  });
+  const signMesh = new THREE.Mesh(new THREE.BoxGeometry(3.2, 0.72, 0.12), [
     timberMat, timberMat, timberMat, timberMat, signMat, signMat,
   ]);
-  signMesh.position.set(0, 1.2 + 0.15, 4.1);
+  signMesh.position.set(-3.5, 1.68, 4.05);
   group.add(signMesh);
 
   if (includeLandscaping) {
+    const mapleMats = [
+      new THREE.MeshStandardMaterial({ color: 0xdc2626, roughness: 0.8 }),
+      new THREE.MeshStandardMaterial({ color: 0xd97706, roughness: 0.8 }),
+    ];
     [
-      { x: -1.2, z: -4.2, col: 0xdc2626 },
-      { x: 3.6, z: -3.8, col: 0xd97706 },
+      { x: -1.2, z: -4.2, mIdx: 0 },
+      { x: 1.5, z: -4.1, mIdx: 1 },
     ].forEach((mt) => {
       const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.24, 2.2, 8), timberMat);
       trunk.position.set(mt.x, 1.1 + 0.15, mt.z);
       trunk.castShadow = true;
-      const foliage = new THREE.Mesh(
-        new THREE.DodecahedronGeometry(1.5, 1),
-        new THREE.MeshStandardMaterial({ color: mt.col, roughness: 0.8 })
-      );
-      foliage.position.set(mt.x, 3.0 + 0.15, mt.z);
-      foliage.castShadow = true;
-      group.add(trunk, foliage);
+      const f1 = new THREE.Mesh(new THREE.DodecahedronGeometry(1.35, 1), mapleMats[mt.mIdx]);
+      f1.position.set(mt.x, 3.05, mt.z);
+      f1.castShadow = true;
+      const f2 = new THREE.Mesh(new THREE.DodecahedronGeometry(0.95, 1), mapleMats[mt.mIdx]);
+      f2.position.set(mt.x + 0.65, 2.65, mt.z + 0.35);
+      f2.castShadow = true;
+      group.add(trunk, f1, f2);
     });
   }
 

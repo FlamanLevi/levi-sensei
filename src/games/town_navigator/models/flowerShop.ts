@@ -1,5 +1,10 @@
 import * as THREE from 'three';
-import { getHorizontalSidingTexture, addWrapAroundWindows } from './wallTextures';
+import {
+  getHorizontalSidingTexture,
+  addWrapAroundWindows,
+  getClearShowcaseGlassMaterial,
+  buildPerimeterRailing,
+} from './wallTextures';
 
 let cachedFlowerShopSignTex: THREE.CanvasTexture | null = null;
 let cachedFloralInteriorTex: THREE.CanvasTexture | null = null;
@@ -254,13 +259,40 @@ export function buildFlowerShopMesh(options: FlowerShopOptions = {}): THREE.Grou
   parapet.castShadow = true;
   bGroup.add(parapet);
 
-  // Rooftop Glass Greenhouse Conservatory Skylight (<= 5.4m)
-  const skylightGeo = new THREE.CylinderGeometry(1.1 * Math.SQRT1_2, 1.8 * Math.SQRT1_2, 0.75, 4);
+  // Rooftop Glass Greenhouse Conservatory Skylight with Structural Mullions + Perimeter Railing
+  const clearGlassMat = getClearShowcaseGlassMaterial();
+  const skylightCurb = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.14, 1.6), woodTrimMat);
+  skylightCurb.position.set(-0.4, bH + 0.32 + 0.07, 0);
+  bGroup.add(skylightCurb);
+
+  const skylightGeo = new THREE.CylinderGeometry(0.18 * Math.SQRT1_2, 1.8 * Math.SQRT1_2, 0.78, 4);
   skylightGeo.rotateY(Math.PI / 4);
-  const skylight = new THREE.Mesh(skylightGeo, glassMat);
-  skylight.scale.set(1.3, 1.0, 0.85);
-  skylight.position.set(-0.4, bH + 0.32 + 0.375, 0);
+  const skylight = new THREE.Mesh(skylightGeo, clearGlassMat);
+  skylight.scale.set(1.25, 1.0, 0.82);
+  skylight.position.set(-0.4, bH + 0.46 + 0.39, 0);
   bGroup.add(skylight);
+
+  // 4 corner hip mullions & ridge cap on greenhouse pyramid
+  const mullionMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.4 });
+  [
+    [-1, -1],
+    [1, -1],
+    [-1, 1],
+    [1, 1],
+  ].forEach(([sx, sz]) => {
+    const hip = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 1.32, 6), mullionMat);
+    hip.position.set(-0.4 + sx * 0.56, bH + 0.46 + 0.38, sz * 0.36);
+    hip.rotation.z = sx * 0.72;
+    hip.rotation.x = -sz * 0.48;
+    bGroup.add(hip);
+  });
+  const ridgeCap = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.06, 0.24), mullionMat);
+  ridgeCap.position.set(-0.4, bH + 0.46 + 0.79, 0);
+  bGroup.add(ridgeCap);
+
+  const roofRail = buildPerimeterRailing(bW - 0.16, bD - 0.16, 0.36, woodTrimMat, 1.2);
+  roofRail.position.set(0, bH + 0.32, 0);
+  bGroup.add(roofRail);
 
   // 360° Side & Rear Framed Windows
   addWrapAroundWindows({
@@ -276,7 +308,7 @@ export function buildFlowerShopMesh(options: FlowerShopOptions = {}): THREE.Grou
     frameMat: woodTrimMat,
   });
 
-  // 3. STOREFRONT STRIPED PINK & WHITE FABRIC AWNING
+  // 3. STOREFRONT STRIPED PINK & WHITE FABRIC AWNING + Wrought-Iron Brackets
   const awningW = 3.5;
   const awningD = 1.1;
   const awningGroup = new THREE.Group();
@@ -301,9 +333,17 @@ export function buildFlowerShopMesh(options: FlowerShopOptions = {}): THREE.Grou
   valance.position.set(0, -awningD * Math.sin(0.25) / 2 - 0.02, awningD * Math.cos(0.25) + 0.02);
   awningGroup.add(valance);
 
+  const ironMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.45, metalness: 0.5 });
+  [-awningW / 2 + 0.15, awningW / 2 - 0.15].forEach((bx) => {
+    const bracketArm = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.04, 0.72), ironMat);
+    bracketArm.position.set(bx, -0.22, 0.34);
+    bracketArm.rotation.x = -0.35;
+    awningGroup.add(bracketArm);
+  });
+
   bGroup.add(awningGroup);
 
-  // Official Flower Shop Signboard mounted on facade
+  // Official Flower Shop Signboard mounted cleanly on 1F–2F cornice band above awning
   const signTexture = createFlowerShopSignTexture();
   const signMat = new THREE.MeshStandardMaterial({
     map: signTexture,
@@ -312,12 +352,21 @@ export function buildFlowerShopMesh(options: FlowerShopOptions = {}): THREE.Grou
     emissiveIntensity: 0.35,
     roughness: 0.4,
   });
-  const signBoard = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.6, 0.05), [
+  const signBoard = new THREE.Mesh(new THREE.BoxGeometry(2.1, 0.38, 0.05), [
     woodTrimMat, woodTrimMat, woodTrimMat, woodTrimMat, signMat, woodTrimMat
   ]);
-  signBoard.position.set(-0.35, 3.25, bD / 2 + 0.04);
+  signBoard.position.set(-0.35, 2.71, bD / 2 + 0.04);
   signBoard.castShadow = true;
   bGroup.add(signBoard);
+
+  // Hanging Wrought-Iron Floral Blade Sign on Right Wall
+  const bladeBracket = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.03, 0.03), ironMat);
+  bladeBracket.position.set(bW / 2 + 0.22, 3.15, bD / 2 - 0.15);
+  const bladeBoard = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.55, 0.38), [
+    awningPinkMat, awningPinkMat, woodTrimMat, woodTrimMat, woodTrimMat, woodTrimMat,
+  ]);
+  bladeBoard.position.set(bW / 2 + 0.26, 2.84, bD / 2 - 0.15);
+  bGroup.add(bladeBracket, bladeBoard);
 
   // 4. LARGE SHOWCASE DISPLAY WINDOW, ILLUMINATED INTERIOR & FLORAL DOOR ARCH
   const floralInteriorTex = createFloralInteriorTexture();
@@ -339,57 +388,85 @@ export function buildFlowerShopMesh(options: FlowerShopOptions = {}): THREE.Grou
   interiorPlane.position.set(-0.95, winH / 2 + 0.15, bD / 2 + 0.043);
   bGroup.add(interiorPlane);
 
-  const winGlass = new THREE.Mesh(new THREE.BoxGeometry(winW, winH, 0.015), glassMat);
+  const winGlass = new THREE.Mesh(new THREE.BoxGeometry(winW, winH, 0.015), clearGlassMat);
   winGlass.userData.skipWindowEnhance = true;
   winGlass.position.set(-0.95, winH / 2 + 0.15, bD / 2 + 0.054);
   bGroup.add(winGlass);
 
-  // Entrance Door + Rose-Draped Wooden Trellis Archway (Right side: X = 1.25m)
+  // Entrance Door + Stone Stoop + Complete Rose-Draped Wooden Trellis Archway
+  const doorStoop = new THREE.Mesh(new THREE.BoxGeometry(1.28, 0.07, 0.46), foundationMat);
+  doorStoop.position.set(1.25, 0.035, bD / 2 + 0.23);
+  bGroup.add(doorStoop);
+
   const doorW = 1.05;
   const doorH = 2.15;
   const doorFrame = new THREE.Mesh(new THREE.BoxGeometry(doorW + 0.08, doorH + 0.06, 0.04), woodTrimMat);
   doorFrame.position.set(1.25, doorH / 2 + 0.03, bD / 2 + 0.02);
   bGroup.add(doorFrame);
 
-  const doorGlass = new THREE.Mesh(new THREE.BoxGeometry(doorW - 0.12, 1.4, 0.02), glassMat);
+  const doorKickplate = new THREE.Mesh(new THREE.BoxGeometry(doorW - 0.12, 0.45, 0.025), woodTrimMat);
+  doorKickplate.position.set(1.25, 0.28, bD / 2 + 0.045);
+  const doorGlass = new THREE.Mesh(new THREE.BoxGeometry(doorW - 0.12, 1.4, 0.02), clearGlassMat);
   doorGlass.userData.skipWindowEnhance = true;
   doorGlass.position.set(1.25, 1.35, bD / 2 + 0.048);
-  bGroup.add(doorGlass);
+  const doorHandle = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.22, 0.05), ironMat);
+  doorHandle.position.set(0.86, 1.05, bD / 2 + 0.068);
+  bGroup.add(doorKickplate, doorGlass, doorHandle);
 
-  // Floral Garland Arch around Entrance Door
-  [-0.56, 0.56].forEach((ax) => {
+  // Floral Garland Wooden Trellis Arch around Entrance Door (sides + top beam)
+  [-0.58, 0.58].forEach((ax) => {
+    const tPost = new THREE.Mesh(new THREE.BoxGeometry(0.06, 2.25, 0.06), woodTrimMat);
+    tPost.position.set(1.25 + ax, 1.125, bD / 2 + 0.08);
+    bGroup.add(tPost);
     for (let ay = 0.6; ay <= 2.1; ay += 0.5) {
       const vine = new THREE.Mesh(new THREE.DodecahedronGeometry(0.11, 0), stemGreenMat);
-      vine.position.set(1.25 + ax, ay, bD / 2 + 0.08);
+      vine.position.set(1.25 + ax, ay, bD / 2 + 0.10);
       const bloom = new THREE.Mesh(new THREE.SphereGeometry(0.055, 8, 6), petalPinkMat);
-      bloom.position.set(1.25 + ax, ay + 0.06, bD / 2 + 0.14);
+      bloom.position.set(1.25 + ax, ay + 0.06, bD / 2 + 0.15);
       bGroup.add(vine, bloom);
     }
   });
+  const trellisTop = new THREE.Mesh(new THREE.BoxGeometry(1.36, 0.08, 0.08), woodTrimMat);
+  trellisTop.position.set(1.25, 2.28, bD / 2 + 0.08);
+  bGroup.add(trellisTop);
+  [-0.38, 0, 0.38].forEach((tx, idx) => {
+    const topVine = new THREE.Mesh(new THREE.DodecahedronGeometry(0.11, 0), stemGreenMat);
+    topVine.position.set(1.25 + tx, 2.34, bD / 2 + 0.10);
+    const topBloom = new THREE.Mesh(new THREE.SphereGeometry(0.055, 8, 6), idx === 1 ? petalRedMat : petalPinkMat);
+    topBloom.position.set(1.25 + tx, 2.38, bD / 2 + 0.16);
+    bGroup.add(topVine, topBloom);
+  });
 
-  // Second Floor Windows + Window Flower Planter Boxes
+  // Second Floor Windows (uGlass proud of uFrame) + Sculpted Window Flower Planter Boxes
   const potColors = [petalRedMat, petalYellowMat, petalPinkMat, petalPurpleMat];
   for (let i = -1; i <= 1; i++) {
     const uWinW = 0.95;
     const uWinH = 0.85;
     const uWinX = i * 1.35;
+    const uFrame = new THREE.Mesh(new THREE.BoxGeometry(uWinW + 0.06, uWinH + 0.06, 0.03), woodTrimMat);
+    uFrame.position.set(uWinX, 3.4, bD / 2 + 0.015);
     const uGlass = new THREE.Mesh(new THREE.BoxGeometry(uWinW, uWinH, 0.02), glassMat);
-    uGlass.position.set(uWinX, 3.4, bD / 2 + 0.01);
-    const uFrame = new THREE.Mesh(new THREE.BoxGeometry(uWinW + 0.06, uWinH + 0.06, 0.04), woodTrimMat);
-    uFrame.position.set(uWinX, 3.4, bD / 2 + 0.02);
+    uGlass.position.set(uWinX, 3.4, bD / 2 + 0.034);
 
-    const wPlanter = new THREE.Mesh(new THREE.BoxGeometry(uWinW, 0.14, 0.14), potTerracottaMat);
-    wPlanter.position.set(uWinX, 2.92, bD / 2 + 0.08);
-    const wBloom = new THREE.Mesh(new THREE.BoxGeometry(uWinW - 0.1, 0.10, 0.10), potColors[(i + 1) % potColors.length]);
-    wBloom.position.set(uWinX, 3.02, bD / 2 + 0.08);
-    bGroup.add(uFrame, uGlass, wPlanter, wBloom);
+    const wPlanter = new THREE.Mesh(new THREE.BoxGeometry(uWinW, 0.14, 0.16), potTerracottaMat);
+    wPlanter.position.set(uWinX, 2.95, bD / 2 + 0.09);
+    const wFoliage = new THREE.Mesh(new THREE.BoxGeometry(uWinW - 0.12, 0.08, 0.12), stemGreenMat);
+    wFoliage.position.set(uWinX, 3.04, bD / 2 + 0.09);
+    bGroup.add(uFrame, uGlass, wPlanter, wFoliage);
+
+    const bloomMat = potColors[(i + 1) % potColors.length];
+    [-0.26, 0, 0.26].forEach((bx) => {
+      const bCluster = new THREE.Mesh(new THREE.DodecahedronGeometry(0.065, 0), bloomMat);
+      bCluster.position.set(uWinX + bx, 3.10, bD / 2 + 0.11);
+      bGroup.add(bCluster);
+    });
   }
 
   group.add(bGroup);
 
-  // 5. SIDEWALK FLOWER STAND (detail1: 3-Tier Stepped Stand at X = -1.6m, Z = 1.25m)
+  // 5. SIDEWALK FLOWER STAND (detail1: 3-Tier Stepped Stand stepping UP away from street)
   const standGroup = new THREE.Group();
-  standGroup.position.set(-1.6, 0.15, 1.25);
+  standGroup.position.set(-1.6, 0.15, 1.32);
 
   const standW = 1.1;
   const standTiers = 3;
@@ -397,39 +474,39 @@ export function buildFlowerShopMesh(options: FlowerShopOptions = {}): THREE.Grou
   const tierRise = 0.22;
 
   for (let t = 0; t < standTiers; t++) {
+    const stepZ = -t * tierDepth;
     const stepPlank = new THREE.Mesh(
       new THREE.BoxGeometry(standW, 0.04, tierDepth),
       woodTrimMat
     );
-    stepPlank.position.set(0, (t + 1) * tierRise, t * tierDepth);
+    stepPlank.position.set(0, (t + 1) * tierRise, stepZ);
     stepPlank.castShadow = true;
     standGroup.add(stepPlank);
 
     [-standW / 2 + 0.03, standW / 2 - 0.03].forEach(sx => {
       const riser = new THREE.Mesh(new THREE.BoxGeometry(0.04, (t + 1) * tierRise, 0.04), woodTrimMat);
-      riser.position.set(sx, ((t + 1) * tierRise) / 2, t * tierDepth);
+      riser.position.set(sx, ((t + 1) * tierRise) / 2, stepZ);
       standGroup.add(riser);
     });
 
     for (let p = 0; p < 3; p++) {
       const potX = -0.35 + p * 0.35;
       const potY = (t + 1) * tierRise + 0.02;
-      const potZ = t * tierDepth;
 
       const potMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.05, 0.12, 12), potTerracottaMat);
-      potMesh.position.set(potX, potY + 0.06, potZ);
+      potMesh.position.set(potX, potY + 0.06, stepZ);
       potMesh.castShadow = true;
       standGroup.add(potMesh);
 
       const foliageMesh = new THREE.Mesh(new THREE.SphereGeometry(0.08, 12, 8), stemGreenMat);
-      foliageMesh.position.set(potX, potY + 0.14, potZ);
+      foliageMesh.position.set(potX, potY + 0.14, stepZ);
       standGroup.add(foliageMesh);
 
       const flowerColor = potColors[(t * 3 + p) % potColors.length];
       for (let f = 0; f < 3; f++) {
         const blossom = new THREE.Mesh(new THREE.DodecahedronGeometry(0.035, 0), flowerColor);
         const fAngle = (f * Math.PI * 2) / 3;
-        blossom.position.set(potX + Math.cos(fAngle) * 0.04, potY + 0.19, potZ + Math.sin(fAngle) * 0.04);
+        blossom.position.set(potX + Math.cos(fAngle) * 0.04, potY + 0.19, stepZ + Math.sin(fAngle) * 0.04);
         blossom.castShadow = true;
         standGroup.add(blossom);
       }

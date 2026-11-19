@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { getConcretePanelTexture, addWrapAroundWindows } from './wallTextures';
+import { getConcretePanelTexture, addWrapAroundWindows, getClearShowcaseGlassMaterial } from './wallTextures';
 
 let cachedGymSignTex: THREE.CanvasTexture | null = null;
 let cachedBasketballCourtTex: THREE.CanvasTexture | null = null;
@@ -111,7 +111,7 @@ function buildBasketballHoop(): THREE.Group {
   const postMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.5 });
   const boardMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.2 });
   const rimOrangeMat = new THREE.MeshStandardMaterial({ color: 0xea580c, roughness: 0.3 });
-  const netMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, wireframe: true });
+  const netMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.45 });
 
   const stanchion = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.10, 2.85, 8), postMat);
   stanchion.position.set(0, 1.425, -0.45);
@@ -127,10 +127,19 @@ function buildBasketballHoop(): THREE.Group {
   rim.rotation.x = Math.PI / 2;
   rim.position.set(0, 2.55, 0.32);
 
-  const net = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.15, 0.34, 10, 2, true), netMat);
-  net.position.set(0, 2.38, 0.32);
+  const netBottom = new THREE.Mesh(new THREE.TorusGeometry(0.14, 0.012, 6, 12), netMat);
+  netBottom.rotation.x = Math.PI / 2;
+  netBottom.position.set(0, 2.23, 0.32);
 
-  hoop.add(stanchion, boom, backboard, targetBox, rim, net);
+  hoop.add(stanchion, boom, backboard, targetBox, rim, netBottom);
+  for (let i = 0; i < 6; i++) {
+    const a = (i * Math.PI * 2) / 6;
+    const cord = new THREE.Mesh(new THREE.BoxGeometry(0.015, 0.33, 0.015), netMat);
+    cord.position.set(Math.cos(a) * 0.18, 2.39, 0.32 + Math.sin(a) * 0.18);
+    cord.rotation.z = Math.cos(a) * 0.22;
+    cord.rotation.x = -Math.sin(a) * 0.22;
+    hoop.add(cord);
+  }
   return hoop;
 }
 
@@ -175,13 +184,14 @@ export function buildGymMesh(options: GymOptions = {}): THREE.Group {
   const darkMetalMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.4 });
   const chromeMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, metalness: 0.85, roughness: 0.2 });
   const sportsBlueMat = new THREE.MeshStandardMaterial({ color: 0x2563eb, roughness: 0.5 });
-  const glassMat = new THREE.MeshStandardMaterial({
+  const clerestoryGlassMat = new THREE.MeshStandardMaterial({
     color: 0x93c5fd,
     roughness: 0.1,
     metalness: 0.15,
     transparent: true,
-    opacity: 0.52,
+    opacity: 0.70,
   });
+  const foyerGlassMat = getClearShowcaseGlassMaterial();
 
   const lotSize = 12.0;
 
@@ -192,9 +202,10 @@ export function buildGymMesh(options: GymOptions = {}): THREE.Group {
   lawn.receiveShadow = true;
   group.add(lawn);
 
-  const plazaGeo = new THREE.BoxGeometry(lotSize, 0.152, 1.5);
+  // Extended forecourt apron covering z = 2.4..4.5 (eliminates z = 2.9..3.0 grass gap)
+  const plazaGeo = new THREE.BoxGeometry(lotSize, 0.152, 2.1);
   const plaza = new THREE.Mesh(plazaGeo, foundationMat);
-  plaza.position.set(0, 0.076, 3.75);
+  plaza.position.set(0, 0.076, 3.45);
   plaza.receiveShadow = true;
   group.add(plaza);
 
@@ -243,6 +254,15 @@ export function buildGymMesh(options: GymOptions = {}): THREE.Group {
   rightWall.position.set(bW / 2 - 0.175, bH / 2, 0);
   rightWall.castShadow = true;
 
+  // Exterior Concrete Wall Buttress Pilasters
+  [-2.2, 0, 2.2].forEach((pz) => {
+    [-bW / 2 - 0.06, bW / 2 + 0.06].forEach((px) => {
+      const pilaster = new THREE.Mesh(new THREE.BoxGeometry(0.18, bH, 0.36), concreteMat);
+      pilaster.position.set(px, bH / 2, pz);
+      gymGroup.add(pilaster);
+    });
+  });
+
   // Front Left & Right Corner Piers + Upper Clerestory Fascia Wall
   const pierL = new THREE.Mesh(new THREE.BoxGeometry(2.0, 3.8, 0.35), concreteMat);
   pierL.position.set(-bW / 2 + 1.0, 1.9, bD / 2 - 0.175);
@@ -252,10 +272,23 @@ export function buildGymMesh(options: GymOptions = {}): THREE.Group {
   frontUpperWall.position.set(0, 5.0, bD / 2 - 0.175);
   gymGroup.add(backWall, leftWall, rightWall, pierL, pierR, frontUpperWall);
 
-  // Interior Warm Back Backdrop
+  // Interior Warm Back Backdrop + Raised Stage (舞台) & LED Scoreboard (Visible through clear foyer!)
   const interiorBack = new THREE.Mesh(new THREE.PlaneGeometry(bW - 0.8, bH - 0.4), interiorWallMat);
   interiorBack.position.set(0, bH / 2, -bD / 2 + 0.38);
   gymGroup.add(interiorBack);
+
+  const stageWoodMat = new THREE.MeshStandardMaterial({ color: 0x9a6432, roughness: 0.45 });
+  const stageDeck = new THREE.Mesh(new THREE.BoxGeometry(5.6, 0.72, 1.15), stageWoodMat);
+  stageDeck.position.set(0, 0.36, -bD / 2 + 0.95);
+  const curtainMat = new THREE.MeshStandardMaterial({ color: 0x991b1b, roughness: 0.65 });
+  const stageCurtain = new THREE.Mesh(new THREE.BoxGeometry(5.4, 1.35, 0.16), curtainMat);
+  stageCurtain.position.set(0, 2.55, -bD / 2 + 0.55);
+  const scoreboardBody = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.85, 0.12), darkMetalMat);
+  scoreboardBody.position.set(0, 4.15, -bD / 2 + 0.52);
+  const scoreGlowMat = new THREE.MeshStandardMaterial({ color: 0xf97316, emissive: 0xf97316, emissiveIntensity: 0.9 });
+  const scoreDots = new THREE.Mesh(new THREE.PlaneGeometry(1.85, 0.45), scoreGlowMat);
+  scoreDots.position.set(0, 4.15, -bD / 2 + 0.59);
+  gymGroup.add(stageDeck, stageCurtain, scoreboardBody, scoreDots);
 
   // Polished Hardwood Basketball Court Floor & Twin Regulation Hoops (Visible through foyer!)
   const floorMesh = new THREE.Mesh(new THREE.BoxGeometry(bW - 0.7, 0.08, bD - 0.7), courtFloorMat);
@@ -271,7 +304,7 @@ export function buildGymMesh(options: GymOptions = {}): THREE.Group {
   hoopEast.rotation.y = -Math.PI / 2;
   gymGroup.add(hoopWest, hoopEast);
 
-  // Curved Barrel Vault Roof + Structural Standing-Seam Ribs
+  // Curved Barrel Vault Roof + Structural Standing-Seam Ribs, Eaves Gutters & Exhaust Cowls
   const archRadius = bW / 2;
   const barrelGeo = new THREE.CylinderGeometry(archRadius, archRadius, bD + 0.3, 32, 1, false, 0, Math.PI);
   barrelGeo.rotateZ(Math.PI / 2);
@@ -281,6 +314,25 @@ export function buildGymMesh(options: GymOptions = {}): THREE.Group {
   barrelRoof.position.set(0, bH, 0);
   barrelRoof.castShadow = true;
   gymGroup.add(barrelRoof);
+
+  [-3.45, -1.72, 0, 1.72, 3.45].forEach((rz) => {
+    const rib = new THREE.Mesh(new THREE.TorusGeometry(archRadius + 0.03, 0.055, 6, 24, Math.PI), darkMetalMat);
+    rib.scale.set(1.0, 0.62, 1.0);
+    rib.position.set(0, bH, rz);
+    gymGroup.add(rib);
+  });
+
+  [-bW / 2 - 0.05, bW / 2 + 0.05].forEach((gx) => {
+    const gutter = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.14, bD + 0.3), darkMetalMat);
+    gutter.position.set(gx, bH, 0);
+    gymGroup.add(gutter);
+  });
+
+  [-1.8, 1.8].forEach((cz) => {
+    const cowl = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.28, 0.42, 10), chromeMat);
+    cowl.position.set(0, bH + archRadius * 0.62 + 0.16, cz);
+    gymGroup.add(cowl);
+  });
 
   // 360° Side & Rear Clerestory Windows
   addWrapAroundWindows({
@@ -292,25 +344,38 @@ export function buildGymMesh(options: GymOptions = {}): THREE.Group {
     winH: 0.95,
     sideCols: 3,
     backCols: 5,
-    glassMat,
+    glassMat: clerestoryGlassMat,
     frameMat: darkMetalMat,
   });
 
   // High Sports Clerestory Windows Along Upper Front Facade
   for (let w = 0; w < 6; w++) {
     const wx = -4.0 + w * 1.6;
-    const win = new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.9, 0.06), glassMat);
+    const win = new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.9, 0.05), clerestoryGlassMat);
     win.position.set(wx, 4.8, bD / 2 + 0.02);
     gymGroup.add(win);
   }
 
-  // Wide Transparent Glass Foyer Curtain Wall & Canopy
-  const foyerGlass = new THREE.Mesh(new THREE.BoxGeometry(6.4, 3.6, 0.05), glassMat);
+  // Wide Clear Glass Foyer Curtain Wall, Aluminum Mullions & Supported Canopy
+  const foyerGlass = new THREE.Mesh(new THREE.BoxGeometry(6.4, 3.6, 0.04), foyerGlassMat);
   foyerGlass.position.set(0, 1.8, bD / 2 - 0.05);
+  [-2.1, -0.7, 0.7, 2.1].forEach((mx) => {
+    const mullion = new THREE.Mesh(new THREE.BoxGeometry(0.06, 3.6, 0.08), darkMetalMat);
+    mullion.position.set(mx, 1.8, bD / 2 - 0.05);
+    gymGroup.add(mullion);
+  });
+  const doorTransom = new THREE.Mesh(new THREE.BoxGeometry(2.8, 0.07, 0.09), darkMetalMat);
+  doorTransom.position.set(0, 2.35, bD / 2 - 0.05);
   const canopy = new THREE.Mesh(new THREE.BoxGeometry(6.8, 0.18, 1.5), sportsBlueMat);
   canopy.position.set(0, 3.7, bD / 2 + 0.65);
   canopy.castShadow = true;
-  gymGroup.add(foyerGlass, canopy);
+  [-3.15, 3.15].forEach((cx) => {
+    const col = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.09, 3.65, 10), chromeMat);
+    col.position.set(cx, 1.825, bD / 2 + 1.25);
+    col.castShadow = true;
+    gymGroup.add(col);
+  });
+  gymGroup.add(foyerGlass, doorTransom, canopy);
 
   // Prominent Header Signboard: "GYMNASIUM / 体育館"
   const signTexture = createGymSignTexture();
@@ -329,7 +394,7 @@ export function buildGymMesh(options: GymOptions = {}): THREE.Group {
 
   group.add(gymGroup);
 
-  // 3. FORECOURT PROPS: MULTI-SPOUT DRINKING FOUNTAIN (detail2 at X = -3.0m, Z = 3.2m)
+  // 3. FORECOURT PROPS: MULTI-SPOUT DRINKING FOUNTAIN (detail2 at X = -3.0m, Z = 3.2m) & BALL CAGE / BIKE RACK
   const fountainGroup = new THREE.Group();
   fountainGroup.position.set(-3.0, 0.15, 3.2);
 
@@ -349,6 +414,20 @@ export function buildGymMesh(options: GymOptions = {}): THREE.Group {
   });
 
   group.add(fountainGroup);
+
+  // Outdoor Bike Rack & Basketball Storage Cage on East Forecourt
+  const rackGroup = new THREE.Group();
+  rackGroup.position.set(3.4, 0.15, 3.35);
+  const rackBase = new THREE.Mesh(new THREE.BoxGeometry(2.0, 0.05, 0.55), darkMetalMat);
+  rackBase.position.y = 0.025;
+  rackGroup.add(rackBase);
+  [-0.75, -0.25, 0.25, 0.75].forEach((rx) => {
+    const loop = new THREE.Mesh(new THREE.TorusGeometry(0.18, 0.02, 6, 12, Math.PI), chromeMat);
+    loop.rotation.y = Math.PI / 2;
+    loop.position.set(rx, 0.05, 0);
+    rackGroup.add(loop);
+  });
+  group.add(rackGroup);
 
   if (scale !== 1.0) {
     group.scale.setScalar(scale);

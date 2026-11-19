@@ -4,8 +4,31 @@ import {
   getBrickTileTexture,
   getStuccoWallTexture,
   getKawaraTileTexture,
+  getTerracottaRoofTexture,
+  getClearShowcaseGlassMaterial,
   buildJapaneseIrimoyaRoof,
+  buildOutdoorAcUnit,
+  addWrapAroundWindows,
 } from './wallTextures';
+
+function normalizeGableUVs(geo: THREE.BufferGeometry, uvScale = 0.35): void {
+  const pos = geo.getAttribute('position');
+  const norm = geo.getAttribute('normal');
+  const uv = geo.getAttribute('uv');
+  if (!pos || !norm || !uv) return;
+  for (let i = 0; i < pos.count; i++) {
+    const nx = Math.abs(norm.getX(i));
+    const ny = Math.abs(norm.getY(i));
+    if (nx > 0.5) {
+      uv.setXY(i, pos.getZ(i) * uvScale, pos.getY(i) * uvScale);
+    } else if (ny > 0.5) {
+      uv.setXY(i, pos.getX(i) * uvScale, pos.getZ(i) * uvScale);
+    } else {
+      uv.setXY(i, pos.getX(i) * uvScale, pos.getY(i) * uvScale);
+    }
+  }
+  uv.needsUpdate = true;
+}
 
 export type HouseVariant =
   | 'CLASSIC_GABLE'
@@ -439,19 +462,20 @@ export interface HouseOptions {
  * Builds a cute, boxy Japanese Kei Car (Honda N-BOX / Suzuki Hustler style)
  * Dimensions: 1.45m long × 0.72m wide × 0.88m tall (fits on front-left driveway apron)
  */
-function buildKeiCar(bodyColor: number, glassMat: THREE.Material): THREE.Group {
+const _keiRoofWhiteMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.3 });
+const _keiTireMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.85 });
+const _keiYellowPlateMat = new THREE.MeshStandardMaterial({ color: 0xfacc15, roughness: 0.4 });
+const _keiHeadlightMat = new THREE.MeshStandardMaterial({
+  color: 0xffffff,
+  emissive: 0xfef08a,
+  emissiveIntensity: 0.5,
+});
+
+function buildKeiCar(bodyColor: number, clearGlassMat: THREE.Material): THREE.Group {
   const car = new THREE.Group();
   car.name = 'Japanese_KeiCar';
 
   const bodyMat = new THREE.MeshStandardMaterial({ color: bodyColor, roughness: 0.35, metalness: 0.15 });
-  const roofWhiteMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.3 });
-  const tireMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.85 });
-  const yellowPlateMat = new THREE.MeshStandardMaterial({ color: 0xfacc15, roughness: 0.4 });
-  const headlightMat = new THREE.MeshStandardMaterial({
-    color: 0xffffff,
-    emissive: 0xfef08a,
-    emissiveIntensity: 0.5,
-  });
 
   // Lower Chassis Box
   const lower = new THREE.Mesh(new THREE.BoxGeometry(1.42, 0.36, 0.72), bodyMat);
@@ -466,14 +490,14 @@ function buildKeiCar(bodyColor: number, glassMat: THREE.Material): THREE.Group {
   car.add(cabin);
 
   // Two-tone White Roof Cap
-  const roofCap = new THREE.Mesh(new THREE.BoxGeometry(1.07, 0.05, 0.70), roofWhiteMat);
+  const roofCap = new THREE.Mesh(new THREE.BoxGeometry(1.07, 0.05, 0.70), _keiRoofWhiteMat);
   roofCap.position.set(-0.1, 0.84, 0);
   car.add(roofCap);
 
-  // Windshield & Side Windows
-  const windshield = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.30, 0.62), glassMat);
+  // Windshield & Side Windows (Clear glass)
+  const windshield = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.30, 0.62), clearGlassMat);
   windshield.position.set(0.43, 0.64, 0);
-  const sideWin = new THREE.Mesh(new THREE.BoxGeometry(0.88, 0.28, 0.70), glassMat);
+  const sideWin = new THREE.Mesh(new THREE.BoxGeometry(0.88, 0.28, 0.70), clearGlassMat);
   sideWin.position.set(-0.1, 0.64, 0);
   car.add(windshield, sideWin);
 
@@ -486,22 +510,22 @@ function buildKeiCar(bodyColor: number, glassMat: THREE.Material): THREE.Group {
     [-0.45, 0.14, 0.35],
     [0.45, 0.14, 0.35],
   ].forEach(([wx, wy, wz]) => {
-    const wheel = new THREE.Mesh(wheelGeo, tireMat);
+    const wheel = new THREE.Mesh(wheelGeo, _keiTireMat);
     wheel.position.set(wx, wy, wz);
     car.add(wheel);
   });
 
   // Round Headlights & Iconic Yellow Kei-Car License Plate (*Kiiro Nanbā*)
   [-0.22, 0.22].forEach((hz) => {
-    const lamp = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.03, 10), headlightMat);
+    const lamp = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.03, 10), _keiHeadlightMat);
     lamp.rotation.z = Math.PI / 2;
     lamp.position.set(0.72, 0.34, hz);
     car.add(lamp);
   });
 
-  const plateFront = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.09, 0.18), yellowPlateMat);
+  const plateFront = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.09, 0.18), _keiYellowPlateMat);
   plateFront.position.set(0.72, 0.20, 0);
-  const plateRear = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.09, 0.18), yellowPlateMat);
+  const plateRear = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.09, 0.18), _keiYellowPlateMat);
   plateRear.position.set(-0.72, 0.22, 0);
   car.add(plateFront, plateRear);
 
@@ -519,31 +543,31 @@ function addFrontYardLifestyleProps(
   metalMat: THREE.Material,
   foundationMat: THREE.Material,
   woodMat: THREE.Material,
-  glassMat: THREE.Material,
+  clearGlassMat: THREE.Material,
   mirrorX: boolean
 ) {
   const mx = (x: number) => (mirrorX ? -x : x);
 
   // Always include outdoor AC compressor (*Shitsugaiki*) tucked on side wall
-  const acBody = new THREE.Mesh(
-    new THREE.BoxGeometry(0.32, 0.50, 0.66),
-    new THREE.MeshStandardMaterial({ color: 0xf1f5f9, roughness: 0.6 })
-  );
-  acBody.position.set(mx(2.48), 0.40, -0.8);
-  acBody.castShadow = true;
-  group.add(acBody);
+  const acUnit = buildOutdoorAcUnit();
+  acUnit.position.set(mx(2.48), 0.15, -0.8);
+  if (mirrorX) acUnit.rotation.y = Math.PI;
+  group.add(acUnit);
 
   // Always include functional front gatepost (*Kinō-Monchū*) with red mail slot
   const monchuX = mx(1.82);
-  const pillar = new THREE.Mesh(new THREE.BoxGeometry(0.22, 1.15, 0.12), foundationMat);
+  const monchuMat = new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.65 });
+  const pillar = new THREE.Mesh(new THREE.BoxGeometry(0.22, 1.15, 0.12), monchuMat);
   pillar.position.set(monchuX, 0.725, 1.34);
   pillar.castShadow = true;
+  const pillarCap = new THREE.Mesh(new THREE.BoxGeometry(0.25, 0.04, 0.15), metalMat);
+  pillarCap.position.set(monchuX, 1.31, 1.34);
   const mailBox = new THREE.Mesh(
     new THREE.BoxGeometry(0.24, 0.22, 0.16),
     new THREE.MeshStandardMaterial({ color: 0xdc2626, roughness: 0.4 })
   );
   mailBox.position.set(monchuX, 1.05, 1.36);
-  group.add(pillar, mailBox);
+  group.add(pillar, pillarCap, mailBox);
 
   if (yardProp === 'KEI_CAR') {
     // Concrete Driveway Pad & Parked Kei Car on Front-Left Apron
@@ -552,12 +576,12 @@ function addFrontYardLifestyleProps(
     pad.receiveShadow = true;
     group.add(pad);
 
-    const car = buildKeiCar(keiCarColor, glassMat);
+    const car = buildKeiCar(keiCarColor, clearGlassMat);
     car.position.set(mx(-1.55), 0.16, 1.06);
     if (mirrorX) car.rotation.y = Math.PI;
     group.add(car);
   } else if (yardProp === 'MAMACHARI_BIKE') {
-    // Parked Japanese Family Bicycle (*Mamachari*) with front wire basket & rear child seat
+    // Parked Japanese Family Bicycle (*Mamachari*) with fork, handlebars, saddle, front basket & rear child seat
     const bikeGroup = new THREE.Group();
     bikeGroup.position.set(mx(-1.45), 0.15, 1.15);
     bikeGroup.rotation.y = mirrorX ? -0.25 : 0.25;
@@ -567,16 +591,31 @@ function addFrontYardLifestyleProps(
     const wheelGeo = new THREE.TorusGeometry(0.20, 0.025, 8, 16);
 
     const wFront = new THREE.Mesh(wheelGeo, tireMat);
-    wFront.position.set(-0.32, 0.22, 0);
+    wFront.position.set(-0.32, 0.225, 0);
     const wRear = new THREE.Mesh(wheelGeo, tireMat);
-    wRear.position.set(0.32, 0.22, 0);
+    wRear.position.set(0.32, 0.225, 0);
 
-    const frame = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.65, 6), frameMat);
-    frame.rotation.z = Math.PI / 2.4;
-    frame.position.set(0, 0.32, 0);
+    const downTube = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.56, 6), frameMat);
+    downTube.rotation.z = Math.PI / 2.6;
+    downTube.position.set(-0.04, 0.30, 0);
+
+    const seatTube = new THREE.Mesh(new THREE.CylinderGeometry(0.014, 0.014, 0.42, 6), frameMat);
+    seatTube.rotation.z = -0.22;
+    seatTube.position.set(0.14, 0.40, 0);
+
+    const frontFork = new THREE.Mesh(new THREE.CylinderGeometry(0.014, 0.014, 0.46, 6), frameMat);
+    frontFork.rotation.z = 0.22;
+    frontFork.position.set(-0.28, 0.42, 0);
+
+    const handlebar = new THREE.Mesh(new THREE.CylinderGeometry(0.01, 0.01, 0.34, 6), metalMat);
+    handlebar.rotation.x = Math.PI / 2;
+    handlebar.position.set(-0.24, 0.65, 0);
+
+    const saddle = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.05, 0.12), tireMat);
+    saddle.position.set(0.16, 0.62, 0);
 
     const basket = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.16, 0.22), metalMat);
-    basket.position.set(-0.34, 0.48, 0);
+    basket.position.set(-0.36, 0.52, 0);
 
     const childSeat = new THREE.Mesh(
       new THREE.BoxGeometry(0.20, 0.24, 0.20),
@@ -584,10 +623,10 @@ function addFrontYardLifestyleProps(
     );
     childSeat.position.set(0.32, 0.50, 0);
 
-    bikeGroup.add(wFront, wRear, frame, basket, childSeat);
+    bikeGroup.add(wFront, wRear, downTube, seatTube, frontFork, handlebar, saddle, basket, childSeat);
     group.add(bikeGroup);
   } else if (yardProp === 'BONSAI_BENCH') {
-    // 2-Tier Wooden Bonsai Stand with Terracotta Pots + Stone Garden Lantern
+    // 2-Tier Wooden Bonsai Stand with Grounded Legs & Terracotta Pots
     const standGroup = new THREE.Group();
     standGroup.position.set(mx(-1.5), 0.15, 1.12);
 
@@ -596,6 +635,18 @@ function addFrontYardLifestyleProps(
     const shelf2 = new THREE.Mesh(new THREE.BoxGeometry(0.95, 0.04, 0.24), woodMat);
     shelf2.position.set(0, 0.48, -0.12);
     standGroup.add(shelf1, shelf2);
+
+    // Grounded vertical wooden legs
+    [
+      [-0.42, 0.25, 0.08, 0.125],
+      [0.42, 0.25, 0.08, 0.125],
+      [-0.42, 0.48, -0.12, 0.24],
+      [0.42, 0.48, -0.12, 0.24],
+    ].forEach(([lx, h, lz, cy]) => {
+      const leg = new THREE.Mesh(new THREE.BoxGeometry(0.05, h, 0.05), woodMat);
+      leg.position.set(lx, cy, lz);
+      standGroup.add(leg);
+    });
 
     const potMat = new THREE.MeshStandardMaterial({ color: 0xc2410c, roughness: 0.7 });
     const leafMat = new THREE.MeshStandardMaterial({ color: 0x15803d, roughness: 0.8 });
@@ -636,7 +687,7 @@ function addFrontYardLifestyleProps(
     });
     group.add(archGroup);
   } else if (yardProp === 'STONE_LANTERN_BAMBOO') {
-    // Carved Stone *Ishi-dōrō* Lantern & Ornamental Bamboo Cluster
+    // Carved Stone *Ishi-dōrō* Lantern & Ornamental Bamboo Cluster with Leafy Tops
     const stoneMat = new THREE.MeshStandardMaterial({ color: 0x94a3b8, roughness: 0.85 });
     const glowMat = new THREE.MeshStandardMaterial({
       color: 0xfef08a,
@@ -644,6 +695,7 @@ function addFrontYardLifestyleProps(
       emissiveIntensity: 1.3,
     });
     const bambooMat = new THREE.MeshStandardMaterial({ color: 0x65a30d, roughness: 0.45 });
+    const bambooLeafMat = new THREE.MeshStandardMaterial({ color: 0x16a34a, roughness: 0.75 });
 
     const lx = mx(-1.35);
     const doroPed = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.18, 0.75, 6), stoneMat);
@@ -655,9 +707,13 @@ function addFrontYardLifestyleProps(
     group.add(doroPed, doroBox, doroRoof);
 
     [-1.85, -1.68, -1.52].forEach((bx, idx) => {
-      const stalk = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.04, 1.9 + idx * 0.25, 6), bambooMat);
-      stalk.position.set(mx(bx), 1.1, 0.95);
-      group.add(stalk);
+      const h = 1.9 + idx * 0.25;
+      const stalk = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.04, h, 6), bambooMat);
+      stalk.position.set(mx(bx), 0.15 + h / 2, 0.95);
+      const leafTuft = new THREE.Mesh(new THREE.DodecahedronGeometry(0.18, 0), bambooLeafMat);
+      leafTuft.scale.set(1.2, 0.75, 1.2);
+      leafTuft.position.set(mx(bx), 0.15 + h, 0.95);
+      group.add(stalk, leafTuft);
     });
   } else if (yardProp === 'SOLAR_EV_CHARGER') {
     // Sleek Brushed-Steel Home EV Charger Stand + Twin Topiary Spheres
@@ -828,6 +884,16 @@ export function buildHouseMesh(options: HouseOptions = {}): THREE.Group {
   const tileTexture = createRoofTileTexture(palette.roofTile, palette.roofTileAccent);
   const tileRoofMat = new THREE.MeshStandardMaterial({
     map: tileTexture,
+    color: 0xffffff,
+    roughness: 0.6,
+  });
+  const kawaraRoofMat = new THREE.MeshStandardMaterial({
+    map: getKawaraTileTexture(),
+    color: palette.roofTile,
+    roughness: 0.55,
+  });
+  const terracottaRoofMat = new THREE.MeshStandardMaterial({
+    map: getTerracottaRoofTexture(),
     color: palette.roofTile,
     roughness: 0.6,
   });
@@ -843,6 +909,7 @@ export function buildHouseMesh(options: HouseOptions = {}): THREE.Group {
     transparent: true,
     opacity: 0.7,
   });
+  const clearGlassMat = getClearShowcaseGlassMaterial();
 
   const metalTrimMat = new THREE.MeshStandardMaterial({
     color: 0x475569,
@@ -940,9 +1007,15 @@ export function buildHouseMesh(options: HouseOptions = {}): THREE.Group {
 
     const balconyFloor = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.14, 1.1), trimMat);
     balconyFloor.position.set(-1.65, 2.55, 1.0);
-    const balconyGlass = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.85, 0.06), glassMat);
+    const balconyGlass = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.85, 0.06), clearGlassMat);
     balconyGlass.position.set(-1.65, 3.0, 1.50);
-    modernGroup.add(balconyFloor, balconyGlass);
+    const balconyRailL = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.85, 1.05), metalTrimMat);
+    balconyRailL.position.set(-2.32, 3.0, 1.0);
+    const balconyRailR = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.85, 1.05), metalTrimMat);
+    balconyRailR.position.set(-0.98, 3.0, 1.0);
+    const balconyTopRail = new THREE.Mesh(new THREE.BoxGeometry(1.42, 0.05, 0.08), metalTrimMat);
+    balconyTopRail.position.set(-1.65, 3.44, 1.50);
+    modernGroup.add(balconyFloor, balconyGlass, balconyRailL, balconyRailR, balconyTopRail);
 
     const louverMat = new THREE.MeshStandardMaterial({ color: 0x92400e, roughness: 0.6 });
     for (let l = 0; l < 6; l++) {
@@ -952,13 +1025,42 @@ export function buildHouseMesh(options: HouseOptions = {}): THREE.Group {
       modernGroup.add(fin);
     }
 
+    const doorFrame = new THREE.Mesh(new THREE.BoxGeometry(1.06, 2.18, 0.08), metalTrimMat);
+    doorFrame.position.set(1.25, 1.09, 1.54);
     const door = new THREE.Mesh(new THREE.BoxGeometry(0.92, 2.1, 0.06), doorMat);
-    door.position.set(1.25, 1.05, 1.56);
+    door.position.set(1.25, 1.05, 1.57);
+    const doorHandle = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.24, 0.06), metalTrimMat);
+    doorHandle.position.set(1.58, 1.05, 1.61);
+    const porchCanopy = new THREE.Mesh(new THREE.BoxGeometry(1.35, 0.08, 0.65), metalTrimMat);
+    porchCanopy.position.set(1.25, 2.32, 1.85);
+    const sconce = new THREE.Mesh(
+      new THREE.BoxGeometry(0.12, 0.18, 0.10),
+      new THREE.MeshStandardMaterial({ color: 0xfef08a, emissive: 0xfde047, emissiveIntensity: 1.1 })
+    );
+    sconce.position.set(1.86, 1.85, 1.59);
+
+    const win1Frame = new THREE.Mesh(new THREE.BoxGeometry(1.80, 1.60, 0.06), metalTrimMat);
+    win1Frame.position.set(-1.25, 1.25, 1.55);
     const win1F = new THREE.Mesh(new THREE.BoxGeometry(1.7, 1.5, 0.05), glassMat);
-    win1F.position.set(-1.25, 1.25, 1.56);
+    win1F.position.set(-1.25, 1.25, 1.58);
+    const win2Frame = new THREE.Mesh(new THREE.BoxGeometry(2.30, 1.30, 0.06), metalTrimMat);
+    win2Frame.position.set(0.65, 3.85, 1.85);
     const win2F = new THREE.Mesh(new THREE.BoxGeometry(2.2, 1.2, 0.05), glassMat);
-    win2F.position.set(0.65, 3.85, 1.86);
-    modernGroup.add(door, win1F, win2F);
+    win2F.position.set(0.65, 3.85, 1.88);
+    modernGroup.add(doorFrame, door, doorHandle, porchCanopy, sconce, win1Frame, win1F, win2Frame, win2F);
+
+    addWrapAroundWindows({
+      targetGroup: modernGroup,
+      bW: 4.6,
+      bD: 3.1,
+      floorHeights: [1.3],
+      winW: 0.75,
+      winH: 0.75,
+      sideCols: 2,
+      backCols: 2,
+      glassMat,
+      frameMat: metalTrimMat,
+    });
 
     shellContainer.add(modernGroup);
   }
@@ -985,24 +1087,38 @@ export function buildHouseMesh(options: HouseOptions = {}): THREE.Group {
       width: mW + 0.7,
       depth: mD + 0.7,
       height: 1.55,
-      roofMat: tileRoofMat,
+      roofMat: kawaraRoofMat,
       gableWallMat: wallMat,
       trimMat: doorMat,
     });
     irimoya.position.set(0, mH + 0.12, 0);
     machiyaGroup.add(irimoya);
 
-    const hisashi = new THREE.Mesh(new THREE.BoxGeometry(mW + 0.3, 0.1, 0.72), tileRoofMat);
+    const hisashi = new THREE.Mesh(new THREE.BoxGeometry(mW + 0.3, 0.1, 0.72), kawaraRoofMat);
     hisashi.position.set(0, 2.35, mD / 2 + 0.30);
     hisashi.rotation.x = 0.22;
     hisashi.castShadow = true;
     machiyaGroup.add(hisashi);
 
+    // Stone threshold step + Hikido sliding door with vertical Kōshi lattice bars
+    const stepStone = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.10, 0.48), foundationMat);
+    stepStone.position.set(0.85, 0.05, mD / 2 + 0.24);
     const hikido = new THREE.Mesh(new THREE.BoxGeometry(1.3, 2.0, 0.06), doorMat);
     hikido.position.set(0.85, 1.12, mD / 2 + 0.02);
     const doorGlass = new THREE.Mesh(new THREE.BoxGeometry(1.1, 1.5, 0.07), glassMat);
-    doorGlass.position.set(0.85, 1.18, mD / 2 + 0.02);
-    machiyaGroup.add(hikido, doorGlass);
+    doorGlass.position.set(0.85, 1.18, mD / 2 + 0.03);
+    machiyaGroup.add(stepStone, hikido, doorGlass);
+    for (let k = -3; k <= 3; k++) {
+      const bar = new THREE.Mesh(new THREE.BoxGeometry(0.035, 1.52, 0.03), doorMat);
+      bar.position.set(0.85 + k * 0.15, 1.18, mD / 2 + 0.06);
+      machiyaGroup.add(bar);
+    }
+
+    // Small Noren curtain bar under Hisashi eaves
+    const norenMat = new THREE.MeshStandardMaterial({ color: 0x1e3a8a, roughness: 0.8 });
+    const noren = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.42, 0.03), norenMat);
+    noren.position.set(0.85, 2.02, mD / 2 + 0.35);
+    machiyaGroup.add(noren);
 
     const lantern = new THREE.Mesh(
       new THREE.BoxGeometry(0.18, 0.26, 0.18),
@@ -1017,17 +1133,36 @@ export function buildHouseMesh(options: HouseOptions = {}): THREE.Group {
     machiyaGroup.add(lantern);
 
     const win1 = new THREE.Mesh(new THREE.BoxGeometry(1.7, 1.1, 0.05), glassMat);
-    win1.position.set(-1.1, 1.3, mD / 2 + 0.02);
+    win1.position.set(-1.1, 1.3, mD / 2 + 0.03);
     const frame1 = new THREE.Mesh(new THREE.BoxGeometry(1.8, 1.2, 0.04), doorMat);
     frame1.position.set(-1.1, 1.3, mD / 2 + 0.01);
     machiyaGroup.add(frame1, win1);
 
     [-1.2, 1.2].forEach((wx) => {
       const win2 = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.85, 0.05), glassMat);
-      win2.position.set(wx, 3.35, mD / 2 + 0.02);
+      win2.position.set(wx, 3.35, mD / 2 + 0.03);
       const frame2 = new THREE.Mesh(new THREE.BoxGeometry(1.3, 0.95, 0.04), doorMat);
       frame2.position.set(wx, 3.35, mD / 2 + 0.01);
       machiyaGroup.add(frame2, win2);
+      // 2F Kōshi-mado wooden slatted grilles
+      for (let g = -2; g <= 2; g++) {
+        const slat = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.85, 0.03), doorMat);
+        slat.position.set(wx + g * 0.22, 3.35, mD / 2 + 0.055);
+        machiyaGroup.add(slat);
+      }
+    });
+
+    addWrapAroundWindows({
+      targetGroup: machiyaGroup,
+      bW: mW,
+      bD: mD,
+      floorHeights: [1.3, 3.35],
+      winW: 0.8,
+      winH: 0.75,
+      sideCols: 2,
+      backCols: 2,
+      glassMat,
+      frameMat: doorMat,
     });
 
     shellContainer.add(machiyaGroup);
@@ -1058,6 +1193,7 @@ export function buildHouseMesh(options: HouseOptions = {}): THREE.Group {
 
     const gableGeo = new THREE.ExtrudeGeometry(gableShape, { depth: cD, bevelEnabled: false });
     gableGeo.translate(0, eavesH, -cD / 2);
+    normalizeGableUVs(gableGeo, 0.35);
     const gableWall = new THREE.Mesh(gableGeo, wallMat);
     gableWall.castShadow = true;
     chaletGroup.add(gableWall);
@@ -1067,16 +1203,20 @@ export function buildHouseMesh(options: HouseOptions = {}): THREE.Group {
     const angle = Math.atan2(peakH, cW / 2);
     const slopeGeo = new THREE.BoxGeometry(slopeLen, 0.12, cD + overhang * 2);
 
-    const leftRoof = new THREE.Mesh(slopeGeo, tileRoofMat);
+    const leftRoof = new THREE.Mesh(slopeGeo, terracottaRoofMat);
     leftRoof.position.set(-(cW / 4 + overhang / 2), eavesH + peakH / 2 + 0.04, 0);
     leftRoof.rotation.z = angle;
     leftRoof.castShadow = true;
 
-    const rightRoof = new THREE.Mesh(slopeGeo, tileRoofMat);
+    const rightRoof = new THREE.Mesh(slopeGeo, terracottaRoofMat);
     rightRoof.position.set(cW / 4 + overhang / 2, eavesH + peakH / 2 + 0.04, 0);
     rightRoof.rotation.z = -angle;
     rightRoof.castShadow = true;
-    chaletGroup.add(leftRoof, rightRoof);
+
+    // Timber ridge beam & front/back bargeboards
+    const ridgeBeam = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.16, cD + overhang * 2 + 0.06), doorMat);
+    ridgeBeam.position.set(0, eavesH + peakH + 0.06, 0);
+    chaletGroup.add(leftRoof, rightRoof, ridgeBeam);
 
     const brickMat = new THREE.MeshStandardMaterial({
       color: 0x9a3412,
@@ -1086,33 +1226,69 @@ export function buildHouseMesh(options: HouseOptions = {}): THREE.Group {
     const chimney = new THREE.Mesh(new THREE.BoxGeometry(0.55, 1.8, 0.55), brickMat);
     chimney.position.set(-1.45, eavesH + 1.0, -0.6);
     chimney.castShadow = true;
-    chaletGroup.add(chimney);
+    const chimneyCap = new THREE.Mesh(new THREE.BoxGeometry(0.66, 0.08, 0.66), foundationMat);
+    chimneyCap.position.set(-1.45, eavesH + 1.94, -0.6);
+    const fluePot = new THREE.Mesh(new THREE.CylinderGeometry(0.10, 0.12, 0.22, 8), brickMat);
+    fluePot.position.set(-1.45, eavesH + 2.08, -0.6);
+    chaletGroup.add(chimney, chimneyCap, fluePot);
 
     const porchDeck = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.14, 0.55), doorMat);
     porchDeck.position.set(0.85, 0.07, cD / 2 + 0.25);
+    const doorFrame = new THREE.Mesh(new THREE.BoxGeometry(1.06, 2.18, 0.07), trimMat);
+    doorFrame.position.set(0.85, 1.14, cD / 2 + 0.01);
     const door = new THREE.Mesh(new THREE.BoxGeometry(0.92, 2.1, 0.06), doorMat);
-    door.position.set(0.85, 1.12, cD / 2 + 0.03);
-    chaletGroup.add(porchDeck, door);
+    door.position.set(0.85, 1.12, cD / 2 + 0.04);
+    const doorHandle = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.18, 0.06), metalTrimMat);
+    doorHandle.position.set(1.18, 1.05, cD / 2 + 0.08);
+    const porchCanopy = new THREE.Mesh(new THREE.BoxGeometry(1.38, 0.10, 0.62), terracottaRoofMat);
+    porchCanopy.position.set(0.85, 2.34, cD / 2 + 0.28);
+    porchCanopy.rotation.x = 0.22;
+    chaletGroup.add(porchDeck, doorFrame, door, doorHandle, porchCanopy);
 
+    const win1Frame = new THREE.Mesh(new THREE.BoxGeometry(1.50, 1.25, 0.05), trimMat);
+    win1Frame.position.set(-0.95, 1.35, cD / 2 + 0.01);
     const win1 = new THREE.Mesh(new THREE.BoxGeometry(1.4, 1.15, 0.05), glassMat);
-    win1.position.set(-0.95, 1.35, cD / 2 + 0.02);
+    win1.position.set(-0.95, 1.35, cD / 2 + 0.035);
+    const shutterL = new THREE.Mesh(new THREE.BoxGeometry(0.24, 1.18, 0.05), doorMat);
+    shutterL.position.set(-1.82, 1.35, cD / 2 + 0.03);
+    const shutterR = new THREE.Mesh(new THREE.BoxGeometry(0.24, 1.18, 0.05), doorMat);
+    shutterR.position.set(-0.08, 1.35, cD / 2 + 0.03);
     const planter = new THREE.Mesh(new THREE.BoxGeometry(1.45, 0.22, 0.22), doorMat);
     planter.position.set(-0.95, 0.68, cD / 2 + 0.11);
-    chaletGroup.add(win1, planter);
+    chaletGroup.add(win1Frame, win1, shutterL, shutterR, planter);
 
-    const flowerColors = [0xef4444, 0xfacc15, 0xf472b6, 0xef4444];
-    flowerColors.forEach((col, idx) => {
+    const flowerMats = [
+      new THREE.MeshStandardMaterial({ color: 0xef4444, roughness: 0.6 }),
+      new THREE.MeshStandardMaterial({ color: 0xfacc15, roughness: 0.6 }),
+      new THREE.MeshStandardMaterial({ color: 0xf472b6, roughness: 0.6 }),
+    ];
+    for (let idx = 0; idx < 4; idx++) {
       const bloom = new THREE.Mesh(
         new THREE.SphereGeometry(0.09, 8, 6),
-        new THREE.MeshStandardMaterial({ color: col, roughness: 0.6 })
+        flowerMats[idx % flowerMats.length]
       );
       bloom.position.set(-1.4 + idx * 0.3, 0.84, cD / 2 + 0.11);
       chaletGroup.add(bloom);
-    });
+    }
 
+    const win2Frame = new THREE.Mesh(new THREE.BoxGeometry(1.20, 1.20, 0.05), trimMat);
+    win2Frame.position.set(0, 3.85, cD / 2 + 0.01);
     const win2 = new THREE.Mesh(new THREE.BoxGeometry(1.1, 1.1, 0.05), glassMat);
-    win2.position.set(0, 3.85, cD / 2 + 0.02);
-    chaletGroup.add(win2);
+    win2.position.set(0, 3.85, cD / 2 + 0.035);
+    chaletGroup.add(win2Frame, win2);
+
+    addWrapAroundWindows({
+      targetGroup: chaletGroup,
+      bW: cW,
+      bD: cD,
+      floorHeights: [1.35],
+      winW: 0.8,
+      winH: 0.8,
+      sideCols: 2,
+      backCols: 2,
+      glassMat,
+      frameMat: trimMat,
+    });
 
     shellContainer.add(chaletGroup);
   }
@@ -1129,6 +1305,17 @@ export function buildHouseMesh(options: HouseOptions = {}): THREE.Group {
     rightBox.castShadow = true;
     rightBox.receiveShadow = true;
 
+    // Close triangular wedge gap beneath sloped rightRoof
+    const rightWedgeShape = new THREE.Shape();
+    rightWedgeShape.moveTo(-1.3, 0);
+    rightWedgeShape.lineTo(-1.3, 0.46);
+    rightWedgeShape.lineTo(1.3, 0);
+    rightWedgeShape.closePath();
+    const rightWedgeGeo = new THREE.ExtrudeGeometry(rightWedgeShape, { depth: 3.3, bevelEnabled: false });
+    rightWedgeGeo.translate(0.95, 4.65, -1.65);
+    normalizeGableUVs(rightWedgeGeo, 0.35);
+    const rightWedge = new THREE.Mesh(rightWedgeGeo, wallMat);
+
     const rightRoof = new THREE.Mesh(new THREE.BoxGeometry(3.0, 0.14, 3.6), tileRoofMat);
     rightRoof.position.set(0.95, 4.82, 0);
     rightRoof.rotation.z = -0.18;
@@ -1140,6 +1327,17 @@ export function buildHouseMesh(options: HouseOptions = {}): THREE.Group {
     leftBox.castShadow = true;
     leftBox.receiveShadow = true;
 
+    // Close triangular wedge gap beneath sloped leftRoof
+    const leftWedgeShape = new THREE.Shape();
+    leftWedgeShape.moveTo(-1.15, 0);
+    leftWedgeShape.lineTo(1.15, 0.50);
+    leftWedgeShape.lineTo(1.15, 0);
+    leftWedgeShape.closePath();
+    const leftWedgeGeo = new THREE.ExtrudeGeometry(leftWedgeShape, { depth: 3.0, bevelEnabled: false });
+    leftWedgeGeo.translate(-1.35, 3.45, -1.6);
+    normalizeGableUVs(leftWedgeGeo, 0.35);
+    const leftWedge = new THREE.Mesh(leftWedgeGeo, wingWallMat);
+
     const leftRoof = new THREE.Mesh(new THREE.BoxGeometry(2.6, 0.14, 3.3), gableRoofMat);
     leftRoof.position.set(-1.35, 3.58, -0.1);
     leftRoof.rotation.z = 0.22;
@@ -1149,24 +1347,51 @@ export function buildHouseMesh(options: HouseOptions = {}): THREE.Group {
     const clerestory = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.75, 2.6), glassMat);
     clerestory.position.set(-0.34, 4.15, 0);
 
-    // 2F Inset Loggia Balcony on Right Volume
-    const loggiaRail = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.85, 0.10), balconyMat);
-    loggiaRail.position.set(0.95, 2.85, 1.70);
+    // 2F Cantilevered Loggia Balcony with Clear Glass & Side Returns
+    const loggiaSlab = new THREE.Mesh(new THREE.BoxGeometry(1.9, 0.12, 0.65), trimMat);
+    loggiaSlab.position.set(0.95, 2.42, 1.92);
+    const loggiaGlass = new THREE.Mesh(new THREE.BoxGeometry(1.82, 0.80, 0.05), clearGlassMat);
+    loggiaGlass.position.set(0.95, 2.86, 2.22);
+    const loggiaTopRail = new THREE.Mesh(new THREE.BoxGeometry(1.9, 0.06, 0.08), metalTrimMat);
+    loggiaTopRail.position.set(0.95, 3.28, 2.22);
+    const loggiaSideL = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.86, 0.62), metalTrimMat);
+    loggiaSideL.position.set(0.03, 2.88, 1.92);
+    const loggiaSideR = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.86, 0.62), metalTrimMat);
+    loggiaSideR.position.set(1.87, 2.88, 1.92);
     const loggiaWin = new THREE.Mesh(new THREE.BoxGeometry(1.7, 1.35, 0.05), glassMat);
     loggiaWin.position.set(0.95, 3.55, 1.66);
 
-    // 1F Entrance Door & Left Picture Window
+    // 1F Entrance Door with Frame/Visor & Left Picture Windows
+    const doorFrame = new THREE.Mesh(new THREE.BoxGeometry(1.04, 2.16, 0.07), trimMat);
+    doorFrame.position.set(0.85, 1.08, 1.65);
     const door = new THREE.Mesh(new THREE.BoxGeometry(0.92, 2.1, 0.06), doorMat);
-    door.position.set(0.85, 1.05, 1.66);
+    door.position.set(0.85, 1.05, 1.67);
+    const doorVisor = new THREE.Mesh(new THREE.BoxGeometry(1.25, 0.07, 0.45), metalTrimMat);
+    doorVisor.position.set(0.85, 2.24, 1.85);
     const leftWin = new THREE.Mesh(new THREE.BoxGeometry(1.4, 1.25, 0.05), glassMat);
     leftWin.position.set(-1.35, 1.45, 1.42);
     const leftWin2 = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.75, 0.05), glassMat);
     leftWin2.position.set(-1.35, 2.85, 1.42);
 
     shedGroup.add(
-      rightBox, rightRoof, leftBox, leftRoof,
-      clerestory, loggiaRail, loggiaWin, door, leftWin, leftWin2
+      rightBox, rightWedge, rightRoof, leftBox, leftWedge, leftRoof,
+      clerestory, loggiaSlab, loggiaGlass, loggiaTopRail, loggiaSideL, loggiaSideR,
+      loggiaWin, doorFrame, door, doorVisor, leftWin, leftWin2
     );
+
+    addWrapAroundWindows({
+      targetGroup: shedGroup,
+      bW: 4.5,
+      bD: 3.3,
+      floorHeights: [1.35],
+      winW: 0.75,
+      winH: 0.75,
+      sideCols: 1,
+      backCols: 2,
+      glassMat,
+      frameMat: trimMat,
+    });
+
     shellContainer.add(shedGroup);
   }
   // =============================================================
@@ -1194,44 +1419,80 @@ export function buildHouseMesh(options: HouseOptions = {}): THREE.Group {
     // 4-Sloped Hipped Pyramid Roof (*Yosemune-yane*)
     const hipGeo = new THREE.ConeGeometry((vW + 0.6) * Math.SQRT1_2, 1.45, 4);
     hipGeo.rotateY(Math.PI / 4);
-    const hipRoof = new THREE.Mesh(hipGeo, tileRoofMat);
+    const hipRoof = new THREE.Mesh(hipGeo, terracottaRoofMat);
     hipRoof.scale.set(1.0, 1.0, (vD + 0.6) / (vW + 0.6));
     hipRoof.position.set(0, vH + 0.72, 0);
     hipRoof.castShadow = true;
     villaGroup.add(hipRoof);
 
-    // Projecting 1F Hexagonal Bay Window (*Demado*) on Left Side
+    // Projecting 1F Hexagonal Bay Window (*Demado*) on Left Side with Clear Glass & Corner Mullions
     const bayGroup = new THREE.Group();
     bayGroup.position.set(-1.1, 1.25, vD / 2 + 0.18);
 
     const bayBody = new THREE.Mesh(new THREE.CylinderGeometry(0.68, 0.68, 1.25, 6), trimMat);
-    const bayGlass = new THREE.Mesh(new THREE.CylinderGeometry(0.69, 0.69, 0.95, 6), glassMat);
+    const bayGlass = new THREE.Mesh(new THREE.CylinderGeometry(0.69, 0.69, 0.95, 6), clearGlassMat);
+    const bayCap = new THREE.Mesh(new THREE.CylinderGeometry(0.74, 0.72, 0.08, 6), trimMat);
+    bayCap.position.y = 0.62;
     const bayRoof = new THREE.Mesh(new THREE.ConeGeometry(0.76, 0.38, 6), gableRoofMat);
-    bayRoof.position.y = 0.81;
+    bayRoof.position.y = 0.85;
     const baySkirt = new THREE.Mesh(new THREE.ConeGeometry(0.68, 0.25, 6), trimMat);
     baySkirt.rotation.x = Math.PI;
     baySkirt.position.y = -0.75;
-    bayGroup.add(bayBody, bayGlass, bayRoof, baySkirt);
+    bayGroup.add(bayBody, bayGlass, bayCap, bayRoof, baySkirt);
+    for (let c = 0; c < 6; c++) {
+      const ang = (c / 6) * Math.PI * 2 + Math.PI / 6;
+      const mull = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.98, 0.05), trimMat);
+      mull.position.set(Math.cos(ang) * 0.69, 0, Math.sin(ang) * 0.69);
+      bayGroup.add(mull);
+    }
     villaGroup.add(bayGroup);
 
-    // Columned Front Entrance Portico on Right Side
+    // Columned Front Entrance Portico on Right Side with Stoop & Door Frame
+    const porticoStoop = new THREE.Mesh(new THREE.BoxGeometry(1.42, 0.10, 0.64), foundationMat);
+    porticoStoop.position.set(1.05, 0.05, vD / 2 + 0.28);
     const porticoCanopy = new THREE.Mesh(new THREE.BoxGeometry(1.45, 0.16, 0.65), trimMat);
     porticoCanopy.position.set(1.05, 2.35, vD / 2 + 0.30);
     const colL = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.07, 2.25, 10), trimMat);
     colL.position.set(0.45, 1.12, vD / 2 + 0.52);
     const colR = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.07, 2.25, 10), trimMat);
     colR.position.set(1.65, 1.12, vD / 2 + 0.52);
+    const doorFrame = new THREE.Mesh(new THREE.BoxGeometry(1.04, 2.16, 0.07), trimMat);
+    doorFrame.position.set(1.05, 1.08, vD / 2 + 0.01);
     const door = new THREE.Mesh(new THREE.BoxGeometry(0.92, 2.1, 0.06), doorMat);
-    door.position.set(1.05, 1.05, vD / 2 + 0.03);
-    villaGroup.add(porticoCanopy, colL, colR, door);
+    door.position.set(1.05, 1.05, vD / 2 + 0.04);
+    const doorHandle = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.20, 0.05), metalTrimMat);
+    doorHandle.position.set(1.38, 1.05, vD / 2 + 0.08);
+    villaGroup.add(porticoStoop, porticoCanopy, colL, colR, doorFrame, door, doorHandle);
 
-    // 2F Symmetrical Windows with Juliet Balconies
+    // 2F Symmetrical Windows with Open Wrought-Iron Juliet Balconies
     [-1.1, 1.05].forEach((wx) => {
+      const win2Frame = new THREE.Mesh(new THREE.BoxGeometry(1.25, 1.20, 0.05), trimMat);
+      win2Frame.position.set(wx, 3.25, vD / 2 + 0.01);
       const win2 = new THREE.Mesh(new THREE.BoxGeometry(1.15, 1.1, 0.05), glassMat);
-      win2.position.set(wx, 3.25, vD / 2 + 0.02);
-      const juliet = new THREE.Mesh(new THREE.BoxGeometry(1.28, 0.42, 0.12), balconyMat);
-      juliet.position.set(wx, 2.88, vD / 2 + 0.06);
-      villaGroup.add(win2, juliet);
+      win2.position.set(wx, 3.25, vD / 2 + 0.035);
+      const topRail = new THREE.Mesh(new THREE.BoxGeometry(1.30, 0.05, 0.08), metalTrimMat);
+      topRail.position.set(wx, 3.06, vD / 2 + 0.12);
+      const botRail = new THREE.Mesh(new THREE.BoxGeometry(1.30, 0.05, 0.08), metalTrimMat);
+      botRail.position.set(wx, 2.70, vD / 2 + 0.12);
+      villaGroup.add(win2Frame, win2, topRail, botRail);
+      for (let b = -2; b <= 2; b++) {
+        const bal = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.36, 0.04), metalTrimMat);
+        bal.position.set(wx + b * 0.28, 2.88, vD / 2 + 0.12);
+        villaGroup.add(bal);
+      }
+    });
+
+    addWrapAroundWindows({
+      targetGroup: villaGroup,
+      bW: vW,
+      bD: vD,
+      floorHeights: [1.3, 3.25],
+      winW: 0.8,
+      winH: 0.8,
+      sideCols: 2,
+      backCols: 2,
+      glassMat,
+      frameMat: trimMat,
     });
 
     shellContainer.add(villaGroup);
@@ -1269,6 +1530,7 @@ export function buildHouseMesh(options: HouseOptions = {}): THREE.Group {
 
     const gableGeo = new THREE.ExtrudeGeometry(gableShape, { depth: mainD, bevelEnabled: false });
     gableGeo.translate(0, mainWallH, -mainD / 2);
+    normalizeGableUVs(gableGeo, 0.35);
     const gableWall = new THREE.Mesh(gableGeo, wallMat);
     gableWall.castShadow = true;
     gableWall.receiveShadow = true;
@@ -1281,13 +1543,13 @@ export function buildHouseMesh(options: HouseOptions = {}): THREE.Group {
 
     const roofPlaneGeo = new THREE.BoxGeometry(slopeHyp, roofThickness, mainD + roofOverhang * 2);
 
-    const leftSlope = new THREE.Mesh(roofPlaneGeo, gableRoofMat);
+    const leftSlope = new THREE.Mesh(roofPlaneGeo, terracottaRoofMat);
     leftSlope.position.set(-(mainW / 4 + roofOverhang / 2), mainWallH + gablePeakH / 2 + 0.04, 0);
     leftSlope.rotation.z = roofSlopeAngle;
     leftSlope.castShadow = true;
     mainWingGroup.add(leftSlope);
 
-    const rightSlope = new THREE.Mesh(roofPlaneGeo, gableRoofMat);
+    const rightSlope = new THREE.Mesh(roofPlaneGeo, terracottaRoofMat);
     rightSlope.position.set(mainW / 4 + roofOverhang / 2, mainWallH + gablePeakH / 2 + 0.04, 0);
     rightSlope.rotation.z = -roofSlopeAngle;
     rightSlope.castShadow = true;
@@ -1297,6 +1559,11 @@ export function buildHouseMesh(options: HouseOptions = {}): THREE.Group {
     const ridgeBeam = new THREE.Mesh(ridgeBeamGeo, metalTrimMat);
     ridgeBeam.position.set(0, mainWallH + gablePeakH + 0.06, 0);
     mainWingGroup.add(ridgeBeam);
+
+    // Front gable bargeboard (*Hafu*) & porch awning
+    const porchAwning = new THREE.Mesh(new THREE.BoxGeometry(1.35, 0.08, 0.52), metalTrimMat);
+    porchAwning.position.set(0.15, 2.28, mainD / 2 + 0.24);
+    mainWingGroup.add(porchAwning);
 
     const balconyY = 2.45;
     const balconyW = 2.4;
@@ -1327,7 +1594,7 @@ export function buildHouseMesh(options: HouseOptions = {}): THREE.Group {
     const ribbonY = 3.55;
 
     const ribbonGlass = new THREE.Mesh(new THREE.BoxGeometry(ribbonW, ribbonH, 0.02), glassMat);
-    ribbonGlass.position.set(0, ribbonY, mainD / 2 + 0.01);
+    ribbonGlass.position.set(0, ribbonY, mainD / 2 + 0.015);
     mainWingGroup.add(ribbonGlass);
 
     const ribbonFrameGeo = new THREE.BoxGeometry(ribbonW + 0.06, 0.05, 0.07);
@@ -1363,7 +1630,7 @@ export function buildHouseMesh(options: HouseOptions = {}): THREE.Group {
 
     const doorGlassGeo = new THREE.BoxGeometry(0.12, 1.5, 0.055);
     const doorGlass = new THREE.Mesh(doorGlassGeo, glassMat);
-    doorGlass.position.set(0.02, doorH / 2 + 0.06, mainD / 2 + 0.05);
+    doorGlass.position.set(0.02, doorH / 2 + 0.06, mainD / 2 + 0.055);
     mainWingGroup.add(doorGlass);
 
     const handleGeo = new THREE.BoxGeometry(0.03, 0.22, 0.05);
@@ -1376,10 +1643,10 @@ export function buildHouseMesh(options: HouseOptions = {}): THREE.Group {
     const leftSqY = 1.35;
     const leftSqX = -0.95;
 
-    const leftSqGlass = new THREE.Mesh(new THREE.BoxGeometry(leftSqW, leftSqH, 0.02), glassMat);
-    leftSqGlass.position.set(leftSqX, leftSqY, mainD / 2 + 0.01);
     const leftSqFrame = new THREE.Mesh(new THREE.BoxGeometry(leftSqW + 0.08, leftSqH + 0.08, 0.05), trimMat);
-    leftSqFrame.position.set(leftSqX, leftSqY, mainD / 2 + 0.02);
+    leftSqFrame.position.set(leftSqX, leftSqY, mainD / 2 + 0.015);
+    const leftSqGlass = new THREE.Mesh(new THREE.BoxGeometry(leftSqW, leftSqH, 0.025), glassMat);
+    leftSqGlass.position.set(leftSqX, leftSqY, mainD / 2 + 0.04);
     mainWingGroup.add(leftSqFrame, leftSqGlass);
 
     const rightSlitW = 0.32;
@@ -1387,11 +1654,24 @@ export function buildHouseMesh(options: HouseOptions = {}): THREE.Group {
     const rightSlitY = 1.35;
     const rightSlitX = 1.15;
 
-    const rightGlass = new THREE.Mesh(new THREE.BoxGeometry(rightSlitW, rightSlitH, 0.02), glassMat);
-    rightGlass.position.set(rightSlitX, rightSlitY, mainD / 2 + 0.01);
     const rightFrame = new THREE.Mesh(new THREE.BoxGeometry(rightSlitW + 0.08, rightSlitH + 0.08, 0.05), trimMat);
-    rightFrame.position.set(rightSlitX, rightSlitY, mainD / 2 + 0.02);
+    rightFrame.position.set(rightSlitX, rightSlitY, mainD / 2 + 0.015);
+    const rightGlass = new THREE.Mesh(new THREE.BoxGeometry(rightSlitW, rightSlitH, 0.025), glassMat);
+    rightGlass.position.set(rightSlitX, rightSlitY, mainD / 2 + 0.04);
     mainWingGroup.add(rightFrame, rightGlass);
+
+    addWrapAroundWindows({
+      targetGroup: mainWingGroup,
+      bW: mainW,
+      bD: mainD,
+      floorHeights: [1.35, 3.55],
+      winW: 0.7,
+      winH: 0.65,
+      sideCols: 1,
+      backCols: 2,
+      glassMat,
+      frameMat: trimMat,
+    });
 
     shellContainer.add(mainWingGroup);
 
@@ -1497,16 +1777,16 @@ export function buildHouseMesh(options: HouseOptions = {}): THREE.Group {
     const winH = 0.8;
     const winY = 1.25;
 
-    const winGlass = new THREE.Mesh(new THREE.BoxGeometry(winW, winH, 0.02), glassMat);
-    winGlass.position.set(0, winY, d2 + 0.01);
     const winOuterFrame = new THREE.Mesh(new THREE.BoxGeometry(winW + 0.08, winH + 0.08, 0.05), trimMat);
-    winOuterFrame.position.set(0, winY, d2 + 0.02);
+    winOuterFrame.position.set(0, winY, d2 + 0.015);
+    const winGlass = new THREE.Mesh(new THREE.BoxGeometry(winW, winH, 0.025), glassMat);
+    winGlass.position.set(0, winY, d2 + 0.04);
     leftWingGroup.add(winOuterFrame, winGlass);
 
     const winHBar = new THREE.Mesh(new THREE.BoxGeometry(winW, 0.04, 0.06), trimMat);
-    winHBar.position.set(0, winY, d2 + 0.025);
+    winHBar.position.set(0, winY, d2 + 0.035);
     const winVBar = new THREE.Mesh(new THREE.BoxGeometry(0.04, winH, 0.06), trimMat);
-    winVBar.position.set(0, winY, d2 + 0.025);
+    winVBar.position.set(0, winY, d2 + 0.035);
     leftWingGroup.add(winHBar, winVBar);
 
     shellContainer.add(leftWingGroup);
@@ -1522,7 +1802,7 @@ export function buildHouseMesh(options: HouseOptions = {}): THREE.Group {
     metalTrimMat,
     foundationMat,
     doorMat,
-    glassMat,
+    clearGlassMat,
     mirrorX
   );
 
@@ -1536,6 +1816,15 @@ export function buildHouseMesh(options: HouseOptions = {}): THREE.Group {
   fence.castShadow = true;
   fence.receiveShadow = true;
   group.add(fence);
+
+  const fenceCap = new THREE.Mesh(new THREE.BoxGeometry(lotWidth + 0.04, 0.06, 0.10), trimMat);
+  fenceCap.position.set(0, 0.15 + fenceH + 0.02, -2.85);
+  group.add(fenceCap);
+  [-2.85, -1.42, 0, 1.42, 2.85].forEach((fx) => {
+    const post = new THREE.Mesh(new THREE.BoxGeometry(0.09, fenceH + 0.08, 0.09), trimMat);
+    post.position.set(fx, 0.15 + fenceH / 2, -2.85);
+    group.add(post);
+  });
 
   const hedgeBaseGeo = new THREE.BoxGeometry(lotWidth, 0.45, 0.22);
   const hedgeBase = new THREE.Mesh(

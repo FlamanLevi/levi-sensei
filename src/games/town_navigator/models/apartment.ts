@@ -3,7 +3,11 @@ import {
   getHorizontalSidingTexture,
   getConcretePanelTexture,
   getBrickTileTexture,
+  getKawaraTileTexture,
+  getTerracottaRoofTexture,
+  getClearShowcaseGlassMaterial,
   buildPerimeterRailing,
+  buildOutdoorAcUnit,
 } from './wallTextures';
 import { HOUSE_PALETTES, HousePalette } from './house';
 
@@ -110,9 +114,18 @@ function buildBikeShelter(metalMat: THREE.Material, frameMat: THREE.Material): T
     wf.position.set(bx, 0.21, 0.32);
     const wr = new THREE.Mesh(wheelGeo, tireMat);
     wr.position.set(bx, 0.21, -0.32);
-    const bikeFrame = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.45, 0.68), frameMat);
-    bikeFrame.position.set(bx, 0.38, 0);
-    bikeShelterGroup.add(wf, wr, bikeFrame);
+    const downTube = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.56, 6), frameMat);
+    downTube.rotation.x = Math.PI / 2.6;
+    downTube.position.set(bx, 0.30, 0.04);
+    const seatTube = new THREE.Mesh(new THREE.CylinderGeometry(0.014, 0.014, 0.42, 6), frameMat);
+    seatTube.rotation.x = -0.22;
+    seatTube.position.set(bx, 0.40, -0.14);
+    const handlebar = new THREE.Mesh(new THREE.CylinderGeometry(0.01, 0.01, 0.32, 6), metalMat);
+    handlebar.rotation.z = Math.PI / 2;
+    handlebar.position.set(bx, 0.64, 0.22);
+    const saddle = new THREE.Mesh(new THREE.BoxGeometry(0.10, 0.04, 0.16), tireMat);
+    saddle.position.set(bx, 0.62, -0.16);
+    bikeShelterGroup.add(wf, wr, downTube, seatTube, handlebar, saddle);
   });
 
   return bikeShelterGroup;
@@ -121,7 +134,7 @@ function buildBikeShelter(metalMat: THREE.Material, frameMat: THREE.Material): T
 /**
  * Helper to build a compact parked Japanese Kei Car for resident parking bays
  */
-function buildResidentKeiCar(bodyColor: number, glassMat: THREE.Material): THREE.Group {
+function buildResidentKeiCar(bodyColor: number, clearGlassMat: THREE.Material): THREE.Group {
   const car = new THREE.Group();
   const bodyMat = new THREE.MeshStandardMaterial({ color: bodyColor, roughness: 0.35, metalness: 0.15 });
   const whiteMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.3 });
@@ -136,7 +149,7 @@ function buildResidentKeiCar(bodyColor: number, glassMat: THREE.Material): THREE
   cabin.castShadow = true;
   const roofCap = new THREE.Mesh(new THREE.BoxGeometry(1.08, 0.05, 0.72), whiteMat);
   roofCap.position.set(-0.08, 0.84, 0);
-  const glass = new THREE.Mesh(new THREE.BoxGeometry(0.92, 0.28, 0.72), glassMat);
+  const glass = new THREE.Mesh(new THREE.BoxGeometry(0.92, 0.28, 0.72), clearGlassMat);
   glass.position.set(-0.05, 0.64, 0);
   const plate = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.09, 0.18), yellowPlateMat);
   plate.position.set(0.73, 0.21, 0);
@@ -156,6 +169,76 @@ function buildResidentKeiCar(bodyColor: number, glassMat: THREE.Material): THREE
   });
 
   return car;
+}
+
+function addFramedSideWindow(
+  target: THREE.Group,
+  x: number,
+  y: number,
+  z: number,
+  h: number,
+  w: number,
+  signX: number,
+  glassMat: THREE.Material,
+  frameMat: THREE.Material,
+  sillMat: THREE.Material
+): void {
+  const frame = new THREE.Mesh(new THREE.BoxGeometry(0.05, h + 0.10, w + 0.10), frameMat);
+  frame.position.set(x, y, z);
+  const glass = new THREE.Mesh(new THREE.BoxGeometry(0.03, h, w), glassMat);
+  glass.position.set(x + signX * 0.022, y, z);
+  const sill = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.06, w + 0.16), sillMat);
+  sill.position.set(x + signX * 0.05, y - h / 2 - 0.03, z);
+  const lintel = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.055, w + 0.14), sillMat);
+  lintel.position.set(x + signX * 0.04, y + h / 2 + 0.03, z);
+  const mullion = new THREE.Mesh(new THREE.BoxGeometry(0.04, h, 0.04), frameMat);
+  mullion.position.set(x + signX * 0.028, y, z);
+  target.add(frame, glass, sill, lintel, mullion);
+}
+
+function addApartmentEndWallDetails(
+  target: THREE.Group,
+  bx: number,
+  bW: number,
+  bD: number,
+  bH: number,
+  glassMat: THREE.Material,
+  frameMat: THREE.Material,
+  sillMat: THREE.Material,
+  pipeMat: THREE.Material
+): void {
+  // South (+Z) and North (-Z) end walls: 1F/2F framed windows + floor drip molding + corner downspouts
+  [-bD / 2, bD / 2].forEach((ez) => {
+    const signZ = ez < 0 ? -1 : 1;
+    [1.45, 3.65].forEach((wy) => {
+      [-bW * 0.24, bW * 0.24].forEach((wxOffset) => {
+        const wx = bx + wxOffset;
+        const frame = new THREE.Mesh(new THREE.BoxGeometry(0.85, 0.95, 0.05), frameMat);
+        frame.position.set(wx, wy, ez + signZ * 0.015);
+        const glass = new THREE.Mesh(new THREE.BoxGeometry(0.75, 0.85, 0.03), glassMat);
+        glass.position.set(wx, wy, ez + signZ * 0.036);
+        const sill = new THREE.Mesh(new THREE.BoxGeometry(0.92, 0.06, 0.12), sillMat);
+        sill.position.set(wx, wy - 0.45, ez + signZ * 0.05);
+        const mullion = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.85, 0.04), frameMat);
+        mullion.position.set(wx, wy, ez + signZ * 0.042);
+        target.add(frame, glass, sill, mullion);
+      });
+    });
+
+    // Mid-floor concrete drip molding
+    const drip = new THREE.Mesh(new THREE.BoxGeometry(bW + 0.08, 0.10, 0.08), sillMat);
+    drip.position.set(bx, 2.75, ez + signZ * 0.03);
+    target.add(drip);
+  });
+
+  // 4 Corner *Amadoi* Rain Downspouts
+  [-bW / 2 + 0.05, bW / 2 - 0.05].forEach((dx) => {
+    [-bD / 2 + 0.05, bD / 2 - 0.05].forEach((dz) => {
+      const pipe = new THREE.Mesh(new THREE.CylinderGeometry(0.032, 0.032, bH, 6), pipeMat);
+      pipe.position.set(bx + dx, 0.15 + bH / 2, dz);
+      target.add(pipe);
+    });
+  });
 }
 
 /**
@@ -210,6 +293,10 @@ export function buildApartmentMesh(options: ApartmentOptions = {}): THREE.Group 
     color: 0xd8dde6,
     roughness: 0.85,
   });
+  const groundPlinthMat = new THREE.MeshStandardMaterial({
+    color: 0xcbd5e1,
+    roughness: 0.88,
+  });
 
   const trimMat = new THREE.MeshStandardMaterial({
     color: pal.trim,
@@ -219,6 +306,16 @@ export function buildApartmentMesh(options: ApartmentOptions = {}): THREE.Group 
   const roofMat = new THREE.MeshStandardMaterial({
     color: pal.roofTile,
     roughness: 0.6,
+  });
+  const terracottaRoofMat = new THREE.MeshStandardMaterial({
+    map: getTerracottaRoofTexture(),
+    color: pal.roofTile,
+    roughness: 0.6,
+  });
+  const kawaraRoofMat = new THREE.MeshStandardMaterial({
+    map: getKawaraTileTexture(),
+    color: pal.roofTile,
+    roughness: 0.55,
   });
 
   const metalStairMat = new THREE.MeshStandardMaterial({
@@ -239,6 +336,7 @@ export function buildApartmentMesh(options: ApartmentOptions = {}): THREE.Group 
     transparent: true,
     opacity: 0.7,
   });
+  const clearGlassMat = getClearShowcaseGlassMaterial();
 
   const warmGlowMat = new THREE.MeshStandardMaterial({
     color: 0xfef08a,
@@ -254,7 +352,7 @@ export function buildApartmentMesh(options: ApartmentOptions = {}): THREE.Group 
 
   // 1. LOT GROUND BASE (6m × 12m)
   const groundGeo = new THREE.BoxGeometry(lotW, 0.15, lotD);
-  const ground = new THREE.Mesh(groundGeo, foundationMat);
+  const ground = new THREE.Mesh(groundGeo, groundPlinthMat);
   ground.position.set(0, 0.075, 0);
   ground.receiveShadow = true;
   group.add(ground);
@@ -285,6 +383,7 @@ export function buildApartmentMesh(options: ApartmentOptions = {}): THREE.Group 
 
     const cedarLouverMat = new THREE.MeshStandardMaterial({ color: 0x92400e, roughness: 0.6 });
     const lawnStripMat = new THREE.MeshStandardMaterial({ color: 0x4ade80, roughness: 0.9 });
+    const monchuRedMat = new THREE.MeshStandardMaterial({ color: 0xdc2626, roughness: 0.4 });
 
     // East Backyard Green Lawn Strip
     const backLawn = new THREE.Mesh(new THREE.BoxGeometry(1.3, 0.03, 9.6), lawnStripMat);
@@ -323,25 +422,30 @@ export function buildApartmentMesh(options: ApartmentOptions = {}): THREE.Group 
       const slopeAngle = Math.atan2(peakH, unitDepth / 2);
       const slopeGeo = new THREE.BoxGeometry(unitWidth + 0.35, 0.1, slopeLen);
 
-      const nSlope = new THREE.Mesh(slopeGeo, roofMat);
+      const nSlope = new THREE.Mesh(slopeGeo, terracottaRoofMat);
       nSlope.position.set(0, eavesH + peakH / 2 + 0.03, -unitDepth / 4);
       nSlope.rotation.x = -slopeAngle;
       nSlope.castShadow = true;
 
-      const sSlope = new THREE.Mesh(slopeGeo, roofMat);
+      const sSlope = new THREE.Mesh(slopeGeo, terracottaRoofMat);
       sSlope.position.set(0, eavesH + peakH / 2 + 0.03, unitDepth / 4);
       sSlope.rotation.x = slopeAngle;
       sSlope.castShadow = true;
-      uGroup.add(nSlope, sSlope);
 
-      // West Front Facade (-X): Genkan Stoop, Canopy, Cedar Louvers & 2F Juliet Balcony
+      const ridgeCap = new THREE.Mesh(new THREE.BoxGeometry(unitWidth + 0.38, 0.12, 0.16), trimMat);
+      ridgeCap.position.set(0, eavesH + peakH + 0.05, 0);
+      uGroup.add(nSlope, sSlope, ridgeCap);
+
+      // West Front Facade (-X): Genkan Stoop, Canopy, Porch Light, Cedar Louvers & 2F Juliet Balcony
       const stoop = new THREE.Mesh(new THREE.BoxGeometry(0.65, 0.12, 1.1), concreteMat);
       stoop.position.set(-unitWidth / 2 - 0.32, 0.06, 0.65);
-      const canopy = new THREE.Mesh(new THREE.BoxGeometry(0.75, 0.12, 1.25), roofMat);
+      const canopy = new THREE.Mesh(new THREE.BoxGeometry(0.75, 0.12, 1.25), terracottaRoofMat);
       canopy.position.set(-unitWidth / 2 - 0.35, 2.25, 0.65);
       const door = new THREE.Mesh(new THREE.BoxGeometry(0.06, 2.0, 0.85), doorMat);
       door.position.set(-unitWidth / 2 - 0.02, 1.06, 0.65);
-      uGroup.add(stoop, canopy, door);
+      const porchLight = new THREE.Mesh(new THREE.BoxGeometry(0.10, 0.14, 0.12), warmGlowMat);
+      porchLight.position.set(-unitWidth / 2 - 0.06, 1.92, 0.12);
+      uGroup.add(stoop, canopy, door, porchLight);
 
       // Cedar Privacy Louver Screen beside porch
       for (let l = 0; l < 4; l++) {
@@ -353,36 +457,63 @@ export function buildApartmentMesh(options: ApartmentOptions = {}): THREE.Group 
       // Red-capped Gatepost (*Kinō-Monchū*)
       const monchu = new THREE.Mesh(new THREE.BoxGeometry(0.14, 1.05, 0.22), concreteMat);
       monchu.position.set(-unitWidth / 2 - 0.72, 0.525, 1.2);
-      const postCap = new THREE.Mesh(
-        new THREE.BoxGeometry(0.18, 0.18, 0.24),
-        new THREE.MeshStandardMaterial({ color: 0xdc2626, roughness: 0.4 })
-      );
+      const postCap = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.18, 0.24), monchuRedMat);
       postCap.position.set(-unitWidth / 2 - 0.72, 0.92, 1.2);
       uGroup.add(monchu, postCap);
 
-      // 1F Living Window & 2F Juliet Balcony Window
-      const win1 = new THREE.Mesh(new THREE.BoxGeometry(0.05, 1.2, 1.2), glassMat);
-      win1.position.set(-unitWidth / 2 - 0.02, 1.3, -0.65);
-      const win2 = new THREE.Mesh(new THREE.BoxGeometry(0.05, 1.35, 1.6), glassMat);
-      win2.position.set(-unitWidth / 2 - 0.02, 3.35, 0);
-      const juliet = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.85, 1.75), cedarLouverMat);
-      juliet.position.set(-unitWidth / 2 - 0.18, 2.95, 0);
-      uGroup.add(win1, win2, juliet);
+      // 1F Living Window & 2F Juliet Balcony Window (explicitly framed + open iron railing)
+      addFramedSideWindow(uGroup, -unitWidth / 2, 1.3, -0.65, 1.2, 1.2, -1, glassMat, trimMat, concreteMat);
+      addFramedSideWindow(uGroup, -unitWidth / 2, 3.35, 0, 1.35, 1.6, -1, glassMat, trimMat, concreteMat);
 
-      // East Backyard (+X): Wooden Partition Fence, Patio Glass & AC Compressor
+      const julietTop = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.05, 1.75), metalStairMat);
+      julietTop.position.set(-unitWidth / 2 - 0.16, 3.28, 0);
+      const julietBot = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.05, 1.75), metalStairMat);
+      julietBot.position.set(-unitWidth / 2 - 0.16, 2.66, 0);
+      uGroup.add(julietTop, julietBot);
+      for (let b = -3; b <= 3; b++) {
+        const bal = new THREE.Mesh(new THREE.BoxGeometry(0.035, 0.62, 0.035), metalStairMat);
+        bal.position.set(-unitWidth / 2 - 0.16, 2.97, b * 0.26);
+        uGroup.add(bal);
+      }
+
+      // East Backyard (+X): Wooden Partition Fence, Framed Patio Glass & Sculpted AC Unit
       const fence = new THREE.Mesh(new THREE.BoxGeometry(1.1, 1.1, 0.06), cedarLouverMat);
       fence.position.set(unitWidth / 2 + 0.55, 0.55, unitDepth / 2);
-      const patio = new THREE.Mesh(new THREE.BoxGeometry(0.05, 1.85, 1.5), glassMat);
-      patio.position.set(unitWidth / 2 + 0.02, 1.0, 0);
-      const ac = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.48, 0.62), acUnitMat);
-      ac.position.set(unitWidth / 2 + 0.25, 0.24, -0.95);
-      uGroup.add(fence, patio, ac);
+      addFramedSideWindow(uGroup, unitWidth / 2, 1.0, 0, 1.85, 1.5, 1, glassMat, trimMat, concreteMat);
+      const ac = buildOutdoorAcUnit();
+      ac.position.set(unitWidth / 2 + 0.25, 0, -0.95);
+      uGroup.add(fence, ac);
+
+      // End-wall windows on Northmost and Southmost units
+      if (idx === 0 || idx === unitZCenters.length - 1) {
+        const ez = idx === 0 ? -(unitDepth - 0.06) / 2 : (unitDepth - 0.06) / 2;
+        const signZ = idx === 0 ? -1 : 1;
+        [1.35, 3.35].forEach((wy) => {
+          [-0.9, 0.9].forEach((wx) => {
+            const eFrame = new THREE.Mesh(new THREE.BoxGeometry(0.85, 0.95, 0.05), trimMat);
+            eFrame.position.set(wx, wy, ez + signZ * 0.015);
+            const eGlass = new THREE.Mesh(new THREE.BoxGeometry(0.75, 0.85, 0.03), glassMat);
+            eGlass.position.set(wx, wy, ez + signZ * 0.036);
+            uGroup.add(eFrame, eGlass);
+          });
+        });
+      }
 
       coreContainer.add(uGroup);
     });
 
-    // South Parking Apron with Parked Resident Kei Car (Z = +4.95m)
-    const car = buildResidentKeiCar(carColor, glassMat);
+    // South Parking Apron with Painted Bay Lines, Wheel Stops & Parked Resident Kei Car (Z = +4.95m)
+    const bayLineMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.7 });
+    [-0.55, 0.55].forEach((lz) => {
+      const line = new THREE.Mesh(new THREE.BoxGeometry(1.85, 0.015, 0.06), bayLineMat);
+      line.position.set(0.2, 0.158, 4.95 + lz);
+      coreContainer.add(line);
+    });
+    const wheelStop = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.08, 0.85), concreteMat);
+    wheelStop.position.set(-0.55, 0.19, 4.95);
+    coreContainer.add(wheelStop);
+
+    const car = buildResidentKeiCar(carColor, clearGlassMat);
     car.position.set(0.2, 0.15, 4.95);
     coreContainer.add(car);
   }
@@ -392,7 +523,7 @@ export function buildApartmentMesh(options: ApartmentOptions = {}): THREE.Group 
   // =========================================================================
   else if (activeVariant === 'DESIGNER_GLASS_LOFT') {
     const bW = 4.3;
-    const bD = 10.2;
+    const bD = 9.2;
     const bH = 5.25;
     const bx = 0.45;
     const cedarMat = new THREE.MeshStandardMaterial({ color: 0x92400e, roughness: 0.55 });
@@ -414,18 +545,18 @@ export function buildApartmentMesh(options: ApartmentOptions = {}): THREE.Group 
     coreContainer.add(roofRail);
 
     const solarMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, metalness: 0.75, roughness: 0.2 });
-    [-3.2, 0.0, 3.2].forEach((sz) => {
-      const panel = new THREE.Mesh(new THREE.BoxGeometry(2.8, 0.06, 2.3), solarMat);
+    [-2.9, 0.0, 2.9].forEach((sz) => {
+      const panel = new THREE.Mesh(new THREE.BoxGeometry(2.8, 0.06, 2.1), solarMat);
       panel.position.set(bx, 0.15 + bH + 0.35, sz);
       panel.rotation.z = -0.12;
       coreContainer.add(panel);
     });
 
-    // Central Projecting 2-Story Glass Stairwell Atrium Tower (West Front: X = -2.0m, Z = 0)
+    // Central Projecting 2-Story Glass Stairwell Atrium Tower (Clear Glass so atriumCoreGlow shines!)
     const atriumFrame = new THREE.Mesh(new THREE.BoxGeometry(1.1, bH + 0.35, 2.3), metalStairMat);
     atriumFrame.position.set(bx - bW / 2 - 0.45, 0.15 + (bH + 0.35) / 2, 0);
     atriumFrame.castShadow = true;
-    const atriumGlass = new THREE.Mesh(new THREE.BoxGeometry(1.14, bH - 0.3, 2.0), glassMat);
+    const atriumGlass = new THREE.Mesh(new THREE.BoxGeometry(1.14, bH - 0.3, 2.0), clearGlassMat);
     atriumGlass.position.set(bx - bW / 2 - 0.46, 0.15 + bH / 2 + 0.1, 0);
     const atriumCoreGlow = new THREE.Mesh(new THREE.BoxGeometry(0.6, bH - 0.6, 1.4), warmGlowMat);
     atriumCoreGlow.position.set(bx - bW / 2 - 0.35, 0.15 + bH / 2, 0);
@@ -436,30 +567,29 @@ export function buildApartmentMesh(options: ApartmentOptions = {}): THREE.Group 
     lobbyCanopy.position.set(bx - bW / 2 - 0.65, 2.45, 0);
     coreContainer.add(lobbyCanopy);
 
-    // Checkerboard Cantilevered Box Balconies on North & South Wings (West & East faces)
-    [-3.3, 3.3].forEach((wz) => {
+    // Checkerboard Cantilevered Box Balconies on North & South Wings (Open Recessed Decks + Clear Glass Rails)
+    [-3.0, 3.0].forEach((wz) => {
       [0.15, 2.75].forEach((wy, fIdx) => {
-        // West Cantilevered Box Balcony
-        const boxFrame = new THREE.Mesh(
-          new THREE.BoxGeometry(0.95, 1.15, 2.6),
-          fIdx === 1 ? sidingMat : concreteMat
-        );
-        boxFrame.position.set(bx - bW / 2 - 0.42, wy + 0.58, wz);
-        boxFrame.castShadow = true;
-        const win = new THREE.Mesh(new THREE.BoxGeometry(0.06, 1.95, 2.1), glassMat);
-        win.position.set(bx - bW / 2 - 0.02, wy + 1.1, wz);
-        coreContainer.add(boxFrame, win);
+        const deckMat = fIdx === 1 ? sidingMat : concreteMat;
+        const westSlab = new THREE.Mesh(new THREE.BoxGeometry(0.95, 0.14, 2.5), deckMat);
+        westSlab.position.set(bx - bW / 2 - 0.44, wy + 0.07, wz);
+        const westGlassRail = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.88, 2.46), clearGlassMat);
+        westGlassRail.position.set(bx - bW / 2 - 0.88, wy + 0.56, wz);
+        const westTopRail = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.05, 2.52), metalStairMat);
+        westTopRail.position.set(bx - bW / 2 - 0.88, wy + 1.02, wz);
+        coreContainer.add(westSlab, westGlassRail, westTopRail);
 
-        // East Rear Balcony + Cedar Louvers + AC Unit
-        const eastSlab = new THREE.Mesh(new THREE.BoxGeometry(0.85, 0.14, 2.6), concreteMat);
+        addFramedSideWindow(coreContainer, bx - bW / 2, wy + 1.1, wz, 1.95, 2.1, -1, glassMat, metalStairMat, concreteMat);
+
+        // East Rear Balcony + Clear Glass Rail + Framed Patio + AC Unit
+        const eastSlab = new THREE.Mesh(new THREE.BoxGeometry(0.85, 0.14, 2.5), concreteMat);
         eastSlab.position.set(bx + bW / 2 + 0.42, wy + 0.07, wz);
-        const eastGlass = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.92, 2.5), glassMat);
+        const eastGlass = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.92, 2.46), clearGlassMat);
         eastGlass.position.set(bx + bW / 2 + 0.80, wy + 0.55, wz);
-        const eastPatio = new THREE.Mesh(new THREE.BoxGeometry(0.05, 1.95, 1.9), glassMat);
-        eastPatio.position.set(bx + bW / 2 + 0.02, wy + 1.1, wz);
-        const ac = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.46, 0.60), acUnitMat);
-        ac.position.set(bx + bW / 2 + 0.35, wy + 0.36, wz - 0.85);
-        coreContainer.add(eastSlab, eastGlass, eastPatio, ac);
+        addFramedSideWindow(coreContainer, bx + bW / 2, wy + 1.1, wz, 1.95, 1.9, 1, glassMat, metalStairMat, concreteMat);
+        const ac = buildOutdoorAcUnit();
+        ac.position.set(bx + bW / 2 + 0.35, wy + 0.14, wz - 0.85);
+        coreContainer.add(eastSlab, eastGlass, ac);
       });
     });
 
@@ -476,9 +606,12 @@ export function buildApartmentMesh(options: ApartmentOptions = {}): THREE.Group 
       });
     });
 
-    // Covered Cycle Port at North End
+    // End-wall windows & corner downspouts
+    addApartmentEndWallDetails(coreContainer, bx, bW, bD, bH, glassMat, metalStairMat, concreteMat, metalStairMat);
+
+    // Covered Cycle Port at North End (clear of mainBody!)
     const cyclePort = buildBikeShelter(metalStairMat, trimMat);
-    cyclePort.position.set(-0.8, 0.15, -4.8);
+    cyclePort.position.set(-0.6, 0.15, -5.28);
     coreContainer.add(cyclePort);
   }
 
@@ -490,6 +623,7 @@ export function buildApartmentMesh(options: ApartmentOptions = {}): THREE.Group 
     const bD = 10.2;
     const bH = 4.65;
     const bx = 0.45;
+    const hedgeMat = new THREE.MeshStandardMaterial({ color: 0x22c55e, roughness: 0.85 });
 
     // Running-Bond Ceramic Tile Main Building
     const body = new THREE.Mesh(new THREE.BoxGeometry(bW, bH, bD), brickTileMat);
@@ -505,14 +639,16 @@ export function buildApartmentMesh(options: ApartmentOptions = {}): THREE.Group 
       coreContainer.add(belt);
     });
 
-    // 4-Sloped Hipped Roof (*Yosemune-yane*)
+    // 4-Sloped Hipped Roof (*Yosemune-yane*) with Kawara Tile Texture & Ridge Cap
     const hipGeo = new THREE.CylinderGeometry(1.8 * Math.SQRT1_2, (bW + 0.5) * Math.SQRT1_2, 1.15, 4);
     hipGeo.rotateY(Math.PI / 4);
-    const hipRoof = new THREE.Mesh(hipGeo, roofMat);
+    const hipRoof = new THREE.Mesh(hipGeo, kawaraRoofMat);
     hipRoof.scale.set(1.0, 1.0, (bD + 0.5) / (bW + 0.5));
     hipRoof.position.set(bx, 0.15 + bH + 0.68, 0);
     hipRoof.castShadow = true;
-    coreContainer.add(hipRoof);
+    const hipRidge = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.12, 3.2), trimMat);
+    hipRidge.position.set(bx, 0.15 + bH + 1.28, 0);
+    coreContainer.add(hipRoof, hipRidge);
 
     // Grand Central Columned Entrance Portico (West Front: Z = 0)
     const porticoCanopy = new THREE.Mesh(new THREE.BoxGeometry(1.15, 0.22, 2.6), trimMat);
@@ -527,12 +663,21 @@ export function buildApartmentMesh(options: ApartmentOptions = {}): THREE.Group 
       coreContainer.add(col);
     });
 
-    // Double Glass Automatic Lobby Doors + Parcel Lockers (*Takuhai-Bokkusu*)
-    const lobbyDoor = new THREE.Mesh(new THREE.BoxGeometry(0.08, 2.15, 1.6), glassMat);
-    lobbyDoor.position.set(bx - bW / 2 - 0.02, 1.22, 0);
+    // Double Glass Automatic Lobby Doors + Detailed Parcel Lockers (*Takuhai-Bokkusu*)
+    const lobbyDoorFrame = new THREE.Mesh(new THREE.BoxGeometry(0.10, 2.25, 1.72), metalStairMat);
+    lobbyDoorFrame.position.set(bx - bW / 2 - 0.01, 1.25, 0);
+    const lobbyDoor = new THREE.Mesh(new THREE.BoxGeometry(0.08, 2.15, 1.6), clearGlassMat);
+    lobbyDoor.position.set(bx - bW / 2 - 0.04, 1.22, 0);
     const lockerBank = new THREE.Mesh(new THREE.BoxGeometry(0.28, 1.55, 0.75), acUnitMat);
     lockerBank.position.set(bx - bW / 2 - 0.22, 0.92, 1.55);
-    coreContainer.add(lobbyDoor, lockerBank);
+    const lockerKeypad = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.22, 0.14), metalStairMat);
+    lockerKeypad.position.set(bx - bW / 2 - 0.36, 1.15, 1.55);
+    coreContainer.add(lobbyDoorFrame, lobbyDoor, lockerBank, lockerKeypad);
+    [0.55, 0.95, 1.35].forEach((ly) => {
+      const seam = new THREE.Mesh(new THREE.BoxGeometry(0.29, 0.02, 0.76), metalStairMat);
+      seam.position.set(bx - bW / 2 - 0.22, ly, 1.55);
+      coreContainer.add(seam);
+    });
 
     // 2nd Floor Continuous Balcony Loggia with Open Wrought-Iron Railing
     const loggiaSlab = new THREE.Mesh(new THREE.BoxGeometry(0.85, 0.14, bD - 0.4), trimMat);
@@ -541,25 +686,23 @@ export function buildApartmentMesh(options: ApartmentOptions = {}): THREE.Group 
     loggiaRail.position.set(bx - bW / 2 - 0.42, 2.69, 0);
     coreContainer.add(loggiaSlab, loggiaRail);
 
-    // Symmetrical Windows & East Balconies
+    // Symmetrical Framed Windows & East Balconies
     [-3.4, 0.0, 3.4].forEach((wz) => {
       // 2F West Windows
-      const w2 = new THREE.Mesh(new THREE.BoxGeometry(0.06, 1.65, 1.8), glassMat);
-      w2.position.set(bx - bW / 2 - 0.02, 3.55, wz);
-      coreContainer.add(w2);
+      addFramedSideWindow(coreContainer, bx - bW / 2, 3.55, wz, 1.65, 1.8, -1, glassMat, trimMat, concreteMat);
 
       if (wz !== 0.0) {
-        // 1F West Windows + Hydrangea Planter Box
-        const w1 = new THREE.Mesh(new THREE.BoxGeometry(0.06, 1.35, 1.7), glassMat);
-        w1.position.set(bx - bW / 2 - 0.02, 1.4, wz);
+        // 1F West Windows + Sculpted Multi-Lobe Hydrangea Planter Box
+        addFramedSideWindow(coreContainer, bx - bW / 2, 1.4, wz, 1.35, 1.7, -1, glassMat, trimMat, concreteMat);
         const planter = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.32, 1.8), brickTileMat);
         planter.position.set(bx - bW / 2 - 0.35, 0.31, wz);
-        const bush = new THREE.Mesh(
-          new THREE.BoxGeometry(0.38, 0.28, 1.65),
-          new THREE.MeshStandardMaterial({ color: 0x22c55e, roughness: 0.85 })
-        );
-        bush.position.set(bx - bW / 2 - 0.35, 0.55, wz);
-        coreContainer.add(w1, planter, bush);
+        coreContainer.add(planter);
+        [-0.52, 0, 0.52].forEach((bz) => {
+          const lobe = new THREE.Mesh(new THREE.DodecahedronGeometry(0.22, 0), hedgeMat);
+          lobe.scale.set(0.85, 0.75, 1.05);
+          lobe.position.set(bx - bW / 2 - 0.35, 0.56, wz + bz);
+          coreContainer.add(lobe);
+        });
       }
 
       // East Rear Balconies (1F & 2F)
@@ -568,13 +711,15 @@ export function buildApartmentMesh(options: ApartmentOptions = {}): THREE.Group 
         bSlab.position.set(bx + bW / 2 + 0.42, ey + 0.07, wz);
         const bRail = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.88, 2.5), trimMat);
         bRail.position.set(bx + bW / 2 + 0.80, ey + 0.51, wz);
-        const patio = new THREE.Mesh(new THREE.BoxGeometry(0.05, 1.85, 1.6), glassMat);
-        patio.position.set(bx + bW / 2 + 0.02, ey + 1.05, wz);
-        const ac = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.46, 0.60), acUnitMat);
-        ac.position.set(bx + bW / 2 + 0.32, ey + 0.36, wz - 0.8);
-        coreContainer.add(bSlab, bRail, patio, ac);
+        addFramedSideWindow(coreContainer, bx + bW / 2, ey + 1.05, wz, 1.85, 1.6, 1, glassMat, trimMat, concreteMat);
+        const ac = buildOutdoorAcUnit();
+        ac.position.set(bx + bW / 2 + 0.32, ey + 0.14, wz - 0.8);
+        coreContainer.add(bSlab, bRail, ac);
       });
     });
+
+    // End-wall windows, drip moldings & corner downspouts
+    addApartmentEndWallDetails(coreContainer, bx, bW, bD, bH, glassMat, trimMat, concreteMat, metalStairMat);
 
     // Warm Glowing Garden Bollard Lamps Flanking Portico
     [-1.45, 1.45].forEach((lz) => {
@@ -641,10 +786,20 @@ export function buildApartmentMesh(options: ApartmentOptions = {}): THREE.Group 
     deck.receiveShadow = true;
     coreContainer.add(deck);
 
-    const railingGeo = new THREE.BoxGeometry(0.04, 0.9, bD);
-    const railing = new THREE.Mesh(railingGeo, metalStairMat);
-    railing.position.set(walkwayX - walkwayW / 2 + 0.02, 2.7 + 0.5, 0);
-    coreContainer.add(railing);
+    // Open Tubular Steel Walkway Handrail (leaving staircase entry open at South end Z in [3.2, 5.2])
+    const railLen = bD - 1.8;
+    const railCenterZ = -0.9;
+    const railX = walkwayX - walkwayW / 2 + 0.04;
+    const topRail = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.05, railLen), metalStairMat);
+    topRail.position.set(railX, 2.7 + 0.92, railCenterZ);
+    const midRail = new THREE.Mesh(new THREE.BoxGeometry(0.035, 0.035, railLen), metalStairMat);
+    midRail.position.set(railX, 2.7 + 0.50, railCenterZ);
+    coreContainer.add(topRail, midRail);
+    for (let pz = -5.0; pz <= 3.2; pz += 1.35) {
+      const post = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.92, 0.04), metalStairMat);
+      post.position.set(railX, 2.7 + 0.46, pz);
+      coreContainer.add(post);
+    }
 
     [-4.2, 0.0, 3.2].forEach((pz) => {
       const col = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 2.6, 8), metalStairMat);
@@ -658,12 +813,13 @@ export function buildApartmentMesh(options: ApartmentOptions = {}): THREE.Group 
     groundDeck.receiveShadow = true;
     coreContainer.add(groundDeck);
 
+    // Softer Staircase Pitch with Diagonal Handrails
     const stairGroup = new THREE.Group();
-    stairGroup.position.set(walkwayX, 0.15, 4.4);
+    stairGroup.position.set(walkwayX, 0.15, 4.85);
 
     const numSteps = 10;
     const stepH = 2.55 / numSteps;
-    const stepD = 1.0 / numSteps;
+    const stepD = 1.6 / numSteps;
     for (let s = 0; s < numSteps; s++) {
       const step = new THREE.Mesh(new THREE.BoxGeometry(walkwayW, 0.04, 0.28), metalStairMat);
       step.position.set(0, (s + 1) * stepH, -(s * stepD));
@@ -671,19 +827,25 @@ export function buildApartmentMesh(options: ApartmentOptions = {}): THREE.Group 
       stairGroup.add(step);
     }
 
-    const stringerL = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.12, 1.8), metalStairMat);
-    stringerL.position.set(-walkwayW / 2 + 0.02, 1.3, -0.45);
-    stringerL.rotation.x = -Math.atan2(2.55, 1.0);
-    stairGroup.add(stringerL);
-
-    const stringerR = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.12, 1.8), metalStairMat);
-    stringerR.position.set(walkwayW / 2 - 0.02, 1.3, -0.45);
-    stringerR.rotation.x = -Math.atan2(2.55, 1.0);
-    stairGroup.add(stringerR);
+    const stairLen = Math.hypot(2.55, 1.6);
+    const stairPitch = Math.atan2(2.55, 1.6);
+    const stringerL = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.12, stairLen), metalStairMat);
+    stringerL.position.set(-walkwayW / 2 + 0.02, 1.3, -0.75);
+    stringerL.rotation.x = -stairPitch;
+    const stringerR = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.12, stairLen), metalStairMat);
+    stringerR.position.set(walkwayW / 2 - 0.02, 1.3, -0.75);
+    stringerR.rotation.x = -stairPitch;
+    const handrailL = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.04, stairLen), metalStairMat);
+    handrailL.position.set(-walkwayW / 2 + 0.02, 2.05, -0.75);
+    handrailL.rotation.x = -stairPitch;
+    const handrailR = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.04, stairLen), metalStairMat);
+    handrailR.position.set(walkwayW / 2 - 0.02, 2.05, -0.75);
+    handrailR.rotation.x = -stairPitch;
+    stairGroup.add(stringerL, stringerR, handrailL, handrailR);
 
     coreContainer.add(stairGroup);
 
-    // 6 Unit Doors, Frosted Entry Lamps & Wall Gas Meters
+    // 6 Unit Doors (proud of wall!), Frosted Entry Lamps & Wall Gas Meters
     const doorZOffsets = [-3.2, 0.0, 3.2];
 
     [
@@ -694,21 +856,21 @@ export function buildApartmentMesh(options: ApartmentOptions = {}): THREE.Group 
         const doorDoorW = 0.85;
         const doorDoorH = 2.0;
 
-        const door = new THREE.Mesh(new THREE.BoxGeometry(0.06, doorDoorH, doorDoorW), doorMat);
-        door.position.set(buildingX - bW / 2 + 0.03, yBase + doorDoorH / 2, dz);
+        const dFrame = new THREE.Mesh(new THREE.BoxGeometry(0.06, doorDoorH + 0.1, doorDoorW + 0.1), trimMat);
+        dFrame.position.set(buildingX - bW / 2 - 0.01, yBase + (doorDoorH + 0.1) / 2, dz);
+        coreContainer.add(dFrame);
+
+        const door = new THREE.Mesh(new THREE.BoxGeometry(0.05, doorDoorH, doorDoorW), doorMat);
+        door.position.set(buildingX - bW / 2 - 0.035, yBase + doorDoorH / 2, dz);
         door.castShadow = true;
         coreContainer.add(door);
 
-        const dFrame = new THREE.Mesh(new THREE.BoxGeometry(0.09, doorDoorH + 0.1, doorDoorW + 0.1), trimMat);
-        dFrame.position.set(buildingX - bW / 2 + 0.04, yBase + (doorDoorH + 0.1) / 2, dz);
-        coreContainer.add(dFrame);
-
         const lamp = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.14, 0.14), warmGlowMat);
-        lamp.position.set(buildingX - bW / 2 - 0.04, yBase + doorDoorH + 0.16, dz);
+        lamp.position.set(buildingX - bW / 2 - 0.06, yBase + doorDoorH + 0.16, dz);
         coreContainer.add(lamp);
 
-        const handle = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.18, 0.03), metalStairMat);
-        handle.position.set(buildingX - bW / 2 - 0.02, yBase + 1.0, dz + 0.3);
+        const handle = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.18, 0.03), metalStairMat);
+        handle.position.set(buildingX - bW / 2 - 0.07, yBase + 1.0, dz + 0.3);
         coreContainer.add(handle);
 
         const gasMeter = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.28, 0.22), acUnitMat);
@@ -719,7 +881,7 @@ export function buildApartmentMesh(options: ApartmentOptions = {}): THREE.Group 
       });
     });
 
-    // Private Rear Balconies with Sliding Patio Glass, AC Units & Laundry Poles
+    // Private Rear Balconies with Proud Sliding Patio Glass, Sculpted AC Units & Laundry Poles
     const balconyX = buildingX + bW / 2 + 0.45;
     const balconyW = 0.9;
     const balconyD = 2.6;
@@ -738,15 +900,10 @@ export function buildApartmentMesh(options: ApartmentOptions = {}): THREE.Group 
         bRail.position.set(balconyX + balconyW / 2 - 0.04, yBase + 0.53, dz);
         coreContainer.add(bRail);
 
-        const patioGeo = new THREE.BoxGeometry(0.04, 1.9, 1.6);
-        const patio = new THREE.Mesh(patioGeo, glassMat);
-        patio.position.set(buildingX + bW / 2 - 0.02, yBase + 1.05, dz);
-        coreContainer.add(patio);
+        addFramedSideWindow(coreContainer, buildingX + bW / 2, yBase + 1.05, dz, 1.9, 1.6, 1, glassMat, trimMat, concreteMat);
 
-        const acGeo = new THREE.BoxGeometry(0.35, 0.48, 0.65);
-        const acUnit = new THREE.Mesh(acGeo, acUnitMat);
-        acUnit.position.set(balconyX + 0.1, yBase + 0.38, dz - 0.85);
-        acUnit.castShadow = true;
+        const acUnit = buildOutdoorAcUnit();
+        acUnit.position.set(balconyX + 0.1, yBase + 0.14, dz - 0.85);
         coreContainer.add(acUnit);
 
         const laundryPole = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 2.2, 6), metalStairMat);
@@ -756,17 +913,29 @@ export function buildApartmentMesh(options: ApartmentOptions = {}): THREE.Group 
       });
     });
 
-    // Covered Bicycle Parking Shelter & Garbage Collection Net Station
+    // End-wall windows, drip moldings & corner downspouts
+    addApartmentEndWallDetails(coreContainer, buildingX, bW, bD, bH, glassMat, trimMat, concreteMat, metalStairMat);
+
+    // Covered Bicycle Parking Shelter & Slatted Metal Neighborhood Recycling Cage
     const bikeShelterGroup = buildBikeShelter(metalStairMat, trimMat);
     bikeShelterGroup.position.set(1.5, 0.15, -4.6);
     coreContainer.add(bikeShelterGroup);
 
-    const trashBoxGeo = new THREE.BoxGeometry(0.85, 0.65, 0.75);
-    const trashBoxMat = new THREE.MeshStandardMaterial({ color: 0x0284c7, roughness: 0.6 });
-    const trashBox = new THREE.Mesh(trashBoxGeo, trashBoxMat);
-    trashBox.position.set(-2.0, 0.15 + 0.325, -4.8);
-    trashBox.castShadow = true;
-    coreContainer.add(trashBox);
+    const cageGroup = new THREE.Group();
+    cageGroup.position.set(-2.0, 0.15, -4.8);
+    const cageBase = new THREE.Mesh(new THREE.BoxGeometry(0.90, 0.06, 0.80), concreteMat);
+    cageBase.position.y = 0.03;
+    const cageLid = new THREE.Mesh(new THREE.BoxGeometry(0.92, 0.05, 0.82), new THREE.MeshStandardMaterial({ color: 0x0284c7, roughness: 0.5 }));
+    cageLid.position.y = 0.68;
+    cageGroup.add(cageBase, cageLid);
+    for (let s = -0.36; s <= 0.36; s += 0.18) {
+      const slatF = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.62, 0.03), metalStairMat);
+      slatF.position.set(s, 0.36, 0.38);
+      const slatB = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.62, 0.03), metalStairMat);
+      slatB.position.set(s, 0.36, -0.38);
+      cageGroup.add(slatF, slatB);
+    }
+    coreContainer.add(cageGroup);
   }
 
   if (scale !== 1.0) {

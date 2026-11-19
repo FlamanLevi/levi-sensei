@@ -1,5 +1,10 @@
 import * as THREE from 'three';
-import { getHorizontalSidingTexture, addWrapAroundWindows } from './wallTextures';
+import {
+  getHorizontalSidingTexture,
+  addWrapAroundWindows,
+  getClearShowcaseGlassMaterial,
+  buildPerimeterRailing,
+} from './wallTextures';
 
 let cachedBookstoreSignTex: THREE.CanvasTexture | null = null;
 let cachedBookshelfTex: THREE.CanvasTexture | null = null;
@@ -312,16 +317,29 @@ export function buildBookstoreMesh(options: BookstoreOptions = {}): THREE.Group 
   bBody.receiveShadow = true;
   bGroup.add(bBody);
 
-  // Mansard Roof Top / Parapet + Decorative Finial Molding
-  const roofRimGeo = new THREE.BoxGeometry(bW + 0.18, 0.34, bD + 0.18);
+  // Sloped Copper-Green Mansard Roof + Cornice Trim + Rooftop Perimeter Railing
+  const clearGlassMat = getClearShowcaseGlassMaterial();
+  const roofRimGeo = new THREE.BoxGeometry(bW + 0.22, 0.14, bD + 0.22);
   const roofRim = new THREE.Mesh(roofRimGeo, woodTrimMat);
-  roofRim.position.y = bH + 0.17;
+  roofRim.position.y = bH + 0.07;
   roofRim.castShadow = true;
   bGroup.add(roofRim);
 
-  const copperCap = new THREE.Mesh(new THREE.BoxGeometry(bW + 0.24, 0.08, bD + 0.24), awningMat);
-  copperCap.position.y = bH + 0.38;
+  const mansardGeo = new THREE.CylinderGeometry(0.76, 1.0, 0.58, 4, 1);
+  mansardGeo.rotateY(Math.PI / 4);
+  const mansard = new THREE.Mesh(mansardGeo, awningMat);
+  mansard.scale.set((bW + 0.12) / Math.SQRT2, 1.0, (bD + 0.12) / Math.SQRT2);
+  mansard.position.y = bH + 0.14 + 0.29;
+  mansard.castShadow = true;
+  bGroup.add(mansard);
+
+  const copperCap = new THREE.Mesh(new THREE.BoxGeometry((bW + 0.12) * 0.77, 0.06, (bD + 0.12) * 0.77), woodTrimMat);
+  copperCap.position.y = bH + 0.74;
   bGroup.add(copperCap);
+
+  const roofRail = buildPerimeterRailing((bW + 0.12) * 0.72, (bD + 0.12) * 0.72, 0.36, darkMetalMat, 1.2);
+  roofRail.position.set(0, bH + 0.77, 0);
+  bGroup.add(roofRail);
 
   // 360° Side & Rear Windows
   addWrapAroundWindows({
@@ -337,7 +355,7 @@ export function buildBookstoreMesh(options: BookstoreOptions = {}): THREE.Group 
     frameMat: woodTrimMat,
   });
 
-  // Projecting Illuminated Vertical Blade Sign (袖看板) on Right Front Corner
+  // Projecting Illuminated Vertical Blade Sign (袖看板) on Right Front Corner with Struts
   const bladeTex = createBladeSignTexture();
   const bladeMat = new THREE.MeshStandardMaterial({
     map: bladeTex,
@@ -349,11 +367,17 @@ export function buildBookstoreMesh(options: BookstoreOptions = {}): THREE.Group 
   const bladeBox = new THREE.Mesh(new THREE.BoxGeometry(0.12, 1.25, 0.52), [
     bladeMat, bladeMat, woodTrimMat, woodTrimMat, woodTrimMat, woodTrimMat,
   ]);
-  bladeBox.position.set(bW / 2 + 0.18, 2.95, bD / 2 - 0.2);
+  bladeBox.position.set(bW / 2 + 0.22, 2.95, bD / 2 - 0.2);
   bladeBox.castShadow = true;
   bGroup.add(bladeBox);
 
-  // 3. STOREFRONT STRIPED FABRIC AWNING (Forest Green & Cream)
+  [2.55, 3.35].forEach((sy) => {
+    const strut = new THREE.Mesh(new THREE.BoxGeometry(0.20, 0.04, 0.04), darkMetalMat);
+    strut.position.set(bW / 2 + 0.09, sy, bD / 2 - 0.2);
+    bGroup.add(strut);
+  });
+
+  // 3. STOREFRONT STRIPED FABRIC AWNING (Forest Green & Cream) + Wrought-Iron Brackets
   const awningW = 3.4;
   const awningD = 1.1;
   const awningGroup = new THREE.Group();
@@ -381,9 +405,16 @@ export function buildBookstoreMesh(options: BookstoreOptions = {}): THREE.Group 
   valance.position.set(0, -awningD * Math.sin(0.25) / 2 - 0.02, awningD * Math.cos(0.25) + 0.02);
   awningGroup.add(valance);
 
+  [-awningW / 2 + 0.15, awningW / 2 - 0.15].forEach((bx) => {
+    const bracketArm = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.04, 0.72), darkMetalMat);
+    bracketArm.position.set(bx, -0.22, 0.34);
+    bracketArm.rotation.x = -0.35;
+    awningGroup.add(bracketArm);
+  });
+
   bGroup.add(awningGroup);
 
-  // Official Bookstore Signboard mounted on facade above awning
+  // Official Bookstore Signboard mounted cleanly on 1F–2F cornice band above awning (clear of 2F windows)
   const signTexture = createBookstoreSignTexture();
   const signMat = new THREE.MeshStandardMaterial({
     map: signTexture,
@@ -392,20 +423,27 @@ export function buildBookstoreMesh(options: BookstoreOptions = {}): THREE.Group 
     emissiveIntensity: 0.35,
     roughness: 0.4,
   });
-  const signBoardGeo = new THREE.BoxGeometry(2.2, 0.6, 0.05);
+  const signBoardGeo = new THREE.BoxGeometry(2.1, 0.42, 0.05);
   const signBoard = new THREE.Mesh(signBoardGeo, [
     woodTrimMat, woodTrimMat, woodTrimMat, woodTrimMat, signMat, woodTrimMat
   ]);
-  signBoard.position.set(-0.35, 3.25, bD / 2 + 0.04);
+  signBoard.position.set(-0.35, 2.74, bD / 2 + 0.04);
   signBoard.castShadow = true;
   bGroup.add(signBoard);
 
-  // Brass Gooseneck Storefront Lamp above Signboard
-  const lampShade = new THREE.Mesh(new THREE.ConeGeometry(0.10, 0.12, 10), brassMat);
-  lampShade.position.set(-0.35, 3.65, bD / 2 + 0.18);
-  bGroup.add(lampShade);
+  // Brass Gooseneck Storefront Lamps with curved arms above Signboard
+  [-0.9, 0.2].forEach((lx) => {
+    const armOut = new THREE.Mesh(new THREE.CylinderGeometry(0.014, 0.014, 0.22, 6), brassMat);
+    armOut.rotation.x = Math.PI / 2;
+    armOut.position.set(lx, 3.06, bD / 2 + 0.11);
+    const armDrop = new THREE.Mesh(new THREE.CylinderGeometry(0.014, 0.014, 0.08, 6), brassMat);
+    armDrop.position.set(lx, 3.02, bD / 2 + 0.21);
+    const lampShade = new THREE.Mesh(new THREE.ConeGeometry(0.09, 0.10, 10), brassMat);
+    lampShade.position.set(lx, 2.96, bD / 2 + 0.21);
+    bGroup.add(armOut, armDrop, lampShade);
+  });
 
-  // 4. DISPLAY WINDOW WITH ILLUMINATED BOOKSHELVES & ENTRANCE DOOR
+  // 4. DISPLAY WINDOW WITH ILLUMINATED BOOKSHELVES, WAINSCOT KICKPLATE & ENTRANCE DOOR
   const shelfTexture = createBookshelfTexture();
   const shelfMat = new THREE.MeshStandardMaterial({
     map: shelfTexture,
@@ -415,30 +453,39 @@ export function buildBookstoreMesh(options: BookstoreOptions = {}): THREE.Group 
     roughness: 0.7,
   });
 
+  const wainscot = new THREE.Mesh(new THREE.BoxGeometry(2.32, 0.32, 0.06), woodTrimMat);
+  wainscot.position.set(-0.95, 0.16, bD / 2 + 0.02);
+  bGroup.add(wainscot);
+
   const winW = 2.2;
-  const winH = 1.95;
-  const winFrame = new THREE.Mesh(new THREE.BoxGeometry(winW + 0.12, winH + 0.12, 0.04), woodTrimMat);
-  winFrame.position.set(-0.95, winH / 2 + 0.15, bD / 2 + 0.02);
+  const winH = 1.78;
+  const winCenterY = 0.32 + winH / 2;
+  const winFrame = new THREE.Mesh(new THREE.BoxGeometry(winW + 0.12, winH + 0.10, 0.04), woodTrimMat);
+  winFrame.position.set(-0.95, winCenterY, bD / 2 + 0.02);
   bGroup.add(winFrame);
 
-  const shelfPlaneGeo = new THREE.PlaneGeometry(2.08, 1.82);
+  const shelfPlaneGeo = new THREE.PlaneGeometry(2.08, 1.66);
   const shelfPlane = new THREE.Mesh(shelfPlaneGeo, shelfMat);
-  shelfPlane.position.set(-0.95, winH / 2 + 0.15, bD / 2 + 0.043);
+  shelfPlane.position.set(-0.95, winCenterY, bD / 2 + 0.043);
   bGroup.add(shelfPlane);
 
-  const winGlass = new THREE.Mesh(new THREE.BoxGeometry(winW, winH, 0.015), glassMat);
+  const winGlass = new THREE.Mesh(new THREE.BoxGeometry(winW, winH, 0.015), clearGlassMat);
   winGlass.userData.skipWindowEnhance = true;
-  winGlass.position.set(-0.95, winH / 2 + 0.15, bD / 2 + 0.054);
+  winGlass.position.set(-0.95, winCenterY, bD / 2 + 0.054);
   bGroup.add(winGlass);
 
-  // Entrance Door (Wood & Glass, Right side) + Brass Handle
+  // Stone Entrance Stoop + Entrance Door (Wood & Clear Glass) + Brass Handle
+  const doorStoop = new THREE.Mesh(new THREE.BoxGeometry(1.3, 0.07, 0.46), foundationMat);
+  doorStoop.position.set(1.25, 0.035, bD / 2 + 0.23);
+  bGroup.add(doorStoop);
+
   const doorW = 1.05;
   const doorH = 2.15;
   const doorFrame = new THREE.Mesh(new THREE.BoxGeometry(doorW + 0.08, doorH + 0.06, 0.05), woodTrimMat);
   doorFrame.position.set(1.25, doorH / 2 + 0.03, bD / 2 + 0.025);
   bGroup.add(doorFrame);
 
-  const doorGlass = new THREE.Mesh(new THREE.BoxGeometry(doorW - 0.14, 1.3, 0.02), glassMat);
+  const doorGlass = new THREE.Mesh(new THREE.BoxGeometry(doorW - 0.14, 1.3, 0.02), clearGlassMat);
   doorGlass.userData.skipWindowEnhance = true;
   doorGlass.position.set(1.25, 1.3, bD / 2 + 0.052);
   const doorHandle = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.24, 0.06), brassMat);
@@ -474,6 +521,18 @@ export function buildBookstoreMesh(options: BookstoreOptions = {}): THREE.Group 
   tableTop.castShadow = true;
   cartGroup.add(tableTop);
 
+  // Push Handle on left side of wagon cart
+  [-cartD / 2 + 0.08, cartD / 2 - 0.08].forEach((hz) => {
+    const hArm = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 0.16, 6), darkMetalMat);
+    hArm.rotation.z = Math.PI / 2;
+    hArm.position.set(-cartW / 2 - 0.07, cartH + 0.08, hz);
+    cartGroup.add(hArm);
+  });
+  const hGrip = new THREE.Mesh(new THREE.CylinderGeometry(0.014, 0.014, cartD - 0.12, 8), woodTrimMat);
+  hGrip.rotation.x = Math.PI / 2;
+  hGrip.position.set(-cartW / 2 - 0.15, cartH + 0.08, 0);
+  cartGroup.add(hGrip);
+
   // 4 Legs + Spoked Wagon Wheels
   const wheelGeo = new THREE.CylinderGeometry(0.11, 0.11, 0.03, 12);
   wheelGeo.rotateX(Math.PI / 2);
@@ -488,20 +547,22 @@ export function buildBookstoreMesh(options: BookstoreOptions = {}): THREE.Group 
     });
   });
 
-  // Stacks of discount books on display cart
-  const bookCols = ['#ef4444', '#3b82f6', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6'];
+  // Stacks of discount books with cream page edges (hoisted materials)
+  const bookMats = [0xef4444, 0x3b82f6, 0x10b981, 0xf59e0b, 0xec4899, 0x8b5cf6].map(
+    (c) => new THREE.MeshStandardMaterial({ color: c, roughness: 0.6 })
+  );
+  const pageMat = new THREE.MeshStandardMaterial({ color: 0xfef3c7, roughness: 0.8 });
   for (let row = 0; row < 2; row++) {
     for (let col = 0; col < 3; col++) {
       const bStackH = 0.09 + ((col * 3) % 4) * 0.02;
-      const bStackGeo = new THREE.BoxGeometry(0.22, bStackH, 0.18);
-      const bStackMat = new THREE.MeshStandardMaterial({
-        color: bookCols[(row * 3 + col) % bookCols.length],
-        roughness: 0.6,
-      });
-      const bStack = new THREE.Mesh(bStackGeo, bStackMat);
-      bStack.position.set(-0.25 + col * 0.25, cartH + 0.06 + bStackH / 2, -0.1 + row * 0.2);
-      bStack.castShadow = true;
-      cartGroup.add(bStack);
+      const bx = -0.25 + col * 0.25;
+      const bz = -0.1 + row * 0.2;
+      const pages = new THREE.Mesh(new THREE.BoxGeometry(0.20, bStackH - 0.02, 0.16), pageMat);
+      pages.position.set(bx, cartH + 0.06 + bStackH / 2, bz);
+      const coverTop = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.018, 0.18), bookMats[(row * 3 + col) % bookMats.length]);
+      coverTop.position.set(bx, cartH + 0.06 + bStackH, bz);
+      coverTop.castShadow = true;
+      cartGroup.add(pages, coverTop);
     }
   }
 
@@ -527,18 +588,24 @@ export function buildBookstoreMesh(options: BookstoreOptions = {}): THREE.Group 
   spinPole.position.y = 0.625;
   spinnerGroup.add(spinBase, spinPole);
 
+  const wirePocketGeo = new THREE.BoxGeometry(0.30, 0.03, 0.30);
+  const coverBookGeo = new THREE.BoxGeometry(0.14, 0.20, 0.025);
   [0.35, 0.68, 1.0].forEach((ty, tIdx) => {
-    const tierCube = new THREE.Mesh(
-      new THREE.BoxGeometry(0.28, 0.24, 0.28),
-      new THREE.MeshStandardMaterial({
-        color: bookCols[(tIdx * 2) % bookCols.length],
-        roughness: 0.5,
-      })
-    );
-    tierCube.position.y = ty;
-    tierCube.rotation.y = tIdx * 0.4;
-    tierCube.castShadow = true;
-    spinnerGroup.add(tierCube);
+    const tierGrp = new THREE.Group();
+    tierGrp.position.y = ty;
+    tierGrp.rotation.y = tIdx * 0.45;
+    const tray = new THREE.Mesh(wirePocketGeo, darkMetalMat);
+    tray.position.y = -0.11;
+    tierGrp.add(tray);
+    for (let f = 0; f < 4; f++) {
+      const ang = (f * Math.PI) / 2;
+      const book = new THREE.Mesh(coverBookGeo, bookMats[(tIdx * 2 + f) % bookMats.length]);
+      book.position.set(Math.sin(ang) * 0.12, 0, Math.cos(ang) * 0.12);
+      book.rotation.y = ang;
+      book.castShadow = true;
+      tierGrp.add(book);
+    }
+    spinnerGroup.add(tierGrp);
   });
   group.add(spinnerGroup);
 

@@ -2,6 +2,8 @@ import * as THREE from 'three';
 import { createContactShadowMesh } from '@/utils/classroom3d';
 import { batchStaticMeshes } from '../staticBatcher';
 
+export type PlayerPostureMode = 'WALK' | 'RUN' | 'BIKE' | 'KART';
+
 export interface PlayerAvatar {
   group: THREE.Group;
   leftLeg: THREE.Group;
@@ -9,7 +11,12 @@ export interface PlayerAvatar {
   leftArm: THREE.Group;
   rightArm: THREE.Group;
   body: THREE.Group;
-  updateAnimation: (isMoving: boolean, delta: number, speedRatio?: number) => void;
+  updateAnimation: (
+    isMoving: boolean,
+    delta: number,
+    speedRatio?: number,
+    mode?: PlayerPostureMode
+  ) => void;
   resetAnimation: () => void;
 }
 
@@ -111,62 +118,71 @@ export function buildPlayerAvatar(): PlayerAvatar {
 
   body.add(randoGroup);
 
-  // 3. Head, Ears, Expressive Eyes & Yellow School Cap
+  // 3. Sculpted Head, Neck, Ears, Expressive Eyes & Yellow School Cap
   const headGroup = new THREE.Group();
   headGroup.position.set(0, 1.05, 0);
 
-  const headGeom = new THREE.BoxGeometry(0.32, 0.30, 0.28);
+  const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.075, 0.08, 10), skinMat);
+  neck.position.set(0, -0.13, 0);
+  headGroup.add(neck);
+
+  const headGeom = new THREE.SphereGeometry(0.165, 14, 12);
+  headGeom.scale(1.0, 0.94, 0.92);
   const head = new THREE.Mesh(headGeom, skinMat);
   headGroup.add(head);
 
   // Ears & Cute Button Nose
-  [-0.165, 0.165].forEach((earX) => {
-    const ear = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.07, 0.05), skinMat);
+  [-0.16, 0.16].forEach((earX) => {
+    const ear = new THREE.Mesh(new THREE.SphereGeometry(0.032, 8, 6), skinMat);
+    ear.scale.set(0.6, 1.0, 0.8);
     ear.position.set(earX, 0.0, 0.0);
     headGroup.add(ear);
   });
-  const nose = new THREE.Mesh(new THREE.BoxGeometry(0.032, 0.032, 0.025), skinMat);
-  nose.position.set(0, -0.01, 0.145);
+  const nose = new THREE.Mesh(new THREE.SphereGeometry(0.022, 8, 6), skinMat);
+  nose.position.set(0, -0.015, 0.15);
   headGroup.add(nose);
 
   // Eyes with White Specular Catchlights & Rosy Cheeks
-  [-0.08, 0.08].forEach((ex) => {
-    const eyeGeom = new THREE.BoxGeometry(0.042, 0.062, 0.01);
+  [-0.072, 0.072].forEach((ex) => {
+    const eyeGeom = new THREE.BoxGeometry(0.038, 0.056, 0.01);
     const eye = new THREE.Mesh(eyeGeom, eyeMat);
-    eye.position.set(ex, 0.02, 0.142);
-    const catchlight = new THREE.Mesh(new THREE.BoxGeometry(0.014, 0.016, 0.012), eyeHighlightMat);
-    catchlight.position.set(ex + 0.008, 0.034, 0.144);
+    eye.position.set(ex, 0.015, 0.144);
+    const catchlight = new THREE.Mesh(new THREE.BoxGeometry(0.013, 0.015, 0.012), eyeHighlightMat);
+    catchlight.position.set(ex + 0.008, 0.028, 0.146);
     headGroup.add(eye, catchlight);
 
-    const blushGeom = new THREE.PlaneGeometry(0.06, 0.03);
+    const blushGeom = new THREE.PlaneGeometry(0.055, 0.026);
     const blush = new THREE.Mesh(blushGeom, blushMat);
-    blush.position.set(ex * 1.3, -0.05, 0.142);
+    blush.position.set(ex * 1.28, -0.045, 0.142);
     headGroup.add(blush);
   });
 
-  // Hair (top, sides, back & front bangs)
-  const hairTop = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.12, 0.30), hairMat);
-  hairTop.position.set(0, 0.13, -0.01);
-  const hairBack = new THREE.Mesh(new THREE.BoxGeometry(0.33, 0.20, 0.06), hairMat);
-  hairBack.position.set(0, 0.02, -0.13);
-  const bangs = new THREE.Mesh(new THREE.BoxGeometry(0.30, 0.05, 0.03), hairMat);
-  bangs.position.set(0, 0.10, 0.135);
+  // Sculpted Multi-Layer Hair (top, back-of-head crown for Chase cam, sideburns & bangs)
+  const hairTop = new THREE.Mesh(new THREE.SphereGeometry(0.172, 12, 10, 0, Math.PI * 2, 0, Math.PI * 0.52), hairMat);
+  hairTop.position.set(0, 0.02, -0.01);
+  const hairBack = new THREE.Mesh(new THREE.CylinderGeometry(0.168, 0.145, 0.16, 12, 1, false, Math.PI * 0.55, Math.PI * 0.9), hairMat);
+  hairBack.position.set(0, -0.02, -0.015);
+  const bangs = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.045, 0.035), hairMat);
+  bangs.position.set(0, 0.09, 0.132);
   headGroup.add(hairTop, hairBack, bangs);
 
-  // Yellow Elementary Cap (*Tsūgaku-bō*) with White Ribbon & Emblem
-  const capDomeGeom = new THREE.CylinderGeometry(0.18, 0.20, 0.12, 16);
+  // Yellow Elementary Cap (*Tsūgaku-bō*) with White Ribbon & Curved Visor
+  const capDomeGeom = new THREE.CylinderGeometry(0.16, 0.185, 0.11, 16);
   const capDome = new THREE.Mesh(capDomeGeom, capMat);
-  capDome.position.set(0, 0.19, 0);
-  const capRibbon = new THREE.Mesh(new THREE.CylinderGeometry(0.196, 0.202, 0.025, 16), collarWhiteMat);
-  capRibbon.position.set(0, 0.145, 0);
+  capDome.position.set(0, 0.17, 0);
+  const capCrown = new THREE.Mesh(new THREE.SphereGeometry(0.16, 14, 8, 0, Math.PI * 2, 0, Math.PI * 0.5), capMat);
+  capCrown.scale.set(1, 0.35, 1);
+  capCrown.position.set(0, 0.22, 0);
+  const capRibbon = new THREE.Mesh(new THREE.CylinderGeometry(0.182, 0.188, 0.024, 16), collarWhiteMat);
+  capRibbon.position.set(0, 0.128, 0);
   const capButton = new THREE.Mesh(new THREE.SphereGeometry(0.022, 8, 6), brassMat);
-  capButton.position.set(0, 0.255, 0);
-  headGroup.add(capDome, capRibbon, capButton);
+  capButton.position.set(0, 0.275, 0);
+  headGroup.add(capDome, capCrown, capRibbon, capButton);
 
-  const visorGeom = new THREE.BoxGeometry(0.24, 0.02, 0.12);
+  const visorGeom = new THREE.CylinderGeometry(0.16, 0.175, 0.02, 12, 1, false, -Math.PI * 0.35, Math.PI * 0.7);
   const visor = new THREE.Mesh(visorGeom, capMat);
-  visor.position.set(0, 0.14, 0.16);
-  visor.rotation.x = 0.15;
+  visor.position.set(0, 0.125, 0.09);
+  visor.rotation.x = 0.18;
   headGroup.add(visor);
 
   body.add(headGroup);
@@ -179,19 +195,19 @@ export function buildPlayerAvatar(): PlayerAvatar {
   });
   group.add(body);
 
-  // 4. Arms (Pivoting at shoulders: y = 0.88)
+  // 4. Contoured Arms (Pivoting at shoulders: y = 0.88)
   function createArm(isLeft: boolean) {
     const armPivot = new THREE.Group();
     armPivot.name = isLeft ? 'Player_LeftArm' : 'Player_RightArm';
     const sign = isLeft ? -1 : 1;
 
-    const sleeve = new THREE.Mesh(new THREE.BoxGeometry(0.10, 0.12, 0.12), shirtMat);
+    const sleeve = new THREE.Mesh(new THREE.CylinderGeometry(0.052, 0.062, 0.12, 10), shirtMat);
     sleeve.position.set(0, -0.06, 0);
-    const cuff = new THREE.Mesh(new THREE.BoxGeometry(0.104, 0.02, 0.124), collarWhiteMat);
+    const cuff = new THREE.Mesh(new THREE.CylinderGeometry(0.063, 0.063, 0.02, 10), collarWhiteMat);
     cuff.position.set(0, -0.115, 0);
     armPivot.add(sleeve, cuff);
 
-    const armMesh = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.24, 0.08), skinMat);
+    const armMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.042, 0.036, 0.24, 10), skinMat);
     armMesh.position.set(0, -0.20, 0);
     const hand = new THREE.Mesh(new THREE.SphereGeometry(0.046, 8, 8), skinMat);
     hand.position.set(0, -0.33, 0);
@@ -208,33 +224,36 @@ export function buildPlayerAvatar(): PlayerAvatar {
   body.add(leftArm);
   body.add(rightArm);
 
-  // 5. Legs (Pivoting at hips: y = 0.44)
+  // 5. Contoured Legs & Rounded Sneakers (Pivoting at hips: y = 0.44)
   function createLeg(isLeft: boolean) {
     const legPivot = new THREE.Group();
     legPivot.name = isLeft ? 'Player_LeftLeg' : 'Player_RightLeg';
     const sign = isLeft ? -1 : 1;
 
-    const legTop = new THREE.Mesh(new THREE.BoxGeometry(0.13, 0.10, 0.14), shortsMat);
+    const legTop = new THREE.Mesh(new THREE.CylinderGeometry(0.068, 0.064, 0.11, 10), shortsMat);
     legTop.position.set(0, -0.05, 0);
     legPivot.add(legTop);
 
-    const skinLeg = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.12, 0.10), skinMat);
+    const skinLeg = new THREE.Mesh(new THREE.CylinderGeometry(0.048, 0.044, 0.12, 10), skinMat);
     skinLeg.position.set(0, -0.15, 0);
     legPivot.add(skinLeg);
 
-    const sock = new THREE.Mesh(new THREE.BoxGeometry(0.095, 0.10, 0.105), sockMat);
+    const sock = new THREE.Mesh(new THREE.CylinderGeometry(0.048, 0.046, 0.10, 10), sockMat);
     sock.position.set(0, -0.24, 0);
-    const sockStripe = new THREE.Mesh(new THREE.BoxGeometry(0.098, 0.018, 0.108), shirtMat);
+    const sockStripe = new THREE.Mesh(new THREE.CylinderGeometry(0.050, 0.050, 0.018, 10), shirtMat);
     sockStripe.position.set(0, -0.205, 0);
     legPivot.add(sock, sockStripe);
 
-    const shoe = new THREE.Mesh(new THREE.BoxGeometry(0.11, 0.09, 0.18), shoeMat);
-    shoe.position.set(0, -0.32, 0.03);
+    const shoe = new THREE.Mesh(new THREE.BoxGeometry(0.11, 0.085, 0.16), shoeMat);
+    shoe.position.set(0, -0.32, 0.02);
+    const toeCap = new THREE.Mesh(new THREE.SphereGeometry(0.055, 8, 6), shoeMat);
+    toeCap.scale.set(1.0, 0.75, 1.0);
+    toeCap.position.set(0, -0.325, 0.09);
     const laceStrap = new THREE.Mesh(new THREE.BoxGeometry(0.114, 0.022, 0.05), sockMat);
     laceStrap.position.set(0, -0.285, 0.04);
-    const sole = new THREE.Mesh(new THREE.BoxGeometry(0.115, 0.025, 0.185), sockMat);
-    sole.position.set(0, -0.365, 0.03);
-    legPivot.add(shoe, laceStrap, sole);
+    const sole = new THREE.Mesh(new THREE.BoxGeometry(0.116, 0.024, 0.19), sockMat);
+    sole.position.set(0, -0.365, 0.035);
+    legPivot.add(shoe, toeCap, laceStrap, sole);
 
     // Batch leg at identity (0, 0, 0) BEFORE setting hip pivot offset
     batchStaticMeshes(legPivot, [], { ignoreShadowFlags: true, bakeVertexColors: true });
@@ -254,7 +273,47 @@ export function buildPlayerAvatar(): PlayerAvatar {
 
   let walkPhase = 0;
 
-  function updateAnimation(isMoving: boolean, delta: number, speedRatio: number = 1.0) {
+  function updateAnimation(
+    isMoving: boolean,
+    delta: number,
+    speedRatio: number = 1.0,
+    mode: PlayerPostureMode = 'WALK'
+  ) {
+    if (mode === 'KART') {
+      // MicroKart already has its own sculpted helmeted racing driver — hide avatar & shadow
+      body.visible = false;
+      leftLeg.visible = false;
+      rightLeg.visible = false;
+      shadowMesh.visible = false;
+      return;
+    }
+
+    body.visible = true;
+    leftLeg.visible = true;
+    rightLeg.visible = true;
+    shadowMesh.visible = true;
+
+    if (mode === 'BIKE') {
+      // Seated on Mamachari saddle (y = 0.24, z = -0.14) gripping handlebars
+      if (isMoving) {
+        walkPhase += delta * 10.0 * speedRatio;
+      }
+      body.position.set(0, 0.24, -0.14);
+      body.rotation.set(0.18, 0, 0);
+      leftArm.rotation.x = -1.05;
+      rightArm.rotation.x = -1.05;
+      const pedalOsc = isMoving ? Math.sin(walkPhase) * 0.42 : 0.18;
+      leftLeg.position.set(-0.10, 0.62, -0.12);
+      rightLeg.position.set(0.10, 0.62, -0.12);
+      leftLeg.rotation.x = -0.55 + pedalOsc;
+      rightLeg.rotation.x = -0.55 - pedalOsc;
+      return;
+    }
+
+    // Restore standing hip positions when walking/running
+    leftLeg.position.set(-0.10, 0.44, 0);
+    rightLeg.position.set(0.10, 0.44, 0);
+
     if (isMoving) {
       walkPhase += delta * 11.0 * speedRatio;
 
@@ -266,8 +325,8 @@ export function buildPlayerAvatar(): PlayerAvatar {
       leftArm.rotation.x = -armAngle;
       rightArm.rotation.x = armAngle;
 
-      body.position.y = Math.abs(Math.sin(walkPhase * 2)) * 0.04;
-      body.rotation.z = Math.sin(walkPhase) * 0.03;
+      body.position.set(0, Math.abs(Math.sin(walkPhase * 2)) * 0.04, 0);
+      body.rotation.set(mode === 'RUN' ? 0.09 : 0.02, 0, Math.sin(walkPhase) * 0.03);
     } else {
       const alpha = 1 - Math.exp(-12 * delta);
       leftLeg.rotation.x = THREE.MathUtils.lerp(leftLeg.rotation.x, 0, alpha);
@@ -275,12 +334,20 @@ export function buildPlayerAvatar(): PlayerAvatar {
       leftArm.rotation.x = THREE.MathUtils.lerp(leftArm.rotation.x, 0, alpha);
       rightArm.rotation.x = THREE.MathUtils.lerp(rightArm.rotation.x, 0, alpha);
       body.position.y = THREE.MathUtils.lerp(body.position.y, 0, alpha);
+      body.position.z = THREE.MathUtils.lerp(body.position.z, 0, alpha);
+      body.rotation.x = THREE.MathUtils.lerp(body.rotation.x, 0, alpha);
       body.rotation.z = THREE.MathUtils.lerp(body.rotation.z, 0, alpha);
     }
   }
 
   function resetAnimation() {
     walkPhase = 0;
+    body.visible = true;
+    leftLeg.visible = true;
+    rightLeg.visible = true;
+    shadowMesh.visible = true;
+    leftLeg.position.set(-0.10, 0.44, 0);
+    rightLeg.position.set(0.10, 0.44, 0);
     leftLeg.rotation.x = 0;
     rightLeg.rotation.x = 0;
     leftArm.rotation.x = 0;

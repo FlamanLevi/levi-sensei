@@ -3,6 +3,7 @@ import {
   getHorizontalSidingTexture,
   buildPerimeterRailing,
   addWrapAroundWindows,
+  getClearShowcaseGlassMaterial,
 } from './wallTextures';
 
 let cachedSupermarketSignTex: THREE.CanvasTexture | null = null;
@@ -166,6 +167,7 @@ export function buildSupermarketMesh(options: SupermarketOptions = {}): THREE.Gr
     transparent: true,
     opacity: 0.68,
   });
+  const clearGlassMat = getClearShowcaseGlassMaterial();
 
   const lotSize = 12.0;
 
@@ -176,9 +178,10 @@ export function buildSupermarketMesh(options: SupermarketOptions = {}): THREE.Gr
   lawn.receiveShadow = true;
   group.add(lawn);
 
-  const plazaGeo = new THREE.BoxGeometry(lotSize, 0.152, 1.5);
+  // Extended commercial apron covering z = 2.4..4.5
+  const plazaGeo = new THREE.BoxGeometry(lotSize, 0.152, 2.1);
   const plaza = new THREE.Mesh(plazaGeo, foundationMat);
-  plaza.position.set(0, 0.076, 3.75);
+  plaza.position.set(0, 0.076, 3.45);
   plaza.receiveShadow = true;
   group.add(plaza);
 
@@ -222,12 +225,14 @@ export function buildSupermarketMesh(options: SupermarketOptions = {}): THREE.Gr
   bodyMesh.receiveShadow = true;
   marketGroup.add(bodyMesh);
 
-  // Orange & Green Parapet Fascia Header Band
+  // Orange & Green Parapet Fascia Header Band + Facade Trim Band
   const fasciaOrange = new THREE.Mesh(new THREE.BoxGeometry(bW + 0.16, 0.48, bD + 0.16), orangeTrimMat);
   fasciaOrange.position.y = bH - 0.24;
   const fasciaGreen = new THREE.Mesh(new THREE.BoxGeometry(bW + 0.16, 0.26, bD + 0.16), greenBandMat);
   fasciaGreen.position.y = bH + 0.13;
-  marketGroup.add(fasciaOrange, fasciaGreen);
+  const midTrim = new THREE.Mesh(new THREE.BoxGeometry(bW + 0.08, 0.14, bD + 0.08), orangeTrimMat);
+  midTrim.position.y = 3.85;
+  marketGroup.add(fasciaOrange, fasciaGreen, midTrim);
 
   // Open Rooftop Safety Railing
   const roofRail = buildPerimeterRailing(bW - 0.2, bD - 0.2, 0.55, chromeMat, 1.8);
@@ -248,7 +253,7 @@ export function buildSupermarketMesh(options: SupermarketOptions = {}): THREE.Gr
     frameMat: orangeTrimMat,
   });
 
-  // Illuminated Interior Grocery Aisles & Sale Banners behind Glass
+  // Illuminated Interior Grocery Aisles & Sale Banners behind Clear Glass
   const interiorTex = createGroceryInteriorTexture();
   const interiorMat = new THREE.MeshStandardMaterial({
     map: interiorTex,
@@ -261,17 +266,27 @@ export function buildSupermarketMesh(options: SupermarketOptions = {}): THREE.Gr
   interiorBackdrop.position.set(0, 1.6, bD / 2 - 0.12);
   marketGroup.add(interiorBackdrop);
 
-  // Full-Width Glass Storefront & Green Entrance Canopy Overhang
-  const frontGlass = new THREE.Mesh(new THREE.BoxGeometry(bW - 0.4, 3.2, 0.06), glassMat);
+  // Full-Width Clear Glass Storefront, Supported Canopy & Framed Sliding Doors
+  const frontGlass = new THREE.Mesh(new THREE.BoxGeometry(bW - 0.4, 3.2, 0.04), clearGlassMat);
   frontGlass.position.set(0, 1.6, bD / 2 + 0.03);
   const frontCanopy = new THREE.Mesh(new THREE.BoxGeometry(bW, 0.18, 1.25), greenBandMat);
   frontCanopy.position.set(0, 3.35, bD / 2 + 0.6);
   frontCanopy.castShadow = true;
   marketGroup.add(frontGlass, frontCanopy);
 
-  const doors = new THREE.Mesh(new THREE.BoxGeometry(2.8, 2.5, 0.1), darkMetalMat);
+  [-4.6, 4.6].forEach((cx) => {
+    const col = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 3.3, 8), chromeMat);
+    col.position.set(cx, 1.65, bD / 2 + 1.08);
+    marketGroup.add(col);
+  });
+
+  const doorFrame = new THREE.Mesh(new THREE.BoxGeometry(2.9, 2.55, 0.08), darkMetalMat);
+  doorFrame.position.set(0, 1.275, bD / 2 + 0.04);
+  const doors = new THREE.Mesh(new THREE.BoxGeometry(2.7, 2.4, 0.05), clearGlassMat);
   doors.position.set(0, 1.25, bD / 2 + 0.06);
-  marketGroup.add(doors);
+  const doorMullion = new THREE.Mesh(new THREE.BoxGeometry(0.06, 2.4, 0.09), darkMetalMat);
+  doorMullion.position.set(0, 1.25, bD / 2 + 0.06);
+  marketGroup.add(doorFrame, doors, doorMullion);
 
   // Prominent "SUPERMARKET" Header Signboard
   const signTexture = createSupermarketSignTexture();
@@ -288,7 +303,7 @@ export function buildSupermarketMesh(options: SupermarketOptions = {}): THREE.Gr
   signMesh.position.set(0, 5.1, bD / 2 + 0.15);
   marketGroup.add(signMesh);
 
-  // 3. ROOFTOP BILLBOARD PYLON TOWER (detail1 at X = 3.2m, Y = 8.5m, Z = 0.5m)
+  // 3. ROOFTOP BILLBOARD PYLON TOWER WITH STEEL CROSS-BRACING (detail1 at X = 3.2m, Y = 8.5m, Z = 0.5m)
   const towerGroup = new THREE.Group();
   towerGroup.position.set(3.2, bH + 0.26, 0.5);
 
@@ -296,7 +311,13 @@ export function buildSupermarketMesh(options: SupermarketOptions = {}): THREE.Gr
   pylonLeg1.position.set(-1.2, 1.9, 0);
   const pylonLeg2 = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 3.8, 8), darkMetalMat);
   pylonLeg2.position.set(1.2, 1.9, 0);
-  towerGroup.add(pylonLeg1, pylonLeg2);
+  const brace1 = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 2.9, 6), chromeMat);
+  brace1.rotation.z = 0.95;
+  brace1.position.set(0, 1.0, 0);
+  const brace2 = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 2.9, 6), chromeMat);
+  brace2.rotation.z = -0.95;
+  brace2.position.set(0, 1.0, 0);
+  towerGroup.add(pylonLeg1, pylonLeg2, brace1, brace2);
 
   const bBoard = new THREE.Mesh(new THREE.BoxGeometry(3.4, 2.2, 0.22), [
     orangeTrimMat, orangeTrimMat, orangeTrimMat, orangeTrimMat, signMat, signMat
@@ -309,7 +330,7 @@ export function buildSupermarketMesh(options: SupermarketOptions = {}): THREE.Gr
   group.add(marketGroup);
 
   // 4. FORECOURT PROPS (detail2: Cart Bay & Fresh Produce Crates grouped at X = -3.8m..-2.0m, Z = 3.2m)
-  // 4a. Shopping Cart Corral Bay (X = -3.9m, Z = 3.2m)
+  // 4a. Shopping Cart Corral Bay with 4 Corner Steel Posts (X = -3.9m, Z = 3.2m)
   const cartBay = new THREE.Group();
   cartBay.position.set(-3.9, 0.15, 3.2);
 
@@ -321,10 +342,20 @@ export function buildSupermarketMesh(options: SupermarketOptions = {}): THREE.Gr
   cartCanopy.position.set(0, 1.65, 0);
   cartBay.add(railL, railR, cartCanopy);
 
+  [-0.65, 0.65].forEach((px) => {
+    [-0.85, 0.85].forEach((pz) => {
+      const cPost = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 1.65, 6), darkMetalMat);
+      cPost.position.set(px, 0.825, pz);
+      cartBay.add(cPost);
+    });
+  });
+
   for (let c = 0; c < 4; c++) {
     const cart = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.65, 0.42), chromeMat);
     cart.position.set(0, 0.45, -0.5 + c * 0.35);
-    cartBay.add(cart);
+    const handle = new THREE.Mesh(new THREE.BoxGeometry(0.56, 0.05, 0.05), orangeTrimMat);
+    handle.position.set(0, 0.82, -0.5 + c * 0.35 + 0.2);
+    cartBay.add(cart, handle);
   }
   group.add(cartBay);
 
@@ -353,10 +384,26 @@ export function buildSupermarketMesh(options: SupermarketOptions = {}): THREE.Gr
   });
   group.add(produceGroup);
 
+  // Colorful "本日特売" Nobori Sale Flags Flanking Entrance
+  [-1.65, 1.65].forEach((nx) => {
+    const nBase = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.18, 0.26), darkMetalMat);
+    nBase.position.set(nx, 0.24, 3.85);
+    const nPole = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 1.85, 6), whiteLineMat);
+    nPole.position.set(nx, 1.15, 3.85);
+    const nArm = new THREE.Mesh(new THREE.CylinderGeometry(0.01, 0.01, 0.42, 6), whiteLineMat);
+    nArm.rotation.z = Math.PI / 2;
+    nArm.position.set(nx + 0.2, 2.02, 3.85);
+    const nFlag = new THREE.Mesh(new THREE.PlaneGeometry(0.4, 1.2), orangeTrimMat);
+    nFlag.position.set(nx + 0.2, 1.4, 3.85);
+    group.add(nBase, nPole, nArm, nFlag);
+  });
+
   // 5. RIGHT FORECOURT: GASHAPON MACHINES & SOFT-SERVE ICE CREAM STAND
   const gashaGroup = new THREE.Group();
   gashaGroup.position.set(2.4, 0.15, 3.4);
 
+  const capMat1 = new THREE.MeshStandardMaterial({ color: 0xec4899 });
+  const capMat2 = new THREE.MeshStandardMaterial({ color: 0x38bdf8 });
   const gashaColors = [0xef4444, 0x3b82f6, 0xfacc15, 0x10b981];
   gashaColors.forEach((color, idx) => {
     const unitGroup = new THREE.Group();
@@ -364,11 +411,11 @@ export function buildSupermarketMesh(options: SupermarketOptions = {}): THREE.Gr
 
     const baseMesh = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.45, 0.32), new THREE.MeshStandardMaterial({ color, roughness: 0.5 }));
     baseMesh.position.y = 0.225;
-    const globeMesh = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.35, 0.3), glassMat);
+    const globeMesh = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.35, 0.3), clearGlassMat);
     globeMesh.position.y = 0.625;
-    const cap1 = new THREE.Mesh(new THREE.SphereGeometry(0.045, 8, 6), new THREE.MeshStandardMaterial({ color: 0xec4899 }));
+    const cap1 = new THREE.Mesh(new THREE.SphereGeometry(0.045, 8, 6), capMat1);
     cap1.position.set(-0.06, 0.55, 0.04);
-    const cap2 = new THREE.Mesh(new THREE.SphereGeometry(0.045, 8, 6), new THREE.MeshStandardMaterial({ color: 0x38bdf8 }));
+    const cap2 = new THREE.Mesh(new THREE.SphereGeometry(0.045, 8, 6), capMat2);
     cap2.position.set(0.06, 0.58, -0.04);
     const dialMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 0.04, 8), darkMetalMat);
     dialMesh.rotation.x = Math.PI / 2;

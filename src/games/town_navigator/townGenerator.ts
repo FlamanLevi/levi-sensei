@@ -335,6 +335,7 @@ export function generateRandomTown(
           intersectionInfo,
           boulevardPart,
           includeMedianTree,
+          lowPower: options?.lowPower,
         });
         const wx = (gx - halfGrid) * cellSize;
         const wz = (gz - halfGrid) * cellSize;
@@ -754,17 +755,31 @@ export function generateRandomTown(
     }
   }
 
-  populateStreetscapeProps(roadsGroup, buildingsList, rng);
+  populateStreetscapeProps(roadsGroup, buildingsList, rng, { lowPower: options?.lowPower });
+
+  // Unify roads + streetscape props + buildings into a single static batch pass so shared
+  // PBR buckets, pavers, and CanvasTexture sign atlases merge town-wide (~10-14 fewer draw calls).
+  // Keep `roadsGroup` as an empty container on TownMap for backward API/disposal compatibility.
+  while (roadsGroup.children.length > 0) {
+    const child = roadsGroup.children[0];
+    roadsGroup.remove(child);
+    buildingsGroup.add(child);
+  }
 
   const batchOpts = {
     ignoreShadowFlags: !options?.enableDynamicShadows,
     bakeVertexColors: true,
     atlasUniqueTextMaps: true,
   };
-  batchStaticMeshes(roadsGroup, [], batchOpts);
   batchStaticMeshes(
     buildingsGroup,
-    ['AmusementPark_WheelRotor', 'AmusementPark_CarouselRotor', 'Park_SwingSeat_0', 'Park_SwingSeat_1'],
+    [
+      'AmusementPark_WheelRotor',
+      'AmusementPark_CarouselRotor',
+      'Park_SwingSeat_0',
+      'Park_SwingSeat_1',
+      'MantaRay',
+    ],
     batchOpts
   );
 

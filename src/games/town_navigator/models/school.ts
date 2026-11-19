@@ -264,22 +264,38 @@ export function buildSchoolMesh(options: SchoolOptions = {}): THREE.Group {
     frameMat: darkMetalMat,
   });
 
-  // Ribbon Windows Across all 3 Stories (Front Classrooms)
+  // Ribbon Windows Across all 3 Stories (Front Classrooms - skip center behind clock tower)
   const numCols = 6;
   const colSpacing = (bW - 2.4) / numCols;
   for (let story = 0; story < 3; story++) {
     const wy = 1.4 + story * 2.8;
     for (let c = 0; c < numCols; c++) {
       const wx = -(bW - 2.4) / 2 + (c + 0.5) * colSpacing;
-      if (story === 0 && Math.abs(wx) < 1.2) continue;
+      if (Math.abs(wx) < 1.2) continue;
 
-      const winFrame = new THREE.Mesh(new THREE.BoxGeometry(colSpacing * 0.82, 1.4, 0.06), darkMetalMat);
+      const winFrame = new THREE.Mesh(new THREE.BoxGeometry(colSpacing * 0.82, 1.4, 0.04), darkMetalMat);
       winFrame.position.set(wx, wy, bD / 2 + 0.015);
-      const winGlass = new THREE.Mesh(new THREE.BoxGeometry(colSpacing * 0.78, 1.32, 0.06), glassMat);
+      const winGlass = new THREE.Mesh(new THREE.BoxGeometry(colSpacing * 0.78, 1.32, 0.05), glassMat);
       winGlass.position.set(wx, wy, bD / 2 + 0.03);
       schoolBuilding.add(winFrame, winGlass);
     }
   }
+
+  // 2F & 3F Classroom Beranda Balcony Ledges & Open Railings (Left & Right Wings)
+  [2.88, 5.68].forEach((by) => {
+    [-2.95, 2.95].forEach((bx) => {
+      const bDeck = new THREE.Mesh(new THREE.BoxGeometry(3.5, 0.10, 0.42), foundationMat);
+      bDeck.position.set(bx, by, bD / 2 + 0.21);
+      const bRail = new THREE.Mesh(new THREE.BoxGeometry(3.5, 0.04, 0.04), metalFenceMat);
+      bRail.position.set(bx, by + 0.58, bD / 2 + 0.40);
+      schoolBuilding.add(bDeck, bRail);
+      [-1.7, -0.55, 0.55, 1.7].forEach((px) => {
+        const bPost = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.018, 0.58, 6), metalFenceMat);
+        bPost.position.set(bx + px, by + 0.29, bD / 2 + 0.40);
+        schoolBuilding.add(bPost);
+      });
+    });
+  });
 
   // 3. CENTRAL ENTRANCE & CLOCK TOWER (detail1: Height 10.6m <= 12.0m)
   const towerW = 2.4;
@@ -292,9 +308,38 @@ export function buildSchoolMesh(options: SchoolOptions = {}): THREE.Group {
   tower.castShadow = true;
   schoolBuilding.add(tower);
 
+  // Vertical Glass Stairwell Ribbon on Clock Tower (warm night glow)
+  const stairRibbonMat = new THREE.MeshStandardMaterial({
+    color: 0xfef3c7,
+    emissive: 0xfde047,
+    emissiveIntensity: 0.4,
+    roughness: 0.25,
+  });
+  const stairFrame = new THREE.Mesh(new THREE.BoxGeometry(0.86, 4.3, 0.05), darkMetalMat);
+  stairFrame.position.set(0, 6.2, bD / 2 + towerD - 0.18);
+  const stairGlass = new THREE.Mesh(new THREE.BoxGeometry(0.76, 4.18, 0.04), stairRibbonMat);
+  stairGlass.userData.skipWindowEnhance = true;
+  stairGlass.position.set(0, 6.2, bD / 2 + towerD - 0.165);
+  schoolBuilding.add(stairFrame, stairGlass);
+
   const towerCap = new THREE.Mesh(new THREE.BoxGeometry(towerW + 0.14, 0.22, towerD + 0.14), accentMat);
   towerCap.position.set(0, towerH + 0.11, bD / 2 + towerD / 2 - 0.2);
   schoolBuilding.add(towerCap);
+
+  // Rooftop PA Broadcast Horn Speakers anchored directly atop Clock Tower Cap (<= 11.7m)
+  const hornGroup = new THREE.Group();
+  hornGroup.position.set(0, towerH + 0.22, bD / 2 + towerD / 2 - 0.2);
+  const hornPole = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.85, 6), darkMetalMat);
+  hornPole.position.y = 0.425;
+  hornGroup.add(hornPole);
+  [0, Math.PI / 2, Math.PI, (3 * Math.PI) / 2].forEach((angle) => {
+    const horn = new THREE.Mesh(new THREE.ConeGeometry(0.12, 0.24, 8), darkMetalMat);
+    horn.rotation.x = Math.PI / 2;
+    horn.rotation.z = angle;
+    horn.position.set(Math.sin(angle) * 0.2, 0.80, Math.cos(angle) * 0.2);
+    hornGroup.add(horn);
+  });
+  schoolBuilding.add(hornGroup);
 
   const clockTexture = createClockTexture();
   const clockMat = new THREE.MeshStandardMaterial({
@@ -325,7 +370,7 @@ export function buildSchoolMesh(options: SchoolOptions = {}): THREE.Group {
   headerSign.position.set(0, 3.25, bD / 2 + towerD - 0.14);
   schoolBuilding.add(headerSign);
 
-  // Ground Floor Entrance Canopy & Shoe-Locker Hallway (Shōkōguchi)
+  // Ground Floor Entrance Canopy & Recessed Shōkōguchi Steps
   const canopyW = 3.2;
   const canopyD = 1.4;
   const canopyH = 0.18;
@@ -341,16 +386,20 @@ export function buildSchoolMesh(options: SchoolOptions = {}): THREE.Group {
     schoolBuilding.add(pillar);
   });
 
-  const doorGeo = new THREE.BoxGeometry(1.8, 2.2, 0.06);
+  const entranceStoop = new THREE.Mesh(new THREE.BoxGeometry(2.6, 0.10, 0.9), foundationMat);
+  entranceStoop.position.set(0, 0.05, bD / 2 + towerD - 0.10);
+  schoolBuilding.add(entranceStoop);
+
+  const doorGeo = new THREE.BoxGeometry(1.8, 2.2, 0.05);
   const door = new THREE.Mesh(doorGeo, glassMat);
-  door.position.set(0, 1.1, bD / 2 + towerD - 0.16);
+  door.position.set(0, 1.15, bD / 2 + towerD - 0.16);
   const doorBorder = new THREE.Mesh(new THREE.BoxGeometry(1.9, 2.26, 0.04), darkMetalMat);
-  doorBorder.position.set(0, 1.1, bD / 2 + towerD - 0.18);
+  doorBorder.position.set(0, 1.15, bD / 2 + towerD - 0.18);
   schoolBuilding.add(doorBorder, door);
 
   group.add(schoolBuilding);
 
-  // 4. FORECOURT / COURTYARD PROPS (detail2: Centered Gateposts & Plaque at Z = 4.1m)
+  // 4. FORECOURT / COURTYARD PROPS (detail2: Centered Gateposts, Plaque & Perimeter Fence at Z = 4.1m)
   const gateGroup = new THREE.Group();
   gateGroup.position.set(0, 0.15, 4.1);
 
@@ -363,14 +412,39 @@ export function buildSchoolMesh(options: SchoolOptions = {}): THREE.Group {
   postR.castShadow = true;
   gateGroup.add(postL, postR);
 
+  // Open sliding iron kōmon gate wings + flanking perimeter fence spanning X = ±6.0
+  [-1, 1].forEach((dir) => {
+    const wallLow = new THREE.Mesh(new THREE.BoxGeometry(3.85, 0.55, 0.16), foundationMat);
+    wallLow.position.set(dir * 4.02, 0.275, 0);
+    const topRail = new THREE.Mesh(new THREE.BoxGeometry(3.85, 0.04, 0.04), metalFenceMat);
+    topRail.position.set(dir * 4.02, 1.25, 0);
+    gateGroup.add(wallLow, topRail);
+    for (let px = 0; px < 8; px++) {
+      const pBar = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.70, 6), metalFenceMat);
+      pBar.position.set(dir * (2.25 + px * 0.48), 0.90, 0);
+      gateGroup.add(pBar);
+    }
+  });
+
   const plaqueTexture = createSchoolPlaqueTexture();
   const plaqueMat = new THREE.MeshStandardMaterial({ map: plaqueTexture, roughness: 0.4 });
-  const plaqueMesh = new THREE.Mesh(new THREE.BoxGeometry(0.40, 0.68, 0.04), [
+  const plaqueMesh = new THREE.Mesh(new THREE.BoxGeometry(0.44, 0.20, 0.04), [
     foundationMat, foundationMat, foundationMat, foundationMat, plaqueMat, foundationMat
   ]);
   plaqueMesh.position.set(-1.85, 1.15, 0.24);
   gateGroup.add(plaqueMesh);
   group.add(gateGroup);
+
+  // Brick Kadan Flowerbed Planters flanking Gateposts
+  const kadanBrickMat = new THREE.MeshStandardMaterial({ color: 0xb45309, roughness: 0.8 });
+  const kadanBloomMat = new THREE.MeshStandardMaterial({ color: 0xf472b6, roughness: 0.7 });
+  [-2.65, 2.65].forEach((kx) => {
+    const bed = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.26, 0.46), kadanBrickMat);
+    bed.position.set(kx, 0.28, 3.65);
+    const bush = new THREE.Mesh(new THREE.BoxGeometry(0.86, 0.22, 0.34), kadanBloomMat);
+    bush.position.set(kx, 0.46, 3.65);
+    group.add(bed, bush);
+  });
 
   // Flagpole with waving school banner (Right plaza: X = 3.6m, Z = 3.8m)
   const flagGroup = new THREE.Group();
@@ -388,18 +462,18 @@ export function buildSchoolMesh(options: SchoolOptions = {}): THREE.Group {
   flagGroup.add(flag);
   group.add(flagGroup);
 
-  // 5. BACKYARD PERIMETER & SCHOOL POOL / PLAYGROUND
+  // 5. BACKYARD PERIMETER & SCHOOL POOL / PLAYGROUND / HYŌYŌSHA
   if (includeLandscaping) {
     const wallH = 1.4;
     const backWall = new THREE.Mesh(new THREE.BoxGeometry(lotSize, wallH, 0.1), foundationMat);
     backWall.position.set(0, 0.15 + wallH / 2, -5.9);
     group.add(backWall);
 
-    // School Swimming Pool (X = -3.1, Z = -3.9)
+    // School Swimming Pool (shifted cleanly to Z in [-5.7, -4.1], clear of building rear wall)
     const poolGroup = new THREE.Group();
-    poolGroup.position.set(-3.1, 0.15, -3.9);
+    poolGroup.position.set(-3.1, 0.15, -4.9);
 
-    const poolDeck = new THREE.Mesh(new THREE.BoxGeometry(4.2, 0.05, 3.2), foundationMat);
+    const poolDeck = new THREE.Mesh(new THREE.BoxGeometry(4.2, 0.05, 1.6), foundationMat);
     poolDeck.position.set(0, 0.025, 0);
     poolDeck.receiveShadow = true;
     poolGroup.add(poolDeck);
@@ -411,30 +485,30 @@ export function buildSchoolMesh(options: SchoolOptions = {}): THREE.Group {
       transparent: true,
       opacity: 0.85
     });
-    const poolWater = new THREE.Mesh(new THREE.BoxGeometry(3.6, 0.06, 2.6), poolWaterMat);
+    const poolWater = new THREE.Mesh(new THREE.BoxGeometry(3.6, 0.06, 1.2), poolWaterMat);
     poolWater.position.set(0, 0.03, 0);
     poolGroup.add(poolWater);
 
     const laneRopeMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.3 });
-    [-0.45, 0.45].forEach((lz) => {
-      const lane = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 3.4, 6), laneRopeMat);
+    [-0.22, 0.22].forEach((lz) => {
+      const lane = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.022, 3.4, 6), laneRopeMat);
       lane.rotation.z = Math.PI / 2;
       lane.position.set(0, 0.065, lz);
       poolGroup.add(lane);
     });
 
     const blockMat = new THREE.MeshStandardMaterial({ color: 0x2563eb, roughness: 0.5 });
-    [-0.9, 0, 0.9].forEach((bz) => {
-      const block = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.18, 0.35), blockMat);
+    [-0.4, 0, 0.4].forEach((bz) => {
+      const block = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.18, 0.28), blockMat);
       block.position.set(-1.6, 0.11, bz);
       poolGroup.add(block);
     });
 
     group.add(poolGroup);
 
-    // 3-Tier Horizontal Pull-Up Bars (Tetsubō)
+    // 3-Tier Horizontal Pull-Up Bars (Tetsubō) clear of rear wall/AC
     const teppouGroup = new THREE.Group();
-    teppouGroup.position.set(2.8, 0.15, -4.0);
+    teppouGroup.position.set(3.4, 0.15, -4.9);
 
     const barColors = [0xef4444, 0xfacc15, 0x3b82f6];
     const barHeights = [0.85, 1.1, 1.35];
@@ -456,6 +530,23 @@ export function buildSchoolMesh(options: SchoolOptions = {}): THREE.Group {
     });
     group.add(teppouGroup);
 
+    // White Louvered Hyōyōsha (Stevenson Weather Station Box) in Front-Left Courtyard
+    const weatherGroup = new THREE.Group();
+    weatherGroup.position.set(-4.35, 0.15, 3.25);
+    const wBox = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.55, 0.55), whiteLineMat);
+    wBox.position.y = 1.05;
+    const wRoof = new THREE.Mesh(new THREE.BoxGeometry(0.66, 0.08, 0.66), whiteLineMat);
+    wRoof.position.y = 1.36;
+    weatherGroup.add(wBox, wRoof);
+    [-0.22, 0.22].forEach((lx) => {
+      [-0.22, 0.22].forEach((lz) => {
+        const leg = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.80, 0.05), whiteLineMat);
+        leg.position.set(lx, 0.40, lz);
+        weatherGroup.add(leg);
+      });
+    });
+    group.add(weatherGroup);
+
     // Tobidashi Safety Cutout outside gate
     const tobidashiGroup = new THREE.Group();
     tobidashiGroup.position.set(-3.8, 0.15, 4.1);
@@ -472,29 +563,13 @@ export function buildSchoolMesh(options: SchoolOptions = {}): THREE.Group {
     tobidashiGroup.add(tobiPost, tobiHead, tobiBody, tobiPants);
     group.add(tobidashiGroup);
 
-    // Rooftop PA Broadcast Horn Speakers on Clock Tower (capped at Y = 11.7m <= 12.0m)
-    const hornGroup = new THREE.Group();
-    hornGroup.position.set(0, towerH + 0.2, 0.5);
-
-    const hornPole = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.9, 6), darkMetalMat);
-    hornPole.position.y = 0.45;
-    hornGroup.add(hornPole);
-
-    [0, Math.PI / 2, Math.PI, (3 * Math.PI) / 2].forEach(angle => {
-      const horn = new THREE.Mesh(new THREE.ConeGeometry(0.12, 0.24, 8), darkMetalMat);
-      horn.rotation.x = Math.PI / 2;
-      horn.rotation.z = angle;
-      horn.position.set(Math.sin(angle) * 0.2, 0.85, Math.cos(angle) * 0.2);
-      hornGroup.add(horn);
-    });
-    group.add(hornGroup);
-
-    // Backyard cherry blossom tree
-    const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.24, 2.0, 8), darkMetalMat);
-    trunk.position.set(4.2, 1.0 + 0.15, -2.4);
+    // Front-Right Courtyard Cherry Blossom Tree (brown bark!)
+    const barkMat = new THREE.MeshStandardMaterial({ color: 0x78350f, roughness: 0.9 });
+    const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.22, 1.9, 8), barkMat);
+    trunk.position.set(4.4, 0.95 + 0.15, 3.3);
     trunk.castShadow = true;
-    const foliage = new THREE.Mesh(new THREE.SphereGeometry(1.3, 16, 12), new THREE.MeshStandardMaterial({ color: 0xf472b6, roughness: 0.8 }));
-    foliage.position.set(4.2, 2.6 + 0.15, -2.4);
+    const foliage = new THREE.Mesh(new THREE.SphereGeometry(1.15, 14, 10), new THREE.MeshStandardMaterial({ color: 0xf472b6, roughness: 0.8 }));
+    foliage.position.set(4.4, 2.45 + 0.15, 3.3);
     foliage.castShadow = true;
     group.add(trunk, foliage);
   }

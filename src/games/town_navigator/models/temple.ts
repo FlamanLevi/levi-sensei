@@ -5,7 +5,6 @@ import {
   getStuccoWallTexture,
   getArchitecturalBumpMap,
   buildJapaneseIrimoyaRoof,
-  buildPerimeterRailing,
 } from './wallTextures';
 
 let cachedTempleSignTex: THREE.CanvasTexture | null = null;
@@ -60,7 +59,7 @@ export interface TempleOptions {
 }
 
 export function buildTempleMesh(options: TempleOptions = {}): THREE.Group {
-  const { includeRoad = true, scale = 1.0 } = options;
+  const { includeRoad = true, includeLandscaping = true, scale = 1.0 } = options;
 
   const group = new THREE.Group();
   group.name = 'Temple_hwg5_u19_20';
@@ -69,6 +68,7 @@ export function buildTempleMesh(options: TempleOptions = {}): THREE.Group {
 
   // Materials
   const timberMat = new THREE.MeshStandardMaterial({ color: 0x582f14, roughness: 0.68 });
+  const darkTimberMat = new THREE.MeshStandardMaterial({ color: 0x3f220e, roughness: 0.72 });
   const plasterWallMat = new THREE.MeshStandardMaterial({
     color: 0xfafaf9,
     map: getStuccoWallTexture(),
@@ -92,6 +92,7 @@ export function buildTempleMesh(options: TempleOptions = {}): THREE.Group {
   });
   const goldMat = new THREE.MeshStandardMaterial({ color: 0xfacc15, metalness: 0.82, roughness: 0.25 });
   const bronzeMat = new THREE.MeshStandardMaterial({ color: 0x78350f, metalness: 0.72, roughness: 0.35 });
+  const pineNeedleMat = new THREE.MeshStandardMaterial({ color: 0x15803d, roughness: 0.85 });
   const smokeMat = new THREE.MeshBasicMaterial({ color: 0xe2e8f0, transparent: true, opacity: 0.45 });
   const lanternGlowMat = new THREE.MeshStandardMaterial({
     color: 0xfef08a,
@@ -120,6 +121,12 @@ export function buildTempleMesh(options: TempleOptions = {}): THREE.Group {
   plaza.position.set(0, 0.076, 3.75);
   plaza.receiveShadow = true;
   group.add(plaza);
+
+  // Flagstone Sandō Walkway from Plaza to Hondō Steps
+  const sando = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.025, 2.8), stonePlinthMat);
+  sando.position.set(0, 0.16, 2.8);
+  sando.receiveShadow = true;
+  group.add(sando);
 
   const sidewalkGeo = new THREE.BoxGeometry(lotSize, 0.15, 1.5);
   const sidewalk = new THREE.Mesh(sidewalkGeo, foundationMat);
@@ -181,19 +188,71 @@ export function buildTempleMesh(options: TempleOptions = {}): THREE.Group {
     hondoGroup.add(kFrame, kArch);
   });
 
+  // Side & Rear Timber Columns + Shōji/Kōshi Glowing Lattice Windows
+  [-1, 1].forEach((side) => {
+    [-bD / 2 + 0.25, 0, bD / 2 - 0.25].forEach((sz) => {
+      const sCol = new THREE.Mesh(new THREE.BoxGeometry(0.16, bH, 0.16), timberMat);
+      sCol.position.set(side * (bW / 2 + 0.01), bH / 2 + 0.55, sz);
+      hondoGroup.add(sCol);
+    });
+    [-1.4, 1.4].forEach((wz) => {
+      const sFrame = new THREE.Mesh(new THREE.BoxGeometry(0.08, 1.4, 1.25), timberMat);
+      sFrame.position.set(side * (bW / 2 + 0.01), 2.55, wz);
+      const sWin = new THREE.Mesh(new THREE.BoxGeometry(0.06, 1.28, 1.12), lanternGlowMat);
+      sWin.position.set(side * (bW / 2 + 0.02), 2.55, wz);
+      hondoGroup.add(sFrame, sWin);
+    });
+  });
+  [-2.4, 0, 2.4].forEach((bx) => {
+    const bFrame = new THREE.Mesh(new THREE.BoxGeometry(1.3, 1.4, 0.08), timberMat);
+    bFrame.position.set(bx, 2.55, -bD / 2 - 0.01);
+    const bWin = new THREE.Mesh(new THREE.BoxGeometry(1.18, 1.28, 0.06), lanternGlowMat);
+    bWin.position.set(bx, 2.55, -bD / 2 - 0.02);
+    hondoGroup.add(bFrame, bWin);
+  });
+
   const lowerTimber = new THREE.Mesh(new THREE.BoxGeometry(bW + 0.06, 1.1, bD + 0.06), timberMat);
   lowerTimber.position.y = 0.55 + 0.55;
   const upperBeam = new THREE.Mesh(new THREE.BoxGeometry(bW + 0.1, 0.22, bD + 0.1), timberMat);
   upperBeam.position.y = 0.55 + bH - 0.15;
   hondoGroup.add(lowerTimber, upperBeam);
 
+  // Kumimono Under-Eave Brackets
+  [-3.6, -1.4, 1.4, 3.6].forEach((kx) => {
+    const bracket = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.24, 0.42), timberMat);
+    bracket.position.set(kx, 0.55 + bH - 0.12, bD / 2 + 0.28);
+    hondoGroup.add(bracket);
+  });
+
   const engawa = new THREE.Mesh(new THREE.BoxGeometry(bW + 0.8, 0.14, bD + 1.0), timberMat);
   engawa.position.set(0, 0.55 + 0.07, 0.1);
   hondoGroup.add(engawa);
 
-  const verandaRail = buildPerimeterRailing(bW + 0.7, bD + 0.9, 0.55, timberMat, 1.4);
-  verandaRail.position.set(0, 0.62, 0.1);
-  hondoGroup.add(verandaRail);
+  // Traditional Timber Kōran Balustrade with Centered Entry Gap (Replaces modern buildPerimeterRailing)
+  const railY = 0.98;
+  [-2.85, 2.85].forEach((rx) => {
+    const fRail = new THREE.Mesh(new THREE.BoxGeometry(3.1, 0.07, 0.07), timberMat);
+    fRail.position.set(rx, railY, (bD + 0.9) / 2 + 0.08);
+    hondoGroup.add(fRail);
+    [-1.4, 0, 1.4].forEach((px) => {
+      const rPost = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.42, 0.08), timberMat);
+      rPost.position.set(rx + px, 0.8, (bD + 0.9) / 2 + 0.08);
+      hondoGroup.add(rPost);
+    });
+  });
+  [-1, 1].forEach((side) => {
+    const sRail = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.07, bD + 0.9), timberMat);
+    sRail.position.set(side * (bW + 0.7) / 2, railY, 0.1);
+    hondoGroup.add(sRail);
+    [-bD / 2, 0, bD / 2].forEach((pz) => {
+      const rPost = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.42, 0.08), timberMat);
+      rPost.position.set(side * (bW + 0.7) / 2, 0.8, pz + 0.1);
+      hondoGroup.add(rPost);
+    });
+  });
+  const backRail = new THREE.Mesh(new THREE.BoxGeometry(bW + 0.7, 0.07, 0.07), timberMat);
+  backRail.position.set(0, railY, -(bD + 0.9) / 2 + 0.1);
+  hondoGroup.add(backRail);
 
   const hondoRoof = buildJapaneseIrimoyaRoof({
     width: bW + 2.0,
@@ -214,9 +273,14 @@ export function buildTempleMesh(options: TempleOptions = {}): THREE.Group {
     hondoGroup.add(post);
   });
 
-  const doors = new THREE.Mesh(new THREE.BoxGeometry(2.2, 2.7, 0.1), goldMat);
-  doors.position.set(0, 1.35 + 0.55, bD / 2 + 0.04);
-  hondoGroup.add(doors);
+  // Recessed Dark-Wood Paneled Doors + Gold Trim + Saisenbako Offering Box
+  const doorFrame = new THREE.Mesh(new THREE.BoxGeometry(2.35, 2.8, 0.12), darkTimberMat);
+  doorFrame.position.set(0, 1.95, bD / 2 + 0.02);
+  const doors = new THREE.Mesh(new THREE.BoxGeometry(2.05, 2.6, 0.08), goldMat);
+  doors.position.set(0, 1.9, bD / 2 + 0.05);
+  const saisenbako = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.55, 0.65), timberMat);
+  saisenbako.position.set(0, 0.92, bD / 2 + 0.35);
+  hondoGroup.add(doorFrame, doors, saisenbako);
 
   const hangingLantern = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.18, 0.38, 6), lanternGlowMat);
   hangingLantern.position.set(0, 3.65, bD / 2 + 0.42);
@@ -230,7 +294,9 @@ export function buildTempleMesh(options: TempleOptions = {}): THREE.Group {
     emissiveIntensity: 0.35,
     roughness: 0.4,
   });
-  const signMesh = new THREE.Mesh(new THREE.BoxGeometry(4.2, 0.85, 0.12), signMat);
+  const signMesh = new THREE.Mesh(new THREE.BoxGeometry(4.2, 0.85, 0.12), [
+    timberMat, timberMat, timberMat, timberMat, signMat, timberMat,
+  ]);
   signMesh.position.set(0, 4.15, bD / 2 + 0.65);
   hondoGroup.add(signMesh);
 
@@ -253,9 +319,9 @@ export function buildTempleMesh(options: TempleOptions = {}): THREE.Group {
     group.add(toro);
   });
 
-  // 2c. Wooden Ema Wish-Plaque Stand (X = -1.8m, Z = 3.9m)
+  // 2c. Wooden Ema Wish-Plaque Stand (Shifted clear of left tōrō: X = -2.55m, Z = 2.45m)
   const emaGroup = new THREE.Group();
-  emaGroup.position.set(-1.8, 0.15, 3.9);
+  emaGroup.position.set(-2.55, 0.15, 2.45);
   [-0.45, 0.45].forEach((ex) => {
     const ePost = new THREE.Mesh(new THREE.BoxGeometry(0.06, 1.25, 0.06), timberMat);
     ePost.position.set(ex, 0.625, 0);
@@ -340,6 +406,7 @@ export function buildTempleMesh(options: TempleOptions = {}): THREE.Group {
 
   const jizoStoneMat = new THREE.MeshStandardMaterial({ color: 0x94a3b8, roughness: 0.9 });
   const redBibMat = new THREE.MeshStandardMaterial({ color: 0xdc2626, roughness: 0.6 });
+  const sotobaMat = new THREE.MeshStandardMaterial({ color: 0xfde68a, roughness: 0.75 });
 
   [-0.45, 0, 0.45].forEach((jx) => {
     const singleJizo = new THREE.Group();
@@ -359,10 +426,44 @@ export function buildTempleMesh(options: TempleOptions = {}): THREE.Group {
     const cap = new THREE.Mesh(new THREE.SphereGeometry(0.115, 10, 8, 0, Math.PI * 2, 0, Math.PI / 2), redBibMat);
     cap.position.set(0, 0.68, 0);
 
-    singleJizo.add(base, body, head, bib, cap);
+    // Wooden Sotoba Memorial Slat behind Jizō
+    const sotoba = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.85, 0.02), sotobaMat);
+    sotoba.position.set(0, 0.45, -0.2);
+
+    singleJizo.add(base, body, head, bib, cap, sotoba);
     jizoGroup.add(singleJizo);
   });
   group.add(jizoGroup);
+
+  // 6. TSUIJIBEI PLASTER-AND-TILE PERIMETER WALL & KUROMATSU BLACK PINE
+  [-5.85, 5.85].forEach((wx) => {
+    const wall = new THREE.Mesh(new THREE.BoxGeometry(0.22, 1.35, 8.2), plasterWallMat);
+    wall.position.set(wx, 0.82, -1.75);
+    const coping = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.14, 8.3), roofTileMat);
+    coping.position.set(wx, 1.54, -1.75);
+    group.add(wall, coping);
+  });
+  const backWall = new THREE.Mesh(new THREE.BoxGeometry(11.7, 1.35, 0.22), plasterWallMat);
+  backWall.position.set(0, 0.82, -5.85);
+  const backCoping = new THREE.Mesh(new THREE.BoxGeometry(11.9, 0.14, 0.34), roofTileMat);
+  backCoping.position.set(0, 1.54, -5.85);
+  group.add(backWall, backCoping);
+
+  if (includeLandscaping) {
+    const pine = new THREE.Group();
+    pine.position.set(4.7, 0.15, -4.4);
+    const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.2, 1.8, 8), darkTimberMat);
+    trunk.position.y = 0.9;
+    trunk.rotation.z = 0.12;
+    const pad1 = new THREE.Mesh(new THREE.SphereGeometry(0.75, 10, 8), pineNeedleMat);
+    pad1.scale.set(1.3, 0.55, 1.1);
+    pad1.position.set(-0.25, 1.85, 0.1);
+    const pad2 = new THREE.Mesh(new THREE.SphereGeometry(0.65, 10, 8), pineNeedleMat);
+    pad2.scale.set(1.25, 0.5, 1.1);
+    pad2.position.set(0.35, 2.25, -0.1);
+    pine.add(trunk, pad1, pad2);
+    group.add(pine);
+  }
 
   if (scale !== 1.0) {
     group.scale.setScalar(scale);

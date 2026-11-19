@@ -203,22 +203,43 @@ export function buildSidewalkTotemSign(options: TotemSignOptions): THREE.Group {
   pillar.castShadow = false;
   group.add(pillar);
 
-  // 3. Pitched Hip-Roof Eaves Cap, Warm Lantern Crown & Golden Finial
-  const capGeo = new THREE.BoxGeometry(0.64, 0.05, 0.64);
+  // 4 Chamfered Dark-Bronze Corner Pilasters framing the acrylic faces
+  const pilasterGeo = new THREE.BoxGeometry(0.05, 1.24, 0.05);
+  [
+    [-0.265, -0.265],
+    [0.265, -0.265],
+    [-0.265, 0.265],
+    [0.265, 0.265],
+  ].forEach(([px, pz]) => {
+    const pilaster = new THREE.Mesh(pilasterGeo, metalMat);
+    pilaster.position.set(px, 0.94, pz);
+    group.add(pilaster);
+  });
+
+  // Subtle Top & Bottom Brass Trim Rings
+  const trimGeo = new THREE.BoxGeometry(0.60, 0.03, 0.60);
+  const botTrim = new THREE.Mesh(trimGeo, goldFinialMat);
+  botTrim.position.set(0, 0.355, 0);
+  const topTrim = new THREE.Mesh(trimGeo, goldFinialMat);
+  topTrim.position.set(0, 1.545, 0);
+  group.add(botTrim, topTrim);
+
+  // 3. Beveled Rain Cap Overhang, Warm Lantern Crown & Golden Finial
+  const capGeo = new THREE.BoxGeometry(0.70, 0.055, 0.70);
   const cap = new THREE.Mesh(capGeo, metalMat);
-  cap.position.set(0, 1.565, 0);
+  cap.position.set(0, 1.585, 0);
 
   const lanternGeo = new THREE.BoxGeometry(0.40, 0.10, 0.40);
   const lantern = new THREE.Mesh(lanternGeo, beaconMat);
-  lantern.position.set(0, 1.64, 0);
+  lantern.position.set(0, 1.66, 0);
 
-  const roofPyramidGeo = new THREE.ConeGeometry(0.50 * Math.SQRT1_2, 0.16, 4);
+  const roofPyramidGeo = new THREE.ConeGeometry(0.52 * Math.SQRT1_2, 0.16, 4);
   roofPyramidGeo.rotateY(Math.PI / 4);
   const roofPyramid = new THREE.Mesh(roofPyramidGeo, metalMat);
-  roofPyramid.position.set(0, 1.77, 0);
+  roofPyramid.position.set(0, 1.79, 0);
 
   const finialBall = new THREE.Mesh(new THREE.SphereGeometry(0.045, 8, 8), goldFinialMat);
-  finialBall.position.set(0, 1.87, 0);
+  finialBall.position.set(0, 1.89, 0);
 
   group.add(cap, lantern, roofPyramid, finialBall);
 

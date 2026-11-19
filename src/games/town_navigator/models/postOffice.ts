@@ -3,6 +3,7 @@ import {
   getBrickTileTexture,
   buildPerimeterRailing,
   addWrapAroundWindows,
+  getClearShowcaseGlassMaterial,
 } from './wallTextures';
 
 let cachedPostSignTex: THREE.CanvasTexture | null = null;
@@ -310,12 +311,21 @@ export function buildPostOfficeMesh(options: PostOfficeOptions = {}): THREE.Grou
   bBody.receiveShadow = true;
   buildingGroup.add(bBody);
 
+  const clearGlassMat = getClearShowcaseGlassMaterial();
+
   const parapetH = 0.35;
   const parapetGeo = new THREE.BoxGeometry(bW + 0.14, parapetH, bD + 0.14);
   const parapet = new THREE.Mesh(parapetGeo, wallAccentMat);
   parapet.position.y = bH + parapetH / 2;
   parapet.castShadow = true;
   buildingGroup.add(parapet);
+
+  const parapetCoping = new THREE.Mesh(
+    new THREE.BoxGeometry(bW + 0.22, 0.08, bD + 0.22),
+    darkTrimMat
+  );
+  parapetCoping.position.y = bH + parapetH + 0.04;
+  buildingGroup.add(parapetCoping);
 
   // Open Rooftop Safety Railing + Solar Panel + Postal Radio Antenna Mast (<= 5.85m)
   const roofRail = buildPerimeterRailing(bW - 0.2, bD - 0.2, 0.48, metalMat, 1.4);
@@ -351,7 +361,7 @@ export function buildPostOfficeMesh(options: PostOfficeOptions = {}): THREE.Grou
     frameMat: darkTrimMat,
   });
 
-  // 3. FRONT CANOPY, 〒 POST OFFICE SIGN & YŪCHO BANK ATM SIGN
+  // 3. FRONT CANOPY, 〒 POST OFFICE SIGN & YŪCHO BANK ATM BLADE SIGN
   const canopyW = 2.5;
   const canopyH = 0.18;
   const canopyD = 1.05;
@@ -362,10 +372,12 @@ export function buildPostOfficeMesh(options: PostOfficeOptions = {}): THREE.Grou
   buildingGroup.add(canopy);
 
   const canopyPillarGeo = new THREE.CylinderGeometry(0.04, 0.04, 2.4, 12);
-  const canopyPillar = new THREE.Mesh(canopyPillarGeo, darkTrimMat);
-  canopyPillar.position.set(-0.6 - canopyW / 2 + 0.1, 1.2, bD / 2 + canopyD - 0.1);
-  canopyPillar.castShadow = true;
-  buildingGroup.add(canopyPillar);
+  [-0.6 - canopyW / 2 + 0.1, -0.6 + canopyW / 2 - 0.1].forEach((px) => {
+    const canopyPillar = new THREE.Mesh(canopyPillarGeo, darkTrimMat);
+    canopyPillar.position.set(px, 1.2, bD / 2 + canopyD - 0.1);
+    canopyPillar.castShadow = true;
+    buildingGroup.add(canopyPillar);
+  });
 
   const signTexture = createPostOfficeSignTexture();
   const signMat = new THREE.MeshStandardMaterial({
@@ -375,15 +387,22 @@ export function buildPostOfficeMesh(options: PostOfficeOptions = {}): THREE.Grou
     emissiveIntensity: 0.35,
     roughness: 0.4,
   });
-  const signBoardGeo = new THREE.BoxGeometry(1.8, 0.52, 0.04);
+  // Seated cleanly on 1F–2F spandrel band above canopy (y = 2.59..2.91), clear of 2F windows (y >= 2.925)
+  const signBoardGeo = new THREE.BoxGeometry(1.9, 0.34, 0.05);
   const signBoard = new THREE.Mesh(signBoardGeo, [
     darkTrimMat, darkTrimMat, darkTrimMat, darkTrimMat, signMat, darkTrimMat
   ]);
-  signBoard.position.set(-0.6, 2.9, bD / 2 + 0.2);
+  signBoard.position.set(-0.6, 2.75, bD / 2 + 0.14);
   signBoard.castShadow = true;
   buildingGroup.add(signBoard);
 
-  // Projecting Green Yūcho Bank ATM Sign on Right Side of Facade
+  [-1.2, 0.0].forEach((bx) => {
+    const bracket = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.06, 0.14), darkTrimMat);
+    bracket.position.set(bx, 2.75, bD / 2 + 0.07);
+    buildingGroup.add(bracket);
+  });
+
+  // Perpendicular Projecting Green Yūcho Bank ATM Blade Sign (袖看板) on Right Corner Brackets
   const atmSignTex = createAtmSignTexture();
   const atmSignMat = new THREE.MeshStandardMaterial({
     map: atmSignTex,
@@ -392,11 +411,17 @@ export function buildPostOfficeMesh(options: PostOfficeOptions = {}): THREE.Grou
     emissiveIntensity: 0.35,
     roughness: 0.4,
   });
-  const atmSignBox = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.9, 0.08), [
-    yuchoGreenMat, yuchoGreenMat, yuchoGreenMat, yuchoGreenMat, atmSignMat, atmSignMat,
+  const atmSignBox = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.9, 0.45), [
+    atmSignMat, atmSignMat, yuchoGreenMat, yuchoGreenMat, yuchoGreenMat, yuchoGreenMat,
   ]);
-  atmSignBox.position.set(2.02, 2.05, bD / 2 + 0.08);
+  atmSignBox.position.set(bW / 2 + 0.28, 2.05, bD / 2 - 0.15);
   buildingGroup.add(atmSignBox);
+
+  [1.75, 2.35].forEach((by) => {
+    const arm = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.04, 0.04), darkTrimMat);
+    arm.position.set(bW / 2 + 0.13, by, bD / 2 - 0.15);
+    buildingGroup.add(arm);
+  });
 
   // 4. ENTRANCE AUTOMATIC DOORS & SERVICE WINDOWS
   const doorStoopGeo = new THREE.BoxGeometry(2.2, 0.08, 0.6);
@@ -407,21 +432,46 @@ export function buildPostOfficeMesh(options: PostOfficeOptions = {}): THREE.Grou
 
   const doorW = 1.8;
   const doorH = 2.15;
+  // Warm glowing lobby interior backdrop behind clear 1F door & counter glass
+  const lobbyBack = new THREE.Mesh(new THREE.PlaneGeometry(3.8, 2.0), warmInteriorMat);
+  lobbyBack.position.set(0.25, 1.15, bD / 2 + 0.01);
+  buildingGroup.add(lobbyBack);
+
   const doorFrameGeo = new THREE.BoxGeometry(doorW + 0.12, doorH + 0.06, 0.04);
   const doorFrame = new THREE.Mesh(doorFrameGeo, darkTrimMat);
   doorFrame.position.set(-0.6, doorH / 2 + 0.03, bD / 2 + 0.02);
   buildingGroup.add(doorFrame);
 
   const doorGlassGeo = new THREE.BoxGeometry(doorW, doorH, 0.02);
-  const doorGlass = new THREE.Mesh(doorGlassGeo, glassMat);
+  const doorGlass = new THREE.Mesh(doorGlassGeo, clearGlassMat);
+  doorGlass.userData.skipWindowEnhance = true;
   doorGlass.position.set(-0.6, doorH / 2 + 0.03, bD / 2 + 0.045);
   buildingGroup.add(doorGlass);
+
+  // Door center mullion, stainless handles & overhead sensor bar
+  const doorMullion = new THREE.Mesh(new THREE.BoxGeometry(0.04, doorH, 0.04), darkTrimMat);
+  doorMullion.position.set(-0.6, doorH / 2 + 0.03, bD / 2 + 0.055);
+  const doorSensor = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.06, 0.06), darkTrimMat);
+  doorSensor.position.set(-0.6, doorH + 0.08, bD / 2 + 0.06);
+  buildingGroup.add(doorMullion, doorSensor);
+  [-0.72, -0.48].forEach((hx) => {
+    const handle = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 0.45, 6), metalMat);
+    handle.position.set(hx, 1.05, bD / 2 + 0.075);
+    buildingGroup.add(handle);
+  });
 
   const doorBadgeGeo = new THREE.CylinderGeometry(0.14, 0.14, 0.03, 24);
   doorBadgeGeo.rotateX(Math.PI / 2);
   const doorBadge = new THREE.Mesh(doorBadgeGeo, postRedMat);
-  doorBadge.position.set(-0.6, 1.25, bD / 2 + 0.065);
-  buildingGroup.add(doorBadge);
+  doorBadge.position.set(-0.6, 1.32, bD / 2 + 0.065);
+  const badgeWhiteMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.4 });
+  const badgeTopBar = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.025, 0.015), badgeWhiteMat);
+  badgeTopBar.position.set(-0.6, 1.38, bD / 2 + 0.082);
+  const badgeMidBar = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.025, 0.015), badgeWhiteMat);
+  badgeMidBar.position.set(-0.6, 1.33, bD / 2 + 0.082);
+  const badgeStem = new THREE.Mesh(new THREE.BoxGeometry(0.025, 0.09, 0.015), badgeWhiteMat);
+  badgeStem.position.set(-0.6, 1.29, bD / 2 + 0.082);
+  buildingGroup.add(doorBadge, badgeTopBar, badgeMidBar, badgeStem);
 
   // First Floor Service Counter & ATM Corner Window (Right side)
   const winW = 1.4;
@@ -431,7 +481,8 @@ export function buildPostOfficeMesh(options: PostOfficeOptions = {}): THREE.Grou
 
   const winFrame = new THREE.Mesh(new THREE.BoxGeometry(winW + 0.08, winH + 0.08, 0.04), darkTrimMat);
   winFrame.position.set(winX, winY, bD / 2 + 0.02);
-  const winGlass = new THREE.Mesh(new THREE.BoxGeometry(winW, winH, 0.02), glassMat);
+  const winGlass = new THREE.Mesh(new THREE.BoxGeometry(winW, winH, 0.02), clearGlassMat);
+  winGlass.userData.skipWindowEnhance = true;
   winGlass.position.set(winX, winY, bD / 2 + 0.042);
   buildingGroup.add(winFrame, winGlass);
 
@@ -557,7 +608,7 @@ export function buildPostOfficeMesh(options: PostOfficeOptions = {}): THREE.Grou
   bar.position.set(0, 0.78, 0.44);
   scooterGroup.add(bar);
 
-  const windscreen = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.26, 0.015), glassMat);
+  const windscreen = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.26, 0.015), clearGlassMat);
   windscreen.position.set(0, 0.92, 0.46);
   windscreen.rotation.x = -0.15;
   scooterGroup.add(windscreen);
@@ -591,7 +642,7 @@ export function buildPostOfficeMesh(options: PostOfficeOptions = {}): THREE.Grou
   scSeat.castShadow = true;
   scooterGroup.add(scSeat);
 
-  // Red Mail Delivery Rear Cargo Box
+  // Red Mail Delivery Rear Cargo Box with 〒 Emblem
   const cargoBoxGeo = new THREE.BoxGeometry(0.38, 0.34, 0.38);
   const cargoBox = new THREE.Mesh(cargoBoxGeo, postRedMat);
   cargoBox.position.set(0, 0.56, -0.42);
@@ -600,23 +651,31 @@ export function buildPostOfficeMesh(options: PostOfficeOptions = {}): THREE.Grou
 
   const boxMarkGeo = new THREE.CylinderGeometry(0.08, 0.08, 0.02, 16);
   boxMarkGeo.rotateX(Math.PI / 2);
-  const boxMark = new THREE.Mesh(boxMarkGeo, new THREE.MeshStandardMaterial({ color: 0xffffff }));
+  const cargoWhiteMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.4 });
+  const boxMark = new THREE.Mesh(boxMarkGeo, cargoWhiteMat);
   boxMark.position.set(0, 0.56, -0.62);
-  scooterGroup.add(boxMark);
+  const cTop = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.016, 0.012), postRedMat);
+  cTop.position.set(0, 0.595, -0.632);
+  const cMid = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.016, 0.012), postRedMat);
+  cMid.position.set(0, 0.565, -0.632);
+  const cStem = new THREE.Mesh(new THREE.BoxGeometry(0.016, 0.055, 0.012), postRedMat);
+  cStem.position.set(0, 0.54, -0.632);
+  scooterGroup.add(boxMark, cTop, cMid, cStem);
 
   group.add(scooterGroup);
 
   // 7. BACKYARD PERIMETER & LANDSCAPING
   if (includeTrees) {
+    const backWallMat = new THREE.MeshStandardMaterial({ color: 0xcbd5e1, roughness: 0.85 });
     const wallH = 1.2;
     const backWallGeo = new THREE.BoxGeometry(lotWidth, wallH, 0.08);
-    const backWall = new THREE.Mesh(backWallGeo, foundationMat);
+    const backWall = new THREE.Mesh(backWallGeo, backWallMat);
     backWall.position.set(0, 0.15 + wallH / 2, -2.85);
     backWall.receiveShadow = true;
     group.add(backWall);
 
     const sideWallGeo = new THREE.BoxGeometry(0.08, wallH, 3.2);
-    const sideWall = new THREE.Mesh(sideWallGeo, foundationMat);
+    const sideWall = new THREE.Mesh(sideWallGeo, backWallMat);
     sideWall.position.set(-lotWidth / 2 + 0.04, 0.15 + wallH / 2, -1.2);
     group.add(sideWall);
 

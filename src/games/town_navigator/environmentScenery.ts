@@ -426,8 +426,9 @@ function getSkyscraperTextures(): { dayMap: THREE.CanvasTexture; nightEmissiveMa
 export function buildPerimeterScenery(options: {
   boundaryHalfSize?: number;
   includeBoundaryFence?: boolean;
+  lowPower?: boolean;
 } = {}): THREE.Group {
-  const { boundaryHalfSize = 40.5, includeBoundaryFence = true } = options;
+  const { boundaryHalfSize = 40.5, includeBoundaryFence = true, lowPower = false } = options;
 
   const scenery = new THREE.Group();
   scenery.name = 'PerimeterVistaScenery';
@@ -439,7 +440,21 @@ export function buildPerimeterScenery(options: {
     map: stoneTex,
     roughness: 0.85,
   });
+  const copingStoneMat = new THREE.MeshStandardMaterial({ color: 0xcbd5e1, roughness: 0.72 });
   const woodFenceMat = new THREE.MeshStandardMaterial({ color: 0x78350f, roughness: 0.85 });
+  const barricadeRedMat = new THREE.MeshStandardMaterial({ color: 0xdc2626, roughness: 0.45 });
+  const barricadeWhiteMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.4 });
+  const coneOrangeMat = new THREE.MeshStandardMaterial({ color: 0xf97316, roughness: 0.45 });
+  const hazardYellowMat = new THREE.MeshStandardMaterial({ color: 0xfacc15, roughness: 0.45 });
+  const darkIronMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.5, metalness: 0.6 });
+  const brickPierMat = new THREE.MeshStandardMaterial({ color: 0x9a3412, roughness: 0.8 });
+  const warmLanternMat = new THREE.MeshStandardMaterial({
+    color: 0xfef08a,
+    emissive: 0xfde047,
+    emissiveIntensity: 1.2,
+    roughness: 0.2,
+  });
+  const shrubMat = new THREE.MeshStandardMaterial({ color: 0x15803d, roughness: 0.9 });
   const grassHillMat = new THREE.MeshStandardMaterial({
     color: 0x65a30d,
     map: getLawnGrassTexture(),
@@ -529,7 +544,7 @@ export function buildPerimeterScenery(options: {
   scenery.userData.grassHillMat = grassHillMat;
 
   // ============================================================================
-  // 1. TOWN BOUNDARY STONE EMBANKMENT CURB & WOODEN COUNTRY RAIL FENCE
+  // 1. TOWN BOUNDARY STONE EMBANKMENT CURB, FENCE POSTS, BARRICADES & GATEWAYS
   // ============================================================================
   if (includeBoundaryFence) {
     const B = boundaryHalfSize;
@@ -555,32 +570,158 @@ export function buildPerimeterScenery(options: {
       const segLen = s1 - s0;
       const mid = (s0 + s1) / 2;
 
-      // North (-Z) & South (+Z) boundary embankment walls
+      // North (-Z) & South (+Z) boundary embankment walls + stone coping + twin rails + posts
       [-B, B].forEach((zPos) => {
         const curb = new THREE.Mesh(new THREE.BoxGeometry(segLen, 0.52, 0.55), boundaryStoneMat);
         curb.position.set(mid, 0.26, zPos);
-        curb.castShadow = false;
         curb.receiveShadow = true;
-        scenery.add(curb);
-
+        const coping = new THREE.Mesh(new THREE.BoxGeometry(segLen + 0.08, 0.08, 0.64), copingStoneMat);
+        coping.position.set(mid, 0.54, zPos);
         const railTop = new THREE.Mesh(new THREE.BoxGeometry(segLen, 0.08, 0.10), woodFenceMat);
-        railTop.position.set(mid, 0.82, zPos);
-        scenery.add(railTop);
+        railTop.position.set(mid, 0.94, zPos);
+        const railLow = new THREE.Mesh(new THREE.BoxGeometry(segLen, 0.06, 0.08), woodFenceMat);
+        railLow.position.set(mid, 0.72, zPos);
+        scenery.add(curb, coping, railTop, railLow);
+
+        const postStep = 3.0;
+        for (let px = s0 + 0.4; px <= s1 - 0.3; px += postStep) {
+          const post = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.48, 0.12), darkIronMat);
+          post.position.set(px, 0.78, zPos);
+          scenery.add(post);
+        }
+        if (!lowPower) {
+          const outZ = zPos < 0 ? zPos - 0.65 : zPos + 0.65;
+          for (let sx = s0 + 2.5; sx <= s1 - 2.0; sx += 7.5) {
+            const shrub = new THREE.Mesh(new THREE.DodecahedronGeometry(0.42, 0), shrubMat);
+            shrub.scale.set(1.3, 0.75, 0.9);
+            shrub.position.set(sx, 0.22, outZ);
+            scenery.add(shrub);
+          }
+        }
       });
 
-      // West (-X) & East (+X) boundary embankment walls
+      // West (-X) & East (+X) boundary embankment walls + stone coping + twin rails + posts
       [-B, B].forEach((xPos) => {
         const curb = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.52, segLen), boundaryStoneMat);
         curb.position.set(xPos, 0.26, mid);
-        curb.castShadow = false;
         curb.receiveShadow = true;
-        scenery.add(curb);
-
+        const coping = new THREE.Mesh(new THREE.BoxGeometry(0.64, 0.08, segLen + 0.08), copingStoneMat);
+        coping.position.set(xPos, 0.54, mid);
         const railTop = new THREE.Mesh(new THREE.BoxGeometry(0.10, 0.08, segLen), woodFenceMat);
-        railTop.position.set(xPos, 0.82, mid);
-        scenery.add(railTop);
+        railTop.position.set(xPos, 0.94, mid);
+        const railLow = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.06, segLen), woodFenceMat);
+        railLow.position.set(xPos, 0.72, mid);
+        scenery.add(curb, coping, railTop, railLow);
+
+        const postStep = 3.0;
+        for (let pz = s0 + 0.4; pz <= s1 - 0.3; pz += postStep) {
+          const post = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.48, 0.12), darkIronMat);
+          post.position.set(xPos, 0.78, pz);
+          scenery.add(post);
+        }
+        if (!lowPower) {
+          const outX = xPos < 0 ? xPos - 0.65 : xPos + 0.65;
+          for (let sz = s0 + 2.5; sz <= s1 - 2.0; sz += 7.5) {
+            const shrub = new THREE.Mesh(new THREE.DodecahedronGeometry(0.42, 0), shrubMat);
+            shrub.scale.set(0.9, 0.75, 1.3);
+            shrub.position.set(outX, 0.22, sz);
+            scenery.add(shrub);
+          }
+        }
       });
     });
+
+    // Helper: Japanese Red-and-White A-Frame Road-End Barricade + Cones + Solar Beacon
+    const buildRoadEndBarricade = (wx: number, wz: number, rotY: number) => {
+      const bg = new THREE.Group();
+      bg.position.set(wx, 0.05, wz);
+      bg.rotation.y = rotY;
+
+      // Twin A-frame barricades spanning 4.2m road width
+      [-1.15, 1.15].forEach((bx) => {
+        const legL = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.92, 0.08), barricadeWhiteMat);
+        legL.position.set(bx - 0.75, 0.44, 0.14);
+        legL.rotation.x = -0.18;
+        const legR = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.92, 0.08), barricadeWhiteMat);
+        legR.position.set(bx + 0.75, 0.44, -0.14);
+        legR.rotation.x = 0.18;
+        const barRed = new THREE.Mesh(new THREE.BoxGeometry(1.75, 0.18, 0.07), barricadeRedMat);
+        barRed.position.set(bx, 0.72, 0);
+        const barWhite = new THREE.Mesh(new THREE.BoxGeometry(0.90, 0.185, 0.075), barricadeWhiteMat);
+        barWhite.position.set(bx, 0.72, 0);
+        bg.add(legL, legR, barRed, barWhite);
+      });
+
+      // Center Yellow-Black Dead-End Chevron Reflector Board + Solar Beacon
+      const boardPost = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 1.15, 6), darkIronMat);
+      boardPost.position.set(0, 0.58, 0);
+      const chevronBoard = new THREE.Mesh(new THREE.BoxGeometry(1.15, 0.34, 0.05), hazardYellowMat);
+      chevronBoard.position.set(0, 0.95, 0);
+      const chevronStripe = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.35, 0.055), darkIronMat);
+      chevronStripe.position.set(0, 0.95, 0);
+      const beacon = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.055, 0.10, 8), warmLanternMat);
+      beacon.position.set(0, 1.18, 0);
+      bg.add(boardPost, chevronBoard, chevronStripe, beacon);
+
+      // Flanking Orange Safety Cones with White Reflective Collars
+      [-2.1, 2.1].forEach((cx) => {
+        const coneBase = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.04, 0.34), coneOrangeMat);
+        coneBase.position.set(cx, 0.02, 0.25);
+        const coneBody = new THREE.Mesh(new THREE.ConeGeometry(0.13, 0.52, 8), coneOrangeMat);
+        coneBody.position.set(cx, 0.28, 0.25);
+        const collar = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.095, 0.12, 8), barricadeWhiteMat);
+        collar.position.set(cx, 0.30, 0.25);
+        bg.add(coneBase, coneBody, collar);
+      });
+
+      scenery.add(bg);
+    };
+
+    // 16 Side-Street Perimeter Road-End Barricades
+    const sideStreetOffsets = isExpanded ? [-63, -33, 33, 63] : [-30, 30];
+    sideStreetOffsets.forEach((coord) => {
+      buildRoadEndBarricade(coord, -B + 0.35, 0);
+      buildRoadEndBarricade(coord, B - 0.35, Math.PI);
+      buildRoadEndBarricade(-B + 0.35, coord, Math.PI / 2);
+      buildRoadEndBarricade(B - 0.35, coord, -Math.PI / 2);
+    });
+
+    // 4 Grand Boulevard Town Welcome Gateway Piers + Removable Traffic Bollards
+    const buildBoulevardGateway = (wx: number, wz: number, rotY: number) => {
+      const gw = new THREE.Group();
+      gw.position.set(wx, 0, wz);
+      gw.rotation.y = rotY;
+
+      [-5.1, 5.1].forEach((px) => {
+        const base = new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.45, 1.1), copingStoneMat);
+        base.position.set(px, 0.225, 0);
+        const shaft = new THREE.Mesh(new THREE.BoxGeometry(0.85, 1.85, 0.85), brickPierMat);
+        shaft.position.set(px, 1.375, 0);
+        const cap = new THREE.Mesh(new THREE.BoxGeometry(1.05, 0.16, 1.05), copingStoneMat);
+        cap.position.set(px, 2.38, 0);
+        const globe = new THREE.Mesh(new THREE.SphereGeometry(0.22, 10, 8), warmLanternMat);
+        globe.position.set(px, 2.66, 0);
+        const plaque = new THREE.Mesh(new THREE.BoxGeometry(0.58, 0.32, 0.04), darkIronMat);
+        plaque.position.set(px, 1.55, 0.44);
+        gw.add(base, shaft, cap, globe, plaque);
+      });
+
+      // Sleek white/red removable traffic bollards across the asphalt boundary
+      [-3.4, -1.7, 0, 1.7, 3.4].forEach((bx) => {
+        const post = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.065, 0.78, 8), barricadeWhiteMat);
+        post.position.set(bx, 0.44, 0);
+        const band = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.16, 8), barricadeRedMat);
+        band.position.set(bx, 0.68, 0);
+        gw.add(post, band);
+      });
+
+      scenery.add(gw);
+    };
+
+    buildBoulevardGateway(0, -B + 0.35, 0);
+    buildBoulevardGateway(0, B - 0.35, Math.PI);
+    buildBoulevardGateway(-B + 0.35, 0, Math.PI / 2);
+    buildBoulevardGateway(B - 0.35, 0, -Math.PI / 2);
   }
 
   // ============================================================================
@@ -789,7 +930,97 @@ export function buildPerimeterScenery(options: {
       bridgeGroup.add(cable);
     }
   });
+  // Bay Water Shimmer Plane beneath the Suspension Bridge
+  const bayWaterMat = new THREE.MeshStandardMaterial({
+    color: 0x0f766e,
+    roughness: 0.18,
+    metalness: 0.55,
+  });
+  const bayWater = new THREE.Mesh(new THREE.PlaneGeometry(54, 86), bayWaterMat);
+  bayWater.rotation.x = -Math.PI / 2;
+  bayWater.position.set(0, 0.08, 0);
+  bridgeGroup.add(bayWater);
+
   skylineGroup.add(bridgeGroup);
+
+  // Distant Elevated Shinkansen Viaduct along North-East outer meadow (clear of Fuji & Tokyo Tower)
+  const viaductGroup = new THREE.Group();
+  viaductGroup.name = 'ShinkansenViaduct';
+  const viaductMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.7 });
+  const shinkansenBlueMat = new THREE.MeshStandardMaterial({ color: 0x0284c7, roughness: 0.3, metalness: 0.2 });
+  const shinkansenRadius = 96;
+  const startAngle = -0.92;
+  const endAngle = -0.26;
+  const spans = lowPower ? 8 : 12;
+
+  for (let i = 0; i < spans; i++) {
+    const a0 = startAngle + (i / spans) * (endAngle - startAngle);
+    const a1 = startAngle + ((i + 1) / spans) * (endAngle - startAngle);
+    const aMid = (a0 + a1) * 0.5;
+    const x0 = Math.cos(a0) * shinkansenRadius;
+    const z0 = Math.sin(a0) * shinkansenRadius;
+    const x1 = Math.cos(a1) * shinkansenRadius;
+    const z1 = Math.sin(a1) * shinkansenRadius;
+    const spanLen = Math.hypot(x1 - x0, z1 - z0);
+    const xm = (x0 + x1) * 0.5;
+    const zm = (z0 + z1) * 0.5;
+    const yaw = Math.atan2(x1 - x0, z1 - z0);
+
+    // Concrete Pier
+    const pier = new THREE.Mesh(new THREE.BoxGeometry(1.1, 6.2, 1.4), viaductMat);
+    pier.position.set(x0, 3.1, z0);
+    pier.rotation.y = yaw;
+    viaductGroup.add(pier);
+
+    // Deck + Sound Barriers
+    const deck = new THREE.Mesh(new THREE.BoxGeometry(2.6, 0.65, spanLen + 0.15), viaductMat);
+    deck.position.set(xm, 6.4, zm);
+    deck.rotation.y = yaw;
+    const barrierL = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.75, spanLen + 0.1), copingStoneMat);
+    barrierL.position.set(xm - Math.cos(yaw) * 1.2, 7.05, zm + Math.sin(yaw) * 1.2);
+    barrierL.rotation.y = yaw;
+    const barrierR = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.75, spanLen + 0.1), copingStoneMat);
+    barrierR.position.set(xm + Math.cos(yaw) * 1.2, 7.05, zm - Math.sin(yaw) * 1.2);
+    barrierR.rotation.y = yaw;
+    viaductGroup.add(deck, barrierL, barrierR);
+
+    // Overhead Catenary Portal every 2 spans
+    if (i % 2 === 0) {
+      const portalL = new THREE.Mesh(new THREE.BoxGeometry(0.14, 2.4, 0.14), darkIronMat);
+      portalL.position.set(x0 - Math.cos(yaw) * 1.15, 7.9, z0 + Math.sin(yaw) * 1.15);
+      const portalR = new THREE.Mesh(new THREE.BoxGeometry(0.14, 2.4, 0.14), darkIronMat);
+      portalR.position.set(x0 + Math.cos(yaw) * 1.15, 7.9, z0 - Math.sin(yaw) * 1.15);
+      const portalTop = new THREE.Mesh(new THREE.BoxGeometry(2.5, 0.14, 0.14), darkIronMat);
+      portalTop.position.set(x0, 9.1, z0);
+      portalTop.rotation.y = yaw;
+      viaductGroup.add(portalL, portalR, portalTop);
+    }
+
+    // Sleek N700S Shinkansen Bullet Train resting on center spans
+    if (i >= Math.floor(spans / 2) - 1 && i <= Math.floor(spans / 2) + 1) {
+      const car = new THREE.Mesh(new THREE.BoxGeometry(1.15, 1.15, spanLen * 0.92), towerWhiteMat);
+      car.position.set(xm, 7.35, zm);
+      car.rotation.y = yaw;
+      const stripe = new THREE.Mesh(new THREE.BoxGeometry(1.19, 0.18, spanLen * 0.92), shinkansenBlueMat);
+      stripe.position.set(xm, 7.18, zm);
+      stripe.rotation.y = yaw;
+      viaductGroup.add(car, stripe);
+
+      if (i === Math.floor(spans / 2) + 1) {
+        const nose = new THREE.Mesh(new THREE.ConeGeometry(0.62, 2.6, 8), towerWhiteMat);
+        nose.rotation.x = Math.PI / 2;
+        nose.position.set(
+          xm + Math.sin(yaw) * (spanLen * 0.46 + 1.1),
+          7.25,
+          zm + Math.cos(yaw) * (spanLen * 0.46 + 1.1)
+        );
+        nose.rotation.y = yaw;
+        viaductGroup.add(nose);
+      }
+    }
+    void aMid;
+  }
+  skylineGroup.add(viaductGroup);
   scenery.add(skylineGroup);
 
   // ============================================================================

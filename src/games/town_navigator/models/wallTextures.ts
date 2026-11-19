@@ -19,6 +19,14 @@ let cachedGrassBumpTexture: THREE.CanvasTexture | null = null;
 let cachedSidewalkPaverTexture: THREE.CanvasTexture | null = null;
 let cachedAsphaltRoadTexture: THREE.CanvasTexture | null = null;
 let cachedInteriorBlindTexture: THREE.CanvasTexture | null = null;
+let cachedTerracottaRoofTexture: THREE.CanvasTexture | null = null;
+let cachedRakedGravelTexture: THREE.CanvasTexture | null = null;
+let cachedTimberPlankTexture: THREE.CanvasTexture | null = null;
+let cachedStandingSeamMetalTexture: THREE.CanvasTexture | null = null;
+let cachedTactilePavingTexture: THREE.CanvasTexture | null = null;
+let cachedBoulevardPaverTexture: THREE.CanvasTexture | null = null;
+let cachedClearShowcaseGlassMat: THREE.MeshStandardMaterial | null = null;
+const cachedSharedEmissiveMats: Partial<Record<'WARM_LANTERN' | 'RED_BEACON' | 'COOL_NEON', THREE.MeshStandardMaterial>> = {};
 
 function createFallbackTexture(): THREE.CanvasTexture {
   const dummy = new THREE.Texture();
@@ -763,6 +771,368 @@ export function getIshigakiStoneTexture(): THREE.CanvasTexture {
 }
 
 /**
+ * 7. Scalloped Terracotta / Mediterranean Roof Tiles (256x256, isArchitecturalTex)
+ */
+export function getTerracottaRoofTexture(): THREE.CanvasTexture {
+  if (cachedTerracottaRoofTexture) return cachedTerracottaRoofTexture;
+  if (typeof document === 'undefined') return createFallbackTexture();
+
+  const size = 256;
+  const canvas = document.createElement('canvas');
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return createFallbackTexture();
+
+  ctx.fillStyle = '#c2410c';
+  ctx.fillRect(0, 0, size, size);
+
+  const rows = 8;
+  const cols = 8;
+  const rowH = size / rows;
+  const colW = size / cols;
+
+  for (let r = 0; r < rows; r++) {
+    const y = r * rowH;
+    const offset = (r % 2) * (colW * 0.5);
+    for (let c = -1; c <= cols; c++) {
+      const x = c * colW + offset;
+      const shade = ((r * 19 + c * 31) % 24) - 12;
+      const rr = Math.min(255, Math.max(0, 212 + shade));
+      const gg = Math.min(255, Math.max(0, 98 + Math.floor(shade * 0.6)));
+      const bb = Math.min(255, Math.max(0, 46 + Math.floor(shade * 0.4)));
+      const grad = ctx.createLinearGradient(x, y, x + colW, y + rowH);
+      grad.addColorStop(0, `rgb(${Math.min(255, rr + 18)}, ${Math.min(255, gg + 12)}, ${bb})`);
+      grad.addColorStop(1, `rgb(${Math.max(0, rr - 22)}, ${Math.max(0, gg - 16)}, ${Math.max(0, bb - 10)})`);
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.roundRect(x + 1.5, y + 1, colW - 3, rowH - 2, [4, 4, 12, 12]);
+      ctx.fill();
+
+      ctx.strokeStyle = 'rgba(67, 20, 7, 0.45)';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    }
+  }
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.wrapS = THREE.RepeatWrapping;
+  texture.wrapT = THREE.RepeatWrapping;
+  texture.repeat.set(3, 3);
+  texture.anisotropy = 4;
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
+  texture.userData.isArchitecturalTex = true;
+  cachedTerracottaRoofTexture = texture;
+  return texture;
+}
+
+/**
+ * 8. Japanese Zen Raked Gravel (*Karesansui Samon*) Texture (256x256, isArchitecturalTex)
+ */
+export function getRakedGravelTexture(): THREE.CanvasTexture {
+  if (cachedRakedGravelTexture) return cachedRakedGravelTexture;
+  if (typeof document === 'undefined') return createFallbackTexture();
+
+  const size = 256;
+  const canvas = document.createElement('canvas');
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return createFallbackTexture();
+
+  ctx.fillStyle = '#e2e8f0';
+  ctx.fillRect(0, 0, size, size);
+
+  const img = ctx.getImageData(0, 0, size, size);
+  const d = img.data;
+  for (let i = 0; i < d.length; i += 4) {
+    const px = (i / 4) % size;
+    const py = Math.floor(i / 4 / size);
+    const dx = px - 128;
+    const dy = py - 128;
+    const dist = Math.hypot(dx, dy);
+    // Blend concentric Zen ripples near center with parallel wave grooves
+    const ringWave = Math.sin(dist * 0.45) * 16;
+    const lineWave = Math.sin(py * 0.42 + Math.sin(px * 0.05) * 1.4) * 14;
+    const blend = Math.max(0, Math.min(1, (dist - 42) / 56));
+    const groove = ringWave * (1 - blend) + lineWave * blend;
+    const pebble = ((px * 29 + py * 53) % 15) - 7;
+    const v = Math.max(175, Math.min(250, 224 + groove + pebble));
+    d[i] = v;
+    d[i + 1] = v;
+    d[i + 2] = Math.min(255, v + 3);
+  }
+  ctx.putImageData(img, 0, 0);
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.wrapS = THREE.RepeatWrapping;
+  texture.wrapT = THREE.RepeatWrapping;
+  texture.repeat.set(2, 2);
+  texture.anisotropy = 4;
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
+  texture.userData.isArchitecturalTex = true;
+  cachedRakedGravelTexture = texture;
+  return texture;
+}
+
+/**
+ * 9. Japanese Cedar / Hinoki Timber Plank Texture (256x256, isArchitecturalTex)
+ */
+export function getTimberPlankTexture(): THREE.CanvasTexture {
+  if (cachedTimberPlankTexture) return cachedTimberPlankTexture;
+  if (typeof document === 'undefined') return createFallbackTexture();
+
+  const size = 256;
+  const canvas = document.createElement('canvas');
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return createFallbackTexture();
+
+  ctx.fillStyle = '#d6b892';
+  ctx.fillRect(0, 0, size, size);
+
+  const planks = 6;
+  const plankW = size / planks;
+  for (let p = 0; p < planks; p++) {
+    const x = p * plankW;
+    const shade = ((p * 23) % 20) - 10;
+    ctx.fillStyle = `rgb(${214 + shade}, ${182 + shade}, ${142 + shade})`;
+    ctx.fillRect(x, 0, plankW, size);
+
+    // Subtle wood grain lines
+    ctx.strokeStyle = 'rgba(120, 74, 34, 0.16)';
+    ctx.lineWidth = 1.2;
+    for (let g = 0; g < 5; g++) {
+      const gx = x + 5 + g * ((plankW - 10) / 4);
+      ctx.beginPath();
+      ctx.moveTo(gx, 0);
+      ctx.bezierCurveTo(gx + 3, size * 0.33, gx - 3, size * 0.66, gx, size);
+      ctx.stroke();
+    }
+
+    // Plank seam
+    ctx.strokeStyle = 'rgba(69, 39, 14, 0.45)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(x, 0);
+    ctx.lineTo(x, size);
+    ctx.stroke();
+  }
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.wrapS = THREE.RepeatWrapping;
+  texture.wrapT = THREE.RepeatWrapping;
+  texture.repeat.set(2, 2);
+  texture.anisotropy = 4;
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
+  texture.userData.isArchitecturalTex = true;
+  cachedTimberPlankTexture = texture;
+  return texture;
+}
+
+/**
+ * 10. Standing-Seam Architectural Metal Cladding Texture (256x256, isArchitecturalTex)
+ */
+export function getStandingSeamMetalTexture(): THREE.CanvasTexture {
+  if (cachedStandingSeamMetalTexture) return cachedStandingSeamMetalTexture;
+  if (typeof document === 'undefined') return createFallbackTexture();
+
+  const size = 256;
+  const canvas = document.createElement('canvas');
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return createFallbackTexture();
+
+  ctx.fillStyle = '#e2e8f0';
+  ctx.fillRect(0, 0, size, size);
+
+  const ribs = 8;
+  const ribW = size / ribs;
+  for (let r = 0; r < ribs; r++) {
+    const x = r * ribW;
+    const grad = ctx.createLinearGradient(x, 0, x + ribW, 0);
+    grad.addColorStop(0.0, '#94a3b8');
+    grad.addColorStop(0.12, '#f8fafc');
+    grad.addColorStop(0.5, '#e2e8f0');
+    grad.addColorStop(0.88, '#cbd5e1');
+    grad.addColorStop(1.0, '#64748b');
+    ctx.fillStyle = grad;
+    ctx.fillRect(x, 0, ribW, size);
+  }
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.wrapS = THREE.RepeatWrapping;
+  texture.wrapT = THREE.RepeatWrapping;
+  texture.repeat.set(3, 2);
+  texture.anisotropy = 4;
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
+  texture.userData.isArchitecturalTex = true;
+  cachedStandingSeamMetalTexture = texture;
+  return texture;
+}
+
+/**
+ * 11. Japanese Tactile Paving (*Tenji-burokku*) Dome-Dot Texture (128x128, isArchitecturalTex)
+ */
+export function getTactilePavingTexture(): THREE.CanvasTexture {
+  if (cachedTactilePavingTexture) return cachedTactilePavingTexture;
+  if (typeof document === 'undefined') return createFallbackTexture();
+
+  const size = 128;
+  const canvas = document.createElement('canvas');
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return createFallbackTexture();
+
+  ctx.fillStyle = '#facc15';
+  ctx.fillRect(0, 0, size, size);
+
+  // Subtle tile border
+  ctx.strokeStyle = 'rgba(161, 98, 7, 0.35)';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(1, 1, size - 2, size - 2);
+
+  // 4x4 grid of raised warning domes
+  const step = size / 4;
+  for (let r = 0; r < 4; r++) {
+    for (let c = 0; c < 4; c++) {
+      const cx = (c + 0.5) * step;
+      const cy = (r + 0.5) * step;
+      ctx.fillStyle = 'rgba(161, 98, 7, 0.45)';
+      ctx.beginPath();
+      ctx.arc(cx + 1.2, cy + 1.5, 6.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#fde047';
+      ctx.beginPath();
+      ctx.arc(cx, cy, 6.2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.wrapS = THREE.RepeatWrapping;
+  texture.wrapT = THREE.RepeatWrapping;
+  texture.repeat.set(3, 1);
+  texture.anisotropy = 4;
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
+  texture.userData.isArchitecturalTex = true;
+  cachedTactilePavingTexture = texture;
+  return texture;
+}
+
+/**
+ * 12. Grand Boulevard Herringbone Brick/Granite Sidewalk Paver Texture (256x256, isArchitecturalTex)
+ */
+export function getBoulevardPaverTexture(): THREE.CanvasTexture {
+  if (cachedBoulevardPaverTexture) return cachedBoulevardPaverTexture;
+  if (typeof document === 'undefined') return createFallbackTexture();
+
+  const size = 256;
+  const canvas = document.createElement('canvas');
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return createFallbackTexture();
+
+  ctx.fillStyle = '#cbd5e1';
+  ctx.fillRect(0, 0, size, size);
+
+  const brickW = 32;
+  const brickH = 16;
+  const rows = size / brickH;
+  const cols = size / brickW;
+
+  for (let r = 0; r < rows; r++) {
+    const offset = (r % 2) * (brickW / 2);
+    for (let c = -1; c <= cols; c++) {
+      const x = c * brickW + offset;
+      const y = r * brickH;
+      const seed = ((r * 17 + c * 29) % 16) - 8;
+      // Warm sandstone/granite pavers
+      ctx.fillStyle = `rgb(${218 + seed}, ${212 + seed}, ${204 + seed})`;
+      ctx.fillRect(x + 1, y + 1, brickW - 2, brickH - 2);
+    }
+  }
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.wrapS = THREE.RepeatWrapping;
+  texture.wrapT = THREE.RepeatWrapping;
+  texture.repeat.set(2, 2);
+  texture.anisotropy = 4;
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.userData.isSharedResource = true;
+  texture.userData.isArchitecturalTex = true;
+  cachedBoulevardPaverTexture = texture;
+  return texture;
+}
+
+/**
+ * Canonical Clear Showcase / Vehicle / Atrium / Skylight Glass Material.
+ * Stays transparent (opacity 0.36, outside [0.58, 0.74]) and merges town-wide into 1 draw call.
+ */
+export function getClearShowcaseGlassMaterial(): THREE.MeshStandardMaterial {
+  if (cachedClearShowcaseGlassMat) return cachedClearShowcaseGlassMat;
+  const mat = new THREE.MeshStandardMaterial({
+    color: 0xdbeafe,
+    transparent: true,
+    opacity: 0.36,
+    roughness: 0.12,
+    metalness: 0.18,
+  });
+  mat.userData.isSharedResource = true;
+  mat.userData.batchGlobal = true;
+  mat.userData.isClearShowcaseGlass = true;
+  cachedClearShowcaseGlassMat = mat;
+  return mat;
+}
+
+/**
+ * Consolidated Static Emissive Materials (collapses town-wide lanterns, beacons & neon accents into 3 draw calls).
+ */
+export function getSharedEmissiveMaterial(
+  variant: 'WARM_LANTERN' | 'RED_BEACON' | 'COOL_NEON'
+): THREE.MeshStandardMaterial {
+  const existing = cachedSharedEmissiveMats[variant];
+  if (existing) return existing;
+
+  let mat: THREE.MeshStandardMaterial;
+  if (variant === 'WARM_LANTERN') {
+    mat = new THREE.MeshStandardMaterial({
+      color: 0xfef08a,
+      emissive: 0xfde047,
+      emissiveIntensity: 0.85,
+      roughness: 0.25,
+    });
+  } else if (variant === 'RED_BEACON') {
+    mat = new THREE.MeshStandardMaterial({
+      color: 0xef4444,
+      emissive: 0xef4444,
+      emissiveIntensity: 1.2,
+      roughness: 0.25,
+    });
+  } else {
+    mat = new THREE.MeshStandardMaterial({
+      color: 0x38bdf8,
+      emissive: 0x38bdf8,
+      emissiveIntensity: 0.75,
+      roughness: 0.25,
+    });
+  }
+  mat.userData.isSharedResource = true;
+  cachedSharedEmissiveMats[variant] = mat;
+  return mat;
+}
+
+/**
  * Builds an authentic rectangular Japanese *Irimoya* (Hip-and-Gable) Roof
  * with flared eaves, carved *Masugumi* timber brackets, corner bronze *Fūtaku* wind-bells,
  * diagonal hip ridges (*Kudari-mune*), and *Onigawara* ridge-end finials.
@@ -1245,7 +1615,25 @@ export function enhanceBuildingGroup(
   });
 
   const processedMaterials = new Set<THREE.Material>();
+  const verticalMaterials = new Set<THREE.Material>();
+  const clonedPaverMats = new Map<THREE.Material, THREE.MeshStandardMaterial>();
   const frontWindowsToEnhance: THREE.Mesh[] = [];
+
+  // Pre-pass: identify materials used on vertical/elevated geometry so flat paver upgrades
+  // never bleed onto vertical walls, gateposts, or steps that share foundationMat.
+  group.traverse((obj) => {
+    const mesh = obj as THREE.Mesh;
+    if (!mesh.isMesh || !mesh.material) return;
+    const geomParams = (mesh.geometry as any)?.parameters;
+    const meshHeight = geomParams?.height ?? 1.0;
+    const isFlatGroundSlab =
+      mesh.geometry.type === 'PlaneGeometry' ||
+      (mesh.geometry.type === 'BoxGeometry' && meshHeight <= 0.36 && mesh.position.y <= 0.38);
+    if (!isFlatGroundSlab) {
+      const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+      for (const m of mats) verticalMaterials.add(m);
+    }
+  });
 
   group.traverse((obj) => {
     const mesh = obj as THREE.Mesh;
@@ -1270,21 +1658,24 @@ export function enhanceBuildingGroup(
       meshHeight <= 1.65 &&
       mesh.position.z >= 0.6 &&
       mesh.position.y >= 0.85 &&
-      !mesh.userData.skipWindowEnhance
+      !mesh.userData.skipWindowEnhance &&
+      !mesh.userData.keepTransparentGlass
     ) {
       const m = mesh.material as THREE.MeshStandardMaterial;
       if (
         m.isMeshStandardMaterial &&
+        !m.userData?.isClearShowcaseGlass &&
         ((m.transparent && m.opacity >= 0.58 && m.opacity <= 0.88) || m.map === winPaneTex)
       ) {
         frontWindowsToEnhance.push(mesh);
       }
     }
 
-    const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
-    for (const m of materials) {
-      const mat = m as THREE.MeshStandardMaterial;
-      if (!mat || !mat.isMeshStandardMaterial || processedMaterials.has(mat)) continue;
+    const isMatArray = Array.isArray(mesh.material);
+    const materials = isMatArray ? (mesh.material as THREE.Material[]) : [mesh.material as THREE.Material];
+    for (let mi = 0; mi < materials.length; mi++) {
+      const mat = materials[mi] as THREE.MeshStandardMaterial;
+      if (!mat || !mat.isMeshStandardMaterial) continue;
 
       if (mat.map && mat.map.anisotropy > maxAnisotropy) {
         mat.map.anisotropy = maxAnisotropy;
@@ -1292,6 +1683,51 @@ export function enhanceBuildingGroup(
 
       const c = mat.color;
       if (!c) continue;
+
+      // 2. Textured Sidewalk / Apron / Plaza Stone Pavers on horizontal slabs
+      // (Checked before processedMaterials so cloned per-mesh slab replacements apply to every slab)
+      const isNeutralLightGray =
+        Math.abs(c.r - c.g) < 0.08 &&
+        Math.abs(c.g - c.b) < 0.10 &&
+        c.r >= 0.65 &&
+        c.r <= 0.96 &&
+        !mat.transparent &&
+        mat.metalness < 0.25;
+      if (!mat.map && isFlatGroundSlab && isNeutralLightGray && meshHeight >= 0.04) {
+        if (verticalMaterials.has(mat)) {
+          let slabMat = clonedPaverMats.get(mat);
+          if (!slabMat) {
+            slabMat = mat.clone();
+            slabMat.map = paverTex;
+            if (archBump) {
+              slabMat.bumpMap = archBump;
+              slabMat.bumpScale = 0.012;
+            }
+            slabMat.roughness = 0.78;
+            slabMat.needsUpdate = true;
+            clonedPaverMats.set(mat, slabMat);
+          }
+          if (isMatArray) {
+            (mesh.material as THREE.Material[])[mi] = slabMat;
+          } else {
+            mesh.material = slabMat;
+          }
+          continue;
+        }
+        if (!processedMaterials.has(mat)) {
+          mat.map = paverTex;
+          if (archBump) {
+            mat.bumpMap = archBump;
+            mat.bumpScale = 0.012;
+          }
+          mat.roughness = 0.78;
+          mat.needsUpdate = true;
+          processedMaterials.add(mat);
+        }
+        continue;
+      }
+
+      if (processedMaterials.has(mat)) continue;
 
       // 1. Textured Grass Upgrade: strictly on horizontal flat lawn/turf slabs (NEVER tree cones/foliage!)
       const isGreenTurf = c.g > 0.32 && c.g > c.r * 1.18 && c.g > c.b * 1.18 && !mat.transparent;
@@ -1302,26 +1738,6 @@ export function enhanceBuildingGroup(
           mat.bumpScale = 0.025;
         }
         mat.roughness = 0.88;
-        mat.needsUpdate = true;
-        processedMaterials.add(mat);
-        continue;
-      }
-
-      // 2. Textured Sidewalk / Apron / Plaza Stone Pavers on horizontal slabs
-      const isNeutralLightGray =
-        Math.abs(c.r - c.g) < 0.08 &&
-        Math.abs(c.g - c.b) < 0.10 &&
-        c.r >= 0.65 &&
-        c.r <= 0.96 &&
-        !mat.transparent &&
-        mat.metalness < 0.25;
-      if (!mat.map && isFlatGroundSlab && isNeutralLightGray && meshHeight >= 0.04) {
-        mat.map = paverTex;
-        if (archBump) {
-          mat.bumpMap = archBump;
-          mat.bumpScale = 0.012;
-        }
-        mat.roughness = 0.78;
         mat.needsUpdate = true;
         processedMaterials.add(mat);
         continue;
@@ -1365,7 +1781,14 @@ export function enhanceBuildingGroup(
 
       // 5. Enhance exterior building window glass with opaque multi-pane sash & Venetian blind texture
       // Making exterior panes opaque eliminates ~200 per-building transparent draw-call splits.
-      if (mat.transparent && mat.opacity >= 0.58 && mat.opacity <= 0.74 && !mat.map) {
+      if (
+        mat.transparent &&
+        mat.opacity >= 0.58 &&
+        mat.opacity <= 0.74 &&
+        !mat.map &&
+        !mat.userData?.isClearShowcaseGlass &&
+        !mesh.userData?.keepTransparentGlass
+      ) {
         mat.map = winPaneTex;
         mat.color.setHex(0xe0f2fe);
         mat.transparent = false;

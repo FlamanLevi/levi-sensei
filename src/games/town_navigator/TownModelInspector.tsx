@@ -1141,8 +1141,8 @@ export const TIER3_CATALOG: Record<Exclude<Tier3Model, 'ESPLANADE_5'>, BuildingD
     detail2: {
       label: 'Dolphin Leap Fountain',
       icon: '🐬',
-      pos: [-4.2, 2.8, 7.8],
-      target: [-4.2, 1.4, 6.7]
+      pos: [-4.2, 2.8, 7.6],
+      target: [-4.2, 1.4, 5.9]
     }
   },
   CASTLE: {

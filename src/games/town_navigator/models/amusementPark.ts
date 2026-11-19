@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { getBrickTileTexture, getArchitecturalBumpMap } from './wallTextures';
+import { getBrickTileTexture, getArchitecturalBumpMap, getClearShowcaseGlassMaterial } from './wallTextures';
 import { batchStaticMeshes } from '../staticBatcher';
 
 export interface AmusementParkOptions {
@@ -106,13 +106,7 @@ export function buildAmusementParkMesh(options: AmusementParkOptions = {}): THRE
     emissiveIntensity: 1.1,
     roughness: 0.2,
   });
-  const glassMat = new THREE.MeshStandardMaterial({
-    color: 0xa5f3fc,
-    roughness: 0.1,
-    metalness: 0.15,
-    transparent: true,
-    opacity: 0.65,
-  });
+  const clearGlassMat = getClearShowcaseGlassMaterial();
   const woodDeckMat = new THREE.MeshStandardMaterial({ color: 0x92400e, roughness: 0.75 });
   const coasterRailMat = new THREE.MeshStandardMaterial({ color: 0xef4444, roughness: 0.28, metalness: 0.45 });
   const coasterPillarMat = new THREE.MeshStandardMaterial({ color: 0xfacc15, roughness: 0.38, metalness: 0.25 });
@@ -175,34 +169,50 @@ export function buildAmusementParkMesh(options: AmusementParkOptions = {}): THRE
   boardingDeck.receiveShadow = true;
   wheelGroup.add(boardingDeck);
 
+  [-2.15, 2.15].forEach((qx) => {
+    const qRail = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.06, 3.8), wheelRimMat);
+    qRail.position.set(qx, 0.92, 0);
+    wheelGroup.add(qRail);
+    [-1.7, 0, 1.7].forEach((qz) => {
+      const qPost = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.56, 6), wheelRimMat);
+      qPost.position.set(qx, 0.64, qz);
+      wheelGroup.add(qPost);
+    });
+  });
+
   for (let st = 0; st < 3; st++) {
     const step = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.12, 0.28), woodDeckMat);
     step.position.set(0, 0.06 + st * 0.11, 2.12 - st * 0.18);
     wheelGroup.add(step);
   }
 
-  // Sturdy A-Frame Structural Pylon Legs + Horizontal Tie-Beams
-  const legPositions = [
-    [-1.8, axleY / 2, -1.6],
-    [+1.8, axleY / 2, -1.6],
-    [-1.8, axleY / 2, +1.6],
-    [+1.8, axleY / 2, +1.6],
-  ];
-  legPositions.forEach(([lx, ly, lz]) => {
-    const legGeo = new THREE.CylinderGeometry(0.18, 0.34, axleY + 0.5, 10);
+  // Sturdy A-Frame Structural Pylon Legs (Aligned cleanly via setFromUnitVectors) + Axle Pillow-Blocks
+  const upVec = new THREE.Vector3(0, 1, 0);
+  [
+    [-1.8, -1.55],
+    [+1.8, -1.55],
+    [-1.8, +1.55],
+    [+1.8, +1.55],
+  ].forEach(([lx, lz]) => {
+    const start = new THREE.Vector3(lx, 0.2, lz);
+    const end = new THREE.Vector3(0, axleY, lz);
+    const dir = new THREE.Vector3().subVectors(end, start);
+    const len = dir.length();
+    const legGeo = new THREE.CylinderGeometry(0.18, 0.32, len, 10);
     const leg = new THREE.Mesh(legGeo, wheelPylonMat);
-    leg.position.set(lx, ly, lz);
-    leg.lookAt(0, axleY, 0);
+    leg.position.addVectors(start, end).multiplyScalar(0.5);
+    leg.quaternion.setFromUnitVectors(upVec, dir.normalize());
     leg.castShadow = true;
     wheelGroup.add(leg);
   });
 
-  // Cross-bracing horizontal struts on A-frame pylons
-  [-1.6, 1.6].forEach((lz) => {
-    const crossTie = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.09, 2.2, 8), wheelPylonMat);
+  [-1.55, 1.55].forEach((lz) => {
+    const pillow = new THREE.Mesh(new THREE.BoxGeometry(0.75, 0.65, 0.42), wheelPylonMat);
+    pillow.position.set(0, axleY, lz);
+    const crossTie = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.09, 2.3, 8), wheelPylonMat);
     crossTie.rotation.z = Math.PI / 2;
     crossTie.position.set(0, 5.2, lz);
-    wheelGroup.add(crossTie);
+    wheelGroup.add(pillow, crossTie);
   });
 
   // Central Rotating Rotor Group (Name preserved for 60 FPS animation!)
@@ -365,16 +375,36 @@ export function buildAmusementParkMesh(options: AmusementParkOptions = {}): THRE
   centerSpine.position.set(0, -0.14, 0);
   coasterGroup.add(leftRail, rightRail, centerSpine);
 
+  const zAxis = new THREE.Vector3(0, 0, 1);
   const numTies = 28;
   for (let t = 0; t <= numTies; t++) {
     const u = t / numTies;
     const pt = trackCurve.getPoint(u);
-    const tie = new THREE.Mesh(new THREE.BoxGeometry(0.60, 0.06, 0.09), coasterPillarMat);
+    const tangent = trackCurve.getTangent(u).normalize();
+    const tie = new THREE.Mesh(new THREE.BoxGeometry(0.62, 0.06, 0.10), coasterPillarMat);
     tie.position.copy(pt);
+    tie.quaternion.setFromUnitVectors(zAxis, tangent);
     coasterGroup.add(tie);
   }
 
-  // Detailed 3-Car Coaster Train at the Top Crest with Headrests & Safety Harnesses
+  // Covered Boarding Station & Lift-Hill End Platform anchoring Track Ends
+  [
+    { x: -3.0, z: -5.0, h: 4.2 },
+    { x: +2.4, z: -0.5, h: 3.8 },
+  ].forEach((st) => {
+    const stDeck = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.22, 1.8), woodDeckMat);
+    stDeck.position.set(st.x, st.h - 0.12, st.z);
+    const stRoof = new THREE.Mesh(new THREE.BoxGeometry(2.0, 0.14, 2.0), castlePinkMat);
+    stRoof.position.set(st.x, st.h + 1.35, st.z);
+    [[-0.8, -0.8], [0.8, -0.8], [-0.8, 0.8], [0.8, 0.8]].forEach(([cx, cz]) => {
+      const col = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, st.h + 1.35, 6), wheelRimMat);
+      col.position.set(st.x + cx, (st.h + 1.35) / 2, st.z + cz);
+      coasterGroup.add(col);
+    });
+    coasterGroup.add(stDeck, stRoof);
+  });
+
+  // Detailed 3-Car Coaster Train at the Top Crest with Bogies, Headrests & Safety Harnesses
   const trainPoint = trackCurve.getPoint(0.5);
   const trainTangent = trackCurve.getTangent(0.5);
 
@@ -389,12 +419,15 @@ export function buildAmusementParkMesh(options: AmusementParkOptions = {}): THRE
     car.position.set(0, 0, c * 0.96);
     car.castShadow = true;
 
+    const bogie = new THREE.Mesh(new THREE.BoxGeometry(0.58, 0.12, 0.54), asphaltMat);
+    bogie.position.set(0, -0.25, c * 0.96);
+
     const headrest = new THREE.Mesh(new THREE.BoxGeometry(0.54, 0.26, 0.12), castlePurpleMat);
     headrest.position.set(0, 0.32, c * 0.96 - 0.22);
 
     const lapBar = new THREE.Mesh(new THREE.BoxGeometry(0.58, 0.16, 0.14), coasterRailMat);
     lapBar.position.set(0, 0.28, c * 0.96 + 0.12);
-    trainGroup.add(car, headrest, lapBar);
+    trainGroup.add(car, bogie, headrest, lapBar);
   }
   const noseCone = new THREE.Mesh(new THREE.ConeGeometry(0.38, 0.60, 10), goldStarMat);
   noseCone.rotation.x = Math.PI / 2;
@@ -404,26 +437,44 @@ export function buildAmusementParkMesh(options: AmusementParkOptions = {}): THRE
   coasterGroup.add(trainGroup);
   park.add(coasterGroup);
 
-  // 3.5. FREEFALL DROP TOWER RIDE (Rear-Center Plaza: X = -0.6m, Z = -6.2m, Height = 14.2m)
+  // 3.5. OPEN-LATTICE FREEFALL DROP TOWER RIDE (Rear-Center Plaza: X = -0.6m, Z = -6.2m, Height = 14.2m)
   const dropTowerGroup = new THREE.Group();
   dropTowerGroup.position.set(-0.6, 0.18, -6.2);
 
-  const dtMast = new THREE.Mesh(new THREE.BoxGeometry(1.1, 13.2, 1.1), castlePurpleMat);
-  dtMast.position.y = 6.6;
-  dtMast.castShadow = true;
+  const dtPad = new THREE.Mesh(new THREE.CylinderGeometry(1.6, 1.7, 0.22, 16), curbMat);
+  dtPad.position.y = 0.11;
+  dropTowerGroup.add(dtPad);
+
+  [[-0.46, -0.46], [0.46, -0.46], [-0.46, 0.46], [0.46, 0.46]].forEach(([mx, mz]) => {
+    const col = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.10, 13.2, 8), castlePurpleMat);
+    col.position.set(mx, 6.6, mz);
+    col.castShadow = true;
+    dropTowerGroup.add(col);
+  });
+  for (let ry = 1.6; ry <= 12.6; ry += 2.2) {
+    const ring = new THREE.Mesh(new THREE.BoxGeometry(1.02, 0.12, 1.02), wheelRimMat);
+    ring.position.y = ry;
+    dropTowerGroup.add(ring);
+  }
   const dtCrown = new THREE.Mesh(new THREE.CylinderGeometry(1.2, 0.8, 0.9, 12), goldStarMat);
   dtCrown.position.y = 13.5;
   const dtSpire = new THREE.Mesh(new THREE.ConeGeometry(0.35, 1.2, 8), neonPinkGlowMat);
   dtSpire.position.y = 14.5;
 
-  // Drop Gondola Ring halfway up the tower
-  const dtCarriage = new THREE.Mesh(new THREE.BoxGeometry(1.9, 0.65, 1.7), coasterRailMat);
-  dtCarriage.position.set(0, 7.8, 0.15);
+  // Multi-Seat Circular Drop Gondola with Yellow Shoulder Harnesses
+  const dtCarriage = new THREE.Mesh(new THREE.CylinderGeometry(1.15, 1.15, 0.45, 16), coasterRailMat);
+  dtCarriage.position.set(0, 7.8, 0);
   dtCarriage.castShadow = true;
-  dropTowerGroup.add(dtMast, dtCrown, dtSpire, dtCarriage);
+  for (let s = 0; s < 6; s++) {
+    const sa = (s / 6) * Math.PI * 2;
+    const seatHarness = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.38, 0.24), goldStarMat);
+    seatHarness.position.set(Math.sin(sa) * 0.95, 8.15, Math.cos(sa) * 0.95);
+    dropTowerGroup.add(seatHarness);
+  }
+  dropTowerGroup.add(dtCrown, dtSpire, dtCarriage);
   park.add(dropTowerGroup);
 
-  // 4. FAIRYTALE ENTRANCE CASTLE GATE & POPCORN/BALLOON STANDS (Z in [+6.0, +7.5])
+  // 4. FAIRYTALE ENTRANCE CASTLE GATE, CARNIVAL BOOTH & POPCORN/BALLOON STANDS (Z in [+6.0, +7.5])
   const gateGroup = new THREE.Group();
   gateGroup.position.set(0, 0.18, 6.7);
 
@@ -457,6 +508,13 @@ export function buildAmusementParkMesh(options: AmusementParkOptions = {}): THRE
   portalArch.position.set(0, 4.8, 0);
   portalArch.castShadow = true;
 
+  // Castle Gate Crenellations along Top of Arch
+  for (let cx = -2.8; cx <= 2.8; cx += 0.8) {
+    const merlon = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.35, 0.50), wheelRimMat);
+    merlon.position.set(cx, 5.68, 0);
+    gateGroup.add(merlon);
+  }
+
   // Entrance Ticket Turnstiles under the Castle Arch
   [-1.4, 0, 1.4].forEach((gx) => {
     const turnstile = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.9, 0.65), wheelPylonMat);
@@ -479,46 +537,82 @@ export function buildAmusementParkMesh(options: AmusementParkOptions = {}): THRE
   gateGroup.add(portalArch, bannerSign);
 
   if (includeLandscaping) {
-    // East Forecourt: Candy-Striped Balloon Cart with Spoked Wheels
+    // East Forecourt: Candy-Striped Balloon Cart with Spoked Wheels, Canopy Poles & Balloon Strings
     const cartGroup = new THREE.Group();
     cartGroup.position.set(5.6, 0, 0);
 
     const cartBox = new THREE.Mesh(new THREE.BoxGeometry(1.25, 0.85, 0.82), castlePinkMat);
-    cartBox.position.set(0, 0.45, 0);
+    cartBox.position.set(0, 0.52, 0);
     const cartCanopy = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.14, 0.95), goldStarMat);
-    cartCanopy.position.set(0, 1.55, 0);
+    cartCanopy.position.set(0, 1.62, 0);
+    [[-0.6, -0.38], [0.6, -0.38], [-0.6, 0.38], [0.6, 0.38]].forEach(([px, pz]) => {
+      const cPole = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 0.72, 6), wheelRimMat);
+      cPole.position.set(px, 1.26, pz);
+      cartGroup.add(cPole);
+    });
+    [[-0.45, 0.42], [0.45, 0.42], [-0.45, -0.42], [0.45, -0.42]].forEach(([wx, wz]) => {
+      const cWheel = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 0.06, 12), woodDeckMat);
+      cWheel.rotation.x = Math.PI / 2;
+      cWheel.position.set(wx, 0.18, wz);
+      cartGroup.add(cWheel);
+    });
     cartGroup.add(cartBox, cartCanopy);
 
+    const balloonMats = [
+      new THREE.MeshStandardMaterial({ color: 0xef4444, roughness: 0.25, metalness: 0.1 }),
+      new THREE.MeshStandardMaterial({ color: 0xfacc15, roughness: 0.25, metalness: 0.1 }),
+      new THREE.MeshStandardMaterial({ color: 0x3b82f6, roughness: 0.25, metalness: 0.1 }),
+      new THREE.MeshStandardMaterial({ color: 0x22c55e, roughness: 0.25, metalness: 0.1 }),
+      new THREE.MeshStandardMaterial({ color: 0xec4899, roughness: 0.25, metalness: 0.1 }),
+    ];
     [
-      [-0.25, 1.85, -0.1, 0xef4444],
-      [+0.25, 2.05, +0.1, 0xfacc15],
-      [0.0, 2.25, 0.0, 0x3b82f6],
-      [-0.15, 2.15, 0.22, 0x22c55e],
-      [+0.18, 2.35, -0.15, 0xec4899],
-    ].forEach(([bx, by, bz, bcolor]) => {
-      const balloon = new THREE.Mesh(
-        new THREE.SphereGeometry(0.19, 12, 10),
-        new THREE.MeshStandardMaterial({ color: bcolor, roughness: 0.25, metalness: 0.1 })
-      );
+      [-0.25, 2.05, -0.1, 0],
+      [+0.25, 2.25, +0.1, 1],
+      [0.0, 2.45, 0.0, 2],
+      [-0.15, 2.35, 0.22, 3],
+      [+0.18, 2.55, -0.15, 4],
+    ].forEach(([bx, by, bz, mIdx]) => {
+      const balloon = new THREE.Mesh(new THREE.SphereGeometry(0.19, 12, 10), balloonMats[mIdx]);
       balloon.position.set(bx, by, bz);
-      cartGroup.add(balloon);
+      const bString = new THREE.Mesh(new THREE.CylinderGeometry(0.008, 0.008, by - 1.65, 4), wheelRimMat);
+      bString.position.set(bx, (by + 1.65) / 2, bz);
+      cartGroup.add(balloon, bString);
     });
     gateGroup.add(cartGroup);
 
-    // West Forecourt: Pastel Popcorn & Crepe Kiosk Wagon
+    // West Forecourt: Pastel Popcorn & Crepe Kiosk Wagon with Clear Glass & Golden Popcorn Mound
     const popcornGroup = new THREE.Group();
     popcornGroup.position.set(-5.6, 0, 0);
     const popCounter = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.92, 0.88), coasterRailMat);
     popCounter.position.y = 0.46;
-    const popGlass = new THREE.Mesh(new THREE.BoxGeometry(1.28, 0.68, 0.78), glassMat);
+    const popGlass = new THREE.Mesh(new THREE.BoxGeometry(1.28, 0.68, 0.78), clearGlassMat);
     popGlass.position.y = 1.24;
+    const popMound = new THREE.Mesh(new THREE.SphereGeometry(0.36, 10, 8), neonGoldGlowMat);
+    popMound.scale.set(1.2, 0.75, 0.9);
+    popMound.position.y = 1.05;
     const popRoof = new THREE.Mesh(new THREE.ConeGeometry(1.0, 0.6, 10), goldStarMat);
     popRoof.position.y = 1.86;
-    popcornGroup.add(popCounter, popGlass, popRoof);
+    popcornGroup.add(popCounter, popGlass, popMound, popRoof);
     gateGroup.add(popcornGroup);
+
+    // East Midway Carnival Game Booth (X = +5.2, Z = +3.5, H <= 3.1m, clear of detail1)
+    const boothGroup = new THREE.Group();
+    boothGroup.position.set(5.2, 0.18, 3.5);
+    const bBase = new THREE.Mesh(new THREE.BoxGeometry(1.8, 1.0, 1.3), castlePinkMat);
+    bBase.position.y = 0.5;
+    const bRoof = new THREE.Mesh(new THREE.ConeGeometry(1.45, 0.85, 4), coasterRailMat);
+    bRoof.rotation.y = Math.PI / 4;
+    bRoof.position.y = 2.65;
+    [[-0.8, -0.55], [0.8, -0.55], [-0.8, 0.55], [0.8, 0.55]].forEach(([px, pz]) => {
+      const bPost = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 1.35, 6), wheelRimMat);
+      bPost.position.set(px, 1.65, pz);
+      boothGroup.add(bPost);
+    });
+    boothGroup.add(bBase, bRoof);
+    park.add(boothGroup);
   }
 
-  // 5. ROTATING CAROUSEL (Merry-Go-Round: X = -3.4m, Z = 3.6m)
+  // 5. ROTATING CAROUSEL (Merry-Go-Round: X = -3.4m, Z = 3.6m, detail2 foreground, finial <= 4.8m)
   const carouselGroup = new THREE.Group();
   carouselGroup.position.set(-3.4, 0.18, 3.6);
 
@@ -549,12 +643,17 @@ export function buildAmusementParkMesh(options: AmusementParkOptions = {}): THRE
   cCenter.position.y = 1.1;
   carouselRotor.add(cCenter);
 
-  // 4 Sculpted Carousel Horses (Body, Neck, Head, Mane & Saddle) on Brass Poles
-  const horseColors = [0xffffff, 0xf472b6, 0x38bdf8, 0xfacc15];
-  for (let h = 0; h < 4; h++) {
-    const hAngle = (h * Math.PI) / 2;
-    const hx = Math.sin(hAngle) * 1.2;
-    const hz = Math.cos(hAngle) * 1.2;
+  // 6 Sculpted Carousel Horses (Body, Legs, Neck, Head, Mane, Tail & Saddle) on Brass Poles
+  const horseMats = [
+    new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.3, metalness: 0.15 }),
+    new THREE.MeshStandardMaterial({ color: 0xf472b6, roughness: 0.3, metalness: 0.15 }),
+    new THREE.MeshStandardMaterial({ color: 0x38bdf8, roughness: 0.3, metalness: 0.15 }),
+    new THREE.MeshStandardMaterial({ color: 0xfacc15, roughness: 0.3, metalness: 0.15 }),
+  ];
+  for (let h = 0; h < 6; h++) {
+    const hAngle = (h * Math.PI * 2) / 6;
+    const hx = Math.sin(hAngle) * 1.22;
+    const hz = Math.cos(hAngle) * 1.22;
 
     const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.024, 0.024, 2.2, 8), goldStarMat);
     pole.position.set(hx, 1.1, hz);
@@ -563,17 +662,26 @@ export function buildAmusementParkMesh(options: AmusementParkOptions = {}): THRE
     horse.position.set(hx, 0.72 + (h % 2) * 0.22, hz);
     horse.rotation.y = hAngle + Math.PI / 2;
 
-    const hMat = new THREE.MeshStandardMaterial({ color: horseColors[h], roughness: 0.3, metalness: 0.15 });
-    const hBody = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.26, 0.54), hMat);
-    const hNeck = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.28, 0.16), hMat);
+    const hMat = horseMats[h % horseMats.length];
+    const hBody = new THREE.Mesh(new THREE.BoxGeometry(0.20, 0.24, 0.52), hMat);
+    const hNeck = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.28, 0.15), hMat);
     hNeck.position.set(0, 0.20, 0.22);
     hNeck.rotation.x = 0.35;
-    const hHead = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.14, 0.24), hMat);
+    const hHead = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.12, 0.24), hMat);
     hHead.position.set(0, 0.32, 0.32);
-    const saddle = new THREE.Mesh(new THREE.BoxGeometry(0.25, 0.09, 0.24), carouselSaddleMat);
-    saddle.position.set(0, 0.14, 0);
+    const hTail = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.22, 0.06), goldStarMat);
+    hTail.position.set(0, 0.02, -0.28);
+    hTail.rotation.x = 0.4;
+    [[-0.07, 0.18], [0.07, 0.18], [-0.07, -0.18], [0.07, -0.18]].forEach(([lx, lz]) => {
+      const hLeg = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.018, 0.24, 6), hMat);
+      hLeg.position.set(lx, -0.18, lz);
+      hLeg.rotation.x = lz > 0 ? -0.3 : 0.3;
+      horse.add(hLeg);
+    });
+    const saddle = new THREE.Mesh(new THREE.BoxGeometry(0.23, 0.08, 0.24), carouselSaddleMat);
+    saddle.position.set(0, 0.13, 0);
 
-    horse.add(hBody, hNeck, hHead, saddle);
+    horse.add(hBody, hNeck, hHead, hTail, saddle);
     carouselRotor.add(pole, horse);
   }
 

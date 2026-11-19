@@ -1,5 +1,10 @@
 import * as THREE from 'three';
-import { getConcretePanelTexture, getArchitecturalBumpMap } from './wallTextures';
+import {
+  getConcretePanelTexture,
+  getArchitecturalBumpMap,
+  getLawnGrassTexture,
+  getClearShowcaseGlassMaterial,
+} from './wallTextures';
 
 export interface StadiumOptions {
   includeRoad?: boolean;
@@ -129,8 +134,9 @@ export function buildStadiumMesh(options: StadiumOptions = {}): THREE.Group {
     roughness: 0.5,
   });
   const arenaAccentMat = new THREE.MeshStandardMaterial({ color: 0x2563eb, roughness: 0.45, metalness: 0.15 });
-  const turfDarkMat = new THREE.MeshStandardMaterial({ color: 0x15803d, roughness: 0.65 });
-  const turfLightMat = new THREE.MeshStandardMaterial({ color: 0x16a34a, roughness: 0.65 });
+  const grassTex = getLawnGrassTexture();
+  const turfDarkMat = new THREE.MeshStandardMaterial({ color: 0x15803d, map: grassTex, roughness: 0.72 });
+  const turfLightMat = new THREE.MeshStandardMaterial({ color: 0x16a34a, map: grassTex, roughness: 0.72 });
   const pitchLineMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.4 });
   const bleacherBlueMat = new THREE.MeshStandardMaterial({ color: 0x1d4ed8, roughness: 0.65 });
   const bleacherSkyMat = new THREE.MeshStandardMaterial({ color: 0x0284c7, roughness: 0.65 });
@@ -140,6 +146,7 @@ export function buildStadiumMesh(options: StadiumOptions = {}): THREE.Group {
     side: THREE.DoubleSide,
   });
   const pylonMat = new THREE.MeshStandardMaterial({ color: 0x64748b, roughness: 0.38, metalness: 0.65 });
+  const darkSlateMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.6 });
   const lampGlowMat = new THREE.MeshStandardMaterial({
     color: 0xfffbeb,
     emissive: 0xfef08a,
@@ -152,20 +159,33 @@ export function buildStadiumMesh(options: StadiumOptions = {}): THREE.Group {
     emissiveIntensity: 0.65,
     roughness: 0.3,
   });
-  const glassMat = new THREE.MeshStandardMaterial({
-    color: 0x93c5fd,
-    roughness: 0.1,
-    metalness: 0.15,
-    transparent: true,
-    opacity: 0.68,
-  });
+  const clearGlassMat = getClearShowcaseGlassMaterial();
   const goalPostMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.3, metalness: 0.25 });
-  const goalNetMat = new THREE.MeshStandardMaterial({
-    color: 0xf8fafc,
-    transparent: true,
-    opacity: 0.45,
-    wireframe: true,
-  });
+  const redKitMat = new THREE.MeshStandardMaterial({ color: 0xef4444, roughness: 0.5 });
+  const blueKitMat = new THREE.MeshStandardMaterial({ color: 0x3b82f6, roughness: 0.5 });
+  const skinMat = new THREE.MeshStandardMaterial({ color: 0xfed7aa, roughness: 0.6 });
+
+  function makeEllipticalRing(
+    rxOuter: number,
+    rzOuter: number,
+    rxInner: number,
+    rzInner: number,
+    height: number,
+    segments = 24
+  ): THREE.ExtrudeGeometry {
+    const shape = new THREE.Shape();
+    shape.absellipse(0, 0, rxOuter, rzOuter, 0, Math.PI * 2, false, 0);
+    const hole = new THREE.Path();
+    hole.absellipse(0, 0, rxInner, rzInner, 0, Math.PI * 2, true, 0);
+    shape.holes.push(hole);
+    const geo = new THREE.ExtrudeGeometry(shape, {
+      depth: height,
+      bevelEnabled: false,
+      curveSegments: segments,
+    });
+    geo.rotateX(-Math.PI / 2);
+    return geo;
+  }
 
   // 1. BASE FOOTPRINT & INFRASTRUCTURE (18m x 18m Lot)
   const foundationGeo = new THREE.BoxGeometry(18.0, 0.18, 16.5);
@@ -202,63 +222,49 @@ export function buildStadiumMesh(options: StadiumOptions = {}): THREE.Group {
     }
   }
 
-  // 2. STADIUM ARENA BOWL (Outer Facade: 16.0m x 12.6m, Height: 7.2m)
+  // 2. STADIUM ARENA BOWL (Solid Extruded Elliptical Wall — Zero Backface Culling)
   const arenaGroup = new THREE.Group();
   arenaGroup.position.set(0, 0.18, -1.2);
 
-  const outerWallGeo = new THREE.CylinderGeometry(8.0, 7.6, 7.0, 32, 1, true);
-  outerWallGeo.scale(1.0, 1.0, 0.78);
-  const outerWall = new THREE.Mesh(outerWallGeo, arenaWallMat);
-  outerWall.position.set(0, 3.5, 0);
+  const outerWall = new THREE.Mesh(makeEllipticalRing(8.05, 8.05 * 0.78, 7.42, 7.42 * 0.78, 6.8, 28), arenaWallMat);
+  outerWall.position.set(0, 0, 0);
   outerWall.castShadow = true;
   outerWall.receiveShadow = true;
   arenaGroup.add(outerWall);
 
-  const rimGeo = new THREE.CylinderGeometry(8.18, 8.18, 0.65, 32, 1, true);
-  rimGeo.scale(1.0, 1.0, 0.78);
-  const rim = new THREE.Mesh(rimGeo, arenaAccentMat);
-  rim.position.set(0, 6.8, 0);
+  const rim = new THREE.Mesh(makeEllipticalRing(8.22, 8.22 * 0.78, 7.35, 7.35 * 0.78, 0.58, 28), arenaAccentMat);
+  rim.position.set(0, 6.65, 0);
   arenaGroup.add(rim);
 
-  // Exterior Concourse Windows & Vertical Facade Ribs
-  const ribGeo = new THREE.BoxGeometry(0.24, 7.0, 0.38);
+  // Vertical Facade Ribs
+  const ribGeo = new THREE.BoxGeometry(0.24, 6.9, 0.38);
   for (let a = 0; a < Math.PI * 2; a += Math.PI / 8) {
     const rib = new THREE.Mesh(ribGeo, arenaAccentMat);
-    const rx = Math.sin(a) * 8.05;
-    const rz = Math.cos(a) * 8.05 * 0.78;
-    rib.position.set(rx, 3.5, rz);
+    const rx = Math.sin(a) * 8.08;
+    const rz = Math.cos(a) * 8.08 * 0.78;
+    rib.position.set(rx, 3.45, rz);
     rib.rotation.y = a;
     rib.castShadow = true;
     arenaGroup.add(rib);
   }
 
-  // 3. GREEN SOCCER PITCH, TWO-TONE MOWED STRIPES, RUNNING TRACK & GOALS (detail1)
+  // 3. GREEN SOCCER PITCH, CURVED OVAL RUNNING TRACK & GOALS (detail1)
   const trackMat = new THREE.MeshStandardMaterial({ color: 0xc2410c, roughness: 0.8 });
-  const trackGeo = new THREE.BoxGeometry(12.4, 0.04, 8.4);
-  const track = new THREE.Mesh(trackGeo, trackMat);
-  track.position.set(0, 0.38, 0);
-  track.receiveShadow = true;
-  arenaGroup.add(track);
+  const trackBase = new THREE.Mesh(makeEllipticalRing(6.35, 4.45, 4.95, 3.15, 0.04, 28), trackMat);
+  trackBase.position.set(0, 0.36, 0);
+  trackBase.receiveShadow = true;
+  arenaGroup.add(trackBase);
 
-  for (let l = 1; l <= 2; l++) {
-    const w = 9.8 + l * 1.1;
-    const d = 6.2 + l * 1.0;
-    const lineThickness = 0.05;
-
-    const northSouthGeo = new THREE.BoxGeometry(w, 0.01, lineThickness);
-    const northLine = new THREE.Mesh(northSouthGeo, pitchLineMat);
-    northLine.position.set(0, 0.405, -d / 2);
-    const southLine = new THREE.Mesh(northSouthGeo, pitchLineMat);
-    southLine.position.set(0, 0.405, d / 2);
-
-    const eastWestGeo = new THREE.BoxGeometry(lineThickness, 0.01, d);
-    const westLine = new THREE.Mesh(eastWestGeo, pitchLineMat);
-    westLine.position.set(-w / 2, 0.405, 0);
-    const eastLine = new THREE.Mesh(eastWestGeo, pitchLineMat);
-    eastLine.position.set(w / 2, 0.405, 0);
-
-    arenaGroup.add(northLine, southLine, westLine, eastLine);
-  }
+  // Concentric White Oval Lane Markings + Sprint Finish Line
+  [5.4, 5.85].forEach((lrx, idx) => {
+    const lrz = 3.55 + idx * 0.42;
+    const laneRing = new THREE.Mesh(makeEllipticalRing(lrx + 0.04, lrz + 0.04, lrx, lrz, 0.012, 28), pitchLineMat);
+    laneRing.position.set(0, 0.402, 0);
+    arenaGroup.add(laneRing);
+  });
+  const finishLine = new THREE.Mesh(new THREE.BoxGeometry(0.10, 0.015, 1.2), pitchLineMat);
+  finishLine.position.set(0, 0.405, 3.78);
+  arenaGroup.add(finishLine);
 
   const numBands = 8;
   const bandW = 9.6 / numBands;
@@ -293,33 +299,40 @@ export function buildStadiumMesh(options: StadiumOptions = {}): THREE.Group {
   soccerBall.position.set(0, 0.53, 0);
   arenaGroup.add(centerCircle, centerLine, soccerBall);
 
-  // Miniature 3D Soccer Players on Pitch (Red Team vs. Blue Team)
-  const redKitMat = new THREE.MeshStandardMaterial({ color: 0xef4444, roughness: 0.5 });
-  const blueKitMat = new THREE.MeshStandardMaterial({ color: 0x3b82f6, roughness: 0.5 });
-  const skinMat = new THREE.MeshStandardMaterial({ color: 0xfed7aa, roughness: 0.6 });
+  // Articulated 3D Soccer Players on Pitch (Red Team vs. Blue Team)
   [
-    { x: -2.2, z: -0.9, mat: redKitMat },
-    { x: -1.1, z: 0.8, mat: redKitMat },
-    { x: -4.2, z: 0.0, mat: redKitMat },
-    { x: 2.2, z: 0.9, mat: blueKitMat },
-    { x: 1.1, z: -0.8, mat: blueKitMat },
-    { x: 4.2, z: 0.0, mat: blueKitMat },
+    { x: -2.2, z: -0.9, mat: redKitMat, rot: 0.4 },
+    { x: -1.1, z: 0.8, mat: redKitMat, rot: 0.9 },
+    { x: -4.2, z: 0.0, mat: redKitMat, rot: Math.PI / 2 },
+    { x: 2.2, z: 0.9, mat: blueKitMat, rot: -2.6 },
+    { x: 1.1, z: -0.8, mat: blueKitMat, rot: -2.0 },
+    { x: 4.2, z: 0.0, mat: blueKitMat, rot: -Math.PI / 2 },
   ].forEach((p) => {
-    const pBody = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.08, 0.36, 8), p.mat);
-    pBody.position.set(p.x, 0.62, p.z);
-    const pHead = new THREE.Mesh(new THREE.SphereGeometry(0.085, 8, 8), skinMat);
-    pHead.position.set(p.x, 0.88, p.z);
-    arenaGroup.add(pBody, pHead);
+    const pGroup = new THREE.Group();
+    pGroup.position.set(p.x, 0.435, p.z);
+    pGroup.rotation.y = p.rot;
+    [-0.045, 0.045].forEach((lx) => {
+      const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.022, 0.18, 6), skinMat);
+      leg.position.set(lx, 0.09, 0);
+      pGroup.add(leg);
+    });
+    const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.075, 0.065, 0.22, 8), p.mat);
+    torso.position.y = 0.28;
+    const head = new THREE.Mesh(new THREE.SphereGeometry(0.075, 8, 8), skinMat);
+    head.position.y = 0.46;
+    pGroup.add(torso, head);
+    arenaGroup.add(pGroup);
   });
 
-  // Penalty Boxes, 6-Yard Goal Boxes & 4 Corner Flags
-  [-4.4, 4.4].forEach((px) => {
+  // Aligned Penalty Boxes & 4 Corner Flags
+  [-4.76, 4.76].forEach((px) => {
+    const dir = px < 0 ? 1 : -1;
     const box = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.01, 3.2), pitchLineMat);
-    box.position.set(px > 0 ? px - 1.0 : px + 1.0, 0.44, 0);
-    const boxTop = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.01, 0.08), pitchLineMat);
-    boxTop.position.set(px > 0 ? px - 0.3 : px + 0.3, 0.44, 1.6);
-    const boxBtm = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.01, 0.08), pitchLineMat);
-    boxBtm.position.set(px > 0 ? px - 0.3 : px + 0.3, 0.44, -1.6);
+    box.position.set(px + dir * 1.15, 0.44, 0);
+    const boxTop = new THREE.Mesh(new THREE.BoxGeometry(1.15, 0.01, 0.08), pitchLineMat);
+    boxTop.position.set(px + dir * 0.575, 0.44, 1.6);
+    const boxBtm = new THREE.Mesh(new THREE.BoxGeometry(1.15, 0.01, 0.08), pitchLineMat);
+    boxBtm.position.set(px + dir * 0.575, 0.44, -1.6);
     arenaGroup.add(box, boxTop, boxBtm);
   });
 
@@ -328,10 +341,7 @@ export function buildStadiumMesh(options: StadiumOptions = {}): THREE.Group {
   ].forEach(([cx, cz]) => {
     const cPole = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.45, 6), pitchLineMat);
     cPole.position.set(cx, 0.65, cz);
-    const cFlag = new THREE.Mesh(
-      new THREE.BoxGeometry(0.16, 0.11, 0.01),
-      new THREE.MeshStandardMaterial({ color: 0xef4444, roughness: 0.5 })
-    );
+    const cFlag = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.11, 0.01), redKitMat);
     cFlag.position.set(cx + 0.08, 0.82, cz);
     arenaGroup.add(cPole, cFlag);
   });
@@ -343,22 +353,24 @@ export function buildStadiumMesh(options: StadiumOptions = {}): THREE.Group {
     arenaGroup.add(adBoard);
   });
 
-  // Team Dugout Benches
+  // Team Dugout Benches with Glazed Side Walls & Support Posts
   [-2.2, 2.2].forEach((dx) => {
     const dugoutGroup = new THREE.Group();
     dugoutGroup.position.set(dx, 0.42, 3.2);
-    const dCanopy = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.04, 0.6), arenaAccentMat);
+    const dCanopy = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.05, 0.6), arenaAccentMat);
     dCanopy.position.set(0, 0.85, 0);
-    const dBench = new THREE.Mesh(
-      new THREE.BoxGeometry(1.4, 0.25, 0.35),
-      new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.6 })
-    );
+    const dBench = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.25, 0.35), darkSlateMat);
     dBench.position.set(0, 0.15, -0.05);
+    [-0.76, 0.76].forEach((sx) => {
+      const sWall = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.82, 0.55), clearGlassMat);
+      sWall.position.set(sx, 0.42, 0);
+      dugoutGroup.add(sWall);
+    });
     dugoutGroup.add(dCanopy, dBench);
     arenaGroup.add(dugoutGroup);
   });
 
-  // Soccer Goals with Translucent Goal Nets (Left & Right)
+  // Solid Tubular Soccer Goals (No wireframe draw call)
   [-4.95, 4.95].forEach((gx) => {
     const goalGroup = new THREE.Group();
     goalGroup.position.set(gx, 0.43, 0);
@@ -375,46 +387,71 @@ export function buildStadiumMesh(options: StadiumOptions = {}): THREE.Group {
     crossbar.position.set(0, 0.95, 0);
 
     const netDepth = 0.48;
-    const netOffset = gx < 0 ? -netDepth / 2 : netDepth / 2;
-    const netCage = new THREE.Mesh(new THREE.BoxGeometry(netDepth, 0.92, 1.86), goalNetMat);
-    netCage.position.set(netOffset, 0.46, 0);
+    const netOffset = gx < 0 ? -netDepth : netDepth;
+    [-0.95, 0.95].forEach((gz) => {
+      const backPost = new THREE.Mesh(postGeo, goalPostMat);
+      backPost.position.set(netOffset, 0.475, gz);
+      const topSide = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, netDepth, 6), goalPostMat);
+      topSide.rotation.z = Math.PI / 2;
+      topSide.position.set(netOffset / 2, 0.94, gz);
+      goalGroup.add(backPost, topSide);
+    });
+    const backBar = new THREE.Mesh(crossbarGeo, goalPostMat);
+    backBar.rotation.x = Math.PI / 2;
+    backBar.position.set(netOffset, 0.95, 0);
 
-    goalGroup.add(leftPost, rightPost, crossbar, netCage);
+    goalGroup.add(leftPost, rightPost, crossbar, backBar);
     arenaGroup.add(goalGroup);
   });
 
-  // 4. STEPPED TIERED BLEACHERS, VIP PRESS BOX & CANTILEVERED ROOF CANOPY
+  // 4. SOLID CAPPED STEPPED BLEACHERS, VIP PRESS BOX & CANTILEVERED NORTH ROOF CANOPY
   for (let tier = 1; tier <= 4; tier++) {
-    const tierGeo = new THREE.CylinderGeometry(
-      5.6 + tier * 0.55,
-      5.4 + tier * 0.55,
-      0.48,
-      32,
-      1,
-      true
-    );
-    tierGeo.scale(1.0, 1.0, 0.78);
+    const rIn = 5.3 + tier * 0.52;
+    const rOut = rIn + 0.54;
+    const bleacherGeo = makeEllipticalRing(rOut, rOut * 0.78, rIn, rIn * 0.78, 0.52, 28);
     const bleachers = new THREE.Mesh(
-      tierGeo,
+      bleacherGeo,
       tier % 2 === 0 ? bleacherBlueMat : bleacherSkyMat
     );
-    bleachers.position.set(0, 0.5 + tier * 0.65, 0);
+    bleachers.position.set(0, 0.42 + (tier - 1) * 0.52, 0);
     arenaGroup.add(bleachers);
   }
 
-  const vipBox = new THREE.Mesh(new THREE.BoxGeometry(4.8, 1.15, 0.95), glassMat);
+  const vipBox = new THREE.Mesh(new THREE.BoxGeometry(4.8, 1.15, 0.95), clearGlassMat);
   vipBox.position.set(0, 5.6, -5.4);
+  const vipRoof = new THREE.Mesh(new THREE.BoxGeometry(5.0, 0.14, 1.1), arenaAccentMat);
+  vipRoof.position.set(0, 6.24, -5.4);
+  [-2.2, 2.2].forEach((vx) => {
+    const vCol = new THREE.Mesh(new THREE.BoxGeometry(0.18, 2.2, 0.18), pylonMat);
+    vCol.position.set(vx, 4.1, -5.4);
+    arenaGroup.add(vCol);
+  });
+
   const northRoofCanopy = new THREE.Mesh(
     new THREE.CylinderGeometry(8.2, 6.2, 0.16, 24, 1, true, Math.PI * 0.65, Math.PI * 0.7),
     canopyWhiteMat
   );
   northRoofCanopy.scale.set(1.0, 1.0, 0.78);
   northRoofCanopy.position.set(0, 7.15, 0);
-  arenaGroup.add(vipBox, northRoofCanopy);
+  // North Roof Cantilever Trusses (Keep South rim Z in [+2.0, +5.5] clear above Y=4.5m for detail1!)
+  [-0.55, -0.18, 0.18, 0.55].forEach((angOffset) => {
+    const ang = Math.PI + angOffset;
+    const truss = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.16, 2.2), pylonMat);
+    truss.position.set(Math.sin(ang) * 7.0, 6.98, Math.cos(ang) * 7.0 * 0.78);
+    truss.rotation.y = ang;
+    arenaGroup.add(truss);
+  });
+  arenaGroup.add(vipBox, vipRoof, northRoofCanopy);
 
-  // 5. GIANT ILLUMINATED LED JUMBOTRON SCOREBOARD (detail2: North Stand)
+  // 5. GIANT ILLUMINATED LED JUMBOTRON SCOREBOARD WITH SUPPORT STANCHIONS (detail2: North Stand)
   const scoreboardGroup = new THREE.Group();
   scoreboardGroup.position.set(0, 8.3, -5.2);
+
+  [-1.8, 1.8].forEach((sx) => {
+    const stanchion = new THREE.Mesh(new THREE.BoxGeometry(0.24, 2.5, 0.24), pylonMat);
+    stanchion.position.set(sx, -1.7, -0.05);
+    scoreboardGroup.add(stanchion);
+  });
 
   const boardFrameGeo = new THREE.BoxGeometry(4.8, 2.4, 0.32);
   const boardFrame = new THREE.Mesh(boardFrameGeo, pylonMat);
@@ -435,7 +472,7 @@ export function buildStadiumMesh(options: StadiumOptions = {}): THREE.Group {
   scoreboardGroup.add(boardFrame, boardScreen);
   arenaGroup.add(scoreboardGroup);
 
-  // 6. FOUR CORNER FLOODLIGHT TOWERS WITH CATWALKS (detail2: Height 17.2m <= 18m limit)
+  // 6. FOUR CORNER FLOODLIGHT TOWERS WITH OPEN CATWALKS & FIXED PITCH AIMING (detail2: Height 17.2m <= 18m)
   const towerPositions = [
     [-7.2, -4.8],
     [+7.2, -4.8],
@@ -447,11 +484,13 @@ export function buildStadiumMesh(options: StadiumOptions = {}): THREE.Group {
     const towerGroup = new THREE.Group();
     towerGroup.position.set(tx, 0.18, tz);
 
+    const plinth = new THREE.Mesh(new THREE.BoxGeometry(1.15, 0.6, 1.15), curbMat);
+    plinth.position.y = 0.3;
     const pylonGeo = new THREE.CylinderGeometry(0.2, 0.45, 16.0, 10);
     const pylon = new THREE.Mesh(pylonGeo, pylonMat);
     pylon.position.set(0, 8.0, 0);
     pylon.castShadow = true;
-    towerGroup.add(pylon);
+    towerGroup.add(plinth, pylon);
 
     for (let h = 2.0; h < 15.5; h += 2.5) {
       const ringGeo = new THREE.TorusGeometry(0.38 - h * 0.015, 0.04, 6, 12);
@@ -463,13 +502,17 @@ export function buildStadiumMesh(options: StadiumOptions = {}): THREE.Group {
 
     const catwalk = new THREE.Mesh(new THREE.BoxGeometry(1.9, 0.10, 0.9), pylonMat);
     catwalk.position.set(0, 15.3, 0);
-    const catwalkRail = new THREE.Mesh(new THREE.BoxGeometry(1.95, 0.35, 0.95), arenaAccentMat);
-    catwalkRail.position.set(0, 15.5, 0);
-    towerGroup.add(catwalk, catwalkRail);
+    towerGroup.add(catwalk);
+    [-0.43, 0.43].forEach((cz) => {
+      const railBar = new THREE.Mesh(new THREE.BoxGeometry(1.92, 0.04, 0.04), arenaAccentMat);
+      railBar.position.set(0, 15.65, cz);
+      towerGroup.add(railBar);
+    });
 
     const headGroup = new THREE.Group();
     headGroup.position.set(0, 16.2, 0);
-    headGroup.lookAt(0, 0.4, -1.2);
+    // Aim directly at soccer pitch center (0, 0.4, -1.2) in world coords
+    headGroup.lookAt(-tx, 0.4 - 0.18, -1.2 - tz);
 
     const headFrameGeo = new THREE.BoxGeometry(1.75, 1.25, 0.35);
     const headFrame = new THREE.Mesh(headFrameGeo, pylonMat);
@@ -530,23 +573,36 @@ export function buildStadiumMesh(options: StadiumOptions = {}): THREE.Group {
     const turnstile = new THREE.Mesh(turnstileGeo, pylonMat);
     turnstile.position.set(tx, 0.48, -0.4);
     turnstile.castShadow = true;
-    plazaGroup.add(turnstile);
+    const arm = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.45, 6), goalPostMat);
+    arm.rotation.z = Math.PI / 2;
+    arm.position.set(tx + 0.32, 0.72, -0.4);
+    plazaGroup.add(turnstile, arm);
+  });
+
+  // Twin Forecourt Ticket/Merchandise Kiosks
+  [-5.8, 5.8].forEach((kx) => {
+    const kiosk = new THREE.Mesh(new THREE.BoxGeometry(1.6, 2.1, 1.1), arenaWallMat);
+    kiosk.position.set(kx, 1.05, -0.2);
+    const kRoof = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.16, 1.3), arenaAccentMat);
+    kRoof.position.set(kx, 2.16, -0.2);
+    const kWin = new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.75, 0.05), clearGlassMat);
+    kWin.position.set(kx, 1.25, 0.36);
+    plazaGroup.add(kiosk, kRoof, kWin);
   });
 
   if (includeLandscaping) {
-    [-5.5, +5.5].forEach((fx) => {
+    const flagMats = [
+      new THREE.MeshStandardMaterial({ color: 0x2563eb, roughness: 0.6, side: THREE.DoubleSide }),
+      new THREE.MeshStandardMaterial({ color: 0xdc2626, roughness: 0.6, side: THREE.DoubleSide }),
+    ];
+    [-5.5, +5.5].forEach((fx, idx) => {
       const poleGeo = new THREE.CylinderGeometry(0.04, 0.05, 5.5, 8);
       const pole = new THREE.Mesh(poleGeo, pylonMat);
       pole.position.set(fx, 2.75, 0);
       pole.castShadow = true;
 
       const flagGeo = new THREE.PlaneGeometry(1.0, 0.6);
-      const flagMat = new THREE.MeshStandardMaterial({
-        color: fx < 0 ? 0x2563eb : 0xdc2626,
-        roughness: 0.6,
-        side: THREE.DoubleSide,
-      });
-      const flag = new THREE.Mesh(flagGeo, flagMat);
+      const flag = new THREE.Mesh(flagGeo, flagMats[idx]);
       flag.position.set(fx + 0.5, 5.0, 0);
       plazaGroup.add(pole, flag);
     });

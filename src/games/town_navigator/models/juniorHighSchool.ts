@@ -226,18 +226,10 @@ export function buildJuniorHighSchoolMesh(options: JuniorHighSchoolOptions = {})
   fascia.castShadow = true;
   schoolGroup.add(fascia);
 
-  // Open Rooftop Safety Railing & Solar Panels
+  // Open Rooftop Safety Railing (solar panels provided by buildPerimeterRailing)
   const roofRail = buildPerimeterRailing(bW - 0.2, bD - 0.2, 0.72, steelMat, 1.8);
   roofRail.position.set(0, bH + 0.42, 0);
   schoolGroup.add(roofRail);
-
-  const solarMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, metalness: 0.75, roughness: 0.2 });
-  [-3.2, 3.2].forEach((sx) => {
-    const solar = new THREE.Mesh(new THREE.BoxGeometry(2.6, 0.06, 2.2), solarMat);
-    solar.position.set(sx, bH + 0.55, -0.5);
-    solar.rotation.x = 0.14;
-    schoolGroup.add(solar);
-  });
 
   // 360° Side & Rear Classroom Windows
   addWrapAroundWindows({
@@ -259,33 +251,45 @@ export function buildJuniorHighSchoolMesh(options: JuniorHighSchoolOptions = {})
     schoolGroup.add(fBand);
   });
 
-  // Ribbon Windows on 3 Floors (Front Face: +Z)
+  // Ribbon Windows on 3 Floors (Front Face: +Z, skip 1F center colliding with 3.0m entrance doors)
   [1.65, 4.75, 7.85].forEach((yWin) => {
     [-4.0, -2.4, -0.8, 0.8, 2.4, 4.0].forEach((wx) => {
-      const winGeo = new THREE.BoxGeometry(1.3, 1.4, 0.08);
+      if (yWin < 2.2 && Math.abs(wx) < 1.5) return;
+      const winGeo = new THREE.BoxGeometry(1.3, 1.4, 0.05);
       const win = new THREE.Mesh(winGeo, glassMat);
       win.position.set(wx, yWin, bD / 2 + 0.02);
-      const frameGeo = new THREE.BoxGeometry(1.38, 1.48, 0.06);
+      const frameGeo = new THREE.BoxGeometry(1.38, 1.48, 0.04);
       const frame = new THREE.Mesh(frameGeo, darkMetalMat);
       frame.position.set(wx, yWin, bD / 2 + 0.01);
       schoolGroup.add(frame, win);
     });
   });
 
-  // Vertical Congratulatory School Club Banner (懸垂幕: "祝 全国大会出場") on Facade
+  // Vertical Congratulatory School Club Banner (懸垂幕: "祝 全国大会出場") with Roller Brackets
   const clubBannerMat = new THREE.MeshStandardMaterial({ map: createClubBannerTexture(), roughness: 0.4 });
   const clubBanner = new THREE.Mesh(new THREE.PlaneGeometry(0.95, 3.8), clubBannerMat);
-  clubBanner.position.set(4.8, 5.4, bD / 2 + 0.08);
+  clubBanner.position.set(4.8, 5.4, bD / 2 + 0.09);
   schoolGroup.add(clubBanner);
+  [7.32, 3.48].forEach((by) => {
+    const roller = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 1.08, 8), steelMat);
+    roller.rotation.z = Math.PI / 2;
+    roller.position.set(4.8, by, bD / 2 + 0.09);
+    schoolGroup.add(roller);
+  });
 
   // 3. CENTRAL ROOFTOP CLOCK TOWER (detail1: Reaches 11.6m <= 12.0m)
   const towerW = 2.4;
   const towerH = 2.1;
+  const towerY = bH + 0.42 + towerH / 2;
   const towerGeo = new THREE.BoxGeometry(towerW, towerH, 1.8);
   const tower = new THREE.Mesh(towerGeo, wallMat);
-  tower.position.set(0, bH + 0.42 + towerH / 2, bD / 2 - 0.9);
+  tower.position.set(0, towerY, bD / 2 - 0.9);
   tower.castShadow = true;
   schoolGroup.add(tower);
+
+  const towerCoping = new THREE.Mesh(new THREE.BoxGeometry(towerW + 0.16, 0.12, 1.96), tileAccentMat);
+  towerCoping.position.set(0, bH + 0.42 + towerH + 0.06, bD / 2 - 0.9);
+  schoolGroup.add(towerCoping);
 
   const clockTex = createClockTexture();
   const clockMat = new THREE.MeshStandardMaterial({
@@ -296,8 +300,21 @@ export function buildJuniorHighSchoolMesh(options: JuniorHighSchoolOptions = {})
     roughness: 0.3,
   });
   const clockMesh = new THREE.Mesh(new THREE.PlaneGeometry(1.5, 1.5), clockMat);
-  clockMesh.position.set(0, bH + 0.42 + towerH / 2, bD / 2 + 0.02);
-  schoolGroup.add(clockMesh);
+  clockMesh.position.set(0, towerY, bD / 2 + 0.02);
+  const clockBezel = new THREE.Mesh(new THREE.TorusGeometry(0.76, 0.045, 8, 24), steelMat);
+  clockBezel.position.set(0, towerY, bD / 2 + 0.03);
+  schoolGroup.add(clockMesh, clockBezel);
+
+  // Twin Rooftop PA Speaker Horns atop Clock Tower
+  const paPole = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.035, 0.48, 8), steelMat);
+  paPole.position.set(0, bH + 0.42 + towerH + 0.36, bD / 2 - 0.9);
+  schoolGroup.add(paPole);
+  [-1, 1].forEach((dir) => {
+    const horn = new THREE.Mesh(new THREE.ConeGeometry(0.11, 0.22, 8), foundationMat);
+    horn.rotation.z = dir * -Math.PI / 2;
+    horn.position.set(dir * 0.12, bH + 0.42 + towerH + 0.54, bD / 2 - 0.9);
+    schoolGroup.add(horn);
+  });
 
   // 4. GROUND FLOOR ENTRANCE & CANOPY (昇降口 - Shōkōguchi)
   const canopyW = 3.6;
@@ -308,6 +325,10 @@ export function buildJuniorHighSchoolMesh(options: JuniorHighSchoolOptions = {})
   canopy.castShadow = true;
   schoolGroup.add(canopy);
 
+  const canopySign = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.28, 0.06), darkMetalMat);
+  canopySign.position.set(0, 3.24, bD / 2 + canopyD - 0.03);
+  schoolGroup.add(canopySign);
+
   [-canopyW / 2 + 0.2, canopyW / 2 - 0.2].forEach((px) => {
     const post = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 2.9, 12), darkMetalMat);
     post.position.set(px, 1.45, bD / 2 + canopyD - 0.2);
@@ -317,12 +338,21 @@ export function buildJuniorHighSchoolMesh(options: JuniorHighSchoolOptions = {})
 
   const doorGeo = new THREE.BoxGeometry(canopyW - 0.6, 2.3, 0.05);
   const doors = new THREE.Mesh(doorGeo, glassMat);
-  doors.position.set(0, 1.15, bD / 2 + 0.03);
-  schoolGroup.add(doors);
+  doors.position.set(0, 1.25, bD / 2 + 0.03);
+  const doorMullion = new THREE.Mesh(new THREE.BoxGeometry(0.06, 2.3, 0.07), darkMetalMat);
+  doorMullion.position.set(0, 1.25, bD / 2 + 0.03);
+  const stoopStep = new THREE.Mesh(new THREE.BoxGeometry(canopyW - 0.2, 0.12, 0.55), concreteMat);
+  stoopStep.position.set(0, 0.06, bD / 2 + 0.28);
+  schoolGroup.add(doors, doorMullion, stoopStep);
 
   group.add(schoolGroup);
 
-  // 5. FRONT GATEPOSTS, RETRACTABLE GATE & PLAQUE (detail2 at X = -2.4m, Z = 4.2m)
+  // Paved Entrance Walkway Strip from Gate to Shōkōguchi
+  const walkway = new THREE.Mesh(new THREE.BoxGeometry(3.4, 0.156, 3.6), concreteMat);
+  walkway.position.set(0, 0.078, 2.45);
+  group.add(walkway);
+
+  // 5. FRONT GATEPOSTS, OPEN CRISS-CROSS ACCORDION GATE & PERIMETER FENCE (detail2 at X = -2.4m, Z = 4.2m)
   const gateX = 2.4;
   const gateZ = 4.2;
 
@@ -348,12 +378,45 @@ export function buildJuniorHighSchoolMesh(options: JuniorHighSchoolOptions = {})
     }
   });
 
-  // Partially Open Retractable Steel Accordion Gate (伸縮門扉)
-  const accordionGate = new THREE.Mesh(new THREE.BoxGeometry(1.6, 1.15, 0.08), steelMat);
-  accordionGate.position.set(1.2, 0.72, gateZ);
-  group.add(accordionGate);
+  // Flanking Perimeter Fence (X = ±2.75..±6.0)
+  [-1, 1].forEach((dir) => {
+    const fWall = new THREE.Mesh(new THREE.BoxGeometry(3.25, 0.55, 0.16), concreteMat);
+    fWall.position.set(dir * 4.37, 0.425, gateZ);
+    const fTop = new THREE.Mesh(new THREE.BoxGeometry(3.25, 0.04, 0.04), steelMat);
+    fTop.position.set(dir * 4.37, 1.25, gateZ);
+    group.add(fWall, fTop);
+    for (let i = 0; i < 6; i++) {
+      const fBar = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.70, 6), steelMat);
+      fBar.position.set(dir * (2.95 + i * 0.56), 0.90, gateZ);
+      group.add(fBar);
+    }
+  });
 
-  // 6. COURTYARD AMENITIES (Student Bicycle Shelters & Club Banner)
+  // Open Retractable Steel Accordion Gate (伸縮門扉)
+  const gateTopRail = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.05, 0.06), steelMat);
+  gateTopRail.position.set(1.25, 1.28, gateZ);
+  const gateBotRail = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.05, 0.06), steelMat);
+  gateBotRail.position.set(1.25, 0.22, gateZ);
+  group.add(gateTopRail, gateBotRail);
+  for (let g = 0; g < 5; g++) {
+    const gx = 0.65 + g * 0.30;
+    const vBar = new THREE.Mesh(new THREE.CylinderGeometry(0.014, 0.014, 1.04, 6), steelMat);
+    vBar.position.set(gx, 0.75, gateZ);
+    group.add(vBar);
+  }
+
+  // Courtyard Kadan Planter Beds & Shrubs
+  const kadanWallMat = new THREE.MeshStandardMaterial({ color: 0xb45309, roughness: 0.8 });
+  const shrubMat = new THREE.MeshStandardMaterial({ color: 0x15803d, roughness: 0.85 });
+  [-3.4, 3.4].forEach((kx) => {
+    const bed = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.24, 0.55), kadanWallMat);
+    bed.position.set(kx, 0.27, 3.55);
+    const shrub = new THREE.Mesh(new THREE.BoxGeometry(1.05, 0.22, 0.40), shrubMat);
+    shrub.position.set(kx, 0.45, 3.55);
+    group.add(bed, shrub);
+  });
+
+  // 6. COURTYARD AMENITIES (Sculpted Student Bicycle Shelters & Club Banner)
   const bikeShelter = new THREE.Group();
   bikeShelter.position.set(-4.2, 0.15, 2.2);
 
@@ -374,9 +437,15 @@ export function buildJuniorHighSchoolMesh(options: JuniorHighSchoolOptions = {})
     wf.position.set(bx, 0.22, 0.35);
     const wr = new THREE.Mesh(wheelGeo, darkMetalMat);
     wr.position.set(bx, 0.22, -0.35);
-    const bike = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.45, 0.75), steelMat);
-    bike.position.set(bx, 0.42, 0);
-    bikeShelter.add(wf, wr, bike);
+    const downTube = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.52, 6), steelMat);
+    downTube.rotation.x = 0.65;
+    downTube.position.set(bx, 0.36, 0.08);
+    const seatTube = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.46, 6), steelMat);
+    seatTube.position.set(bx, 0.44, -0.14);
+    const hBar = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 0.34, 6), darkMetalMat);
+    hBar.rotation.z = Math.PI / 2;
+    hBar.position.set(bx, 0.62, 0.26);
+    bikeShelter.add(wf, wr, downTube, seatTube, hBar);
   });
   group.add(bikeShelter);
 

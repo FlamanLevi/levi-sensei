@@ -3,6 +3,7 @@ import {
   getConcretePanelTexture,
   buildPerimeterRailing,
   addWrapAroundWindows,
+  getClearShowcaseGlassMaterial,
 } from './wallTextures';
 
 let cachedLibrarySignTex: THREE.CanvasTexture | null = null;
@@ -121,13 +122,14 @@ export function buildLibraryMesh(options: LibraryOptions = {}): THREE.Group {
   const grassMat = new THREE.MeshStandardMaterial({ color: 0x65a30d, roughness: 0.95 });
   const darkMetalMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.4 });
   const steelMat = new THREE.MeshStandardMaterial({ color: 0x94a3b8, metalness: 0.75, roughness: 0.3 });
-  const glassMat = new THREE.MeshStandardMaterial({
+  const exteriorGlassMat = new THREE.MeshStandardMaterial({
     color: 0x93c5fd,
     roughness: 0.1,
     metalness: 0.15,
     transparent: true,
-    opacity: 0.52,
+    opacity: 0.70,
   });
+  const atriumGlassMat = getClearShowcaseGlassMaterial();
 
   const lotSize = 12.0;
 
@@ -138,9 +140,9 @@ export function buildLibraryMesh(options: LibraryOptions = {}): THREE.Group {
   lawn.receiveShadow = true;
   group.add(lawn);
 
-  const plazaGeo = new THREE.BoxGeometry(lotSize, 0.152, 1.5);
+  const plazaGeo = new THREE.BoxGeometry(lotSize, 0.152, 2.2);
   const plaza = new THREE.Mesh(plazaGeo, foundationMat);
-  plaza.position.set(0, 0.076, 3.75);
+  plaza.position.set(0, 0.076, 3.4);
   plaza.receiveShadow = true;
   group.add(plaza);
 
@@ -202,7 +204,7 @@ export function buildLibraryMesh(options: LibraryOptions = {}): THREE.Group {
   atriumFloor.position.set(-1.55, 0.06, bD / 2 - 0.7);
   libGroup.add(atriumBackWall, atriumFloor);
 
-  // Interior 3-Tier Oak Bookshelves & Colorful Books (Clearly visible inside the glass atrium!)
+  // Interior 3-Tier Oak Bookshelves & Colorful Books + 2F Reading Mezzanine Table
   const bookColors = [0xef4444, 0x3b82f6, 0x10b981, 0xf59e0b, 0x8b5cf6, 0xec4899];
   const bookMats = bookColors.map((c) => new THREE.MeshStandardMaterial({ color: c, roughness: 0.5 }));
   for (let shelf = 0; shelf < 3; shelf++) {
@@ -221,20 +223,10 @@ export function buildLibraryMesh(options: LibraryOptions = {}): THREE.Group {
     }
   }
 
-  // Open Rooftop Safety Railing & South-Angled Rooftop Solar PV Panels
+  // Open Rooftop Safety Railing (solar panels provided by buildPerimeterRailing)
   const roofRail = buildPerimeterRailing(bW - 0.2, bD - 0.2, 0.65, steelMat, 1.6);
   roofRail.position.set(0, bH, 0);
   libGroup.add(roofRail);
-
-  const solarPanelMat = new THREE.MeshStandardMaterial({ color: 0x1e3a8a, roughness: 0.2, metalness: 0.6 });
-  [-2.6, 0, 2.6].forEach((sx) => {
-    const strut = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.35, 0.12), steelMat);
-    strut.position.set(sx, bH + 0.18, -1.2);
-    const panel = new THREE.Mesh(new THREE.BoxGeometry(2.1, 0.06, 1.35), solarPanelMat);
-    panel.position.set(sx, bH + 0.38, -1.1);
-    panel.rotation.x = 0.35;
-    libGroup.add(strut, panel);
-  });
 
   // 360° Side & Rear Reading Room Windows
   addWrapAroundWindows({
@@ -246,8 +238,17 @@ export function buildLibraryMesh(options: LibraryOptions = {}): THREE.Group {
     winH: 1.4,
     sideCols: 3,
     backCols: 5,
-    glassMat,
+    glassMat: exteriorGlassMat,
     frameMat: emeraldTrimMat,
+  });
+
+  // Framed 2F Windows on Right Front Wing
+  [2.2, 3.8].forEach((wx) => {
+    const rWin = new THREE.Mesh(new THREE.BoxGeometry(1.1, 1.25, 0.05), exteriorGlassMat);
+    rWin.position.set(wx, 4.35, bD / 2 + 0.02);
+    const rFrame = new THREE.Mesh(new THREE.BoxGeometry(1.18, 1.33, 0.04), emeraldTrimMat);
+    rFrame.position.set(wx, 4.35, bD / 2 + 0.01);
+    libGroup.add(rFrame, rWin);
   });
 
   // Natural Cedar Architectural Louver Fins on Upper Facade
@@ -258,10 +259,10 @@ export function buildLibraryMesh(options: LibraryOptions = {}): THREE.Group {
     libGroup.add(fin);
   }
 
-  // Soaring 2-Story Floor-to-Ceiling Glass Reading Atrium Curtain Wall + Mullions
+  // Soaring 2-Story Clear Glass Reading Atrium Curtain Wall + Mullions & Transoms
   const glassAtriumW = 5.6;
   const glassAtriumH = 5.6;
-  const atriumGlass = new THREE.Mesh(new THREE.BoxGeometry(glassAtriumW, glassAtriumH, 0.06), glassMat);
+  const atriumGlass = new THREE.Mesh(new THREE.BoxGeometry(glassAtriumW, glassAtriumH, 0.04), atriumGlassMat);
   atriumGlass.position.set(-1.55, glassAtriumH / 2 + 0.1, bD / 2 - 0.02);
   libGroup.add(atriumGlass);
 
@@ -271,18 +272,27 @@ export function buildLibraryMesh(options: LibraryOptions = {}): THREE.Group {
     mullion.position.set(mx, glassAtriumH / 2 + 0.1, bD / 2);
     libGroup.add(mullion);
   }
+  const transom = new THREE.Mesh(new THREE.BoxGeometry(glassAtriumW, 0.07, 0.10), darkMetalMat);
+  transom.position.set(-1.55, 2.95, bD / 2);
+  libGroup.add(transom);
 
-  // Entrance Lobby & Cedar Canopy (Right Wing: X = +2.9m)
+  // Entrance Lobby & Supported Cedar Canopy (Right Wing: X = +2.9m)
   const canopy = new THREE.Mesh(new THREE.BoxGeometry(3.4, 0.18, 1.6), woodLouverMat);
   canopy.position.set(2.9, 3.1, bD / 2 + 0.75);
   canopy.castShadow = true;
   libGroup.add(canopy);
 
-  const doors = new THREE.Mesh(new THREE.BoxGeometry(2.2, 2.4, 0.06), glassMat);
+  [1.45, 4.35].forEach((cx) => {
+    const col = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 3.05, 8), darkMetalMat);
+    col.position.set(cx, 1.525, bD / 2 + 1.35);
+    libGroup.add(col);
+  });
+
+  const doors = new THREE.Mesh(new THREE.BoxGeometry(2.2, 2.4, 0.05), atriumGlassMat);
   doors.position.set(2.9, 1.2, bD / 2 + 0.04);
   libGroup.add(doors);
 
-  // Prominent Header Signboard: "LIBRARY / 図書館"
+  // Prominent Header Signboard: "LIBRARY / 図書館" (mounted cleanly below cedar louver fins)
   const signTexture = createLibrarySignTexture();
   const signMat = new THREE.MeshStandardMaterial({
     map: signTexture,
@@ -294,15 +304,15 @@ export function buildLibraryMesh(options: LibraryOptions = {}): THREE.Group {
   const signMesh = new THREE.Mesh(new THREE.BoxGeometry(4.8, 0.85, 0.12), [
     emeraldTrimMat, emeraldTrimMat, emeraldTrimMat, emeraldTrimMat, signMat, emeraldTrimMat
   ]);
-  signMesh.position.set(0, bH - 0.35, bD / 2 + 0.26);
+  signMesh.position.set(-1.4, 4.55, bD / 2 + 0.16);
   libGroup.add(signMesh);
 
   group.add(libGroup);
 
   // 3. FORECOURT PROPS (detail2: Book Return Box, Reading Bench & Covered Bicycle Parking Rack)
-  // Covered Bicycle Parking Rack (*Chūrinjō* at X = +4.2m, Z = +2.8m)
+  // Covered Bicycle Parking Rack (*Chūrinjō* on paved plaza at X = +4.2m, Z = +3.45m)
   const bikeRack = new THREE.Group();
-  bikeRack.position.set(4.2, 0.15, 2.8);
+  bikeRack.position.set(4.2, 0.15, 3.45);
   const rackRoof = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.06, 1.25), steelMat);
   rackRoof.position.set(0, 1.65, 0);
   rackRoof.rotation.x = 0.12;
@@ -313,16 +323,16 @@ export function buildLibraryMesh(options: LibraryOptions = {}): THREE.Group {
     bikeRack.add(post);
   });
   const bikeColors = [0xef4444, 0x0ea5e9, 0x22c55e, 0xf59e0b];
+  const bikeMats = bikeColors.map((c) => new THREE.MeshStandardMaterial({ color: c, roughness: 0.4 }));
   for (let i = 0; i < 4; i++) {
     const bx = -0.78 + i * 0.52;
-    const bMat = new THREE.MeshStandardMaterial({ color: bikeColors[i], roughness: 0.4 });
     const wheelF = new THREE.Mesh(new THREE.TorusGeometry(0.22, 0.03, 6, 12), darkMetalMat);
     wheelF.rotation.y = Math.PI / 2;
     wheelF.position.set(bx, 0.24, 0.28);
     const wheelR = new THREE.Mesh(new THREE.TorusGeometry(0.22, 0.03, 6, 12), darkMetalMat);
     wheelR.rotation.y = Math.PI / 2;
     wheelR.position.set(bx, 0.24, -0.28);
-    const frame = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.28, 0.56), bMat);
+    const frame = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.28, 0.56), bikeMats[i]);
     frame.position.set(bx, 0.42, 0);
     bikeRack.add(wheelF, wheelR, frame);
   }

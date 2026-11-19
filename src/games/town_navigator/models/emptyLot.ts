@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { getRakedGravelTexture, getLawnGrassTexture } from './wallTextures';
 
 export type EmptyLotVariant =
   | 'SAKURA_FOUNTAIN'
@@ -183,7 +184,7 @@ export function buildEmptyLotMesh(options: EmptyLotOptions = {}): THREE.Group {
   const lotWidth = 6.0;
 
   // Shared Materials
-  const grassMat = new THREE.MeshStandardMaterial({ color: 0x4ade80, roughness: 0.9 });
+  const grassMat = new THREE.MeshStandardMaterial({ color: 0x4ade80, map: getLawnGrassTexture(), roughness: 0.9 });
   const stoneMat = new THREE.MeshStandardMaterial({ color: 0x94a3b8, roughness: 0.75 });
   const sidewalkMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.75 });
   const curbMat = new THREE.MeshStandardMaterial({ color: 0xcbd5e1, roughness: 0.6 });
@@ -204,28 +205,42 @@ export function buildEmptyLotMesh(options: EmptyLotOptions = {}): THREE.Group {
     emissiveIntensity: 1.4,
     roughness: 0.2,
   });
-  const flowerYellowMat = new THREE.MeshBasicMaterial({ color: 0xfde047 });
-  const flowerWhiteMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+  const flowerYellowMat = new THREE.MeshStandardMaterial({ color: 0xfde047, roughness: 0.7 });
+  const flowerWhiteMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.7 });
 
-  // 1. Park Grass Lawn (Z in [-3.0, +1.5], depth 4.5m)
-  const lawnGeo = new THREE.BoxGeometry(lotWidth, 0.16, 4.5);
+  // 1. Park Grass Lawn (Z in [-3.0, +1.5], depth 4.5m, flush 0.15m)
+  const lawnGeo = new THREE.BoxGeometry(lotWidth, 0.15, 4.5);
   const lawn = new THREE.Mesh(lawnGeo, grassMat);
-  lawn.position.set(0, 0.08, -0.75);
+  lawn.position.set(0, 0.075, -0.75);
   lawn.receiveShadow = true;
   group.add(lawn);
 
-  // Unobstructed Front Sidewalk (Z in [+1.5, +3.0], depth 1.5m)
-  const swGeo = new THREE.BoxGeometry(lotWidth, 0.18, 1.5);
+  // Subtle stone lawn edging curb separating lawn from sidewalk
+  const lawnEdging = new THREE.Mesh(new THREE.BoxGeometry(lotWidth, 0.04, 0.08), stoneMat);
+  lawnEdging.position.set(0, 0.16, 1.46);
+  group.add(lawnEdging);
+
+  // Unobstructed Front Sidewalk (Z in [+1.5, +3.0], depth 1.5m, flush 0.15m)
+  const swGeo = new THREE.BoxGeometry(lotWidth, 0.15, 1.5);
   const sw = new THREE.Mesh(swGeo, sidewalkMat);
-  sw.position.set(0, 0.09, 2.25);
+  sw.position.set(0, 0.075, 2.25);
   sw.receiveShadow = true;
   group.add(sw);
 
-  // Front Concrete Curb (Z = +3.0m)
-  const frontCurbGeo = new THREE.BoxGeometry(lotWidth, 0.20, 0.15);
+  // Front Concrete Curb (Z = +3.0m, 0.18m flush with adjacent lots)
+  const frontCurbGeo = new THREE.BoxGeometry(lotWidth, 0.18, 0.12);
   const frontCurb = new THREE.Mesh(frontCurbGeo, curbMat);
-  frontCurb.position.set(0, 0.10, 3.0);
+  frontCurb.position.set(0, 0.09, 3.0);
   group.add(frontCurb);
+
+  // Mini Wooden Park Nameplate (*〇〇公園*) at front-left lawn edge
+  const signPost = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.55, 0.06), woodMat);
+  signPost.position.set(-2.55, 0.42, 1.32);
+  const signBoard = new THREE.Mesh(new THREE.BoxGeometry(0.46, 0.20, 0.04), woodMat);
+  signBoard.position.set(-2.55, 0.65, 1.34);
+  const signPlate = new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.14, 0.02), flowerWhiteMat);
+  signPlate.position.set(-2.55, 0.65, 1.36);
+  group.add(signPost, signBoard, signPlate);
 
   if (includeRoad) {
     const asphaltMat = new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.85 });
@@ -258,7 +273,7 @@ export function buildEmptyLotMesh(options: EmptyLotOptions = {}): THREE.Group {
 
     [-1.35, 1.35].forEach((bx, bedIdx) => {
       const bedGroup = new THREE.Group();
-      bedGroup.position.set(bx, 0.16, -0.55);
+      bedGroup.position.set(bx, 0.15, -0.55);
 
       const frame = new THREE.Mesh(new THREE.BoxGeometry(1.9, 0.24, 2.8), woodMat);
       frame.position.y = 0.12;
@@ -305,16 +320,21 @@ export function buildEmptyLotMesh(options: EmptyLotOptions = {}): THREE.Group {
     });
 
     const gravelWalk = new THREE.Mesh(new THREE.BoxGeometry(0.65, 0.02, 3.4), stoneMat);
-    gravelWalk.position.set(0, 0.17, -0.4);
+    gravelWalk.position.set(0, 0.16, -0.4);
     group.add(gravelWalk);
 
+    // Detailed Tool Shed with framed door, tiny window, and pitched overhang
     const shed = new THREE.Mesh(new THREE.BoxGeometry(1.1, 1.5, 0.85), woodMat);
-    shed.position.set(0, 0.91, -2.25);
+    shed.position.set(0, 0.90, -2.25);
     shed.castShadow = true;
-    const shedRoof = new THREE.Mesh(new THREE.BoxGeometry(1.3, 0.08, 1.05), darkMetalMat);
-    shedRoof.position.set(0, 1.7, -2.25);
+    const shedDoor = new THREE.Mesh(new THREE.BoxGeometry(0.54, 1.25, 0.04), curbMat);
+    shedDoor.position.set(-0.18, 0.78, -1.81);
+    const shedWin = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.28, 0.04), flowerWhiteMat);
+    shedWin.position.set(0.28, 1.22, -1.81);
+    const shedRoof = new THREE.Mesh(new THREE.BoxGeometry(1.36, 0.08, 1.15), darkMetalMat);
+    shedRoof.position.set(0, 1.69, -2.22);
     shedRoof.rotation.x = 0.15;
-    group.add(shed, shedRoof);
+    group.add(shed, shedDoor, shedWin, shedRoof);
   }
 
   // =========================================================================
@@ -322,12 +342,18 @@ export function buildEmptyLotMesh(options: EmptyLotOptions = {}): THREE.Group {
   // =========================================================================
   else if (variant === 'BAMBOO_KARESANSUI') {
     const bambooStalkMat = new THREE.MeshStandardMaterial({ color: 0x65a30d, roughness: 0.45 });
-    const gravelWhiteMat = new THREE.MeshStandardMaterial({ color: 0xf1f5f9, roughness: 0.9 });
+    const gravelWhiteMat = new THREE.MeshStandardMaterial({
+      color: 0xf1f5f9,
+      map: getRakedGravelTexture(),
+      roughness: 0.9,
+    });
 
     const gravelBed = new THREE.Mesh(new THREE.BoxGeometry(3.4, 0.03, 2.6), gravelWhiteMat);
-    gravelBed.position.set(-0.6, 0.17, -0.6);
+    gravelBed.position.set(-0.6, 0.165, -0.6);
     gravelBed.receiveShadow = true;
-    group.add(gravelBed);
+    const gravelEdging = new THREE.Mesh(new THREE.BoxGeometry(3.56, 0.06, 2.76), woodMat);
+    gravelEdging.position.set(-0.6, 0.15, -0.6);
+    group.add(gravelEdging, gravelBed);
 
     [
       { x: -1.3, z: -0.8, r: 0.48 },
@@ -348,10 +374,10 @@ export function buildEmptyLotMesh(options: EmptyLotOptions = {}): THREE.Group {
     ];
     stalkCoords.forEach(([bx, bz, bh]) => {
       const stalk = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.065, bh, 8), bambooStalkMat);
-      stalk.position.set(bx, 0.16 + bh / 2, bz);
+      stalk.position.set(bx, 0.15 + bh / 2, bz);
       stalk.castShadow = true;
       const crown = new THREE.Mesh(new THREE.DodecahedronGeometry(0.45, 0), leafGreenMat);
-      crown.position.set(bx, 0.16 + bh - 0.2, bz);
+      crown.position.set(bx, 0.15 + bh - 0.2, bz);
       group.add(stalk, crown);
     });
 
@@ -364,7 +390,7 @@ export function buildEmptyLotMesh(options: EmptyLotOptions = {}): THREE.Group {
     group.add(doroBase, doroLight, doroCap);
 
     const bench = buildWoodenBench(woodMat, darkMetalMat);
-    bench.position.set(-1.3, 0.16, 0.85);
+    bench.position.set(-1.3, 0.15, 0.85);
     group.add(bench);
   }
 
@@ -517,37 +543,46 @@ export function buildEmptyLotMesh(options: EmptyLotOptions = {}): THREE.Group {
 
     // Circular Sandbox on Left
     const sandRim = new THREE.Mesh(new THREE.CylinderGeometry(1.15, 1.15, 0.18, 20), woodMat);
-    sandRim.position.set(-1.4, 0.25, -1.1);
+    sandRim.position.set(-1.4, 0.24, -1.1);
     const sandFill = new THREE.Mesh(new THREE.CylinderGeometry(1.05, 1.05, 0.16, 20), sandMat);
-    sandFill.position.set(-1.4, 0.26, -1.1);
+    sandFill.position.set(-1.4, 0.25, -1.1);
     group.add(sandRim, sandFill);
 
     // Row of 5 Half-Buried Rainbow Painted Tires (*Taiya Yūgu*)
     const tireColors = [0xef4444, 0xfacc15, 0x3b82f6, 0x22c55e, 0xec4899];
-    tireColors.forEach((col, idx) => {
-      const tireGeo = new THREE.TorusGeometry(0.32, 0.11, 10, 18, Math.PI);
-      const tireMat = new THREE.MeshStandardMaterial({ color: col, roughness: 0.5 });
-      const tire = new THREE.Mesh(tireGeo, tireMat);
-      tire.position.set(0.4 + (idx % 3) * 0.75, 0.16, -1.6 + Math.floor(idx / 3) * 1.1);
+    const tireMats = tireColors.map((col) => new THREE.MeshStandardMaterial({ color: col, roughness: 0.5 }));
+    const tireGeo = new THREE.TorusGeometry(0.32, 0.11, 10, 18, Math.PI);
+    tireColors.forEach((_col, idx) => {
+      const tire = new THREE.Mesh(tireGeo, tireMats[idx]);
+      tire.position.set(0.4 + (idx % 3) * 0.75, 0.15, -1.6 + Math.floor(idx / 3) * 1.1);
       tire.rotation.y = 0.25;
       tire.castShadow = true;
       group.add(tire);
     });
 
-    // 2-Seat Wooden Seesaw (*Shīsō*) in Front-Center
+    // 2-Seat Wooden Seesaw (*Shīsō*) with Seats & Handles in Front-Center
     const fulcrum = new THREE.Mesh(
       new THREE.CylinderGeometry(0.18, 0.24, 0.36, 3),
       new THREE.MeshStandardMaterial({ color: 0x2563eb, roughness: 0.4 })
     );
-    fulcrum.position.set(0.2, 0.34, 0.65);
+    fulcrum.position.set(0.2, 0.33, 0.65);
+    const seesawPivot = new THREE.Group();
+    seesawPivot.position.set(0.2, 0.51, 0.65);
+    seesawPivot.rotation.z = 0.14;
     const plank = new THREE.Mesh(
       new THREE.BoxGeometry(2.3, 0.06, 0.28),
       new THREE.MeshStandardMaterial({ color: 0xfacc15, roughness: 0.5 })
     );
-    plank.position.set(0.2, 0.52, 0.65);
-    plank.rotation.z = 0.14;
     plank.castShadow = true;
-    group.add(fulcrum, plank);
+    seesawPivot.add(plank);
+    [-0.95, 0.95].forEach((sx) => {
+      const seat = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.04, 0.26), vermilionMat);
+      seat.position.set(sx, 0.05, 0);
+      const handle = new THREE.Mesh(new THREE.TorusGeometry(0.08, 0.018, 6, 10, Math.PI), darkMetalMat);
+      handle.position.set(sx * 0.72, 0.08, 0);
+      seesawPivot.add(seat, handle);
+    });
+    group.add(fulcrum, seesawPivot);
   }
 
   // =========================================================================
@@ -563,13 +598,13 @@ export function buildEmptyLotMesh(options: EmptyLotOptions = {}): THREE.Group {
 
     // Paved Rest Area Terrace
     const paver = new THREE.Mesh(new THREE.BoxGeometry(4.8, 0.03, 3.2), stoneMat);
-    paver.position.set(0, 0.17, -0.4);
+    paver.position.set(0, 0.165, -0.4);
     paver.receiveShadow = true;
     group.add(paver);
 
     // Timber Wisteria Pergola (*Fujidana*) on Left Side
     const pergolaGroup = new THREE.Group();
-    pergolaGroup.position.set(-1.0, 0.16, -0.4);
+    pergolaGroup.position.set(-1.0, 0.15, -0.4);
 
     [-1.1, 1.1].forEach((px) => {
       [-0.85, 0.85].forEach((pz) => {
@@ -603,21 +638,29 @@ export function buildEmptyLotMesh(options: EmptyLotOptions = {}): THREE.Group {
     pergolaGroup.add(bench);
     group.add(pergolaGroup);
 
-    // Twin Illuminated Japanese Drink Vending Machines on Right
+    // Twin Illuminated Japanese Drink Vending Machines + Recycling Bin on Right
+    const vmRedMat = new THREE.MeshStandardMaterial({ color: 0xdc2626, roughness: 0.4 });
+    const vmBlueMat = new THREE.MeshStandardMaterial({ color: 0x0284c7, roughness: 0.4 });
     [
-      { x: 1.2, col: 0xdc2626 },
-      { x: 2.05, col: 0x0284c7 },
+      { x: 1.1, mat: vmRedMat },
+      { x: 1.95, mat: vmBlueMat },
     ].forEach((vm) => {
-      const body = new THREE.Mesh(
-        new THREE.BoxGeometry(0.76, 1.75, 0.58),
-        new THREE.MeshStandardMaterial({ color: vm.col, roughness: 0.4 })
-      );
-      body.position.set(vm.x, 1.04, -0.7);
+      const body = new THREE.Mesh(new THREE.BoxGeometry(0.76, 1.75, 0.58), vm.mat);
+      body.position.set(vm.x, 1.03, -0.7);
       body.castShadow = true;
       const display = new THREE.Mesh(new THREE.BoxGeometry(0.64, 0.85, 0.04), lanternGlowMat);
       display.position.set(vm.x, 1.28, -0.40);
-      group.add(body, display);
+      const pickupSlot = new THREE.Mesh(new THREE.BoxGeometry(0.56, 0.22, 0.04), darkMetalMat);
+      pickupSlot.position.set(vm.x, 0.45, -0.40);
+      const coinPanel = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.24, 0.04), darkMetalMat);
+      coinPanel.position.set(vm.x + 0.24, 0.72, -0.40);
+      group.add(body, display, pickupSlot, coinPanel);
     });
+    const recycleBin = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.72, 0.44), stoneMat);
+    recycleBin.position.set(2.60, 0.52, -0.7);
+    const binTop = new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.08, 0.46), vmBlueMat);
+    binTop.position.set(2.60, 0.90, -0.7);
+    group.add(recycleBin, binTop);
   }
 
   // =========================================================================
@@ -629,7 +672,7 @@ export function buildEmptyLotMesh(options: EmptyLotOptions = {}): THREE.Group {
 
     // Paved Emergency Assembly Apron
     const apron = new THREE.Mesh(new THREE.BoxGeometry(4.6, 0.03, 3.2), stoneMat);
-    apron.position.set(0, 0.17, -0.4);
+    apron.position.set(0, 0.165, -0.4);
     group.add(apron);
 
     // 1. Tall Solar-Powered Emergency Streetlamp (*Bōsai Gaitō*)
@@ -646,33 +689,44 @@ export function buildEmptyLotMesh(options: EmptyLotOptions = {}): THREE.Group {
     lamp.position.set(-1.5, 3.65, -1.4);
     group.add(pole, solarPanel, lamp);
 
-    // 2. Red Municipal Fire-Hose Cabinet (*Shōkasen-bako*)
+    // 2. Red Municipal Fire-Hose Cabinet (*Shōkasen-bako*) with Plaque
     const hoseBox = new THREE.Mesh(new THREE.BoxGeometry(0.75, 1.15, 0.32), vermilionMat);
     hoseBox.position.set(1.75, 0.74, -1.65);
     hoseBox.castShadow = true;
+    const hosePlaque = new THREE.Mesh(new THREE.BoxGeometry(0.56, 0.22, 0.03), flowerWhiteMat);
+    hosePlaque.position.set(1.75, 1.04, -1.48);
     const hoseBeacon = new THREE.Mesh(
       new THREE.SphereGeometry(0.08, 8, 8),
       new THREE.MeshStandardMaterial({ color: 0xef4444, emissive: 0xff0000, emissiveIntensity: 1.2 })
     );
     hoseBeacon.position.set(1.75, 1.4, -1.65);
-    group.add(hoseBox, hoseBeacon);
+    group.add(hoseBox, hosePlaque, hoseBeacon);
 
-    // 3. Green Cast-Iron Hand-Pump Emergency Water Well (*Teoshi Ponpu*)
+    // 3. Green Cast-Iron Hand-Pump Emergency Water Well (*Teoshi Ponpu*) with Spout & Basin
     const wellPad = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.60, 0.14, 12), stoneMat);
-    wellPad.position.set(0.2, 0.24, -0.8);
+    wellPad.position.set(0.2, 0.23, -0.8);
     const pumpStand = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.12, 0.75, 10), emeraldPumpMat);
     pumpStand.position.set(0.2, 0.65, -0.8);
+    const pumpSpout = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.24, 6), emeraldPumpMat);
+    pumpSpout.rotation.z = Math.PI / 2.4;
+    pumpSpout.position.set(0.06, 0.62, -0.8);
+    const drainageBasin = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.08, 0.32), curbMat);
+    drainageBasin.position.set(-0.08, 0.30, -0.8);
     const pumpHandle = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.04, 0.04), emeraldPumpMat);
     pumpHandle.position.set(0.42, 0.92, -0.8);
     pumpHandle.rotation.z = -0.35;
-    group.add(wellPad, pumpStand, pumpHandle);
+    group.add(wellPad, pumpStand, pumpSpout, drainageBasin, pumpHandle);
 
-    // 4. Brick *Kamado* (Emergency Cooking Stove) Bench
+    // 4. Brick *Kamado* (Emergency Cooking Stove) Bench & Emergency Plaque
     const kamadoBase = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.38, 0.45), brickMat);
     kamadoBase.position.set(-1.1, 0.35, 0.65);
     const kamadoSeat = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.06, 0.50), woodMat);
     kamadoSeat.position.set(-1.1, 0.57, 0.65);
-    group.add(kamadoBase, kamadoSeat);
+    const bosaiPost = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.85, 0.06), darkMetalMat);
+    bosaiPost.position.set(1.6, 0.58, 0.85);
+    const bosaiSign = new THREE.Mesh(new THREE.BoxGeometry(0.62, 0.30, 0.04), emeraldPumpMat);
+    bosaiSign.position.set(1.6, 0.96, 0.85);
+    group.add(kamadoBase, kamadoSeat, bosaiPost, bosaiSign);
   }
 
   // =========================================================================
@@ -690,7 +744,7 @@ export function buildEmptyLotMesh(options: EmptyLotOptions = {}): THREE.Group {
     // Sunken Pond Water Basin
     const pond = new THREE.Mesh(new THREE.CylinderGeometry(1.85, 1.75, 0.06, 20), waterMat);
     pond.scale.set(1.25, 1.0, 0.85);
-    pond.position.set(0, 0.16, -0.55);
+    pond.position.set(0, 0.155, -0.55);
     group.add(pond);
 
     // Natural River Stone Border around Pond
@@ -701,23 +755,30 @@ export function buildEmptyLotMesh(options: EmptyLotOptions = {}): THREE.Group {
       group.add(rock);
     }
 
-    // Swimming Orange & White Koi Fish inside Pond
+    // Swimming Orange & White Koi Fish with Tail Fins
+    const koiMats = [
+      new THREE.MeshStandardMaterial({ color: 0xf97316, roughness: 0.3 }),
+      new THREE.MeshStandardMaterial({ color: 0xef4444, roughness: 0.3 }),
+      new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.3 }),
+    ];
     [
-      { x: -0.85, z: -0.45, col: 0xf97316, rot: 0.4 },
-      { x: 0.75, z: -0.75, col: 0xef4444, rot: -1.2 },
-      { x: 0.55, z: -0.25, col: 0xffffff, rot: 2.1 },
+      { x: -0.85, z: -0.45, idx: 0, rot: 0.4 },
+      { x: 0.75, z: -0.75, idx: 1, rot: -1.2 },
+      { x: 0.55, z: -0.25, idx: 2, rot: 2.1 },
     ].forEach((koi) => {
-      const kMesh = new THREE.Mesh(
-        new THREE.ConeGeometry(0.06, 0.26, 6),
-        new THREE.MeshStandardMaterial({ color: koi.col, roughness: 0.3 })
-      );
-      kMesh.rotation.x = Math.PI / 2;
-      kMesh.rotation.z = koi.rot;
-      kMesh.position.set(koi.x, 0.19, koi.z);
-      group.add(kMesh);
+      const koiGroup = new THREE.Group();
+      koiGroup.position.set(koi.x, 0.185, koi.z);
+      koiGroup.rotation.y = koi.rot;
+      const body = new THREE.Mesh(new THREE.ConeGeometry(0.06, 0.24, 6), koiMats[koi.idx]);
+      body.rotation.x = Math.PI / 2;
+      const tail = new THREE.Mesh(new THREE.ConeGeometry(0.055, 0.09, 3), koiMats[koi.idx]);
+      tail.rotation.x = -Math.PI / 2;
+      tail.position.z = -0.14;
+      koiGroup.add(body, tail);
+      group.add(koiGroup);
     });
 
-    // Vermilion Arched Wooden Footbridge (*Taiko-bashi*) spanning the Pond
+    // Vermilion Arched Wooden Footbridge (*Taiko-bashi*) with Anchored Balusters & Handrails
     for (let s = -3; s <= 3; s++) {
       const t = s / 3;
       const by = 0.22 + (1 - t * t) * 0.32;
@@ -727,10 +788,18 @@ export function buildEmptyLotMesh(options: EmptyLotOptions = {}): THREE.Group {
       plank.rotation.x = -t * 0.28;
       plank.castShadow = true;
       group.add(plank);
+
+      if (Math.abs(s) === 3 || Math.abs(s) === 1 || s === 0) {
+        [-0.45, 0.45].forEach((rx) => {
+          const post = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.42, 0.05), vermilionMat);
+          post.position.set(rx, by + 0.21, bz);
+          group.add(post);
+        });
+      }
     }
     [-0.45, 0.45].forEach((rx) => {
-      const rail = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.05, 3.1), vermilionMat);
-      rail.position.set(rx, 0.75, -0.55);
+      const rail = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.05, 3.05), vermilionMat);
+      rail.position.set(rx, 0.82, -0.55);
       group.add(rail);
     });
   }
@@ -750,27 +819,28 @@ export function buildEmptyLotMesh(options: EmptyLotOptions = {}): THREE.Group {
     group.add(gTrunk, gCanopy);
 
     // 3-Height Horizontal Pull-Up Bars (*Tetsubō*) on Right
-    const barColors = [0xef4444, 0xfacc15, 0x3b82f6];
+    const barMats = [
+      new THREE.MeshStandardMaterial({ color: 0xef4444, roughness: 0.4 }),
+      new THREE.MeshStandardMaterial({ color: 0xfacc15, roughness: 0.4 }),
+      new THREE.MeshStandardMaterial({ color: 0x3b82f6, roughness: 0.4 }),
+    ];
     const barHeights = [0.85, 1.15, 1.45];
     barHeights.forEach((bh, idx) => {
       const bx = 0.2 + idx * 0.85;
       const postL = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, bh, 8), darkMetalMat);
-      postL.position.set(bx - 0.42, 0.16 + bh / 2, -0.8);
+      postL.position.set(bx - 0.42, 0.15 + bh / 2, -0.8);
       const postR = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, bh, 8), darkMetalMat);
-      postR.position.set(bx + 0.42, 0.16 + bh / 2, -0.8);
-      const bar = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.025, 0.025, 0.84, 8),
-        new THREE.MeshStandardMaterial({ color: barColors[idx], roughness: 0.4 })
-      );
+      postR.position.set(bx + 0.42, 0.15 + bh / 2, -0.8);
+      const bar = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 0.84, 8), barMats[idx]);
       bar.rotation.z = Math.PI / 2;
-      bar.position.set(bx, 0.16 + bh, -0.8);
+      bar.position.set(bx, 0.15 + bh, -0.8);
       group.add(postL, postR, bar);
     });
 
     // Stepping-Log Balance Course in Front-Left
     [-1.6, -1.1, -0.6, -0.1].forEach((lx, idx) => {
       const log = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.14, 0.28 + (idx % 2) * 0.12, 8), woodMat);
-      log.position.set(lx, 0.30, 0.65 + (idx % 2) * 0.22);
+      log.position.set(lx, 0.29, 0.65 + (idx % 2) * 0.22);
       log.castShadow = true;
       group.add(log);
     });
@@ -781,28 +851,32 @@ export function buildEmptyLotMesh(options: EmptyLotOptions = {}): THREE.Group {
   // =========================================================================
   else if (variant === 'NEKO_SUNNY_TERRACE') {
     const potMat = new THREE.MeshStandardMaterial({ color: 0xc2410c, roughness: 0.7 });
+    const collarMat = new THREE.MeshStandardMaterial({ color: 0xdc2626, roughness: 0.5 });
 
     // Warm Flagstone Terrace
     const terrace = new THREE.Mesh(new THREE.BoxGeometry(4.2, 0.03, 2.8), stoneMat);
-    terrace.position.set(0, 0.17, -0.4);
+    terrace.position.set(0, 0.165, -0.4);
     terrace.receiveShadow = true;
     group.add(terrace);
 
-    // Wooden Community Cat Shelter House at Rear-Left
+    // Wooden Community Cat Shelter House with Arched Doorway at Rear-Left
     const catHouse = new THREE.Mesh(new THREE.BoxGeometry(0.85, 0.65, 0.75), woodMat);
     catHouse.position.set(-1.35, 0.48, -1.25);
     catHouse.castShadow = true;
+    const catDoorway = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.16, 0.04, 10), darkMetalMat);
+    catDoorway.rotation.x = Math.PI / 2;
+    catDoorway.position.set(-1.35, 0.36, -0.87);
     const chRoof = new THREE.Mesh(new THREE.ConeGeometry(0.72, 0.42, 4), vermilionMat);
     chRoof.rotation.y = Math.PI / 4;
     chRoof.position.set(-1.35, 1.0, -1.25);
-    group.add(catHouse, chRoof);
+    group.add(catHouse, catDoorway, chRoof);
 
     // Sunny Wooden Bench
     const bench = buildWoodenBench(woodMat, darkMetalMat);
-    bench.position.set(0.85, 0.17, -0.6);
+    bench.position.set(0.85, 0.16, -0.6);
     group.add(bench);
 
-    // 3 Stylized Low-Poly Neighborhood Cats (Orange Tabby on bench, Calico & Tuxedo on terrace)
+    // 3 Stylized Low-Poly Neighborhood Cats with Collars (Orange Tabby on bench, Calico & Tuxedo on terrace)
     const buildCat = (x: number, y: number, z: number, rotY: number, coatHex: number) => {
       const cat = new THREE.Group();
       cat.position.set(x, y, z);
@@ -812,6 +886,8 @@ export function buildEmptyLotMesh(options: EmptyLotOptions = {}): THREE.Group {
       body.position.y = 0.12;
       const head = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.15, 0.16), cMat);
       head.position.set(0, 0.22, 0.14);
+      const collar = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.035, 0.14), collarMat);
+      collar.position.set(0, 0.16, 0.13);
       [-0.05, 0.05].forEach((ex) => {
         const ear = new THREE.Mesh(new THREE.ConeGeometry(0.035, 0.07, 4), cMat);
         ear.position.set(ex, 0.32, 0.14);
@@ -820,20 +896,20 @@ export function buildEmptyLotMesh(options: EmptyLotOptions = {}): THREE.Group {
       const tail = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.22, 6), cMat);
       tail.position.set(0, 0.22, -0.18);
       tail.rotation.x = -0.5;
-      cat.add(body, head, tail);
+      cat.add(body, head, collar, tail);
       group.add(cat);
     };
 
-    buildCat(0.85, 0.60, -0.6, 0.4, 0xf97316); // Orange tabby lounging on bench
-    buildCat(-0.35, 0.18, 0.25, -0.6, 0xfef3c7); // Cream/calico cat on warm stones
-    buildCat(-1.1, 0.18, -0.45, 0.9, 0x1e293b); // Tuxedo cat near shelter
+    buildCat(0.85, 0.59, -0.6, 0.4, 0xf97316); // Orange tabby lounging on bench
+    buildCat(-0.35, 0.17, 0.25, -0.6, 0xfef3c7); // Cream/calico cat on warm stones
+    buildCat(-1.1, 0.17, -0.45, 0.9, 0x1e293b); // Tuxedo cat near shelter
 
     // Terracotta Flower Planters
     [-1.6, 1.6].forEach((px) => {
       const pot = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.18, 0.32, 12), potMat);
-      pot.position.set(px, 0.34, 0.85);
+      pot.position.set(px, 0.33, 0.85);
       const bush = new THREE.Mesh(new THREE.SphereGeometry(0.24, 10, 8), blossomMat);
-      bush.position.set(px, 0.56, 0.85);
+      bush.position.set(px, 0.55, 0.85);
       group.add(pot, bush);
     });
   }
@@ -848,22 +924,39 @@ export function buildEmptyLotMesh(options: EmptyLotOptions = {}): THREE.Group {
       emissiveIntensity: 1.1,
       roughness: 0.3,
     });
+    const taikoHeadMat = new THREE.MeshStandardMaterial({ color: 0xfef3c7, roughness: 0.5 });
 
-    // Center Mini-Yagura Festival Platform & Taiko Drum
+    // Center Mini-Yagura Festival Platform with Kōhaku Skirting & Step Ladder
     const stage = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.45, 1.8), woodMat);
     stage.position.set(0, 0.38, -0.6);
     stage.castShadow = true;
-    group.add(stage);
+    const skirtRed = new THREE.Mesh(new THREE.BoxGeometry(1.84, 0.22, 1.84), vermilionMat);
+    skirtRed.position.set(0, 0.28, -0.6);
+    const skirtWhite = new THREE.Mesh(new THREE.BoxGeometry(1.85, 0.10, 1.85), flowerWhiteMat);
+    skirtWhite.position.set(0, 0.42, -0.6);
+    group.add(stage, skirtRed, skirtWhite);
 
-    const taiko = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.32, 0.32, 0.48, 14),
-      new THREE.MeshStandardMaterial({ color: 0xfef3c7, roughness: 0.5 })
-    );
-    taiko.rotation.x = Math.PI / 2;
-    taiko.position.set(0, 0.95, -0.6);
-    group.add(taiko);
+    // Timber Step Ladder on Front of Stage
+    [0.16, 0.32].forEach((ly, idx) => {
+      const step = new THREE.Mesh(new THREE.BoxGeometry(0.56, 0.05, 0.20), woodMat);
+      step.position.set(0, 0.15 + ly, 0.48 - idx * 0.16);
+      group.add(step);
+    });
 
-    // 4 Corner Timber Festival Poles & Hanging Glowing Chōchin Paper Lanterns
+    // Grounded Taiko Drum on Wooden Stand with Rim Rivets
+    const taikoStandL = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.44, 0.36), woodMat);
+    taikoStandL.position.set(-0.26, 0.80, -0.6);
+    const taikoStandR = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.44, 0.36), woodMat);
+    taikoStandR.position.set(0.26, 0.80, -0.6);
+    const taikoBody = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.32, 0.44, 14), woodMat);
+    taikoBody.rotation.x = Math.PI / 2;
+    taikoBody.position.set(0, 0.98, -0.6);
+    const taikoHead = new THREE.Mesh(new THREE.CylinderGeometry(0.30, 0.30, 0.48, 14), taikoHeadMat);
+    taikoHead.rotation.x = Math.PI / 2;
+    taikoHead.position.set(0, 0.98, -0.6);
+    group.add(taikoStandL, taikoStandR, taikoBody, taikoHead);
+
+    // 4 Corner Timber Festival Poles & Hanging Glowing Chōchin Paper Lanterns + Catenary Ropes
     const corners = [
       [-2.1, -2.0],
       [2.1, -2.0],
@@ -877,7 +970,16 @@ export function buildEmptyLotMesh(options: EmptyLotOptions = {}): THREE.Group {
       group.add(pole);
     });
 
-    // Strings of Glowing Chōchin Lanterns radiating from center
+    // Connecting Festival Ropes between poles
+    const frontRope = new THREE.Mesh(new THREE.CylinderGeometry(0.014, 0.014, 4.2, 6), darkMetalMat);
+    frontRope.rotation.z = Math.PI / 2;
+    frontRope.position.set(0, 3.04, 0.8);
+    const backRope = new THREE.Mesh(new THREE.CylinderGeometry(0.014, 0.014, 4.2, 6), darkMetalMat);
+    backRope.rotation.z = Math.PI / 2;
+    backRope.position.set(0, 3.04, -2.0);
+    group.add(frontRope, backRope);
+
+    // Strings of Glowing Chōchin Lanterns hanging from ropes
     for (let i = -1.6; i <= 1.6; i += 0.8) {
       const l1 = new THREE.Mesh(new THREE.SphereGeometry(0.13, 10, 8), i % 1.6 === 0 ? chochinRedMat : lanternGlowMat);
       l1.scale.set(1.0, 1.35, 1.0);
@@ -937,13 +1039,13 @@ export function buildEmptyLotMesh(options: EmptyLotOptions = {}): THREE.Group {
       { x: -1.2, z: -0.6, r: 0.34 },
     ].forEach((p) => {
       const sMesh = new THREE.Mesh(new THREE.CylinderGeometry(p.r, p.r * 1.05, 0.04, 8), stoneMat);
-      sMesh.position.set(p.x, 0.17, p.z);
+      sMesh.position.set(p.x, 0.165, p.z);
       sMesh.receiveShadow = true;
       group.add(sMesh);
     });
 
     const bench = buildWoodenBench(woodMat, darkMetalMat);
-    bench.position.set(-1.6, 0.16, -1.0);
+    bench.position.set(-1.6, 0.15, -1.0);
     bench.rotation.y = 0.35;
     group.add(bench);
 
@@ -955,8 +1057,8 @@ export function buildEmptyLotMesh(options: EmptyLotOptions = {}): THREE.Group {
       { x: -0.4, z: -1.8, mat: flowerWhiteMat },
       { x: 0.2, z: -2.2, mat: flowerYellowMat },
     ].forEach((f) => {
-      const fMesh = new THREE.Mesh(new THREE.CircleGeometry(0.08, 6), f.mat);
-      fMesh.rotation.x = -Math.PI / 2;
+      const fMesh = new THREE.Mesh(new THREE.DodecahedronGeometry(0.065, 0), f.mat);
+      fMesh.scale.set(1.2, 0.55, 1.2);
       fMesh.position.set(f.x, 0.17, f.z);
       group.add(fMesh);
     });
@@ -966,27 +1068,33 @@ export function buildEmptyLotMesh(options: EmptyLotOptions = {}): THREE.Group {
 
     const fountainMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.8 });
     const chromeMat = new THREE.MeshStandardMaterial({ color: 0xf1f5f9, metalness: 0.8, roughness: 0.2 });
+    const waterArcMat = new THREE.MeshStandardMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.78, roughness: 0.1 });
 
     const pillar = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.72, 0.36), fountainMat);
     pillar.position.set(0, 0.36, 0);
     pillar.castShadow = true;
-    const basin = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.13, 0.08, 12), stoneMat);
+    const basin = new THREE.Mesh(new THREE.CylinderGeometry(0.17, 0.13, 0.08, 12), stoneMat);
     basin.position.set(0, 0.76, 0);
     const faucetStem = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 0.10, 8), chromeMat);
     faucetStem.position.set(0, 0.82, 0);
+    const waterArc = new THREE.Mesh(new THREE.TorusGeometry(0.045, 0.008, 6, 8, Math.PI), waterArcMat);
+    waterArc.position.set(0, 0.86, 0.04);
+    waterArc.rotation.y = Math.PI / 2;
     const stepStone = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.16, 0.28), fountainMat);
     stepStone.position.set(0, 0.08, 0.32);
-    fountainGroup.add(pillar, basin, faucetStem, stepStone);
+    fountainGroup.add(pillar, basin, faucetStem, waterArc, stepStone);
 
-    [0x93c5fd, 0xc4b5fd, 0xfbcfe8].forEach((col, idx) => {
-      const bush = new THREE.Mesh(
-        new THREE.DodecahedronGeometry(0.24, 0),
-        new THREE.MeshStandardMaterial({ color: col, roughness: 0.85 })
-      );
+    const bushMats = [
+      new THREE.MeshStandardMaterial({ color: 0x93c5fd, roughness: 0.85 }),
+      new THREE.MeshStandardMaterial({ color: 0xc4b5fd, roughness: 0.85 }),
+      new THREE.MeshStandardMaterial({ color: 0xfbcfe8, roughness: 0.85 }),
+    ];
+    for (let idx = 0; idx < 3; idx++) {
+      const bush = new THREE.Mesh(new THREE.DodecahedronGeometry(0.24, 0), bushMats[idx]);
       bush.position.set(-0.45 + idx * 0.25, 0.22, -0.35 + (idx % 2) * 0.15);
       bush.castShadow = true;
       fountainGroup.add(bush);
-    });
+    }
 
     group.add(fountainGroup);
   }

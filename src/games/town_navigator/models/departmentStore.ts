@@ -3,6 +3,7 @@ import {
   getBrickTileTexture,
   buildPerimeterRailing,
   addWrapAroundWindows,
+  getClearShowcaseGlassMaterial,
 } from './wallTextures';
 
 export interface DepartmentStoreOptions {
@@ -136,6 +137,7 @@ export function buildDepartmentStoreMesh(options: DepartmentStoreOptions = {}): 
     transparent: true,
     opacity: 0.7,
   });
+  const clearGlassMat = getClearShowcaseGlassMaterial();
 
   const balloonMat = new THREE.MeshStandardMaterial({
     color: 0xef4444,
@@ -190,6 +192,13 @@ export function buildDepartmentStoreMesh(options: DepartmentStoreOptions = {}): 
   body.receiveShadow = true;
   storeTower.add(body);
 
+  // Horizontal Floor Spandrel Moldings
+  [2.85, 5.35, 7.85].forEach((my) => {
+    const molding = new THREE.Mesh(new THREE.BoxGeometry(bW + 0.14, 0.12, bD + 0.14), accentGoldMat);
+    molding.position.set(0, my, 0);
+    storeTower.add(molding);
+  });
+
   // Golden Cornices / Parapet Capping Band & Open Rooftop Balustrade
   const corniceGeo = new THREE.BoxGeometry(bW + 0.28, 0.42, bD + 0.28);
   const cornice = new THREE.Mesh(corniceGeo, accentGoldMat);
@@ -201,11 +210,27 @@ export function buildDepartmentStoreMesh(options: DepartmentStoreOptions = {}): 
   roofRail.position.set(0, bH + 0.42, 0);
   storeTower.add(roofRail);
 
+  // Rooftop Elevator Penthouse
+  const pent = new THREE.Mesh(new THREE.BoxGeometry(2.4, 1.4, 2.0), wallMat);
+  pent.position.set(-3.2, bH + 0.7, -1.6);
+  const pentCap = new THREE.Mesh(new THREE.BoxGeometry(2.55, 0.15, 2.15), accentGoldMat);
+  pentCap.position.set(-3.2, bH + 1.45, -1.6);
+  storeTower.add(pent, pentCap);
+
   // Vertical Stone Pilasters along Front Facade
   [-5.2, -2.85, 2.85, 5.2].forEach((px) => {
     const pilaster = new THREE.Mesh(new THREE.BoxGeometry(0.26, bH, 0.14), accentGoldMat);
     pilaster.position.set(px, bH / 2, bD / 2 + 0.04);
     storeTower.add(pilaster);
+  });
+
+  // Vertical Fabric Taremaku Sale Banners flanking main upper facade
+  [-4.95, 4.95].forEach((bx) => {
+    const banner = new THREE.Mesh(new THREE.BoxGeometry(0.44, 4.6, 0.04), redMat);
+    banner.position.set(bx, 6.2, bD / 2 + 0.10);
+    const bTrim = new THREE.Mesh(new THREE.BoxGeometry(0.50, 0.12, 0.06), accentGoldMat);
+    bTrim.position.set(bx, 8.5, bD / 2 + 0.10);
+    storeTower.add(banner, bTrim);
   });
 
   // 360° Side & Rear Gold-Trimmed Windows
@@ -222,39 +247,41 @@ export function buildDepartmentStoreMesh(options: DepartmentStoreOptions = {}): 
     frameMat: accentGoldMat,
   });
 
-  // Upper Floor Architectural Ribbon Windows (Floors 2, 3, 4)
+  // Upper Floor Architectural Ribbon Windows (Floors 2, 3, 4; depth 0.05 for 3D framing)
   [4.05, 6.65, 9.05].forEach((yWin) => {
     [-3.8, -1.9, 0, 1.9, 3.8].forEach((wx) => {
-      const winGeo = new THREE.BoxGeometry(1.4, 1.6, 0.08);
+      const winGeo = new THREE.BoxGeometry(1.4, 1.6, 0.05);
       const win = new THREE.Mesh(winGeo, glassMat);
       win.position.set(wx, yWin, bD / 2 + 0.03);
-      const frame = new THREE.Mesh(new THREE.BoxGeometry(1.5, 1.7, 0.05), accentGoldMat);
+      const frame = new THREE.Mesh(new THREE.BoxGeometry(1.5, 1.7, 0.04), accentGoldMat);
       frame.position.set(wx, yWin, bD / 2 + 0.01);
       storeTower.add(frame, win);
     });
   });
 
-  // 3. GROUND FLOOR ILLUMINATED SHOW WINDOWS & MANNEQUIN DISPLAYS
+  // 3. GROUND FLOOR ILLUMINATED SHOW WINDOWS & MANNEQUIN DISPLAYS (Clear glass!)
+  const mannequinMats = [
+    new THREE.MeshStandardMaterial({ color: 0xec4899, roughness: 0.45 }),
+    new THREE.MeshStandardMaterial({ color: 0x2563eb, roughness: 0.45 }),
+  ];
   [-3.9, 3.9].forEach((wx) => {
-    // Warm illuminated display backdrop
     const backdrop = new THREE.Mesh(new THREE.PlaneGeometry(2.3, 2.1), warmDisplayMat);
     backdrop.position.set(wx, 1.25, bD / 2 - 0.18);
     storeTower.add(backdrop);
 
-    const swGeo = new THREE.BoxGeometry(2.4, 2.2, 0.12);
-    const sw = new THREE.Mesh(swGeo, glassMat);
+    const swGeo = new THREE.BoxGeometry(2.4, 2.2, 0.06);
+    const sw = new THREE.Mesh(swGeo, clearGlassMat);
     sw.position.set(wx, 1.25, bD / 2 + 0.05);
     const swFrame = new THREE.Mesh(new THREE.BoxGeometry(2.55, 2.35, 0.08), accentGoldMat);
     swFrame.position.set(wx, 1.25, bD / 2 + 0.02);
     storeTower.add(swFrame, sw);
 
-    // 2 Fashion Mannequins on Circular Display Pedestals inside each window
     [-0.45, 0.45].forEach((mx, mIdx) => {
       const ped = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.26, 0.14, 12), accentGoldMat);
       ped.position.set(wx + mx, 0.22, bD / 2 - 0.06);
       const mannequin = new THREE.Mesh(
         new THREE.CylinderGeometry(0.13, 0.16, 1.25, 10),
-        new THREE.MeshStandardMaterial({ color: mIdx === 0 ? 0xec4899 : 0x2563eb, roughness: 0.45 })
+        mannequinMats[mIdx % 2]
       );
       mannequin.position.set(wx + mx, 0.90, bD / 2 - 0.06);
       const head = new THREE.Mesh(new THREE.SphereGeometry(0.10, 10, 8), balloonWhiteMat);
@@ -301,23 +328,39 @@ export function buildDepartmentStoreMesh(options: DepartmentStoreOptions = {}): 
     storeTower.add(post);
   });
 
-  // Grand Glass Entrance + Central Revolving Door Drum
-  const doorGeo = new THREE.BoxGeometry(entranceW - 0.6, 2.6, 0.06);
-  const doors = new THREE.Mesh(doorGeo, glassMat);
+  // Grand Clear Glass Entrance + Central Revolving Door Drum with Interior Cross-Vanes
+  const doorGeo = new THREE.BoxGeometry(entranceW - 0.6, 2.6, 0.05);
+  const doors = new THREE.Mesh(doorGeo, clearGlassMat);
   doors.position.set(0, 1.3, bD / 2 + 0.04);
-  const revolvingDrum = new THREE.Mesh(new THREE.CylinderGeometry(0.75, 0.75, 2.35, 16), glassMat);
+  const revolvingDrum = new THREE.Mesh(new THREE.CylinderGeometry(0.75, 0.75, 2.35, 16), clearGlassMat);
   revolvingDrum.position.set(0, 1.2, bD / 2 + 0.35);
+  const vane1 = new THREE.Mesh(new THREE.BoxGeometry(1.42, 2.25, 0.04), accentGoldMat);
+  vane1.position.set(0, 1.2, bD / 2 + 0.35);
+  const vane2 = new THREE.Mesh(new THREE.BoxGeometry(0.04, 2.25, 1.42), accentGoldMat);
+  vane2.position.set(0, 1.2, bD / 2 + 0.35);
   const drumCap = new THREE.Mesh(new THREE.CylinderGeometry(0.78, 0.78, 0.12, 16), accentGoldMat);
   drumCap.position.set(0, 2.42, bD / 2 + 0.35);
-  storeTower.add(doors, revolvingDrum, drumCap);
+  storeTower.add(doors, revolvingDrum, vane1, vane2, drumCap);
 
-  // Red Welcome Carpet Runner & Brass Rope Stanchions
+  // Red Welcome Carpet Runner & Brass Velvet-Rope Stanchions
   const carpetGeo = new THREE.BoxGeometry(2.4, 0.02, 2.1);
   const carpetMat = new THREE.MeshStandardMaterial({ color: 0x991b1b, roughness: 0.8 });
   const carpet = new THREE.Mesh(carpetGeo, carpetMat);
   carpet.position.set(0, 0.01, bD / 2 + 1.15);
   carpet.receiveShadow = true;
   storeTower.add(carpet);
+
+  [-1.25, 1.25].forEach((sx) => {
+    [bD / 2 + 0.85, bD / 2 + 1.95].forEach((sz) => {
+      const stanchion = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.04, 0.82, 8), accentGoldMat);
+      stanchion.position.set(sx, 0.41, sz);
+      storeTower.add(stanchion);
+    });
+    const rope = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 1.1, 6), redMat);
+    rope.rotation.x = Math.PI / 2;
+    rope.position.set(sx, 0.72, bD / 2 + 1.4);
+    storeTower.add(rope);
+  });
 
   [-1.35, 1.35].forEach((sx) => {
     const topiaryPot = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.18, 0.42, 12), accentGoldMat);
@@ -330,7 +373,7 @@ export function buildDepartmentStoreMesh(options: DepartmentStoreOptions = {}): 
     storeTower.add(topiaryPot, topiaryBall);
   });
 
-  // 5. ROOFTOP BILLBOARD STRUCTURE (detail2)
+  // 5. ROOFTOP BILLBOARD STRUCTURE & REAR STEEL TRUSS (detail2)
   const billW = 5.2;
   const billH = 2.4;
   const billZ = bD / 2 - 1.2;
@@ -338,7 +381,10 @@ export function buildDepartmentStoreMesh(options: DepartmentStoreOptions = {}): 
   [-billW / 2 + 0.4, billW / 2 - 0.4].forEach((lx) => {
     const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 1.4, 8), darkMetalMat);
     leg.position.set(lx, bH + 0.7, billZ);
-    storeTower.add(leg);
+    const rearStrut = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 2.2, 6), darkMetalMat);
+    rearStrut.position.set(lx, bH + 1.1, billZ - 0.7);
+    rearStrut.rotation.x = 0.55;
+    storeTower.add(leg, rearStrut);
   });
 
   const boardGeo = new THREE.BoxGeometry(billW, billH, 0.18);
@@ -371,12 +417,14 @@ export function buildDepartmentStoreMesh(options: DepartmentStoreOptions = {}): 
   const whiteStripe = new THREE.Mesh(whiteStripeGeo, balloonWhiteMat);
   balloonGroup.add(whiteStripe);
 
-  // Vertical Hanging "大創業祭 / SALE" Pennant Banner below Balloon
+  // Vertical Hanging "大創業祭 / SALE" Pennant Banner with Gold Trim Bars
   const hangingBanner = new THREE.Mesh(new THREE.BoxGeometry(0.42, 1.9, 0.03), redMat);
   hangingBanner.position.set(0, -1.95, 0);
+  const bannerStripe = new THREE.Mesh(new THREE.BoxGeometry(0.32, 1.5, 0.04), balloonWhiteMat);
+  bannerStripe.position.set(0, -1.95, 0);
   const bannerTrim = new THREE.Mesh(new THREE.BoxGeometry(0.46, 0.08, 0.04), accentGoldMat);
   bannerTrim.position.set(0, -1.0, 0);
-  balloonGroup.add(hangingBanner, bannerTrim);
+  balloonGroup.add(hangingBanner, bannerStripe, bannerTrim);
 
   const tetherGeo = new THREE.CylinderGeometry(0.008, 0.008, 4.5, 6);
   const tether = new THREE.Mesh(tetherGeo, darkMetalMat);

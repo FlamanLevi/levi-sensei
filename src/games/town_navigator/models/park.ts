@@ -1,6 +1,47 @@
 import * as THREE from 'three';
 
 let cachedParkSignTex: THREE.CanvasTexture | null = null;
+let cachedParkClockTex: THREE.CanvasTexture | null = null;
+
+function createParkClockTexture(): THREE.CanvasTexture {
+  if (cachedParkClockTex) return cachedParkClockTex;
+  const canvas = document.createElement('canvas');
+  canvas.width = 128;
+  canvas.height = 128;
+  const ctx = canvas.getContext('2d')!;
+  ctx.fillStyle = '#fefce8';
+  ctx.beginPath();
+  ctx.arc(64, 64, 60, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = '#1e293b';
+  ctx.lineWidth = 6;
+  ctx.stroke();
+  for (let i = 0; i < 12; i++) {
+    const a = (i / 12) * Math.PI * 2;
+    ctx.beginPath();
+    ctx.moveTo(64 + Math.cos(a) * 44, 64 + Math.sin(a) * 44);
+    ctx.lineTo(64 + Math.cos(a) * 52, 64 + Math.sin(a) * 52);
+    ctx.strokeStyle = '#334155';
+    ctx.lineWidth = i % 3 === 0 ? 4 : 2;
+    ctx.stroke();
+  }
+  ctx.strokeStyle = '#0f172a';
+  ctx.lineWidth = 5;
+  ctx.beginPath();
+  ctx.moveTo(64, 64);
+  ctx.lineTo(64, 32);
+  ctx.stroke();
+  ctx.lineWidth = 3.5;
+  ctx.beginPath();
+  ctx.moveTo(64, 64);
+  ctx.lineTo(90, 64);
+  ctx.stroke();
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.userData.isSharedResource = true;
+  cachedParkClockTex = tex;
+  return tex;
+}
 
 /**
  * Procedural texture for Park Entrance Sign
@@ -151,6 +192,20 @@ export function buildParkMesh(options: ParkOptions = {}): THREE.Group {
   plat.position.set(0, 2.45, -1.0);
   slideGroup.add(plat);
 
+  // Slide Platform Rear Support Posts & Top Safety Rails
+  [-0.38, 0.38].forEach((sx) => {
+    const sPost = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 2.5, 8), metalBlueMat);
+    sPost.position.set(sx, 1.25, -1.4);
+    const topRail = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 0.88, 8), metalRedMat);
+    topRail.rotation.x = Math.PI / 2;
+    topRail.position.set(sx, 2.95, -1.0);
+    const rPost = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 0.5, 6), metalRedMat);
+    rPost.position.set(sx, 2.7, -1.4);
+    const fPost = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 0.5, 6), metalRedMat);
+    fPost.position.set(sx, 2.7, -0.58);
+    slideGroup.add(sPost, topRail, rPost, fPost);
+  });
+
   // Slanted Yellow Slide Chute with Red Safety Side Rails
   const chute = new THREE.Mesh(new THREE.BoxGeometry(0.68, 0.06, 3.2), metalYellowMat);
   chute.rotation.x = 0.68;
@@ -222,11 +277,31 @@ export function buildParkMesh(options: ParkOptions = {}): THREE.Group {
   }
   group.add(gymGroup);
 
-  // 2d. Curved Sandy Walking Trail Ring
+  // 2d. Curved Sandy Walking Trail Ring & Paved Entrance Connector
   const trail = new THREE.Mesh(new THREE.RingGeometry(2.6, 3.35, 32), sandMat);
   trail.rotation.x = -Math.PI / 2;
   trail.position.set(0, 0.156, -0.6);
   group.add(trail);
+
+  const entryConnector = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.02, 1.5), foundationMat);
+  entryConnector.position.set(0, 0.158, 2.95);
+  group.add(entryConnector);
+
+  // Seesaw (Shīsō) in Rear-Center Lawn
+  const seesawGroup = new THREE.Group();
+  seesawGroup.position.set(-0.2, 0.15, -2.3);
+  const fulcrum = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.14, 0.42, 8), darkMetalMat);
+  fulcrum.position.y = 0.21;
+  const plank = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.07, 0.26), metalBlueMat);
+  plank.position.y = 0.44;
+  plank.rotation.z = 0.14;
+  [-0.95, 0.95].forEach((hx) => {
+    const handle = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.24, 6), metalYellowMat);
+    handle.position.set(hx, 0.56 + hx * 0.14, 0);
+    seesawGroup.add(handle);
+  });
+  seesawGroup.add(fulcrum, plank);
+  group.add(seesawGroup);
 
   // 3. EAST PLAYGROUND ZONE: SANDBOX & BLOOMING SAKURA TREES (detail2 at target [2.5, 1.5, 1.5])
   // 3a. Circular Sandbox (Sunaba / 砂場 at X = +2.4m, Z = 1.4m) with Mini Sandcastle & Bucket
@@ -266,16 +341,23 @@ export function buildParkMesh(options: ParkOptions = {}): THREE.Group {
     });
   }
 
-  // 4. PARK AMENITIES (Benches, East Pergola, Fence, Clock Post, Fountain & Entrance Sign at Z <= 4.35m)
+  // 4. PARK AMENITIES (Benches with 4 Iron Legs, East Pergola w/ Wisteria, Closed Fence, Clock Post, Globe Lamps, Fountain & Overhead Archway Sign)
   [-3.6, 3.6].forEach(bx => {
     const bench = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.06, 0.45), woodMat);
     bench.position.set(bx, 0.45 + 0.15, 3.6);
     const back = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.45, 0.06), woodMat);
     back.position.set(bx, 0.7 + 0.15, 3.4);
+    [-0.65, 0.65].forEach((lx) => {
+      [-0.16, 0.16].forEach((lz) => {
+        const leg = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.44, 0.06), darkMetalMat);
+        leg.position.set(bx + lx, 0.37, 3.6 + lz);
+        group.add(leg);
+      });
+    });
     group.add(bench, back);
   });
 
-  // Shaded Wooden Pergola over East Bench (X = 3.6, Z = 3.6)
+  // Shaded Wooden Pergola over East Bench (X = 3.6, Z = 3.6) + Draping Wisteria Vines
   [
     [2.7, 3.1], [4.5, 3.1], [2.7, 4.1], [4.5, 4.1],
   ].forEach(([px, pz]) => {
@@ -283,23 +365,36 @@ export function buildParkMesh(options: ParkOptions = {}): THREE.Group {
     post.position.set(px, 1.22, pz);
     group.add(post);
   });
+  const wisteriaMat = new THREE.MeshStandardMaterial({ color: 0xa855f7, roughness: 0.75 });
   for (let rx = 2.65; rx <= 4.55; rx += 0.36) {
     const rafter = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.08, 1.25), woodMat);
     rafter.position.set(rx, 2.34, 3.6);
     group.add(rafter);
+    const vine = new THREE.Mesh(new THREE.ConeGeometry(0.08, 0.42, 6), wisteriaMat);
+    vine.rotation.x = Math.PI;
+    vine.position.set(rx, 2.12, 3.25 + ((Math.round(rx * 10) % 2) * 0.65));
+    group.add(vine);
   }
 
-  // Low Perimeter Wooden Park Fence & Entrance Bollards
+  // Closed Perimeter Wooden Park Fence (West, East, North & Front) + Entrance Bollards
   [-5.8, 5.8].forEach((fx) => {
-    const sideRail = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.08, 8.6), woodMat);
-    sideRail.position.set(fx, 0.62, -0.1);
+    const sideRail = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.08, 10.2), woodMat);
+    sideRail.position.set(fx, 0.62, -0.75);
     group.add(sideRail);
-    for (let fz = -4.2; fz <= 4.2; fz += 2.1) {
+    for (let fz = -5.8; fz <= 4.3; fz += 2.02) {
       const fPost = new THREE.Mesh(new THREE.BoxGeometry(0.11, 0.68, 0.11), woodMat);
       fPost.position.set(fx, 0.49, fz);
       group.add(fPost);
     }
   });
+  const northRail = new THREE.Mesh(new THREE.BoxGeometry(11.6, 0.08, 0.08), woodMat);
+  northRail.position.set(0, 0.62, -5.85);
+  group.add(northRail);
+  for (let nx = -3.8; nx <= 3.8; nx += 1.9) {
+    const nPost = new THREE.Mesh(new THREE.BoxGeometry(0.11, 0.68, 0.11), woodMat);
+    nPost.position.set(nx, 0.49, -5.85);
+    group.add(nPost);
+  }
   [-3.5, 3.5].forEach((fx) => {
     const frontRail = new THREE.Mesh(new THREE.BoxGeometry(4.4, 0.08, 0.08), woodMat);
     frontRail.position.set(fx, 0.62, 4.35);
@@ -311,13 +406,38 @@ export function buildParkMesh(options: ParkOptions = {}): THREE.Group {
     group.add(bollard);
   });
 
-  // Classic Japanese Park Clock Post & Glowing Lantern (X = 0, Z = -0.8m)
+  // 3 Warm Vintage Globe Park Lamps
+  [
+    [-2.2, 3.4],
+    [2.2, 3.4],
+    [0.0, -4.6],
+  ].forEach(([lx, lz]) => {
+    const lPole = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.06, 2.35, 8), darkMetalMat);
+    lPole.position.set(lx, 1.32, lz);
+    const lGlobe = new THREE.Mesh(new THREE.SphereGeometry(0.18, 10, 8), warmGlowMat);
+    lGlobe.position.set(lx, 2.58, lz);
+    group.add(lPole, lGlobe);
+  });
+
+  // Classic Japanese Park Clock Post with Crisp CanvasTexture Face (X = 0, Z = -0.8m)
   const clockPole = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.07, 3.4, 10), darkMetalMat);
   clockPole.position.set(0, 1.85, -0.8);
-  const clockDial = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.28, 0.08, 16), warmGlowMat);
+  const clockRim = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.32, 0.09, 16), darkMetalMat);
+  clockRim.rotation.x = Math.PI / 2;
+  clockRim.position.set(0, 3.55, -0.8);
+  const clockFaceMat = new THREE.MeshStandardMaterial({
+    map: createParkClockTexture(),
+    emissive: 0xffffff,
+    emissiveMap: createParkClockTexture(),
+    emissiveIntensity: 0.4,
+    roughness: 0.3,
+  });
+  const clockDial = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.28, 0.11, 16), [
+    darkMetalMat, clockFaceMat, clockFaceMat,
+  ]);
   clockDial.rotation.x = Math.PI / 2;
   clockDial.position.set(0, 3.55, -0.8);
-  group.add(clockPole, clockDial);
+  group.add(clockPole, clockRim, clockDial);
 
   // Park Drinking Fountain (Suidōba: X = -1.6m, Z = 3.6m)
   const fountain = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.68, 0.42), foundationMat);
@@ -326,7 +446,7 @@ export function buildParkMesh(options: ParkOptions = {}): THREE.Group {
   spout.position.set(-1.6, 0.90, 3.6);
   group.add(fountain, spout);
 
-  // Park Entrance Sign Post (X = 0, Z = 4.1m)
+  // Park Overhead Timber Entrance Archway Sign (Clearance Y >= 2.65m so gate is open!)
   const signTexture = createParkSignTexture();
   const signMat = new THREE.MeshStandardMaterial({
     map: signTexture,
@@ -335,15 +455,20 @@ export function buildParkMesh(options: ParkOptions = {}): THREE.Group {
     emissiveIntensity: 0.3,
     roughness: 0.4,
   });
+  [-1.9, 1.9].forEach((ax) => {
+    const archPost = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.10, 3.25, 10), woodMat);
+    archPost.position.set(ax, 1.77, 4.1);
+    group.add(archPost);
+  });
   const signMesh = new THREE.Mesh(new THREE.BoxGeometry(3.6, 0.85, 0.12), [
     woodMat, woodMat, woodMat, woodMat, signMat, signMat,
   ]);
-  signMesh.position.set(0, 1.2 + 0.15, 4.1);
+  signMesh.position.set(0, 3.05, 4.1);
   group.add(signMesh);
 
   // 5. SPRING-RIDER ANIMAL ROCKERS (Duck & Panda)
   const duckGroup = new THREE.Group();
-  duckGroup.position.set(-0.2, 0.15, 2.2);
+  duckGroup.position.set(-0.45, 0.15, 2.1);
   const spring1 = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.35, 10), chromeMat);
   spring1.position.y = 0.175;
   const duckBody = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.32, 0.55), metalYellowMat);
@@ -355,6 +480,22 @@ export function buildParkMesh(options: ParkOptions = {}): THREE.Group {
   duckBeak.position.set(0, 0.7, 0.38);
   duckGroup.add(spring1, duckBody, duckHead, duckBeak);
   group.add(duckGroup);
+
+  const pandaGroup = new THREE.Group();
+  pandaGroup.position.set(0.45, 0.15, 2.1);
+  const spring2 = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.35, 10), chromeMat);
+  spring2.position.y = 0.175;
+  const pBody = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.32, 0.52), whiteLineMat);
+  pBody.position.y = 0.48;
+  const pHead = new THREE.Mesh(new THREE.SphereGeometry(0.15, 10, 8), whiteLineMat);
+  pHead.position.set(0, 0.72, 0.20);
+  [-0.1, 0.1].forEach((ex) => {
+    const ear = new THREE.Mesh(new THREE.SphereGeometry(0.05, 8, 6), darkMetalMat);
+    ear.position.set(ex, 0.85, 0.18);
+    pandaGroup.add(ear);
+  });
+  pandaGroup.add(spring2, pBody, pHead);
+  group.add(pandaGroup);
 
   if (scale !== 1.0) {
     group.scale.setScalar(scale);

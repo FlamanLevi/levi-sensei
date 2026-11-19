@@ -3,6 +3,7 @@ import {
   getBrickTileTexture,
   buildPerimeterRailing,
   addWrapAroundWindows,
+  getClearShowcaseGlassMaterial,
 } from './wallTextures';
 
 let cachedHospitalSignTex: THREE.CanvasTexture | null = null;
@@ -233,6 +234,7 @@ export function buildHospitalMesh(options: HospitalOptions = {}): THREE.Group {
     transparent: true,
     opacity: 0.7,
   });
+  const clearGlassMat = getClearShowcaseGlassMaterial();
 
   const lotSize = 12.0;
 
@@ -243,9 +245,10 @@ export function buildHospitalMesh(options: HospitalOptions = {}): THREE.Group {
   lawn.receiveShadow = true;
   group.add(lawn);
 
-  const plazaGeo = new THREE.BoxGeometry(lotSize, 0.152, 1.5);
+  // Extended paved forecourt apron covering z = 1.9..4.5 so Ambulance parks on pavement
+  const plazaGeo = new THREE.BoxGeometry(lotSize, 0.152, 2.6);
   const plaza = new THREE.Mesh(plazaGeo, foundationMat);
-  plaza.position.set(0, 0.076, 3.75);
+  plaza.position.set(0, 0.076, 3.2);
   plaza.receiveShadow = true;
   group.add(plaza);
 
@@ -277,7 +280,7 @@ export function buildHospitalMesh(options: HospitalOptions = {}): THREE.Group {
 
   // 2. MAIN 3-STORY HOSPITAL BUILDING
   const hospitalGroup = new THREE.Group();
-  hospitalGroup.position.set(0, 0.15, -0.6);
+  hospitalGroup.position.set(0, 0.15, -0.8);
 
   const bW = 9.8;
   const bD = 6.6;
@@ -314,16 +317,16 @@ export function buildHospitalMesh(options: HospitalOptions = {}): THREE.Group {
     frameMat: tealAccentMat,
   });
 
-  // Front Ward Windows Across 3 Stories
+  // Front Ward Windows Across 3 Stories (skip 1F outpatient & ER door bays)
   for (let story = 0; story < 3; story++) {
     const wy = 1.4 + story * 2.8;
     for (let c = 0; c < 6; c++) {
       const wx = -3.8 + c * 1.5;
-      if (story === 0 && Math.abs(wx) < 1.2) continue;
+      if (story === 0 && (Math.abs(wx + 2.4) < 1.35 || Math.abs(wx - 2.8) < 1.35)) continue;
 
       const frame = new THREE.Mesh(new THREE.BoxGeometry(1.14, 1.38, 0.05), tealAccentMat);
       frame.position.set(wx, wy, bD / 2 + 0.015);
-      const win = new THREE.Mesh(new THREE.BoxGeometry(1.05, 1.3, 0.06), glassMat);
+      const win = new THREE.Mesh(new THREE.BoxGeometry(1.05, 1.3, 0.05), glassMat);
       win.position.set(wx, wy, bD / 2 + 0.03);
       hospitalGroup.add(frame, win);
     }
@@ -336,7 +339,9 @@ export function buildHospitalMesh(options: HospitalOptions = {}): THREE.Group {
   const penthouse = new THREE.Mesh(new THREE.BoxGeometry(pentW, pentH, pentD), hospitalWhiteMat);
   penthouse.position.set(-1.5, bH + pentH / 2, 0);
   penthouse.castShadow = true;
-  hospitalGroup.add(penthouse);
+  const pentCap = new THREE.Mesh(new THREE.BoxGeometry(pentW + 0.14, 0.14, pentD + 0.14), tealAccentMat);
+  pentCap.position.set(-1.5, bH + pentH + 0.07, 0);
+  hospitalGroup.add(penthouse, pentCap);
 
   // 3D Glowing Red Cross on Front of Penthouse
   const rcGroup = new THREE.Group();
@@ -389,21 +394,45 @@ export function buildHospitalMesh(options: HospitalOptions = {}): THREE.Group {
   entranceCanopy.castShadow = true;
   hospitalGroup.add(entranceCanopy);
 
+  // Red Cross Emblem on Outpatient Canopy Fascia
+  const canRcV = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.32, 0.04), redCrossMat);
+  canRcV.position.set(-2.4, 2.7, bD / 2 + 1.81);
+  const canRcH = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.12, 0.04), redCrossMat);
+  canRcH.position.set(-2.4, 2.7, bD / 2 + 1.81);
+  hospitalGroup.add(canRcV, canRcH);
+
   [-1.6, 1.6].forEach(px => {
     const pillar = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 2.7, 12), darkMetalMat);
     pillar.position.set(-2.4 + px, 1.35, bD / 2 + 1.7);
     hospitalGroup.add(pillar);
   });
 
-  const doors = new THREE.Mesh(new THREE.BoxGeometry(2.4, 2.3, 0.06), glassMat);
+  const doors = new THREE.Mesh(new THREE.BoxGeometry(2.4, 2.3, 0.05), clearGlassMat);
   doors.position.set(-2.4, 1.15, bD / 2 + 0.04);
-  hospitalGroup.add(doors);
+  const doorMullion = new THREE.Mesh(new THREE.BoxGeometry(0.06, 2.3, 0.08), darkMetalMat);
+  doorMullion.position.set(-2.4, 1.15, bD / 2 + 0.04);
+  hospitalGroup.add(doors, doorMullion);
 
-  // Right Side: Emergency Ambulance Drop-Off Portico (detail1 at X = +2.8m)
+  // Wheelchair Accessibility Ramp + Handrail beside Outpatient Entrance
+  const ramp = new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.1, 1.7), foundationMat);
+  ramp.position.set(-4.35, 0.06, bD / 2 + 0.85);
+  const rampRail = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.65, 1.65), steelMat);
+  rampRail.position.set(-4.85, 0.42, bD / 2 + 0.85);
+  hospitalGroup.add(ramp, rampRail);
+
+  // Right Side: Emergency Ambulance Drop-Off Portico (detail1 at X = +2.8m) with Twin Support Columns
   const erCanopy = new THREE.Mesh(new THREE.BoxGeometry(3.8, 0.18, 2.2), tealAccentMat);
   erCanopy.position.set(2.8, 3.2, bD / 2 + 1.1);
   erCanopy.castShadow = true;
   hospitalGroup.add(erCanopy);
+  [-1.65, 1.65].forEach((px) => {
+    const erCol = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 3.2, 10), steelMat);
+    erCol.position.set(2.8 + px, 1.6, bD / 2 + 2.0);
+    hospitalGroup.add(erCol);
+  });
+  const erDoors = new THREE.Mesh(new THREE.BoxGeometry(2.4, 2.3, 0.05), clearGlassMat);
+  erDoors.position.set(2.8, 1.15, bD / 2 + 0.04);
+  hospitalGroup.add(erDoors);
 
   const erBannerMat = new THREE.MeshStandardMaterial({
     map: createEmergencyBannerTexture(),
@@ -418,7 +447,7 @@ export function buildHospitalMesh(options: HospitalOptions = {}): THREE.Group {
   erBanner.position.set(2.8, 3.55, bD / 2 + 2.18);
   hospitalGroup.add(erBanner);
 
-  // Prominent Header Signboard: "HOSPITAL / 総合病院"
+  // Prominent Header Signboard: "HOSPITAL / 総合病院" (centered cleanly on 2F/3F spandrel band)
   const signTexture = createHospitalSignTexture();
   const signMat = new THREE.MeshStandardMaterial({
     map: signTexture,
@@ -430,15 +459,23 @@ export function buildHospitalMesh(options: HospitalOptions = {}): THREE.Group {
   const signMesh = new THREE.Mesh(new THREE.BoxGeometry(4.8, 0.85, 0.12), [
     tealAccentMat, tealAccentMat, tealAccentMat, tealAccentMat, signMat, tealAccentMat
   ]);
-  signMesh.position.set(0, 6.2, bD / 2 + 0.12);
+  signMesh.position.set(0, 5.6, bD / 2 + 0.12);
   hospitalGroup.add(signMesh);
 
   group.add(hospitalGroup);
 
-  // 5. JAPANESE AMBULANCE (detail1: Parked at ER Bay on Right Apron at X = +2.8m, Z = 2.3m)
+  // 5. JAPANESE AMBULANCE (detail1: Parked at ER Bay on Right Apron at X = +2.8m, Z = 2.65m)
   const ambulance = buildAmbulance();
-  ambulance.position.set(2.8, 0.15, 2.3);
+  ambulance.position.set(2.8, 0.15, 2.65);
   group.add(ambulance);
+
+  // Forecourt Stone Planter & Waiting Bench
+  const hedgeMat = new THREE.MeshStandardMaterial({ color: 0x15803d, roughness: 0.9 });
+  const planter = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.28, 0.65), foundationMat);
+  planter.position.set(-4.8, 0.29, 3.95);
+  const hedge = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.32, 0.45), hedgeMat);
+  hedge.position.set(-4.8, 0.56, 3.95);
+  group.add(planter, hedge);
 
   if (scale !== 1.0) {
     group.scale.setScalar(scale);

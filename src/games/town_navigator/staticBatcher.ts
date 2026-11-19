@@ -117,9 +117,9 @@ function materialSignature(mat: THREE.Material, bakeVertexColors: boolean): { si
   if (mat.userData?.batchUnique) return { sig: `unique:${mat.uuid}`, baked: false };
 
   if (bakeVertexColors && canBakeVertexColor(mat)) {
-    const qRough = quantizeStep(mat.roughness, 0.05);
-    const qMetal = quantizeStep(mat.metalness, 0.05);
-    const qEnv = quantizeStep(mat.envMapIntensity ?? 1, 0.1);
+    const qRough = quantizeStep(mat.roughness, 0.20);
+    const qMetal = quantizeStep(mat.metalness, 0.25);
+    const qEnv = quantizeStep(mat.envMapIntensity ?? 1, 0.25);
     const parts: string[] = [
       'BakedStd',
       `r=${qRough.toFixed(2)}`,

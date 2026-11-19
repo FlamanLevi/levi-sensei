@@ -377,6 +377,7 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
   const carouselRotorRef = useRef<THREE.Object3D | null>(null);
   const swingSeat0Ref = useRef<THREE.Object3D | null>(null);
   const swingSeat1Ref = useRef<THREE.Object3D | null>(null);
+  const mantaRayRef = useRef<THREE.Object3D | null>(null);
   const livingTownRef = useRef<LivingTownController | null>(null);
   const streetlightLevelRef = useRef<number>(0);
 
@@ -792,6 +793,7 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
     carouselRotorRef.current = nextMap.buildingsGroup.getObjectByName('AmusementPark_CarouselRotor') ?? null;
     swingSeat0Ref.current = nextMap.buildingsGroup.getObjectByName('Park_SwingSeat_0') ?? null;
     swingSeat1Ref.current = nextMap.buildingsGroup.getObjectByName('Park_SwingSeat_1') ?? null;
+    mantaRayRef.current = nextMap.buildingsGroup.getObjectByName('MantaRay') ?? null;
 
     // Mount Living Town Simulation (instanced traffic, pedestrians, 3D target beacon & confetti)
     if (livingTownRef.current) {
@@ -973,6 +975,7 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
     const perimeterScenery = buildPerimeterScenery({
       boundaryHalfSize: 74.0,
       includeBoundaryFence: true,
+      lowPower: gpuProfileRef.current?.isLowPower ?? false,
     });
     perimeterSceneryRef.current = perimeterScenery;
     updatePerimeterSceneryLighting(perimeterScenery, atmos.streetlightLevel, atmos.groundColor);
@@ -1164,6 +1167,14 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
       if (swingSeat1Ref.current) {
         swingSeat1Ref.current.rotation.x = Math.sin(elapsed * 2.1 + 0.85) * 0.36;
       }
+      const mantaRay = mantaRayRef.current;
+      if (mantaRay) {
+        mantaRay.position.x = 2.1 + Math.sin(elapsed * 0.55) * 0.95;
+        mantaRay.position.y = 3.7 + Math.sin(elapsed * 1.1) * 0.22;
+        mantaRay.position.z = -1.4 + Math.cos(elapsed * 0.55) * 0.25;
+        mantaRay.rotation.z = Math.cos(elapsed * 0.55) * 0.16;
+        mantaRay.rotation.y = -0.35 + Math.cos(elapsed * 0.55) * 0.25;
+      }
 
       livingTownRef.current?.update(delta, elapsed, playerPosRef.current, streetlightLevelRef.current);
 
@@ -1258,6 +1269,24 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
         player.body.position.set(0, 0.06, 0.05);
         player.leftLeg.visible = false;
         player.rightLeg.visible = false;
+        const tod = timeOfDayRef.current;
+        const nightFactor = tod === 'NIGHT' ? 1.0 : tod === 'SUNSET' ? 0.5 : 0.0;
+        const wMode = weatherRef.current;
+        const weatherSprayMode =
+          wMode === 'LIGHT_RAIN' || wMode === 'HEAVY_RAIN'
+            ? 'RAIN'
+            : wMode === 'LIGHT_SNOW' || wMode === 'HEAVY_SNOW'
+            ? 'SNOW'
+            : 'NONE';
+        const isBraking = velForwardRef.current < -0.05 || (targetForward <= 0 && Math.abs(velForwardRef.current) > 0.15);
+        kart.updateKartVisuals(delta, {
+          speed: velForwardRef.current * baseSpeed,
+          steerInput: -velTurnRef.current,
+          nightFactor,
+          isBraking,
+          weatherSprayMode,
+          elapsedSec: elapsed,
+        });
         townAudio.updateKartEngine(isMoving, speedRatio);
       } else if (currentMode === 'BIKE') {
         bike.group.visible = true;
@@ -1274,7 +1303,7 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
         player.rightLeg.visible = true;
       }
 
-      player.updateAnimation(isMoving, delta, speedRatio);
+      player.updateAnimation(isMoving, delta, speedRatio, currentMode);
       if (playerLamp.visible) {
         playerLamp.position.set(playerPosRef.current.x, 5.2, playerPosRef.current.z);
       }
@@ -1490,6 +1519,14 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
       }
 
       renderer.render(scene, camera);
+      if (import.meta.env.DEV && (renderer.info.render.frame % 60 === 0)) {
+        (window as unknown as Record<string, unknown>).__TOWN_DEBUG_BUDGET = {
+          calls: renderer.info.render.calls,
+          triangles: renderer.info.render.triangles,
+          geometries: renderer.info.memory.geometries,
+          textures: renderer.info.memory.textures,
+        };
+      }
       afterDraw(animate);
     };
 
@@ -1517,6 +1554,7 @@ export const TownNavigator: React.FC<TownNavigatorProps> = ({
       carouselRotorRef.current = null;
       swingSeat0Ref.current = null;
       swingSeat1Ref.current = null;
+      mantaRayRef.current = null;
       routeInstancedRef.current = null;
       weatherControllerRef.current = null;
       materialBucketsRef.current = null;

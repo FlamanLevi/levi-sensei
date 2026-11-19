@@ -331,10 +331,24 @@ export function generateRandomTown(
           }
         }
 
+        const isZRoad = isRoadX && !isRoadZ;
+        const nearIntersectionNeg = isZRoad
+          ? roadIndicesZ.has(gz - 1)
+          : roadIndicesX.has(gx - 1);
+        const nearIntersectionPos = isZRoad
+          ? roadIndicesZ.has(gz + 1)
+          : roadIndicesX.has(gx + 1);
+        const includeBikeMark = (gx + gz) % 2 === 0;
+        const includeManhole = (gx + gz) % 3 === 0;
+
         const tile = buildRoadTile(type, {
           intersectionInfo,
           boulevardPart,
           includeMedianTree,
+          nearIntersectionNeg,
+          nearIntersectionPos,
+          includeBikeMark,
+          includeManhole,
           lowPower: options?.lowPower,
         });
         const wx = (gx - halfGrid) * cellSize;

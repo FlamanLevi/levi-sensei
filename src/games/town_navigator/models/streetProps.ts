@@ -726,11 +726,11 @@ function buildAokanbanGantry(
   g.position.set(wx, 0.15, wz);
   g.rotation.y = rotY;
 
-  // Galvanized L-Cantilever mast on left sidewalk + overhead beam
+  // Galvanized L-Cantilever mast on left sidewalk + rear support beam behind board
   const mast = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.12, 5.4, 8), mirrorPoleMat);
-  mast.position.set(-2.65, 2.7, 0);
+  mast.position.set(-2.65, 2.7, -0.08);
   const beam = new THREE.Mesh(new THREE.BoxGeometry(3.8, 0.12, 0.12), mirrorPoleMat);
-  beam.position.set(-0.85, 5.25, 0);
+  beam.position.set(-0.85, 5.25, -0.08);
   g.add(mast, beam);
 
   const canvas = document.createElement('canvas');
@@ -747,9 +747,13 @@ function buildAokanbanGantry(
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   ctx.font = 'bold 34px "BIZ UDPGothic", sans-serif';
-  ctx.fillText(`↑ ${straightLabel}`, 256, 62, 460);
-  ctx.font = 'bold 28px "BIZ UDPGothic", sans-serif';
-  ctx.fillText(`← ${leftLabel}    |    ${rightLabel} →`, 256, 162, 470);
+  ctx.fillText(`↑ ${straightLabel}`, 256, 74, 460);
+  // Subtle horizontal divider bar
+  ctx.fillStyle = 'rgba(255,255,255,0.45)';
+  ctx.fillRect(32, 126, 448, 3);
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 26px "BIZ UDPGothic", sans-serif';
+  ctx.fillText(`← ${leftLabel}   |   ${rightLabel} →`, 256, 182, 470);
 
   const tex = new THREE.CanvasTexture(canvas);
   tex.colorSpace = THREE.SRGBColorSpace;
@@ -909,20 +913,63 @@ export function populateStreetscapeProps(
     }
   });
 
-  // 2B. Dynamic Seed-Accurate Overhead *Aokanban* Route Gantries on all 4 Boulevard Approaches
-  const pickLandmarks = (pred: (b: PlacedBuilding) => boolean): string => {
-    const found = buildingsList.filter((b) => b.tier >= 2 && pred(b));
-    if (found.length === 0) return 'Station';
-    const b = found[0];
-    const cleanJa = b.nameJa.replace(/<[^>]*>/g, '');
-    return `${cleanJa} ${b.nameEn}`;
+  // 2B. Dynamic Seed-Accurate Overhead *Aokanban* Route Gantries on all 4 Left-Hand Boulevard Approaches
+  const pickCardinalLandmark = (dir: 'N' | 'S' | 'E' | 'W', usedIds: Set<string>): string => {
+    const candidates = buildingsList
+      .filter((b) => b.tier >= 2 && !usedIds.has(b.id))
+      .map((b) => {
+        const [bx, , bz] = b.worldPos;
+        const primary =
+          dir === 'N' ? -bz : dir === 'S' ? bz : dir === 'E' ? bx : -bx;
+        const lateral =
+          dir === 'N' || dir === 'S' ? Math.abs(bx) : Math.abs(bz);
+        return { b, primary, lateral };
+      })
+      .filter((c) => c.primary > 12);
+
+    if (candidates.length === 0) return 'Station';
+
+    // Prefer landmarks strictly within the 90° cardinal wedge (primary >= lateral),
+    // then prefer higher-tier landmarks closest to the avenue centerline
+    candidates.sort((a, b) => {
+      const aInWedge = a.primary >= a.lateral ? 1 : 0;
+      const bInWedge = b.primary >= b.lateral ? 1 : 0;
+      if (aInWedge !== bInWedge) return bInWedge - aInWedge;
+      if (a.b.tier !== b.b.tier) return b.b.tier - a.b.tier;
+      return a.lateral - b.lateral;
+    });
+
+    const chosen = candidates[0].b;
+    usedIds.add(chosen.id);
+    const cleanJa = chosen.nameJa.replace(/<[^>]*>/g, '');
+    return `${cleanJa} ${chosen.nameEn}`;
   };
-  // Northbound (-Z), Southbound (+Z), Eastbound (+X), Westbound (-X)
+
+  const makeGantry = (
+    wx: number,
+    wz: number,
+    rotY: number,
+    straightDir: 'N' | 'S' | 'E' | 'W',
+    leftDir: 'N' | 'S' | 'E' | 'W',
+    rightDir: 'N' | 'S' | 'E' | 'W'
+  ) => {
+    const used = new Set<string>();
+    const straight = pickCardinalLandmark(straightDir, used);
+    const left = pickCardinalLandmark(leftDir, used);
+    const right = pickCardinalLandmark(rightDir, used);
+    return buildAokanbanGantry(wx, wz, rotY, straight, left, right);
+  };
+
+  // Left-hand traffic boulevard approaches to Central (0,0):
+  // Northbound (-Z) on West side (X=-3.0, Z=+15.0, mast on X=-5.65 sidewalk)
+  // Southbound (+Z) on East side (X=+3.0, Z=-15.0, mast on X=+5.65 sidewalk)
+  // Eastbound (+X) on North side (X=-15.0, Z=-3.0, mast on Z=-5.65 sidewalk)
+  // Westbound (-X) on South side (X=+15.0, Z=+3.0, mast on Z=+5.65 sidewalk)
   propsGroup.add(
-    buildAokanbanGantry(2.8, 15.0, 0, pickLandmarks((b) => b.worldPos[2] < -15), pickLandmarks((b) => b.worldPos[0] < -15), pickLandmarks((b) => b.worldPos[0] > 15)),
-    buildAokanbanGantry(-2.8, -15.0, Math.PI, pickLandmarks((b) => b.worldPos[2] > 15), pickLandmarks((b) => b.worldPos[0] > 15), pickLandmarks((b) => b.worldPos[0] < -15)),
-    buildAokanbanGantry(-15.0, 2.8, Math.PI / 2, pickLandmarks((b) => b.worldPos[0] > 15), pickLandmarks((b) => b.worldPos[2] < -15), pickLandmarks((b) => b.worldPos[2] > 15)),
-    buildAokanbanGantry(15.0, -2.8, -Math.PI / 2, pickLandmarks((b) => b.worldPos[0] < -15), pickLandmarks((b) => b.worldPos[2] > 15), pickLandmarks((b) => b.worldPos[2] < -15))
+    makeGantry(-3.0, 15.0, 0, 'N', 'W', 'E'),
+    makeGantry(3.0, -15.0, Math.PI, 'S', 'E', 'W'),
+    makeGantry(-15.0, -3.0, -Math.PI / 2, 'E', 'N', 'S'),
+    makeGantry(15.0, 3.0, Math.PI / 2, 'W', 'S', 'N')
   );
 
   // 2C. Japanese Concrete Utility Poles (*Denchū*) along outer/secondary streets + 1 Batched Wire Mesh

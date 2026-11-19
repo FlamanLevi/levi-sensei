@@ -66,21 +66,89 @@ function getRoadStencilAtlasTexture(): THREE.CanvasTexture | null {
   ctx.font = '900 54px "BIZ UDPGothic", "UD Digi Kyokasho NP-R", sans-serif';
   ctx.fillText('止まれ', 384, 66);
 
-  // Q3 (0,128)-(256,256): Blue Bicycle Lane Sharrow Chevron
-  ctx.fillStyle = 'rgba(2, 132, 199, 0.86)';
-  ctx.fillRect(18, 138, 220, 108);
-  ctx.strokeStyle = '#ffffff';
-  ctx.lineWidth = 6;
-  ctx.strokeRect(24, 144, 208, 96);
-  // Chevron + bike wheels
+  // Q3 (0,128)-(256,256): Authentic Japanese Jitensha Navi-Māku (自転車ナビマーク)
+  // Painted directly onto asphalt (transparent background, no border box):
+  // Top: 2 upward chevrons + solid upward arrow; Bottom: front-facing cyclist silhouette
+  const naviBlue = '#0ea5e9';
+  ctx.fillStyle = naviBlue;
+  ctx.strokeStyle = naviBlue;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+
+  // Top chevron 1 (y = 134..156)
   ctx.beginPath();
-  ctx.moveTo(86, 178);
-  ctx.lineTo(128, 156);
-  ctx.lineTo(170, 178);
+  ctx.moveTo(128, 132);
+  ctx.lineTo(156, 150);
+  ctx.lineTo(156, 160);
+  ctx.lineTo(128, 142);
+  ctx.lineTo(100, 160);
+  ctx.lineTo(100, 150);
+  ctx.closePath();
+  ctx.fill();
+
+  // Middle chevron 2 (y = 152..176)
+  ctx.beginPath();
+  ctx.moveTo(128, 151);
+  ctx.lineTo(156, 169);
+  ctx.lineTo(156, 179);
+  ctx.lineTo(128, 161);
+  ctx.lineTo(100, 179);
+  ctx.lineTo(100, 169);
+  ctx.closePath();
+  ctx.fill();
+
+  // Solid upward arrow (y = 170..199)
+  ctx.beginPath();
+  ctx.moveTo(128, 169);
+  ctx.lineTo(156, 189);
+  ctx.lineTo(140, 189);
+  ctx.lineTo(140, 200);
+  ctx.lineTo(116, 200);
+  ctx.lineTo(116, 189);
+  ctx.lineTo(100, 189);
+  ctx.closePath();
+  ctx.fill();
+
+  // Front-view cyclist silhouette (y = 205..252)
+  // Head
+  ctx.beginPath();
+  ctx.arc(128, 211, 5.5, 0, Math.PI * 2);
+  ctx.fill();
+  // Torso
+  ctx.beginPath();
+  ctx.moveTo(118, 219);
+  ctx.lineTo(138, 219);
+  ctx.lineTo(134, 231);
+  ctx.lineTo(122, 231);
+  ctx.closePath();
+  ctx.fill();
+  // Arms & wide handlebars
+  ctx.lineWidth = 4.5;
+  ctx.beginPath();
+  ctx.moveTo(117, 221);
+  ctx.lineTo(107, 231);
+  ctx.moveTo(139, 221);
+  ctx.lineTo(149, 231);
   ctx.stroke();
+  ctx.lineWidth = 4;
   ctx.beginPath();
-  ctx.arc(104, 214, 14, 0, Math.PI * 2);
-  ctx.arc(152, 214, 14, 0, Math.PI * 2);
+  ctx.moveTo(102, 230);
+  ctx.lineTo(128, 235);
+  ctx.lineTo(154, 230);
+  ctx.stroke();
+  // Front vertical tire & fork
+  ctx.lineWidth = 4.5;
+  ctx.beginPath();
+  ctx.moveTo(128, 234);
+  ctx.lineTo(128, 253);
+  ctx.stroke();
+  // Left & right legs/pedals
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.moveTo(120, 235);
+  ctx.lineTo(120, 246);
+  ctx.moveTo(136, 235);
+  ctx.lineTo(136, 249);
   ctx.stroke();
 
   // Q4 (256,128)-(512,256): "30" Zone Speed Stencil
@@ -1292,6 +1360,14 @@ export interface RoadTileOptions {
   boulevardPart?: 'NW' | 'NE' | 'SW' | 'SE' | 'W' | 'E' | 'N' | 'S';
   /** Add boulevard median shade tree on alternating straight boulevard tiles */
   includeMedianTree?: boolean;
+  /** True when an intersection lies immediately at the negative axis edge (-Z for Z roads, -X for X roads) */
+  nearIntersectionNeg?: boolean;
+  /** True when an intersection lies immediately at the positive axis edge (+Z for Z roads, +X for X roads) */
+  nearIntersectionPos?: boolean;
+  /** Add bike navi-mark on boulevard curb edge (alternating tiles) */
+  includeBikeMark?: boolean;
+  /** Add manhole cover on straight road tile */
+  includeManhole?: boolean;
   /** Low-power hardware mode to skip optional micro-decorations */
   lowPower?: boolean;
 }
@@ -1361,7 +1437,16 @@ export function buildRoadTile(
         ? { intersectionInfo: intersectionOrOptions }
         : intersectionOrOptions)
     : {};
-  const { intersectionInfo, boulevardPart, includeMedianTree, lowPower = false } = opts;
+  const {
+    intersectionInfo,
+    boulevardPart,
+    includeMedianTree,
+    nearIntersectionNeg = false,
+    nearIntersectionPos = false,
+    includeBikeMark = true,
+    includeManhole = true,
+    lowPower = false,
+  } = opts;
   const tile = new THREE.Group();
   tile.name = `RoadTile_${type}`;
 
@@ -1412,19 +1497,31 @@ export function buildRoadTile(
       tile.add(stripe);
     }
 
-    // Iconic Japanese White Road Diamond (◇) + "30" Zone Stencil + Cast-Iron Manhole Cover
-    const diamond = buildRoadDiamondMarking();
-    diamond.position.set(-1.15, 0.056, 0);
-    tile.add(diamond);
+    // Intersection-scoped markings (Left-hand traffic: West x=-1.15 goes North -Z, East x=+1.15 goes South +Z)
+    if (nearIntersectionNeg) {
+      // Approaching North intersection (-Z): diamond in West lane, "30" exiting in East lane
+      const diamond = buildRoadDiamondMarking();
+      diamond.position.set(-1.15, 0.056, 0.4);
+      const speed30 = createRoadStencilDecal('SPEED30', 1.05, 1.05);
+      speed30.rotation.z = Math.PI;
+      speed30.position.set(1.15, 0.057, 0.4);
+      tile.add(diamond, speed30);
+    }
+    if (nearIntersectionPos) {
+      // Approaching South intersection (+Z): diamond in East lane, "30" exiting in West lane
+      const diamond = buildRoadDiamondMarking();
+      diamond.position.set(1.15, 0.056, -0.4);
+      const speed30 = createRoadStencilDecal('SPEED30', 1.05, 1.05);
+      speed30.position.set(-1.15, 0.057, -0.4);
+      tile.add(diamond, speed30);
+    }
 
-    const speed30 = createRoadStencilDecal('SPEED30', 1.05, 1.05);
-    speed30.position.set(1.15, 0.057, 1.6);
-    tile.add(speed30);
-
-    const manhole = new THREE.Mesh(new THREE.CircleGeometry(0.34, 14), manholeMat);
-    manhole.rotation.x = -Math.PI / 2;
-    manhole.position.set(1.15, 0.056, -1.2);
-    tile.add(manhole);
+    if (includeManhole) {
+      const manhole = new THREE.Mesh(new THREE.CircleGeometry(0.34, 14), manholeMat);
+      manhole.rotation.x = -Math.PI / 2;
+      manhole.position.set(1.15, 0.056, -1.6);
+      tile.add(manhole);
+    }
 
     // Curbside Municipal LED Streetlight on West Sidewalk (X = -2.72m, Z = 0)
     const streetLight = buildStreetlight('EAST', 'SIDE_STREET', lowPower);
@@ -1460,21 +1557,34 @@ export function buildRoadTile(
       tile.add(stripe);
     }
 
-    // Iconic Japanese White Road Diamond (◇) + "30" Zone Stencil + Cast-Iron Manhole Cover
-    const diamond = buildRoadDiamondMarking();
-    diamond.rotation.y = Math.PI / 2;
-    diamond.position.set(0, 0.056, 1.15);
-    tile.add(diamond);
+    // Intersection-scoped markings (Left-hand traffic: North z=-1.15 goes East +X, South z=+1.15 goes West -X)
+    if (nearIntersectionPos) {
+      // Approaching East intersection (+X): diamond in North lane, "30" exiting in South lane
+      const diamond = buildRoadDiamondMarking();
+      diamond.rotation.y = Math.PI / 2;
+      diamond.position.set(-0.4, 0.056, -1.15);
+      const speed30 = createRoadStencilDecal('SPEED30', 1.05, 1.05);
+      speed30.rotation.z = Math.PI / 2;
+      speed30.position.set(-0.4, 0.057, 1.15);
+      tile.add(diamond, speed30);
+    }
+    if (nearIntersectionNeg) {
+      // Approaching West intersection (-X): diamond in South lane, "30" exiting in North lane
+      const diamond = buildRoadDiamondMarking();
+      diamond.rotation.y = Math.PI / 2;
+      diamond.position.set(0.4, 0.056, 1.15);
+      const speed30 = createRoadStencilDecal('SPEED30', 1.05, 1.05);
+      speed30.rotation.z = -Math.PI / 2;
+      speed30.position.set(0.4, 0.057, -1.15);
+      tile.add(diamond, speed30);
+    }
 
-    const speed30 = createRoadStencilDecal('SPEED30', 1.05, 1.05);
-    speed30.rotation.z = Math.PI / 2;
-    speed30.position.set(1.6, 0.057, -1.15);
-    tile.add(speed30);
-
-    const manhole = new THREE.Mesh(new THREE.CircleGeometry(0.34, 14), manholeMat);
-    manhole.rotation.x = -Math.PI / 2;
-    manhole.position.set(-1.2, 0.056, -1.15);
-    tile.add(manhole);
+    if (includeManhole) {
+      const manhole = new THREE.Mesh(new THREE.CircleGeometry(0.34, 14), manholeMat);
+      manhole.rotation.x = -Math.PI / 2;
+      manhole.position.set(-1.6, 0.056, -1.15);
+      tile.add(manhole);
+    }
 
     // Curbside Municipal LED Streetlight on North Sidewalk (X = 0, Z = -2.72m)
     const streetLight = buildStreetlight('SOUTH', 'SIDE_STREET', lowPower);
@@ -1600,26 +1710,30 @@ export function buildRoadTile(
     }
     tile.add(medCurb, medTurf);
 
-    // Dashed White Lane Divider + Southbound Arrow & Bike Sharrow
+    // Dashed White Lane Divider + 2 Northbound (-Z) Left-Hand Traffic Lanes
     for (let z = -2.0; z <= 2.0; z += 2.0) {
       const stripe = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.01, 1.2), whiteStripeMat);
       stripe.position.set(0.3, 0.056, z);
       tile.add(stripe);
     }
-    const sbArrow = createRoadStencilDecal('ARROW', 1.0, 1.2);
-    sbArrow.rotation.z = Math.PI;
-    sbArrow.position.set(1.45, 0.057, 1.4);
-    const sbBike = createRoadStencilDecal('BIKE', 0.85, 0.7);
-    sbBike.rotation.z = Math.PI;
-    sbBike.position.set(-1.55, 0.057, -1.6);
-    tile.add(sbArrow, sbBike);
-
-    const diamond = buildRoadDiamondMarking();
-    diamond.position.set(-0.9, 0.056, 0);
-    tile.add(diamond);
+    if (nearIntersectionNeg) {
+      // Both lanes point North (-Z) approaching the intersection
+      const nbInnerArrow = createRoadStencilDecal('ARROW', 0.95, 1.25);
+      nbInnerArrow.position.set(1.45, 0.057, 1.0);
+      const nbOuterArrow = createRoadStencilDecal('ARROW', 0.95, 1.25);
+      nbOuterArrow.position.set(-0.75, 0.057, 1.0);
+      const diamond = buildRoadDiamondMarking();
+      diamond.position.set(0.3, 0.056, -1.35);
+      tile.add(nbInnerArrow, nbOuterArrow, diamond);
+    }
+    if (includeBikeMark) {
+      const nbBike = createRoadStencilDecal('BIKE', 0.68, 1.65);
+      nbBike.position.set(-1.62, 0.057, 0);
+      tile.add(nbBike);
+    }
 
   } else if (type === 'BOULEVARD_Z_EAST') {
-    // 12m Grand Boulevard - East Half (North-South, 2 Northbound lanes)
+    // 12m Grand Boulevard - East Half (North-South, 2 Southbound +Z lanes in Left-Hand Traffic)
     const medCurb = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.18, tileSize), curbMat);
     medCurb.position.set(-2.79, 0.115, 0);
     const medTurf = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.16, tileSize), medianTurfMat);
@@ -1667,18 +1781,27 @@ export function buildRoadTile(
       stripe.position.set(-0.3, 0.056, z);
       tile.add(stripe);
     }
-    const nbArrow = createRoadStencilDecal('ARROW', 1.0, 1.2);
-    nbArrow.position.set(-1.45, 0.057, -1.4);
-    const nbBike = createRoadStencilDecal('BIKE', 0.85, 0.7);
-    nbBike.position.set(1.55, 0.057, 1.6);
-    tile.add(nbArrow, nbBike);
-
-    const diamond = buildRoadDiamondMarking();
-    diamond.position.set(0.9, 0.056, 0);
-    tile.add(diamond);
+    if (nearIntersectionPos) {
+      // Both lanes point South (+Z) approaching the intersection
+      const sbInnerArrow = createRoadStencilDecal('ARROW', 0.95, 1.25);
+      sbInnerArrow.rotation.z = Math.PI;
+      sbInnerArrow.position.set(-1.45, 0.057, -1.0);
+      const sbOuterArrow = createRoadStencilDecal('ARROW', 0.95, 1.25);
+      sbOuterArrow.rotation.z = Math.PI;
+      sbOuterArrow.position.set(0.75, 0.057, -1.0);
+      const diamond = buildRoadDiamondMarking();
+      diamond.position.set(-0.3, 0.056, 1.35);
+      tile.add(sbInnerArrow, sbOuterArrow, diamond);
+    }
+    if (includeBikeMark) {
+      const sbBike = createRoadStencilDecal('BIKE', 0.68, 1.65);
+      sbBike.rotation.z = Math.PI;
+      sbBike.position.set(1.62, 0.057, 0);
+      tile.add(sbBike);
+    }
 
   } else if (type === 'BOULEVARD_X_NORTH') {
-    // 12m Grand Boulevard - North Half (East-West, 2 Westbound lanes)
+    // 12m Grand Boulevard - North Half (East-West, 2 Eastbound +X lanes in Left-Hand Traffic)
     const swGeo = new THREE.BoxGeometry(tileSize, 0.15, 0.75);
     const sw = new THREE.Mesh(swGeo, boulevardSidewalkMat);
     sw.position.set(0, 0.1, -2.625);
@@ -1731,16 +1854,28 @@ export function buildRoadTile(
       stripe.position.set(x, 0.056, 0.3);
       tile.add(stripe);
     }
-    const wbArrow = createRoadStencilDecal('ARROW', 1.0, 1.2);
-    wbArrow.rotation.z = Math.PI / 2;
-    wbArrow.position.set(-1.4, 0.057, 1.45);
-    const wbBike = createRoadStencilDecal('BIKE', 0.85, 0.7);
-    wbBike.rotation.z = Math.PI / 2;
-    wbBike.position.set(1.6, 0.057, -1.55);
-    tile.add(wbArrow, wbBike);
+    if (nearIntersectionPos) {
+      // Both lanes point East (+X) approaching the intersection
+      const ebInnerArrow = createRoadStencilDecal('ARROW', 0.95, 1.25);
+      ebInnerArrow.rotation.z = -Math.PI / 2;
+      ebInnerArrow.position.set(-1.0, 0.057, 1.45);
+      const ebOuterArrow = createRoadStencilDecal('ARROW', 0.95, 1.25);
+      ebOuterArrow.rotation.z = -Math.PI / 2;
+      ebOuterArrow.position.set(-1.0, 0.057, -0.75);
+      const diamond = buildRoadDiamondMarking();
+      diamond.rotation.y = Math.PI / 2;
+      diamond.position.set(1.35, 0.056, 0.3);
+      tile.add(ebInnerArrow, ebOuterArrow, diamond);
+    }
+    if (includeBikeMark) {
+      const ebBike = createRoadStencilDecal('BIKE', 0.68, 1.65);
+      ebBike.rotation.z = -Math.PI / 2;
+      ebBike.position.set(0, 0.057, -1.62);
+      tile.add(ebBike);
+    }
 
   } else if (type === 'BOULEVARD_X_SOUTH') {
-    // 12m Grand Boulevard - South Half (East-West, 2 Eastbound lanes)
+    // 12m Grand Boulevard - South Half (East-West, 2 Westbound -X lanes in Left-Hand Traffic)
     const medCurb = new THREE.Mesh(new THREE.BoxGeometry(tileSize, 0.18, 0.42), curbMat);
     medCurb.position.set(0, 0.115, -2.79);
     const medTurf = new THREE.Mesh(new THREE.BoxGeometry(tileSize, 0.16, 0.32), medianTurfMat);
@@ -1787,13 +1922,25 @@ export function buildRoadTile(
       stripe.position.set(x, 0.056, -0.3);
       tile.add(stripe);
     }
-    const ebArrow = createRoadStencilDecal('ARROW', 1.0, 1.2);
-    ebArrow.rotation.z = -Math.PI / 2;
-    ebArrow.position.set(1.4, 0.057, -1.45);
-    const ebBike = createRoadStencilDecal('BIKE', 0.85, 0.7);
-    ebBike.rotation.z = -Math.PI / 2;
-    ebBike.position.set(-1.6, 0.057, 1.55);
-    tile.add(ebArrow, ebBike);
+    if (nearIntersectionNeg) {
+      // Both lanes point West (-X) approaching the intersection
+      const wbInnerArrow = createRoadStencilDecal('ARROW', 0.95, 1.25);
+      wbInnerArrow.rotation.z = Math.PI / 2;
+      wbInnerArrow.position.set(1.0, 0.057, -1.45);
+      const wbOuterArrow = createRoadStencilDecal('ARROW', 0.95, 1.25);
+      wbOuterArrow.rotation.z = Math.PI / 2;
+      wbOuterArrow.position.set(1.0, 0.057, 0.75);
+      const diamond = buildRoadDiamondMarking();
+      diamond.rotation.y = Math.PI / 2;
+      diamond.position.set(-1.35, 0.056, -0.3);
+      tile.add(wbInnerArrow, wbOuterArrow, diamond);
+    }
+    if (includeBikeMark) {
+      const wbBike = createRoadStencilDecal('BIKE', 0.68, 1.65);
+      wbBike.rotation.z = Math.PI / 2;
+      wbBike.position.set(0, 0.057, 1.62);
+      tile.add(wbBike);
+    }
 
   } else if (type === 'BOULEVARD_CENTER_4WAY' || type === 'BOULEVARD_JUNCTION_Z' || type === 'BOULEVARD_JUNCTION_X') {
     const plateMat = intersectionInfo

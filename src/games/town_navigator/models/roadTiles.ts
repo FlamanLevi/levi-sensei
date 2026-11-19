@@ -294,6 +294,8 @@ let grateDarkMat!: THREE.MeshStandardMaterial;
 let manholeMat!: THREE.MeshStandardMaterial;
 let medianTurfMat!: THREE.MeshStandardMaterial;
 let medianHedgeMat!: THREE.MeshStandardMaterial;
+let medianTreeTrunkMat!: THREE.MeshStandardMaterial;
+let medianTreeLeafMat!: THREE.MeshStandardMaterial;
 
 // Streetlight & Traffic Signal materials
 let poleMat!: THREE.MeshStandardMaterial;
@@ -543,6 +545,8 @@ function ensureRoadResources(): void {
   });
   medianTurfMat = new THREE.MeshStandardMaterial({ color: 0x22c55e, roughness: 0.85 });
   medianHedgeMat = new THREE.MeshStandardMaterial({ color: 0x15803d, roughness: 0.9 });
+  medianTreeTrunkMat = new THREE.MeshStandardMaterial({ color: 0x5c3a21, roughness: 0.9 });
+  medianTreeLeafMat = new THREE.MeshStandardMaterial({ color: 0x22c55e, roughness: 0.85 });
 
   poleMat = new THREE.MeshStandardMaterial({ color: 0x64748b, roughness: 0.45, metalness: 0.65 });
   castIronMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.5, metalness: 0.5 });
@@ -618,6 +622,7 @@ function ensureRoadResources(): void {
   const allSharedRoadMats: THREE.Material[] = [
     asphaltMat, curbMat, sidewalkMat, whiteStripeMat, tactileYellowMat,
     grateDarkMat, manholeMat, medianTurfMat, medianHedgeMat,
+    medianTreeTrunkMat, medianTreeLeafMat,
     poleMat, castIronMat, controllerBoxMat, housingMat, speakerWhiteMat,
     yellowBoxMat, pushButtonFaceMat, intersectionPlateMat, streetBannerMat,
     lampGlowMat, lightPoolMat,
@@ -717,6 +722,31 @@ export function updateTrafficSignals(elapsedSeconds: number): void {
   }
 
   ewPedestrianDisplay.renderState(ewPedWalk, ewPedFlash, ewFlashOn, ewGreenBars, ewRedBars);
+}
+
+export interface TrafficSignalSnapshot {
+  nsVehicle: 'GREEN' | 'YELLOW' | 'RED';
+  ewVehicle: 'GREEN' | 'YELLOW' | 'RED';
+  nsPedWalk: boolean;
+  ewPedWalk: boolean;
+}
+
+/**
+ * Pure readout of the current traffic signal phase matching updateTrafficSignals().
+ */
+export function getTrafficSignalSnapshot(elapsedSeconds: number): TrafficSignalSnapshot {
+  const cycleTime = 24;
+  const t = ((elapsedSeconds % cycleTime) + cycleTime) % cycleTime;
+
+  const nsVehicle: 'GREEN' | 'YELLOW' | 'RED' =
+    t < 8.5 ? 'GREEN' : t < 10.5 ? 'YELLOW' : 'RED';
+  const ewVehicle: 'GREEN' | 'YELLOW' | 'RED' =
+    t >= 12 && t < 20.5 ? 'GREEN' : t >= 20.5 && t < 22.5 ? 'YELLOW' : 'RED';
+
+  const nsPedWalk = t >= 0.5 && t < 7.0;
+  const ewPedWalk = t >= 12.5 && t < 19.0;
+
+  return { nsVehicle, ewVehicle, nsPedWalk, ewPedWalk };
 }
 
 /**
@@ -1036,15 +1066,42 @@ function buildRoadDiamondMarking(): THREE.Group {
   return diamond;
 }
 
+export interface RoadTileOptions {
+  intersectionInfo?: IntersectionInfo;
+  /** Quadrant/side inside a 12m Grand Boulevard junction */
+  boulevardPart?: 'NW' | 'NE' | 'SW' | 'SE' | 'W' | 'E' | 'N' | 'S';
+  /** Add boulevard median shade tree on alternating straight boulevard tiles */
+  includeMedianTree?: boolean;
+}
+
+function buildBoulevardMedianTree(): THREE.Group {
+  const tree = new THREE.Group();
+  const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.12, 2.3, 7), medianTreeTrunkMat);
+  trunk.position.y = 1.3;
+  const c1 = new THREE.Mesh(new THREE.DodecahedronGeometry(0.85, 1), medianTreeLeafMat);
+  c1.position.set(0, 2.85, 0);
+  c1.scale.set(1.0, 1.15, 1.0);
+  const c2 = new THREE.Mesh(new THREE.DodecahedronGeometry(0.62, 1), medianTreeLeafMat);
+  c2.position.set(0.22, 3.55, -0.14);
+  tree.add(trunk, c1, c2);
+  return tree;
+}
+
 /**
  * Builds a standard 6.0m x 6.0m (1U x 1U) road tile with curbs, textured sidewalks, lane markings,
  * Japanese road diamonds (◇), manhole covers, storm grates, streetlights, and 4-way traffic signals.
  */
 export function buildRoadTile(
   type: RoadTileType,
-  intersectionInfo?: IntersectionInfo
+  intersectionOrOptions?: IntersectionInfo | RoadTileOptions
 ): THREE.Group {
   ensureRoadResources();
+  const opts: RoadTileOptions = intersectionOrOptions
+    ? ('jaName' in intersectionOrOptions
+        ? { intersectionInfo: intersectionOrOptions }
+        : intersectionOrOptions)
+    : {};
+  const { intersectionInfo, boulevardPart, includeMedianTree } = opts;
   const tile = new THREE.Group();
   tile.name = `RoadTile_${type}`;
 
@@ -1238,6 +1295,11 @@ export function buildRoadTile(
       hedge.position.set(2.80, 0.28, hz);
       tile.add(hedge);
     });
+    if (includeMedianTree) {
+      const tree = buildBoulevardMedianTree();
+      tree.position.set(3.0, 0, 0);
+      tile.add(tree);
+    }
     tile.add(medCurb, medTurf);
 
     // Dashed White Lane Divider between the 2 lanes
@@ -1323,6 +1385,11 @@ export function buildRoadTile(
       hedge.position.set(hx, 0.28, 2.80);
       tile.add(hedge);
     });
+    if (includeMedianTree) {
+      const tree = buildBoulevardMedianTree();
+      tree.position.set(0, 0, 3.0);
+      tile.add(tree);
+    }
     tile.add(medCurb, medTurf);
 
     for (let x = -2.0; x <= 2.0; x += 2.0) {
@@ -1369,27 +1436,185 @@ export function buildRoadTile(
     }
 
   } else if (type === 'BOULEVARD_CENTER_4WAY' || type === 'BOULEVARD_JUNCTION_Z' || type === 'BOULEVARD_JUNCTION_X') {
-    // Grand Junction open asphalt with crosswalks and corner signals
-    const centerManhole = new THREE.Mesh(new THREE.CircleGeometry(0.42, 16), manholeMat);
-    centerManhole.rotation.x = -Math.PI / 2;
-    centerManhole.position.set(0, 0.056, 0);
-    tile.add(centerManhole);
+    const plateMat = intersectionInfo
+      ? getIntersectionPlateMaterial(intersectionInfo.jaName, intersectionInfo.enName)
+      : intersectionPlateMat;
 
-    // Zebra Crosswalk stripes
-    for (let s = -2.0; s <= 2.0; s += 0.8) {
-      const zebraZ = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.01, 0.72), whiteStripeMat);
-      zebraZ.position.set(s, 0.056, 2.2);
-      tile.add(zebraZ);
+    const cornerCoordMap: Record<'NW' | 'NE' | 'SE' | 'SW', { cx: number; cz: number }> = {
+      NW: { cx: -2.625, cz: -2.625 },
+      NE: { cx: +2.625, cz: -2.625 },
+      SE: { cx: +2.625, cz: +2.625 },
+      SW: { cx: -2.625, cz: +2.625 },
+    };
 
-      const zebraX = new THREE.Mesh(new THREE.BoxGeometry(0.72, 0.01, 0.45), whiteStripeMat);
-      zebraX.position.set(2.2, 0.056, s);
-      tile.add(zebraX);
-    }
-    for (let z = -2.0; z <= 2.0; z += 2.0) {
-      const stripeGeo = new THREE.BoxGeometry(0.14, 0.01, 1.2);
-      const stripe = new THREE.Mesh(stripeGeo, whiteStripeMat);
-      stripe.position.set(0, 0.056, z);
-      tile.add(stripe);
+    const addBoulevardCorner = (corner: 'NW' | 'NE' | 'SE' | 'SW') => {
+      const { cx, cz } = cornerCoordMap[corner];
+      const cornerMesh = new THREE.Mesh(new THREE.BoxGeometry(0.75, 0.15, 0.75), sidewalkMat);
+      cornerMesh.position.set(cx, 0.1, cz);
+      cornerMesh.receiveShadow = true;
+
+      const innerX = cx < 0 ? cx + 0.34 : cx - 0.34;
+      const innerZ = cz < 0 ? cz + 0.34 : cz - 0.34;
+      const tacX = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.01, 0.45), tactileYellowMat);
+      tacX.position.set(innerX, 0.178, cz);
+      const tacZ = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.01, 0.14), tactileYellowMat);
+      tacZ.position.set(cx, 0.178, innerZ);
+
+      const signal = buildCornerTrafficSignal(corner, plateMat);
+      signal.position.set(cx, 0.15, cz);
+      tile.add(cornerMesh, tacX, tacZ, signal);
+    };
+
+    if (type === 'BOULEVARD_CENTER_4WAY') {
+      const part: 'NW' | 'NE' | 'SW' | 'SE' =
+        boulevardPart === 'NE' || boulevardPart === 'SW' || boulevardPart === 'SE'
+          ? boulevardPart
+          : 'NW';
+      addBoulevardCorner(part);
+
+      // Outer North or South crosswalk stripes (stopping before central median)
+      const isNorth = part === 'NW' || part === 'NE';
+      const isWest = part === 'NW' || part === 'SW';
+      const cz = isNorth ? -2.1 : +2.1;
+      const startX = isWest ? -1.6 : -2.4;
+      const endX = isWest ? +2.4 : +1.6;
+      for (let s = startX; s <= endX + 0.01; s += 0.8) {
+        const zebra = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.01, 0.68), whiteStripeMat);
+        zebra.position.set(s, 0.056, cz);
+        tile.add(zebra);
+      }
+
+      // Outer West or East crosswalk stripes (stopping before central median)
+      const cx = isWest ? -2.1 : +2.1;
+      const startZ = isNorth ? -1.6 : -2.4;
+      const endZ = isNorth ? +2.4 : +1.6;
+      for (let s = startZ; s <= endZ + 0.01; s += 0.8) {
+        const zebra = new THREE.Mesh(new THREE.BoxGeometry(0.68, 0.01, 0.45), whiteStripeMat);
+        zebra.position.set(cx, 0.056, s);
+        tile.add(zebra);
+      }
+
+      // Left-hand approach stop line (1 per outer quadrant approach)
+      if (part === 'NW') {
+        // Southbound (+Z) approach on West half
+        const stopLine = new THREE.Mesh(new THREE.BoxGeometry(4.1, 0.01, 0.22), whiteStripeMat);
+        stopLine.position.set(0.25, 0.056, -2.78);
+        tile.add(stopLine);
+      } else if (part === 'SE') {
+        // Northbound (-Z) approach on East half
+        const stopLine = new THREE.Mesh(new THREE.BoxGeometry(4.1, 0.01, 0.22), whiteStripeMat);
+        stopLine.position.set(-0.25, 0.056, 2.78);
+        tile.add(stopLine);
+      } else if (part === 'NE') {
+        // Westbound (-X) approach on North half
+        const stopLine = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.01, 4.1), whiteStripeMat);
+        stopLine.position.set(2.78, 0.056, 0.25);
+        tile.add(stopLine);
+      } else if (part === 'SW') {
+        // Eastbound (+X) approach on South half
+        const stopLine = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.01, 4.1), whiteStripeMat);
+        stopLine.position.set(-2.78, 0.056, -0.25);
+        tile.add(stopLine);
+      }
+    } else if (type === 'BOULEVARD_JUNCTION_Z') {
+      const part: 'W' | 'E' = boulevardPart === 'E' ? 'E' : 'W';
+      if (part === 'W') {
+        addBoulevardCorner('NW');
+        addBoulevardCorner('SW');
+        // Full West side-street crosswalk
+        for (let s = -1.6; s <= 1.61; s += 0.8) {
+          const zebra = new THREE.Mesh(new THREE.BoxGeometry(0.68, 0.01, 0.45), whiteStripeMat);
+          zebra.position.set(-2.1, 0.056, s);
+          tile.add(zebra);
+        }
+        // West half of North & South boulevard crosswalks
+        [-2.1, +2.1].forEach((cz) => {
+          for (let s = -1.6; s <= 2.41; s += 0.8) {
+            const zebra = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.01, 0.68), whiteStripeMat);
+            zebra.position.set(s, 0.056, cz);
+            tile.add(zebra);
+          }
+        });
+        // Southbound boulevard stop line + Eastbound side-street stop line
+        const sbStop = new THREE.Mesh(new THREE.BoxGeometry(4.1, 0.01, 0.22), whiteStripeMat);
+        sbStop.position.set(0.25, 0.056, -2.78);
+        const ebStop = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.01, 1.75), whiteStripeMat);
+        ebStop.position.set(-2.78, 0.056, 1.1);
+        tile.add(sbStop, ebStop);
+      } else {
+        addBoulevardCorner('NE');
+        addBoulevardCorner('SE');
+        // Full East side-street crosswalk
+        for (let s = -1.6; s <= 1.61; s += 0.8) {
+          const zebra = new THREE.Mesh(new THREE.BoxGeometry(0.68, 0.01, 0.45), whiteStripeMat);
+          zebra.position.set(2.1, 0.056, s);
+          tile.add(zebra);
+        }
+        // East half of North & South boulevard crosswalks
+        [-2.1, +2.1].forEach((cz) => {
+          for (let s = -2.4; s <= 1.61; s += 0.8) {
+            const zebra = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.01, 0.68), whiteStripeMat);
+            zebra.position.set(s, 0.056, cz);
+            tile.add(zebra);
+          }
+        });
+        // Northbound boulevard stop line + Westbound side-street stop line
+        const nbStop = new THREE.Mesh(new THREE.BoxGeometry(4.1, 0.01, 0.22), whiteStripeMat);
+        nbStop.position.set(-0.25, 0.056, 2.78);
+        const wbStop = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.01, 1.75), whiteStripeMat);
+        wbStop.position.set(2.78, 0.056, -1.1);
+        tile.add(nbStop, wbStop);
+      }
+    } else {
+      // BOULEVARD_JUNCTION_X
+      const part: 'N' | 'S' = boulevardPart === 'S' ? 'S' : 'N';
+      if (part === 'N') {
+        addBoulevardCorner('NW');
+        addBoulevardCorner('NE');
+        // Full North side-street crosswalk
+        for (let s = -1.6; s <= 1.61; s += 0.8) {
+          const zebra = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.01, 0.68), whiteStripeMat);
+          zebra.position.set(s, 0.056, -2.1);
+          tile.add(zebra);
+        }
+        // North half of West & East boulevard crosswalks
+        [-2.1, +2.1].forEach((cx) => {
+          for (let s = -1.6; s <= 2.41; s += 0.8) {
+            const zebra = new THREE.Mesh(new THREE.BoxGeometry(0.68, 0.01, 0.45), whiteStripeMat);
+            zebra.position.set(cx, 0.056, s);
+            tile.add(zebra);
+          }
+        });
+        // Westbound boulevard stop line + Southbound side-street stop line
+        const wbStop = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.01, 4.1), whiteStripeMat);
+        wbStop.position.set(2.78, 0.056, 0.25);
+        const sbStop = new THREE.Mesh(new THREE.BoxGeometry(1.75, 0.01, 0.22), whiteStripeMat);
+        sbStop.position.set(1.1, 0.056, -2.78);
+        tile.add(wbStop, sbStop);
+      } else {
+        addBoulevardCorner('SW');
+        addBoulevardCorner('SE');
+        // Full South side-street crosswalk
+        for (let s = -1.6; s <= 1.61; s += 0.8) {
+          const zebra = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.01, 0.68), whiteStripeMat);
+          zebra.position.set(s, 0.056, 2.1);
+          tile.add(zebra);
+        }
+        // South half of West & East boulevard crosswalks
+        [-2.1, +2.1].forEach((cx) => {
+          for (let s = -2.4; s <= 1.61; s += 0.8) {
+            const zebra = new THREE.Mesh(new THREE.BoxGeometry(0.68, 0.01, 0.45), whiteStripeMat);
+            zebra.position.set(cx, 0.056, s);
+            tile.add(zebra);
+          }
+        });
+        // Eastbound boulevard stop line + Northbound side-street stop line
+        const ebStop = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.01, 4.1), whiteStripeMat);
+        ebStop.position.set(-2.78, 0.056, -0.25);
+        const nbStop = new THREE.Mesh(new THREE.BoxGeometry(1.75, 0.01, 0.22), whiteStripeMat);
+        nbStop.position.set(-1.1, 0.056, 2.78);
+        tile.add(ebStop, nbStop);
+      }
     }
   }
 

@@ -204,6 +204,7 @@ export function buildLibraryMesh(options: LibraryOptions = {}): THREE.Group {
 
   // Interior 3-Tier Oak Bookshelves & Colorful Books (Clearly visible inside the glass atrium!)
   const bookColors = [0xef4444, 0x3b82f6, 0x10b981, 0xf59e0b, 0x8b5cf6, 0xec4899];
+  const bookMats = bookColors.map((c) => new THREE.MeshStandardMaterial({ color: c, roughness: 0.5 }));
   for (let shelf = 0; shelf < 3; shelf++) {
     const sy = 1.0 + shelf * 1.65;
     const sMesh = new THREE.Mesh(new THREE.BoxGeometry(5.0, 0.08, 0.42), woodLouverMat);
@@ -211,20 +212,29 @@ export function buildLibraryMesh(options: LibraryOptions = {}): THREE.Group {
     libGroup.add(sMesh);
 
     for (let b = 0; b < 13; b++) {
-      const bColor = bookColors[(shelf * 5 + b) % bookColors.length];
       const book = new THREE.Mesh(
         new THREE.BoxGeometry(0.22, 0.42, 0.30),
-        new THREE.MeshStandardMaterial({ color: bColor, roughness: 0.5 })
+        bookMats[(shelf * 5 + b) % bookMats.length]
       );
       book.position.set(-3.8 + b * 0.37, sy + 0.25, bD / 2 - 0.85);
       libGroup.add(book);
     }
   }
 
-  // Open Rooftop Safety Railing
+  // Open Rooftop Safety Railing & South-Angled Rooftop Solar PV Panels
   const roofRail = buildPerimeterRailing(bW - 0.2, bD - 0.2, 0.65, steelMat, 1.6);
   roofRail.position.set(0, bH, 0);
   libGroup.add(roofRail);
+
+  const solarPanelMat = new THREE.MeshStandardMaterial({ color: 0x1e3a8a, roughness: 0.2, metalness: 0.6 });
+  [-2.6, 0, 2.6].forEach((sx) => {
+    const strut = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.35, 0.12), steelMat);
+    strut.position.set(sx, bH + 0.18, -1.2);
+    const panel = new THREE.Mesh(new THREE.BoxGeometry(2.1, 0.06, 1.35), solarPanelMat);
+    panel.position.set(sx, bH + 0.38, -1.1);
+    panel.rotation.x = 0.35;
+    libGroup.add(strut, panel);
+  });
 
   // 360° Side & Rear Reading Room Windows
   addWrapAroundWindows({
@@ -289,7 +299,35 @@ export function buildLibraryMesh(options: LibraryOptions = {}): THREE.Group {
 
   group.add(libGroup);
 
-  // 3. FORECOURT PROPS (detail2: Book Return Box & Reading Bench grouped at X = -3.8m..-2.2m, Z = 3.2m)
+  // 3. FORECOURT PROPS (detail2: Book Return Box, Reading Bench & Covered Bicycle Parking Rack)
+  // Covered Bicycle Parking Rack (*Chūrinjō* at X = +4.2m, Z = +2.8m)
+  const bikeRack = new THREE.Group();
+  bikeRack.position.set(4.2, 0.15, 2.8);
+  const rackRoof = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.06, 1.25), steelMat);
+  rackRoof.position.set(0, 1.65, 0);
+  rackRoof.rotation.x = 0.12;
+  bikeRack.add(rackRoof);
+  [-1.05, 1.05].forEach((rx) => {
+    const post = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 1.65, 8), darkMetalMat);
+    post.position.set(rx, 0.825, -0.45);
+    bikeRack.add(post);
+  });
+  const bikeColors = [0xef4444, 0x0ea5e9, 0x22c55e, 0xf59e0b];
+  for (let i = 0; i < 4; i++) {
+    const bx = -0.78 + i * 0.52;
+    const bMat = new THREE.MeshStandardMaterial({ color: bikeColors[i], roughness: 0.4 });
+    const wheelF = new THREE.Mesh(new THREE.TorusGeometry(0.22, 0.03, 6, 12), darkMetalMat);
+    wheelF.rotation.y = Math.PI / 2;
+    wheelF.position.set(bx, 0.24, 0.28);
+    const wheelR = new THREE.Mesh(new THREE.TorusGeometry(0.22, 0.03, 6, 12), darkMetalMat);
+    wheelR.rotation.y = Math.PI / 2;
+    wheelR.position.set(bx, 0.24, -0.28);
+    const frame = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.28, 0.56), bMat);
+    frame.position.set(bx, 0.42, 0);
+    bikeRack.add(wheelF, wheelR, frame);
+  }
+  group.add(bikeRack);
+
   // 3a. Outdoor 24-Hour Book Return Drop Box (Henkyaku-Posuto at X = -3.85m, Z = 3.2m)
   const returnGroup = new THREE.Group();
   returnGroup.position.set(-3.85, 0.15, 3.2);

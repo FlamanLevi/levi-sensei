@@ -184,16 +184,49 @@ export function buildParkMesh(options: ParkOptions = {}): THREE.Group {
     swingGroup.add(leg1, leg2);
   });
 
-  [-0.65, 0.65].forEach(sx => {
+  [-0.65, 0.65].forEach((sx, idx) => {
+    const seatPivot = new THREE.Group();
+    seatPivot.name = `Park_SwingSeat_${idx}`;
+    seatPivot.position.set(sx, 2.65, 0);
+
     const chain1 = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 1.95, 6), chromeMat);
-    chain1.position.set(sx - 0.20, 1.65, 0);
+    chain1.position.set(-0.20, -1.0, 0);
     const chain2 = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 1.95, 6), chromeMat);
-    chain2.position.set(sx + 0.20, 1.65, 0);
+    chain2.position.set(0.20, -1.0, 0);
     const seat = new THREE.Mesh(new THREE.BoxGeometry(0.48, 0.05, 0.24), metalYellowMat);
-    seat.position.set(sx, 0.65, 0);
-    swingGroup.add(chain1, chain2, seat);
+    seat.position.set(0, -2.0, 0);
+    seatPivot.add(chain1, chain2, seat);
+    swingGroup.add(seatPivot);
   });
   group.add(swingGroup);
+
+  // 2c. Japanese Steel Climbing Dome / Jungle Gym (*Janguru Jimu*) in rear-west grass
+  const gymGroup = new THREE.Group();
+  gymGroup.position.set(-3.4, 0.15, -1.8);
+  const gymMats = [metalRedMat, metalBlueMat, metalYellowMat];
+  for (let lvl = 0; lvl < 2; lvl++) {
+    const y = 0.55 + lvl * 0.62;
+    const r = 1.05 - lvl * 0.28;
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(r, 0.032, 6, 16), gymMats[lvl]);
+    ring.rotation.x = Math.PI / 2;
+    ring.position.y = y;
+    gymGroup.add(ring);
+  }
+  for (let a = 0; a < 6; a++) {
+    const ang = (a / 6) * Math.PI * 2;
+    const bar = new THREE.Mesh(new THREE.CylinderGeometry(0.028, 0.028, 1.45, 6), gymMats[a % 3]);
+    bar.position.set(Math.cos(ang) * 0.72, 0.72, Math.sin(ang) * 0.72);
+    bar.rotation.z = Math.cos(ang) * 0.26;
+    bar.rotation.x = -Math.sin(ang) * 0.26;
+    gymGroup.add(bar);
+  }
+  group.add(gymGroup);
+
+  // 2d. Curved Sandy Walking Trail Ring
+  const trail = new THREE.Mesh(new THREE.RingGeometry(2.6, 3.35, 32), sandMat);
+  trail.rotation.x = -Math.PI / 2;
+  trail.position.set(0, 0.156, -0.6);
+  group.add(trail);
 
   // 3. EAST PLAYGROUND ZONE: SANDBOX & BLOOMING SAKURA TREES (detail2 at target [2.5, 1.5, 1.5])
   // 3a. Circular Sandbox (Sunaba / 砂場 at X = +2.4m, Z = 1.4m) with Mini Sandcastle & Bucket
@@ -233,13 +266,49 @@ export function buildParkMesh(options: ParkOptions = {}): THREE.Group {
     });
   }
 
-  // 4. PARK AMENITIES (Benches, Park Clock Post, Drinking Fountain & Entrance Sign at Z <= 4.2m)
+  // 4. PARK AMENITIES (Benches, East Pergola, Fence, Clock Post, Fountain & Entrance Sign at Z <= 4.35m)
   [-3.6, 3.6].forEach(bx => {
     const bench = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.06, 0.45), woodMat);
     bench.position.set(bx, 0.45 + 0.15, 3.6);
     const back = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.45, 0.06), woodMat);
     back.position.set(bx, 0.7 + 0.15, 3.4);
     group.add(bench, back);
+  });
+
+  // Shaded Wooden Pergola over East Bench (X = 3.6, Z = 3.6)
+  [
+    [2.7, 3.1], [4.5, 3.1], [2.7, 4.1], [4.5, 4.1],
+  ].forEach(([px, pz]) => {
+    const post = new THREE.Mesh(new THREE.BoxGeometry(0.12, 2.15, 0.12), woodMat);
+    post.position.set(px, 1.22, pz);
+    group.add(post);
+  });
+  for (let rx = 2.65; rx <= 4.55; rx += 0.36) {
+    const rafter = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.08, 1.25), woodMat);
+    rafter.position.set(rx, 2.34, 3.6);
+    group.add(rafter);
+  }
+
+  // Low Perimeter Wooden Park Fence & Entrance Bollards
+  [-5.8, 5.8].forEach((fx) => {
+    const sideRail = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.08, 8.6), woodMat);
+    sideRail.position.set(fx, 0.62, -0.1);
+    group.add(sideRail);
+    for (let fz = -4.2; fz <= 4.2; fz += 2.1) {
+      const fPost = new THREE.Mesh(new THREE.BoxGeometry(0.11, 0.68, 0.11), woodMat);
+      fPost.position.set(fx, 0.49, fz);
+      group.add(fPost);
+    }
+  });
+  [-3.5, 3.5].forEach((fx) => {
+    const frontRail = new THREE.Mesh(new THREE.BoxGeometry(4.4, 0.08, 0.08), woodMat);
+    frontRail.position.set(fx, 0.62, 4.35);
+    group.add(frontRail);
+  });
+  [-1.2, 1.2].forEach((bx) => {
+    const bollard = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.09, 0.72, 10), woodMat);
+    bollard.position.set(bx, 0.51, 4.35);
+    group.add(bollard);
   });
 
   // Classic Japanese Park Clock Post & Glowing Lantern (X = 0, Z = -0.8m)

@@ -37,7 +37,8 @@ import { buildAquariumMesh } from './models/aquarium';
 import { buildCastleMesh } from './models/castle';
 import { buildAmusementParkMesh } from './models/amusementPark';
 
-import { buildRoadTile, RoadTileType, IntersectionInfo } from './models/roadTiles';
+import { buildRoadTile, RoadTileType, RoadTileOptions, IntersectionInfo } from './models/roadTiles';
+import { populateStreetscapeProps } from './models/streetProps';
 import { buildSidewalkTotemSign } from './models/sidewalkTotemSign';
 import { enhanceBuildingGroup } from './models/wallTextures';
 import { batchStaticMeshes } from './staticBatcher';
@@ -284,21 +285,35 @@ export function generateRandomTown(
       if (isRoadX || isRoadZ) {
         let type: RoadTileType;
         let intersectionInfo: IntersectionInfo | undefined;
+        let boulevardPart: RoadTileOptions['boulevardPart'];
+        let includeMedianTree = false;
 
         if (isRoadX && isRoadZ) {
           intersectionInfo = getIntersectionDirectionInfo(gx, gz, options);
           if ((gx === 11 || gx === 12) && (gz === 11 || gz === 12)) {
             type = 'BOULEVARD_CENTER_4WAY';
+            boulevardPart =
+              gx === 11 && gz === 11
+                ? 'NW'
+                : gx === 12 && gz === 11
+                ? 'NE'
+                : gx === 11 && gz === 12
+                ? 'SW'
+                : 'SE';
           } else if (gx === 11 || gx === 12) {
             type = 'BOULEVARD_JUNCTION_Z';
+            boulevardPart = gx === 11 ? 'W' : 'E';
           } else if (gz === 11 || gz === 12) {
             type = 'BOULEVARD_JUNCTION_X';
+            boulevardPart = gz === 11 ? 'N' : 'S';
           } else {
             type = 'INTERSECTION_4WAY';
           }
         } else if (isRoadX) {
           if (gx === 11) {
             type = 'BOULEVARD_Z_WEST';
+            includeMedianTree =
+              (gx + gz) % 2 === 0 && !roadIndicesZ.has(gz - 1) && !roadIndicesZ.has(gz + 1);
           } else if (gx === 12) {
             type = 'BOULEVARD_Z_EAST';
           } else {
@@ -307,6 +322,8 @@ export function generateRandomTown(
         } else {
           if (gz === 11) {
             type = 'BOULEVARD_X_NORTH';
+            includeMedianTree =
+              (gx + gz) % 2 === 0 && !roadIndicesX.has(gx - 1) && !roadIndicesX.has(gx + 1);
           } else if (gz === 12) {
             type = 'BOULEVARD_X_SOUTH';
           } else {
@@ -314,7 +331,11 @@ export function generateRandomTown(
           }
         }
 
-        const tile = buildRoadTile(type, intersectionInfo);
+        const tile = buildRoadTile(type, {
+          intersectionInfo,
+          boulevardPart,
+          includeMedianTree,
+        });
         const wx = (gx - halfGrid) * cellSize;
         const wz = (gz - halfGrid) * cellSize;
         tile.position.set(wx, 0, wz);
@@ -733,13 +754,19 @@ export function generateRandomTown(
     }
   }
 
+  populateStreetscapeProps(roadsGroup, buildingsList, rng);
+
   const batchOpts = {
     ignoreShadowFlags: !options?.enableDynamicShadows,
     bakeVertexColors: true,
     atlasUniqueTextMaps: true,
   };
   batchStaticMeshes(roadsGroup, [], batchOpts);
-  batchStaticMeshes(buildingsGroup, ['AmusementPark_WheelRotor', 'AmusementPark_CarouselRotor'], batchOpts);
+  batchStaticMeshes(
+    buildingsGroup,
+    ['AmusementPark_WheelRotor', 'AmusementPark_CarouselRotor', 'Park_SwingSeat_0', 'Park_SwingSeat_1'],
+    batchOpts
+  );
 
   return {
     seed,

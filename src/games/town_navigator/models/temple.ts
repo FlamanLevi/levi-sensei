@@ -236,6 +236,44 @@ export function buildTempleMesh(options: TempleOptions = {}): THREE.Group {
 
   group.add(hondoGroup);
 
+  // 2b. Paired Carved Stone Tōrō Lanterns flanking the Walkway (X = ±1.8m, Z = 3.2m)
+  [-1.8, 1.8].forEach((tx) => {
+    const toro = new THREE.Group();
+    toro.position.set(tx, 0.15, 3.2);
+    const tBase = new THREE.Mesh(new THREE.BoxGeometry(0.46, 0.24, 0.46), stonePlinthMat);
+    tBase.position.y = 0.12;
+    const tPillar = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.13, 0.72, 8), stonePlinthMat);
+    tPillar.position.y = 0.6;
+    const tBox = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.28, 0.32), lanternGlowMat);
+    tBox.position.y = 1.1;
+    const tRoof = new THREE.Mesh(new THREE.ConeGeometry(0.38, 0.26, 4), stonePlinthMat);
+    tRoof.rotateY(Math.PI / 4);
+    tRoof.position.y = 1.37;
+    toro.add(tBase, tPillar, tBox, tRoof);
+    group.add(toro);
+  });
+
+  // 2c. Wooden Ema Wish-Plaque Stand (X = -1.8m, Z = 3.9m)
+  const emaGroup = new THREE.Group();
+  emaGroup.position.set(-1.8, 0.15, 3.9);
+  [-0.45, 0.45].forEach((ex) => {
+    const ePost = new THREE.Mesh(new THREE.BoxGeometry(0.06, 1.25, 0.06), timberMat);
+    ePost.position.set(ex, 0.625, 0);
+    emaGroup.add(ePost);
+  });
+  const emaRoof = new THREE.Mesh(new THREE.BoxGeometry(1.15, 0.08, 0.36), roofTileMat);
+  emaRoof.position.y = 1.28;
+  emaGroup.add(emaRoof);
+  const emaPlaqueMat = new THREE.MeshStandardMaterial({ color: 0xfde68a, roughness: 0.7 });
+  for (let row = 0; row < 2; row++) {
+    for (let col = 0; col < 4; col++) {
+      const plaque = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.11, 0.02), emaPlaqueMat);
+      plaque.position.set(-0.3 + col * 0.2, 0.72 + row * 0.22, 0);
+      emaGroup.add(plaque);
+    }
+  }
+  group.add(emaGroup);
+
   // 3. BELL TOWER (Shōrō / 鐘楼) on Left Plaza: X = -3.8m, Z = 3.5m
   const bellTower = new THREE.Group();
   bellTower.position.set(-3.8, 0.15, 3.5);

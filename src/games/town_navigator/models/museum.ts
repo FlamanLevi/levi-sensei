@@ -41,6 +41,61 @@ function createMuseumSignTexture(): THREE.CanvasTexture {
   return texture;
 }
 
+let cachedMuseumBannerTex: THREE.CanvasTexture | null = null;
+
+function createMuseumBannerTexture(): THREE.CanvasTexture {
+  if (cachedMuseumBannerTex) return cachedMuseumBannerTex;
+  const canvas = document.createElement('canvas');
+  canvas.width = 256;
+  canvas.height = 256;
+  const ctx = canvas.getContext('2d')!;
+
+  // Left half: DINOSAURS, Right half: JAPANESE ART
+  ctx.fillStyle = '#1e3a8a';
+  ctx.fillRect(0, 0, 128, 256);
+  ctx.fillStyle = '#991b1b';
+  ctx.fillRect(128, 0, 128, 256);
+
+  ctx.strokeStyle = '#facc15';
+  ctx.lineWidth = 4;
+  ctx.strokeRect(4, 4, 120, 248);
+  ctx.strokeRect(132, 4, 120, 248);
+
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#fef08a';
+  ctx.font = 'bold 18px sans-serif';
+  ctx.fillText('SPECIAL', 64, 38);
+  ctx.fillText('EXHIBIT', 192, 38);
+
+  // Dino silhouette icon
+  ctx.fillStyle = '#38bdf8';
+  ctx.beginPath();
+  ctx.arc(64, 118, 28, 0, Math.PI * 2);
+  ctx.fill();
+  // Torii / Art motif
+  ctx.fillStyle = '#fca5a5';
+  ctx.fillRect(166, 94, 52, 8);
+  ctx.fillRect(174, 102, 8, 42);
+  ctx.fillRect(202, 102, 8, 42);
+
+  ctx.fillStyle = '#ffffff';
+  ctx.font = '900 17px sans-serif';
+  ctx.fillText('DINOSAURS', 64, 186);
+  ctx.fillText('JAPANESE', 192, 180);
+  ctx.fillText('ART', 192, 202);
+
+  ctx.font = 'bold 14px "UD Digi Kyokasho NP-R", sans-serif';
+  ctx.fillStyle = '#fde047';
+  ctx.fillText('恐竜展', 64, 224);
+  ctx.fillText('日本美術', 192, 228);
+
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.userData.isSharedResource = true;
+  cachedMuseumBannerTex = tex;
+  return tex;
+}
+
 export interface MuseumOptions {
   includeRoad?: boolean;
   includeLandscaping?: boolean;
@@ -193,17 +248,69 @@ export function buildMuseumMesh(options: MuseumOptions = {}): THREE.Group {
   medallion.position.set(0, colH + 0.95, bD / 2 + porticoD + 0.15);
   museumGroup.add(medallion);
 
-  // 4 Classical Columns with Bases & Capitals
+  // Limestone Corner Quoins along all 4 corners
+  const quoinGeo = new THREE.BoxGeometry(0.36, 0.42, 0.36);
+  [
+    [-bW / 2 + 0.08, -bD / 2 + 0.08],
+    [bW / 2 - 0.08, -bD / 2 + 0.08],
+    [-bW / 2 + 0.08, bD / 2 - 0.08],
+    [bW / 2 - 0.08, bD / 2 - 0.08],
+  ].forEach(([qx, qz]) => {
+    for (let qy = 0.45; qy < bH - 0.3; qy += 0.9) {
+      const quoin = new THREE.Mesh(quoinGeo, darkStoneMat);
+      quoin.position.set(qx, qy, qz);
+      museumGroup.add(quoin);
+    }
+  });
+
+  // Interior Display Vitrines behind Front Arched Windows
+  const vitrineGoldMat = new THREE.MeshStandardMaterial({ color: 0xfacc15, metalness: 0.75, roughness: 0.25 });
+  [-3.3, 3.3].forEach((vx) => {
+    const ped = new THREE.Mesh(new THREE.BoxGeometry(0.75, 1.35, 0.45), darkStoneMat);
+    ped.position.set(vx, 0.675, bD / 2 - 0.32);
+    const artifact = new THREE.Mesh(new THREE.OctahedronGeometry(0.24, 0), vitrineGoldMat);
+    artifact.position.set(vx, 1.7, bD / 2 - 0.32);
+    museumGroup.add(ped, artifact);
+  });
+
+  // Vertical Exhibition Cloth Banners flanking the Portico
+  const bannerTex = createMuseumBannerTexture();
+  const leftBannerGeo = new THREE.PlaneGeometry(0.64, 2.2);
+  const uvL = leftBannerGeo.attributes.uv;
+  for (let i = 0; i < uvL.count; i++) {
+    uvL.setX(i, uvL.getX(i) * 0.5);
+  }
+  const rightBannerGeo = new THREE.PlaneGeometry(0.64, 2.2);
+  const uvR = rightBannerGeo.attributes.uv;
+  for (let i = 0; i < uvR.count; i++) {
+    uvR.setX(i, 0.5 + uvR.getX(i) * 0.5);
+  }
+  const bannerMat = new THREE.MeshStandardMaterial({ map: bannerTex, roughness: 0.55, side: THREE.DoubleSide });
+  const bannerL = new THREE.Mesh(leftBannerGeo, bannerMat);
+  bannerL.position.set(-2.35, 3.1, bD / 2 + 0.12);
+  const bannerR = new THREE.Mesh(rightBannerGeo, bannerMat);
+  bannerR.position.set(2.35, 3.1, bD / 2 + 0.12);
+  museumGroup.add(bannerL, bannerR);
+
+  // 4 Classical Columns with Bases, Capitals & Warm Portico Uplights
+  const uplightMat = new THREE.MeshStandardMaterial({
+    color: 0xfef08a,
+    emissive: 0xfde047,
+    emissiveIntensity: 1.4,
+    roughness: 0.2,
+  });
   [-1.8, -0.6, 0.6, 1.8].forEach(cx => {
     const colZ = bD / 2 + porticoD - 0.22;
     const base = new THREE.Mesh(new THREE.BoxGeometry(0.46, 0.24, 0.46), darkStoneMat);
     base.position.set(cx, 0.48, colZ);
+    const uplight = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.2, 0.04, 12), uplightMat);
+    uplight.position.set(cx, 0.61, colZ);
     const shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.19, colH - 0.6, 16), stoneMat);
     shaft.position.set(cx, colH / 2 + 0.2, colZ);
     shaft.castShadow = true;
     const capital = new THREE.Mesh(new THREE.BoxGeometry(0.48, 0.22, 0.48), darkStoneMat);
     capital.position.set(cx, colH - 0.1, colZ);
-    museumGroup.add(base, shaft, capital);
+    museumGroup.add(base, uplight, shaft, capital);
   });
 
   // Bronze Museum Double Doors
@@ -230,7 +337,7 @@ export function buildMuseumMesh(options: MuseumOptions = {}): THREE.Group {
 
   group.add(museumGroup);
 
-  // 4. OUTDOOR BRONZE SCULPTURE ON PLAZA APRON
+  // 4. OUTDOOR BRONZE SCULPTURE, PLAQUE & STONE PLAZA BENCH
   const sculptureGroup = new THREE.Group();
   sculptureGroup.position.set(-3.6, 0.15, 3.8);
 
@@ -245,7 +352,20 @@ export function buildMuseumMesh(options: MuseumOptions = {}): THREE.Group {
   artMesh.castShadow = true;
   sculptureGroup.add(artMesh);
 
+  const plaque = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.18, 0.04), bronzeMat);
+  plaque.position.set(0, 0.45, 0.42);
+  sculptureGroup.add(plaque);
+
   group.add(sculptureGroup);
+
+  // Stone Museum Plaza Bench (East Plaza)
+  const benchSeat = new THREE.Mesh(new THREE.BoxGeometry(1.7, 0.1, 0.5), darkStoneMat);
+  benchSeat.position.set(3.4, 0.55, 3.8);
+  const benchLegL = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.4, 0.44), darkStoneMat);
+  benchLegL.position.set(2.75, 0.35, 3.8);
+  const benchLegR = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.4, 0.44), darkStoneMat);
+  benchLegR.position.set(4.05, 0.35, 3.8);
+  group.add(benchSeat, benchLegL, benchLegR);
 
   if (scale !== 1.0) {
     group.scale.setScalar(scale);

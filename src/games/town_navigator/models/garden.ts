@@ -220,6 +220,41 @@ export function buildGardenMesh(options: GardenOptions = {}): THREE.Group {
   });
   group.add(bridgeGroup);
 
+  // 2b. Paired Stone Tōrō Lanterns flanking the Bridge Approach (X = ±1.45m, Z = 2.7m)
+  [-1.45, 1.45].forEach((tx) => {
+    const toro = new THREE.Group();
+    toro.position.set(tx, 0.15, 2.7);
+    const tBase = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.2, 0.42), stoneMat);
+    tBase.position.y = 0.1;
+    const tPillar = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.12, 0.65, 8), stoneMat);
+    tPillar.position.y = 0.525;
+    const tBox = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.24, 0.28), lanternGlowMat);
+    tBox.position.y = 0.97;
+    const tRoof = new THREE.Mesh(new THREE.ConeGeometry(0.34, 0.22, 4), stoneMat);
+    tRoof.rotateY(Math.PI / 4);
+    tRoof.position.y = 1.2;
+    toro.add(tBase, tPillar, tBox, tRoof);
+    group.add(toro);
+  });
+
+  // 2c. Stepped Stone Waterfall Cascade on North Edge of Koi Pond (X = 0, Z = -2.2m)
+  const waterfallGroup = new THREE.Group();
+  waterfallGroup.position.set(0, 0.15, -2.2);
+  [
+    { w: 1.5, h: 1.1, d: 0.7, y: 0.55, z: -0.35 },
+    { w: 1.1, h: 0.7, d: 0.6, y: 0.35, z: 0.15 },
+  ].forEach((rock) => {
+    const rMesh = new THREE.Mesh(new THREE.DodecahedronGeometry(rock.w * 0.55, 0), stoneMat);
+    rMesh.scale.set(1.2, rock.h / (rock.w * 0.55), rock.d / (rock.w * 0.55));
+    rMesh.position.set(0, rock.y, rock.z);
+    waterfallGroup.add(rMesh);
+  });
+  const cascade = new THREE.Mesh(new THREE.BoxGeometry(0.48, 0.95, 0.12), waterMat);
+  cascade.position.set(0, 0.48, 0.05);
+  cascade.rotation.x = 0.22;
+  waterfallGroup.add(cascade);
+  group.add(waterfallGroup);
+
   // 3. EAST MOUND: 4-TIER STONE PAGODA LANTERN & BAMBOO SHISHI-ODOSHI (detail2 at target [3.2, 1.4, 1.5])
   // 3a. 4-Tier Carved Stone Pagoda Lantern (五重石塔・石灯籠 at X = +3.55m, Z = 1.25m)
   const pagoda = new THREE.Group();

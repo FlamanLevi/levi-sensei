@@ -551,9 +551,33 @@ export const Town3DStage: React.FC<Town3DStageProps> = ({
           camLookTarget.set(goldX, 1.4, goldZ);
           camera.lookAt(camLookTarget);
 
-          // 2. BIRD'S-EYE DRONE: wide aerial view of all 30-40 students across town
-          birdCam.position.set(0, 125, 18);
-          birdCam.lookAt(0, 0, 0);
+          // 2. BIRD'S-EYE DRONE: auto-framed from Start (bottom) to Destination (top)
+          if (targetPos) {
+            const sx = spawnPos[0];
+            const sz = spawnPos[1];
+            const tx = targetPos[0];
+            const tz = targetPos[2];
+            const midX = (sx + tx) * 0.5;
+            const midZ = (sz + tz) * 0.5;
+            const dx = tx - sx;
+            const dz = tz - sz;
+            const span = Math.max(24, Math.hypot(dx, dz));
+            const ux = span > 0.1 ? dx / span : 0;
+            const uz = span > 0.1 ? dz / span : -1;
+            const height = Math.min(135, Math.max(48, span * 1.25));
+
+            birdCam.up.set(ux, 0, uz);
+            birdCam.position.set(
+              midX - ux * (span * 0.12),
+              height,
+              midZ - uz * (span * 0.12)
+            );
+            birdCam.lookAt(midX, 0, midZ);
+          } else {
+            birdCam.up.set(0, 1, 0);
+            birdCam.position.set(0, 125, 18);
+            birdCam.lookAt(0, 0, 0);
+          }
 
           // 3. FINISH LINE CAM: street-level hover right in front of destination waiting for finishers
           if (targetPos) {

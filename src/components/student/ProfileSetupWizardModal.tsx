@@ -276,8 +276,8 @@ export const ProfileSetupWizardModal: React.FC<ProfileSetupWizardModalProps> = (
                 </h3>
                 <p className="text-xs sm:text-sm font-bold text-slate-600 dark:text-slate-300 leading-relaxed">
                   {t(
-                    'This name appears on the big TV, race leaderboards, and game lobbies. Use your first name, hiragana, romaji, or a fun nickname (up to 10 characters).',
-                    <>このなまえは、まえのテレビやゲームの<ruby>順位表<rt>じゅんいひょう</rt></ruby>に<ruby>出<rt>で</rt></ruby>ます！ひらがな・ローマ<ruby>字<rt>じ</rt></ruby>・ニックネームなど、10<ruby>文字<rt>もじ</rt></ruby>まで<ruby>入力<rt>にゅうりょく</rt></ruby>できるよ。</>
+                    'This nickname appears on the big TV, race leaderboards, and game lobbies. Pick a fun nickname (up to 10 characters)—please avoid using your real name!',
+                    <>このニックネームは、まえのテレビやゲームの<ruby>順位表<rt>じゅんいひょう</rt></ruby>に<ruby>出<rt>で</rt></ruby>ます！すきなニックネームを10<ruby>文字<rt>もじ</rt></ruby>まで<ruby>入力<rt>にゅうりょく</rt></ruby>できるよ（<ruby>本名<rt>ほんみょう</rt></ruby>は<ruby>入<rt>い</rt></ruby>れないでね）。</>
                   )}
                 </p>
               </div>
@@ -297,7 +297,7 @@ export const ProfileSetupWizardModal: React.FC<ProfileSetupWizardModalProps> = (
                   maxLength={10}
                   value={nickname}
                   onChange={(e) => setNickname(e.target.value)}
-                  placeholder={language === 'ja' ? '例: たろう / Ken / さくら' : 'e.g. Ken / Sara'}
+                  placeholder={language === 'ja' ? '例: パンダ / ドラゴン / PANDA' : 'e.g. Panda / Ninja / Star'}
                   autoFocus
                   className="w-full h-16 px-5 font-black text-xl sm:text-2xl rounded-2xl border-3 border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:border-emerald-500 focus:outline-hidden shadow-xs"
                 />

@@ -557,7 +557,7 @@ export const QuizStudentJoin: React.FC<QuizStudentJoinProps> = ({
                               setNickname(val.trim());
                             }
                           }}
-                          placeholder={t('Add nickname (optional, e.g. Ken)', '名前を追加 (省略OK / 例: けんた)')}
+                          placeholder={t('Add nickname (optional, e.g. Panda)', 'ニックネームを追加 (省略OK / 例: パンダ)')}
                           className="w-full py-2 px-3 text-center font-bold text-sm rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:border-purple-500 focus:outline-none"
                         />
                       </div>
@@ -579,7 +579,7 @@ export const QuizStudentJoin: React.FC<QuizStudentJoinProps> = ({
                             if (n > 0) setSelectedAttendanceNumber(n);
                           }
                         }}
-                        placeholder={t('Enter name (e.g. #27 Ken)', '名前を入力 (例: 27番 けんた)')}
+                        placeholder={t('Enter nickname (e.g. #27 Panda)', 'ニックネームを入力 (例: 27番 パンダ)')}
                         className="w-full py-3 px-4 text-center font-black text-lg rounded-2xl border-2 border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:border-purple-500 focus:outline-none focus:ring-4 focus:ring-purple-100 dark:focus:ring-purple-950/40"
                       />
                     </div>

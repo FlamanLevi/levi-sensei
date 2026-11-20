@@ -66,18 +66,6 @@ export const StudentPortal: React.FC = () => {
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
   const [isStatsModalOpen, setIsStatsModalOpen] = useState(false);
   const [isShopOpen, setIsShopOpen] = useState(false);
-  const [isCanadaMode, setIsCanadaMode] = useState(false);
-
-  const handleCanadaTrigger = () => {
-    playPop();
-    setIsCanadaMode(prev => !prev);
-    confetti({
-      particleCount: 45,
-      spread: 70,
-      colors: ['#ef4444', '#ffffff', '#dc2626', '#fca5a5'],
-      origin: { y: 0.6 }
-    });
-  };
 
   const [activeSetupCode, setActiveSetupCode] = useState<string | null>(() => {
     try {
@@ -1075,41 +1063,17 @@ export const StudentPortal: React.FC = () => {
           {/* Header */}
           <div className="flex items-center justify-between gap-2 pb-3 mb-3 border-b-2 border-dashed border-amber-300 dark:border-amber-700/60 flex-nowrap overflow-x-auto no-scrollbar">
             <div className="flex items-center gap-2 min-w-0 flex-1">
-              <button
-                type="button"
-                onClick={handleCanadaTrigger}
-                className="text-xl sm:text-2xl hover:scale-125 transition-transform cursor-pointer shrink-0"
-                title={isCanadaMode ? "🇨🇦 カナダちゃん！" : "🍁 タップしてみてね！"}
-              >
-                {isCanadaMode ? "🍁" : "🌸"}
-              </button>
+              <span className="text-xl sm:text-2xl shrink-0">🌸</span>
               <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-1.5 min-w-0 truncate">
                 {t(
-                  isCanadaMode ? "Canada-chan's English Stamp Card 🇨🇦" : "Levi-Sensei's English Stamp Card",
-                  isCanadaMode ? (
-                    <>カナダちゃん<span className="text-xs font-bold text-red-500">🇨🇦🍁</span>の えいごスタンプカード</>
-                  ) : (
-                    <>リヴァイ<ruby>先生<rt>せんせい</rt></ruby>の えいごスタンプカード</>
-                  )
+                  "Levi-Sensei's English Stamp Card",
+                  <>リヴァイ<ruby>先生<rt>せんせい</rt></ruby>の えいごスタンプカード</>
                 )}
               </h3>
-              <button
-                type="button"
-                onClick={handleCanadaTrigger}
-                className={`text-[10px] font-black px-2 py-0.5 rounded-full border transition-all cursor-pointer active:scale-95 flex items-center gap-1 shrink-0 whitespace-nowrap ${
-                  isCanadaMode
-                    ? 'bg-red-500 text-white border-red-600 shadow-sm animate-pulse'
-                    : 'bg-red-50 hover:bg-red-100 dark:bg-red-950/40 dark:hover:bg-red-900/40 text-red-600 dark:text-red-300 border-red-200 dark:border-red-800/60'
-                }`}
-                title={t("Canada-chan Easter Egg! Click to celebrate", "通称：カナダちゃん！クリックしてみてね")}
-              >
-                <span>🇨🇦</span>
-                <span>{isCanadaMode ? "カナダちゃん🍁" : "カナダちゃん？"}</span>
-              </button>
             </div>
             <div className="text-xs font-black text-amber-900 dark:text-amber-300 bg-amber-100 dark:bg-amber-950/80 px-3 py-1 rounded-full border border-amber-300 dark:border-amber-800 shrink-0 whitespace-nowrap">
               {profile.attendanceNumber === 0 
-                ? t("Teacher / Tester Card (Canada-chan 🇨🇦)", <><ruby>先生<rt>せんせい</rt></ruby>・カナダちゃんカード 🇨🇦</>)
+                ? t("Teacher / Tester Card", <><ruby>先生<rt>せんせい</rt></ruby>・テスターカード</>)
                 : `${profile.classId} #${profile.attendanceNumber} ${profile.nickname}`}
             </div>
           </div>

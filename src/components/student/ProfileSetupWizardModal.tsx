@@ -276,8 +276,8 @@ export const ProfileSetupWizardModal: React.FC<ProfileSetupWizardModalProps> = (
                 </h3>
                 <p className="text-xs sm:text-sm font-bold text-slate-600 dark:text-slate-300 leading-relaxed">
                   {t(
-                    'This nickname appears on the big TV, race leaderboards, and game lobbies. Pick a fun nickname (up to 10 characters)—please avoid using your real name!',
-                    <>このニックネームは、まえのテレビやゲームの<ruby>順位表<rt>じゅんいひょう</rt></ruby>に<ruby>出<rt>で</rt></ruby>ます！すきなニックネームを10<ruby>文字<rt>もじ</rt></ruby>まで<ruby>入力<rt>にゅうりょく</rt></ruby>できるよ（<ruby>本名<rt>ほんみょう</rt></ruby>は<ruby>入<rt>い</rt></ruby>れないでね）。</>
+                    'This nickname appears on the big TV, race leaderboards, and game lobbies. Enter a fun nickname (up to 10 characters)!',
+                    <>このニックネームは、まえのテレビやゲームの<ruby>順位表<rt>じゅんいひょう</rt></ruby>に<ruby>出<rt>で</rt></ruby>ます！すきなニックネームを10<ruby>文字<rt>もじ</rt></ruby>まで<ruby>入力<rt>にゅうりょく</rt></ruby>してね。</>
                   )}
                 </p>
               </div>

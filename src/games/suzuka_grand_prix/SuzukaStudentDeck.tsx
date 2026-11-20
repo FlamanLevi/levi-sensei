@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { QuizQuestion, QuizOption, OPTION_STYLES } from '@/games/quiz/types';
+import { resolveColorQuestionStyle } from '@/games/quiz/colorOptionStyle';
 import {
   DEFAULT_LOCKOUT_SECONDS,
   isEnglishPromptType,
@@ -415,6 +416,7 @@ export const SuzukaStudentDeck: React.FC<SuzukaStudentDeckProps> = ({
 
                 {question.options.map((option, idx) => {
                   const style = OPTION_STYLES[idx % OPTION_STYLES.length];
+                  const colorOverride = resolveColorQuestionStyle(question, option);
                   const isSelected = feedback?.optionId === option.id;
                   const isFeedbackCorrect = isSelected && feedback?.isCorrect;
                   const isFeedbackWrong = isSelected && !feedback?.isCorrect;
@@ -426,10 +428,20 @@ export const SuzukaStudentDeck: React.FC<SuzukaStudentDeckProps> = ({
                     !isFeedbackCorrect &&
                     !isFeedbackWrong &&
                     !isEliminated;
-                  const textColor = isDarkText ? 'text-slate-950' : 'text-white';
-                  const subTextColor = isDarkText ? 'text-slate-800' : 'text-white/90';
+                  const textColor =
+                    colorOverride && !isFeedbackCorrect && !isFeedbackWrong && !isEliminated
+                      ? colorOverride.textClass
+                      : isDarkText
+                      ? 'text-slate-950'
+                      : 'text-white';
+                  const subTextColor =
+                    colorOverride && !isFeedbackCorrect && !isFeedbackWrong && !isEliminated
+                      ? colorOverride.subTextClass
+                      : isDarkText
+                      ? 'text-slate-800'
+                      : 'text-white/90';
 
-                  let btnBg = style.bg;
+                  let btnBg = colorOverride ? `${colorOverride.bg} border-2 ${colorOverride.border}` : style.bg;
                   if (isFeedbackCorrect) btnBg = 'bg-emerald-500 border-b-4 border-emerald-700';
                   if (isFeedbackWrong) btnBg = 'bg-rose-700 animate-shake';
                   if (isEliminated && !isFeedbackWrong) btnBg = 'bg-slate-900 border border-slate-800';
@@ -909,6 +921,7 @@ export const SuzukaStudentDeck: React.FC<SuzukaStudentDeckProps> = ({
 
             {question.options.map((option, idx) => {
               const style = OPTION_STYLES[idx % OPTION_STYLES.length];
+              const colorOverride = resolveColorQuestionStyle(question, option);
               const isSelected = feedback?.optionId === option.id;
               const isFeedbackCorrect = isSelected && feedback?.isCorrect;
               const isFeedbackWrong = isSelected && !feedback?.isCorrect;
@@ -920,10 +933,20 @@ export const SuzukaStudentDeck: React.FC<SuzukaStudentDeckProps> = ({
                 !isFeedbackCorrect &&
                 !isFeedbackWrong &&
                 !isEliminated;
-              const textColor = isDarkText ? 'text-slate-950' : 'text-white';
-              const subTextColor = isDarkText ? 'text-slate-800' : 'text-white/90';
+              const textColor =
+                colorOverride && !isFeedbackCorrect && !isFeedbackWrong && !isEliminated
+                  ? colorOverride.textClass
+                  : isDarkText
+                  ? 'text-slate-950'
+                  : 'text-white';
+              const subTextColor =
+                colorOverride && !isFeedbackCorrect && !isFeedbackWrong && !isEliminated
+                  ? colorOverride.subTextClass
+                  : isDarkText
+                  ? 'text-slate-800'
+                  : 'text-white/90';
 
-              let btnBg = style.bg;
+              let btnBg = colorOverride ? `${colorOverride.bg} border-2 ${colorOverride.border}` : style.bg;
               if (isFeedbackCorrect) btnBg = 'bg-emerald-500 border-b-4 border-emerald-700';
               if (isFeedbackWrong) btnBg = 'bg-rose-700 animate-shake';
               if (isEliminated && !isFeedbackWrong) btnBg = 'bg-slate-900 border border-slate-800';

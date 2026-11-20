@@ -49,6 +49,7 @@ import {
   TamaireSuspenseFrame,
 } from '../core/quizEngine';
 import { OPTION_STYLES, TamaireSettings, VolleyballSettings } from '../types';
+import { resolveColorQuestionStyle } from '../colorOptionStyle';
 import {
   Tamaire3DStage,
   VolleyballAnswerEvent,
@@ -1120,11 +1121,15 @@ export const QuizStudentTamaire: React.FC<QuizStudentTamaireProps> = ({
           <div className="flex-1 grid grid-cols-2 gap-2 min-h-[124px]">
             {currentQuestion.options.map((option, idx) => {
               const style = OPTION_STYLES[idx % OPTION_STYLES.length];
+              const colorOverride = resolveColorQuestionStyle(currentQuestion, option);
               const isEliminated = eliminatedOptionIds.has(option.id);
               const pres = resolveOptionPresentation(currentQuestion, option);
               const isYellow = style.color === 'yellow' && !isEliminated;
-              const textColor = isYellow ? 'text-slate-950' : 'text-white';
-              const badgeClass = isYellow ? 'bg-black/15 text-slate-950' : 'bg-black/25 text-white';
+              const textColor = colorOverride ? colorOverride.textClass : (isYellow ? 'text-slate-950' : 'text-white');
+              const badgeClass = colorOverride ? colorOverride.badgeClass : (isYellow ? 'bg-black/15 text-slate-950' : 'bg-black/25 text-white');
+              const activeClasses = colorOverride
+                ? `${colorOverride.bg} ${colorOverride.hoverBg} ${colorOverride.border} ${textColor} shadow-md`
+                : `${style.bg} ${style.hoverBg} ${style.border} ${textColor} shadow-md`;
 
               return (
                 <button
@@ -1135,7 +1140,7 @@ export const QuizStudentTamaire: React.FC<QuizStudentTamaireProps> = ({
                   className={`relative rounded-2xl p-2.5 flex flex-col justify-between text-left border-2 transition-all active:scale-95 cursor-pointer ${
                     isEliminated
                       ? 'opacity-25 grayscale bg-slate-800 border-slate-700 text-white pointer-events-none'
-                      : `${style.bg} ${style.hoverBg} ${style.border} ${textColor} shadow-md`
+                      : activeClasses
                   }`}
                 >
                   <div className="flex items-center justify-between w-full">

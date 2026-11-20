@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { QuizQuestion, IpadDisplayMode, OPTION_STYLES, TeamId, TEAM_PRESETS, RecallDelaySeconds, DistractorEliminationMode } from '../types';
 import { isEnglishPromptType } from '../core/quizEngine';
+import { resolveColorQuestionStyle } from '../colorOptionStyle';
 import { soundEffects } from '@/services/soundEffects';
 import { getServerTime } from '@/services/rtdbSafe';
 import { useLanguage } from '@/context/LanguageContext';
@@ -356,16 +357,19 @@ export const QuizStudentQuestion: React.FC<QuizStudentQuestionProps> = ({
                   ? (option.ja_hiragana && option.ja_kanji && option.ja_kanji !== option.ja_hiragana ? option.ja_hiragana : undefined)
                   : (question.englishReadingAid === 'WITH_KATAKANA' && option.en_katakana ? `【${option.en_katakana}】` : undefined);
 
-                const toyBtnClass = {
-                  triangle: 'btn-toy-rose',
-                  diamond:  'btn-toy-blue',
-                  circle:   'btn-toy-amber',
-                  square:   'btn-toy-emerald'
-                }[option.symbol] || 'btn-toy-base';
+                const colorOverride = resolveColorQuestionStyle(question, option);
+                const toyBtnClass = colorOverride
+                  ? `${colorOverride.bg} ${colorOverride.hoverBg} border-2 ${colorOverride.border}`
+                  : ({
+                      triangle: 'btn-toy-rose',
+                      diamond:  'btn-toy-blue',
+                      circle:   'btn-toy-amber',
+                      square:   'btn-toy-emerald'
+                    }[option.symbol] || 'btn-toy-base');
 
-                const textureStyle = CUD_TEXTURE_STYLES[option.symbol] || {};
-                const primaryInk = isYellowCard ? 'text-slate-950' : 'text-white drop-shadow-md';
-                const secondaryInk = isYellowCard ? 'text-slate-800' : 'text-white/90';
+                const textureStyle = colorOverride ? {} : (CUD_TEXTURE_STYLES[option.symbol] || {});
+                const primaryInk = colorOverride ? colorOverride.textClass : (isYellowCard ? 'text-slate-950' : 'text-white drop-shadow-md');
+                const secondaryInk = colorOverride ? colorOverride.subTextClass : (isYellowCard ? 'text-slate-800' : 'text-white/90');
 
                 return (
                   <button

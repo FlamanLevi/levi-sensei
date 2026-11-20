@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { QuizQuestion, QuizPlayer, OPTION_STYLES, TugOfWarSettings, SprintCumulativeStats } from '../types';
 import { evaluateOptionMatch, isEnglishPromptType, resolveLockoutPenaltySeconds } from '../core/quizEngine';
+import { resolveColorQuestionStyle } from '../colorOptionStyle';
 import { RubyText } from '@/components/common/RubyText';
 import { soundEffects } from '@/services/soundEffects';
 import { getServerTime } from '@/services/rtdbSafe';
@@ -428,6 +429,7 @@ export const QuizStudentTugOfWar: React.FC<QuizStudentTugOfWarProps> = ({
       <div className="grid grid-cols-2 gap-2 sm:gap-3.5 h-36 sm:h-44 md:h-52 shrink-0">
         {currentQuestion.options.map((option, idx) => {
           const style = OPTION_STYLES[idx % OPTION_STYLES.length];
+          const colorOverride = resolveColorQuestionStyle(currentQuestion, option);
           const isEliminated = eliminatedOptionIds.has(option.id);
           const isFeedbackTarget = feedback?.optionId === option.id;
           const isYellowCard = style.color === 'yellow' && !isFeedbackTarget && !isEliminated;
@@ -437,8 +439,11 @@ export const QuizStudentTugOfWar: React.FC<QuizStudentTugOfWarProps> = ({
             !isEnPrompt &&
             currentQuestion.englishReadingAid === 'WITH_KATAKANA' &&
             Boolean(option.en_katakana);
-          const primaryInk = isYellowCard ? 'text-slate-950' : 'text-white';
-          const secondaryInk = isYellowCard ? 'text-slate-800' : 'text-white/90';
+          const primaryInk = colorOverride ? colorOverride.textClass : (isYellowCard ? 'text-slate-950' : 'text-white');
+          const secondaryInk = colorOverride ? colorOverride.subTextClass : (isYellowCard ? 'text-slate-800' : 'text-white/90');
+          const baseClasses = colorOverride
+            ? `${colorOverride.bg} ${colorOverride.hoverBg} ${primaryInk} border-2 ${colorOverride.border}`
+            : `${style.bg} ${style.hoverBg} ${primaryInk} border-2 ${style.border}`;
 
           return (
             <button
@@ -453,7 +458,7 @@ export const QuizStudentTugOfWar: React.FC<QuizStudentTugOfWarProps> = ({
                     ? feedback.isCorrect
                       ? 'bg-emerald-500 text-white border-4 border-white shadow-emerald-500/50 scale-102'
                       : 'bg-rose-700 text-white border-4 border-rose-400'
-                    : `${style.bg} ${style.hoverBg} ${primaryInk} border-2 ${style.border}`
+                    : baseClasses
               }`}
             >
               {/* Shape Badge in corner */}

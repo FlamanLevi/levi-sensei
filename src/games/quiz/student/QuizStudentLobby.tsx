@@ -35,6 +35,8 @@ import {
 
 interface QuizStudentLobbyProps {
   roomCode: string;
+  schoolId?: StudentProfile['schoolId'];
+  classId?: string;
   player: QuizPlayer;
   gamePlayType?: GamePlayType;
   sprintSettings?: SprintSettings;
@@ -57,6 +59,8 @@ interface QuizStudentLobbyProps {
 
 export const QuizStudentLobby: React.FC<QuizStudentLobbyProps> = ({
   roomCode,
+  schoolId,
+  classId,
   player,
   gamePlayType = 'KAHOOT',
   sprintSettings,
@@ -128,9 +132,10 @@ export const QuizStudentLobby: React.FC<QuizStudentLobbyProps> = ({
   };
 
   const currentProfile: StudentProfile = savedProfile || {
-    schoolId: 'futakotamagawa',
-    classId: '6-1',
-    attendanceNumber: typeof player.attendanceNumber === 'number' ? player.attendanceNumber : 0,
+    schoolId: schoolId || 'futakotamagawa',
+    classId: classId || 'GUEST',
+    attendanceNumber: typeof player.attendanceNumber === 'number' ? player.attendanceNumber : -1,
+    isGuest: typeof player.attendanceNumber !== 'number' || player.attendanceNumber <= 0,
     nickname: player.nickname,
     avatar: player.avatar || '🇯🇵',
     callsign: `${player.attendanceNumber === 0 ? '00' : (player.attendanceNumber || 1)}`,
@@ -639,13 +644,14 @@ export const QuizStudentLobby: React.FC<QuizStudentLobbyProps> = ({
       )}
 
       {/* Modals */}
-      {isEditProfileOpen && (
+      {isEditProfileOpen && createPortal(
         <EditProfileModal
           isOpen={isEditProfileOpen}
           profile={currentProfile}
           onClose={() => setIsEditProfileOpen(false)}
           onUpdated={handleProfileUpdated}
-        />
+        />,
+        document.body
       )}
       {isShopOpen && createPortal(
         <EigoShopModal

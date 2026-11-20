@@ -214,12 +214,12 @@ export const ProfileStudioHost: React.FC<ProfileStudioHostProps> = ({ onExit, on
   useEffect(() => {
     QRCode.toDataURL(setupUrl, {
       width: 512,
-      margin: 1,
+      margin: 4,
       color: {
         dark: '#0f172a',
         light: '#ffffff',
       },
-      errorCorrectionLevel: 'M',
+      errorCorrectionLevel: 'L',
     }).then((url) => {
       setQrCodeDataUrl(url);
     }).catch((err) => {
@@ -548,7 +548,7 @@ export const ProfileStudioHost: React.FC<ProfileStudioHostProps> = ({ onExit, on
                 <img
                   src={qrCodeDataUrl}
                   alt="Setup QR Code"
-                  className="h-[52dvh] sm:h-[60dvh] max-h-[460px] aspect-square object-contain select-none pointer-events-none rounded-2xl"
+                  className="h-[52dvh] sm:h-[60dvh] max-h-[460px] aspect-square object-contain select-none pointer-events-none"
                 />
               ) : (
                 <div className="h-[52dvh] sm:h-[60dvh] max-h-[460px] aspect-square flex items-center justify-center text-slate-500 dark:text-slate-400 font-bold animate-pulse">

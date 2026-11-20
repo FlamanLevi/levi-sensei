@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from '@/context/LanguageContext';
-import { SchoolId, StudentProfile, SCHOOL_CONFIGS, getRandomAvatarEmoji } from '@/types/roster';
+import { SchoolId, StudentProfile, SCHOOL_CONFIGS, getRandomAvatarEmoji, getDefaultSecretCharm } from '@/types/roster';
 import { ensureAnonymousAuth } from '@/services/firebase';
 import { safeSubscribe, safeSet, safeGet } from '@/services/rtdbSafe';
 import { claimAttendanceNumber, getSavedStudentProfile, unlinkStudentDevice } from '@/services/studentProfile';
@@ -193,6 +193,7 @@ export const ProfileStudioStudent: React.FC<ProfileStudioStudentProps> = ({
         } catch {}
       }
       
+      const defaultCharm = selectedSeat === 0 ? '👑' : getDefaultSecretCharm(selectedSeat);
       // 1. Claim cloud student profile & write to iPad localStorage
       const profile = await claimAttendanceNumber(
         roomState.schoolId,
@@ -205,7 +206,7 @@ export const ProfileStudioStudent: React.FC<ProfileStudioStudentProps> = ({
         0,
         0,
         undefined,
-        selectedSeat === 0 ? '👑' : undefined,
+        defaultCharm,
         selectedSeat === 0 ? 'TEACH' : undefined
       );
 
@@ -238,7 +239,7 @@ export const ProfileStudioStudent: React.FC<ProfileStudioStudentProps> = ({
 
   const schoolConfig = roomState?.schoolId ? SCHOOL_CONFIGS[roomState.schoolId] : null;
   const boundSeats = roomState?.boundSeats || {};
-  const MAX_SEATS = 36;
+  const MAX_SEATS = roomState?.classSize || 35;
   const seatsArray = [0, ...Array.from({ length: MAX_SEATS }, (_, i) => i + 1)];
 
   if (loading) {
@@ -478,87 +479,105 @@ export const ProfileStudioStudent: React.FC<ProfileStudioStudentProps> = ({
           </div>
         </div>
 
-        {/* New Profile Confirmation Drawer (When an empty seat is tapped) */}
+        {/* New Profile Confirmation Modal (Front-and-center when an empty seat is tapped) */}
         {selectedSeat !== null && (
-          <div className="p-5 sm:p-6 bg-white dark:bg-slate-900 rounded-3xl border-3 border-purple-500 shadow-2xl animate-in slide-in-from-bottom-4 duration-200 mb-6">
-            <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-100 dark:border-slate-800">
-              <div className="flex items-center gap-3">
-                <span className="w-10 h-10 rounded-2xl bg-purple-600 text-white font-mono font-black text-lg flex items-center justify-center shadow-md">
-                  {selectedSeat === 0 ? '00' : `#${selectedSeat}`}
-                </span>
-                <div>
-                  <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-white leading-tight">
-                    {selectedSeat === 0 ? t('Teacher Profile Setup', '00番 先生プロフィールの設定') : t(`Seat #${selectedSeat}`, `出席番号: ${selectedSeat}番`)}
-                  </h3>
-                  <span className="text-xs text-slate-500 dark:text-slate-400 font-bold">
-                    {schoolConfig?.shortKanji || '学校'} {roomState.classId}
+          <div
+            className="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-150"
+            onClick={() => !saving && setSelectedSeat(null)}
+          >
+            <div
+              className="p-5 sm:p-6 bg-white dark:bg-slate-900 rounded-3xl border-4 border-purple-500 shadow-2xl animate-in zoom-in-95 duration-150 max-w-lg w-full"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-100 dark:border-slate-800">
+                <div className="flex items-center gap-3">
+                  <span className="w-10 h-10 rounded-2xl bg-purple-600 text-white font-mono font-black text-lg flex items-center justify-center shadow-md">
+                    {selectedSeat === 0 ? '00' : `#${selectedSeat}`}
                   </span>
+                  <div>
+                    <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-white leading-tight">
+                      {selectedSeat === 0 ? t('Teacher Profile Setup', '00番 先生プロフィールの設定') : t(`Seat #${selectedSeat}`, <><ruby>出席番号<rt>しゅっせきばんごう</rt></ruby>: {selectedSeat}番</>)}
+                    </h3>
+                    <span className="text-xs text-slate-500 dark:text-slate-400 font-bold">
+                      {schoolConfig?.shortKanji || '学校'} {roomState.classId}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <div className="text-3xl select-none">
+                    {selectedAvatar}
+                  </div>
+                  <button
+                    type="button"
+                    disabled={saving}
+                    onClick={() => setSelectedSeat(null)}
+                    className="p-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-white cursor-pointer"
+                  >
+                    <X size={18} />
+                  </button>
                 </div>
               </div>
 
-              <div className="text-3xl select-none">
-                {selectedAvatar}
+              {/* Avatar Selector Carousel */}
+              <div className="mb-4">
+                <label className="block text-xs font-black text-slate-600 dark:text-slate-300 mb-2">
+                  {t('Choose Avatar Emoji:', 'すきなアイコンをえらぼう:')}
+                </label>
+                <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+                  {POPULAR_AVATARS.map((av) => (
+                    <button
+                      key={av}
+                      type="button"
+                      onClick={() => {
+                        soundEffects.playTick();
+                        setSelectedAvatar(av);
+                      }}
+                      className={`w-11 h-11 shrink-0 rounded-2xl text-2xl flex items-center justify-center transition-all cursor-pointer ${
+                        selectedAvatar === av
+                          ? 'bg-purple-100 dark:bg-purple-950/80 border-2 border-purple-500 scale-110 shadow-md'
+                          : 'bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-purple-300'
+                      }`}
+                    >
+                      {av}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
 
-            {/* Avatar Selector Carousel */}
-            <div className="mb-4">
-              <label className="block text-xs font-black text-slate-600 dark:text-slate-300 mb-2">
-                {t('Choose Avatar Emoji:', 'すきなアイコンをえらぼう:')}
-              </label>
-              <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
-                {POPULAR_AVATARS.map((av) => (
-                  <button
-                    key={av}
-                    type="button"
-                    onClick={() => {
-                      soundEffects.playTick();
-                      setSelectedAvatar(av);
-                    }}
-                    className={`w-11 h-11 shrink-0 rounded-2xl text-2xl flex items-center justify-center transition-all cursor-pointer ${
-                      selectedAvatar === av
-                        ? 'bg-purple-100 dark:bg-purple-950/80 border-2 border-purple-500 scale-110 shadow-md'
-                        : 'bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-purple-300'
-                    }`}
-                  >
-                    {av}
-                  </button>
-                ))}
+              {/* Nickname Input */}
+              <div className="mb-5">
+                <label className="block text-xs font-black text-slate-600 dark:text-slate-300 mb-1.5">
+                  {t('Name on Screen (Optional):', '表示する名前 (省略OK・そのままでもOK):')}
+                </label>
+                <input
+                  type="text"
+                  maxLength={12}
+                  value={nicknameInput}
+                  onChange={(e) => setNicknameInput(e.target.value)}
+                  placeholder={language === 'ja' ? `${selectedSeat}番 けんた` : `#${selectedSeat} Ken`}
+                  className="w-full py-3 px-4 rounded-xl border-2 border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white font-black text-base focus:border-purple-500 focus:outline-none"
+                />
               </div>
-            </div>
 
-            {/* Nickname Input */}
-            <div className="mb-5">
-              <label className="block text-xs font-black text-slate-600 dark:text-slate-300 mb-1.5">
-                {t('Name on Screen (Optional):', '表示する名前 (省略OK・そのままでもOK):')}
-              </label>
-              <input
-                type="text"
-                maxLength={12}
-                value={nicknameInput}
-                onChange={(e) => setNicknameInput(e.target.value)}
-                placeholder={language === 'ja' ? `${selectedSeat}番 けんた` : `#${selectedSeat} Ken`}
-                className="w-full py-3 px-4 rounded-xl border-2 border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white font-black text-base focus:border-purple-500 focus:outline-none"
-              />
+              {/* Confirm Button */}
+              <button
+                type="button"
+                disabled={saving}
+                onClick={handleConfirmNewProfile}
+                className="w-full py-4 rounded-2xl bg-gradient-to-r from-purple-600 via-indigo-600 to-emerald-600 text-white font-black text-base shadow-xl hover:brightness-105 active:scale-98 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-purple-500/25"
+              >
+                {saving ? (
+                  <span>{t('Linking iPad...', 'iPadをひも付け中...')}</span>
+                ) : (
+                  <>
+                    <span>✨</span>
+                    <span>{t('Link This iPad (Confirm)', 'この番号で決定！')}</span>
+                    <ArrowRight size={18} />
+                  </>
+                )}
+              </button>
             </div>
-
-            {/* Confirm Button */}
-            <button
-              type="button"
-              disabled={saving}
-              onClick={handleConfirmNewProfile}
-              className="w-full py-4 rounded-2xl bg-gradient-to-r from-purple-600 via-indigo-600 to-emerald-600 text-white font-black text-base shadow-xl hover:brightness-105 active:scale-98 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-purple-500/25"
-            >
-              {saving ? (
-                <span>{t('Linking iPad...', 'iPadをひも付け中...')}</span>
-              ) : (
-                <>
-                  <span>✨</span>
-                  <span>{t('Link This iPad (Confirm)', 'この番号で決定！')}</span>
-                  <ArrowRight size={18} />
-                </>
-              )}
-            </button>
           </div>
         )}
 

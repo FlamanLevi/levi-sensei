@@ -163,16 +163,16 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
     ? registeredRosterCount
     : configuredSize;
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
+  const [isQrZoomOpen, setIsQrZoomOpen] = useState<boolean>(false);
 
-  // Generate high-resolution, high-contrast QR Code (640px) linking directly to student portal
+  // Generate high-resolution, high-contrast QR Code with full 4-module quiet zone and minimal URL density
   useEffect(() => {
     const origin = window.location.origin;
-    const directJoinUrl = isStudentHost
-      ? `${origin}/?pin=${roomCode}`
-      : `${origin}/?pin=${roomCode}${classId ? `&class=${classId}` : ''}${schoolId ? `&school=${schoolId}` : ''}`;
+    const directJoinUrl = `${origin}/?pin=${roomCode}`;
     QRCode.toDataURL(directJoinUrl, {
       width: 640,
-      margin: 1,
+      margin: 4,
+      errorCorrectionLevel: 'L',
       color: {
         dark: '#0f172a',
         light: '#ffffff'
@@ -180,7 +180,7 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
     })
       .then(url => setQrDataUrl(url))
       .catch(() => {});
-  }, [roomCode, classId, schoolId, isStudentHost]);
+  }, [roomCode]);
 
   // Preload & pre-warm 3D circuit assets during lobby waiting
   useEffect(() => {
@@ -366,19 +366,24 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
 
           {/* High-Resolution QR Canvas (Fluidly scales to available card width & height across iPad / Dynabook / Surface / TV) */}
           <div className="flex-1 min-h-0 w-full flex items-center justify-center my-2 overflow-hidden">
-            <div className="h-full max-h-full max-w-full aspect-square p-2.5 sm:p-3.5 bg-white rounded-3xl shadow-inner border-4 border-slate-900 flex items-center justify-center">
+            <button
+              type="button"
+              onClick={() => qrDataUrl && setIsQrZoomOpen(true)}
+              className="h-full max-h-full max-w-full aspect-square p-2 sm:p-3 bg-white rounded-3xl shadow-inner border-4 border-slate-900 flex items-center justify-center cursor-pointer hover:scale-[1.01] transition-transform"
+              title={t('Tap to enlarge QR code', 'タップしてQRコードを大きく表示')}
+            >
               {qrDataUrl ? (
                 <img
                   src={qrDataUrl}
                   alt={`Join room ${roomCode}`}
-                  className="w-full h-full object-contain rounded-2xl"
+                  className="w-full h-full object-contain"
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center bg-slate-100 rounded-2xl text-xs text-slate-500">
                   {t('Generating QR...', 'QRコード生成中...')}
                 </div>
               )}
-            </div>
+            </button>
           </div>
 
           {/* Bottom Scan Instruction Strip */}
@@ -387,11 +392,46 @@ export const QuizHostLobby: React.FC<QuizHostLobbyProps> = ({
               <QrCode size={15} />
               <span>{t('Scan with iPad Camera', 'iPadカメラでスキャン')}</span>
             </span>
-            <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400">
-              {t('Point camera to join', 'かざして即参加')}
-            </span>
+            <button
+              type="button"
+              onClick={() => qrDataUrl && setIsQrZoomOpen(true)}
+              className="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 hover:underline cursor-pointer"
+            >
+              {t('🔍 Tap QR to enlarge', '🔍 タップで拡大')}
+            </button>
           </div>
         </div>
+
+        {/* Fullscreen QR Zoom Modal for Back-Row Scanning */}
+        {isQrZoomOpen && qrDataUrl && (
+          <div
+            className="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-sm flex items-center justify-center p-4 sm:p-8"
+            onClick={() => setIsQrZoomOpen(false)}
+          >
+            <div
+              className="bg-white rounded-3xl p-4 sm:p-6 shadow-2xl border-4 border-indigo-500 flex flex-col items-center gap-3 max-h-[92dvh]"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="w-full flex items-center justify-between gap-4 text-slate-900">
+                <span className="font-mono font-black text-2xl sm:text-3xl tracking-widest">
+                  PIN: {roomCode}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setIsQrZoomOpen(false)}
+                  className="px-3 py-1.5 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-800 font-black text-xs cursor-pointer"
+                >
+                  ✕ {t('Close', 'とじる')}
+                </button>
+              </div>
+              <img
+                src={qrDataUrl}
+                alt={`Join room ${roomCode}`}
+                className="h-[68dvh] max-h-[640px] aspect-square object-contain"
+              />
+            </div>
+          </div>
+        )}
 
         {/* Right Column: Translucent Student Roster & Teams Grid so live 3D track is visible behind (7 cols) */}
         <div className="lg:col-span-7 flex flex-col justify-between p-3.5 sm:p-4 bg-white/75 dark:bg-slate-900/75 backdrop-blur-xs border-4 border-white/80 dark:border-slate-700/80 rounded-3xl shadow-xl min-h-0 overflow-hidden">

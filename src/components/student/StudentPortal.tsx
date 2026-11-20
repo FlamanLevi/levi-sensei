@@ -110,16 +110,50 @@ export const StudentPortal: React.FC = () => {
     }
   });
 
-  // Route 4-digit PINs to setup room if applicable
+  const [pendingQuizRoomMeta, setPendingQuizRoomMeta] = useState<{
+    code: string;
+    schoolId?: 'futakotamagawa' | 'toyogaoka';
+    classId?: string;
+    isStudentHost?: boolean;
+    isTestGame?: boolean;
+  } | null>(null);
+  const [isCheckingQuizRoomMeta, setIsCheckingQuizRoomMeta] = useState<boolean>(false);
+  const [bypassPinClassMismatch, setBypassPinClassMismatch] = useState<boolean>(false);
+
+  // Route 4-digit PINs to setup room if applicable, and fetch room school/class for profile gating
   useEffect(() => {
-    if (activeQuizPin && activeQuizPin.length === 4) {
-      safeGet<{ status: string }>(`setupRooms/${activeQuizPin}`).then((setup) => {
-        if (setup && setup.status === 'ACTIVE') {
-          setActiveSetupCode(activeQuizPin);
-          setActiveQuizPin(null);
-        }
-      });
+    setBypassPinClassMismatch(false);
+    if (!activeQuizPin || activeQuizPin.length !== 4) {
+      setPendingQuizRoomMeta(null);
+      setIsCheckingQuizRoomMeta(false);
+      return;
     }
+    let cancelled = false;
+    setIsCheckingQuizRoomMeta(true);
+    Promise.all([
+      safeGet<{ status: string }>(`setupRooms/${activeQuizPin}`).catch(() => null),
+      safeGet<{
+        schoolId?: 'futakotamagawa' | 'toyogaoka';
+        classId?: string;
+        isStudentHost?: boolean;
+        isTestGame?: boolean;
+      }>(`rooms/${activeQuizPin}`).catch(() => null),
+    ]).then(([setup, roomMeta]) => {
+      if (cancelled) return;
+      if (setup && setup.status === 'ACTIVE') {
+        setActiveSetupCode(activeQuizPin);
+        setActiveQuizPin(null);
+        setPendingQuizRoomMeta(null);
+      } else if (roomMeta) {
+        setPendingQuizRoomMeta({ code: activeQuizPin, ...roomMeta });
+      } else {
+        setPendingQuizRoomMeta(null);
+      }
+      setIsCheckingQuizRoomMeta(false);
+    });
+    return () => {
+      cancelled = true;
+    };
   }, [activeQuizPin]);
 
   const [profile, setProfile] = useState<StudentProfile | null>(() => getSavedStudentProfile());
@@ -448,6 +482,10 @@ export const StudentPortal: React.FC = () => {
         setActiveGrade('ES_G4');
       } else if (profile.classId.startsWith('3')) {
         setActiveGrade('ES_G3');
+      } else if (profile.classId.startsWith('2')) {
+        setActiveGrade('ES_G2');
+      } else if (profile.classId.startsWith('1')) {
+        setActiveGrade('ES_G1');
       }
     }
   }, [profile?.schoolId, profile?.classId, activeSchool, activeClassId, setActiveSchool, setActiveClassId, setActiveGrade]);
@@ -491,8 +529,113 @@ export const StudentPortal: React.FC = () => {
     );
   }
 
-  // 1. Live Quiz Fast-Path: Allow scanning QR code (?pin=...) to join quiz directly even if not yet bound
+  // 1. Live Quiz Fast-Path: Ensure student is registered in this class before entering teacher-hosted class games
   if (activeQuizPin !== null) {
+    if (isCheckingQuizRoomMeta) {
+      return (
+        <div className="w-full min-h-[50dvh] flex flex-col items-center justify-center p-8 text-center animate-in fade-in">
+          <div className="w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full animate-spin mb-4" />
+          <p className="text-base font-black text-slate-700 dark:text-slate-200">
+            {t(`Connecting to Room #${activeQuizPin}...`, `へや ${activeQuizPin} に接続中...`)}
+          </p>
+        </div>
+      );
+    }
+
+    const isTeacherClassRoom = Boolean(
+      pendingQuizRoomMeta &&
+      pendingQuizRoomMeta.code === activeQuizPin &&
+      pendingQuizRoomMeta.schoolId &&
+      pendingQuizRoomMeta.classId &&
+      pendingQuizRoomMeta.classId !== 'TEST' &&
+      !pendingQuizRoomMeta.isStudentHost &&
+      !pendingQuizRoomMeta.isTestGame
+    );
+
+    if (isTeacherClassRoom && !profile) {
+      return (
+        <div className="w-full flex flex-col items-center justify-center py-1 sm:py-2">
+          <div className="mb-2 px-4 py-2 rounded-2xl bg-purple-600 text-white text-xs sm:text-sm font-black shadow-md flex items-center gap-2">
+            <span>🎮</span>
+            <span>
+              {t(
+                `Pick your seat first to join Game #${activeQuizPin}!`,
+                <>まず<ruby>出席番号<rt>しゅっせきばんごう</rt></ruby>をえらぶと、ゲーム({activeQuizPin})に入れるよ！</>
+              )}
+            </span>
+          </div>
+          <StudentDeviceLinker
+            initialSchoolId={pendingQuizRoomMeta!.schoolId}
+            initialClassId={pendingQuizRoomMeta!.classId}
+            onLinked={(newProf) => setProfile(newProf)}
+            onOpenSetupPin={(code) => {
+              setActiveQuizPin(null);
+              setActiveSetupCode(code);
+            }}
+          />
+        </div>
+      );
+    }
+
+    const pinClassMismatch = Boolean(
+      isTeacherClassRoom &&
+      profile &&
+      !profile.isGuest &&
+      profile.attendanceNumber > 0 &&
+      !bypassPinClassMismatch &&
+      pendingQuizRoomMeta?.classId &&
+      profile.classId.toLowerCase() !== pendingQuizRoomMeta.classId.toLowerCase()
+    );
+
+    if (pinClassMismatch && profile && pendingQuizRoomMeta?.classId) {
+      return (
+        <div className="min-h-[70dvh] w-full flex items-center justify-center p-4">
+          <div className="max-w-lg w-full p-6 rounded-3xl bg-white dark:bg-slate-900 border-4 border-amber-400 shadow-2xl text-center space-y-4">
+            <div className="text-4xl">⚠️</div>
+            <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">
+              {t('Switch to This Class?', 'クラスを切り替えますか？')}
+            </h2>
+            <p className="text-sm font-bold text-slate-600 dark:text-slate-300 leading-relaxed">
+              {t(
+                `This iPad is currently registered as ${profile.classId} #${profile.attendanceNumber} (${profile.nickname}). This game is for ${pendingQuizRoomMeta.classId}.`,
+                <>このiPadはまえのクラス【{profile.classId} {profile.attendanceNumber}番 {profile.nickname}】のままです。いまのゲームは【{pendingQuizRoomMeta.classId}】です。</>
+              )}
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-2">
+              <button
+                type="button"
+                onClick={async () => {
+                  playPop();
+                  await unlinkStudentDevice();
+                  if (pendingQuizRoomMeta.schoolId) {
+                    localStorage.setItem('levi_sensei_pending_school', pendingQuizRoomMeta.schoolId);
+                  }
+                  if (pendingQuizRoomMeta.classId) {
+                    localStorage.setItem('levi_sensei_pending_class', pendingQuizRoomMeta.classId);
+                  }
+                  setClassMismatchNotice(null);
+                  setProfile(null);
+                }}
+                className="py-3 px-4 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-sm shadow-md cursor-pointer"
+              >
+                {t(`Switch to ${pendingQuizRoomMeta.classId}`, `${pendingQuizRoomMeta.classId} のせきをえらぶ`)}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  playPop();
+                  setBypassPinClassMismatch(true);
+                }}
+                className="py-3 px-4 rounded-2xl bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-black text-sm cursor-pointer"
+              >
+                {t(`Keep ${profile.classId} & Join`, `このまま参加する`)}
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className="fixed inset-0 z-50 w-screen h-dvh overflow-hidden bg-slate-950 flex flex-col">
         <QuizStudentContainer

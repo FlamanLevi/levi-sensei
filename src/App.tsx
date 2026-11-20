@@ -231,7 +231,16 @@ export const App: React.FC = () => {
     });
   }, [searchQuery, selectedTeachingMoment, selectedStatus, selectedStream, selectedPlayer, selectedSkill, selectedSort]);
 
-  if (isLoading) {
+  const isDirectStudentJoin = (() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      return Boolean(params.get('pin') || params.get('room') || params.get('setup'));
+    } catch {
+      return false;
+    }
+  })();
+
+  if (isLoading && !isDirectStudentJoin) {
     return (
       <div className="min-h-dvh bg-slate-900 flex flex-col items-center justify-center p-6 text-white text-center">
         <div className="w-20 h-20 rounded-3xl bg-gradient-to-tr from-blue-500 to-indigo-600 flex items-center justify-center mb-6 shadow-xl animate-bounce">

@@ -55,15 +55,17 @@ export const QuizStudentJoin: React.FC<QuizStudentJoinProps> = ({
   const isHigherGradeRoom = Boolean(studentGradeNum && roomGradeNum && studentGradeNum < roomGradeNum);
 
   // Auto-join immediately if initialPin (e.g. from QR scan) is present and device has a saved profile
+  // Wait for roomInfo so STUDENT_CHOICE team rooms let the student pick their team first.
   useEffect(() => {
-    if (initialPin && initialPin.length === 4 && savedProfile?.nickname && !hasAutoJoinedRef.current && !loading && !error) {
-      hasAutoJoinedRef.current = true;
-      const timer = setTimeout(() => {
-        onJoin(initialPin, savedProfile.nickname, selectedTeam === 'RANDOM' ? undefined : selectedTeam, savedProfile.attendanceNumber);
-      }, 400);
-      return () => clearTimeout(timer);
-    }
-  }, [initialPin, savedProfile, onJoin, loading, error, selectedTeam]);
+    if (!initialPin || initialPin.length !== 4 || !savedProfile?.nickname || hasAutoJoinedRef.current || loading || error) return;
+    if (!roomInfo) return;
+    if (roomInfo.mode === 'TEAM' && roomInfo.teamAssignment === 'STUDENT_CHOICE') return;
+    hasAutoJoinedRef.current = true;
+    const timer = setTimeout(() => {
+      onJoin(initialPin, savedProfile.nickname, selectedTeam === 'RANDOM' ? undefined : selectedTeam, savedProfile.attendanceNumber);
+    }, 250);
+    return () => clearTimeout(timer);
+  }, [initialPin, savedProfile, roomInfo, onJoin, loading, error, selectedTeam]);
 
   // Listen to room state when 4-digit PIN is entered
   useEffect(() => {

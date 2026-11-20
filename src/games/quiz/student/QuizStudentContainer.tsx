@@ -37,6 +37,10 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
   });
   const [playerId, setPlayerId] = useState<string | null>(() => {
     try {
+      const savedPin = localStorage.getItem('activeQuizRoomCode') || sessionStorage.getItem('activeQuizRoomCode');
+      if (initialPin && savedPin && initialPin !== savedPin) {
+        return null;
+      }
       return localStorage.getItem('activeQuizPlayerId') || sessionStorage.getItem('activeQuizPlayerId') || null;
     } catch {
       return null;
@@ -44,6 +48,10 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
   });
   const [nickname, setNickname] = useState<string | null>(() => {
     try {
+      const savedPin = localStorage.getItem('activeQuizRoomCode') || sessionStorage.getItem('activeQuizRoomCode');
+      if (initialPin && savedPin && initialPin !== savedPin) {
+        return null;
+      }
       return localStorage.getItem('activeQuizNickname') || sessionStorage.getItem('activeQuizNickname') || null;
     } catch {
       return null;
@@ -55,6 +63,7 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
   const [localKartThemeOverride, setLocalKartThemeOverride] = useState<string | undefined>(undefined);
   const questionReceivedAtRef = React.useRef<number>(getServerTime());
   const lastSeenQuestionIndexRef = React.useRef<number | null>(null);
+  const wasInRoomRef = React.useRef<string | null>(null);
 
   const {
     room,
@@ -83,10 +92,21 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
     };
   }, []);
 
+  // Track whether this player was actually observed in the current room
+  useEffect(() => {
+    if (playerId && room && room.players?.[playerId]) {
+      wasInRoomRef.current = `${room.code}:${playerId}`;
+    }
+  }, [playerId, room]);
+
   // Check if player was kicked by host (RTDB deletes `players` key completely when the last player is kicked)
   useEffect(() => {
     if (playerId && room && room.status !== 'CLOSED' && !room.players?.[playerId]) {
-      setJoinError(t('You were removed by the teacher. Please join again.', '先生によって退室させられました。もう一度参加してください。'));
+      const wasInThisRoom = wasInRoomRef.current === `${room.code}:${playerId}`;
+      if (wasInThisRoom) {
+        setJoinError(t('You were removed by the teacher. Please join again.', '先生によって退室させられました。もう一度参加してください。'));
+        setPin(null);
+      }
       try {
         localStorage.removeItem('activeQuizRoomCode');
         localStorage.removeItem('activeQuizPlayerId');
@@ -95,8 +115,8 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
         sessionStorage.removeItem('activeQuizPlayerId');
         sessionStorage.removeItem('activeQuizNickname');
       } catch {}
+      wasInRoomRef.current = null;
       setPlayerId(null);
-      setPin(null);
       setSelectedOptionId(null);
     }
   }, [playerId, room, t]);
@@ -431,6 +451,8 @@ export const QuizStudentContainer: React.FC<QuizStudentContainerProps> = ({
         <div className="relative z-20 w-full h-full flex-1 flex flex-col items-center justify-center p-2 sm:p-3 pointer-events-none">
           <QuizStudentLobby
             roomCode={room.code}
+            schoolId={room.schoolId}
+            classId={room.classId}
             player={currentPlayer}
             gamePlayType={room.gamePlayType}
             sprintSettings={room.sprintSettings}

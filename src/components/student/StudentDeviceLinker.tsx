@@ -26,9 +26,16 @@ import { AvatarDisplay } from '@/components/common/AvatarDisplay';
 interface StudentDeviceLinkerProps {
   onLinked: (profile: StudentProfile) => void;
   onOpenSetupPin?: (code: string) => void;
+  initialSchoolId?: SchoolId;
+  initialClassId?: string;
 }
 
-export const StudentDeviceLinker: React.FC<StudentDeviceLinkerProps> = ({ onLinked, onOpenSetupPin }) => {
+export const StudentDeviceLinker: React.FC<StudentDeviceLinkerProps> = ({
+  onLinked,
+  onOpenSetupPin,
+  initialSchoolId,
+  initialClassId,
+}) => {
   const { t, language } = useLanguage();
   const { setActiveGrade } = useClassroom();
 
@@ -61,11 +68,13 @@ export const StudentDeviceLinker: React.FC<StudentDeviceLinkerProps> = ({ onLink
         if (parsedClass.schoolId) return parsedClass.schoolId;
       }
 
+      if (initialSchoolId) return initialSchoolId;
+
       // 3. Check saved pending school in localStorage (only if student explicitly unlocked via secret word on this iPad)
       const saved = localStorage.getItem('levi_sensei_pending_school') as SchoolId;
       if (saved === 'futakotamagawa' || saved === 'toyogaoka') return saved;
     } catch {}
-    return null;
+    return initialSchoolId || null;
   });
 
   const [lockedClassId, setLockedClassId] = useState<string | null>(() => {
@@ -83,9 +92,10 @@ export const StudentDeviceLinker: React.FC<StudentDeviceLinkerProps> = ({ onLink
         const parsedClass = parseSchoolAndClassFromPath(rawClass);
         if (parsedClass.classId) return parsedClass.classId;
       }
+      if (initialClassId) return initialClassId;
       return localStorage.getItem('levi_sensei_pending_class') || null;
     } catch {}
-    return null;
+    return initialClassId || null;
   });
 
   // State for manual selection fallback if no class was provided in URL
@@ -306,7 +316,7 @@ export const StudentDeviceLinker: React.FC<StudentDeviceLinkerProps> = ({ onLink
     }
   };
 
-  // Fetch claimed attendance numbers in real-time from Firebase RTDB
+  // Fetch & live-subscribe claimed attendance numbers from Firebase RTDB
   useEffect(() => {
     if (!activeSchoolId || !activeClassId) return;
 
@@ -325,8 +335,33 @@ export const StudentDeviceLinker: React.FC<StudentDeviceLinkerProps> = ({ onLink
         if (isMounted) setLoadingClaims(false);
       });
 
+    const unsub = safeSubscribe<Record<string, any> | Array<any>>(
+      `schools/${activeSchoolId}/classes/${activeClassId}/students`,
+      (rawData) => {
+        if (!isMounted || !rawData) return;
+        const next: Record<number, { nickname: string; callsign?: string; avatar: string; secretCharm?: string }> = {};
+        const entries = Array.isArray(rawData)
+          ? rawData.map((val, idx) => [String(idx), val] as const)
+          : Object.entries(rawData);
+        for (const [key, val] of entries) {
+          const num = parseInt(key, 10);
+          if (!isNaN(num) && num > 0 && val && typeof val === 'object') {
+            next[num] = {
+              nickname: val.nickname || `#${num}`,
+              callsign: val.callsign || generateDefaultCallsign(val.nickname || '', num, activeClassId),
+              avatar: val.avatar || getRandomAvatarEmoji(num),
+              secretCharm: val.secretCharm || undefined,
+            };
+          }
+        }
+        setClaimedNumbers(next);
+        setLoadingClaims(false);
+      }
+    );
+
     return () => {
       isMounted = false;
+      unsub();
     };
   }, [activeSchoolId, activeClassId]);
 
@@ -480,6 +515,10 @@ export const StudentDeviceLinker: React.FC<StudentDeviceLinkerProps> = ({ onLink
         setActiveGrade('ES_G4');
       } else if (activeClassId.startsWith('3')) {
         setActiveGrade('ES_G3');
+      } else if (activeClassId.startsWith('2')) {
+        setActiveGrade('ES_G2');
+      } else if (activeClassId.startsWith('1')) {
+        setActiveGrade('ES_G1');
       }
 
       if (num === 0) {
@@ -692,6 +731,10 @@ export const StudentDeviceLinker: React.FC<StudentDeviceLinkerProps> = ({ onLink
         setActiveGrade('ES_G4');
       } else if (activeClassId.startsWith('3')) {
         setActiveGrade('ES_G3');
+      } else if (activeClassId.startsWith('2')) {
+        setActiveGrade('ES_G2');
+      } else if (activeClassId.startsWith('1')) {
+        setActiveGrade('ES_G1');
       }
 
       soundEffects.playFanfare();
@@ -1101,15 +1144,15 @@ export const StudentDeviceLinker: React.FC<StudentDeviceLinkerProps> = ({ onLink
               <div className="flex items-center justify-center gap-3 sm:gap-5 mt-2 sm:mt-2.5 text-[10px] sm:text-[11px] font-bold flex-nowrap overflow-x-auto no-scrollbar whitespace-nowrap">
                 <span className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400 shrink-0">
                   <span className="w-2.5 h-2.5 rounded-full bg-white dark:bg-slate-800 border-2 border-slate-300 dark:border-slate-600 inline-block" />
-                  <span>{t('Available (Tap to set up)', '空いている席（タップして登録）')}</span>
+                  <span>{t('Available (Tap to set up)', <><ruby>空<rt>あ</rt></ruby>いている<ruby>席<rt>せき</rt></ruby>（タップして<ruby>登録<rt>とうろく</rt></ruby>）</>)}</span>
                 </span>
                 <span className="flex items-center gap-1.5 text-amber-700 dark:text-amber-400 shrink-0">
                   <span className="w-2.5 h-2.5 rounded-full bg-amber-400 inline-block" />
-                  <span>{t('Taken (Tap to reclaim)', '登録済み（タップで引き継ぎ）')}</span>
+                  <span>{t('Taken (Tap to reclaim)', <><ruby>登録済<rt>とうろくず</rt></ruby>み（タップで<ruby>引<rt>ひ</rt></ruby>き<ruby>継<rt>つ</rt></ruby>ぎ）</>)}</span>
                 </span>
                 <span className="flex items-center gap-1.5 text-rose-600 dark:text-rose-400 shrink-0">
                   <span className="w-2.5 h-2.5 rounded-full bg-rose-500 inline-block" />
-                  <span>{t('Locked (3m wait / Teacher PIN)', 'ロック中（3分待つか先生PIN）')}</span>
+                  <span>{t('Locked (3m wait / Teacher PIN)', <>ロック<ruby>中<rt>ちゅう</rt></ruby>（3<ruby>分<rt>ふん</rt></ruby>待つか<ruby>先生<rt>せんせい</rt></ruby>PIN）</>)}</span>
                 </span>
               </div>
             </div>
@@ -1194,32 +1237,34 @@ export const StudentDeviceLinker: React.FC<StudentDeviceLinkerProps> = ({ onLink
                     />
                   </div>
 
-                  {/* Step 2: Short Display Tag (Max 6ch) */}
-                  <div>
-                    <div className="flex items-center justify-between mb-1.5">
-                      <label className="text-sm sm:text-base font-black text-slate-800 dark:text-slate-200 uppercase tracking-wider flex items-center gap-1.5">
-                        <span>🏎️</span>
-                        <span>{t('Display Tag (Max 6ch)', 'TV・レース用 短縮タグ')}</span>
-                      </label>
-                      <span className="text-xs font-bold text-slate-400">
-                        {t('Max 6 chars', '最大6文字')}
-                      </span>
+                  {/* Step 2: Short Display Tag (Max 6ch) — hidden for G1-G3 where auto-tag is used */}
+                  {!(activeClassId?.startsWith('1') || activeClassId?.startsWith('2') || activeClassId?.startsWith('3')) && (
+                    <div>
+                      <div className="flex items-center justify-between mb-1.5">
+                        <label className="text-sm sm:text-base font-black text-slate-800 dark:text-slate-200 uppercase tracking-wider flex items-center gap-1.5">
+                          <span>🏎️</span>
+                          <span>{t('Display Tag (Max 6ch)', 'TV・レース用 短縮タグ')}</span>
+                        </label>
+                        <span className="text-xs font-bold text-slate-400">
+                          {t('Max 6 chars', '最大6文字')}
+                        </span>
+                      </div>
+                      <input
+                        type="text"
+                        maxLength={6}
+                        value={setupCallsign}
+                        onChange={(e) => handleCallsignChange(e.target.value)}
+                        placeholder="3-1-1"
+                        className="w-full h-14 sm:h-16 px-4 text-center uppercase tracking-widest font-mono font-black text-2xl sm:text-3xl rounded-2xl border-3 border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:border-emerald-500 focus:outline-hidden transition-colors shadow-2xs"
+                      />
+                      <p className="text-xs font-bold text-slate-400 mt-1.5 leading-relaxed">
+                        {t(
+                          '※Shown on 3D game leaderboards and big TV screen (e.g. 3-1-1, 4-4-14, SARA, KEN)',
+                          '※大画面TVや3Dレースの順位表に「3-1-1」「4-4-14」「SARA」などの短縮タグでカッコよく表示されます！'
+                        )}
+                      </p>
                     </div>
-                    <input
-                      type="text"
-                      maxLength={6}
-                      value={setupCallsign}
-                      onChange={(e) => handleCallsignChange(e.target.value)}
-                      placeholder="3-1-1"
-                      className="w-full h-14 sm:h-16 px-4 text-center uppercase tracking-widest font-mono font-black text-2xl sm:text-3xl rounded-2xl border-3 border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:border-emerald-500 focus:outline-hidden transition-colors shadow-2xs"
-                    />
-                    <p className="text-xs font-bold text-slate-400 mt-1.5 leading-relaxed">
-                      {t(
-                        '※Shown on 3D game leaderboards and big TV screen (e.g. 3-1-1, 4-4-14, SARA, KEN)',
-                        '※大画面TVや3Dレースの順位表に「3-1-1」「4-4-14」「SARA」などの短縮タグでカッコよく表示されます！'
-                      )}
-                    </p>
-                  </div>
+                  )}
                 </div>
 
                 {/* Primary Start Action */}

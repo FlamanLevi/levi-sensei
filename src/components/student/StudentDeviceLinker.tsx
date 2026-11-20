@@ -22,6 +22,7 @@ import { useClassroom, verifyTeacherPin } from '@/context/ClassroomContext';
 import confetti from 'canvas-confetti';
 import { Sparkles, ShieldCheck, Check, Lock, Smartphone, School, Users, CheckCircle2, ChevronRight, KeyRound, X, AlertTriangle, Clock } from 'lucide-react';
 import { AvatarDisplay } from '@/components/common/AvatarDisplay';
+import { ProfileSetupWizardModal, ProfileWizardResult } from './ProfileSetupWizardModal';
 
 interface StudentDeviceLinkerProps {
   onLinked: (profile: StudentProfile) => void;
@@ -687,7 +688,7 @@ export const StudentDeviceLinker: React.FC<StudentDeviceLinkerProps> = ({
     setSetupSecretCharm(charmEmoji);
   };
 
-  const handleConfirmLink = async () => {
+  const handleConfirmLink = async (wizardResult?: ProfileWizardResult) => {
     if (setupModalNum === null || !activeClassId || submitting) return;
 
     if (!activeSchoolId || !activeClassId) {
@@ -699,8 +700,10 @@ export const StudentDeviceLinker: React.FC<StudentDeviceLinkerProps> = ({
     setErrorMessage(null);
 
     try {
-      const finalNickname = setupNickname.trim() || (setupModalNum === 0 ? (language === 'ja' ? '先生' : 'Teacher') : (language === 'ja' ? `${setupModalNum}番` : `#${setupModalNum}`));
-      const finalCallsign = setupCallsign.trim() || (setupModalNum === 0 ? 'TEACH' : generateDefaultCallsign(finalNickname, setupModalNum, activeClassId));
+      const finalNickname = (wizardResult?.nickname || setupNickname).trim() || (setupModalNum === 0 ? (language === 'ja' ? '先生' : 'Teacher') : (language === 'ja' ? `${setupModalNum}番` : `#${setupModalNum}`));
+      const finalAvatar = wizardResult?.avatar || setupAvatar;
+      const finalCharm = wizardResult?.secretCharm || setupSecretCharm;
+      const finalCallsign = (wizardResult?.callsign || setupCallsign).trim() || (setupModalNum === 0 ? 'TEACH' : generateDefaultCallsign(finalNickname, setupModalNum, activeClassId));
 
       const newProfile = await claimAttendanceNumber(
         activeSchoolId,
@@ -709,11 +712,11 @@ export const StudentDeviceLinker: React.FC<StudentDeviceLinkerProps> = ({
         finalNickname,
         0,
         0,
-        setupAvatar,
+        finalAvatar,
         0,
         0,
         undefined,
-        setupSecretCharm,
+        finalCharm,
         finalCallsign
       );
 
@@ -1160,257 +1163,31 @@ export const StudentDeviceLinker: React.FC<StudentDeviceLinkerProps> = ({
         )}
       </div>
 
-      {/* Seat Setup & Customization Modal (Full-Screen / Expansive Elementary Friendly Stage) */}
-      {setupModalNum !== null && (
-        <div 
-          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-slate-950/75 backdrop-blur-xs select-none animate-in fade-in duration-150"
-          onClick={() => {
-            if (!submitting) setSetupModalNum(null);
-          }}
-        >
-          <div
-            className="bg-white dark:bg-slate-900 rounded-3xl sm:rounded-4xl w-[96vw] max-w-5xl h-[94dvh] max-h-[820px] p-5 sm:p-7 md:p-8 shadow-2xl border-4 sm:border-6 border-emerald-400 dark:border-emerald-500 relative flex flex-col justify-between overflow-y-auto overscroll-contain animate-in zoom-in-95 duration-150"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Modal Header */}
-            <div className="flex items-center justify-between pb-3 sm:pb-4 border-b-2 border-slate-100 dark:border-slate-800 shrink-0">
-              <div className="flex items-center gap-3.5 sm:gap-4 min-w-0">
-                <div className="w-14 h-14 sm:w-18 sm:h-18 rounded-2xl sm:rounded-3xl bg-gradient-to-tr from-emerald-500 to-teal-500 text-white flex items-center justify-center shadow-md shrink-0">
-                  <AvatarDisplay avatar={setupAvatar} sizeClassName="w-10 h-10 sm:w-13 sm:h-13" />
-                </div>
-                <div className="min-w-0">
-                  <div className="flex items-center gap-2 mb-0.5">
-                    <span className="px-3 py-0.5 rounded-xl bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 font-black text-xs sm:text-sm border border-emerald-200 dark:border-emerald-800">
-                      {activeClassId}
-                    </span>
-                    <span className="px-3 py-0.5 rounded-xl bg-emerald-600 text-white font-black text-xs sm:text-sm shadow-xs">
-                      {setupModalNum === 0 ? (language === 'ja' ? '00番 先生' : '#00 Teacher') : `#${setupModalNum}番`}
-                    </span>
-                  </div>
-                  <h3 className="text-xl sm:text-2xl md:text-3xl font-black text-slate-900 dark:text-white leading-tight truncate">
-                    {setupModalNum === 0 ? t('Teacher Profile Setup', '先生プロフィールの設定') : t(`Link Seat #${setupModalNum}`, `${setupModalNum}番のプロフィールの設定`)}
-                  </h3>
-                  <p className="text-xs sm:text-sm font-bold text-slate-400 truncate">
-                    {t('Set your icon, name & secret charm to start!', 'アイコン・名前・合言葉を設定してスタートしよう！')}
-                  </p>
-                </div>
-              </div>
-
-              {/* Close Button */}
-              <button
-                type="button"
-                disabled={submitting}
-                onClick={() => {
-                  setSetupModalNum(null);
-                  setErrorMessage(null);
-                }}
-                className="p-2.5 sm:p-3 rounded-2xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer shrink-0"
-                title={t('Close', 'とじる')}
-              >
-                <X size={26} className="stroke-[2.5]" />
-              </button>
-            </div>
-
-            {errorMessage && (
-              <div className="my-2 p-3 rounded-2xl bg-rose-50 dark:bg-rose-950/50 border-2 border-rose-300 dark:border-rose-800 text-rose-600 dark:text-rose-400 text-sm font-black text-center shrink-0">
-                {errorMessage}
-              </div>
-            )}
-
-            {/* 2-Column Responsive Stage Layout */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-7 flex-1 min-h-0 pt-3 pb-2 overflow-y-auto overscroll-contain">
-              {/* Left Column: Names & Start Action (lg:col-span-5) */}
-              <div className="lg:col-span-5 flex flex-col justify-between space-y-4">
-                <div className="space-y-4">
-                  {/* Step 1: Nickname */}
-                  <div>
-                    <label className="block text-sm sm:text-base font-black text-slate-800 dark:text-slate-200 uppercase tracking-wider mb-1.5">
-                      {t('1. Nickname', '1. ニックネーム（なまえ）')}
-                    </label>
-                    <input
-                      type="text"
-                      maxLength={10}
-                      value={setupNickname}
-                      onChange={(e) => handleNicknameChange(e.target.value)}
-                      placeholder={language === 'ja' ? '例: たろう / Sara / Ken' : 'e.g. Ken / Sara'}
-                      className="w-full h-14 sm:h-16 px-4 font-black text-lg sm:text-xl rounded-2xl border-3 border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:border-emerald-500 focus:outline-hidden transition-colors shadow-2xs"
-                    />
-                  </div>
-
-                  {/* Step 2: Short Display Tag (Max 6ch) — hidden for G1-G3 where auto-tag is used */}
-                  {!(activeClassId?.startsWith('1') || activeClassId?.startsWith('2') || activeClassId?.startsWith('3')) && (
-                    <div>
-                      <div className="flex items-center justify-between mb-1.5">
-                        <label className="text-sm sm:text-base font-black text-slate-800 dark:text-slate-200 uppercase tracking-wider flex items-center gap-1.5">
-                          <span>🏎️</span>
-                          <span>{t('Display Tag (Max 6ch)', 'TV・レース用 短縮タグ')}</span>
-                        </label>
-                        <span className="text-xs font-bold text-slate-400">
-                          {t('Max 6 chars', '最大6文字')}
-                        </span>
-                      </div>
-                      <input
-                        type="text"
-                        maxLength={6}
-                        value={setupCallsign}
-                        onChange={(e) => handleCallsignChange(e.target.value)}
-                        placeholder="3-1-1"
-                        className="w-full h-14 sm:h-16 px-4 text-center uppercase tracking-widest font-mono font-black text-2xl sm:text-3xl rounded-2xl border-3 border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:border-emerald-500 focus:outline-hidden transition-colors shadow-2xs"
-                      />
-                      <p className="text-xs font-bold text-slate-400 mt-1.5 leading-relaxed">
-                        {t(
-                          '※Shown on 3D game leaderboards and big TV screen (e.g. 3-1-1, 4-4-14, SARA, KEN)',
-                          '※大画面TVや3Dレースの順位表に「3-1-1」「4-4-14」「SARA」などの短縮タグでカッコよく表示されます！'
-                        )}
-                      </p>
-                    </div>
-                  )}
-                </div>
-
-                {/* Primary Start Action */}
-                <div className="pt-2 space-y-2.5">
-                  <button
-                    type="button"
-                    disabled={submitting}
-                    onClick={handleConfirmLink}
-                    className="w-full h-16 sm:h-20 rounded-2xl sm:rounded-3xl font-black text-lg sm:text-2xl text-white shadow-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 shadow-emerald-500/30 active:scale-98 transition-all flex items-center justify-center gap-3 cursor-pointer disabled:opacity-50"
-                  >
-                    <Sparkles size={24} />
-                    <span>
-                      {submitting
-                        ? t('Linking...', '登録中...')
-                        : language === 'ja'
-                          ? `⚡ ${setupAvatar} ${setupModalNum === 0 ? '00番（先生）' : `${setupModalNum}番`}でスタート！`
-                          : `⚡ Start as ${setupAvatar} #${setupModalNum === 0 ? '00 (Teacher)' : setupModalNum}!`}
-                    </span>
-                  </button>
-
-                  <button
-                    type="button"
-                    disabled={submitting}
-                    onClick={() => setSetupModalNum(null)}
-                    className="w-full py-2 text-xs sm:text-sm font-bold text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors cursor-pointer text-center"
-                  >
-                    {t('Cancel / Choose Different Seat', '番号をえらび直す（キャンセル）')}
-                  </button>
-                </div>
-              </div>
-
-              {/* Right Column: Avatar & Secret Charm (lg:col-span-7) */}
-              <div className="lg:col-span-7 flex flex-col justify-between space-y-4 min-h-0">
-                {/* Section 2: Avatar Selector */}
-                <div>
-                  <div className="flex items-center justify-between mb-1.5">
-                    <label className="text-sm sm:text-base font-black text-slate-800 dark:text-slate-200 uppercase tracking-wider">
-                      {t('2. Choose Avatar Icon', '2. アイコンをえらぶ')}
-                    </label>
-                    <button
-                      type="button"
-                      onClick={handleRollRandomAvatar}
-                      className="text-xs sm:text-sm font-black px-4 py-1.5 rounded-2xl bg-emerald-100 hover:bg-emerald-200 dark:bg-emerald-950/80 dark:hover:bg-emerald-900 text-emerald-800 dark:text-emerald-200 flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer shadow-xs border-2 border-emerald-300 dark:border-emerald-700"
-                    >
-                      <span className="text-base">🎲</span>
-                      <span>{t('Random Roll', 'ランダム')}</span>
-                    </button>
-                  </div>
-
-                  {/* 7 Category Tabs */}
-                  <div className="grid grid-cols-7 gap-1.5 mb-2">
-                    {AVATAR_CATEGORIES.map((cat) => {
-                      const isActive = activeAvatarTab === cat.id;
-                      return (
-                        <button
-                          key={cat.id}
-                          type="button"
-                          onClick={() => setActiveAvatarTab(cat.id)}
-                          className={`h-10 sm:h-11 px-1 rounded-xl sm:rounded-2xl font-black text-xs sm:text-sm transition-all flex items-center justify-center cursor-pointer whitespace-nowrap text-center ${
-                            isActive
-                              ? 'bg-emerald-500 text-white shadow-md ring-2 ring-emerald-300 dark:ring-emerald-700 scale-102'
-                              : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
-                          }`}
-                        >
-                          <span>{language === 'ja' ? cat.jaName : cat.name}</span>
-                        </button>
-                      );
-                    })}
-                  </div>
-
-                  {/* Emojis Grid: Exactly 3 rows of 8 emojis with zero scrollbar */}
-                  <div className="grid grid-cols-8 gap-1.5 sm:gap-2 p-2 sm:p-2.5 bg-slate-50 dark:bg-slate-800/60 rounded-2xl sm:rounded-3xl border-2 border-slate-200 dark:border-slate-700">
-                    {(AVATAR_CATEGORIES.find(c => c.id === activeAvatarTab)?.emojis || AVATAR_CATEGORIES[0].emojis).map((av) => (
-                      <button
-                        key={av}
-                        type="button"
-                        onClick={() => handlePickAvatar(av)}
-                        className={`h-10 sm:h-11 md:h-11 rounded-xl sm:rounded-2xl text-xl sm:text-2xl flex items-center justify-center transition-all cursor-pointer ${
-                          setupAvatar === av
-                            ? 'bg-emerald-100 dark:bg-emerald-950/80 ring-2.5 ring-emerald-500 scale-105 shadow-xs'
-                            : 'bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 hover:scale-105 active:scale-95'
-                        }`}
-                      >
-                        <AvatarDisplay avatar={av} sizeClassName="w-6 h-6 sm:w-7 sm:h-7" />
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Section 3: Secret Pass-Charm Picker */}
-                <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <label className="text-sm sm:text-base font-black text-slate-800 dark:text-slate-200 uppercase tracking-wider flex items-center gap-1.5">
-                      <KeyRound size={16} className="text-amber-500" />
-                      <span>{t('3. Secret Pass-Charm', '3. ひみつのマーク（合言葉）')}</span>
-                    </label>
-                    <span className="text-xs sm:text-sm font-black px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 flex items-center gap-1.5 border border-amber-300 dark:border-amber-800">
-                      <span className="text-base">{setupSecretCharm}</span>
-                      <span>{t('Secret', 'ひみつ')}</span>
-                    </span>
-                  </div>
-                  <p className="text-xs font-bold text-amber-700 dark:text-amber-400 mb-2 leading-relaxed">
-                    {t(
-                      '*Never shown to others. Used to unlock your seat if you ever switch iPads!',
-                      '※このマークは他の人には見えません。別のiPadから入るときの「合言葉」になります！'
-                    )}
-                  </p>
-
-                  <div className="grid grid-cols-4 sm:grid-cols-6 gap-2 sm:gap-2.5">
-                    {SECRET_CHARMS.map((charm) => {
-                      const isSelected = setupSecretCharm === charm.emoji;
-                      const isSameAsPublicAvatar = setupAvatar === charm.emoji;
-
-                      return (
-                        <button
-                          key={charm.emoji}
-                          type="button"
-                          disabled={isSameAsPublicAvatar}
-                          onClick={() => handlePickSecretCharm(charm.emoji)}
-                          title={
-                            isSameAsPublicAvatar
-                              ? (language === 'ja' ? '表のアイコンと同じものは選べません' : 'Cannot match public avatar')
-                              : (language === 'ja' ? charm.jaName : charm.name)
-                          }
-                          className={`h-16 sm:h-18 rounded-2xl flex flex-col items-center justify-center gap-0.5 sm:gap-1 transition-all border-2 relative cursor-pointer ${
-                            isSameAsPublicAvatar
-                              ? 'opacity-25 bg-slate-100 dark:bg-slate-800 border-dashed border-slate-300 dark:border-slate-700 cursor-not-allowed'
-                              : isSelected
-                                ? 'bg-amber-100 dark:bg-amber-950 border-amber-500 shadow-md ring-3 ring-amber-300 scale-102'
-                                : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:border-amber-300 hover:scale-102 active:scale-95'
-                          }`}
-                        >
-                          <span className="text-2xl sm:text-3xl leading-none">{charm.emoji}</span>
-                          <span className="text-xs font-black text-slate-700 dark:text-slate-300 truncate w-full text-center">
-                            {language === 'ja' ? charm.jaName : charm.name}
-                          </span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Unified 4-Step Profile Creation Wizard */}
+      <ProfileSetupWizardModal
+        isOpen={setupModalNum !== null}
+        mode="create"
+        seatNumber={setupModalNum ?? 1}
+        classId={activeClassId || ''}
+        initialNickname={setupNickname}
+        initialAvatar={setupAvatar}
+        initialSecretCharm={setupModalNum === 0 ? setupSecretCharm : undefined}
+        submitting={submitting}
+        errorMessage={errorMessage}
+        onClose={() => {
+          if (!submitting) {
+            setSetupModalNum(null);
+            setErrorMessage(null);
+          }
+        }}
+        onChangeSeat={() => {
+          if (!submitting) {
+            setSetupModalNum(null);
+            setErrorMessage(null);
+          }
+        }}
+        onSubmit={handleConfirmLink}
+      />
 
       {/* Reclaim / Secret Pass-Charm Challenge Modal (Large Child-Friendly Stage) */}
       {reclaimingNum !== null && (

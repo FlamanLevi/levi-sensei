@@ -9,6 +9,8 @@ import { SetupRoomState, BoundSeatInfo } from './types';
 import { Check, CheckCircle2, Sparkles, User, Smartphone, ArrowRight, ArrowLeft, RefreshCw, AlertCircle, X, Edit3, KeyRound } from 'lucide-react';
 import { verifyTeacherPin } from '@/context/ClassroomContext';
 import confetti from 'canvas-confetti';
+import { ProfileSetupWizardModal, ProfileWizardResult } from '@/components/student/ProfileSetupWizardModal';
+import { AvatarDisplay } from '@/components/common/AvatarDisplay';
 
 const POPULAR_AVATARS = [
   '👨‍🏫', '🐼', '🦁', '🐯', '🐰', '🦊', '🐨', '🐵', '🐶', '🐱', '🐻',
@@ -178,13 +180,16 @@ export const ProfileStudioStudent: React.FC<ProfileStudioStudentProps> = ({
   };
 
   // Submit and save newly-created profile
-  const handleConfirmNewProfile = async () => {
+  const handleConfirmNewProfile = async (wizardResult?: ProfileWizardResult) => {
     if (selectedSeat === null || selectedSeat === undefined || !roomState || saving) return;
 
     setSaving(true);
     try {
       const defaultNick = selectedSeat === 0 ? (language === 'ja' ? '先生' : 'Teacher') : (language === 'ja' ? `${selectedSeat}番` : `#${selectedSeat}`);
-      const finalNickname = nicknameInput.trim() || defaultNick;
+      const finalNickname = wizardResult?.nickname?.trim() || nicknameInput.trim() || defaultNick;
+      const finalAvatar = wizardResult?.avatar || selectedAvatar;
+      const finalCallsign = wizardResult?.callsign || (selectedSeat === 0 ? 'TEACH' : undefined);
+      const finalCharm = wizardResult?.secretCharm || (selectedSeat === 0 ? '👑' : getDefaultSecretCharm(selectedSeat));
 
       if (selectedSeat === 0) {
         try {
@@ -193,7 +198,6 @@ export const ProfileStudioStudent: React.FC<ProfileStudioStudentProps> = ({
         } catch {}
       }
       
-      const defaultCharm = selectedSeat === 0 ? '👑' : getDefaultSecretCharm(selectedSeat);
       // 1. Claim cloud student profile & write to iPad localStorage
       const profile = await claimAttendanceNumber(
         roomState.schoolId,
@@ -202,12 +206,12 @@ export const ProfileStudioStudent: React.FC<ProfileStudioStudentProps> = ({
         finalNickname,
         0,
         0,
-        selectedAvatar,
+        finalAvatar,
         0,
         0,
         undefined,
-        defaultCharm,
-        selectedSeat === 0 ? 'TEACH' : undefined
+        finalCharm,
+        finalCallsign
       );
 
       // 2. Notify setup room in RTDB that this seat is claimed (guarantees auth even for Seat 00)
@@ -215,7 +219,7 @@ export const ProfileStudioStudent: React.FC<ProfileStudioStudentProps> = ({
       const seatInfo: BoundSeatInfo = {
         attendanceNumber: selectedSeat,
         nickname: finalNickname,
-        avatar: selectedAvatar,
+        avatar: finalAvatar,
         boundAt: Date.now(),
       };
       await safeSet(`setupRooms/${code}/boundSeats/${selectedSeat}`, seatInfo);
@@ -228,6 +232,7 @@ export const ProfileStudioStudent: React.FC<ProfileStudioStudentProps> = ({
         origin: { y: 0.7 },
       });
 
+      setSelectedSeat(null);
       setLinkedProfile(profile);
     } catch (err) {
       console.error('Error claiming seat:', err);
@@ -290,7 +295,7 @@ export const ProfileStudioStudent: React.FC<ProfileStudioStudentProps> = ({
         <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 max-w-md md:max-w-2xl w-full shadow-2xl border-4 border-emerald-400 dark:border-emerald-500 animate-in zoom-in-95 duration-200 grid grid-cols-1 md:grid-cols-12 gap-5 items-center">
           <div className="md:col-span-5 flex flex-col items-center text-center">
             <div className="w-20 h-20 rounded-3xl bg-gradient-to-tr from-emerald-500 to-teal-600 text-white flex items-center justify-center mb-3 text-4xl shadow-xl animate-bounce">
-              {linkedProfile.avatar || selectedAvatar}
+              <AvatarDisplay avatar={linkedProfile.avatar || selectedAvatar} sizeClassName="w-12 h-12 text-4xl" />
             </div>
 
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 font-black text-xs mb-2">
@@ -479,107 +484,19 @@ export const ProfileStudioStudent: React.FC<ProfileStudioStudentProps> = ({
           </div>
         </div>
 
-        {/* New Profile Confirmation Modal (Front-and-center when an empty seat is tapped) */}
-        {selectedSeat !== null && (
-          <div
-            className="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-150"
-            onClick={() => !saving && setSelectedSeat(null)}
-          >
-            <div
-              className="p-5 sm:p-6 bg-white dark:bg-slate-900 rounded-3xl border-4 border-purple-500 shadow-2xl animate-in zoom-in-95 duration-150 max-w-lg w-full"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-100 dark:border-slate-800">
-                <div className="flex items-center gap-3">
-                  <span className="w-10 h-10 rounded-2xl bg-purple-600 text-white font-mono font-black text-lg flex items-center justify-center shadow-md">
-                    {selectedSeat === 0 ? '00' : `#${selectedSeat}`}
-                  </span>
-                  <div>
-                    <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-white leading-tight">
-                      {selectedSeat === 0 ? t('Teacher Profile Setup', '00番 先生プロフィールの設定') : t(`Seat #${selectedSeat}`, <><ruby>出席番号<rt>しゅっせきばんごう</rt></ruby>: {selectedSeat}番</>)}
-                    </h3>
-                    <span className="text-xs text-slate-500 dark:text-slate-400 font-bold">
-                      {schoolConfig?.shortKanji || '学校'} {roomState.classId}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <div className="text-3xl select-none">
-                    {selectedAvatar}
-                  </div>
-                  <button
-                    type="button"
-                    disabled={saving}
-                    onClick={() => setSelectedSeat(null)}
-                    className="p-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-white cursor-pointer"
-                  >
-                    <X size={18} />
-                  </button>
-                </div>
-              </div>
-
-              {/* Avatar Selector Carousel */}
-              <div className="mb-4">
-                <label className="block text-xs font-black text-slate-600 dark:text-slate-300 mb-2">
-                  {t('Choose Avatar Emoji:', 'すきなアイコンをえらぼう:')}
-                </label>
-                <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
-                  {POPULAR_AVATARS.map((av) => (
-                    <button
-                      key={av}
-                      type="button"
-                      onClick={() => {
-                        soundEffects.playTick();
-                        setSelectedAvatar(av);
-                      }}
-                      className={`w-11 h-11 shrink-0 rounded-2xl text-2xl flex items-center justify-center transition-all cursor-pointer ${
-                        selectedAvatar === av
-                          ? 'bg-purple-100 dark:bg-purple-950/80 border-2 border-purple-500 scale-110 shadow-md'
-                          : 'bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-purple-300'
-                      }`}
-                    >
-                      {av}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Nickname Input */}
-              <div className="mb-5">
-                <label className="block text-xs font-black text-slate-600 dark:text-slate-300 mb-1.5">
-                  {t('Name on Screen (Optional):', '表示する名前 (省略OK・そのままでもOK):')}
-                </label>
-                <input
-                  type="text"
-                  maxLength={12}
-                  value={nicknameInput}
-                  onChange={(e) => setNicknameInput(e.target.value)}
-                  placeholder={language === 'ja' ? `${selectedSeat}番 けんた` : `#${selectedSeat} Ken`}
-                  className="w-full py-3 px-4 rounded-xl border-2 border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white font-black text-base focus:border-purple-500 focus:outline-none"
-                />
-              </div>
-
-              {/* Confirm Button */}
-              <button
-                type="button"
-                disabled={saving}
-                onClick={handleConfirmNewProfile}
-                className="w-full py-4 rounded-2xl bg-gradient-to-r from-purple-600 via-indigo-600 to-emerald-600 text-white font-black text-base shadow-xl hover:brightness-105 active:scale-98 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-purple-500/25"
-              >
-                {saving ? (
-                  <span>{t('Linking iPad...', 'iPadをひも付け中...')}</span>
-                ) : (
-                  <>
-                    <span>✨</span>
-                    <span>{t('Link This iPad (Confirm)', 'この番号で決定！')}</span>
-                    <ArrowRight size={18} />
-                  </>
-                )}
-              </button>
-            </div>
-          </div>
-        )}
+        {/* Unified 4-Step Profile Creation Wizard */}
+        <ProfileSetupWizardModal
+          isOpen={selectedSeat !== null}
+          mode="create"
+          seatNumber={selectedSeat ?? 1}
+          classId={roomState.classId}
+          initialNickname={nicknameInput}
+          initialAvatar={selectedAvatar}
+          submitting={saving}
+          onClose={() => !saving && setSelectedSeat(null)}
+          onChangeSeat={() => !saving && setSelectedSeat(null)}
+          onSubmit={handleConfirmNewProfile}
+        />
 
         {/* Existing Registered Seat Modal (When tapping a seat that's already in the roster) */}
         {reclaimTarget && (

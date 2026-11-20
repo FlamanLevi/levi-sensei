@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { getFlagTwemojiUrl } from '@/types/roster';
 import { getAuraStyle } from '@/services/shopCatalog';
 
@@ -20,6 +20,9 @@ export const AvatarDisplay: React.FC<AvatarDisplayProps> = ({
   showBadge = true
 }) => {
   const [loadError, setLoadError] = useState(false);
+  useEffect(() => {
+    setLoadError(false);
+  }, [avatar]);
   const flagUrl = getFlagTwemojiUrl(avatar);
   const aura = getAuraStyle(frameId || auraId);
 

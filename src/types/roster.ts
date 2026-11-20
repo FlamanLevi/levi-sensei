@@ -353,13 +353,170 @@ export interface AvatarCategory {
   emojis: string[];
 }
 
-export function getFlagTwemojiUrl(flagEmoji: string): string | null {
+export interface FlagCountry {
+  emoji: string;
+  code: string;
+  name: string;
+  jaName: string;
+}
+
+export interface FlagRegion {
+  id: string;
+  name: string;
+  jaName: string;
+  icon: string;
+  countries: FlagCountry[];
+}
+
+export const FLAG_REGIONS: FlagRegion[] = [
+  {
+    id: 'asia',
+    name: 'Asia',
+    jaName: 'アジア',
+    icon: '🌏',
+    countries: [
+      { emoji: '🇯🇵', code: 'jp', name: 'Japan', jaName: '日本' },
+      { emoji: '🇰🇷', code: 'kr', name: 'South Korea', jaName: '韓国' },
+      { emoji: '🇹🇼', code: 'tw', name: 'Taiwan', jaName: '台湾' },
+      { emoji: '🇨🇳', code: 'cn', name: 'China', jaName: '中国' },
+      { emoji: '🇵🇭', code: 'ph', name: 'Philippines', jaName: 'フィリピン' },
+      { emoji: '🇹🇭', code: 'th', name: 'Thailand', jaName: 'タイ' },
+      { emoji: '🇻🇳', code: 'vn', name: 'Vietnam', jaName: 'ベトナム' },
+      { emoji: '🇸🇬', code: 'sg', name: 'Singapore', jaName: 'シンガポール' },
+      { emoji: '🇮🇳', code: 'in', name: 'India', jaName: 'インド' },
+      { emoji: '🇮🇩', code: 'id', name: 'Indonesia', jaName: 'インドネシア' },
+      { emoji: '🇲🇾', code: 'my', name: 'Malaysia', jaName: 'マレーシア' },
+      { emoji: '🇲🇳', code: 'mn', name: 'Mongolia', jaName: 'モンゴル' },
+      { emoji: '🇳🇵', code: 'np', name: 'Nepal', jaName: 'ネパール' },
+      { emoji: '🇰🇭', code: 'kh', name: 'Cambodia', jaName: 'カンボジア' },
+      { emoji: '🇱🇦', code: 'la', name: 'Laos', jaName: 'ラオス' },
+      { emoji: '🇲🇲', code: 'mm', name: 'Myanmar', jaName: 'ミャンマー' },
+      { emoji: '🇱🇰', code: 'lk', name: 'Sri Lanka', jaName: 'スリランカ' },
+      { emoji: '🇧🇩', code: 'bd', name: 'Bangladesh', jaName: 'バングラデシュ' },
+      { emoji: '🇵🇰', code: 'pk', name: 'Pakistan', jaName: 'パキスタン' },
+      { emoji: '🇰🇿', code: 'kz', name: 'Kazakhstan', jaName: 'カザフスタン' },
+    ],
+  },
+  {
+    id: 'americas',
+    name: 'Americas',
+    jaName: 'アメリカ',
+    icon: '🌎',
+    countries: [
+      { emoji: '🇺🇸', code: 'us', name: 'USA', jaName: 'アメリカ' },
+      { emoji: '🇨🇦', code: 'ca', name: 'Canada', jaName: 'カナダ' },
+      { emoji: '🇲🇽', code: 'mx', name: 'Mexico', jaName: 'メキシコ' },
+      { emoji: '🇧🇷', code: 'br', name: 'Brazil', jaName: 'ブラジル' },
+      { emoji: '🇦🇷', code: 'ar', name: 'Argentina', jaName: 'アルゼンチン' },
+      { emoji: '🇯🇲', code: 'jm', name: 'Jamaica', jaName: 'ジャマイカ' },
+      { emoji: '🇨🇴', code: 'co', name: 'Colombia', jaName: 'コロンビア' },
+      { emoji: '🇵🇪', code: 'pe', name: 'Peru', jaName: 'ペルー' },
+      { emoji: '🇨🇱', code: 'cl', name: 'Chile', jaName: 'チリ' },
+      { emoji: '🇨🇺', code: 'cu', name: 'Cuba', jaName: 'キューバ' },
+      { emoji: '🇨🇷', code: 'cr', name: 'Costa Rica', jaName: 'コスタリカ' },
+      { emoji: '🇵🇦', code: 'pa', name: 'Panama', jaName: 'パナマ' },
+      { emoji: '🇪🇨', code: 'ec', name: 'Ecuador', jaName: 'エクアドル' },
+      { emoji: '🇺🇾', code: 'uy', name: 'Uruguay', jaName: 'ウルグアイ' },
+      { emoji: '🇩🇴', code: 'do', name: 'Dominican Rep.', jaName: 'ドミニカ' },
+      { emoji: '🇧🇴', code: 'bo', name: 'Bolivia', jaName: 'ボリビア' },
+    ],
+  },
+  {
+    id: 'europe',
+    name: 'Europe',
+    jaName: 'ヨーロッパ',
+    icon: '🌍',
+    countries: [
+      { emoji: '🇬🇧', code: 'gb', name: 'UK', jaName: 'イギリス' },
+      { emoji: '🇫🇷', code: 'fr', name: 'France', jaName: 'フランス' },
+      { emoji: '🇮🇹', code: 'it', name: 'Italy', jaName: 'イタリア' },
+      { emoji: '🇩🇪', code: 'de', name: 'Germany', jaName: 'ドイツ' },
+      { emoji: '🇪🇸', code: 'es', name: 'Spain', jaName: 'スペイン' },
+      { emoji: '🇷🇺', code: 'ru', name: 'Russia', jaName: 'ロシア' },
+      { emoji: '🇺🇦', code: 'ua', name: 'Ukraine', jaName: 'ウクライナ' },
+      { emoji: '🇨🇭', code: 'ch', name: 'Switzerland', jaName: 'スイス' },
+      { emoji: '🇸🇪', code: 'se', name: 'Sweden', jaName: 'スウェーデン' },
+      { emoji: '🇳🇱', code: 'nl', name: 'Netherlands', jaName: 'オランダ' },
+      { emoji: '🇵🇹', code: 'pt', name: 'Portugal', jaName: 'ポルトガル' },
+      { emoji: '🇵🇱', code: 'pl', name: 'Poland', jaName: 'ポーランド' },
+      { emoji: '🇫🇮', code: 'fi', name: 'Finland', jaName: 'フィンランド' },
+      { emoji: '🇳🇴', code: 'no', name: 'Norway', jaName: 'ノルウェー' },
+      { emoji: '🇩🇰', code: 'dk', name: 'Denmark', jaName: 'デンマーク' },
+      { emoji: '🇬🇷', code: 'gr', name: 'Greece', jaName: 'ギリシャ' },
+      { emoji: '🇮🇪', code: 'ie', name: 'Ireland', jaName: 'アイルランド' },
+      { emoji: '🇧🇪', code: 'be', name: 'Belgium', jaName: 'ベルギー' },
+      { emoji: '🇦🇹', code: 'at', name: 'Austria', jaName: 'オーストリア' },
+      { emoji: '🇨🇿', code: 'cz', name: 'Czechia', jaName: 'チェコ' },
+    ],
+  },
+  {
+    id: 'africa_me',
+    name: 'Africa & ME',
+    jaName: 'アフリカ・中東',
+    icon: '🏜️',
+    countries: [
+      { emoji: '🇪🇬', code: 'eg', name: 'Egypt', jaName: 'エジプト' },
+      { emoji: '🇿🇦', code: 'za', name: 'South Africa', jaName: '南アフリカ' },
+      { emoji: '🇰🇪', code: 'ke', name: 'Kenya', jaName: 'ケニア' },
+      { emoji: '🇳🇬', code: 'ng', name: 'Nigeria', jaName: 'ナイジェリア' },
+      { emoji: '🇲🇦', code: 'ma', name: 'Morocco', jaName: 'モロッコ' },
+      { emoji: '🇬🇭', code: 'gh', name: 'Ghana', jaName: 'ガーナ' },
+      { emoji: '🇪🇹', code: 'et', name: 'Ethiopia', jaName: 'エチオピア' },
+      { emoji: '🇹🇿', code: 'tz', name: 'Tanzania', jaName: 'タンザニア' },
+      { emoji: '🇸🇳', code: 'sn', name: 'Senegal', jaName: 'セネガル' },
+      { emoji: '🇦🇪', code: 'ae', name: 'UAE', jaName: 'アラブ首長国連邦' },
+      { emoji: '🇸🇦', code: 'sa', name: 'Saudi Arabia', jaName: 'サウジアラビア' },
+      { emoji: '🇹🇷', code: 'tr', name: 'Turkey', jaName: 'トルコ' },
+      { emoji: '🇮🇱', code: 'il', name: 'Israel', jaName: 'イスラエル' },
+      { emoji: '🇯🇴', code: 'jo', name: 'Jordan', jaName: 'ヨルダン' },
+      { emoji: '🇶🇦', code: 'qa', name: 'Qatar', jaName: 'カタール' },
+      { emoji: '🇹🇳', code: 'tn', name: 'Tunisia', jaName: 'チュニジア' },
+    ],
+  },
+  {
+    id: 'oceania',
+    name: 'Oceania',
+    jaName: 'オセアニア',
+    icon: '🏝️',
+    countries: [
+      { emoji: '🇦🇺', code: 'au', name: 'Australia', jaName: 'オーストラリア' },
+      { emoji: '🇳🇿', code: 'nz', name: 'New Zealand', jaName: 'ニュージーランド' },
+      { emoji: '🇫🇯', code: 'fj', name: 'Fiji', jaName: 'フィジー' },
+      { emoji: '🇵🇼', code: 'pw', name: 'Palau', jaName: 'パラオ' },
+      { emoji: '🇵🇬', code: 'pg', name: 'Papua NG', jaName: 'パプアニューギニア' },
+      { emoji: '🇼🇸', code: 'ws', name: 'Samoa', jaName: 'サモア' },
+      { emoji: '🇹🇴', code: 'to', name: 'Tonga', jaName: 'トンガ' },
+      { emoji: '🇻🇺', code: 'vu', name: 'Vanuatu', jaName: 'バヌアツ' },
+    ],
+  },
+];
+
+const FLAG_META_MAP: Record<string, FlagCountry> = Object.fromEntries(
+  FLAG_REGIONS.flatMap(r => r.countries.map(c => [c.emoji, c]))
+);
+
+export function getFlagMetadata(flagEmoji: string): FlagCountry | null {
+  return FLAG_META_MAP[flagEmoji] || null;
+}
+
+export function flagEmojiToIsoCode(flagEmoji: string): string | null {
   if (!flagEmoji) return null;
-  const codePoints = Array.from(flagEmoji).map(c => c.codePointAt(0)?.toString(16).toLowerCase()).filter(Boolean);
-  if (codePoints.length === 2 && codePoints.every(cp => cp && cp >= '1f1e6' && cp <= '1f1ff')) {
-    return `https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/${codePoints.join('-')}.svg`;
+  const codePoints = Array.from(flagEmoji)
+    .map(c => c.codePointAt(0))
+    .filter((cp): cp is number => typeof cp === 'number');
+  if (codePoints.length === 2 && codePoints.every(cp => cp >= 0x1f1e6 && cp <= 0x1f1ff)) {
+    return String.fromCharCode(codePoints[0] - 0x1f1e6 + 97, codePoints[1] - 0x1f1e6 + 97);
   }
   return null;
+}
+
+/**
+ * Resolves a flag emoji to our self-hosted /assets/flags/{code}.svg (zero Cloudflare/external CDN dependency).
+ */
+export function getFlagTwemojiUrl(flagEmoji: string): string | null {
+  const code = flagEmojiToIsoCode(flagEmoji);
+  if (!code) return null;
+  return `/assets/flags/${code}.svg`;
 }
 
 export const AVATAR_CATEGORIES: AvatarCategory[] = [
@@ -371,7 +528,9 @@ export const AVATAR_CATEGORIES: AvatarCategory[] = [
     emojis: [
       '🐼', '🐯', '🐨', '🐬', '🦁', '🦊', '🐰', '🐧',
       '🐶', '🐱', '🐻', '🐵', '🐸', '🦉', '🦄', '🐙',
-      '🐢', '🐘', '🦒', '🦓', '🦔', '🐝', '🦋', '🦕'
+      '🐢', '🐘', '🦒', '🦓', '🦔', '🐝', '🦋', '🦕',
+      '🦖', '🐳', '🦈', '🦅', '🦜', '🦩', '🐺', '🦝',
+      '🦘', '🦥', '🦦', '🦭', '🐠', '🦀', '🐉', '🐣'
     ]
   },
   {
@@ -382,7 +541,9 @@ export const AVATAR_CATEGORIES: AvatarCategory[] = [
     emojis: [
       '⚽', '⚾', '🏀', '🏈', '🎾', '🏐', '🏓', '🏸',
       '🥊', '🥋', '🏊', '🏃', '🚴', '🛹', '🎳', '🎯',
-      '⛳', '🏄', '⛷️', '🧗', '🏇', '🎣', '🏆', '🥇'
+      '⛳', '🏄', '⛷️', '🧗', '🏇', '🎣', '🏆', '🥇',
+      '🥈', '🥉', '🥎', '🏉', '🥏', '🏹', '⛸️', '🛼',
+      '🤿', '🤸', '🤼', '🤾', '🏋️', '🎽', '🏅', '🎖️'
     ]
   },
   {
@@ -393,7 +554,9 @@ export const AVATAR_CATEGORIES: AvatarCategory[] = [
     emojis: [
       '🍣', '🍙', '🍜', '🍲', '🍛', '🍡', '🍱', '🥟',
       '🍤', '🍢', '🍘', '🍵', '🍠', '🍥', '🥢', '🍶',
-      '🥩', '🥘', '🍳', '🧂', '🥠', '🌰', '🍚', '🌽'
+      '🥩', '🥘', '🍳', '🧂', '🥠', '🌰', '🍚', '🌽',
+      '🍧', '🍨', '🍵', '🧋', '🥮', '🍤', '🍄', '🫛',
+      '🐟', '🦀', '🦑', '🦐', '🍊', '🍈', '🍑', '🍓'
     ]
   },
   {
@@ -404,7 +567,9 @@ export const AVATAR_CATEGORIES: AvatarCategory[] = [
     emojis: [
       '🍕', '🍔', '🍟', '🌭', '🥪', '🍝', '🌮', '🍦',
       '🍩', '🍰', '🍫', '🥞', '🥐', '🥨', '🧀', '🥯',
-      '🧁', '🧇', '🍿', '🍪', '🍮', '🍭', '🍓', '🍎'
+      '🧁', '🧇', '🍿', '🍪', '🍮', '🍭', '🍎', '🍇',
+      '🍉', '🍌', '🍍', '🥭', '🍒', '🥑', '🌯', '🥙',
+      '🥗', '🥧', '🍬', '🍡', '🥛', '🧃', '🥤', '☕'
     ]
   },
   {
@@ -412,11 +577,7 @@ export const AVATAR_CATEGORIES: AvatarCategory[] = [
     name: 'Flags',
     jaName: '国旗',
     icon: '🚩',
-    emojis: [
-      '🇯🇵', '🇺🇸', '🇬🇧', '🇨🇦', '🇦🇺', '🇳🇿', '🇫🇷', '🇷🇺',
-      '🇩🇪', '🇪🇸', '🇧🇷', '🇰🇷', '🇹🇼', '🇨🇳', '🇸🇬', '🇮🇳',
-      '🇲🇽', '🇵🇭', '🇹🇭', '🇻🇳', '🇪🇬', '🇿🇦', '🇦🇷', '🇯🇲'
-    ]
+    emojis: FLAG_REGIONS.flatMap(r => r.countries.map(c => c.emoji))
   },
   {
     id: 'vehicles',
@@ -426,7 +587,9 @@ export const AVATAR_CATEGORIES: AvatarCategory[] = [
     emojis: [
       '🚗', '🚕', '🚙', '🚌', '🚎', '🏎️', '🚓', '🚑',
       '🚒', '🚐', '🛻', '🚚', '🚛', '🚜', '🛵', '🚲',
-      '🛴', '🚨', '✈️', '🚀', '🛸', '🚁', '⛵', '🚢'
+      '🛴', '🚨', '✈️', '🚀', '🛸', '🚁', '⛵', '🚢',
+      '🚅', '🚄', '🚆', '🚇', '🚋', '🚂', '🚤', '🛳️',
+      '⛴️', '🛶', '🛩️', '🛰️', '🪂', '🏍️', '🦽', '⛽'
     ]
   },
   {
@@ -437,7 +600,9 @@ export const AVATAR_CATEGORIES: AvatarCategory[] = [
     emojis: [
       '⭐', '🌟', '✨', '⚡', '🌈', '☀️', '🌙', '🔥',
       '💧', '❄️', '🌸', '🌻', '🍀', '🍄', '🎈', '🎉',
-      '🎮', '👾', '🤖', '👑', '💎', '🎨', '🎸', '🪄'
+      '🎮', '👾', '🤖', '👑', '💎', '🎨', '🎸', '🪄',
+      '🧩', '🎲', '🧸', '🪁', '🎹', '🥁', '🎺', '🎻',
+      '📚', '✏️', '🔭', '🔬', '🧭', '🛡️', '⚔️', '🔮'
     ]
   }
 ];

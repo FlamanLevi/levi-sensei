@@ -43,6 +43,7 @@
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.1.2",
     "autoprefixer": "^10.6.1",
+    "flag-icons": "^7.6.0",
     "postcss": "^8.5.29",
     "rollup-plugin-visualizer": "^7.1.1",
     "sharp": "^0.35.5",

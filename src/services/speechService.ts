@@ -386,8 +386,10 @@ export function getWordAudioUrl(
   word: { sound_file?: string; audio_suite?: Record<string, string> },
   speaker: VoiceSpeaker = 'jenny'
 ): string {
-  if (word.audio_suite && word.audio_suite[speaker]) {
-    return word.audio_suite[speaker];
+  const suiteKey = speaker === 'nanami' ? 'ja' : speaker;
+  if (word.audio_suite) {
+    if (word.audio_suite[suiteKey]) return word.audio_suite[suiteKey];
+    if (word.audio_suite[speaker]) return word.audio_suite[speaker];
   }
   if (!word.sound_file) return '';
   return word.sound_file.replace(/_jenny\.mp3$/i, `_${speaker}.mp3`);

@@ -1,0 +1,3547 @@
+[
+  {
+    "id": "word_5001",
+    "english": "sustainable",
+    "disambiguation": null,
+    "display_label": "sustainable",
+    "part_of_speech": "adjective",
+    "category": "12_nature",
+    "sub_category": "landscape",
+    "ja_kanji": "持続可能な",
+    "ja_hiragana": "じぞくかのうな",
+    "en_katakana": "サステイナブル",
+    "ruby": [
+      {
+        "base": "持続可能",
+        "ruby": "じぞくかのう"
+      },
+      {
+        "base": "な",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "ES_G5",
+      "ES_G6",
+      "JHS_G1",
+      "JHS_G2",
+      "JHS_G3"
+    ],
+    "tags": [
+      "landscape",
+      "es_g5"
+    ],
+    "lemma": "sustainable",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "3",
+    "three_hints": {
+      "category_hint": "It is a core SDGs & environmental keyword!",
+      "feature_hint": "Protecting nature and resources so future generations can keep living happily!",
+      "letter_hint": "It starts with 'S'."
+    },
+    "target_dialogues": [
+      {
+        "question": "What does the 'S' in SDGs stand for?",
+        "answer": "It stands for Sustainable Development Goals.",
+        "context": "ES_G5 SDGs Unit 1: What's SDGs? - 17 Goals (Doc 15 ES L1)"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "",
+        "unit": "SDGs Unit 1: What's SDGs? - 17 Goals (Doc 15 ES L1)",
+        "source": "borderlink_es_g5",
+        "sdg_goals": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17
+        ]
+      },
+      "ES_G6": {
+        "card_image": "",
+        "unit": "SDGs Unit 1: What's SDGs? - 17 Goals (Doc 15 ES L1)",
+        "source": "borderlink_es_g5",
+        "sdg_goals": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17
+        ]
+      },
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "SDGs Unit 1: What's SDGs? - 17 Goals (Doc 15 ES L1)",
+        "source": "borderlink_es_g5",
+        "sdg_goals": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17
+        ]
+      },
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "SDGs Unit 1: What's SDGs? - 17 Goals (Doc 15 ES L1)",
+        "source": "borderlink_es_g5",
+        "sdg_goals": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17
+        ]
+      },
+      "JHS_G3": {
+        "card_image": "",
+        "unit": "SDGs Unit 1: What's SDGs? - 17 Goals (Doc 15 ES L1)",
+        "source": "borderlink_es_g5",
+        "sdg_goals": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17
+        ]
+      }
+    }
+  },
+  {
+    "id": "word_5002",
+    "english": "goal",
+    "disambiguation": null,
+    "display_label": "goal",
+    "part_of_speech": "noun",
+    "category": "05_schoollife",
+    "sub_category": "school_subject",
+    "ja_kanji": "目標・ゴール",
+    "ja_hiragana": "もくひょう",
+    "en_katakana": "ゴール",
+    "ruby": [
+      {
+        "base": "目標",
+        "ruby": "もくひょう"
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "ES_G5",
+      "ES_G6",
+      "JHS_G1",
+      "JHS_G2",
+      "JHS_G3"
+    ],
+    "tags": [
+      "school_subject",
+      "es_g5"
+    ],
+    "lemma": "goal",
+    "is_plural": false,
+    "article": "a",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "3",
+    "three_hints": {
+      "category_hint": "It is a core SDGs & planning keyword!",
+      "feature_hint": "An aim or target that people work together to achieve!",
+      "letter_hint": "It starts with 'G'."
+    },
+    "target_dialogues": [
+      {
+        "question": "How many goals do the SDGs have?",
+        "answer": "The SDGs have 17 goals for our future.",
+        "context": "ES_G5 SDGs Unit 1: What's SDGs? - 17 Goals (Doc 15 ES L1)"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "",
+        "unit": "SDGs Unit 1: What's SDGs? - 17 Goals (Doc 15 ES L1)",
+        "source": "borderlink_es_g5",
+        "sdg_goals": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17
+        ]
+      },
+      "ES_G6": {
+        "card_image": "",
+        "unit": "SDGs Unit 1: What's SDGs? - 17 Goals (Doc 15 ES L1)",
+        "source": "borderlink_es_g5",
+        "sdg_goals": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17
+        ]
+      },
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "SDGs Unit 1: What's SDGs? - 17 Goals (Doc 15 ES L1)",
+        "source": "borderlink_es_g5",
+        "sdg_goals": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17
+        ]
+      },
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "SDGs Unit 1: What's SDGs? - 17 Goals (Doc 15 ES L1)",
+        "source": "borderlink_es_g5",
+        "sdg_goals": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17
+        ]
+      },
+      "JHS_G3": {
+        "card_image": "",
+        "unit": "SDGs Unit 1: What's SDGs? - 17 Goals (Doc 15 ES L1)",
+        "source": "borderlink_es_g5",
+        "sdg_goals": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17
+        ]
+      }
+    }
+  },
+  {
+    "id": "word_5003",
+    "english": "environment",
+    "disambiguation": null,
+    "display_label": "environment",
+    "part_of_speech": "noun",
+    "category": "12_nature",
+    "sub_category": "landscape",
+    "ja_kanji": "環境",
+    "ja_hiragana": "かんきょう",
+    "en_katakana": "エンバイロメント",
+    "ruby": [
+      {
+        "base": "環境",
+        "ruby": "かんきょう"
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "ES_G5",
+      "ES_G6",
+      "JHS_G1",
+      "JHS_G2",
+      "JHS_G3"
+    ],
+    "tags": [
+      "landscape",
+      "es_g5"
+    ],
+    "lemma": "environment",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "3",
+    "three_hints": {
+      "category_hint": "It is a core nature & SDGs noun!",
+      "feature_hint": "The natural world of land, sea, air, plants, and animals around us!",
+      "letter_hint": "It starts with 'E'."
+    },
+    "target_dialogues": [
+      {
+        "question": "What can we do for the environment?",
+        "answer": "We can save water and electricity for the environment.",
+        "context": "ES_G5 SDGs Unit 1: What's SDGs? - 17 Goals (Doc 15 ES L1)"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "",
+        "unit": "SDGs Unit 1: What's SDGs? - 17 Goals (Doc 15 ES L1)",
+        "source": "borderlink_es_g5",
+        "sdg_goals": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17
+        ]
+      },
+      "ES_G6": {
+        "card_image": "",
+        "unit": "SDGs Unit 1: What's SDGs? - 17 Goals (Doc 15 ES L1)",
+        "source": "borderlink_es_g5",
+        "sdg_goals": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17
+        ]
+      },
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "SDGs Unit 1: What's SDGs? - 17 Goals (Doc 15 ES L1)",
+        "source": "borderlink_es_g5",
+        "sdg_goals": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17
+        ]
+      },
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "SDGs Unit 1: What's SDGs? - 17 Goals (Doc 15 ES L1)",
+        "source": "borderlink_es_g5",
+        "sdg_goals": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17
+        ]
+      },
+      "JHS_G3": {
+        "card_image": "",
+        "unit": "SDGs Unit 1: What's SDGs? - 17 Goals (Doc 15 ES L1)",
+        "source": "borderlink_es_g5",
+        "sdg_goals": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17
+        ]
+      }
+    }
+  },
+  {
+    "id": "word_5004",
+    "english": "recycle",
+    "disambiguation": null,
+    "display_label": "recycle",
+    "part_of_speech": "verb",
+    "category": "01_action",
+    "sub_category": "present_verb",
+    "ja_kanji": "リサイクルする・再利用する",
+    "ja_hiragana": "りさいくるする",
+    "en_katakana": "リサイクル",
+    "ruby": [
+      {
+        "base": "再利用",
+        "ruby": "さいりよう"
+      },
+      {
+        "base": "する",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "ES_G5",
+      "ES_G6",
+      "JHS_G1",
+      "JHS_G2",
+      "JHS_G3"
+    ],
+    "tags": [
+      "present_verb",
+      "es_g5"
+    ],
+    "lemma": "recycle",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "3",
+    "three_hints": {
+      "category_hint": "It is an eco-action verb (SDG Goal 12)!",
+      "feature_hint": "Turning used paper, cans, and PET bottles into new items instead of trash!",
+      "letter_hint": "It starts with 'R'."
+    },
+    "target_dialogues": [
+      {
+        "question": "What can we do with cans and bottles?",
+        "answer": "We can recycle cans, bottles, and paper.",
+        "context": "ES_G5 SDGs Unit 1: What's SDGs? - 17 Goals (Doc 15 ES L1)"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "",
+        "unit": "SDGs Unit 1: What's SDGs? - 17 Goals (Doc 15 ES L1)",
+        "source": "borderlink_es_g5",
+        "sdg_goals": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17
+        ]
+      },
+      "ES_G6": {
+        "card_image": "",
+        "unit": "SDGs Unit 1: What's SDGs? - 17 Goals (Doc 15 ES L1)",
+        "source": "borderlink_es_g5",
+        "sdg_goals": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17
+        ]
+      },
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "SDGs Unit 1: What's SDGs? - 17 Goals (Doc 15 ES L1)",
+        "source": "borderlink_es_g5",
+        "sdg_goals": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17
+        ]
+      },
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "SDGs Unit 1: What's SDGs? - 17 Goals (Doc 15 ES L1)",
+        "source": "borderlink_es_g5",
+        "sdg_goals": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17
+        ]
+      },
+      "JHS_G3": {
+        "card_image": "",
+        "unit": "SDGs Unit 1: What's SDGs? - 17 Goals (Doc 15 ES L1)",
+        "source": "borderlink_es_g5",
+        "sdg_goals": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17
+        ]
+      }
+    }
+  },
+  {
+    "id": "word_5005",
+    "english": "reduce",
+    "disambiguation": null,
+    "display_label": "reduce",
+    "part_of_speech": "verb",
+    "category": "01_action",
+    "sub_category": "present_verb",
+    "ja_kanji": "減らす",
+    "ja_hiragana": "へらす",
+    "en_katakana": "リデュース",
+    "ruby": [
+      {
+        "base": "減",
+        "ruby": "へ"
+      },
+      {
+        "base": "らす",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "ES_G5",
+      "ES_G6",
+      "JHS_G1",
+      "JHS_G2",
+      "JHS_G3"
+    ],
+    "tags": [
+      "present_verb",
+      "es_g5"
+    ],
+    "lemma": "reduce",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "3",
+    "three_hints": {
+      "category_hint": "It is one of the 3Rs eco-verbs (SDG Goal 12)!",
+      "feature_hint": "To make the amount of trash, waste, or energy smaller!",
+      "letter_hint": "It starts with 'R'."
+    },
+    "target_dialogues": [
+      {
+        "question": "How can we help the earth?",
+        "answer": "We can reduce food waste and plastic trash.",
+        "context": "ES_G5 SDGs Unit 1: What's SDGs? - 17 Goals (Doc 15 ES L1)"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "",
+        "unit": "SDGs Unit 1: What's SDGs? - 17 Goals (Doc 15 ES L1)",
+        "source": "borderlink_es_g5",
+        "sdg_goals": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17
+        ]
+      },
+      "ES_G6": {
+        "card_image": "",
+        "unit": "SDGs Unit 1: What's SDGs? - 17 Goals (Doc 15 ES L1)",
+        "source": "borderlink_es_g5",
+        "sdg_goals": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17
+        ]
+      },
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "SDGs Unit 1: What's SDGs? - 17 Goals (Doc 15 ES L1)",
+        "source": "borderlink_es_g5",
+        "sdg_goals": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17
+        ]
+      },
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "SDGs Unit 1: What's SDGs? - 17 Goals (Doc 15 ES L1)",
+        "source": "borderlink_es_g5",
+        "sdg_goals": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17
+        ]
+      },
+      "JHS_G3": {
+        "card_image": "",
+        "unit": "SDGs Unit 1: What's SDGs? - 17 Goals (Doc 15 ES L1)",
+        "source": "borderlink_es_g5",
+        "sdg_goals": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17
+        ]
+      }
+    }
+  },
+  {
+    "id": "word_5006",
+    "english": "reuse",
+    "disambiguation": null,
+    "display_label": "reuse",
+    "part_of_speech": "verb",
+    "category": "01_action",
+    "sub_category": "present_verb",
+    "ja_kanji": "繰り返し使う（リユースする）",
+    "ja_hiragana": "くりかえしつかう",
+    "en_katakana": "リユース",
+    "ruby": [
+      {
+        "base": "繰",
+        "ruby": "く"
+      },
+      {
+        "base": "り",
+        "ruby": ""
+      },
+      {
+        "base": "返",
+        "ruby": "かえ"
+      },
+      {
+        "base": "し",
+        "ruby": ""
+      },
+      {
+        "base": "使",
+        "ruby": "つか"
+      },
+      {
+        "base": "う",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "ES_G5",
+      "ES_G6",
+      "JHS_G1",
+      "JHS_G2",
+      "JHS_G3"
+    ],
+    "tags": [
+      "present_verb",
+      "es_g5"
+    ],
+    "lemma": "reuse",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "3",
+    "three_hints": {
+      "category_hint": "It is one of the 3Rs eco-verbs (SDG Goal 12)!",
+      "feature_hint": "To use an item again and again instead of throwing it away after one use!",
+      "letter_hint": "It starts with 'R'."
+    },
+    "target_dialogues": [
+      {
+        "question": "Why do you carry an eco-bag?",
+        "answer": "Because I can reuse my bag many times.",
+        "context": "ES_G5 SDGs Unit 1: What's SDGs? - 17 Goals (Doc 15 ES L1)"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "",
+        "unit": "SDGs Unit 1: What's SDGs? - 17 Goals (Doc 15 ES L1)",
+        "source": "borderlink_es_g5",
+        "sdg_goals": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17
+        ]
+      },
+      "ES_G6": {
+        "card_image": "",
+        "unit": "SDGs Unit 1: What's SDGs? - 17 Goals (Doc 15 ES L1)",
+        "source": "borderlink_es_g5",
+        "sdg_goals": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17
+        ]
+      },
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "SDGs Unit 1: What's SDGs? - 17 Goals (Doc 15 ES L1)",
+        "source": "borderlink_es_g5",
+        "sdg_goals": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17
+        ]
+      },
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "SDGs Unit 1: What's SDGs? - 17 Goals (Doc 15 ES L1)",
+        "source": "borderlink_es_g5",
+        "sdg_goals": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17
+        ]
+      },
+      "JHS_G3": {
+        "card_image": "",
+        "unit": "SDGs Unit 1: What's SDGs? - 17 Goals (Doc 15 ES L1)",
+        "source": "borderlink_es_g5",
+        "sdg_goals": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17
+        ]
+      }
+    }
+  },
+  {
+    "id": "word_5007",
+    "english": "endangered",
+    "disambiguation": null,
+    "display_label": "endangered",
+    "part_of_speech": "adjective",
+    "category": "11_animals",
+    "sub_category": "zoo_wild_animal",
+    "ja_kanji": "絶滅危惧（ぜつめつきぐ）の",
+    "ja_hiragana": "ぜつめつきぐの",
+    "en_katakana": "エンデインジャード",
+    "ruby": [
+      {
+        "base": "絶滅危惧",
+        "ruby": "ぜつめつきぐ"
+      },
+      {
+        "base": "の",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "ES_G5",
+      "ES_G6",
+      "JHS_G1",
+      "JHS_G2",
+      "JHS_G3"
+    ],
+    "tags": [
+      "zoo_wild_animal",
+      "es_g5"
+    ],
+    "lemma": "endangered",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "3",
+    "three_hints": {
+      "category_hint": "It is a wildlife conservation word (SDG Goals 14 & 15)!",
+      "feature_hint": "Animals or plants that have very few left in the wild and need protection!",
+      "letter_hint": "It starts with 'E'."
+    },
+    "target_dialogues": [
+      {
+        "question": "Why must we protect sea turtles and dugongs?",
+        "answer": "Because they are endangered animals.",
+        "context": "ES_G5 SDGs Unit 2: Biodiversity, Forests & Oceans (Doc 15 ES L2-L5)"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "",
+        "unit": "SDGs Unit 2: Biodiversity, Forests & Oceans (Doc 15 ES L2-L5)",
+        "source": "borderlink_es_g5",
+        "sdg_goals": [
+          2,
+          6,
+          12,
+          13,
+          14,
+          15
+        ]
+      },
+      "ES_G6": {
+        "card_image": "",
+        "unit": "SDGs Unit 2: Biodiversity, Forests & Oceans (Doc 15 ES L2-L5)",
+        "source": "borderlink_es_g5",
+        "sdg_goals": [
+          2,
+          6,
+          12,
+          13,
+          14,
+          15
+        ]
+      },
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "SDGs Unit 2: Biodiversity, Forests & Oceans (Doc 15 ES L2-L5)",
+        "source": "borderlink_es_g5",
+        "sdg_goals": [
+          2,
+          6,
+          12,
+          13,
+          14,
+          15
+        ]
+      },
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "SDGs Unit 2: Biodiversity, Forests & Oceans (Doc 15 ES L2-L5)",
+        "source": "borderlink_es_g5",
+        "sdg_goals": [
+          2,
+          6,
+          12,
+          13,
+          14,
+          15
+        ]
+      },
+      "JHS_G3": {
+        "card_image": "",
+        "unit": "SDGs Unit 2: Biodiversity, Forests & Oceans (Doc 15 ES L2-L5)",
+        "source": "borderlink_es_g5",
+        "sdg_goals": [
+          2,
+          6,
+          12,
+          13,
+          14,
+          15
+        ]
+      }
+    }
+  },
+  {
+    "id": "word_5008",
+    "english": "ocean",
+    "disambiguation": null,
+    "display_label": "ocean",
+    "part_of_speech": "noun",
+    "category": "12_nature",
+    "sub_category": "landscape",
+    "ja_kanji": "大洋・広い海",
+    "ja_hiragana": "たいよう",
+    "en_katakana": "オーシャン",
+    "ruby": [
+      {
+        "base": "広",
+        "ruby": "ひろ"
+      },
+      {
+        "base": "い",
+        "ruby": ""
+      },
+      {
+        "base": "海",
+        "ruby": "うみ"
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "ES_G5",
+      "ES_G6",
+      "JHS_G1",
+      "JHS_G2",
+      "JHS_G3"
+    ],
+    "tags": [
+      "landscape",
+      "es_g5"
+    ],
+    "lemma": "ocean",
+    "is_plural": false,
+    "article": "an",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "3",
+    "three_hints": {
+      "category_hint": "It is a nature & SDG Goal 14 keyword!",
+      "feature_hint": "The vast blue sea covering most of our planet Earth!",
+      "letter_hint": "It starts with 'O'."
+    },
+    "target_dialogues": [
+      {
+        "question": "What should we keep clean?",
+        "answer": "We must keep the ocean clean for sea animals.",
+        "context": "ES_G5 SDGs Unit 2: Biodiversity, Forests & Oceans (Doc 15 ES L2-L5)"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "",
+        "unit": "SDGs Unit 2: Biodiversity, Forests & Oceans (Doc 15 ES L2-L5)",
+        "source": "borderlink_es_g5",
+        "sdg_goals": [
+          2,
+          6,
+          12,
+          13,
+          14,
+          15
+        ]
+      },
+      "ES_G6": {
+        "card_image": "",
+        "unit": "SDGs Unit 2: Biodiversity, Forests & Oceans (Doc 15 ES L2-L5)",
+        "source": "borderlink_es_g5",
+        "sdg_goals": [
+          2,
+          6,
+          12,
+          13,
+          14,
+          15
+        ]
+      },
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "SDGs Unit 2: Biodiversity, Forests & Oceans (Doc 15 ES L2-L5)",
+        "source": "borderlink_es_g5",
+        "sdg_goals": [
+          2,
+          6,
+          12,
+          13,
+          14,
+          15
+        ]
+      },
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "SDGs Unit 2: Biodiversity, Forests & Oceans (Doc 15 ES L2-L5)",
+        "source": "borderlink_es_g5",
+        "sdg_goals": [
+          2,
+          6,
+          12,
+          13,
+          14,
+          15
+        ]
+      },
+      "JHS_G3": {
+        "card_image": "",
+        "unit": "SDGs Unit 2: Biodiversity, Forests & Oceans (Doc 15 ES L2-L5)",
+        "source": "borderlink_es_g5",
+        "sdg_goals": [
+          2,
+          6,
+          12,
+          13,
+          14,
+          15
+        ]
+      }
+    }
+  },
+  {
+    "id": "word_5009",
+    "english": "climate",
+    "disambiguation": null,
+    "display_label": "climate",
+    "part_of_speech": "noun",
+    "category": "12_nature",
+    "sub_category": "weather",
+    "ja_kanji": "気候",
+    "ja_hiragana": "きこう",
+    "en_katakana": "クライメイト",
+    "ruby": [
+      {
+        "base": "気候",
+        "ruby": "きこう"
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "ES_G5",
+      "ES_G6",
+      "JHS_G1",
+      "JHS_G2",
+      "JHS_G3"
+    ],
+    "tags": [
+      "weather",
+      "es_g5"
+    ],
+    "lemma": "climate",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "3",
+    "three_hints": {
+      "category_hint": "It is an SDG Goal 13 (Climate Action) keyword!",
+      "feature_hint": "The long-term weather pattern of a region or the whole Earth!",
+      "letter_hint": "It starts with 'C'."
+    },
+    "target_dialogues": [
+      {
+        "question": "What is changing around the world?",
+        "answer": "Climate change is making summers hotter.",
+        "context": "ES_G5 SDGs Unit 2: Biodiversity, Forests & Oceans (Doc 15 ES L2-L5)"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "",
+        "unit": "SDGs Unit 2: Biodiversity, Forests & Oceans (Doc 15 ES L2-L5)",
+        "source": "borderlink_es_g5",
+        "sdg_goals": [
+          2,
+          6,
+          12,
+          13,
+          14,
+          15
+        ]
+      },
+      "ES_G6": {
+        "card_image": "",
+        "unit": "SDGs Unit 2: Biodiversity, Forests & Oceans (Doc 15 ES L2-L5)",
+        "source": "borderlink_es_g5",
+        "sdg_goals": [
+          2,
+          6,
+          12,
+          13,
+          14,
+          15
+        ]
+      },
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "SDGs Unit 2: Biodiversity, Forests & Oceans (Doc 15 ES L2-L5)",
+        "source": "borderlink_es_g5",
+        "sdg_goals": [
+          2,
+          6,
+          12,
+          13,
+          14,
+          15
+        ]
+      },
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "SDGs Unit 2: Biodiversity, Forests & Oceans (Doc 15 ES L2-L5)",
+        "source": "borderlink_es_g5",
+        "sdg_goals": [
+          2,
+          6,
+          12,
+          13,
+          14,
+          15
+        ]
+      },
+      "JHS_G3": {
+        "card_image": "",
+        "unit": "SDGs Unit 2: Biodiversity, Forests & Oceans (Doc 15 ES L2-L5)",
+        "source": "borderlink_es_g5",
+        "sdg_goals": [
+          2,
+          6,
+          12,
+          13,
+          14,
+          15
+        ]
+      }
+    }
+  },
+  {
+    "id": "word_5010",
+    "english": "protect",
+    "disambiguation": null,
+    "display_label": "protect",
+    "part_of_speech": "verb",
+    "category": "01_action",
+    "sub_category": "present_verb",
+    "ja_kanji": "守る・保護する",
+    "ja_hiragana": "まもる",
+    "en_katakana": "プロテクト",
+    "ruby": [
+      {
+        "base": "守",
+        "ruby": "まも"
+      },
+      {
+        "base": "る",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "ES_G5",
+      "ES_G6",
+      "JHS_G1",
+      "JHS_G2",
+      "JHS_G3"
+    ],
+    "tags": [
+      "present_verb",
+      "es_g5"
+    ],
+    "lemma": "protect",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "3",
+    "three_hints": {
+      "category_hint": "It is a conservation action verb!",
+      "feature_hint": "To keep nature, animals, or people safe from harm or danger!",
+      "letter_hint": "It starts with 'P'."
+    },
+    "target_dialogues": [
+      {
+        "question": "What can we do for forests and animals?",
+        "answer": "We can protect forests and wild animals.",
+        "context": "ES_G5 SDGs Unit 2: Biodiversity, Forests & Oceans (Doc 15 ES L2-L5)"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "",
+        "unit": "SDGs Unit 2: Biodiversity, Forests & Oceans (Doc 15 ES L2-L5)",
+        "source": "borderlink_es_g5",
+        "sdg_goals": [
+          2,
+          6,
+          12,
+          13,
+          14,
+          15
+        ]
+      },
+      "ES_G6": {
+        "card_image": "",
+        "unit": "SDGs Unit 2: Biodiversity, Forests & Oceans (Doc 15 ES L2-L5)",
+        "source": "borderlink_es_g5",
+        "sdg_goals": [
+          2,
+          6,
+          12,
+          13,
+          14,
+          15
+        ]
+      },
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "SDGs Unit 2: Biodiversity, Forests & Oceans (Doc 15 ES L2-L5)",
+        "source": "borderlink_es_g5",
+        "sdg_goals": [
+          2,
+          6,
+          12,
+          13,
+          14,
+          15
+        ]
+      },
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "SDGs Unit 2: Biodiversity, Forests & Oceans (Doc 15 ES L2-L5)",
+        "source": "borderlink_es_g5",
+        "sdg_goals": [
+          2,
+          6,
+          12,
+          13,
+          14,
+          15
+        ]
+      },
+      "JHS_G3": {
+        "card_image": "",
+        "unit": "SDGs Unit 2: Biodiversity, Forests & Oceans (Doc 15 ES L2-L5)",
+        "source": "borderlink_es_g5",
+        "sdg_goals": [
+          2,
+          6,
+          12,
+          13,
+          14,
+          15
+        ]
+      }
+    }
+  },
+  {
+    "id": "word_5011",
+    "english": "living things",
+    "disambiguation": null,
+    "display_label": "living things",
+    "part_of_speech": "noun",
+    "category": "11_animals",
+    "sub_category": "zoo_wild_animal",
+    "ja_kanji": "生き物（生物）",
+    "ja_hiragana": "いきもの",
+    "en_katakana": "リビング シングス",
+    "ruby": [
+      {
+        "base": "生",
+        "ruby": "い"
+      },
+      {
+        "base": "き",
+        "ruby": ""
+      },
+      {
+        "base": "物",
+        "ruby": "もの"
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "ES_G5",
+      "ES_G6",
+      "JHS_G1",
+      "JHS_G2",
+      "JHS_G3"
+    ],
+    "tags": [
+      "zoo_wild_animal",
+      "es_g5"
+    ],
+    "lemma": "living thing",
+    "is_plural": true,
+    "article": "",
+    "syllable_count": 2,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "3",
+    "three_hints": {
+      "category_hint": "It is a nature & science phrase!",
+      "feature_hint": "All animals, birds, fish, insects, and plants that are alive!",
+      "letter_hint": "It starts with 'L'."
+    },
+    "target_dialogues": [
+      {
+        "question": "What lives in the forest and sea?",
+        "answer": "Many living things live together in nature.",
+        "context": "ES_G5 SDGs Unit 2: Biodiversity, Forests & Oceans (Doc 15 ES L2-L5)"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "",
+        "unit": "SDGs Unit 2: Biodiversity, Forests & Oceans (Doc 15 ES L2-L5)",
+        "source": "borderlink_es_g5",
+        "sdg_goals": [
+          2,
+          6,
+          12,
+          13,
+          14,
+          15
+        ]
+      },
+      "ES_G6": {
+        "card_image": "",
+        "unit": "SDGs Unit 2: Biodiversity, Forests & Oceans (Doc 15 ES L2-L5)",
+        "source": "borderlink_es_g5",
+        "sdg_goals": [
+          2,
+          6,
+          12,
+          13,
+          14,
+          15
+        ]
+      },
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "SDGs Unit 2: Biodiversity, Forests & Oceans (Doc 15 ES L2-L5)",
+        "source": "borderlink_es_g5",
+        "sdg_goals": [
+          2,
+          6,
+          12,
+          13,
+          14,
+          15
+        ]
+      },
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "SDGs Unit 2: Biodiversity, Forests & Oceans (Doc 15 ES L2-L5)",
+        "source": "borderlink_es_g5",
+        "sdg_goals": [
+          2,
+          6,
+          12,
+          13,
+          14,
+          15
+        ]
+      },
+      "JHS_G3": {
+        "card_image": "",
+        "unit": "SDGs Unit 2: Biodiversity, Forests & Oceans (Doc 15 ES L2-L5)",
+        "source": "borderlink_es_g5",
+        "sdg_goals": [
+          2,
+          6,
+          12,
+          13,
+          14,
+          15
+        ]
+      }
+    }
+  },
+  {
+    "id": "word_5012",
+    "english": "origin",
+    "disambiguation": null,
+    "display_label": "origin",
+    "part_of_speech": "noun",
+    "category": "03_fooddrink",
+    "sub_category": "ingredient",
+    "ja_kanji": "産地・起源",
+    "ja_hiragana": "さんち",
+    "en_katakana": "オリジン",
+    "ruby": [
+      {
+        "base": "産地",
+        "ruby": "さんち"
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "ES_G5",
+      "ES_G6",
+      "JHS_G1",
+      "JHS_G2",
+      "JHS_G3"
+    ],
+    "tags": [
+      "ingredient",
+      "es_g5"
+    ],
+    "lemma": "origin",
+    "is_plural": false,
+    "article": "an",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "3",
+    "three_hints": {
+      "category_hint": "It is a food & social studies word (Doc 15 ES L3)!",
+      "feature_hint": "The place or country where a food or product comes from!",
+      "letter_hint": "It starts with 'O'."
+    },
+    "target_dialogues": [
+      {
+        "question": "Where does our food come from?",
+        "answer": "Let's check the country of origin on the label.",
+        "context": "ES_G5 SDGs Unit 2: Biodiversity, Forests & Oceans (Doc 15 ES L2-L5)"
+      }
+    ],
+    "media_by_grade": {
+      "ES_G5": {
+        "card_image": "",
+        "unit": "SDGs Unit 2: Biodiversity, Forests & Oceans (Doc 15 ES L2-L5)",
+        "source": "borderlink_es_g5",
+        "sdg_goals": [
+          2,
+          6,
+          12,
+          13,
+          14,
+          15
+        ]
+      },
+      "ES_G6": {
+        "card_image": "",
+        "unit": "SDGs Unit 2: Biodiversity, Forests & Oceans (Doc 15 ES L2-L5)",
+        "source": "borderlink_es_g5",
+        "sdg_goals": [
+          2,
+          6,
+          12,
+          13,
+          14,
+          15
+        ]
+      },
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "SDGs Unit 2: Biodiversity, Forests & Oceans (Doc 15 ES L2-L5)",
+        "source": "borderlink_es_g5",
+        "sdg_goals": [
+          2,
+          6,
+          12,
+          13,
+          14,
+          15
+        ]
+      },
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "SDGs Unit 2: Biodiversity, Forests & Oceans (Doc 15 ES L2-L5)",
+        "source": "borderlink_es_g5",
+        "sdg_goals": [
+          2,
+          6,
+          12,
+          13,
+          14,
+          15
+        ]
+      },
+      "JHS_G3": {
+        "card_image": "",
+        "unit": "SDGs Unit 2: Biodiversity, Forests & Oceans (Doc 15 ES L2-L5)",
+        "source": "borderlink_es_g5",
+        "sdg_goals": [
+          2,
+          6,
+          12,
+          13,
+          14,
+          15
+        ]
+      }
+    }
+  },
+  {
+    "id": "word_5013",
+    "english": "fast food",
+    "disambiguation": null,
+    "display_label": "fast food",
+    "part_of_speech": "noun",
+    "category": "03_fooddrink",
+    "sub_category": "main_dish",
+    "ja_kanji": "ファストフード",
+    "ja_hiragana": "ふぁすとふーど",
+    "en_katakana": "ファスト フード",
+    "ruby": [
+      {
+        "base": "ファストフード",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G1",
+      "ES_G6",
+      "JHS_G2",
+      "JHS_G3"
+    ],
+    "tags": [
+      "main_dish",
+      "jhs_g1"
+    ],
+    "lemma": "fast food",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 2,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "3",
+    "three_hints": {
+      "category_hint": "It is a food & JHS SDGs discussion topic (Doc 15 JHS L1)!",
+      "feature_hint": "Quick restaurant food like hamburgers and French fries!",
+      "letter_hint": "It starts with 'F'."
+    },
+    "target_dialogues": [
+      {
+        "question": "Do you like fast food?",
+        "answer": "I like fast food, but I also eat vegetables.",
+        "context": "JHS_G1 SDGs Unit 3: Sustainable Living & Communities (Doc 15 JHS Discussion L1-L5)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "SDGs Unit 3: Sustainable Living & Communities (Doc 15 JHS Discussion L1-L5)",
+        "source": "borderlink_jhs_g1",
+        "sdg_goals": [
+          1,
+          3,
+          4,
+          5,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13
+        ]
+      },
+      "ES_G6": {
+        "card_image": "",
+        "unit": "SDGs Unit 3: Sustainable Living & Communities (Doc 15 JHS Discussion L1-L5)",
+        "source": "borderlink_jhs_g1",
+        "sdg_goals": [
+          1,
+          3,
+          4,
+          5,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13
+        ]
+      },
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "SDGs Unit 3: Sustainable Living & Communities (Doc 15 JHS Discussion L1-L5)",
+        "source": "borderlink_jhs_g1",
+        "sdg_goals": [
+          1,
+          3,
+          4,
+          5,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13
+        ]
+      },
+      "JHS_G3": {
+        "card_image": "",
+        "unit": "SDGs Unit 3: Sustainable Living & Communities (Doc 15 JHS Discussion L1-L5)",
+        "source": "borderlink_jhs_g1",
+        "sdg_goals": [
+          1,
+          3,
+          4,
+          5,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13
+        ]
+      }
+    }
+  },
+  {
+    "id": "word_5014",
+    "english": "urban",
+    "disambiguation": null,
+    "display_label": "urban",
+    "part_of_speech": "adjective",
+    "category": "06_facility",
+    "sub_category": "building",
+    "ja_kanji": "都市の・都会の",
+    "ja_hiragana": "としの",
+    "en_katakana": "アーバン",
+    "ruby": [
+      {
+        "base": "都市",
+        "ruby": "とし"
+      },
+      {
+        "base": "の",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G1",
+      "ES_G6",
+      "JHS_G2",
+      "JHS_G3"
+    ],
+    "tags": [
+      "building",
+      "jhs_g1"
+    ],
+    "lemma": "urban",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "3",
+    "three_hints": {
+      "category_hint": "It is a JHS SDGs discussion keyword (Doc 15 JHS L3)!",
+      "feature_hint": "Related to a busy city or big town with tall buildings and stations (opposite of 'rural')!",
+      "letter_hint": "It starts with 'U'."
+    },
+    "target_dialogues": [
+      {
+        "question": "Which do you prefer, urban or rural life?",
+        "answer": "Urban life is convenient because there are many trains.",
+        "context": "JHS_G1 SDGs Unit 3: Sustainable Living & Communities (Doc 15 JHS Discussion L1-L5)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "SDGs Unit 3: Sustainable Living & Communities (Doc 15 JHS Discussion L1-L5)",
+        "source": "borderlink_jhs_g1",
+        "sdg_goals": [
+          1,
+          3,
+          4,
+          5,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13
+        ]
+      },
+      "ES_G6": {
+        "card_image": "",
+        "unit": "SDGs Unit 3: Sustainable Living & Communities (Doc 15 JHS Discussion L1-L5)",
+        "source": "borderlink_jhs_g1",
+        "sdg_goals": [
+          1,
+          3,
+          4,
+          5,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13
+        ]
+      },
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "SDGs Unit 3: Sustainable Living & Communities (Doc 15 JHS Discussion L1-L5)",
+        "source": "borderlink_jhs_g1",
+        "sdg_goals": [
+          1,
+          3,
+          4,
+          5,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13
+        ]
+      },
+      "JHS_G3": {
+        "card_image": "",
+        "unit": "SDGs Unit 3: Sustainable Living & Communities (Doc 15 JHS Discussion L1-L5)",
+        "source": "borderlink_jhs_g1",
+        "sdg_goals": [
+          1,
+          3,
+          4,
+          5,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13
+        ]
+      }
+    }
+  },
+  {
+    "id": "word_5015",
+    "english": "rural",
+    "disambiguation": null,
+    "display_label": "rural",
+    "part_of_speech": "adjective",
+    "category": "12_nature",
+    "sub_category": "landscape",
+    "ja_kanji": "田舎の・農村の",
+    "ja_hiragana": "いなかの",
+    "en_katakana": "ルーラル",
+    "ruby": [
+      {
+        "base": "田舎",
+        "ruby": "いなか"
+      },
+      {
+        "base": "の",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G1",
+      "ES_G6",
+      "JHS_G2",
+      "JHS_G3"
+    ],
+    "tags": [
+      "landscape",
+      "jhs_g1"
+    ],
+    "lemma": "rural",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "3",
+    "three_hints": {
+      "category_hint": "It is a JHS SDGs discussion keyword (Doc 15 JHS L3)!",
+      "feature_hint": "Related to the quiet countryside with farms, mountains, and green fields (opposite of 'urban')!",
+      "letter_hint": "It starts with 'R'."
+    },
+    "target_dialogues": [
+      {
+        "question": "What is good about rural areas?",
+        "answer": "Rural areas have clean air and beautiful nature.",
+        "context": "JHS_G1 SDGs Unit 3: Sustainable Living & Communities (Doc 15 JHS Discussion L1-L5)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "SDGs Unit 3: Sustainable Living & Communities (Doc 15 JHS Discussion L1-L5)",
+        "source": "borderlink_jhs_g1",
+        "sdg_goals": [
+          1,
+          3,
+          4,
+          5,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13
+        ]
+      },
+      "ES_G6": {
+        "card_image": "",
+        "unit": "SDGs Unit 3: Sustainable Living & Communities (Doc 15 JHS Discussion L1-L5)",
+        "source": "borderlink_jhs_g1",
+        "sdg_goals": [
+          1,
+          3,
+          4,
+          5,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13
+        ]
+      },
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "SDGs Unit 3: Sustainable Living & Communities (Doc 15 JHS Discussion L1-L5)",
+        "source": "borderlink_jhs_g1",
+        "sdg_goals": [
+          1,
+          3,
+          4,
+          5,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13
+        ]
+      },
+      "JHS_G3": {
+        "card_image": "",
+        "unit": "SDGs Unit 3: Sustainable Living & Communities (Doc 15 JHS Discussion L1-L5)",
+        "source": "borderlink_jhs_g1",
+        "sdg_goals": [
+          1,
+          3,
+          4,
+          5,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13
+        ]
+      }
+    }
+  },
+  {
+    "id": "word_5016",
+    "english": "lifestyle",
+    "disambiguation": null,
+    "display_label": "lifestyle",
+    "part_of_speech": "noun",
+    "category": "07_dailylife",
+    "sub_category": "household_item",
+    "ja_kanji": "生活様式・ライフスタイル",
+    "ja_hiragana": "せいかつようしき",
+    "en_katakana": "ライフスタイル",
+    "ruby": [
+      {
+        "base": "生活様式",
+        "ruby": "せいかつようしき"
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G1",
+      "ES_G6",
+      "JHS_G2",
+      "JHS_G3"
+    ],
+    "tags": [
+      "household_item",
+      "jhs_g1"
+    ],
+    "lemma": "lifestyle",
+    "is_plural": false,
+    "article": "a",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "3",
+    "three_hints": {
+      "category_hint": "It is a daily living & SDGs word!",
+      "feature_hint": "The way a person or community lives, works, and uses resources every day!",
+      "letter_hint": "It starts with 'L'."
+    },
+    "target_dialogues": [
+      {
+        "question": "How can we change our daily habits?",
+        "answer": "We can choose an eco-friendly lifestyle.",
+        "context": "JHS_G1 SDGs Unit 3: Sustainable Living & Communities (Doc 15 JHS Discussion L1-L5)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "SDGs Unit 3: Sustainable Living & Communities (Doc 15 JHS Discussion L1-L5)",
+        "source": "borderlink_jhs_g1",
+        "sdg_goals": [
+          1,
+          3,
+          4,
+          5,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13
+        ]
+      },
+      "ES_G6": {
+        "card_image": "",
+        "unit": "SDGs Unit 3: Sustainable Living & Communities (Doc 15 JHS Discussion L1-L5)",
+        "source": "borderlink_jhs_g1",
+        "sdg_goals": [
+          1,
+          3,
+          4,
+          5,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13
+        ]
+      },
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "SDGs Unit 3: Sustainable Living & Communities (Doc 15 JHS Discussion L1-L5)",
+        "source": "borderlink_jhs_g1",
+        "sdg_goals": [
+          1,
+          3,
+          4,
+          5,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13
+        ]
+      },
+      "JHS_G3": {
+        "card_image": "",
+        "unit": "SDGs Unit 3: Sustainable Living & Communities (Doc 15 JHS Discussion L1-L5)",
+        "source": "borderlink_jhs_g1",
+        "sdg_goals": [
+          1,
+          3,
+          4,
+          5,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13
+        ]
+      }
+    }
+  },
+  {
+    "id": "word_5017",
+    "english": "daily necessities",
+    "disambiguation": null,
+    "display_label": "daily necessities",
+    "part_of_speech": "noun",
+    "category": "07_dailylife",
+    "sub_category": "household_item",
+    "ja_kanji": "日用品・生活必需品",
+    "ja_hiragana": "にちようひん",
+    "en_katakana": "デイリー ネセシティーズ",
+    "ruby": [
+      {
+        "base": "日用品",
+        "ruby": "にちようひん"
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G1",
+      "ES_G6",
+      "JHS_G2",
+      "JHS_G3"
+    ],
+    "tags": [
+      "household_item",
+      "jhs_g1"
+    ],
+    "lemma": "daily necessity",
+    "is_plural": true,
+    "article": "",
+    "syllable_count": 2,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "3",
+    "three_hints": {
+      "category_hint": "It is a shopping & SDGs discussion phrase (Doc 15 JHS L2)!",
+      "feature_hint": "Essential items you need every day like soap, tissue, food, and clothes!",
+      "letter_hint": "It starts with 'D'."
+    },
+    "target_dialogues": [
+      {
+        "question": "What do you buy when you go shopping?",
+        "answer": "We buy food and daily necessities.",
+        "context": "JHS_G1 SDGs Unit 3: Sustainable Living & Communities (Doc 15 JHS Discussion L1-L5)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "SDGs Unit 3: Sustainable Living & Communities (Doc 15 JHS Discussion L1-L5)",
+        "source": "borderlink_jhs_g1",
+        "sdg_goals": [
+          1,
+          3,
+          4,
+          5,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13
+        ]
+      },
+      "ES_G6": {
+        "card_image": "",
+        "unit": "SDGs Unit 3: Sustainable Living & Communities (Doc 15 JHS Discussion L1-L5)",
+        "source": "borderlink_jhs_g1",
+        "sdg_goals": [
+          1,
+          3,
+          4,
+          5,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13
+        ]
+      },
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "SDGs Unit 3: Sustainable Living & Communities (Doc 15 JHS Discussion L1-L5)",
+        "source": "borderlink_jhs_g1",
+        "sdg_goals": [
+          1,
+          3,
+          4,
+          5,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13
+        ]
+      },
+      "JHS_G3": {
+        "card_image": "",
+        "unit": "SDGs Unit 3: Sustainable Living & Communities (Doc 15 JHS Discussion L1-L5)",
+        "source": "borderlink_jhs_g1",
+        "sdg_goals": [
+          1,
+          3,
+          4,
+          5,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13
+        ]
+      }
+    }
+  },
+  {
+    "id": "word_5018",
+    "english": "education",
+    "disambiguation": null,
+    "display_label": "education",
+    "part_of_speech": "noun",
+    "category": "05_schoollife",
+    "sub_category": "school_subject",
+    "ja_kanji": "教育",
+    "ja_hiragana": "きょういく",
+    "en_katakana": "エデュケイション",
+    "ruby": [
+      {
+        "base": "教育",
+        "ruby": "きょういく"
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G1",
+      "ES_G6",
+      "JHS_G2",
+      "JHS_G3"
+    ],
+    "tags": [
+      "school_subject",
+      "jhs_g1"
+    ],
+    "lemma": "education",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "3",
+    "three_hints": {
+      "category_hint": "It is an SDG Goal 4 keyword (Doc 15 JHS L5)!",
+      "feature_hint": "Learning at school so every child can read, write, and build their future (SDG Goal 4)!",
+      "letter_hint": "It starts with 'E'."
+    },
+    "target_dialogues": [
+      {
+        "question": "What is SDG Goal 4?",
+        "answer": "Goal 4 is quality education for all children in the world.",
+        "context": "JHS_G1 SDGs Unit 3: Sustainable Living & Communities (Doc 15 JHS Discussion L1-L5)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "SDGs Unit 3: Sustainable Living & Communities (Doc 15 JHS Discussion L1-L5)",
+        "source": "borderlink_jhs_g1",
+        "sdg_goals": [
+          1,
+          3,
+          4,
+          5,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13
+        ]
+      },
+      "ES_G6": {
+        "card_image": "",
+        "unit": "SDGs Unit 3: Sustainable Living & Communities (Doc 15 JHS Discussion L1-L5)",
+        "source": "borderlink_jhs_g1",
+        "sdg_goals": [
+          1,
+          3,
+          4,
+          5,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13
+        ]
+      },
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "SDGs Unit 3: Sustainable Living & Communities (Doc 15 JHS Discussion L1-L5)",
+        "source": "borderlink_jhs_g1",
+        "sdg_goals": [
+          1,
+          3,
+          4,
+          5,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13
+        ]
+      },
+      "JHS_G3": {
+        "card_image": "",
+        "unit": "SDGs Unit 3: Sustainable Living & Communities (Doc 15 JHS Discussion L1-L5)",
+        "source": "borderlink_jhs_g1",
+        "sdg_goals": [
+          1,
+          3,
+          4,
+          5,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13
+        ]
+      }
+    }
+  },
+  {
+    "id": "word_5019",
+    "english": "clean energy",
+    "disambiguation": null,
+    "display_label": "clean energy",
+    "part_of_speech": "noun",
+    "category": "12_nature",
+    "sub_category": "landscape",
+    "ja_kanji": "クリーンエネルギー（自然エネルギー）",
+    "ja_hiragana": "くりーんえねるぎー",
+    "en_katakana": "クリーン エナジー",
+    "ruby": [
+      {
+        "base": "自然",
+        "ruby": "しぜん"
+      },
+      {
+        "base": "エネルギー",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G1",
+      "ES_G6",
+      "JHS_G2",
+      "JHS_G3"
+    ],
+    "tags": [
+      "landscape",
+      "jhs_g1"
+    ],
+    "lemma": "clean energy",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 2,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "3",
+    "three_hints": {
+      "category_hint": "It is an SDG Goal 7 keyword!",
+      "feature_hint": "Electricity made from sunlight, wind, or water that does not pollute the air!",
+      "letter_hint": "It starts with 'C'."
+    },
+    "target_dialogues": [
+      {
+        "question": "How can we make electricity without pollution?",
+        "answer": "We can use clean energy from the sun and wind.",
+        "context": "JHS_G1 SDGs Unit 3: Sustainable Living & Communities (Doc 15 JHS Discussion L1-L5)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "SDGs Unit 3: Sustainable Living & Communities (Doc 15 JHS Discussion L1-L5)",
+        "source": "borderlink_jhs_g1",
+        "sdg_goals": [
+          1,
+          3,
+          4,
+          5,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13
+        ]
+      },
+      "ES_G6": {
+        "card_image": "",
+        "unit": "SDGs Unit 3: Sustainable Living & Communities (Doc 15 JHS Discussion L1-L5)",
+        "source": "borderlink_jhs_g1",
+        "sdg_goals": [
+          1,
+          3,
+          4,
+          5,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13
+        ]
+      },
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "SDGs Unit 3: Sustainable Living & Communities (Doc 15 JHS Discussion L1-L5)",
+        "source": "borderlink_jhs_g1",
+        "sdg_goals": [
+          1,
+          3,
+          4,
+          5,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13
+        ]
+      },
+      "JHS_G3": {
+        "card_image": "",
+        "unit": "SDGs Unit 3: Sustainable Living & Communities (Doc 15 JHS Discussion L1-L5)",
+        "source": "borderlink_jhs_g1",
+        "sdg_goals": [
+          1,
+          3,
+          4,
+          5,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13
+        ]
+      }
+    }
+  },
+  {
+    "id": "word_5020",
+    "english": "equality",
+    "disambiguation": null,
+    "display_label": "equality",
+    "part_of_speech": "noun",
+    "category": "14_body_family",
+    "sub_category": "person_pronoun",
+    "ja_kanji": "平等",
+    "ja_hiragana": "びょうどう",
+    "en_katakana": "イクオリティ",
+    "ruby": [
+      {
+        "base": "平等",
+        "ruby": "びょうどう"
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G1",
+      "ES_G6",
+      "JHS_G2",
+      "JHS_G3"
+    ],
+    "tags": [
+      "person_pronoun",
+      "jhs_g1"
+    ],
+    "lemma": "equality",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "3",
+    "three_hints": {
+      "category_hint": "It is an SDG Goals 5 & 10 keyword!",
+      "feature_hint": "Treating all people fairly with the same rights and opportunities!",
+      "letter_hint": "It starts with 'E'."
+    },
+    "target_dialogues": [
+      {
+        "question": "Why are SDG Goals 5 and 10 important?",
+        "answer": "Because everyone deserves equality and respect.",
+        "context": "JHS_G1 SDGs Unit 3: Sustainable Living & Communities (Doc 15 JHS Discussion L1-L5)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "SDGs Unit 3: Sustainable Living & Communities (Doc 15 JHS Discussion L1-L5)",
+        "source": "borderlink_jhs_g1",
+        "sdg_goals": [
+          1,
+          3,
+          4,
+          5,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13
+        ]
+      },
+      "ES_G6": {
+        "card_image": "",
+        "unit": "SDGs Unit 3: Sustainable Living & Communities (Doc 15 JHS Discussion L1-L5)",
+        "source": "borderlink_jhs_g1",
+        "sdg_goals": [
+          1,
+          3,
+          4,
+          5,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13
+        ]
+      },
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "SDGs Unit 3: Sustainable Living & Communities (Doc 15 JHS Discussion L1-L5)",
+        "source": "borderlink_jhs_g1",
+        "sdg_goals": [
+          1,
+          3,
+          4,
+          5,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13
+        ]
+      },
+      "JHS_G3": {
+        "card_image": "",
+        "unit": "SDGs Unit 3: Sustainable Living & Communities (Doc 15 JHS Discussion L1-L5)",
+        "source": "borderlink_jhs_g1",
+        "sdg_goals": [
+          1,
+          3,
+          4,
+          5,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13
+        ]
+      }
+    }
+  },
+  {
+    "id": "word_5021",
+    "english": "opinion",
+    "disambiguation": null,
+    "display_label": "opinion",
+    "part_of_speech": "noun",
+    "category": "05_schoollife",
+    "sub_category": "school_subject",
+    "ja_kanji": "意見・考え",
+    "ja_hiragana": "いけん",
+    "en_katakana": "オピニオン",
+    "ruby": [
+      {
+        "base": "意見",
+        "ruby": "いけん"
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G1",
+      "ES_G6",
+      "JHS_G2",
+      "JHS_G3"
+    ],
+    "tags": [
+      "school_subject",
+      "jhs_g1"
+    ],
+    "lemma": "opinion",
+    "is_plural": false,
+    "article": "an",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "3",
+    "three_hints": {
+      "category_hint": "It is a core discussion & presentation noun!",
+      "feature_hint": "What you think or believe about a topic ('What's your opinion?')!",
+      "letter_hint": "It starts with 'O'."
+    },
+    "target_dialogues": [
+      {
+        "question": "What is your opinion about this goal?",
+        "answer": "In my opinion, Goal 13 is the most urgent.",
+        "context": "JHS_G1 SDGs Unit 4: Earth Day & Global Action Projects (Doc 15 JHS Project L1-L3)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "SDGs Unit 4: Earth Day & Global Action Projects (Doc 15 JHS Project L1-L3)",
+        "source": "borderlink_jhs_g1",
+        "sdg_goals": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17
+        ]
+      },
+      "ES_G6": {
+        "card_image": "",
+        "unit": "SDGs Unit 4: Earth Day & Global Action Projects (Doc 15 JHS Project L1-L3)",
+        "source": "borderlink_jhs_g1",
+        "sdg_goals": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17
+        ]
+      },
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "SDGs Unit 4: Earth Day & Global Action Projects (Doc 15 JHS Project L1-L3)",
+        "source": "borderlink_jhs_g1",
+        "sdg_goals": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17
+        ]
+      },
+      "JHS_G3": {
+        "card_image": "",
+        "unit": "SDGs Unit 4: Earth Day & Global Action Projects (Doc 15 JHS Project L1-L3)",
+        "source": "borderlink_jhs_g1",
+        "sdg_goals": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17
+        ]
+      }
+    }
+  },
+  {
+    "id": "word_5022",
+    "english": "Earth Day",
+    "disambiguation": null,
+    "display_label": "Earth Day",
+    "part_of_speech": "noun",
+    "category": "15_festalday",
+    "sub_category": "seasonal_tradition",
+    "ja_kanji": "アースデイ（地球の日：4月22日）",
+    "ja_hiragana": "あーすでい",
+    "en_katakana": "アース デイ",
+    "ruby": [
+      {
+        "base": "地球",
+        "ruby": "ちきゅう"
+      },
+      {
+        "base": "の",
+        "ruby": ""
+      },
+      {
+        "base": "日",
+        "ruby": "ひ"
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G1",
+      "ES_G6",
+      "JHS_G2",
+      "JHS_G3"
+    ],
+    "tags": [
+      "seasonal_tradition",
+      "jhs_g1"
+    ],
+    "lemma": "Earth Day",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 2,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "3",
+    "three_hints": {
+      "category_hint": "It is a global environmental event (Doc 15 JHS Project L2)!",
+      "feature_hint": "A worldwide day on April 22nd to celebrate and protect planet Earth!",
+      "letter_hint": "It starts with 'E'."
+    },
+    "target_dialogues": [
+      {
+        "question": "What event are we planning?",
+        "answer": "Let's plan an Earth Day event at our school!",
+        "context": "JHS_G1 SDGs Unit 4: Earth Day & Global Action Projects (Doc 15 JHS Project L1-L3)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "SDGs Unit 4: Earth Day & Global Action Projects (Doc 15 JHS Project L1-L3)",
+        "source": "borderlink_jhs_g1",
+        "sdg_goals": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17
+        ]
+      },
+      "ES_G6": {
+        "card_image": "",
+        "unit": "SDGs Unit 4: Earth Day & Global Action Projects (Doc 15 JHS Project L1-L3)",
+        "source": "borderlink_jhs_g1",
+        "sdg_goals": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17
+        ]
+      },
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "SDGs Unit 4: Earth Day & Global Action Projects (Doc 15 JHS Project L1-L3)",
+        "source": "borderlink_jhs_g1",
+        "sdg_goals": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17
+        ]
+      },
+      "JHS_G3": {
+        "card_image": "",
+        "unit": "SDGs Unit 4: Earth Day & Global Action Projects (Doc 15 JHS Project L1-L3)",
+        "source": "borderlink_jhs_g1",
+        "sdg_goals": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17
+        ]
+      }
+    }
+  },
+  {
+    "id": "word_5023",
+    "english": "project",
+    "disambiguation": null,
+    "display_label": "project",
+    "part_of_speech": "noun",
+    "category": "05_schoollife",
+    "sub_category": "school_event",
+    "ja_kanji": "プロジェクト・企画・探究活動",
+    "ja_hiragana": "ぷろじぇくと",
+    "en_katakana": "プロジェクト",
+    "ruby": [
+      {
+        "base": "企画",
+        "ruby": "きかく"
+      },
+      {
+        "base": "・プロジェクト",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G1",
+      "ES_G6",
+      "JHS_G2",
+      "JHS_G3"
+    ],
+    "tags": [
+      "school_event",
+      "jhs_g1"
+    ],
+    "lemma": "project",
+    "is_plural": false,
+    "article": "a",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "3",
+    "three_hints": {
+      "category_hint": "It is a research & presentation noun (Doc 15 JHS Project L3)!",
+      "feature_hint": "A planned team activity or research mission to solve a problem!",
+      "letter_hint": "It starts with 'P'."
+    },
+    "target_dialogues": [
+      {
+        "question": "What project is interesting in that country?",
+        "answer": "They have a solar power project in their town.",
+        "context": "JHS_G1 SDGs Unit 4: Earth Day & Global Action Projects (Doc 15 JHS Project L1-L3)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "SDGs Unit 4: Earth Day & Global Action Projects (Doc 15 JHS Project L1-L3)",
+        "source": "borderlink_jhs_g1",
+        "sdg_goals": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17
+        ]
+      },
+      "ES_G6": {
+        "card_image": "",
+        "unit": "SDGs Unit 4: Earth Day & Global Action Projects (Doc 15 JHS Project L1-L3)",
+        "source": "borderlink_jhs_g1",
+        "sdg_goals": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17
+        ]
+      },
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "SDGs Unit 4: Earth Day & Global Action Projects (Doc 15 JHS Project L1-L3)",
+        "source": "borderlink_jhs_g1",
+        "sdg_goals": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17
+        ]
+      },
+      "JHS_G3": {
+        "card_image": "",
+        "unit": "SDGs Unit 4: Earth Day & Global Action Projects (Doc 15 JHS Project L1-L3)",
+        "source": "borderlink_jhs_g1",
+        "sdg_goals": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17
+        ]
+      }
+    }
+  },
+  {
+    "id": "word_5024",
+    "english": "encourage",
+    "disambiguation": null,
+    "display_label": "encourage",
+    "part_of_speech": "verb",
+    "category": "01_action",
+    "sub_category": "present_verb",
+    "ja_kanji": "励ます・促す・奨励する",
+    "ja_hiragana": "はげます",
+    "en_katakana": "エンカレッジ",
+    "ruby": [
+      {
+        "base": "励",
+        "ruby": "はげ"
+      },
+      {
+        "base": "ます・",
+        "ruby": ""
+      },
+      {
+        "base": "促",
+        "ruby": "うなが"
+      },
+      {
+        "base": "す",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G1",
+      "ES_G6",
+      "JHS_G2",
+      "JHS_G3"
+    ],
+    "tags": [
+      "present_verb",
+      "jhs_g1"
+    ],
+    "lemma": "encourage",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "3",
+    "three_hints": {
+      "category_hint": "It is an action & social initiative verb (Doc 15 JHS Project L3)!",
+      "feature_hint": "To give someone support, confidence, or motivation to do something good!",
+      "letter_hint": "It starts with 'E'."
+    },
+    "target_dialogues": [
+      {
+        "question": "How does the city reduce waste?",
+        "answer": "They encourage people to use bicycles and eco-bags.",
+        "context": "JHS_G1 SDGs Unit 4: Earth Day & Global Action Projects (Doc 15 JHS Project L1-L3)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "SDGs Unit 4: Earth Day & Global Action Projects (Doc 15 JHS Project L1-L3)",
+        "source": "borderlink_jhs_g1",
+        "sdg_goals": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17
+        ]
+      },
+      "ES_G6": {
+        "card_image": "",
+        "unit": "SDGs Unit 4: Earth Day & Global Action Projects (Doc 15 JHS Project L1-L3)",
+        "source": "borderlink_jhs_g1",
+        "sdg_goals": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17
+        ]
+      },
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "SDGs Unit 4: Earth Day & Global Action Projects (Doc 15 JHS Project L1-L3)",
+        "source": "borderlink_jhs_g1",
+        "sdg_goals": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17
+        ]
+      },
+      "JHS_G3": {
+        "card_image": "",
+        "unit": "SDGs Unit 4: Earth Day & Global Action Projects (Doc 15 JHS Project L1-L3)",
+        "source": "borderlink_jhs_g1",
+        "sdg_goals": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17
+        ]
+      }
+    }
+  },
+  {
+    "id": "word_5025",
+    "english": "future",
+    "disambiguation": null,
+    "display_label": "future",
+    "part_of_speech": "noun",
+    "category": "10_calendar_time",
+    "sub_category": "calendar_concept",
+    "ja_kanji": "未来・将来",
+    "ja_hiragana": "みらい",
+    "en_katakana": "フューチャー",
+    "ruby": [
+      {
+        "base": "未来",
+        "ruby": "みらい"
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G1",
+      "ES_G6",
+      "JHS_G2",
+      "JHS_G3"
+    ],
+    "tags": [
+      "calendar_concept",
+      "jhs_g1"
+    ],
+    "lemma": "future",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "3",
+    "three_hints": {
+      "category_hint": "It is a time & SDGs vision word!",
+      "feature_hint": "The time that will come after today—tomorrow, next year, and beyond!",
+      "letter_hint": "It starts with 'F'."
+    },
+    "target_dialogues": [
+      {
+        "question": "Why do we learn about the SDGs?",
+        "answer": "To build a bright future for everyone on Earth.",
+        "context": "JHS_G1 SDGs Unit 4: Earth Day & Global Action Projects (Doc 15 JHS Project L1-L3)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "SDGs Unit 4: Earth Day & Global Action Projects (Doc 15 JHS Project L1-L3)",
+        "source": "borderlink_jhs_g1",
+        "sdg_goals": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17
+        ]
+      },
+      "ES_G6": {
+        "card_image": "",
+        "unit": "SDGs Unit 4: Earth Day & Global Action Projects (Doc 15 JHS Project L1-L3)",
+        "source": "borderlink_jhs_g1",
+        "sdg_goals": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17
+        ]
+      },
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "SDGs Unit 4: Earth Day & Global Action Projects (Doc 15 JHS Project L1-L3)",
+        "source": "borderlink_jhs_g1",
+        "sdg_goals": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17
+        ]
+      },
+      "JHS_G3": {
+        "card_image": "",
+        "unit": "SDGs Unit 4: Earth Day & Global Action Projects (Doc 15 JHS Project L1-L3)",
+        "source": "borderlink_jhs_g1",
+        "sdg_goals": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17
+        ]
+      }
+    }
+  }
+]

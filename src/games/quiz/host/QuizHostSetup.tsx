@@ -70,9 +70,8 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
     activeClassId,
     setActiveClassId,
     selectedUnits: globalSelectedUnits,
-    openUnitModal,
   } = useClassroom();
-  const { getWordsForScope, ensureCluesLoaded } = useVocabulary();
+  const { getWordsForScope, ensureCluesLoaded, openWordFilterModal } = useVocabulary();
 
   React.useEffect(() => {
     ensureCluesLoaded();
@@ -315,8 +314,8 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
       }
   );
 
-  const hasPriorReview = ['ES_G4', 'ES_G5', 'ES_G6', 'JHS_G1'].includes(activeGrade);
-  const hasGrandSlam = ['ES_G3', 'ES_G4', 'ES_G5', 'ES_G6', 'JHS_G1'].includes(activeGrade);
+  const hasPriorReview = ['ES_G2', 'ES_G3', 'ES_G4', 'ES_G5', 'ES_G6', 'JHS_G1', 'JHS_G2', 'JHS_G3'].includes(activeGrade);
+  const hasGrandSlam = ['ES_G3', 'ES_G4', 'ES_G5', 'ES_G6', 'JHS_G1', 'JHS_G2', 'JHS_G3'].includes(activeGrade);
 
   const cleanUnitLabel = (u: string) => u.replace(/^Unit\s+(\d+):\s+Unit\s+\1:\s*/i, 'Unit $1: ');
 
@@ -343,10 +342,14 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
   };
 
   const getPriorReviewTitle = () => {
-    if (activeGrade === 'ES_G6') return language === 'ja' ? '小3〜小5 復習' : 'G3–G5 Review';
-    if (activeGrade === 'ES_G5') return language === 'ja' ? '小3〜小4 復習' : 'G3–G4 Review';
-    if (activeGrade === 'ES_G4') return language === 'ja' ? '小3 復習' : 'G3 Review';
-    return language === 'ja' ? '小学校 復習' : 'Elementary Review';
+    if (activeGrade === 'JHS_G3') return language === 'ja' ? '小学校＋中1〜中2 復習' : 'ES + JHS G1–G2 Review';
+    if (activeGrade === 'JHS_G2') return language === 'ja' ? '小学校＋中1 復習' : 'ES + JHS G1 Review';
+    if (activeGrade === 'JHS_G1') return language === 'ja' ? '小学校 復習' : 'Elementary Review';
+    if (activeGrade === 'ES_G6') return language === 'ja' ? '小1〜小5 復習' : 'G1–G5 Review';
+    if (activeGrade === 'ES_G5') return language === 'ja' ? '小1〜小4 復習' : 'G1–G4 Review';
+    if (activeGrade === 'ES_G4') return language === 'ja' ? '小1〜小3 復習' : 'G1–G3 Review';
+    if (activeGrade === 'ES_G3') return language === 'ja' ? '小1〜小2 復習' : 'G1–G2 Review';
+    return language === 'ja' ? '前学年 復習' : 'Prior Grade Review';
   };
 
   const handleSelectGamePlayType = (nextType: GamePlayType) => {
@@ -677,7 +680,10 @@ export const QuizHostSetup: React.FC<QuizHostSetupProps> = ({
           hasPriorReview={hasPriorReview}
           hasGrandSlam={hasGrandSlam}
           getPriorReviewTitle={getPriorReviewTitle}
-          openUnitModal={openUnitModal}
+          openUnitModal={() => {
+            setSelectedScope('CURRENT');
+            openWordFilterModal();
+          }}
         />
 
         <PlayModeAndTeamsSection

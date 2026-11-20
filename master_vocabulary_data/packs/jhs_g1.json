@@ -1,0 +1,2680 @@
+[
+  {
+    "id": "word_2001",
+    "english": "classmate",
+    "disambiguation": null,
+    "display_label": "classmate",
+    "part_of_speech": "noun",
+    "category": "14_body_family",
+    "sub_category": "person_pronoun",
+    "ja_kanji": "クラスメイト",
+    "ja_hiragana": "くらすめいと",
+    "en_katakana": "クラスメイト",
+    "ruby": [
+      {
+        "base": "クラスメイト",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G1"
+    ],
+    "tags": [
+      "person_pronoun",
+      "jhs_g1"
+    ],
+    "lemma": "classmate",
+    "is_plural": false,
+    "article": "a",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A1",
+    "eiken": "5",
+    "three_hints": {
+      "category_hint": "It is a person at school!",
+      "feature_hint": "A friend who studies in the same school classroom with you!",
+      "letter_hint": "It starts with 'C'."
+    },
+    "target_dialogues": [
+      {
+        "question": "Who is she?",
+        "answer": "She is my classmate.",
+        "context": "JHS_G1 Unit 1: Self-Intro & Be-Verb (L1-L9)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "Unit 1: Self-Intro & Be-Verb (L1-L9)",
+        "source": "borderlink_jhs_g1",
+        "textbook_units": {
+          "NC": "L1, L3",
+          "NH": "U1, U2",
+          "HG": "U1-U4",
+          "OW": "L1-L3",
+          "BS": "U1, U2",
+          "SU": "P1-P4"
+        }
+      }
+    },
+    "inflections": {
+      "plural": "classmates"
+    }
+  },
+  {
+    "id": "word_2002",
+    "english": "pretty",
+    "disambiguation": null,
+    "display_label": "pretty",
+    "part_of_speech": "adjective",
+    "category": "02_state",
+    "sub_category": "impression",
+    "ja_kanji": "かわいい・きれいな",
+    "ja_hiragana": "かわいい",
+    "en_katakana": "プリティ",
+    "ruby": [
+      {
+        "base": "かわいい",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G1"
+    ],
+    "tags": [
+      "impression",
+      "jhs_g1"
+    ],
+    "lemma": "pretty",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A1",
+    "eiken": "5",
+    "three_hints": {
+      "category_hint": "It is a describing word!",
+      "feature_hint": "Cute and lovely to look at!",
+      "letter_hint": "It starts with 'P'."
+    },
+    "target_dialogues": [
+      {
+        "question": "What is your hamster like?",
+        "answer": "It is very pretty.",
+        "context": "JHS_G1 Unit 1: Self-Intro & Be-Verb (L1-L9)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "Unit 1: Self-Intro & Be-Verb (L1-L9)",
+        "source": "borderlink_jhs_g1",
+        "textbook_units": {
+          "NC": "L1, L3",
+          "NH": "U1, U2",
+          "HG": "U1-U4",
+          "OW": "L1-L3",
+          "BS": "U1, U2",
+          "SU": "P1-P4"
+        }
+      }
+    },
+    "inflections": {
+      "comparative": "prettier",
+      "superlative": "prettiest"
+    }
+  },
+  {
+    "id": "word_2003",
+    "english": "handsome",
+    "disambiguation": null,
+    "display_label": "handsome",
+    "part_of_speech": "adjective",
+    "category": "02_state",
+    "sub_category": "impression",
+    "ja_kanji": "ハンサムな・かっこいい",
+    "ja_hiragana": "はんさむな",
+    "en_katakana": "ハンサム",
+    "ruby": [
+      {
+        "base": "ハンサムな",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G1"
+    ],
+    "tags": [
+      "impression",
+      "jhs_g1"
+    ],
+    "lemma": "handsome",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A1",
+    "eiken": "5",
+    "three_hints": {
+      "category_hint": "It is a describing word!",
+      "feature_hint": "Good-looking and cool!",
+      "letter_hint": "It starts with 'H'."
+    },
+    "target_dialogues": [
+      {
+        "question": "Who is that man?",
+        "answer": "He is a handsome actor.",
+        "context": "JHS_G1 Unit 1: Self-Intro & Be-Verb (L1-L9)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "Unit 1: Self-Intro & Be-Verb (L1-L9)",
+        "source": "borderlink_jhs_g1",
+        "textbook_units": {
+          "NC": "L1, L3",
+          "NH": "U1, U2",
+          "HG": "U1-U4",
+          "OW": "L1-L3",
+          "BS": "U1, U2",
+          "SU": "P1-P4"
+        }
+      }
+    },
+    "inflections": {
+      "comparative": "more handsome",
+      "superlative": "most handsome"
+    }
+  },
+  {
+    "id": "word_2004",
+    "english": "basketball player",
+    "disambiguation": null,
+    "display_label": "basketball player",
+    "part_of_speech": "noun",
+    "category": "06_facility",
+    "sub_category": "job",
+    "ja_kanji": "バスケットボール選手",
+    "ja_hiragana": "ばすけっとぼーるせんしゅ",
+    "en_katakana": "バスケットボール プレイヤー",
+    "ruby": [
+      {
+        "base": "バスケットボール",
+        "ruby": ""
+      },
+      {
+        "base": "選手",
+        "ruby": "せんしゅ"
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G1"
+    ],
+    "tags": [
+      "job",
+      "jhs_g1"
+    ],
+    "lemma": "basketball player",
+    "is_plural": false,
+    "article": "a",
+    "syllable_count": 2,
+    "difficulty_tier": "intermediate",
+    "cefr": "A1",
+    "eiken": "5",
+    "three_hints": {
+      "category_hint": "It is a sports occupation!",
+      "feature_hint": "An athlete who dribbles and shoots the ball into a high hoop!",
+      "letter_hint": "It starts with 'B'."
+    },
+    "target_dialogues": [
+      {
+        "question": "Who is he?",
+        "answer": "He is a famous basketball player.",
+        "context": "JHS_G1 Unit 1: Self-Intro & Be-Verb (L1-L9)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "Unit 1: Self-Intro & Be-Verb (L1-L9)",
+        "source": "borderlink_jhs_g1",
+        "textbook_units": {
+          "NC": "L1, L3",
+          "NH": "U1, U2",
+          "HG": "U1-U4",
+          "OW": "L1-L3",
+          "BS": "U1, U2",
+          "SU": "P1-P4"
+        }
+      }
+    },
+    "inflections": {
+      "plural": "basketball players"
+    }
+  },
+  {
+    "id": "word_2005",
+    "english": "o'clock",
+    "disambiguation": null,
+    "display_label": "o'clock",
+    "part_of_speech": "adverb",
+    "category": "10_calendar_time",
+    "sub_category": "calendar_concept",
+    "ja_kanji": "〜時（ちょうど）",
+    "ja_hiragana": "じ",
+    "en_katakana": "オクロック",
+    "ruby": [
+      {
+        "base": "〜",
+        "ruby": ""
+      },
+      {
+        "base": "時",
+        "ruby": "じ"
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G1"
+    ],
+    "tags": [
+      "calendar_concept",
+      "jhs_g1"
+    ],
+    "lemma": "o'clock",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A1",
+    "eiken": "5",
+    "three_hints": {
+      "category_hint": "It is a word for telling exact time!",
+      "feature_hint": "Used after a number from 1 to 12 when the minute hand is on 12!",
+      "letter_hint": "It starts with 'O'."
+    },
+    "target_dialogues": [
+      {
+        "question": "What time is it now?",
+        "answer": "It is nine o'clock.",
+        "context": "JHS_G1 Unit 1: Self-Intro & Be-Verb (L1-L9)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "Unit 1: Self-Intro & Be-Verb (L1-L9)",
+        "source": "borderlink_jhs_g1",
+        "textbook_units": {
+          "NC": "L1, L3",
+          "NH": "U1, U2",
+          "HG": "U1-U4",
+          "OW": "L1-L3",
+          "BS": "U1, U2",
+          "SU": "P1-P4"
+        }
+      }
+    }
+  },
+  {
+    "id": "word_2006",
+    "english": "natto",
+    "disambiguation": null,
+    "display_label": "natto",
+    "part_of_speech": "noun",
+    "category": "03_fooddrink",
+    "sub_category": "main_dish",
+    "ja_kanji": "納豆",
+    "ja_hiragana": "なっとう",
+    "en_katakana": "ナットウ",
+    "ruby": [
+      {
+        "base": "納豆",
+        "ruby": "なっとう"
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G1"
+    ],
+    "tags": [
+      "main_dish",
+      "jhs_g1"
+    ],
+    "lemma": "natto",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A1",
+    "eiken": "5",
+    "three_hints": {
+      "category_hint": "It is a traditional Japanese food!",
+      "feature_hint": "Sticky fermented soybeans often eaten on warm rice in Japan!",
+      "letter_hint": "It starts with 'N'."
+    },
+    "target_dialogues": [
+      {
+        "question": "Do you like natto?",
+        "answer": "Yes, I eat natto for breakfast.",
+        "context": "JHS_G1 Unit 2: Likes, Sports & Japanese Culture (L10-L18)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "Unit 2: Likes, Sports & Japanese Culture (L10-L18)",
+        "source": "borderlink_jhs_g1",
+        "textbook_units": {
+          "NC": "L1, L2",
+          "NH": "U1-U3",
+          "HG": "U1-U3",
+          "OW": "L1, L2",
+          "BS": "U3, U4",
+          "SU": "P1-P3, P7"
+        }
+      }
+    }
+  },
+  {
+    "id": "word_2007",
+    "english": "yakisoba",
+    "disambiguation": null,
+    "display_label": "yakisoba",
+    "part_of_speech": "noun",
+    "category": "03_fooddrink",
+    "sub_category": "main_dish",
+    "ja_kanji": "焼きそば",
+    "ja_hiragana": "やきそば",
+    "en_katakana": "ヤキソバ",
+    "ruby": [
+      {
+        "base": "焼",
+        "ruby": "や"
+      },
+      {
+        "base": "きそば",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G1"
+    ],
+    "tags": [
+      "main_dish",
+      "jhs_g1"
+    ],
+    "lemma": "yakisoba",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A1",
+    "eiken": "5",
+    "three_hints": {
+      "category_hint": "It is a popular noodle dish!",
+      "feature_hint": "Fried noodles with pork, cabbage, and sweet brown sauce!",
+      "letter_hint": "It starts with 'Y'."
+    },
+    "target_dialogues": [
+      {
+        "question": "What food do you like?",
+        "answer": "I like yakisoba.",
+        "context": "JHS_G1 Unit 2: Likes, Sports & Japanese Culture (L10-L18)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "Unit 2: Likes, Sports & Japanese Culture (L10-L18)",
+        "source": "borderlink_jhs_g1",
+        "textbook_units": {
+          "NC": "L1, L2",
+          "NH": "U1-U3",
+          "HG": "U1-U3",
+          "OW": "L1, L2",
+          "BS": "U3, U4",
+          "SU": "P1-P3, P7"
+        }
+      }
+    }
+  },
+  {
+    "id": "word_2008",
+    "english": "takoyaki",
+    "disambiguation": null,
+    "display_label": "takoyaki",
+    "part_of_speech": "noun",
+    "category": "03_fooddrink",
+    "sub_category": "main_dish",
+    "ja_kanji": "たこ焼き",
+    "ja_hiragana": "たこやき",
+    "en_katakana": "タコヤキ",
+    "ruby": [
+      {
+        "base": "たこ",
+        "ruby": ""
+      },
+      {
+        "base": "焼",
+        "ruby": "や"
+      },
+      {
+        "base": "き",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G1"
+    ],
+    "tags": [
+      "main_dish",
+      "jhs_g1"
+    ],
+    "lemma": "takoyaki",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A1",
+    "eiken": "5",
+    "three_hints": {
+      "category_hint": "It is a famous Japanese street food!",
+      "feature_hint": "Round hot batter balls with a piece of octopus inside, famous in Osaka!",
+      "letter_hint": "It starts with 'T'."
+    },
+    "target_dialogues": [
+      {
+        "question": "What did you eat in Osaka?",
+        "answer": "I ate takoyaki.",
+        "context": "JHS_G1 Unit 2: Likes, Sports & Japanese Culture (L10-L18)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "Unit 2: Likes, Sports & Japanese Culture (L10-L18)",
+        "source": "borderlink_jhs_g1",
+        "textbook_units": {
+          "NC": "L1, L2",
+          "NH": "U1-U3",
+          "HG": "U1-U3",
+          "OW": "L1, L2",
+          "BS": "U3, U4",
+          "SU": "P1-P3, P7"
+        }
+      }
+    }
+  },
+  {
+    "id": "word_2009",
+    "english": "chicken soup",
+    "disambiguation": null,
+    "display_label": "chicken soup",
+    "part_of_speech": "noun",
+    "category": "03_fooddrink",
+    "sub_category": "main_dish",
+    "ja_kanji": "チキンスープ",
+    "ja_hiragana": "ちきんすーぷ",
+    "en_katakana": "チキン スープ",
+    "ruby": [
+      {
+        "base": "チキンスープ",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G1"
+    ],
+    "tags": [
+      "main_dish",
+      "jhs_g1"
+    ],
+    "lemma": "chicken soup",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 2,
+    "difficulty_tier": "intermediate",
+    "cefr": "A1",
+    "eiken": "5",
+    "three_hints": {
+      "category_hint": "It is a warm soup dish!",
+      "feature_hint": "A warm, comforting soup made with chicken and vegetables!",
+      "letter_hint": "It starts with 'C'."
+    },
+    "target_dialogues": [
+      {
+        "question": "Do you like soup?",
+        "answer": "Yes, I like warm chicken soup.",
+        "context": "JHS_G1 Unit 2: Likes, Sports & Japanese Culture (L10-L18)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "Unit 2: Likes, Sports & Japanese Culture (L10-L18)",
+        "source": "borderlink_jhs_g1",
+        "textbook_units": {
+          "NC": "L1, L2",
+          "NH": "U1-U3",
+          "HG": "U1-U3",
+          "OW": "L1, L2",
+          "BS": "U3, U4",
+          "SU": "P1-P3, P7"
+        }
+      }
+    }
+  },
+  {
+    "id": "word_2010",
+    "english": "ping-pong",
+    "disambiguation": null,
+    "display_label": "ping-pong",
+    "part_of_speech": "noun",
+    "category": "08_sports",
+    "sub_category": "core_school_sport",
+    "ja_kanji": "卓球（ピンポン）",
+    "ja_hiragana": "たっきゅう",
+    "en_katakana": "ピンポン",
+    "ruby": [
+      {
+        "base": "卓球",
+        "ruby": "たっきゅう"
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G1"
+    ],
+    "tags": [
+      "core_school_sport",
+      "jhs_g1"
+    ],
+    "lemma": "ping-pong",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A1",
+    "eiken": "5",
+    "three_hints": {
+      "category_hint": "It is an indoor racket sport!",
+      "feature_hint": "You hit a tiny light ball back and forth across a table with small paddles!",
+      "letter_hint": "It starts with 'P'."
+    },
+    "target_dialogues": [
+      {
+        "question": "What sport do you play?",
+        "answer": "I play ping-pong after school.",
+        "context": "JHS_G1 Unit 2: Likes, Sports & Japanese Culture (L10-L18)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "Unit 2: Likes, Sports & Japanese Culture (L10-L18)",
+        "source": "borderlink_jhs_g1",
+        "textbook_units": {
+          "NC": "L1, L2",
+          "NH": "U1-U3",
+          "HG": "U1-U3",
+          "OW": "L1, L2",
+          "BS": "U3, U4",
+          "SU": "P1-P3, P7"
+        }
+      }
+    }
+  },
+  {
+    "id": "word_2011",
+    "english": "handball",
+    "disambiguation": null,
+    "display_label": "handball",
+    "part_of_speech": "noun",
+    "category": "08_sports",
+    "sub_category": "core_school_sport",
+    "ja_kanji": "ハンドボール",
+    "ja_hiragana": "はんどぼーる",
+    "en_katakana": "ハンドボール",
+    "ruby": [
+      {
+        "base": "ハンドボール",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G1"
+    ],
+    "tags": [
+      "core_school_sport",
+      "jhs_g1"
+    ],
+    "lemma": "handball",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A1",
+    "eiken": "5",
+    "three_hints": {
+      "category_hint": "It is a team ball sport!",
+      "feature_hint": "A fast team sport where players pass with their hands and throw into a goal!",
+      "letter_hint": "It starts with 'H'."
+    },
+    "target_dialogues": [
+      {
+        "question": "Do you play handball?",
+        "answer": "Yes, I play handball on the team.",
+        "context": "JHS_G1 Unit 2: Likes, Sports & Japanese Culture (L10-L18)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "Unit 2: Likes, Sports & Japanese Culture (L10-L18)",
+        "source": "borderlink_jhs_g1",
+        "textbook_units": {
+          "NC": "L1, L2",
+          "NH": "U1-U3",
+          "HG": "U1-U3",
+          "OW": "L1, L2",
+          "BS": "U3, U4",
+          "SU": "P1-P3, P7"
+        }
+      }
+    }
+  },
+  {
+    "id": "word_2012",
+    "english": "golf",
+    "disambiguation": null,
+    "display_label": "golf",
+    "part_of_speech": "noun",
+    "category": "08_sports",
+    "sub_category": "olympic_expanded_sport",
+    "ja_kanji": "ゴルフ",
+    "ja_hiragana": "ごるふ",
+    "en_katakana": "ゴルフ",
+    "ruby": [
+      {
+        "base": "ゴルフ",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G1"
+    ],
+    "tags": [
+      "olympic_expanded_sport",
+      "jhs_g1"
+    ],
+    "lemma": "golf",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A1",
+    "eiken": "5",
+    "three_hints": {
+      "category_hint": "It is an outdoor sport!",
+      "feature_hint": "You hit a small white ball across green grass into a hole with clubs!",
+      "letter_hint": "It starts with 'G'."
+    },
+    "target_dialogues": [
+      {
+        "question": "What sport does your father play?",
+        "answer": "He plays golf on Sundays.",
+        "context": "JHS_G1 Unit 2: Likes, Sports & Japanese Culture (L10-L18)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "Unit 2: Likes, Sports & Japanese Culture (L10-L18)",
+        "source": "borderlink_jhs_g1",
+        "textbook_units": {
+          "NC": "L1, L2",
+          "NH": "U1-U3",
+          "HG": "U1-U3",
+          "OW": "L1, L2",
+          "BS": "U3, U4",
+          "SU": "P1-P3, P7"
+        }
+      }
+    }
+  },
+  {
+    "id": "word_2013",
+    "english": "video games",
+    "disambiguation": null,
+    "display_label": "video games",
+    "part_of_speech": "noun",
+    "category": "07_dailylife",
+    "sub_category": "instrument_tech",
+    "ja_kanji": "テレビゲーム",
+    "ja_hiragana": "てれびげーむ",
+    "en_katakana": "ビデオ ゲームズ",
+    "ruby": [
+      {
+        "base": "テレビゲーム",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G1"
+    ],
+    "tags": [
+      "instrument_tech",
+      "jhs_g1"
+    ],
+    "lemma": "video game",
+    "is_plural": true,
+    "article": "",
+    "syllable_count": 2,
+    "difficulty_tier": "intermediate",
+    "cefr": "A1",
+    "eiken": "5",
+    "three_hints": {
+      "category_hint": "It is a fun indoor hobby!",
+      "feature_hint": "Digital games you play on a console, TV, or computer!",
+      "letter_hint": "It starts with 'V'."
+    },
+    "target_dialogues": [
+      {
+        "question": "What game do you play?",
+        "answer": "I play video games with my friends.",
+        "context": "JHS_G1 Unit 2: Likes, Sports & Japanese Culture (L10-L18)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "Unit 2: Likes, Sports & Japanese Culture (L10-L18)",
+        "source": "borderlink_jhs_g1",
+        "textbook_units": {
+          "NC": "L1, L2",
+          "NH": "U1-U3",
+          "HG": "U1-U3",
+          "OW": "L1, L2",
+          "BS": "U3, U4",
+          "SU": "P1-P3, P7"
+        }
+      }
+    }
+  },
+  {
+    "id": "word_2014",
+    "english": "board games",
+    "disambiguation": null,
+    "display_label": "board games",
+    "part_of_speech": "noun",
+    "category": "07_dailylife",
+    "sub_category": "household_item",
+    "ja_kanji": "ボードゲーム",
+    "ja_hiragana": "ぼーどげーむ",
+    "en_katakana": "ボード ゲームズ",
+    "ruby": [
+      {
+        "base": "ボードゲーム",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G1"
+    ],
+    "tags": [
+      "household_item",
+      "jhs_g1"
+    ],
+    "lemma": "board game",
+    "is_plural": true,
+    "article": "",
+    "syllable_count": 2,
+    "difficulty_tier": "intermediate",
+    "cefr": "A1",
+    "eiken": "5",
+    "three_hints": {
+      "category_hint": "It is a tabletop game!",
+      "feature_hint": "Games played on a flat board with dice, cards, or pieces!",
+      "letter_hint": "It starts with 'B'."
+    },
+    "target_dialogues": [
+      {
+        "question": "What do you play on rainy days?",
+        "answer": "We play board games at home.",
+        "context": "JHS_G1 Unit 2: Likes, Sports & Japanese Culture (L10-L18)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "Unit 2: Likes, Sports & Japanese Culture (L10-L18)",
+        "source": "borderlink_jhs_g1",
+        "textbook_units": {
+          "NC": "L1, L2",
+          "NH": "U1-U3",
+          "HG": "U1-U3",
+          "OW": "L1, L2",
+          "BS": "U3, U4",
+          "SU": "P1-P3, P7"
+        }
+      }
+    }
+  },
+  {
+    "id": "word_2015",
+    "english": "shogi",
+    "disambiguation": null,
+    "display_label": "shogi",
+    "part_of_speech": "noun",
+    "category": "07_dailylife",
+    "sub_category": "household_item",
+    "ja_kanji": "将棋",
+    "ja_hiragana": "しょうぎ",
+    "en_katakana": "ショウギ",
+    "ruby": [
+      {
+        "base": "将棋",
+        "ruby": "しょうぎ"
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G1"
+    ],
+    "tags": [
+      "household_item",
+      "jhs_g1"
+    ],
+    "lemma": "shogi",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A1",
+    "eiken": "5",
+    "three_hints": {
+      "category_hint": "It is a traditional Japanese strategy game!",
+      "feature_hint": "Japanese chess played with wooden 5-sided pieces containing kanji!",
+      "letter_hint": "It starts with 'S'."
+    },
+    "target_dialogues": [
+      {
+        "question": "Can you play shogi?",
+        "answer": "Yes, I play shogi with my grandfather.",
+        "context": "JHS_G1 Unit 2: Likes, Sports & Japanese Culture (L10-L18)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "Unit 2: Likes, Sports & Japanese Culture (L10-L18)",
+        "source": "borderlink_jhs_g1",
+        "textbook_units": {
+          "NC": "L1, L2",
+          "NH": "U1-U3",
+          "HG": "U1-U3",
+          "OW": "L1, L2",
+          "BS": "U3, U4",
+          "SU": "P1-P3, P7"
+        }
+      }
+    }
+  },
+  {
+    "id": "word_2016",
+    "english": "chess",
+    "disambiguation": null,
+    "display_label": "chess",
+    "part_of_speech": "noun",
+    "category": "07_dailylife",
+    "sub_category": "household_item",
+    "ja_kanji": "チェス",
+    "ja_hiragana": "ちぇす",
+    "en_katakana": "チェス",
+    "ruby": [
+      {
+        "base": "チェス",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G1"
+    ],
+    "tags": [
+      "household_item",
+      "jhs_g1"
+    ],
+    "lemma": "chess",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A1",
+    "eiken": "5",
+    "three_hints": {
+      "category_hint": "It is a classic world strategy game!",
+      "feature_hint": "A black-and-white checkered board game with kings, queens, and knights!",
+      "letter_hint": "It starts with 'C'."
+    },
+    "target_dialogues": [
+      {
+        "question": "Do you play chess?",
+        "answer": "Yes, I love playing chess.",
+        "context": "JHS_G1 Unit 2: Likes, Sports & Japanese Culture (L10-L18)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "Unit 2: Likes, Sports & Japanese Culture (L10-L18)",
+        "source": "borderlink_jhs_g1",
+        "textbook_units": {
+          "NC": "L1, L2",
+          "NH": "U1-U3",
+          "HG": "U1-U3",
+          "OW": "L1, L2",
+          "BS": "U3, U4",
+          "SU": "P1-P3, P7"
+        }
+      }
+    }
+  },
+  {
+    "id": "word_2017",
+    "english": "anime",
+    "disambiguation": null,
+    "display_label": "anime",
+    "part_of_speech": "noun",
+    "category": "07_dailylife",
+    "sub_category": "instrument_tech",
+    "ja_kanji": "アニメ",
+    "ja_hiragana": "あにめ",
+    "en_katakana": "アニメ",
+    "ruby": [
+      {
+        "base": "アニメ",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G1"
+    ],
+    "tags": [
+      "instrument_tech",
+      "jhs_g1"
+    ],
+    "lemma": "anime",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A1",
+    "eiken": "5",
+    "three_hints": {
+      "category_hint": "It is pop culture & entertainment!",
+      "feature_hint": "Japanese animated TV shows and movies loved all around the world!",
+      "letter_hint": "It starts with 'A'."
+    },
+    "target_dialogues": [
+      {
+        "question": "What do you watch on weekends?",
+        "answer": "I watch Japanese anime.",
+        "context": "JHS_G1 Unit 2: Likes, Sports & Japanese Culture (L10-L18)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "Unit 2: Likes, Sports & Japanese Culture (L10-L18)",
+        "source": "borderlink_jhs_g1",
+        "textbook_units": {
+          "NC": "L1, L2",
+          "NH": "U1-U3",
+          "HG": "U1-U3",
+          "OW": "L1, L2",
+          "BS": "U3, U4",
+          "SU": "P1-P3, P7"
+        }
+      }
+    }
+  },
+  {
+    "id": "word_2018",
+    "english": "Spanish",
+    "disambiguation": null,
+    "display_label": "Spanish",
+    "part_of_speech": "noun",
+    "category": "05_schoollife",
+    "sub_category": "school_subject",
+    "ja_kanji": "スペイン語",
+    "ja_hiragana": "すぺいんご",
+    "en_katakana": "スパニッシュ",
+    "ruby": [
+      {
+        "base": "スペイン",
+        "ruby": ""
+      },
+      {
+        "base": "語",
+        "ruby": "ご"
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G1"
+    ],
+    "tags": [
+      "school_subject",
+      "jhs_g1"
+    ],
+    "lemma": "Spanish",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A1",
+    "eiken": "5",
+    "three_hints": {
+      "category_hint": "It is a world language!",
+      "feature_hint": "The language spoken in Spain, Mexico, and much of South America ('Hola!')!",
+      "letter_hint": "It starts with 'S'."
+    },
+    "target_dialogues": [
+      {
+        "question": "Can you speak Spanish?",
+        "answer": "Yes, I can speak a little Spanish.",
+        "context": "JHS_G1 Unit 3: Can & World Languages (L19-L26)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "Unit 3: Can & World Languages (L19-L26)",
+        "source": "borderlink_jhs_g1",
+        "textbook_units": {
+          "NC": "L2",
+          "NH": "U1, U3, U4",
+          "HG": "U1, U2, U5",
+          "OW": "L1, L2",
+          "BS": "U4, U5, U7",
+          "SU": "P1-P3, P5"
+        }
+      }
+    }
+  },
+  {
+    "id": "word_2019",
+    "english": "French",
+    "disambiguation": null,
+    "display_label": "French",
+    "part_of_speech": "noun",
+    "category": "05_schoollife",
+    "sub_category": "school_subject",
+    "ja_kanji": "フランス語",
+    "ja_hiragana": "ふらんすご",
+    "en_katakana": "フレンチ",
+    "ruby": [
+      {
+        "base": "フランス",
+        "ruby": ""
+      },
+      {
+        "base": "語",
+        "ruby": "ご"
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G1"
+    ],
+    "tags": [
+      "school_subject",
+      "jhs_g1"
+    ],
+    "lemma": "French",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A1",
+    "eiken": "5",
+    "three_hints": {
+      "category_hint": "It is a world language!",
+      "feature_hint": "The language spoken in France and parts of Canada ('Bonjour!')!",
+      "letter_hint": "It starts with 'F'."
+    },
+    "target_dialogues": [
+      {
+        "question": "Can she speak French?",
+        "answer": "Yes, she speaks French very well.",
+        "context": "JHS_G1 Unit 3: Can & World Languages (L19-L26)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "Unit 3: Can & World Languages (L19-L26)",
+        "source": "borderlink_jhs_g1",
+        "textbook_units": {
+          "NC": "L2",
+          "NH": "U1, U3, U4",
+          "HG": "U1, U2, U5",
+          "OW": "L1, L2",
+          "BS": "U4, U5, U7",
+          "SU": "P1-P3, P5"
+        }
+      }
+    }
+  },
+  {
+    "id": "word_2020",
+    "english": "Italian",
+    "disambiguation": null,
+    "display_label": "Italian",
+    "part_of_speech": "noun",
+    "category": "05_schoollife",
+    "sub_category": "school_subject",
+    "ja_kanji": "イタリア語",
+    "ja_hiragana": "いたりあご",
+    "en_katakana": "イタリアン",
+    "ruby": [
+      {
+        "base": "イタリア",
+        "ruby": ""
+      },
+      {
+        "base": "語",
+        "ruby": "ご"
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G1"
+    ],
+    "tags": [
+      "school_subject",
+      "jhs_g1"
+    ],
+    "lemma": "Italian",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A1",
+    "eiken": "5",
+    "three_hints": {
+      "category_hint": "It is a world language!",
+      "feature_hint": "The language spoken in Italy ('Ciao!' / 'Grazie!')!",
+      "letter_hint": "It starts with 'I'."
+    },
+    "target_dialogues": [
+      {
+        "question": "Do you know Italian?",
+        "answer": "Ciao is hello in Italian!",
+        "context": "JHS_G1 Unit 3: Can & World Languages (L19-L26)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "Unit 3: Can & World Languages (L19-L26)",
+        "source": "borderlink_jhs_g1",
+        "textbook_units": {
+          "NC": "L2",
+          "NH": "U1, U3, U4",
+          "HG": "U1, U2, U5",
+          "OW": "L1, L2",
+          "BS": "U4, U5, U7",
+          "SU": "P1-P3, P5"
+        }
+      }
+    }
+  },
+  {
+    "id": "word_2021",
+    "english": "saxophone",
+    "disambiguation": null,
+    "display_label": "saxophone",
+    "part_of_speech": "noun",
+    "category": "07_dailylife",
+    "sub_category": "instrument_tech",
+    "ja_kanji": "サックス（サクソフォン）",
+    "ja_hiragana": "さっくす",
+    "en_katakana": "サクソフォン",
+    "ruby": [
+      {
+        "base": "サックス",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G1"
+    ],
+    "tags": [
+      "instrument_tech",
+      "jhs_g1"
+    ],
+    "lemma": "saxophone",
+    "is_plural": false,
+    "article": "a",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A1",
+    "eiken": "5",
+    "three_hints": {
+      "category_hint": "It is a musical instrument!",
+      "feature_hint": "A shiny golden brass wind instrument popular in jazz and brass bands!",
+      "letter_hint": "It starts with 'S'."
+    },
+    "target_dialogues": [
+      {
+        "question": "What instrument can you play?",
+        "answer": "I can play the saxophone.",
+        "context": "JHS_G1 Unit 3: Can & World Languages (L19-L26)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "Unit 3: Can & World Languages (L19-L26)",
+        "source": "borderlink_jhs_g1",
+        "textbook_units": {
+          "NC": "L2",
+          "NH": "U1, U3, U4",
+          "HG": "U1, U2, U5",
+          "OW": "L1, L2",
+          "BS": "U4, U5, U7",
+          "SU": "P1-P3, P5"
+        }
+      }
+    },
+    "inflections": {
+      "plural": "saxophones"
+    }
+  },
+  {
+    "id": "word_2022",
+    "english": "windy",
+    "disambiguation": null,
+    "display_label": "windy",
+    "part_of_speech": "adjective",
+    "category": "12_nature",
+    "sub_category": "weather",
+    "ja_kanji": "風が強い",
+    "ja_hiragana": "かぜがつよい",
+    "en_katakana": "ウィンディ",
+    "ruby": [
+      {
+        "base": "風",
+        "ruby": "かぜ"
+      },
+      {
+        "base": "が",
+        "ruby": ""
+      },
+      {
+        "base": "強",
+        "ruby": "つよ"
+      },
+      {
+        "base": "い",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G1"
+    ],
+    "tags": [
+      "weather",
+      "jhs_g1"
+    ],
+    "lemma": "windy",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A1",
+    "eiken": "5",
+    "three_hints": {
+      "category_hint": "It describes the weather!",
+      "feature_hint": "The wind is blowing hard and trees are swaying!",
+      "letter_hint": "It starts with 'W'."
+    },
+    "target_dialogues": [
+      {
+        "question": "How is the weather today?",
+        "answer": "It is very windy outside.",
+        "context": "JHS_G1 Unit 3: Can & World Languages (L19-L26)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "Unit 3: Can & World Languages (L19-L26)",
+        "source": "borderlink_jhs_g1",
+        "textbook_units": {
+          "NC": "L2",
+          "NH": "U1, U3, U4",
+          "HG": "U1, U2, U5",
+          "OW": "L1, L2",
+          "BS": "U4, U5, U7",
+          "SU": "P1-P3, P5"
+        }
+      }
+    },
+    "inflections": {
+      "comparative": "windier",
+      "superlative": "windiest"
+    }
+  },
+  {
+    "id": "word_2023",
+    "english": "stormy",
+    "disambiguation": null,
+    "display_label": "stormy",
+    "part_of_speech": "adjective",
+    "category": "12_nature",
+    "sub_category": "weather",
+    "ja_kanji": "嵐の・荒れた天気の",
+    "ja_hiragana": "あらしの",
+    "en_katakana": "ストーミー",
+    "ruby": [
+      {
+        "base": "嵐",
+        "ruby": "あらし"
+      },
+      {
+        "base": "の",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G1"
+    ],
+    "tags": [
+      "weather",
+      "jhs_g1"
+    ],
+    "lemma": "stormy",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A1",
+    "eiken": "5",
+    "three_hints": {
+      "category_hint": "It describes severe weather!",
+      "feature_hint": "Heavy rain, strong wind, and thunder!",
+      "letter_hint": "It starts with 'S'."
+    },
+    "target_dialogues": [
+      {
+        "question": "How was the weather last night?",
+        "answer": "It was stormy with heavy rain.",
+        "context": "JHS_G1 Unit 3: Can & World Languages (L19-L26)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "Unit 3: Can & World Languages (L19-L26)",
+        "source": "borderlink_jhs_g1",
+        "textbook_units": {
+          "NC": "L2",
+          "NH": "U1, U3, U4",
+          "HG": "U1, U2, U5",
+          "OW": "L1, L2",
+          "BS": "U4, U5, U7",
+          "SU": "P1-P3, P5"
+        }
+      }
+    },
+    "inflections": {
+      "comparative": "stormier",
+      "superlative": "stormiest"
+    }
+  },
+  {
+    "id": "word_2024",
+    "english": "plays",
+    "disambiguation": null,
+    "display_label": "plays",
+    "part_of_speech": "verb",
+    "category": "01_action",
+    "sub_category": "present_verb",
+    "ja_kanji": "（スポーツ・楽器を）する・弾く［三単現］",
+    "ja_hiragana": "ぷれいず",
+    "en_katakana": "プレイズ",
+    "ruby": [
+      {
+        "base": "する・",
+        "ruby": ""
+      },
+      {
+        "base": "弾",
+        "ruby": "ひ"
+      },
+      {
+        "base": "く",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G1"
+    ],
+    "tags": [
+      "present_verb",
+      "jhs_g1"
+    ],
+    "lemma": "play",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A1",
+    "eiken": "5",
+    "three_hints": {
+      "category_hint": "It is a 3rd-person singular (-s) verb!",
+      "feature_hint": "Used after 'he' or 'she' for sports, games, or musical instruments!",
+      "letter_hint": "It starts with 'P'."
+    },
+    "target_dialogues": [
+      {
+        "question": "What does he do after school?",
+        "answer": "He plays the piano after school.",
+        "context": "JHS_G1 Unit 4: Third-Person Singular -s (L27-L30)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "Unit 4: Third-Person Singular -s (L27-L30)",
+        "source": "borderlink_jhs_g1",
+        "textbook_units": {
+          "NC": "L4",
+          "NH": "U6",
+          "HG": "U5",
+          "OW": "L3",
+          "BS": "U6",
+          "SU": "P5"
+        }
+      }
+    },
+    "inflections": {
+      "third_person": "plays",
+      "past": "played",
+      "past_participle": "played",
+      "gerund": "playing"
+    }
+  },
+  {
+    "id": "word_2025",
+    "english": "likes",
+    "disambiguation": null,
+    "display_label": "likes",
+    "part_of_speech": "verb",
+    "category": "01_action",
+    "sub_category": "present_verb",
+    "ja_kanji": "好む・好きである［三単現］",
+    "ja_hiragana": "らいくす",
+    "en_katakana": "ライクス",
+    "ruby": [
+      {
+        "base": "好",
+        "ruby": "す"
+      },
+      {
+        "base": "きである",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G1"
+    ],
+    "tags": [
+      "present_verb",
+      "jhs_g1"
+    ],
+    "lemma": "like",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A1",
+    "eiken": "5",
+    "three_hints": {
+      "category_hint": "It is a 3rd-person singular (-s) verb!",
+      "feature_hint": "Used after 'he', 'she', or a friend's name to tell what they love!",
+      "letter_hint": "It starts with 'L'."
+    },
+    "target_dialogues": [
+      {
+        "question": "What does Sara like?",
+        "answer": "Sara likes anime very much.",
+        "context": "JHS_G1 Unit 4: Third-Person Singular -s (L27-L30)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "Unit 4: Third-Person Singular -s (L27-L30)",
+        "source": "borderlink_jhs_g1",
+        "textbook_units": {
+          "NC": "L4",
+          "NH": "U6",
+          "HG": "U5",
+          "OW": "L3",
+          "BS": "U6",
+          "SU": "P5"
+        }
+      }
+    },
+    "inflections": {
+      "third_person": "likes",
+      "past": "liked",
+      "past_participle": "liked",
+      "gerund": "liking"
+    }
+  },
+  {
+    "id": "word_2026",
+    "english": "studies",
+    "disambiguation": null,
+    "display_label": "studies",
+    "part_of_speech": "verb",
+    "category": "01_action",
+    "sub_category": "present_verb",
+    "ja_kanji": "勉強する［三単現］",
+    "ja_hiragana": "すたでぃーず",
+    "en_katakana": "スタディーズ",
+    "ruby": [
+      {
+        "base": "勉強",
+        "ruby": "べんきょう"
+      },
+      {
+        "base": "する",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G1"
+    ],
+    "tags": [
+      "present_verb",
+      "jhs_g1"
+    ],
+    "lemma": "study",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A1",
+    "eiken": "5",
+    "three_hints": {
+      "category_hint": "It is a 3rd-person singular (-ies) verb!",
+      "feature_hint": "The 'y' in 'study' changes to '-ies' after 'he' or 'she'!",
+      "letter_hint": "It starts with 'S'."
+    },
+    "target_dialogues": [
+      {
+        "question": "What does your brother study?",
+        "answer": "He studies English every day.",
+        "context": "JHS_G1 Unit 4: Third-Person Singular -s (L27-L30)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "Unit 4: Third-Person Singular -s (L27-L30)",
+        "source": "borderlink_jhs_g1",
+        "textbook_units": {
+          "NC": "L4",
+          "NH": "U6",
+          "HG": "U5",
+          "OW": "L3",
+          "BS": "U6",
+          "SU": "P5"
+        }
+      }
+    },
+    "inflections": {
+      "third_person": "studies",
+      "past": "studied",
+      "past_participle": "studied",
+      "gerund": "studying"
+    }
+  },
+  {
+    "id": "word_2027",
+    "english": "makes",
+    "disambiguation": null,
+    "display_label": "makes",
+    "part_of_speech": "verb",
+    "category": "01_action",
+    "sub_category": "present_verb",
+    "ja_kanji": "作る［三単現］",
+    "ja_hiragana": "めいくす",
+    "en_katakana": "メイクス",
+    "ruby": [
+      {
+        "base": "作",
+        "ruby": "つく"
+      },
+      {
+        "base": "る",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G1"
+    ],
+    "tags": [
+      "present_verb",
+      "jhs_g1"
+    ],
+    "lemma": "make",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A1",
+    "eiken": "5",
+    "three_hints": {
+      "category_hint": "It is a 3rd-person singular (-s) verb!",
+      "feature_hint": "Used after 'he' or 'she' when creating or cooking something!",
+      "letter_hint": "It starts with 'M'."
+    },
+    "target_dialogues": [
+      {
+        "question": "Who makes breakfast in your family?",
+        "answer": "My father makes breakfast.",
+        "context": "JHS_G1 Unit 4: Third-Person Singular -s (L27-L30)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "Unit 4: Third-Person Singular -s (L27-L30)",
+        "source": "borderlink_jhs_g1",
+        "textbook_units": {
+          "NC": "L4",
+          "NH": "U6",
+          "HG": "U5",
+          "OW": "L3",
+          "BS": "U6",
+          "SU": "P5"
+        }
+      }
+    },
+    "inflections": {
+      "third_person": "makes",
+      "past": "made",
+      "past_participle": "made",
+      "gerund": "making"
+    }
+  },
+  {
+    "id": "word_2028",
+    "english": "gives",
+    "disambiguation": null,
+    "display_label": "gives",
+    "part_of_speech": "verb",
+    "category": "01_action",
+    "sub_category": "present_verb",
+    "ja_kanji": "与える・あげる［三単現］",
+    "ja_hiragana": "ぎぶず",
+    "en_katakana": "ギブズ",
+    "ruby": [
+      {
+        "base": "与",
+        "ruby": "あた"
+      },
+      {
+        "base": "える",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G1"
+    ],
+    "tags": [
+      "present_verb",
+      "jhs_g1"
+    ],
+    "lemma": "give",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A1",
+    "eiken": "5",
+    "three_hints": {
+      "category_hint": "It is a 3rd-person singular (-s) verb!",
+      "feature_hint": "Used after 'he' or 'she' when handing a gift or item to someone!",
+      "letter_hint": "It starts with 'G'."
+    },
+    "target_dialogues": [
+      {
+        "question": "What does she give her dog?",
+        "answer": "She gives her dog fresh water.",
+        "context": "JHS_G1 Unit 4: Third-Person Singular -s (L27-L30)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "Unit 4: Third-Person Singular -s (L27-L30)",
+        "source": "borderlink_jhs_g1",
+        "textbook_units": {
+          "NC": "L4",
+          "NH": "U6",
+          "HG": "U5",
+          "OW": "L3",
+          "BS": "U6",
+          "SU": "P5"
+        }
+      }
+    },
+    "inflections": {
+      "third_person": "gives",
+      "past": "gave",
+      "past_participle": "given",
+      "gerund": "giving"
+    }
+  },
+  {
+    "id": "word_2029",
+    "english": "yesterday",
+    "disambiguation": null,
+    "display_label": "yesterday",
+    "part_of_speech": "adverb",
+    "category": "10_calendar_time",
+    "sub_category": "calendar_concept",
+    "ja_kanji": "昨日（きのう）",
+    "ja_hiragana": "きのう",
+    "en_katakana": "イエスタデイ",
+    "ruby": [
+      {
+        "base": "昨日",
+        "ruby": "きのう"
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G1"
+    ],
+    "tags": [
+      "calendar_concept",
+      "jhs_g1"
+    ],
+    "lemma": "yesterday",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A1",
+    "eiken": "5",
+    "three_hints": {
+      "category_hint": "It is a time word used with past tense!",
+      "feature_hint": "The day before today!",
+      "letter_hint": "It starts with 'Y'."
+    },
+    "target_dialogues": [
+      {
+        "question": "What did you do yesterday?",
+        "answer": "I visited Kyoto yesterday.",
+        "context": "JHS_G1 Unit 5: Simple Past Tense (L31-L34)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "Unit 5: Simple Past Tense (L31-L34)",
+        "source": "borderlink_jhs_g1",
+        "textbook_units": {
+          "NC": "L6",
+          "NH": "U10, U11",
+          "HG": "U7",
+          "OW": "L4",
+          "BS": "U9",
+          "SU": "P9"
+        }
+      }
+    }
+  },
+  {
+    "id": "word_2030",
+    "english": "studied",
+    "disambiguation": null,
+    "display_label": "studied",
+    "part_of_speech": "verb",
+    "category": "01_action",
+    "sub_category": "past_verb",
+    "ja_kanji": "勉強した［過去・過去分詞］",
+    "ja_hiragana": "べんきょうした",
+    "en_katakana": "スタディード",
+    "ruby": [
+      {
+        "base": "勉強",
+        "ruby": "べんきょう"
+      },
+      {
+        "base": "した",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G1"
+    ],
+    "tags": [
+      "past_verb",
+      "jhs_g1"
+    ],
+    "lemma": "study",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A1",
+    "eiken": "5",
+    "three_hints": {
+      "category_hint": "It is a past-tense (-ied) verb!",
+      "feature_hint": "The past form of 'study' (y changes to -ied)!",
+      "letter_hint": "It starts with 'S'."
+    },
+    "target_dialogues": [
+      {
+        "question": "Did you study last night?",
+        "answer": "Yes, I studied math for two hours.",
+        "context": "JHS_G1 Unit 5: Simple Past Tense (L31-L34)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "Unit 5: Simple Past Tense (L31-L34)",
+        "source": "borderlink_jhs_g1",
+        "textbook_units": {
+          "NC": "L6",
+          "NH": "U10, U11",
+          "HG": "U7",
+          "OW": "L4",
+          "BS": "U9",
+          "SU": "P9"
+        }
+      }
+    },
+    "inflections": {
+      "third_person": "studies",
+      "past": "studied",
+      "past_participle": "studied",
+      "gerund": "studying"
+    }
+  },
+  {
+    "id": "word_2031",
+    "english": "helped",
+    "disambiguation": null,
+    "display_label": "helped",
+    "part_of_speech": "verb",
+    "category": "01_action",
+    "sub_category": "past_verb",
+    "ja_kanji": "手伝った・助けた",
+    "ja_hiragana": "てつだった",
+    "en_katakana": "ヘルプト",
+    "ruby": [
+      {
+        "base": "手伝",
+        "ruby": "てつだ"
+      },
+      {
+        "base": "った",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G1"
+    ],
+    "tags": [
+      "past_verb",
+      "jhs_g1"
+    ],
+    "lemma": "help",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A1",
+    "eiken": "5",
+    "three_hints": {
+      "category_hint": "It is a regular past-tense (-ed) verb!",
+      "feature_hint": "The past form of 'help'!",
+      "letter_hint": "It starts with 'H'."
+    },
+    "target_dialogues": [
+      {
+        "question": "What did you do at home?",
+        "answer": "I helped my mother cook dinner.",
+        "context": "JHS_G1 Unit 5: Simple Past Tense (L31-L34)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "Unit 5: Simple Past Tense (L31-L34)",
+        "source": "borderlink_jhs_g1",
+        "textbook_units": {
+          "NC": "L6",
+          "NH": "U10, U11",
+          "HG": "U7",
+          "OW": "L4",
+          "BS": "U9",
+          "SU": "P9"
+        }
+      }
+    },
+    "inflections": {
+      "third_person": "helps",
+      "past": "helped",
+      "past_participle": "helped",
+      "gerund": "helping"
+    }
+  },
+  {
+    "id": "word_2032",
+    "english": "washed",
+    "disambiguation": null,
+    "display_label": "washed",
+    "part_of_speech": "verb",
+    "category": "01_action",
+    "sub_category": "past_verb",
+    "ja_kanji": "洗った",
+    "ja_hiragana": "あらった",
+    "en_katakana": "ウォッシュト",
+    "ruby": [
+      {
+        "base": "洗",
+        "ruby": "あら"
+      },
+      {
+        "base": "った",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G1"
+    ],
+    "tags": [
+      "past_verb",
+      "jhs_g1"
+    ],
+    "lemma": "wash",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A1",
+    "eiken": "5",
+    "three_hints": {
+      "category_hint": "It is a regular past-tense (-ed) verb!",
+      "feature_hint": "The past form of 'wash'!",
+      "letter_hint": "It starts with 'W'."
+    },
+    "target_dialogues": [
+      {
+        "question": "Did you wash the dishes?",
+        "answer": "Yes, I washed all the dishes.",
+        "context": "JHS_G1 Unit 5: Simple Past Tense (L31-L34)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "Unit 5: Simple Past Tense (L31-L34)",
+        "source": "borderlink_jhs_g1",
+        "textbook_units": {
+          "NC": "L6",
+          "NH": "U10, U11",
+          "HG": "U7",
+          "OW": "L4",
+          "BS": "U9",
+          "SU": "P9"
+        }
+      }
+    },
+    "inflections": {
+      "third_person": "washes",
+      "past": "washed",
+      "past_participle": "washed",
+      "gerund": "washing"
+    }
+  },
+  {
+    "id": "word_2033",
+    "english": "eating",
+    "disambiguation": null,
+    "display_label": "eating",
+    "part_of_speech": "verb",
+    "category": "01_action",
+    "sub_category": "gerund",
+    "ja_kanji": "食べている・食べること",
+    "ja_hiragana": "たべている",
+    "en_katakana": "イーティング",
+    "ruby": [
+      {
+        "base": "食",
+        "ruby": "た"
+      },
+      {
+        "base": "べている",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G1"
+    ],
+    "tags": [
+      "gerund",
+      "jhs_g1"
+    ],
+    "lemma": "eat",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A1",
+    "eiken": "5",
+    "three_hints": {
+      "category_hint": "It is an -ing action form!",
+      "feature_hint": "The -ing form of 'eat', used in 'am/is/are eating'!",
+      "letter_hint": "It starts with 'E'."
+    },
+    "target_dialogues": [
+      {
+        "question": "What are you doing now?",
+        "answer": "I am eating lunch now.",
+        "context": "JHS_G1 Unit 6: Present Progressive -ing (L35-L40)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "Unit 6: Present Progressive -ing (L35-L40)",
+        "source": "borderlink_jhs_g1",
+        "textbook_units": {
+          "NC": "L5",
+          "NH": "U4, U8",
+          "HG": "U5, U7, U8",
+          "OW": "L5, L7",
+          "BS": "U3, U10",
+          "SU": "P8"
+        }
+      }
+    },
+    "inflections": {
+      "third_person": "eats",
+      "past": "ate",
+      "past_participle": "eaten",
+      "gerund": "eating"
+    }
+  },
+  {
+    "id": "word_2034",
+    "english": "writing",
+    "disambiguation": null,
+    "display_label": "writing",
+    "part_of_speech": "verb",
+    "category": "01_action",
+    "sub_category": "gerund",
+    "ja_kanji": "書いている・書くこと",
+    "ja_hiragana": "かいている",
+    "en_katakana": "ライティング",
+    "ruby": [
+      {
+        "base": "書",
+        "ruby": "か"
+      },
+      {
+        "base": "いている",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G1"
+    ],
+    "tags": [
+      "gerund",
+      "jhs_g1"
+    ],
+    "lemma": "write",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A1",
+    "eiken": "5",
+    "three_hints": {
+      "category_hint": "It is an -ing action form!",
+      "feature_hint": "The -ing form of 'write' (drop the silent 'e' and add -ing)!",
+      "letter_hint": "It starts with 'W'."
+    },
+    "target_dialogues": [
+      {
+        "question": "What is she doing?",
+        "answer": "She is writing a letter.",
+        "context": "JHS_G1 Unit 6: Present Progressive -ing (L35-L40)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "Unit 6: Present Progressive -ing (L35-L40)",
+        "source": "borderlink_jhs_g1",
+        "textbook_units": {
+          "NC": "L5",
+          "NH": "U4, U8",
+          "HG": "U5, U7, U8",
+          "OW": "L5, L7",
+          "BS": "U3, U10",
+          "SU": "P8"
+        }
+      }
+    },
+    "inflections": {
+      "third_person": "writes",
+      "past": "wrote",
+      "past_participle": "written",
+      "gerund": "writing"
+    }
+  },
+  {
+    "id": "word_2035",
+    "english": "making",
+    "disambiguation": null,
+    "display_label": "making",
+    "part_of_speech": "verb",
+    "category": "01_action",
+    "sub_category": "gerund",
+    "ja_kanji": "作っている・作ること",
+    "ja_hiragana": "つくっている",
+    "en_katakana": "メイキング",
+    "ruby": [
+      {
+        "base": "作",
+        "ruby": "つく"
+      },
+      {
+        "base": "っている",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G1"
+    ],
+    "tags": [
+      "gerund",
+      "jhs_g1"
+    ],
+    "lemma": "make",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A1",
+    "eiken": "5",
+    "three_hints": {
+      "category_hint": "It is an -ing action form!",
+      "feature_hint": "The -ing form of 'make' (drop 'e' and add -ing)!",
+      "letter_hint": "It starts with 'M'."
+    },
+    "target_dialogues": [
+      {
+        "question": "What are you making?",
+        "answer": "I am making a birthday cake.",
+        "context": "JHS_G1 Unit 6: Present Progressive -ing (L35-L40)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "Unit 6: Present Progressive -ing (L35-L40)",
+        "source": "borderlink_jhs_g1",
+        "textbook_units": {
+          "NC": "L5",
+          "NH": "U4, U8",
+          "HG": "U5, U7, U8",
+          "OW": "L5, L7",
+          "BS": "U3, U10",
+          "SU": "P8"
+        }
+      }
+    },
+    "inflections": {
+      "third_person": "makes",
+      "past": "made",
+      "past_participle": "made",
+      "gerund": "making"
+    }
+  },
+  {
+    "id": "word_2036",
+    "english": "watching movies",
+    "disambiguation": null,
+    "display_label": "watching movies",
+    "part_of_speech": "phrase",
+    "category": "01_action",
+    "sub_category": "gerund",
+    "ja_kanji": "映画を見ること",
+    "ja_hiragana": "えいがをみること",
+    "en_katakana": "ウォッチング ムービーズ",
+    "ruby": [
+      {
+        "base": "映画",
+        "ruby": "えいが"
+      },
+      {
+        "base": "を",
+        "ruby": ""
+      },
+      {
+        "base": "見",
+        "ruby": "み"
+      },
+      {
+        "base": "ること",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G1"
+    ],
+    "tags": [
+      "gerund",
+      "jhs_g1"
+    ],
+    "lemma": "watch",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 2,
+    "difficulty_tier": "intermediate",
+    "cefr": "A1",
+    "eiken": "5",
+    "three_hints": {
+      "category_hint": "It is a hobby phrase using -ing!",
+      "feature_hint": "Enjoying films at a theater or on TV!",
+      "letter_hint": "It starts with 'W'."
+    },
+    "target_dialogues": [
+      {
+        "question": "What do you like doing?",
+        "answer": "I like watching movies.",
+        "context": "JHS_G1 Unit 6: Present Progressive -ing (L35-L40)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "Unit 6: Present Progressive -ing (L35-L40)",
+        "source": "borderlink_jhs_g1",
+        "textbook_units": {
+          "NC": "L5",
+          "NH": "U4, U8",
+          "HG": "U5, U7, U8",
+          "OW": "L5, L7",
+          "BS": "U3, U10",
+          "SU": "P8"
+        }
+      }
+    }
+  },
+  {
+    "id": "word_2037",
+    "english": "letter",
+    "disambiguation": null,
+    "display_label": "letter",
+    "part_of_speech": "noun",
+    "category": "05_schoollife",
+    "sub_category": "stationery",
+    "ja_kanji": "手紙・文字",
+    "ja_hiragana": "てがみ",
+    "en_katakana": "レター",
+    "ruby": [
+      {
+        "base": "手紙",
+        "ruby": "てがみ"
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G1"
+    ],
+    "tags": [
+      "stationery",
+      "jhs_g1"
+    ],
+    "lemma": "letter",
+    "is_plural": false,
+    "article": "a",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A1",
+    "eiken": "5",
+    "three_hints": {
+      "category_hint": "It is something you write and send!",
+      "feature_hint": "A message you write on paper and put in an envelope, or a character like A, B, C!",
+      "letter_hint": "It starts with 'L'."
+    },
+    "target_dialogues": [
+      {
+        "question": "What are you writing?",
+        "answer": "I'm writing a letter to my grandmother.",
+        "context": "JHS_G1 Unit 6: Present Progressive -ing (L35-L40)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "Unit 6: Present Progressive -ing (L35-L40)",
+        "source": "borderlink_jhs_g1",
+        "textbook_units": {
+          "NC": "L5",
+          "NH": "U4, U8",
+          "HG": "U5, U7, U8",
+          "OW": "L5, L7",
+          "BS": "U3, U10",
+          "SU": "P8"
+        }
+      }
+    },
+    "inflections": {
+      "plural": "letters"
+    }
+  },
+  {
+    "id": "word_2038",
+    "english": "favorite character",
+    "disambiguation": null,
+    "display_label": "favorite character",
+    "part_of_speech": "noun",
+    "category": "07_dailylife",
+    "sub_category": "instrument_tech",
+    "ja_kanji": "お気に入りのキャラクター",
+    "ja_hiragana": "おきにいりのきゃらくたー",
+    "en_katakana": "フェイバリット キャラクター",
+    "ruby": [
+      {
+        "base": "お",
+        "ruby": ""
+      },
+      {
+        "base": "気",
+        "ruby": "き"
+      },
+      {
+        "base": "に",
+        "ruby": ""
+      },
+      {
+        "base": "入",
+        "ruby": "い"
+      },
+      {
+        "base": "りのキャラクター",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G1"
+    ],
+    "tags": [
+      "instrument_tech",
+      "jhs_g1"
+    ],
+    "lemma": "favorite character",
+    "is_plural": false,
+    "article": "a",
+    "syllable_count": 2,
+    "difficulty_tier": "intermediate",
+    "cefr": "A1",
+    "eiken": "5",
+    "three_hints": {
+      "category_hint": "It is a debate & conversation topic!",
+      "feature_hint": "The character from anime, games, or books that you love the most!",
+      "letter_hint": "It starts with 'F'."
+    },
+    "target_dialogues": [
+      {
+        "question": "Who is your favorite character?",
+        "answer": "My favorite character is Doraemon.",
+        "context": "JHS_G1 Unit 7: Opinion & Reason Debate (Doc 13 G1)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "Unit 7: Opinion & Reason Debate (Doc 13 G1)",
+        "source": "borderlink_jhs_g1",
+        "textbook_units": {
+          "NC": "L1-L6",
+          "NH": "U1-U10",
+          "HG": "U1-U8",
+          "OW": "L1-L5",
+          "BS": "U1-U10",
+          "SU": "P1-P9"
+        }
+      }
+    }
+  },
+  {
+    "id": "word_2039",
+    "english": "detailed",
+    "disambiguation": null,
+    "display_label": "detailed",
+    "part_of_speech": "adjective",
+    "category": "02_state",
+    "sub_category": "impression",
+    "ja_kanji": "詳しい・詳細な",
+    "ja_hiragana": "くわしい",
+    "en_katakana": "ディテイルド",
+    "ruby": [
+      {
+        "base": "詳",
+        "ruby": "くわ"
+      },
+      {
+        "base": "しい",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G1"
+    ],
+    "tags": [
+      "impression",
+      "jhs_g1"
+    ],
+    "lemma": "detailed",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A1",
+    "eiken": "5",
+    "three_hints": {
+      "category_hint": "It is an academic & debate adjective!",
+      "feature_hint": "Giving lots of clear facts and specific examples!",
+      "letter_hint": "It starts with 'D'."
+    },
+    "target_dialogues": [
+      {
+        "question": "Can you give a reason?",
+        "answer": "Please give a detailed explanation.",
+        "context": "JHS_G1 Unit 7: Opinion & Reason Debate (Doc 13 G1)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "Unit 7: Opinion & Reason Debate (Doc 13 G1)",
+        "source": "borderlink_jhs_g1",
+        "textbook_units": {
+          "NC": "L1-L6",
+          "NH": "U1-U10",
+          "HG": "U1-U8",
+          "OW": "L1-L5",
+          "BS": "U1-U10",
+          "SU": "P1-P9"
+        }
+      }
+    }
+  },
+  {
+    "id": "word_2040",
+    "english": "useful",
+    "disambiguation": null,
+    "display_label": "useful",
+    "part_of_speech": "adjective",
+    "category": "02_state",
+    "sub_category": "impression",
+    "ja_kanji": "役に立つ・便利な",
+    "ja_hiragana": "やくにたつ",
+    "en_katakana": "ユースフル",
+    "ruby": [
+      {
+        "base": "役",
+        "ruby": "やく"
+      },
+      {
+        "base": "に",
+        "ruby": ""
+      },
+      {
+        "base": "立",
+        "ruby": "た"
+      },
+      {
+        "base": "つ",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G1"
+    ],
+    "tags": [
+      "impression",
+      "jhs_g1"
+    ],
+    "lemma": "useful",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A1",
+    "eiken": "5",
+    "three_hints": {
+      "category_hint": "It is a word for giving a reason in debate!",
+      "feature_hint": "Helpful and practical for solving problems or doing work!",
+      "letter_hint": "It starts with 'U'."
+    },
+    "target_dialogues": [
+      {
+        "question": "Why do you like this dictionary?",
+        "answer": "Because it is very useful!",
+        "context": "JHS_G1 Unit 7: Opinion & Reason Debate (Doc 13 G1)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G1": {
+        "card_image": "",
+        "unit": "Unit 7: Opinion & Reason Debate (Doc 13 G1)",
+        "source": "borderlink_jhs_g1",
+        "textbook_units": {
+          "NC": "L1-L6",
+          "NH": "U1-U10",
+          "HG": "U1-U8",
+          "OW": "L1-L5",
+          "BS": "U1-U10",
+          "SU": "P1-P9"
+        }
+      }
+    },
+    "inflections": {
+      "comparative": "more useful",
+      "superlative": "most useful"
+    }
+  }
+]

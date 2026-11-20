@@ -3,40 +3,12 @@ import { useClassroom } from '../../context/ClassroomContext';
 import { useVocabulary } from '../../context/VocabularyContext';
 import { useAudio } from '../../context/AudioContext';
 import { useLanguage } from '../../context/LanguageContext';
-import { CategoryKey } from '@data/types';
 import { ChevronLeft, ChevronRight, SlidersHorizontal } from 'lucide-react';
-import { WordFilterModal } from './WordFilterModal';
 
-const CATEGORIES: { key: CategoryKey; labelEn: string; labelJa: string }[] = [
-  { key: '01_action', labelEn: 'Actions', labelJa: '動作・アクション' },
-  { key: '02_state', labelEn: 'Feelings', labelJa: 'きもち・状態' },
-  { key: '03_fooddrink', labelEn: 'Food & Drink', labelJa: '食べ物・飲み物' },
-  { key: '04_number', labelEn: 'Numbers', labelJa: '数字・数' },
-  { key: '05_schoollife', labelEn: 'School', labelJa: '学校・文房具' },
-  { key: '06_facility', labelEn: 'Town & Jobs', labelJa: '町・仕事・施設' },
-  { key: '07_dailylife', labelEn: 'Daily Life', labelJa: '日常生活' },
-  { key: '08_sports', labelEn: 'Sports', labelJa: 'スポーツ' },
-  { key: '09_color_shape', labelEn: 'Colors & Shapes', labelJa: '色・形' },
-  { key: '10_calendar_time', labelEn: 'Days & Months', labelJa: '月・曜日・時間' },
-  { key: '11_animals', labelEn: 'Animals', labelJa: '動物' },
-  { key: '12_nature', labelEn: 'Nature', labelJa: '自然・天気' },
-  { key: '13_position', labelEn: 'Directions', labelJa: '位置・方向' },
-  { key: '14_body_family', labelEn: 'Body & Family', labelJa: '体・家族' },
-  { key: '15_festalday', labelEn: 'Holidays', labelJa: '季節・行事' },
-  { key: '16_alphabet', labelEn: 'Alphabet', labelJa: 'アルファベット' },
-];
+import { VOCAB_CATEGORIES, formatCompactUnitTitle } from '../../data/vocabMetadata';
 
-function cleanUnitTitle(u: string): string {
-  const match = u.match(/^Unit\s+(\d+):\s*(.+)/i);
-  if (!match) return u;
-  const num = `U${match[1]}`;
-  let title = match[2].trim();
-  const paren = title.match(/^([^(]+)\s*\((.+)\)$/);
-  if (paren) {
-    title = paren[1].trim();
-  }
-  return `${num}: ${title}`;
-}
+const CATEGORIES = VOCAB_CATEGORIES;
+const cleanUnitTitle = formatCompactUnitTitle;
 
 export const UnitCategoryBar: React.FC = () => {
   const { 
@@ -197,7 +169,6 @@ export const UnitCategoryBar: React.FC = () => {
           </div>
         )}
       </div>
-      <WordFilterModal />
     </div>
   );
 };

@@ -1,16 +1,59 @@
 {
-  "version": "2349b0f7a985",
-  "coreHash": "d0f9845ab235",
-  "cluesHash": "bb7a5a8cf671",
-  "wordCount": 1093,
-  "multiGradeWordCount": 335,
-  "gradeCounts": {
-    "ES_G3": 240,
-    "ES_G4": 193,
-    "ES_G5": 384,
-    "ES_G6": 621,
-    "ES_G1": 63,
-    "ES_G2": 68
+  "version": "aba4ec4a9a26",
+  "coreHash": "76cf3fbfe7a4",
+  "cluesHash": "96013d530651",
+  "hintsBankHash": "1ad8d7efbbae",
+  "packs": {
+    "jhs_g1": {
+      "url": "/data/packs/jhs_g1.json",
+      "hash": "1a1a7779afbd",
+      "wordCount": 40,
+      "grades": [
+        "JHS_G1"
+      ]
+    },
+    "jhs_g2": {
+      "url": "/data/packs/jhs_g2.json",
+      "hash": "3653b5a9c417",
+      "wordCount": 42,
+      "grades": [
+        "JHS_G2"
+      ]
+    },
+    "jhs_g3": {
+      "url": "/data/packs/jhs_g3.json",
+      "hash": "30703556fe2f",
+      "wordCount": 45,
+      "grades": [
+        "JHS_G3"
+      ]
+    },
+    "sdgs": {
+      "url": "/data/packs/sdgs.json",
+      "hash": "4ed89f8270da",
+      "wordCount": 25,
+      "grades": [
+        "ES_G5",
+        "ES_G6",
+        "JHS_G1",
+        "JHS_G2",
+        "JHS_G3"
+      ]
+    }
   },
-  "generatedAt": "2026-11-11T02:53:37.755Z"
+  "wordCount": 1108,
+  "packWordCount": 152,
+  "multiGradeWordCount": 353,
+  "gradeCounts": {
+    "ES_G3": 255,
+    "ES_G4": 222,
+    "ES_G5": 413,
+    "ES_G6": 646,
+    "ES_G1": 63,
+    "ES_G2": 68,
+    "JHS_G2": 70,
+    "JHS_G1": 65,
+    "JHS_G3": 70
+  },
+  "generatedAt": "2026-11-20T01:09:46.498Z"
 }

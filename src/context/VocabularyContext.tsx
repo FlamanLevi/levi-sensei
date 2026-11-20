@@ -40,11 +40,21 @@ export interface VocabularyClueEntry {
   target_sentences?: VocabularyItem['target_sentences'];
 }
 
+interface VocabularyPackMeta {
+  url: string;
+  hash: string;
+  wordCount: number;
+  grades: GradeLevel[];
+}
+
 interface VocabularyManifest {
   version: string;
   coreHash: string;
   cluesHash: string;
+  hintsBankHash?: string;
+  packs?: Record<string, VocabularyPackMeta>;
   wordCount: number;
+  packWordCount?: number;
 }
 
 const VOCAB_CACHE_NAME = 'levi-sensei-vocab-v1';
@@ -56,16 +66,36 @@ const LS_CLUES_HASH_KEY = 'levi_vocab_clues_hash';
 
 let cachedCluesData: Record<string, VocabularyClueEntry> | null = null;
 let cluesFetchPromise: Promise<Record<string, VocabularyClueEntry>> | null = null;
+let latestManifestCluesHash: string | null = null;
+let latestManifestPacks: Record<string, VocabularyPackMeta> | null = null;
+const loadedPackIds = new Set<string>();
+
+function buildDerivedAudioSuite(w: VocabularyItem): Record<string, string> | undefined {
+  const sf = w.sound_file || '';
+  const existing = w.audio_suite || {};
+  if (sf.endsWith('_jenny.mp3')) {
+    return {
+      jenny: sf,
+      andrew: sf.replace(/_jenny\.mp3$/, '_andrew.mp3'),
+      ana: sf.replace(/_jenny\.mp3$/, '_ana.mp3'),
+      ja: sf.replace(/_jenny\.mp3$/, '_nanami.mp3'),
+      ...existing
+    };
+  }
+  return Object.keys(existing).length > 0 ? existing : undefined;
+}
 
 function normalizeVocabularyItem(w: VocabularyItem, clue?: VocabularyClueEntry): VocabularyItem {
   const enTrimmed = (w.english || '').trim();
   const alphaOnly = enTrimmed.replace(/[^a-zA-Z]/g, '');
-  const suite = w.audio_suite || {};
+  const audioSuite = buildDerivedAudioSuite(w);
+  const suite = audioSuite || {};
   const mediaByGradeImage = w.media_by_grade
     ? Object.values(w.media_by_grade).find(m => m?.card_image)?.card_image || ''
     : '';
   return {
     ...w,
+    audio_suite: audioSuite,
     primary_audio: w.primary_audio || w.sound_file || suite.en_jenny || suite.jenny || '',
     primary_image: w.primary_image || w.card_image || w.hwg_card_illust || mediaByGradeImage || w.hwg_card_full || '',
     letter_count: w.letter_count ?? (alphaOnly.length || enTrimmed.length),
@@ -99,7 +129,8 @@ async function fetchJsonWithCache<T>(
     }
   }
 
-  const res = await fetch(url);
+  const fetchUrl = expectedHash ? `${url}?v=${encodeURIComponent(expectedHash)}` : url;
+  const res = await fetch(fetchUrl, expectedHash ? { cache: 'no-cache' } : undefined);
   if (!res.ok) throw new Error(`HTTP status ${res.status} for ${url}`);
 
   if (canUseCache) {
@@ -117,12 +148,15 @@ async function fetchJsonWithCache<T>(
   return (await res.json()) as T;
 }
 
-export async function loadVocabularyCluesMap(): Promise<Record<string, VocabularyClueEntry>> {
+export async function loadVocabularyCluesMap(expectedHashOverride?: string | null): Promise<Record<string, VocabularyClueEntry>> {
   if (cachedCluesData) return cachedCluesData;
   if (!cluesFetchPromise) {
     cluesFetchPromise = (async () => {
       try {
-        const expectedHash = typeof window !== 'undefined' ? localStorage.getItem(LS_CLUES_HASH_KEY) : null;
+        const expectedHash =
+          expectedHashOverride ??
+          latestManifestCluesHash ??
+          (typeof window !== 'undefined' ? localStorage.getItem(LS_CLUES_HASH_KEY) : null);
         const data = await fetchJsonWithCache<Record<string, VocabularyClueEntry>>(
           CLUES_URL,
           expectedHash,
@@ -248,6 +282,7 @@ export const VocabularyProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         const needsFreshCore = !servedFromCache || (manifest?.coreHash && manifest.coreHash !== storedCoreHash);
 
         if (manifest?.cluesHash) {
+          latestManifestCluesHash = manifest.cluesHash;
           const storedCluesHash = localStorage.getItem(LS_CLUES_HASH_KEY);
           if (storedCluesHash && storedCluesHash !== manifest.cluesHash) {
             cachedCluesData = null;
@@ -292,34 +327,56 @@ export const VocabularyProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     };
   }, [ensureCluesLoaded]);
 
-  // 1. Filter by Active Grade
-  const gradeWords = useMemo(() => {
+  // 1. Filter by Active Grade (quarantine tier='expanded' world flags from default grade pools)
+  const allGradeWordsIncludingExpanded = useMemo(() => {
     return allWords.filter(w => w.grades && w.grades.includes(activeGrade));
   }, [allWords, activeGrade]);
 
-  // 2. Discover available units for this grade with natural numerical sorting
+  const gradeWords = useMemo(() => {
+    return allGradeWordsIncludingExpanded.filter(w => w.tier !== 'expanded');
+  }, [allGradeWordsIncludingExpanded]);
+
+  // 2. Discover available units for this grade with natural numerical sorting (includes opt-in World Flags unit)
   const availableUnits = useMemo(() => {
     const unitsSet = new Set<string>();
-    gradeWords.forEach(w => {
+    allGradeWordsIncludingExpanded.forEach(w => {
       const gm = w.media_by_grade && w.media_by_grade[activeGrade];
       if (gm && gm.unit) {
         unitsSet.add(gm.unit);
       }
+      if (gm && Array.isArray(gm.additional_units)) {
+        gm.additional_units.forEach(u => {
+          if (u) unitsSet.add(u);
+        });
+      }
     });
     return Array.from(unitsSet).sort((a, b) => {
-      const matchA = a.match(/^Unit\s+(\d+)/i);
-      const matchB = b.match(/^Unit\s+(\d+)/i);
-      if (matchA && matchB) {
-        return parseInt(matchA[1], 10) - parseInt(matchB[1], 10);
-      }
+      const getRank = (u: string): [number, number, number] => {
+        if (/^World Flags/i.test(u)) return [4, 0, 0];
+        const sdgMatch = u.match(/^SDGs\s+Unit\s+(\d+)/i);
+        if (sdgMatch) return [3, parseInt(sdgMatch[1], 10), 0];
+        if (/Bonus\s*&\s*Extra/i.test(u)) return [2, 99, 0];
+        const unitBonusMatch = u.match(/^Unit\s+(\d+)\s+Bonus/i);
+        if (unitBonusMatch) return [1, parseInt(unitBonusMatch[1], 10), 1];
+        const unitMatch = u.match(/^Unit\s+(\d+)/i);
+        if (unitMatch) return [1, parseInt(unitMatch[1], 10), 0];
+        return [2, 0, 0];
+      };
+      const [ra1, ra2, ra3] = getRank(a);
+      const [rb1, rb2, rb3] = getRank(b);
+      if (ra1 !== rb1) return ra1 - rb1;
+      if (ra2 !== rb2) return ra2 - rb2;
+      if (ra3 !== rb3) return ra3 - rb3;
       return a.localeCompare(b);
     });
-  }, [gradeWords, activeGrade]);
+  }, [allGradeWordsIncludingExpanded, activeGrade]);
 
-  // Cumulative words learned up to and including activeGrade
+  // Cumulative words learned up to and including activeGrade (core curriculum only)
   const cumulativeGradeWords = useMemo(() => {
     const allowedGrades = CUMULATIVE_GRADES_MAP[activeGrade] || [activeGrade];
-    return allWords.filter(w => w.grades && w.grades.some(g => allowedGrades.includes(g as GradeLevel)));
+    return allWords.filter(
+      w => w.tier !== 'expanded' && w.grades && w.grades.some(g => allowedGrades.includes(g as GradeLevel))
+    );
   }, [allWords, activeGrade]);
 
   // 3. Raw Filtered Words (Grade + Category + Unit + Search before exclusion)
@@ -327,23 +384,28 @@ export const VocabularyProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     const isUnitLocked = (selectedUnits && selectedUnits.length > 0) || activeUnit !== 'ALL';
     const isCategoryOrSearchActive = activeCategory !== 'ALL' || searchQuery.trim().length > 0;
 
-    // If a specific textbook unit is selected, stay strictly within activeGrade.
-    // If browsing a Thematic Category (e.g. Food, Animals) or Searching with Unit='ALL',
-    // include all words learned up through activeGrade!
-    const basePool = (!isUnitLocked && isCategoryOrSearchActive) ? cumulativeGradeWords : gradeWords;
+    // If a specific textbook unit is selected, allow expanded words (e.g. "World Flags: Countries of the World")
+    // while keeping "All Units" / category / search pools strictly core-curriculum.
+    const basePool = isUnitLocked
+      ? allGradeWordsIncludingExpanded
+      : isCategoryOrSearchActive
+      ? cumulativeGradeWords
+      : gradeWords;
 
     return basePool.filter(w => {
       // Category match
       if (activeCategory !== 'ALL' && w.category !== activeCategory) {
         return false;
       }
-      // Multi-Unit or Single-Unit match (official textbook chapter)
+      // Multi-Unit or Single-Unit match (official textbook chapter + additional_units)
       if (selectedUnits && selectedUnits.length > 0) {
         const gm = w.media_by_grade && w.media_by_grade[activeGrade];
-        if (!gm || !gm.unit || !selectedUnits.includes(gm.unit)) return false;
+        const wordUnits = gm ? [gm.unit, ...(gm.additional_units || [])].filter(Boolean) as string[] : [];
+        if (!wordUnits.some(u => selectedUnits.includes(u))) return false;
       } else if (activeUnit !== 'ALL') {
         const gm = w.media_by_grade && w.media_by_grade[activeGrade];
-        if (!gm || gm.unit !== activeUnit) return false;
+        const wordUnits = gm ? [gm.unit, ...(gm.additional_units || [])].filter(Boolean) as string[] : [];
+        if (!wordUnits.includes(activeUnit)) return false;
       }
       // Search query
       if (searchQuery.trim()) {
@@ -355,7 +417,7 @@ export const VocabularyProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       }
       return true;
     });
-  }, [gradeWords, cumulativeGradeWords, activeCategory, activeUnit, selectedUnits, searchQuery, activeGrade]);
+  }, [allGradeWordsIncludingExpanded, gradeWords, cumulativeGradeWords, activeCategory, activeUnit, selectedUnits, searchQuery, activeGrade]);
 
   // 4. Reset exclusions whenever curriculum unit, grade, category, or selected bundles change
   useEffect(() => {
@@ -469,7 +531,9 @@ export const VocabularyProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     return allWords.filter(w => {
       if (!w.grades || !w.grades.includes(targetGrade)) return false;
       const gm = w.media_by_grade && w.media_by_grade[targetGrade];
-      return Boolean(gm && gm.unit && units.includes(gm.unit));
+      if (!gm) return false;
+      const wordUnits = [gm.unit, ...(gm.additional_units || [])].filter(Boolean) as string[];
+      return wordUnits.some(u => units.includes(u));
     });
   }, [allWords, activeGrade]);
 
@@ -479,16 +543,16 @@ export const VocabularyProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       return filteredWords.length > 0 ? filteredWords : gradeWords;
     }
     if (scope === 'GRADE_ALL') {
-      return allWords.filter(w => w.grades && w.grades.includes(targetGrade));
+      return allWords.filter(w => w.tier !== 'expanded' && w.grades && w.grades.includes(targetGrade));
     }
     if (scope === 'PRIOR_REVIEW') {
       const priorGrades = PRIOR_GRADES_MAP[targetGrade] || [];
       if (priorGrades.length === 0) return gradeWords;
-      return allWords.filter(w => w.grades && w.grades.some(g => priorGrades.includes(g as GradeLevel)));
+      return allWords.filter(w => w.tier !== 'expanded' && w.grades && w.grades.some(g => priorGrades.includes(g as GradeLevel)));
     }
     if (scope === 'ALL_ELEMENTARY') {
       const cumGrades: GradeLevel[] = ['ES_G1', 'ES_G2', 'ES_G3', 'ES_G4', 'ES_G5', 'ES_G6'];
-      return allWords.filter(w => w.grades && w.grades.some(g => cumGrades.includes(g as GradeLevel)));
+      return allWords.filter(w => w.tier !== 'expanded' && w.grades && w.grades.some(g => cumGrades.includes(g as GradeLevel)));
     }
     return gradeWords;
   }, [allWords, filteredWords, gradeWords, activeGrade]);

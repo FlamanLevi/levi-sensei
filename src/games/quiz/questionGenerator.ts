@@ -3,6 +3,9 @@ import { PromptType, QuizOption, QuizQuestion, QuizHostSettings, OPTION_STYLES }
 import { getCluePoolsForWord } from '@/games/three_hints/utils';
 import { arrangeOptions } from './optionOrder';
 
+import { resolveCardImage } from '@/utils/cardUtils';
+import { getWordSemanticMeta } from '@/data/vocabMetadata';
+
 // Helper to shuffle arrays
 function shuffle<T>(array: T[]): T[] {
   const result = [...array];
@@ -13,43 +16,15 @@ function shuffle<T>(array: T[]): T[] {
   return result;
 }
 
-const LOWER_GRADE_FALLBACK_ORDER: GradeLevel[] = ['ES_G4', 'ES_G3', 'ES_G2', 'ES_G1', 'ES_G5', 'ES_G6', 'JHS_G1', 'JHS_G2', 'JHS_G3'];
-const UPPER_GRADE_FALLBACK_ORDER: GradeLevel[] = ['ES_G6', 'ES_G5', 'JHS_G1', 'JHS_G2', 'JHS_G3', 'ES_G4', 'ES_G3', 'ES_G2', 'ES_G1'];
-
-const CATEGORY_HUNT_LABELS: Record<string, { icon: string; ja: string; en: string }> = {
-  '01_action': { icon: '🏃', ja: '動き・アクション', en: 'Action / Verb' },
-  '02_state': { icon: '✨', ja: '様子・気持ち', en: 'Feeling / State' },
-  '03_food': { icon: '🍎', ja: '食べ物・飲み物', en: 'Food & Drink' },
-  '03_fooddrink': { icon: '🍎', ja: '食べ物・飲み物', en: 'Food & Drink' },
-  '04_number': { icon: '🔢', ja: '数・数字', en: 'Number' },
-  '05_school': { icon: '🏫', ja: '学校・文房具', en: 'School & Stationery' },
-  '05_schoollife': { icon: '🏫', ja: '学校・文房具', en: 'School Life' },
-  '06_facility': { icon: '🗺️', ja: '場所・建物', en: 'Place & Building' },
-  '07_dailylife': { icon: '🏠', ja: '身の回りのもの・生活', en: 'Daily Life' },
-  '08_sport': { icon: '⚽', ja: 'スポーツ・遊び', en: 'Sport & Game' },
-  '08_sports': { icon: '⚽', ja: 'スポーツ・遊び', en: 'Sport & Game' },
-  '09_colorshape': { icon: '🎨', ja: '色・形', en: 'Color & Shape' },
-  '09_color_shape': { icon: '🎨', ja: '色・形', en: 'Color & Shape' },
-  '10_calendar_time': { icon: '📅', ja: '曜日・月・季節・時間', en: 'Calendar & Time' },
-  '11_animal': { icon: '🐾', ja: '動物・生き物', en: 'Animal & Living Thing' },
-  '11_animals': { icon: '🐾', ja: '動物・生き物', en: 'Animal & Living Thing' },
-  '12_nature': { icon: '🌿', ja: '自然・天気', en: 'Nature & Weather' },
-  '13_position': { icon: '🧭', ja: '位置・方向', en: 'Position & Direction' },
-  '14_body': { icon: '🖐️', ja: '体・家族・人', en: 'Body & Family' },
-  '14_body_family': { icon: '🖐️', ja: '体・家族・人', en: 'Body & Family' },
-  '15_festalday': { icon: '🎉', ja: '行事・イベント', en: 'Event & Festival' },
-};
-
 function getEffectiveCategoryKey(word: VocabularyItem): string {
-  if (word.tags?.includes('job')) return 'job_special';
+  if (word.sub_category === 'job' || word.tags?.includes('job')) return 'job_special';
+  if (word.sub_category === 'country' || word.tags?.includes('country')) return 'country_special';
   return word.category || '';
 }
 
 function getCategoryHuntMeta(word: VocabularyItem): { icon: string; ja: string; en: string } | null {
-  if (word.tags?.includes('job')) {
-    return { icon: '👩‍⚕️', ja: '職業・将来の夢', en: 'Job / Occupation' };
-  }
-  return CATEGORY_HUNT_LABELS[word.category] || null;
+  const meta = getWordSemanticMeta(word);
+  return meta ? { icon: meta.icon, ja: meta.ja, en: meta.en } : null;
 }
 
 const PHONICS_CHUNK_FAMILIES: { chunks: string[]; distractors: Record<string, string[]> }[] = [
@@ -262,13 +237,14 @@ export function buildShortClozePrompt(word: VocabularyItem): { promptText: strin
   }
 
   if (!maskedSentence) {
-    // Clean pedagogical fallback template based on part of speech
+    // Clean pedagogical fallback template based on part of speech and article
     if (word.part_of_speech === 'verb') {
       maskedSentence = `"Let's [ ? ] together!"`;
     } else if (word.part_of_speech === 'adjective') {
       maskedSentence = `"It looks very [ ? ]!"`;
     } else {
-      maskedSentence = `"I can see a [ ? ]."`;
+      const articlePrefix = word.article ? `${word.article} ` : '';
+      maskedSentence = `"I can see ${articlePrefix}[ ? ]."`;
     }
   }
 
@@ -295,43 +271,7 @@ function pickRotatingVoiceSound(word: VocabularyItem, index: number): string | u
 }
 
 export function resolveWordImage(word: VocabularyItem, grade?: GradeLevel): string {
-  let imagePath = '';
-
-  // 1. Prefer active student grade's pure illustration (without text label)
-  if (grade && word.media_by_grade?.[grade]) {
-    const gm = word.media_by_grade[grade]!;
-    imagePath = gm.card_image || '';
-  }
-
-  // 2. Bracket-aware cross-grade fallback if active grade has no entry (GEMINI.md §1)
-  if (!imagePath && word.media_by_grade) {
-    const isUpper = grade === 'ES_G5' || grade === 'ES_G6' || grade?.startsWith('JHS_');
-    const fallbackOrder = isUpper ? UPPER_GRADE_FALLBACK_ORDER : LOWER_GRADE_FALLBACK_ORDER;
-    for (const fallbackGrade of fallbackOrder) {
-      const gm = word.media_by_grade[fallbackGrade];
-      if (gm?.card_image) {
-        imagePath = gm.card_image;
-        break;
-      }
-    }
-  }
-
-  // 3. Root fallback
-  if (!imagePath) {
-    imagePath = word.hwg_card_illust || word.primary_image || word.card_image || '';
-  }
-
-  if (!imagePath) return '';
-
-  // 4. Normalize labeled flashcards (`*_1_ce.*` / `*_full.*`) to pure illustrations (`*_1_c.*` / `*_illust.*`)
-  // so quiz prompts never leak the English target word on the card!
-  imagePath = imagePath
-    .replace(/_1_ce\.(png|webp|svg)$/i, '_1_c.$1')
-    .replace(/cards\/full\/([^/]+)_full\.(png|webp)$/i, 'cards/illustration/$1_illust.$2');
-
-  if (imagePath.startsWith('http') || imagePath.startsWith('/')) return imagePath;
-  if (imagePath.startsWith('cards/')) return `/${imagePath}`;
-  return `/media/images/${imagePath}`;
+  return resolveCardImage(word, 'picture_only', grade) || '';
 }
 
 export function generateQuizQuestions(
@@ -373,7 +313,8 @@ export function generateQuizQuestions(
     if (!targetImage) {
       availablePromptTypes = availablePromptTypes.filter(p => p !== 'IMAGE_ONLY');
     }
-    if (alphaLen <= 2) {
+    const trimmedEn = target.english.trim();
+    if (alphaLen <= 2 || alphaLen > 12 || /[\s'-]/.test(trimmedEn)) {
       availablePromptTypes = availablePromptTypes.filter(p => p !== 'PHONICS_MASK');
     }
     if (!categoryMeta) {
@@ -386,12 +327,17 @@ export function generateQuizQuestions(
     let chosenPromptType: PromptType = availablePromptTypes[Math.floor(Math.random() * availablePromptTypes.length)];
 
     // Build 3 smart distractors from the pool (or fallbackPool if pool is small)
-    // Filter distractors by English lemma, not just ID, to prevent duplicate answer options (e.g. Sunday vs Sunday)
-    const targetLower = target.english.trim().toLowerCase();
-    const otherWords = pool.filter(w =>
-      w.id !== target.id &&
-      w.english.trim().toLowerCase() !== targetLower
-    );
+    // Filter distractors by normalized lemma, not just ID/exact English, to prevent pen vs pens or knee vs knees collisions
+    const targetLower = trimmedEn.toLowerCase();
+    const targetLemma = (target.lemma || trimmedEn).trim().toLowerCase();
+    const otherWords = pool.filter(w => {
+      const wLemma = (w.lemma || w.english).trim().toLowerCase();
+      return (
+        w.id !== target.id &&
+        w.english.trim().toLowerCase() !== targetLower &&
+        wLemma !== targetLemma
+      );
+    });
 
     let distractorCandidates: VocabularyItem[] = [];
 
@@ -402,6 +348,7 @@ export function generateQuizQuestions(
       const diffCatExternal = fallbackPool.filter(w =>
         w.id !== target.id &&
         w.english.trim().toLowerCase() !== targetLower &&
+        (w.lemma || w.english).trim().toLowerCase() !== targetLemma &&
         getEffectiveCategoryKey(w) !== targetCatKey
       );
       distractorCandidates = [...shuffle(diffCatInPool), ...shuffle(diffCatExternal)];
@@ -412,24 +359,42 @@ export function generateQuizQuestions(
     }
 
     if (chosenPromptType !== 'CATEGORY_HUNT') {
-      // 1. Same category distractors
-      const categoryMatches = otherWords.filter(w => w.category === target.category);
-      // 2. Same part of speech
-      const posMatches = otherWords.filter(w => w.part_of_speech === target.part_of_speech && !categoryMatches.includes(w));
-      // 3. Fallback to any remaining in pool
-      const otherFallbacks = otherWords.filter(w => !categoryMatches.includes(w) && !posMatches.includes(w));
+      const confusableSet = new Set(target.confusables || []);
+      // 1. Curated Japanese-learner confusable pairs present in pool
+      const confusableMatches = confusableSet.size > 0
+        ? otherWords.filter(w => confusableSet.has(w.id))
+        : [];
+      // 2. Same granular sub_category distractors
+      const subCatMatches = target.sub_category
+        ? otherWords.filter(w => w.sub_category === target.sub_category && !confusableMatches.includes(w))
+        : [];
+      // 3. Same broad category distractors
+      const categoryMatches = otherWords.filter(
+        w => w.category === target.category && !confusableMatches.includes(w) && !subCatMatches.includes(w)
+      );
+      // 4. Same part of speech
+      const posMatches = otherWords.filter(
+        w => w.part_of_speech === target.part_of_speech && !confusableMatches.includes(w) && !subCatMatches.includes(w) && !categoryMatches.includes(w)
+      );
+      // 5. Fallback to any remaining in pool
+      const otherFallbacks = otherWords.filter(
+        w => !confusableMatches.includes(w) && !subCatMatches.includes(w) && !categoryMatches.includes(w) && !posMatches.includes(w)
+      );
 
-      // 4. If pool still has fewer than 3 distractors, draw from fallbackPool
+      // 6. If pool still has fewer than 3 distractors, draw from fallbackPool
       let externalFallbacks: VocabularyItem[] = [];
-      if (categoryMatches.length + posMatches.length + otherFallbacks.length < 3 && fallbackPool.length > 0) {
+      if (confusableMatches.length + subCatMatches.length + categoryMatches.length + posMatches.length + otherFallbacks.length < 3 && fallbackPool.length > 0) {
         externalFallbacks = fallbackPool.filter(w =>
           w.id !== target.id &&
           w.english.trim().toLowerCase() !== targetLower &&
+          (w.lemma || w.english).trim().toLowerCase() !== targetLemma &&
           !pool.some(p => p.id === w.id || p.english.trim().toLowerCase() === w.english.trim().toLowerCase())
         );
       }
 
       distractorCandidates = [
+        ...shuffle(confusableMatches),
+        ...shuffle(subCatMatches),
         ...shuffle(categoryMatches),
         ...shuffle(posMatches),
         ...shuffle(otherFallbacks),
@@ -454,21 +419,24 @@ export function generateQuizQuestions(
 
     // Deduplicate distractor candidates by English lemma, Japanese meaning, AND resolved artwork URL
     // so two choices never show identical pictures when image choices are active.
-    const seenDistractorLemmas = new Set<string>([targetLower]);
+    const seenDistractorLemmas = new Set<string>([targetLower, targetLemma]);
     const targetJaNorm = getNormalizedJa(target);
     const seenDistractorJa = new Set<string>(targetJaNorm ? [targetJaNorm] : []);
     const seenDistractorImages = new Set<string>(allowChoiceImages && targetImage ? [targetImage] : []);
 
     const distractors: VocabularyItem[] = [];
     for (const cand of distractorCandidates) {
-      const candLemma = cand.english.trim().toLowerCase();
+      const candEn = cand.english.trim().toLowerCase();
+      const candLemma = (cand.lemma || cand.english).trim().toLowerCase();
       const candJa = getNormalizedJa(cand);
       const candImg = allowChoiceImages ? resolveWordImage(cand, grade) : '';
       if (
+        !seenDistractorLemmas.has(candEn) &&
         !seenDistractorLemmas.has(candLemma) &&
         (!candJa || !seenDistractorJa.has(candJa)) &&
         (!allowChoiceImages || !candImg || !seenDistractorImages.has(candImg))
       ) {
+        seenDistractorLemmas.add(candEn);
         seenDistractorLemmas.add(candLemma);
         if (candJa) seenDistractorJa.add(candJa);
         if (candImg) seenDistractorImages.add(candImg);
@@ -567,7 +535,7 @@ export function generateQuizQuestions(
         break;
       case 'EN_TO_JA':
       case 'EN_WORD':
-        promptText = target.english;
+        promptText = target.disambiguation ? `${target.english} (${target.disambiguation})` : target.english;
         promptSubtext = target.en_katakana ? `[ ${target.en_katakana} ] 正しい日本語の意味は？` : '正しい日本語の意味をえらぼう！';
         promptImage = targetImage;
         break;

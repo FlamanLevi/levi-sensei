@@ -345,8 +345,8 @@ export const SubjectDeckSection: React.FC<SubjectDeckSectionProps> = ({
                 </div>
                 <p className="text-xs text-slate-500 dark:text-slate-400">
                   {globalSelectedUnits.length > 1
-                    ? t('Active multi-unit bundle from Hub for targeted classroom practice.', 'ホーム画面で選択中の複数単元バンドルから出題されます。')
-                    : t('Active textbook unit for today’s class. Tap "Change Units" to switch or bundle.', '本日の授業で学習中の教科書単元です。別の単元とまとめたい場合は右のボタンから選択。')}
+                    ? t('Active multi-unit bundle from Lesson Deck Studio.', '教材デッキスタジオで選択中の複数単元バンドルから出題されます。')
+                    : t('Active Lesson Deck for today’s class. Open Studio to switch grade, bundle units, or toggle cards.', '本日の授業デッキです。右のスタジオから学年・単元の変更やカード調整ができます。')}
                 </p>
               </div>
 
@@ -356,10 +356,10 @@ export const SubjectDeckSection: React.FC<SubjectDeckSectionProps> = ({
                   e.stopPropagation();
                   openUnitModal();
                 }}
-                className="px-4 py-2 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs transition-all shadow-sm active:scale-95 flex items-center justify-center gap-1.5 shrink-0"
+                className="px-4 py-2 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs transition-all shadow-sm active:scale-95 flex items-center justify-center gap-1.5 shrink-0 cursor-pointer"
               >
-                <span>✏️</span>
-                <span>{t('Change / Bundle Units', '単元を変更・追加')}</span>
+                <span>🧺</span>
+                <span>{t('Lesson Deck Studio', '教材デッキスタジオ')}</span>
               </button>
             </div>
           </div>

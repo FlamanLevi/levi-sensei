@@ -5,7 +5,7 @@ import { useVocabulary } from '../../context/VocabularyContext';
 import { useAudio } from '../../context/AudioContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { resolveCardImage, getNumberValue, getNumberTheme } from '../../utils/cardUtils';
-import { CategoryKey } from '@data/types';
+import { CategoryKey, GradeLevel } from '@data/types';
 import { MarbleGameModal } from '../curriculum/MarbleGameModal';
 import { UnitAimsModal } from '../curriculum/UnitAimsModal';
 import { 
@@ -19,52 +19,32 @@ import {
   Sun, 
   Moon, 
   CheckCheck, 
-  Layers, 
   FilterX, 
-  AlertCircle,
   BookOpen,
   LayoutGrid,
-  Search,
-  CheckSquare,
-  Square
+  Search
 } from 'lucide-react';
 
-const CATEGORIES: { key: CategoryKey; labelEn: string; labelJa: string; emoji: string }[] = [
-  { key: '01_action', labelEn: 'Actions', labelJa: '動作・アクション', emoji: '🏃' },
-  { key: '02_state', labelEn: 'Feelings', labelJa: 'きもち・状態', emoji: '😊' },
-  { key: '03_fooddrink', labelEn: 'Food & Drink', labelJa: '食べ物・飲み物', emoji: '🍎' },
-  { key: '04_number', labelEn: 'Numbers', labelJa: '数字・数', emoji: '🔢' },
-  { key: '05_schoollife', labelEn: 'School', labelJa: '学校・文房具', emoji: '🎒' },
-  { key: '06_facility', labelEn: 'Town & Jobs', labelJa: '町・仕事・施設', emoji: '🏥' },
-  { key: '07_dailylife', labelEn: 'Daily Life', labelJa: '日常生活', emoji: '⏰' },
-  { key: '08_sports', labelEn: 'Sports', labelJa: 'スポーツ', emoji: '⚽' },
-  { key: '09_color_shape', labelEn: 'Colors & Shapes', labelJa: '色・形', emoji: '🎨' },
-  { key: '10_calendar_time', labelEn: 'Days & Months', labelJa: '月・曜日・時間', emoji: '📅' },
-  { key: '11_animals', labelEn: 'Animals', labelJa: '動物', emoji: '🦁' },
-  { key: '12_nature', labelEn: 'Nature', labelJa: '自然・天気', emoji: '🌈' },
-  { key: '13_position', labelEn: 'Directions', labelJa: '位置・方向', emoji: '🧭' },
-  { key: '14_body_family', labelEn: 'Body & Family', labelJa: '体・家族', emoji: '👀' },
-  { key: '15_festalday', labelEn: 'Holidays', labelJa: '季節・行事', emoji: '🎃' },
-  { key: '16_alphabet', labelEn: 'Alphabet', labelJa: 'アルファベット', emoji: '🔤' },
-];
+import { VOCAB_CATEGORIES, parseUnitTitle as parseUnitChip } from '../../data/vocabMetadata';
 
-function parseUnitChip(unitStr: string): { unitNum: string; title: string; full: string } {
-  const match = unitStr.match(/^Unit\s+(\d+):\s*(.+)/i);
-  if (!match) {
-    return { unitNum: '', title: unitStr, full: unitStr };
-  }
-  const unitNum = `U${match[1]}`;
-  let title = match[2].trim();
-  const parenMatch = title.match(/^([^(]+)\s*\((.+)\)$/);
-  if (parenMatch) {
-    title = parenMatch[1].trim();
-  }
-  return { unitNum, title, full: unitStr };
-}
+const CATEGORIES = VOCAB_CATEGORIES;
+
+const STUDIO_GRADES: { key: GradeLevel; shortEn: string; shortJa: string; group: 'ES' | 'JHS' }[] = [
+  { key: 'ES_G1', shortEn: 'G1', shortJa: '小1', group: 'ES' },
+  { key: 'ES_G2', shortEn: 'G2', shortJa: '小2', group: 'ES' },
+  { key: 'ES_G3', shortEn: 'G3', shortJa: '小3', group: 'ES' },
+  { key: 'ES_G4', shortEn: 'G4', shortJa: '小4', group: 'ES' },
+  { key: 'ES_G5', shortEn: 'G5', shortJa: '小5', group: 'ES' },
+  { key: 'ES_G6', shortEn: 'G6', shortJa: '小6', group: 'ES' },
+  { key: 'JHS_G1', shortEn: 'J1', shortJa: '中1', group: 'JHS' },
+  { key: 'JHS_G2', shortEn: 'J2', shortJa: '中2', group: 'JHS' },
+  { key: 'JHS_G3', shortEn: 'J3', shortJa: '中3', group: 'JHS' },
+];
 
 export const WordFilterModal: React.FC = () => {
   const { 
-    activeGrade, 
+    activeGrade,
+    setActiveGrade,
     activeUnit, 
     setActiveUnit,
     activeCategory, 
@@ -79,6 +59,8 @@ export const WordFilterModal: React.FC = () => {
   const { 
     availableUnits,
     gradeWords,
+    getWordsForUnits,
+    setVocabularyScope,
     rawFilteredWords, 
     filteredWords, 
     excludedWordIds, 
@@ -108,7 +90,7 @@ export const WordFilterModal: React.FC = () => {
     return activeUnit === 'Unit 6: Alphabet' || activeUnit.startsWith('Unit 6:');
   }, [activeUnit]);
 
-  // Auto-switch to THEME mode if active grade has no curriculum units (G1, G2)
+  // Auto-switch to THEME mode only if active grade genuinely has no curriculum units
   React.useEffect(() => {
     if (availableUnits.length === 0 && studioMode === 'UNIT') {
       setStudioMode('THEME');
@@ -141,6 +123,17 @@ export const WordFilterModal: React.FC = () => {
   const totalCandidates = rawFilteredWords.length;
   const activeCount = filteredWords.length;
 
+  const handleGradeSwitch = (grade: GradeLevel) => {
+    if (grade === activeGrade) return;
+    playPop();
+    setActiveGrade(grade);
+    clearSelectedUnits();
+    setActiveUnit('ALL');
+    setActiveCategory('ALL');
+    setVocabularyScope('CURRENT');
+    setStudioMode('UNIT');
+  };
+
   // Unit checklist handlers
   const isUnitChecked = (unit: string) => {
     if (selectedUnits && selectedUnits.length > 0) {
@@ -152,6 +145,7 @@ export const WordFilterModal: React.FC = () => {
   const handleToggleUnit = (unit: string) => {
     playPop();
     setActiveCategory('ALL');
+    setVocabularyScope('CURRENT');
 
     if (selectedUnits.length > 0) {
       // Already bundling: toggle this unit
@@ -189,6 +183,7 @@ export const WordFilterModal: React.FC = () => {
     clearSelectedUnits();
     setActiveUnit(unit);
     setActiveCategory('ALL');
+    setVocabularyScope('CURRENT');
   };
 
   const handleSelectAllUnits = () => {
@@ -196,6 +191,7 @@ export const WordFilterModal: React.FC = () => {
     clearSelectedUnits();
     setActiveUnit('ALL');
     setActiveCategory('ALL');
+    setVocabularyScope('CURRENT');
   };
 
   const handleThemeClick = (catKey: CategoryKey | 'ALL') => {
@@ -203,6 +199,7 @@ export const WordFilterModal: React.FC = () => {
     clearSelectedUnits();
     setActiveUnit('ALL');
     setActiveCategory(catKey);
+    setVocabularyScope('CURRENT');
   };
 
   // Scope summary title
@@ -228,7 +225,7 @@ export const WordFilterModal: React.FC = () => {
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between pb-3.5 border-b border-slate-200 dark:border-slate-800 mb-3 gap-2 min-h-[44px] shrink-0">
+        <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800 mb-3 gap-2 min-h-[44px] shrink-0">
           <div className="min-w-0 flex-1 truncate">
             <div className="flex items-center gap-2">
               <span className="text-xl">🧺</span>
@@ -246,7 +243,7 @@ export const WordFilterModal: React.FC = () => {
             </div>
             <p className="text-xs text-slate-500 dark:text-slate-400 font-medium truncate mt-0.5">
               <strong className="text-slate-700 dark:text-slate-300 mr-1.5">{scopeSummary}</strong>
-              • {t('Pick your textbook units on the left, then toggle cards on the right.', '左で単元を選び、右で授業に使う単語カードを調整します。')}
+              • {t('Pick grade & units on the left, then fine-tune individual cards on the right.', '左で学年と単元を選び、右で授業に使う単語カードを調整します。')}
             </p>
           </div>
 
@@ -293,12 +290,39 @@ export const WordFilterModal: React.FC = () => {
           </div>
         </div>
 
-        {/* Studio Body: Split View (Left: Units/Themes, Right: Word Cards Deck) */}
+        {/* Studio Body: Split View (Left: Grade + Units/Themes, Right: Word Cards Deck) */}
         <div className="flex-1 min-h-0 flex flex-col md:flex-row gap-4">
           
-          {/* LEFT COLUMN: Curriculum & Units Checklist */}
+          {/* LEFT COLUMN: Grade Bar + Curriculum & Units Checklist */}
           <div className="md:w-72 lg:w-80 xl:w-96 flex flex-col shrink-0 border-b md:border-b-0 md:border-r border-slate-200 dark:border-slate-800 pb-3 md:pb-0 md:pr-4">
             
+            {/* Unified Grade Switcher (ES G1-G6 + JHS G1-G3) */}
+            <div className="grid grid-cols-9 gap-1 mb-2 shrink-0">
+              {STUDIO_GRADES.map(g => {
+                const isCurrent = activeGrade === g.key;
+                const isJhs = g.group === 'JHS';
+                return (
+                  <button
+                    key={g.key}
+                    type="button"
+                    onClick={() => handleGradeSwitch(g.key)}
+                    title={g.key}
+                    className={`h-7 rounded-lg text-[10px] font-black transition-all cursor-pointer border flex items-center justify-center ${
+                      isCurrent
+                        ? isJhs
+                          ? 'bg-purple-600 text-white border-purple-500 shadow-xs'
+                          : 'bg-blue-600 text-white border-blue-500 shadow-xs'
+                        : isJhs
+                        ? 'bg-purple-50/70 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 border-purple-200/70 dark:border-purple-800/60 hover:bg-purple-100 dark:hover:bg-purple-900/50'
+                        : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700'
+                    }`}
+                  >
+                    {language === 'ja' ? g.shortJa : g.shortEn}
+                  </button>
+                );
+              })}
+            </div>
+
             {/* Mode Switch Tabs: Units vs Themes */}
             <div className="grid grid-cols-2 bg-slate-100 dark:bg-slate-800 p-1 rounded-2xl border border-slate-200 dark:border-slate-700 mb-2.5 shrink-0 text-xs font-black">
               <button
@@ -350,7 +374,7 @@ export const WordFilterModal: React.FC = () => {
                       </div>
                       <div className="min-w-0">
                         <span className="font-black text-xs block truncate">
-                          {language === 'ja' ? 'すべての単元（全学年単語）' : 'All Textbook Units'}
+                          {language === 'ja' ? 'すべての単元（基本教科書単語）' : 'All Textbook Units (Core)'}
                         </span>
                         <span className="text-[10px] text-slate-400 font-bold">
                           {gradeWords.length} {language === 'ja' ? '語' : 'words'}
@@ -363,7 +387,10 @@ export const WordFilterModal: React.FC = () => {
                   {availableUnits.map(unit => {
                     const checked = isUnitChecked(unit);
                     const { unitNum, title } = parseUnitChip(unit);
-                    const count = gradeWords.filter(w => w.media_by_grade?.[activeGrade]?.unit === unit).length;
+                    const count = getWordsForUnits([unit], activeGrade).length;
+                    const isBonus = /Bonus/i.test(unit);
+                    const isSdg = /^SDGs/i.test(unit);
+                    const isFlags = /^World Flags/i.test(unit);
 
                     return (
                       <div
@@ -372,6 +399,10 @@ export const WordFilterModal: React.FC = () => {
                         className={`group p-2 rounded-2xl border-2 transition-all cursor-pointer flex items-center justify-between gap-2 ${
                           checked
                             ? 'border-blue-600 bg-blue-50/80 dark:bg-blue-950/60 text-blue-900 dark:text-blue-200 shadow-xs'
+                            : isSdg
+                            ? 'border-emerald-200/80 dark:border-emerald-900/60 hover:border-emerald-400 bg-emerald-50/40 dark:bg-emerald-950/20 text-slate-800 dark:text-slate-200'
+                            : isBonus || isFlags
+                            ? 'border-amber-200/80 dark:border-amber-900/50 hover:border-amber-400 bg-amber-50/30 dark:bg-amber-950/20 text-slate-800 dark:text-slate-200'
                             : 'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 bg-white dark:bg-slate-800/60 text-slate-800 dark:text-slate-200'
                         }`}
                       >
@@ -394,13 +425,30 @@ export const WordFilterModal: React.FC = () => {
                                   {unitNum}
                                 </span>
                               )}
-                              <span className="text-xs font-black truncate max-w-[140px] sm:max-w-[180px]">
+                              <span className="text-xs font-black truncate max-w-[140px] sm:max-w-[175px]">
                                 {title}
                               </span>
                             </div>
-                            <span className="text-[10px] text-slate-400 font-bold block">
-                              {count} {language === 'ja' ? '語' : 'words'}
-                            </span>
+                            <div className="flex items-center gap-1.5 mt-0.5">
+                              <span className="text-[10px] text-slate-400 font-bold">
+                                {count} {language === 'ja' ? '語' : 'words'}
+                              </span>
+                              {isSdg && (
+                                <span className="text-[9px] font-black px-1.5 py-0.2 rounded bg-emerald-100 dark:bg-emerald-900/70 text-emerald-700 dark:text-emerald-300">
+                                  SDGs
+                                </span>
+                              )}
+                              {isBonus && (
+                                <span className="text-[9px] font-black px-1.5 py-0.2 rounded bg-amber-100 dark:bg-amber-900/70 text-amber-700 dark:text-amber-300">
+                                  {language === 'ja' ? '発展' : 'Bonus'}
+                                </span>
+                              )}
+                              {isFlags && (
+                                <span className="text-[9px] font-black px-1.5 py-0.2 rounded bg-indigo-100 dark:bg-indigo-900/70 text-indigo-700 dark:text-indigo-300">
+                                  🌍
+                                </span>
+                              )}
+                            </div>
                           </div>
                         </div>
 
@@ -829,6 +877,7 @@ export const WordFilterModal: React.FC = () => {
             type="button"
             onClick={() => {
               playPop();
+              setVocabularyScope('CURRENT');
               closeWordFilterModal();
             }}
             className="px-5 py-2 rounded-2xl bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-black text-xs transition-all shadow-md flex items-center gap-1.5 cursor-pointer"

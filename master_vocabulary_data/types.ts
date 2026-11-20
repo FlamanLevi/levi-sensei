@@ -61,40 +61,64 @@ export interface ThreeHints {
   letter_hint: string;
 }
 
+export interface JhsTextbookUnits {
+  NC?: string; // New Crown (三省堂)
+  NH?: string; // New Horizon (東京書籍)
+  HG?: string; // Here We Go! (光村図書)
+  OW?: string; // One World (教育出版)
+  BS?: string; // Blue Sky (啓林館)
+  SU?: string; // Sunshine (開隆堂)
+}
+
+export interface WordInflections {
+  third_person?: string;
+  past?: string;
+  past_participle?: string;
+  gerund?: string;
+  plural?: string;
+  comparative?: string;
+  superlative?: string;
+}
+
 export interface GradeMediaItem {
   card_image: string;
   card_full?: string;
   card_text?: string;
+  card_bw?: string;
   sound_file?: string;
   unit?: string;
+  additional_units?: string[];
+  textbook_units?: JhsTextbookUnits;
+  sdg_goals?: number[];
   source: string;
 }
 
 export interface VocabularyItem {
   id: string;
   english: string;
-  canonical_key: string;
+  canonical_key?: string;
   disambiguation?: string;
   display_label?: string;
-  normalized_english: string;
+  normalized_english?: string;
   part_of_speech: PartOfSpeech;
   category: CategoryKey;
-  category_name: string;
+  sub_category?: string;
+  category_name?: string;
   ja_kanji: string;
   ja_hiragana: string;
   en_katakana: string;
   ruby: RubySegment[];
-  ruby_html: string;
-  ruby_text: string;
+  ruby_html?: string;
+  ruby_text?: string;
   sound_file: string;
   card_image: string;
-  card_image_kana: string;
-  card_image_en: string;
-  card_image_bilingual: string;
-  card_variants: string[];
-  token: string;
+  card_image_kana?: string;
+  card_image_en?: string;
+  card_image_bilingual?: string;
+  card_variants?: string[];
+  token?: string;
   grades: GradeLevel[];
-  themes: string[];
+  themes?: string[];
   tags: string[];
 
   // Textbook flashcard artwork (Here We Go)
@@ -102,31 +126,43 @@ export interface VocabularyItem {
   hwg_card_illust?: string;
   hwg_card_text?: string;
 
-  // Lemmatization & Plural forms
+  // Lemmatization, Grammar & Plural forms
   lemma: string;
   is_plural: boolean;
+  article?: 'a' | 'an' | '';
+  confusables?: string[];
+  inflections?: WordInflections;
+  cefr?: 'A1' | 'A2' | 'B1' | 'B2' | 'C1';
+  eiken?: '5' | '4' | '3' | 'pre2' | '2' | 'pre1' | '1';
+  es_overlap_id?: string;
 
   // Unified Media Accessors & Fallbacks
   primary_image: string;
   primary_audio: string;
 
   // Game Engine & Puzzle Attributes
-  letter_count: number;
+  letter_count?: number;
   syllable_count: number;
-  first_letter: string;
-  is_compound: boolean;
-  phonics_initial: string;
-  difficulty_tier: 1 | 2 | 3;
+  first_letter?: string;
+  is_compound?: boolean;
+  phonics_initial?: string;
+  difficulty_tier: 1 | 2 | 3 | 'basic' | 'intermediate' | 'advanced';
 
-  // Pedagogical Dialogues & 3-Hint Clues
-  target_sentences: string[];
-  target_dialogues: TargetDialogue[];
-  three_hints: ThreeHints;
+  // Katakana Breaker & World Flags Curriculum Metadata
+  is_katakana_loanword?: boolean;
+  tier?: 'core' | 'expanded';
+  country_code?: string;
+  world_flag_image?: string;
+
+  // Pedagogical Dialogues & 3-Hint Clues (lazy-loaded)
+  target_sentences?: string[];
+  target_dialogues?: TargetDialogue[];
+  three_hints?: ThreeHints;
 
   // Grade-Context-Aware Media Mapping
   media_by_grade?: Partial<Record<GradeLevel, GradeMediaItem>>;
 
-  // Audio Suite (Multi-voice & Japanese pronunciation)
+  // Audio Suite (Multi-voice, Japanese pronunciation, and Katakana Breaker janakute clips)
   audio_suite?: Record<string, string>;
 }
 

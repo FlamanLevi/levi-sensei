@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { CardCount, DisplayTier, MissingCount, TimerOption, ScoreboardMode } from './types';
 import { useLanguage } from '@/context/LanguageContext';
 import { useAudio } from '@/context/AudioContext';
+import { useVocabulary } from '@/context/VocabularyContext';
 import {
   X,
   Settings,
@@ -69,6 +70,7 @@ export const WhatsMissingSettingsModal: React.FC<WhatsMissingSettingsModalProps>
 }) => {
   const { t } = useLanguage();
   const { playPop } = useAudio();
+  const { openWordFilterModal } = useVocabulary();
 
   // Close on Escape key
   useEffect(() => {
@@ -237,17 +239,17 @@ export const WhatsMissingSettingsModal: React.FC<WhatsMissingSettingsModalProps>
               </div>
             )}
 
-            {/* 7. Textbook Unit Switcher */}
+            {/* 7. Textbook Unit / Lesson Deck Switcher */}
             {availableUnits.length > 0 && (
-              <div className="bg-slate-800/60 rounded-2xl p-3 sm:p-4 border border-slate-700/70 flex items-center justify-between gap-3">
+              <div className="bg-slate-800/60 rounded-2xl p-3 sm:p-4 border border-slate-700/70 flex items-center justify-between gap-2">
                 <span className="font-black text-slate-200 flex items-center gap-1.5 shrink-0">
                   <BookOpen size={14} className="text-amber-400" />
-                  <span>{t("Textbook Unit", <><ruby>単元<rt>たんげん</rt></ruby></>)}:</span>
+                  <span>{t("Lesson Deck", <><ruby>単元<rt>たんげん</rt></ruby></>)}:</span>
                 </span>
                 <select
                   value={activeUnit}
                   onChange={(e) => setActiveUnit(e.target.value)}
-                  className="flex-1 min-w-0 bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-amber-300 font-bold text-xs sm:text-sm focus:outline-none focus:border-amber-400 cursor-pointer"
+                  className="flex-1 min-w-0 bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-1.5 text-amber-300 font-bold text-xs sm:text-sm focus:outline-none focus:border-amber-400 cursor-pointer"
                 >
                   <option value="ALL">
                     {t(`All Units (${activeGrade})`, `全単元 (${activeGrade})`)}
@@ -258,6 +260,18 @@ export const WhatsMissingSettingsModal: React.FC<WhatsMissingSettingsModalProps>
                     </option>
                   ))}
                 </select>
+                <button
+                  type="button"
+                  onClick={() => {
+                    playPop();
+                    onClose();
+                    openWordFilterModal();
+                  }}
+                  className="px-2.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-black text-xs shrink-0 whitespace-nowrap cursor-pointer transition-colors"
+                  title={t("Open Lesson Deck Studio to bundle units or toggle cards", "教材デッキスタジオを開く")}
+                >
+                  🧺 {t("Studio", "スタジオ")}
+                </button>
               </div>
             )}
           </div>

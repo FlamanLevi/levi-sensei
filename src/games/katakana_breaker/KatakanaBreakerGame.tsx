@@ -47,6 +47,8 @@ export const KatakanaBreakerGame: React.FC<KatakanaBreakerGameProps> = () => {
   const fallbackPool = gradeWords.length >= 4 ? gradeWords : allWords;
 
   const katakanaWords = useMemo(() => {
+    const loanwords = rawPool.filter((w) => w.is_katakana_loanword === true);
+    if (loanwords.length >= 4) return loanwords;
     const list = rawPool.filter((w) => Boolean(w.en_katakana && w.en_katakana.trim().length > 0));
     return list.length >= 4 ? list : rawPool;
   }, [rawPool]);
@@ -73,32 +75,51 @@ export const KatakanaBreakerGame: React.FC<KatakanaBreakerGameProps> = () => {
   const activeVoiceKey = englishVoices[voiceIndex % englishVoices.length];
 
   // Audio Playback Helpers
-  const playAudioUrl = useCallback((pathOrFilename?: string) => {
+  const playAudioUrl = useCallback((pathOrFilename?: string, onFallback?: () => void) => {
     if (!pathOrFilename || isMuted) return;
-    const url = pathOrFilename.startsWith('http') || pathOrFilename.startsWith('/')
-      ? pathOrFilename
-      : `/media/sound/${pathOrFilename}`;
+    const clean = pathOrFilename.trim();
+    const url = clean.startsWith('http') || clean.startsWith('/')
+      ? clean
+      : clean.startsWith('media/')
+      ? `/${clean}`
+      : `/media/sound/${clean}`;
     const audio = new Audio(url);
-    audio.play().catch(() => {});
+    audio.play().catch(() => {
+      onFallback?.();
+    });
   }, [isMuted]);
 
   const playJapaneseWord = useCallback(() => {
     if (!currentCard) return;
-    const jaClip = currentCard.audio_suite?.ja || currentCard.sound_file;
+    const jaClip = currentCard.audio_suite?.ja;
+    const speakJa = () =>
+      speechService.speak(currentCard.ja_hiragana || currentCard.ja_kanji || currentCard.en_katakana || '', {
+        lang: 'ja',
+        rate: 0.96,
+        pitch: 1.02
+      });
     if (jaClip) {
-      playAudioUrl(jaClip);
+      playAudioUrl(jaClip, speakJa);
     } else {
-      speechService.speak(currentCard.ja_hiragana || currentCard.ja_kanji || currentCard.en_katakana || '', { lang: 'ja', rate: 0.96, pitch: 1.02 });
+      speakJa();
     }
   }, [currentCard, playAudioUrl]);
 
   const playJanakutePrompt = useCallback(() => {
     if (isMuted) return;
-    const audio = new Audio('/media/sound_suite/common/janakute_nanami.mp3');
-    audio.play().catch(() => {
-      speechService.speak('じゃなくて？', { lang: 'ja', rate: 0.96, pitch: 1.05 });
-    });
-  }, [isMuted]);
+    const wordJanakute = currentCard?.audio_suite?.janakute;
+    const fallbackCommon = () => {
+      const audio = new Audio('/media/sound/sound_suite/common/janakute_nanami.mp3');
+      audio.play().catch(() => {
+        speechService.speak('じゃなくて？', { lang: 'ja', rate: 0.96, pitch: 1.05 });
+      });
+    };
+    if (wordJanakute) {
+      playAudioUrl(wordJanakute, fallbackCommon);
+    } else {
+      fallbackCommon();
+    }
+  }, [currentCard, isMuted, playAudioUrl]);
 
   const playEnglishWord = useCallback(() => {
     if (!currentCard) return;

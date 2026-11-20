@@ -19,30 +19,7 @@ import {
   normalizeGuessAnswer,
 } from './types';
 
-const ANTICIPATION_CATEGORY_LABELS: Record<string, { en: string; ja: string }> = {
-  '01_action': { en: 'Action / Verb', ja: '動き・アクション' },
-  '02_state': { en: 'Feeling / State', ja: '様子・気持ち' },
-  '03_food': { en: 'Food & Drink', ja: '食べ物・飲み物' },
-  '03_fooddrink': { en: 'Food & Drink', ja: '食べ物・飲み物' },
-  '04_number': { en: 'Numbers', ja: '数・数字' },
-  '05_school': { en: 'School & Stationery', ja: '学校・文房具' },
-  '05_schoollife': { en: 'School Life', ja: '学校生活' },
-  '06_facility': { en: 'Place & Building', ja: '場所・建物' },
-  '07_dailylife': { en: 'Daily Life', ja: '暮らし・生活' },
-  '08_sport': { en: 'Sports & Hobbies', ja: 'スポーツ・遊び' },
-  '08_sports': { en: 'Sports & Hobbies', ja: 'スポーツ・遊び' },
-  '09_colorshape': { en: 'Color & Shape', ja: '色・形' },
-  '09_color_shape': { en: 'Color & Shape', ja: '色・形' },
-  '10_calendar_time': { en: 'Calendar & Time', ja: '曜日・月・時間' },
-  '11_animal': { en: 'Animals', ja: '動物・生き物' },
-  '11_animals': { en: 'Animals', ja: '動物・生き物' },
-  '12_nature': { en: 'Nature & Weather', ja: '自然・天気' },
-  '13_position': { en: 'Directions', ja: '位置・方向' },
-  '14_body': { en: 'Body & Family', ja: '体・家族' },
-  '14_body_family': { en: 'Body & Family', ja: '体・家族' },
-  '15_festalday': { en: 'Events & Holidays', ja: '行事・イベント' },
-  '16_alphabet': { en: 'Alphabet', ja: 'アルファベット' },
-};
+import { getCategoryMeta } from '@/data/vocabMetadata';
 
 function isCleanSpellingWord(english: string): boolean {
   const trimmed = (english || '').trim();
@@ -278,10 +255,10 @@ export function buildAnticipationRounds(
     const curatedStrokes = resolveCuratedNesStrokes(targetWord.english);
     const nesVector = curatedStrokes ? encodeCompactStrokes(curatedStrokes) : undefined;
 
-    const catMeta = ANTICIPATION_CATEGORY_LABELS[targetWord.category] || {
-      en: targetWord.category_name || targetWord.category || 'Vocabulary',
-      ja: 'たんご',
-    };
+    const meta = getCategoryMeta(targetWord.category);
+    const catMeta = meta
+      ? { en: meta.labelEn, ja: meta.labelJa }
+      : { en: targetWord.category_name || targetWord.category || 'Vocabulary', ja: 'たんご' };
     const { drawStyle, isFeatureDots } = resolveDrawStyleForRound(
       settings.drawStyle,
       roundIndex,

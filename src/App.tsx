@@ -10,7 +10,7 @@ import { GameContainer } from './components/common/GameContainer';
 import { StudentDrawModal } from './components/common/StudentDrawModal';
 import { DiceModal } from './components/common/DiceModal';
 import { DailyRoutineModal } from './components/common/DailyRoutineModal';
-import { UnitPickerModal } from './components/shell/UnitPickerModal';
+import { WordFilterModal } from './components/shell/WordFilterModal';
 import { GAME_REGISTRY } from './games/registry';
 import { useClassroom } from './context/ClassroomContext';
 import { useVocabulary } from './context/VocabularyContext';
@@ -676,7 +676,7 @@ export const App: React.FC = () => {
   return (
     <>
       {renderContent()}
-      <UnitPickerModal />
+      <WordFilterModal />
       <StudentDrawModal />
       <DiceModal />
       <DailyRoutineModal />

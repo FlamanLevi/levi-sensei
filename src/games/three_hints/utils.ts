@@ -44,30 +44,7 @@ export async function loadThreeHintsBank(): Promise<Record<string, WordThreeHint
   return bankLoadPromise;
 }
 
-const CATEGORY_JA_MAP: Record<string, string> = {
-  '01_action': 'どうさ・アクション（動作）',
-  '02_state': 'ようす・きもち（様子・気持ち）',
-  '03_food': 'たべもの・のみもの（食べ物・飲み物）',
-  '03_fooddrink': 'たべもの・のみもの（食べ物・飲み物）',
-  '04_number': 'かず・すうじ（数・数字）',
-  '05_school': 'がっこう・ぶんぼうぐ（学校・文房具）',
-  '05_schoollife': 'がっこう・ぶんぼうぐ（学校・文房具）',
-  '06_facility': 'ばしょ・たてもの（場所・施設）',
-  '07_dailylife': 'まいにちのせいかつ（毎日の生活）',
-  '08_sport': 'スポーツ・あそび（スポーツ）',
-  '08_sports': 'スポーツ・あそび（スポーツ）',
-  '09_colorshape': 'いろ・かたち（色・形）',
-  '09_color_shape': 'いろ・かたち（色・形）',
-  '10_calendar_time': 'ひづけ・きせつ・じかん（日付・季節・時間）',
-  '11_animal': 'どうぶつ・いきもの（動物・生き物）',
-  '11_animals': 'どうぶつ・いきもの（動物・生き物）',
-  '12_nature': 'しぜん・てんき（自然・天気）',
-  '13_position': 'いち・ほうこう（位置・方向）',
-  '14_body': 'からだ・かぞく（体・家族）',
-  '14_body_family': 'からだ・かぞく（体・家族）',
-  '15_festalday': 'ぎょうじ・イベント（行事・イベント）',
-  '16_alphabet': 'アルファベット（文字）'
-};
+import { getWordSemanticMeta } from '@/data/vocabMetadata';
 
 function maskWordInText(text: string, targetEnglish: string): string {
   if (!text || !targetEnglish) return text;
@@ -94,15 +71,13 @@ export function getCluePoolsForWord(word: VocabularyItem): {
   const lastLetter = alphaOnly.length > 1 ? alphaOnly.charAt(alphaOnly.length - 1).toUpperCase() : '';
   const jaMeaning = word.ja_kanji || word.ja_hiragana || '';
 
-  // Fix misleading category labels for jobs, past verbs, and party items
-  let catJa = CATEGORY_JA_MAP[word.category] || word.category_name || '教科書の単語';
-  let catEn = word.three_hints?.category_hint || `It is in the category of ${word.category_name || 'words'}.`;
+  const semanticMeta = getWordSemanticMeta(word);
+  let catJa = semanticMeta?.hintJa || word.category_name || '教科書の単語';
+  let catEn = word.three_hints?.category_hint || `It is in the category of ${semanticMeta?.en || word.category_name || 'words'}.`;
 
-  if (tags.includes('job')) {
-    catJa = 'しょうらいのゆめ・しごと（職業）';
+  if (word.sub_category === 'job' || tags.includes('job')) {
     catEn = 'It is an occupation or dream job.';
-  } else if (tags.includes('past_verb')) {
-    catJa = 'かこのどうさ（過去にしたこと）';
+  } else if (word.sub_category === 'past_verb' || tags.includes('past_verb')) {
     catEn = 'It is an action you already did in the past!';
   } else if (word.category === '15_festalday' && (tags.includes('item') || tags.includes('toy'))) {
     catJa = 'パーティーグッズ・プレゼント（物）';
@@ -183,20 +158,29 @@ export function getCluePoolsForWord(word: VocabularyItem): {
   }
 
   // --- STAGE 3 POOL (First Letter, First+Last Mask, Katakana Initial Sound) ---
+  const isSingleAlphabet = word.category === '16_alphabet' || letterCount === 1;
   const blanks = enClean
     .split('')
     .map((ch, i) => (i === 0 ? ch.toUpperCase() : ch === ' ' ? '   ' : '_'))
     .join(' ');
 
-  const pool3: BilingualHintItem[] = [
-    {
-      en: `It starts with the letter "${firstLetter}". (${blanks})`,
-      ja: `【さいしょの文字】 「${firstLetter}」 からはじまります （${letterCount}文字）`,
-      speak: `It starts with the letter ${firstLetter}.`
-    }
-  ];
+  const pool3: BilingualHintItem[] = isSingleAlphabet
+    ? [
+        {
+          en: `Sing the ABC song from "A" to find this ${enClean === enClean.toUpperCase() ? 'uppercase' : 'lowercase'} letter!`,
+          ja: `【アルファベット】 ABCのうたを「A」からうたって さがしてみよう！（${enClean === enClean.toUpperCase() ? '大文字' : '小文字'}）`,
+          speak: 'Sing the ABC song from A to find this letter!'
+        }
+      ]
+    : [
+        {
+          en: `It starts with the letter "${firstLetter}". (${blanks})`,
+          ja: `【さいしょの文字】 「${firstLetter}」 からはじまります （${letterCount}文字）`,
+          speak: `It starts with the letter ${firstLetter}.`
+        }
+      ];
 
-  if (lastLetter && letterCount >= 3) {
+  if (!isSingleAlphabet && lastLetter && letterCount >= 3) {
     const firstLastMask = enClean
       .split('')
       .map((ch, i, arr) =>
@@ -210,7 +194,7 @@ export function getCluePoolsForWord(word: VocabularyItem): {
     });
   }
 
-  if (word.en_katakana && word.en_katakana.length >= 2) {
+  if (!isSingleAlphabet && word.en_katakana && word.en_katakana.length >= 2) {
     const firstKana = word.en_katakana.charAt(0) + (word.en_katakana.charAt(1) === 'ー' ? 'ー' : '');
     pool3.push({
       en: `Starts with "${firstLetter}" — and the sound begins with "${firstKana}..."!`,
@@ -307,35 +291,58 @@ export function swapClueForStage(
   return formatThreeClues(word, nextIndices);
 }
 
+const NON_SEMANTIC_TAGS = new Set(['plural', 'item', 'activity', 'play', 'sports']);
+
 /**
- * Generates 4 choices (1 correct + 3 believable distractors matching tags/sub-category first)
+ * Generates 4 choices (1 correct + 3 believable distractors matching sub_category, narrow tags, and category without lemma collisions)
  */
 export function generateFourChoices(
   targetWord: VocabularyItem,
   pool: VocabularyItem[]
 ): HintChoiceOption[] {
-  const targetTags = new Set(targetWord.tags || []);
+  const targetLemma = (targetWord.lemma || targetWord.english).trim().toLowerCase();
+  const targetTags = new Set((targetWord.tags || []).filter(t => !NON_SEMANTIC_TAGS.has(t)));
 
-  // 1. Best match: shares a specific tag (e.g., 'job', 'past_verb', 'feeling', 'toy')
-  const sameTag = pool.filter(
-    w => w.id !== targetWord.id && (w.tags || []).some(t => targetTags.has(t))
+  const eligible = pool.filter(w => {
+    const wLemma = (w.lemma || w.english).trim().toLowerCase();
+    return w.id !== targetWord.id && wLemma !== targetLemma;
+  });
+
+  // 1. Best match: same granular sub_category
+  const sameSubCat = targetWord.sub_category
+    ? eligible.filter(w => w.sub_category === targetWord.sub_category)
+    : [];
+  // 2. Second best: shares a narrow semantic tag
+  const sameTag = eligible.filter(
+    w => !sameSubCat.includes(w) && (w.tags || []).some(t => targetTags.has(t))
   );
-  // 2. Second best: shares the same MEXT category
-  const sameCategory = pool.filter(
-    w => w.id !== targetWord.id && w.category === targetWord.category && !sameTag.includes(w)
+  // 3. Third best: shares the same MEXT category
+  const sameCategory = eligible.filter(
+    w => w.category === targetWord.category && !sameSubCat.includes(w) && !sameTag.includes(w)
   );
-  // 3. Fallback: any other word
-  const otherWords = pool.filter(
-    w => w.id !== targetWord.id && w.category !== targetWord.category && !sameTag.includes(w)
+  // 4. Fallback: any other word
+  const otherWords = eligible.filter(
+    w => w.category !== targetWord.category && !sameSubCat.includes(w) && !sameTag.includes(w)
   );
 
   const combinedCandidates = [
+    ...shuffleArray(sameSubCat),
     ...shuffleArray(sameTag),
     ...shuffleArray(sameCategory),
     ...shuffleArray(otherWords)
   ];
 
-  const distractors = combinedCandidates.slice(0, 3);
+  const seenLemmas = new Set<string>([targetLemma]);
+  const distractors: VocabularyItem[] = [];
+  for (const cand of combinedCandidates) {
+    const candLemma = (cand.lemma || cand.english).trim().toLowerCase();
+    if (!seenLemmas.has(candLemma)) {
+      seenLemmas.add(candLemma);
+      distractors.push(cand);
+      if (distractors.length === 3) break;
+    }
+  }
+
   const allFour = shuffleArray([targetWord, ...distractors]);
   const keys: ('A' | 'B' | 'C' | 'D')[] = ['A', 'B', 'C', 'D'];
 

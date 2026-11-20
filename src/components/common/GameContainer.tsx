@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ArrowLeft, Volume2, VolumeX, Maximize, Minimize, BookOpen, ChevronDown, Check, Sun, Moon } from 'lucide-react';
+import { ArrowLeft, Volume2, VolumeX, Maximize, Minimize, BookOpen, ChevronDown, Sun, Moon } from 'lucide-react';
 import { useClassroom } from '../../context/ClassroomContext';
 import { useAudio } from '../../context/AudioContext';
 import { useLanguage, LanguageToggle } from '../../context/LanguageContext';
@@ -22,31 +22,44 @@ export const GameContainer: React.FC<GameContainerProps> = ({
   hideScopeDropdown,
   isScrollable = false 
 }) => {
-  const { exitToHub, activeGrade, activeUnit, theme, toggleTheme, openPickerModal, openDiceModal } = useClassroom();
+  const { exitToHub, activeGrade, activeUnit, selectedUnits, activeCategory, theme, toggleTheme, openPickerModal, openDiceModal } = useClassroom();
   const { isMuted, toggleMute, playPop } = useAudio();
   const { t, language } = useLanguage();
-  const { vocabularyScope, setVocabularyScope, getWordsForScope, scopedWords } = useVocabulary();
+  const { vocabularyScope, setVocabularyScope, getWordsForScope, scopedWords, excludedWordIds, openWordFilterModal } = useVocabulary();
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isScopeMenuOpen, setIsScopeMenuOpen] = useState(false);
   const scopeMenuRef = useRef<HTMLDivElement>(null);
 
-  const hasPriorReview = ['ES_G4', 'ES_G5', 'ES_G6', 'JHS_G1'].includes(activeGrade);
-  const hasGrandSlam = ['ES_G5', 'ES_G6', 'JHS_G1'].includes(activeGrade);
+  const hasPriorReview = ['ES_G2', 'ES_G3', 'ES_G4', 'ES_G5', 'ES_G6', 'JHS_G1', 'JHS_G2', 'JHS_G3'].includes(activeGrade);
+  const hasGrandSlam = ['ES_G3', 'ES_G4', 'ES_G5', 'ES_G6', 'JHS_G1', 'JHS_G2', 'JHS_G3'].includes(activeGrade);
 
   const getPriorReviewTitle = () => {
-    if (activeGrade === 'ES_G6') return language === 'ja' ? '小3〜小5 復習' : 'G3–G5 Review';
-    if (activeGrade === 'ES_G5') return language === 'ja' ? '小3〜小4 復習' : 'G3–G4 Review';
-    if (activeGrade === 'ES_G4') return language === 'ja' ? '小3 復習' : 'G3 Review';
-    return language === 'ja' ? '小学校 復習' : 'Elementary Review';
+    if (activeGrade === 'JHS_G3') return language === 'ja' ? '小学校＋中1〜中2 復習' : 'ES + JHS G1–G2 Review';
+    if (activeGrade === 'JHS_G2') return language === 'ja' ? '小学校＋中1 復習' : 'ES + JHS G1 Review';
+    if (activeGrade === 'JHS_G1') return language === 'ja' ? '小学校 復習' : 'Elementary Review';
+    if (activeGrade === 'ES_G6') return language === 'ja' ? '小1〜小5 復習' : 'G1–G5 Review';
+    if (activeGrade === 'ES_G5') return language === 'ja' ? '小1〜小4 復習' : 'G1–G4 Review';
+    if (activeGrade === 'ES_G4') return language === 'ja' ? '小1〜小3 復習' : 'G1–G3 Review';
+    if (activeGrade === 'ES_G3') return language === 'ja' ? '小1〜小2 復習' : 'G1–G2 Review';
+    return language === 'ja' ? '前学年 復習' : 'Prior Grade Review';
   };
+
+  const compactCurrentDeckLabel =
+    selectedUnits.length > 1
+      ? (language === 'ja' ? `📦 ${selectedUnits.length}単元` : `📦 ${selectedUnits.length} Units`)
+      : activeUnit !== 'ALL'
+      ? activeUnit.replace(/^Unit\s+(\d+):\s*/i, 'U$1: ').replace(/\s*\([^)]*\)$/, '')
+      : activeCategory !== 'ALL'
+      ? activeCategory.replace(/^\d+_/, '')
+      : t('Lesson Deck', '授業デッキ');
 
   const getScopeName = (scope: VocabularyScope) => {
     if (scope === 'CURRENT') {
-      return activeUnit !== 'ALL' ? activeUnit : t('Current Unit', '選択中単元');
+      return compactCurrentDeckLabel;
     }
     if (scope === 'GRADE_ALL') return t(`All ${activeGrade}`, `${activeGrade} 全単元`);
     if (scope === 'PRIOR_REVIEW') return getPriorReviewTitle();
-    if (scope === 'ALL_ELEMENTARY') return t('All Elementary', '小3〜小6 全単語');
+    if (scope === 'ALL_ELEMENTARY') return t('All Elementary', '小学校 全単語');
     return t('Vocabulary', '単語');
   };
 
@@ -128,46 +141,76 @@ export const GameContainer: React.FC<GameContainerProps> = ({
               {activeGrade}
             </span>
 
-            {/* Word Scope Dropdown Pill (Hidden for Eigo Arena where scope is chosen in setup) */}
+            {/* Harmonized Lesson Deck & Scope Dropdown Pill (Hidden for Eigo Arena where scope is chosen in setup) */}
             {!hideScopeDropdown && !title.toLowerCase().includes('arena') && (
               <div className="relative shrink-0" ref={scopeMenuRef}>
               <button
                 onClick={() => setIsScopeMenuOpen(!isScopeMenuOpen)}
-                className="px-2.5 py-1 rounded-xl bg-slate-700/80 hover:bg-slate-700 text-indigo-300 hover:text-indigo-200 border border-indigo-400/30 text-xs font-black flex items-center gap-1.5 transition-all cursor-pointer shadow-xs active:scale-95 whitespace-nowrap"
-                title={t("Change vocabulary pool scope", "出題単語の範囲を変更")}
+                className="px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-500/40 text-xs font-black flex items-center gap-1.5 transition-all cursor-pointer shadow-xs active:scale-95 whitespace-nowrap"
+                title={t("Change Lesson Deck or Vocabulary Scope", "教材デッキや出題範囲を変更")}
               >
-                <BookOpen size={13} className="text-indigo-400 shrink-0" />
-                <span className="hidden sm:inline">{getScopeName(vocabularyScope)}</span>
-                <span className="text-[10px] text-indigo-300 font-bold">({scopedWords.length})</span>
-                <ChevronDown size={12} className="text-indigo-400 shrink-0" />
+                <span className="text-xs leading-none shrink-0">🧺</span>
+                <span className="hidden sm:inline truncate max-w-[150px]">{getScopeName(vocabularyScope)}</span>
+                <span className="text-[10px] px-1.5 py-0.5 rounded bg-indigo-600 text-white font-mono font-black">
+                  {scopedWords.length}{language === 'ja' ? '語' : 'w'}
+                </span>
+                {vocabularyScope === 'CURRENT' && excludedWordIds.length > 0 && (
+                  <span className="text-[10px] px-1 py-0.5 rounded bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300 font-bold">
+                    -{excludedWordIds.length}
+                  </span>
+                )}
+                <ChevronDown size={12} className="text-indigo-500 dark:text-indigo-400 shrink-0" />
               </button>
 
               {isScopeMenuOpen && (
-                <div className="absolute left-0 mt-1.5 w-64 sm:w-72 bg-slate-800 border-2 border-slate-700 rounded-2xl shadow-2xl p-2 z-50 animate-in fade-in zoom-in-95 duration-150">
-                  <div className="text-[10px] font-black text-slate-400 uppercase tracking-wider px-2 py-1 mb-1 border-b border-slate-700/60 flex items-center justify-between">
-                    <span>{t("Vocabulary Scope", "出題範囲・単語プール")}</span>
-                    <span className="text-indigo-400">{scopedWords.length} {t("words", "語")}</span>
+                <div className="absolute left-0 mt-1.5 w-72 sm:w-80 bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 rounded-2xl shadow-2xl p-2 z-50 animate-in fade-in zoom-in-95 duration-150">
+                  {/* Direct Launch into Unified Lesson Deck Studio */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      playPop();
+                      setIsScopeMenuOpen(false);
+                      setVocabularyScope('CURRENT');
+                      openWordFilterModal();
+                    }}
+                    className="w-full p-2.5 mb-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-left transition-all flex items-center justify-between cursor-pointer shadow-sm active:scale-[0.99]"
+                  >
+                    <div className="min-w-0 pr-2">
+                      <p className="text-xs font-black flex items-center gap-1.5">
+                        <span>🧺</span>
+                        <span>{t('Open Lesson Deck Studio', '教材デッキスタジオを開く')}</span>
+                      </p>
+                      <p className="text-[10px] text-blue-100 font-medium truncate">
+                        {t('Switch grade, bundle units, or toggle cards', '学年・単元バンドル・個別カードを自由に調整')}
+                      </p>
+                    </div>
+                    <BookOpen size={15} className="shrink-0 text-blue-100" />
+                  </button>
+
+                  <div className="text-[10px] font-black text-slate-400 uppercase tracking-wider px-2 py-1 mb-1 border-b border-slate-200 dark:border-slate-700/60 flex items-center justify-between">
+                    <span>{t("Quick Review Scopes", "クイック出題範囲")}</span>
+                    <span className="text-indigo-600 dark:text-indigo-400">{scopedWords.length} {t("words", "語")}</span>
                   </div>
 
                   <div className="space-y-1">
-                    {/* Option 1: Current Unit */}
+                    {/* Option 1: Current Lesson Deck */}
                     <button
                       onClick={() => { playPop(); setVocabularyScope('CURRENT'); setIsScopeMenuOpen(false); }}
                       className={`w-full p-2 rounded-xl text-left transition-all flex items-center justify-between cursor-pointer ${
                         vocabularyScope === 'CURRENT'
                           ? 'bg-indigo-600 text-white shadow-xs'
-                          : 'hover:bg-slate-700/80 text-slate-200'
+                          : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200'
                       }`}
                     >
                       <div className="min-w-0 pr-1">
                         <p className="text-xs font-black truncate">
-                          {activeUnit !== 'ALL' ? activeUnit : t('Current Filter', '選択中単元')}
+                          {compactCurrentDeckLabel}
                         </p>
                         <p className={`text-[10px] ${vocabularyScope === 'CURRENT' ? 'text-indigo-200' : 'text-slate-400'}`}>
-                          {t('Today’s textbook unit', '本日の教科書レッスン')}
+                          {t('Active Lesson Deck selection', 'スタジオで選択中のデッキ')}
                         </p>
                       </div>
-                      <span className={`text-[10px] font-black px-1.5 py-0.5 rounded shrink-0 ${vocabularyScope === 'CURRENT' ? 'bg-indigo-700 text-white' : 'bg-slate-700 text-slate-300'}`}>
+                      <span className={`text-[10px] font-black px-1.5 py-0.5 rounded shrink-0 ${vocabularyScope === 'CURRENT' ? 'bg-indigo-700 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'}`}>
                         {getWordsForScope('CURRENT').length}
                       </span>
                     </button>
@@ -178,7 +221,7 @@ export const GameContainer: React.FC<GameContainerProps> = ({
                       className={`w-full p-2 rounded-xl text-left transition-all flex items-center justify-between cursor-pointer ${
                         vocabularyScope === 'GRADE_ALL'
                           ? 'bg-blue-600 text-white shadow-xs'
-                          : 'hover:bg-slate-700/80 text-slate-200'
+                          : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200'
                       }`}
                     >
                       <div className="min-w-0 pr-1">
@@ -186,10 +229,10 @@ export const GameContainer: React.FC<GameContainerProps> = ({
                           {t(`All ${activeGrade}`, `${activeGrade} 全単元`)}
                         </p>
                         <p className={`text-[10px] ${vocabularyScope === 'GRADE_ALL' ? 'text-blue-200' : 'text-slate-400'}`}>
-                          {t('Complete grade vocabulary', '学年の全単語')}
+                          {t('Complete grade core vocabulary', '学年の基本教科書全単語')}
                         </p>
                       </div>
-                      <span className={`text-[10px] font-black px-1.5 py-0.5 rounded shrink-0 ${vocabularyScope === 'GRADE_ALL' ? 'bg-blue-700 text-white' : 'bg-slate-700 text-slate-300'}`}>
+                      <span className={`text-[10px] font-black px-1.5 py-0.5 rounded shrink-0 ${vocabularyScope === 'GRADE_ALL' ? 'bg-blue-700 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'}`}>
                         {getWordsForScope('GRADE_ALL').length}
                       </span>
                     </button>
@@ -201,7 +244,7 @@ export const GameContainer: React.FC<GameContainerProps> = ({
                         className={`w-full p-2 rounded-xl text-left transition-all flex items-center justify-between cursor-pointer ${
                           vocabularyScope === 'PRIOR_REVIEW'
                             ? 'bg-amber-600 text-white shadow-xs'
-                            : 'hover:bg-slate-700/80 text-slate-200'
+                            : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200'
                         }`}
                       >
                         <div className="min-w-0 pr-1">
@@ -209,10 +252,10 @@ export const GameContainer: React.FC<GameContainerProps> = ({
                             {getPriorReviewTitle()}
                           </p>
                           <p className={`text-[10px] ${vocabularyScope === 'PRIOR_REVIEW' ? 'text-amber-200' : 'text-slate-400'}`}>
-                            {t('Past elementary grades', '過去学年の総復習')}
+                            {t('Prior grades review pool', 'これまで学んだ学年の総復習')}
                           </p>
                         </div>
-                        <span className={`text-[10px] font-black px-1.5 py-0.5 rounded shrink-0 ${vocabularyScope === 'PRIOR_REVIEW' ? 'bg-amber-700 text-white' : 'bg-slate-700 text-slate-300'}`}>
+                        <span className={`text-[10px] font-black px-1.5 py-0.5 rounded shrink-0 ${vocabularyScope === 'PRIOR_REVIEW' ? 'bg-amber-700 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'}`}>
                           {getWordsForScope('PRIOR_REVIEW').length}
                         </span>
                       </button>
@@ -225,18 +268,18 @@ export const GameContainer: React.FC<GameContainerProps> = ({
                         className={`w-full p-2 rounded-xl text-left transition-all flex items-center justify-between cursor-pointer ${
                           vocabularyScope === 'ALL_ELEMENTARY'
                             ? 'bg-purple-600 text-white shadow-xs'
-                            : 'hover:bg-slate-700/80 text-slate-200'
+                            : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200'
                         }`}
                       >
                         <div className="min-w-0 pr-1">
                           <p className="text-xs font-black truncate">
-                            {t('All Elementary Grand Slam', '小3〜小6 全単語')}
+                            {t('All Elementary Grand Slam', '小学校 全単語マスター')}
                           </p>
                           <p className={`text-[10px] ${vocabularyScope === 'ALL_ELEMENTARY' ? 'text-purple-200' : 'text-slate-400'}`}>
-                            {t('Full G3–G6 cumulative pool', '小学校全単語マスター')}
+                            {t('Full G1–G6 core cumulative pool', '小1〜小6 基本単語すべて')}
                           </p>
                         </div>
-                        <span className={`text-[10px] font-black px-1.5 py-0.5 rounded shrink-0 ${vocabularyScope === 'ALL_ELEMENTARY' ? 'bg-purple-700 text-white' : 'bg-slate-700 text-slate-300'}`}>
+                        <span className={`text-[10px] font-black px-1.5 py-0.5 rounded shrink-0 ${vocabularyScope === 'ALL_ELEMENTARY' ? 'bg-purple-700 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'}`}>
                           {getWordsForScope('ALL_ELEMENTARY').length}
                         </span>
                       </button>

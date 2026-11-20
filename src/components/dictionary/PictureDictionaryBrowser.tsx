@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { VocabularyItem } from '@data/types';
 import { speechService } from '../../services/speechService';
+import { loadThreeHintsBank, getCluePoolsForWord } from '../../games/three_hints/utils';
 
 export const PictureDictionaryBrowser: React.FC = () => {
   const { filteredWords, searchQuery, setSearchQuery, ensureCluesLoaded, areCluesLoaded } = useVocabulary();
@@ -38,15 +39,17 @@ export const PictureDictionaryBrowser: React.FC = () => {
   const [quizMode, setQuizMode] = useState<boolean>(false);
   const [revealedHints, setRevealedHints] = useState<number>(3);
   const [speakingText, setSpeakingText] = useState<string | null>(null);
+  const [isHintsBankLoaded, setIsHintsBankLoaded] = useState<boolean>(false);
 
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     ensureCluesLoaded();
+    loadThreeHintsBank().then(() => setIsHintsBankLoaded(true));
   }, [ensureCluesLoaded]);
 
   useEffect(() => {
-    if (selectedWord && areCluesLoaded && (!selectedWord.three_hints || !selectedWord.target_dialogues?.length)) {
+    if (selectedWord && areCluesLoaded && !selectedWord.target_dialogues?.length) {
       const updated = filteredWords.find(w => w.id === selectedWord.id);
       if (updated) setSelectedWord(updated);
     }
@@ -668,7 +671,14 @@ export const PictureDictionaryBrowser: React.FC = () => {
                   )}
 
                   {/* 3-Hint Clues Preview & Quiz Mode */}
-                  {selectedWord.three_hints && (
+                  {(() => {
+                    void isHintsBankLoaded;
+                    const pools = getCluePoolsForWord(selectedWord);
+                    const h1 = pools.pool1[0]?.en || selectedWord.three_hints?.category_hint || '';
+                    const h2 = pools.pool2[0]?.en || selectedWord.three_hints?.feature_hint || '';
+                    const h3 = pools.pool3[0]?.en || selectedWord.three_hints?.letter_hint || '';
+                    if (!h1 && !h2 && !h3) return null;
+                    return (
                     <div className="bg-amber-50/90 dark:bg-amber-950/30 rounded-2xl p-4 border border-amber-200 dark:border-amber-900/60 shadow-xs text-xs sm:text-sm space-y-2">
                       <div className="flex items-center justify-between gap-1.5 text-amber-900 dark:text-amber-300 text-xs font-black uppercase tracking-wider mb-1">
                         <div className="flex items-center gap-1.5">
@@ -693,7 +703,7 @@ export const PictureDictionaryBrowser: React.FC = () => {
 
                       {/* Hint 1 */}
                       <p className="text-slate-700 dark:text-amber-100/90 font-medium">
-                        <strong className="text-amber-800 dark:text-amber-300 mr-1">1.</strong> {selectedWord.three_hints.category_hint}
+                        <strong className="text-amber-800 dark:text-amber-300 mr-1">1.</strong> {h1}
                       </p>
 
                       {/* Hint 2 */}
@@ -707,7 +717,7 @@ export const PictureDictionaryBrowser: React.FC = () => {
                         </button>
                       ) : (
                         <p className="text-slate-700 dark:text-amber-100/90 font-medium">
-                          <strong className="text-amber-800 dark:text-amber-300 mr-1">2.</strong> {selectedWord.three_hints.feature_hint}
+                          <strong className="text-amber-800 dark:text-amber-300 mr-1">2.</strong> {h2}
                         </p>
                       )}
 
@@ -722,11 +732,12 @@ export const PictureDictionaryBrowser: React.FC = () => {
                         </button>
                       ) : (
                         <p className="text-slate-700 dark:text-amber-100/90 font-medium">
-                          <strong className="text-amber-800 dark:text-amber-300 mr-1">3.</strong> {selectedWord.three_hints.letter_hint}
+                          <strong className="text-amber-800 dark:text-amber-300 mr-1">3.</strong> {h3}
                         </p>
                       )}
                     </div>
-                  )}
+                    );
+                  })()}
                 </div>
 
                 {/* Keyboard Shortcut Hints Footer */}

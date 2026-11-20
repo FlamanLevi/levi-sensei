@@ -50,9 +50,6 @@ interface ClassroomContextType {
   openDictionary: () => void;
   openAlphabet: () => void;
   openReports: () => void;
-  isUnitModalOpen: boolean;
-  setIsUnitModalOpen: (open: boolean) => void;
-  openUnitModal: () => void;
   isPickerModalOpen: boolean;
   setIsPickerModalOpen: (open: boolean) => void;
   openPickerModal: () => void;
@@ -563,14 +560,9 @@ export const ClassroomProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     setIsContestantMode(false);
   };
 
-  const [isUnitModalOpen, setIsUnitModalOpen] = useState<boolean>(false);
   const [isPickerModalOpen, setIsPickerModalOpen] = useState<boolean>(false);
   const [isDiceModalOpen, setIsDiceModalOpen] = useState<boolean>(false);
   const [isRoutineModalOpen, setIsRoutineModalOpen] = useState<boolean>(false);
-
-  const openUnitModal = () => {
-    setIsUnitModalOpen(true);
-  };
 
   const openPickerModal = () => {
     setIsPickerModalOpen(true);
@@ -693,9 +685,6 @@ export const ClassroomProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       openDictionary,
       openAlphabet,
       openReports,
-      isUnitModalOpen,
-      setIsUnitModalOpen,
-      openUnitModal,
       isPickerModalOpen,
       setIsPickerModalOpen,
       openPickerModal,

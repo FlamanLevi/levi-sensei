@@ -3,6 +3,7 @@ import confetti from 'canvas-confetti';
 import { CinemaStageLayout } from '@/components/common/CinemaStageLayout';
 import { useLanguage } from '@/context/LanguageContext';
 import { useAudio } from '@/context/AudioContext';
+import { useVocabulary } from '@/context/VocabularyContext';
 import { speechService } from '@/services/speechService';
 import { soundEffects } from '@/services/soundEffects';
 import { RubyText } from '@/components/common/RubyText';
@@ -165,11 +166,35 @@ export const MysteryPencilCaseGame: React.FC<MysteryPencilCaseGameProps> = ({ on
   const [isNoFlipped, setIsNoFlipped] = useState<boolean>(false);
   const [isBranchFlipped, setIsBranchFlipped] = useState<boolean>(false); // false = YES/NO, true = ある/なし
 
+  const { allWords } = useVocabulary();
+
+  const hydratedStationeryItems = useMemo<StationeryItem[]>(() => {
+    if (!allWords || allWords.length === 0) return STATIONERY_ITEMS;
+    const byId = new Map(allWords.map(w => [w.id, w]));
+    return STATIONERY_ITEMS.map(item => {
+      const vocab = byId.get(item.id);
+      if (!vocab) return item;
+      const g4Media = vocab.media_by_grade?.ES_G4?.card_image;
+      return {
+        ...item,
+        english: vocab.english || item.english,
+        displayLabel: vocab.display_label || vocab.english || item.displayLabel,
+        article: (vocab.article === 'an' ? 'an' : 'a') as 'a' | 'an',
+        jaKanji: vocab.ja_kanji || item.jaKanji,
+        jaHiragana: vocab.ja_hiragana || item.jaHiragana,
+        ruby: vocab.ruby && vocab.ruby.length > 0 ? vocab.ruby : item.ruby,
+        singularImg: g4Media || vocab.card_image || item.singularImg,
+        soundFile: vocab.primary_audio || vocab.sound_file || item.soundFile,
+        audioSuite: vocab.audio_suite ? { ...item.audioSuite, ...vocab.audio_suite } : item.audioSuite
+      };
+    });
+  }, [allWords]);
+
   // Active word pool
   const activeItems = useMemo(() => {
-    const filtered = STATIONERY_ITEMS.filter(it => activeItemIds.includes(it.id));
-    return filtered.length > 0 ? filtered : STATIONERY_ITEMS;
-  }, [activeItemIds]);
+    const filtered = hydratedStationeryItems.filter(it => activeItemIds.includes(it.id));
+    return filtered.length > 0 ? filtered : hydratedStationeryItems;
+  }, [hydratedStationeryItems, activeItemIds]);
 
   // Generate a new round
   const generateNewRound = useCallback(() => {

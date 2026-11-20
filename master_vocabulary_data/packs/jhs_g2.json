@@ -1,0 +1,2867 @@
+[
+  {
+    "id": "word_3001",
+    "english": "found",
+    "disambiguation": null,
+    "display_label": "found",
+    "part_of_speech": "verb",
+    "category": "01_action",
+    "sub_category": "past_verb",
+    "ja_kanji": "見つけた・わかった［過去・過去分詞］",
+    "ja_hiragana": "みつけた",
+    "en_katakana": "ファウンド",
+    "ruby": [
+      {
+        "base": "見",
+        "ruby": "み"
+      },
+      {
+        "base": "つけた",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G2"
+    ],
+    "tags": [
+      "past_verb",
+      "jhs_g2"
+    ],
+    "lemma": "find",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "4",
+    "three_hints": {
+      "category_hint": "It is an irregular past-tense verb!",
+      "feature_hint": "The irregular past and past participle of 'find'!",
+      "letter_hint": "It starts with 'F'."
+    },
+    "target_dialogues": [
+      {
+        "question": "What did you find in the park?",
+        "answer": "I found a cute lost puppy.",
+        "context": "JHS_G2 Unit 1: Past Stories & Irregular Past (L1-L4)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "Unit 1: Past Stories & Irregular Past (L1-L4)",
+        "source": "borderlink_jhs_g2",
+        "textbook_units": {
+          "NC": "G1 L6, L7",
+          "NH": "G2 U0, U1",
+          "HG": "U1, G1 U7",
+          "OW": "G1 L4, L5",
+          "BS": "U1, G1 U8",
+          "SU": "G1 P9, P10"
+        }
+      }
+    },
+    "inflections": {
+      "third_person": "finds",
+      "past": "found",
+      "past_participle": "found",
+      "gerund": "finding"
+    }
+  },
+  {
+    "id": "word_3002",
+    "english": "took",
+    "disambiguation": null,
+    "display_label": "took",
+    "part_of_speech": "verb",
+    "category": "01_action",
+    "sub_category": "past_verb",
+    "ja_kanji": "撮った・持っていった・乗った［過去］",
+    "ja_hiragana": "とった",
+    "en_katakana": "トゥック",
+    "ruby": [
+      {
+        "base": "撮",
+        "ruby": "と"
+      },
+      {
+        "base": "った",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G2"
+    ],
+    "tags": [
+      "past_verb",
+      "jhs_g2"
+    ],
+    "lemma": "take",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "4",
+    "three_hints": {
+      "category_hint": "It is an irregular past-tense verb!",
+      "feature_hint": "The irregular past tense of 'take' (past participle is 'taken')!",
+      "letter_hint": "It starts with 'T'."
+    },
+    "target_dialogues": [
+      {
+        "question": "Did you take pictures on your trip?",
+        "answer": "Yes, I took many pictures.",
+        "context": "JHS_G2 Unit 1: Past Stories & Irregular Past (L1-L4)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "Unit 1: Past Stories & Irregular Past (L1-L4)",
+        "source": "borderlink_jhs_g2",
+        "textbook_units": {
+          "NC": "G1 L6, L7",
+          "NH": "G2 U0, U1",
+          "HG": "U1, G1 U7",
+          "OW": "G1 L4, L5",
+          "BS": "U1, G1 U8",
+          "SU": "G1 P9, P10"
+        }
+      }
+    },
+    "inflections": {
+      "third_person": "takes",
+      "past": "took",
+      "past_participle": "taken",
+      "gerund": "taking"
+    }
+  },
+  {
+    "id": "word_3003",
+    "english": "forgot",
+    "disambiguation": null,
+    "display_label": "forgot",
+    "part_of_speech": "verb",
+    "category": "01_action",
+    "sub_category": "past_verb",
+    "ja_kanji": "忘れた［過去］",
+    "ja_hiragana": "わすれた",
+    "en_katakana": "フォゴット",
+    "ruby": [
+      {
+        "base": "忘",
+        "ruby": "わす"
+      },
+      {
+        "base": "れた",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G2"
+    ],
+    "tags": [
+      "past_verb",
+      "jhs_g2"
+    ],
+    "lemma": "forget",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "4",
+    "three_hints": {
+      "category_hint": "It is an irregular past-tense verb!",
+      "feature_hint": "The irregular past tense of 'forget'!",
+      "letter_hint": "It starts with 'F'."
+    },
+    "target_dialogues": [
+      {
+        "question": "Where is your umbrella?",
+        "answer": "Oh no, I forgot my umbrella on the train!",
+        "context": "JHS_G2 Unit 1: Past Stories & Irregular Past (L1-L4)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "Unit 1: Past Stories & Irregular Past (L1-L4)",
+        "source": "borderlink_jhs_g2",
+        "textbook_units": {
+          "NC": "G1 L6, L7",
+          "NH": "G2 U0, U1",
+          "HG": "U1, G1 U7",
+          "OW": "G1 L4, L5",
+          "BS": "U1, G1 U8",
+          "SU": "G1 P9, P10"
+        }
+      }
+    },
+    "inflections": {
+      "third_person": "forgets",
+      "past": "forgot",
+      "past_participle": "forgotten",
+      "gerund": "forgetting"
+    }
+  },
+  {
+    "id": "word_3004",
+    "english": "told",
+    "disambiguation": null,
+    "display_label": "told",
+    "part_of_speech": "verb",
+    "category": "01_action",
+    "sub_category": "past_verb",
+    "ja_kanji": "伝えた・話した［過去・過去分詞］",
+    "ja_hiragana": "つたえた",
+    "en_katakana": "トールド",
+    "ruby": [
+      {
+        "base": "伝",
+        "ruby": "つた"
+      },
+      {
+        "base": "えた",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G2"
+    ],
+    "tags": [
+      "past_verb",
+      "jhs_g2"
+    ],
+    "lemma": "tell",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "4",
+    "three_hints": {
+      "category_hint": "It is an irregular past-tense verb!",
+      "feature_hint": "The irregular past and past participle of 'tell'!",
+      "letter_hint": "It starts with 'T'."
+    },
+    "target_dialogues": [
+      {
+        "question": "What did the teacher tell you?",
+        "answer": "She told us an interesting story.",
+        "context": "JHS_G2 Unit 1: Past Stories & Irregular Past (L1-L4)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "Unit 1: Past Stories & Irregular Past (L1-L4)",
+        "source": "borderlink_jhs_g2",
+        "textbook_units": {
+          "NC": "G1 L6, L7",
+          "NH": "G2 U0, U1",
+          "HG": "U1, G1 U7",
+          "OW": "G1 L4, L5",
+          "BS": "U1, G1 U8",
+          "SU": "G1 P9, P10"
+        }
+      }
+    },
+    "inflections": {
+      "third_person": "tells",
+      "past": "told",
+      "past_participle": "told",
+      "gerund": "telling"
+    }
+  },
+  {
+    "id": "word_3005",
+    "english": "said",
+    "disambiguation": null,
+    "display_label": "said",
+    "part_of_speech": "verb",
+    "category": "01_action",
+    "sub_category": "past_verb",
+    "ja_kanji": "言った［過去・過去分詞］",
+    "ja_hiragana": "いった",
+    "en_katakana": "セッド",
+    "ruby": [
+      {
+        "base": "言",
+        "ruby": "い"
+      },
+      {
+        "base": "った",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G2"
+    ],
+    "tags": [
+      "past_verb",
+      "jhs_g2"
+    ],
+    "lemma": "say",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "4",
+    "three_hints": {
+      "category_hint": "It is an irregular past-tense verb!",
+      "feature_hint": "The irregular past and past participle of 'say' (pronounced /sed/)!",
+      "letter_hint": "It starts with 'S'."
+    },
+    "target_dialogues": [
+      {
+        "question": "What did he say?",
+        "answer": "He said 'Thank you!' with a big smile.",
+        "context": "JHS_G2 Unit 1: Past Stories & Irregular Past (L1-L4)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "Unit 1: Past Stories & Irregular Past (L1-L4)",
+        "source": "borderlink_jhs_g2",
+        "textbook_units": {
+          "NC": "G1 L6, L7",
+          "NH": "G2 U0, U1",
+          "HG": "U1, G1 U7",
+          "OW": "G1 L4, L5",
+          "BS": "U1, G1 U8",
+          "SU": "G1 P9, P10"
+        }
+      }
+    },
+    "inflections": {
+      "third_person": "says",
+      "past": "said",
+      "past_participle": "said",
+      "gerund": "saying"
+    }
+  },
+  {
+    "id": "word_3006",
+    "english": "heard",
+    "disambiguation": null,
+    "display_label": "heard",
+    "part_of_speech": "verb",
+    "category": "01_action",
+    "sub_category": "past_verb",
+    "ja_kanji": "聞いた・聞こえた［過去・過去分詞］",
+    "ja_hiragana": "きいた",
+    "en_katakana": "ハード",
+    "ruby": [
+      {
+        "base": "聞",
+        "ruby": "き"
+      },
+      {
+        "base": "いた",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G2"
+    ],
+    "tags": [
+      "past_verb",
+      "jhs_g2"
+    ],
+    "lemma": "hear",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "4",
+    "three_hints": {
+      "category_hint": "It is an irregular past-tense verb!",
+      "feature_hint": "The irregular past and past participle of 'hear'!",
+      "letter_hint": "It starts with 'H'."
+    },
+    "target_dialogues": [
+      {
+        "question": "Did you hear the news?",
+        "answer": "Yes, I heard the good news this morning.",
+        "context": "JHS_G2 Unit 1: Past Stories & Irregular Past (L1-L4)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "Unit 1: Past Stories & Irregular Past (L1-L4)",
+        "source": "borderlink_jhs_g2",
+        "textbook_units": {
+          "NC": "G1 L6, L7",
+          "NH": "G2 U0, U1",
+          "HG": "U1, G1 U7",
+          "OW": "G1 L4, L5",
+          "BS": "U1, G1 U8",
+          "SU": "G1 P9, P10"
+        }
+      }
+    },
+    "inflections": {
+      "third_person": "hears",
+      "past": "heard",
+      "past_participle": "heard",
+      "gerund": "hearing"
+    }
+  },
+  {
+    "id": "word_3007",
+    "english": "village",
+    "disambiguation": null,
+    "display_label": "village",
+    "part_of_speech": "noun",
+    "category": "06_facility",
+    "sub_category": "building",
+    "ja_kanji": "村",
+    "ja_hiragana": "むら",
+    "en_katakana": "ビレッジ",
+    "ruby": [
+      {
+        "base": "村",
+        "ruby": "むら"
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G2"
+    ],
+    "tags": [
+      "building",
+      "jhs_g2"
+    ],
+    "lemma": "village",
+    "is_plural": false,
+    "article": "a",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "4",
+    "three_hints": {
+      "category_hint": "It is a community or place where people live!",
+      "feature_hint": "A small community in the countryside, smaller than a town or city!",
+      "letter_hint": "It starts with 'V'."
+    },
+    "target_dialogues": [
+      {
+        "question": "Where did your grandfather live?",
+        "answer": "He lived in a quiet mountain village.",
+        "context": "JHS_G2 Unit 1: Past Stories & Irregular Past (L1-L4)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "Unit 1: Past Stories & Irregular Past (L1-L4)",
+        "source": "borderlink_jhs_g2",
+        "textbook_units": {
+          "NC": "G1 L6, L7",
+          "NH": "G2 U0, U1",
+          "HG": "U1, G1 U7",
+          "OW": "G1 L4, L5",
+          "BS": "U1, G1 U8",
+          "SU": "G1 P9, P10"
+        }
+      }
+    },
+    "inflections": {
+      "plural": "villages"
+    }
+  },
+  {
+    "id": "word_3008",
+    "english": "traditional",
+    "disambiguation": null,
+    "display_label": "traditional",
+    "part_of_speech": "adjective",
+    "category": "02_state",
+    "sub_category": "impression",
+    "ja_kanji": "伝統的な",
+    "ja_hiragana": "でんとうてきな",
+    "en_katakana": "トラディショナル",
+    "ruby": [
+      {
+        "base": "伝統的",
+        "ruby": "でんとうてき"
+      },
+      {
+        "base": "な",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G2"
+    ],
+    "tags": [
+      "impression",
+      "jhs_g2"
+    ],
+    "lemma": "traditional",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "4",
+    "three_hints": {
+      "category_hint": "It is a cultural describing word!",
+      "feature_hint": "Passed down for many generations in a country's culture!",
+      "letter_hint": "It starts with 'T'."
+    },
+    "target_dialogues": [
+      {
+        "question": "What did you see in Kyoto?",
+        "answer": "We saw traditional Japanese houses.",
+        "context": "JHS_G2 Unit 1: Past Stories & Irregular Past (L1-L4)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "Unit 1: Past Stories & Irregular Past (L1-L4)",
+        "source": "borderlink_jhs_g2",
+        "textbook_units": {
+          "NC": "G1 L6, L7",
+          "NH": "G2 U0, U1",
+          "HG": "U1, G1 U7",
+          "OW": "G1 L4, L5",
+          "BS": "U1, G1 U8",
+          "SU": "G1 P9, P10"
+        }
+      }
+    },
+    "inflections": {
+      "comparative": "more traditional",
+      "superlative": "most traditional"
+    }
+  },
+  {
+    "id": "word_3009",
+    "english": "message",
+    "disambiguation": null,
+    "display_label": "message",
+    "part_of_speech": "noun",
+    "category": "05_schoollife",
+    "sub_category": "stationery",
+    "ja_kanji": "伝言・メッセージ",
+    "ja_hiragana": "でんごん",
+    "en_katakana": "メッセージ",
+    "ruby": [
+      {
+        "base": "伝言",
+        "ruby": "でんごん"
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G2"
+    ],
+    "tags": [
+      "stationery",
+      "jhs_g2"
+    ],
+    "lemma": "message",
+    "is_plural": false,
+    "article": "a",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "4",
+    "three_hints": {
+      "category_hint": "It is a communication word!",
+      "feature_hint": "Information or words you leave for someone when they cannot answer the phone!",
+      "letter_hint": "It starts with 'M'."
+    },
+    "target_dialogues": [
+      {
+        "question": "Can I take a message?",
+        "answer": "Please leave a message on my phone.",
+        "context": "JHS_G2 Unit 2: Future Plans & Phone Calls (L5-L8)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "Unit 2: Future Plans & Phone Calls (L5-L8)",
+        "source": "borderlink_jhs_g2",
+        "textbook_units": {
+          "NC": "G1 L8, G2 L4",
+          "NH": "G2 U1",
+          "HG": "U3",
+          "OW": "G1 L8",
+          "BS": "U2, LT4",
+          "SU": "P1"
+        }
+      }
+    },
+    "inflections": {
+      "plural": "messages"
+    }
+  },
+  {
+    "id": "word_3010",
+    "english": "meeting",
+    "disambiguation": null,
+    "display_label": "meeting",
+    "part_of_speech": "noun",
+    "category": "05_schoollife",
+    "sub_category": "school_event",
+    "ja_kanji": "会議・ミーティング",
+    "ja_hiragana": "かいぎ",
+    "en_katakana": "ミーティング",
+    "ruby": [
+      {
+        "base": "会議",
+        "ruby": "かいぎ"
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G2"
+    ],
+    "tags": [
+      "school_event",
+      "jhs_g2"
+    ],
+    "lemma": "meeting",
+    "is_plural": false,
+    "article": "a",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "4",
+    "three_hints": {
+      "category_hint": "It is a school or workplace gathering!",
+      "feature_hint": "When people come together to discuss plans and ideas!",
+      "letter_hint": "It starts with 'M'."
+    },
+    "target_dialogues": [
+      {
+        "question": "Why is the teacher busy?",
+        "answer": "She is having a meeting right now.",
+        "context": "JHS_G2 Unit 2: Future Plans & Phone Calls (L5-L8)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "Unit 2: Future Plans & Phone Calls (L5-L8)",
+        "source": "borderlink_jhs_g2",
+        "textbook_units": {
+          "NC": "G1 L8, G2 L4",
+          "NH": "G2 U1",
+          "HG": "U3",
+          "OW": "G1 L8",
+          "BS": "U2, LT4",
+          "SU": "P1"
+        }
+      }
+    },
+    "inflections": {
+      "plural": "meetings"
+    }
+  },
+  {
+    "id": "word_3011",
+    "english": "hold on",
+    "disambiguation": null,
+    "display_label": "hold on",
+    "part_of_speech": "phrase",
+    "category": "01_action",
+    "sub_category": "classroom_tpr",
+    "ja_kanji": "（電話を切らずに）少し待つ",
+    "ja_hiragana": "すこしまつ",
+    "en_katakana": "ホールド オン",
+    "ruby": [
+      {
+        "base": "少",
+        "ruby": "すこ"
+      },
+      {
+        "base": "し",
+        "ruby": ""
+      },
+      {
+        "base": "待",
+        "ruby": "ま"
+      },
+      {
+        "base": "つ",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G2"
+    ],
+    "tags": [
+      "classroom_tpr",
+      "jhs_g2"
+    ],
+    "lemma": "hold",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 2,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "4",
+    "three_hints": {
+      "category_hint": "It is a useful phone conversation phrase!",
+      "feature_hint": "What you say on the phone to ask the caller to wait for a short moment!",
+      "letter_hint": "It starts with 'H'."
+    },
+    "target_dialogues": [
+      {
+        "question": "May I speak to Ken?",
+        "answer": "Sure, please hold on a moment.",
+        "context": "JHS_G2 Unit 2: Future Plans & Phone Calls (L5-L8)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "Unit 2: Future Plans & Phone Calls (L5-L8)",
+        "source": "borderlink_jhs_g2",
+        "textbook_units": {
+          "NC": "G1 L8, G2 L4",
+          "NH": "G2 U1",
+          "HG": "U3",
+          "OW": "G1 L8",
+          "BS": "U2, LT4",
+          "SU": "P1"
+        }
+      }
+    }
+  },
+  {
+    "id": "word_3012",
+    "english": "noon",
+    "disambiguation": null,
+    "display_label": "noon",
+    "part_of_speech": "noun",
+    "category": "10_calendar_time",
+    "sub_category": "time_of_day",
+    "ja_kanji": "正午（昼の12時）",
+    "ja_hiragana": "しょうご",
+    "en_katakana": "ヌーン",
+    "ruby": [
+      {
+        "base": "正午",
+        "ruby": "しょうご"
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G2"
+    ],
+    "tags": [
+      "time_of_day",
+      "jhs_g2"
+    ],
+    "lemma": "noon",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "4",
+    "three_hints": {
+      "category_hint": "It is an exact time of day!",
+      "feature_hint": "Exactly 12:00 in the middle of the day (lunchtime)!",
+      "letter_hint": "It starts with 'N'."
+    },
+    "target_dialogues": [
+      {
+        "question": "When will the event start?",
+        "answer": "It will start at noon.",
+        "context": "JHS_G2 Unit 2: Future Plans & Phone Calls (L5-L8)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "Unit 2: Future Plans & Phone Calls (L5-L8)",
+        "source": "borderlink_jhs_g2",
+        "textbook_units": {
+          "NC": "G1 L8, G2 L4",
+          "NH": "G2 U1",
+          "HG": "U3",
+          "OW": "G1 L8",
+          "BS": "U2, LT4",
+          "SU": "P1"
+        }
+      }
+    }
+  },
+  {
+    "id": "word_3013",
+    "english": "perhaps",
+    "disambiguation": null,
+    "display_label": "perhaps",
+    "part_of_speech": "adverb",
+    "category": "10_calendar_time",
+    "sub_category": "frequency_adverb",
+    "ja_kanji": "ひょっとすると・たぶん",
+    "ja_hiragana": "たぶん",
+    "en_katakana": "パーハップス",
+    "ruby": [
+      {
+        "base": "たぶん",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G2"
+    ],
+    "tags": [
+      "frequency_adverb",
+      "jhs_g2"
+    ],
+    "lemma": "perhaps",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "4",
+    "three_hints": {
+      "category_hint": "It is an adverb expressing possibility!",
+      "feature_hint": "Another word for 'maybe' when you are not 100% sure!",
+      "letter_hint": "It starts with 'P'."
+    },
+    "target_dialogues": [
+      {
+        "question": "Will it rain tomorrow?",
+        "answer": "Perhaps it will rain in the afternoon.",
+        "context": "JHS_G2 Unit 2: Future Plans & Phone Calls (L5-L8)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "Unit 2: Future Plans & Phone Calls (L5-L8)",
+        "source": "borderlink_jhs_g2",
+        "textbook_units": {
+          "NC": "G1 L8, G2 L4",
+          "NH": "G2 U1",
+          "HG": "U3",
+          "OW": "G1 L8",
+          "BS": "U2, LT4",
+          "SU": "P1"
+        }
+      }
+    }
+  },
+  {
+    "id": "word_3014",
+    "english": "charity",
+    "disambiguation": null,
+    "display_label": "charity",
+    "part_of_speech": "noun",
+    "category": "06_facility",
+    "sub_category": "building",
+    "ja_kanji": "チャリティー・慈善活動",
+    "ja_hiragana": "じぜんかつどう",
+    "en_katakana": "チャリティー",
+    "ruby": [
+      {
+        "base": "慈善活動",
+        "ruby": "じぜんかつどう"
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G2"
+    ],
+    "tags": [
+      "building",
+      "jhs_g2"
+    ],
+    "lemma": "charity",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "4",
+    "three_hints": {
+      "category_hint": "It is a social contribution word!",
+      "feature_hint": "Helping people in need by donating money, food, or volunteer work!",
+      "letter_hint": "It starts with 'C'."
+    },
+    "target_dialogues": [
+      {
+        "question": "Why are they selling cookies?",
+        "answer": "They are raising money for charity.",
+        "context": "JHS_G2 Unit 3: Rules, Modals & Charity (L9-L12)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "Unit 3: Rules, Modals & Charity (L9-L12)",
+        "source": "borderlink_jhs_g2",
+        "textbook_units": {
+          "NC": "GET Plus 3, 4",
+          "NH": "U4",
+          "HG": "U5",
+          "OW": "G1 L7",
+          "BS": "U2, LT2",
+          "SU": "P2"
+        }
+      }
+    },
+    "inflections": {
+      "plural": "charities"
+    }
+  },
+  {
+    "id": "word_3015",
+    "english": "hunger",
+    "disambiguation": null,
+    "display_label": "hunger",
+    "part_of_speech": "noun",
+    "category": "02_state",
+    "sub_category": "feeling",
+    "ja_kanji": "飢え・空腹",
+    "ja_hiragana": "うえ",
+    "en_katakana": "ハンガー",
+    "ruby": [
+      {
+        "base": "飢",
+        "ruby": "う"
+      },
+      {
+        "base": "え",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G2"
+    ],
+    "tags": [
+      "feeling",
+      "jhs_g2"
+    ],
+    "lemma": "hunger",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "4",
+    "three_hints": {
+      "category_hint": "It is a global issue & SDGs keyword!",
+      "feature_hint": "The serious problem of not having enough food to eat (SDG Goal 2: Zero Hunger)!",
+      "letter_hint": "It starts with 'H'."
+    },
+    "target_dialogues": [
+      {
+        "question": "Why is this SDG goal important?",
+        "answer": "We must work together to end world hunger.",
+        "context": "JHS_G2 Unit 3: Rules, Modals & Charity (L9-L12)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "Unit 3: Rules, Modals & Charity (L9-L12)",
+        "source": "borderlink_jhs_g2",
+        "textbook_units": {
+          "NC": "GET Plus 3, 4",
+          "NH": "U4",
+          "HG": "U5",
+          "OW": "G1 L7",
+          "BS": "U2, LT2",
+          "SU": "P2"
+        }
+      }
+    }
+  },
+  {
+    "id": "word_3016",
+    "english": "distance",
+    "disambiguation": null,
+    "display_label": "distance",
+    "part_of_speech": "noun",
+    "category": "13_position",
+    "sub_category": "direction",
+    "ja_kanji": "距離",
+    "ja_hiragana": "きょり",
+    "en_katakana": "ディスタンス",
+    "ruby": [
+      {
+        "base": "距離",
+        "ruby": "きょり"
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G2"
+    ],
+    "tags": [
+      "direction",
+      "jhs_g2"
+    ],
+    "lemma": "distance",
+    "is_plural": false,
+    "article": "a",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "4",
+    "three_hints": {
+      "category_hint": "It is a measurement & travel word!",
+      "feature_hint": "How far it is from one place to another!",
+      "letter_hint": "It starts with 'D'."
+    },
+    "target_dialogues": [
+      {
+        "question": "Is the station far from here?",
+        "answer": "It is a short walking distance.",
+        "context": "JHS_G2 Unit 3: Rules, Modals & Charity (L9-L12)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "Unit 3: Rules, Modals & Charity (L9-L12)",
+        "source": "borderlink_jhs_g2",
+        "textbook_units": {
+          "NC": "GET Plus 3, 4",
+          "NH": "U4",
+          "HG": "U5",
+          "OW": "G1 L7",
+          "BS": "U2, LT2",
+          "SU": "P2"
+        }
+      }
+    },
+    "inflections": {
+      "plural": "distances"
+    }
+  },
+  {
+    "id": "word_3017",
+    "english": "should",
+    "disambiguation": null,
+    "display_label": "should",
+    "part_of_speech": "verb",
+    "category": "01_action",
+    "sub_category": "present_verb",
+    "ja_kanji": "〜すべきである・〜したほうがよい",
+    "ja_hiragana": "すべきである",
+    "en_katakana": "シュッド",
+    "ruby": [
+      {
+        "base": "〜すべきである",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G2"
+    ],
+    "tags": [
+      "present_verb",
+      "jhs_g2"
+    ],
+    "lemma": "should",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "4",
+    "three_hints": {
+      "category_hint": "It is an advice modal verb!",
+      "feature_hint": "A modal verb used to give helpful advice or say what is right to do!",
+      "letter_hint": "It starts with 'S'."
+    },
+    "target_dialogues": [
+      {
+        "question": "What should we do for the earth?",
+        "answer": "We should bring our own bags.",
+        "context": "JHS_G2 Unit 3: Rules, Modals & Charity (L9-L12)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "Unit 3: Rules, Modals & Charity (L9-L12)",
+        "source": "borderlink_jhs_g2",
+        "textbook_units": {
+          "NC": "GET Plus 3, 4",
+          "NH": "U4",
+          "HG": "U5",
+          "OW": "G1 L7",
+          "BS": "U2, LT2",
+          "SU": "P2"
+        }
+      }
+    }
+  },
+  {
+    "id": "word_3018",
+    "english": "throw away",
+    "disambiguation": null,
+    "display_label": "throw away",
+    "part_of_speech": "phrase",
+    "category": "01_action",
+    "sub_category": "daily_routine_phrase",
+    "ja_kanji": "捨てる",
+    "ja_hiragana": "すてる",
+    "en_katakana": "スロー アウェイ",
+    "ruby": [
+      {
+        "base": "捨",
+        "ruby": "す"
+      },
+      {
+        "base": "てる",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G2"
+    ],
+    "tags": [
+      "daily_routine_phrase",
+      "jhs_g2"
+    ],
+    "lemma": "throw",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 2,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "4",
+    "three_hints": {
+      "category_hint": "It is an action phrase about waste & environment!",
+      "feature_hint": "To put unwanted trash or garbage into the bin!",
+      "letter_hint": "It starts with 'T'."
+    },
+    "target_dialogues": [
+      {
+        "question": "What should we not do with plastic?",
+        "answer": "We should not throw away plastic in the sea.",
+        "context": "JHS_G2 Unit 3: Rules, Modals & Charity (L9-L12)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "Unit 3: Rules, Modals & Charity (L9-L12)",
+        "source": "borderlink_jhs_g2",
+        "textbook_units": {
+          "NC": "GET Plus 3, 4",
+          "NH": "U4",
+          "HG": "U5",
+          "OW": "G1 L7",
+          "BS": "U2, LT2",
+          "SU": "P2"
+        }
+      }
+    }
+  },
+  {
+    "id": "word_3019",
+    "english": "important",
+    "disambiguation": null,
+    "display_label": "important",
+    "part_of_speech": "adjective",
+    "category": "02_state",
+    "sub_category": "impression",
+    "ja_kanji": "大切な・重要な",
+    "ja_hiragana": "たいせつな",
+    "en_katakana": "インポータント",
+    "ruby": [
+      {
+        "base": "大切",
+        "ruby": "たいせつ"
+      },
+      {
+        "base": "な",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G2"
+    ],
+    "tags": [
+      "impression",
+      "jhs_g2"
+    ],
+    "lemma": "important",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "4",
+    "three_hints": {
+      "category_hint": "It is a key adjective for expressing opinions!",
+      "feature_hint": "Having great value or meaning—something you must not forget!",
+      "letter_hint": "It starts with 'I'."
+    },
+    "target_dialogues": [
+      {
+        "question": "What is important to you?",
+        "answer": "Family and friends are very important to me.",
+        "context": "JHS_G2 Unit 3: Rules, Modals & Charity (L9-L12)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "Unit 3: Rules, Modals & Charity (L9-L12)",
+        "source": "borderlink_jhs_g2",
+        "textbook_units": {
+          "NC": "GET Plus 3, 4",
+          "NH": "U4",
+          "HG": "U5",
+          "OW": "G1 L7",
+          "BS": "U2, LT2",
+          "SU": "P2"
+        }
+      }
+    },
+    "inflections": {
+      "comparative": "more important",
+      "superlative": "most important"
+    }
+  },
+  {
+    "id": "word_3020",
+    "english": "if",
+    "disambiguation": null,
+    "display_label": "if",
+    "part_of_speech": "preposition",
+    "category": "13_position",
+    "sub_category": "preposition",
+    "ja_kanji": "もし〜なら",
+    "ja_hiragana": "もし",
+    "en_katakana": "イフ",
+    "ruby": [
+      {
+        "base": "もし〜なら",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G2"
+    ],
+    "tags": [
+      "preposition",
+      "jhs_g2"
+    ],
+    "lemma": "if",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "4",
+    "three_hints": {
+      "category_hint": "It is a conditional conjunction!",
+      "feature_hint": "A short word that introduces a condition ('If it rains, I will stay home')!",
+      "letter_hint": "It starts with 'I'."
+    },
+    "target_dialogues": [
+      {
+        "question": "What will you do tomorrow?",
+        "answer": "If it is sunny, I will go cycling.",
+        "context": "JHS_G2 Unit 4: Conjunctions when, if, that (L13-L16)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "Unit 4: Conjunctions when, if, that (L13-L16)",
+        "source": "borderlink_jhs_g2",
+        "textbook_units": {
+          "NC": "L1, L4",
+          "NH": "U2",
+          "HG": "U1-U3",
+          "OW": "L1, L2",
+          "BS": "U1, U3",
+          "SU": "P1, P2"
+        }
+      }
+    }
+  },
+  {
+    "id": "word_3021",
+    "english": "reason",
+    "disambiguation": null,
+    "display_label": "reason",
+    "part_of_speech": "noun",
+    "category": "05_schoollife",
+    "sub_category": "school_subject",
+    "ja_kanji": "理由・わけ",
+    "ja_hiragana": "りゆう",
+    "en_katakana": "リーズン",
+    "ruby": [
+      {
+        "base": "理由",
+        "ruby": "りゆう"
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G2"
+    ],
+    "tags": [
+      "school_subject",
+      "jhs_g2"
+    ],
+    "lemma": "reason",
+    "is_plural": false,
+    "article": "a",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "4",
+    "three_hints": {
+      "category_hint": "It is an essential opinion & debate noun!",
+      "feature_hint": "The 'why' behind your opinion or choice!",
+      "letter_hint": "It starts with 'R'."
+    },
+    "target_dialogues": [
+      {
+        "question": "Why do you think so?",
+        "answer": "I have two reasons for my opinion.",
+        "context": "JHS_G2 Unit 4: Conjunctions when, if, that (L13-L16)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "Unit 4: Conjunctions when, if, that (L13-L16)",
+        "source": "borderlink_jhs_g2",
+        "textbook_units": {
+          "NC": "L1, L4",
+          "NH": "U2",
+          "HG": "U1-U3",
+          "OW": "L1, L2",
+          "BS": "U1, U3",
+          "SU": "P1, P2"
+        }
+      }
+    },
+    "inflections": {
+      "plural": "reasons"
+    }
+  },
+  {
+    "id": "word_3022",
+    "english": "explanation",
+    "disambiguation": null,
+    "display_label": "explanation",
+    "part_of_speech": "noun",
+    "category": "05_schoollife",
+    "sub_category": "school_subject",
+    "ja_kanji": "説明",
+    "ja_hiragana": "せつめい",
+    "en_katakana": "エクスプラネイション",
+    "ruby": [
+      {
+        "base": "説明",
+        "ruby": "せつめい"
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G2"
+    ],
+    "tags": [
+      "school_subject",
+      "jhs_g2"
+    ],
+    "lemma": "explanation",
+    "is_plural": false,
+    "article": "an",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "4",
+    "three_hints": {
+      "category_hint": "It is an academic & debate noun!",
+      "feature_hint": "Details that make an idea or rule easy to understand (from the verb 'explain')!",
+      "letter_hint": "It starts with 'E'."
+    },
+    "target_dialogues": [
+      {
+        "question": "Did you understand the rule?",
+        "answer": "Yes, her explanation was very clear.",
+        "context": "JHS_G2 Unit 4: Conjunctions when, if, that (L13-L16)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "Unit 4: Conjunctions when, if, that (L13-L16)",
+        "source": "borderlink_jhs_g2",
+        "textbook_units": {
+          "NC": "L1, L4",
+          "NH": "U2",
+          "HG": "U1-U3",
+          "OW": "L1, L2",
+          "BS": "U1, U3",
+          "SU": "P1, P2"
+        }
+      }
+    },
+    "inflections": {
+      "plural": "explanations"
+    }
+  },
+  {
+    "id": "word_3023",
+    "english": "costume",
+    "disambiguation": null,
+    "display_label": "costume",
+    "part_of_speech": "noun",
+    "category": "15_festalday",
+    "sub_category": "halloween_character",
+    "ja_kanji": "衣装・コスチューム",
+    "ja_hiragana": "いしょう",
+    "en_katakana": "コスチューム",
+    "ruby": [
+      {
+        "base": "衣装",
+        "ruby": "いしょう"
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G2"
+    ],
+    "tags": [
+      "halloween_character",
+      "jhs_g2"
+    ],
+    "lemma": "costume",
+    "is_plural": false,
+    "article": "a",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "4",
+    "three_hints": {
+      "category_hint": "It is special clothing for festivals or plays!",
+      "feature_hint": "Special clothes worn for a festival, Halloween, or a stage play!",
+      "letter_hint": "It starts with 'C'."
+    },
+    "target_dialogues": [
+      {
+        "question": "What will you wear to the festival?",
+        "answer": "I will wear a traditional costume.",
+        "context": "JHS_G2 Unit 4: Conjunctions when, if, that (L13-L16)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "Unit 4: Conjunctions when, if, that (L13-L16)",
+        "source": "borderlink_jhs_g2",
+        "textbook_units": {
+          "NC": "L1, L4",
+          "NH": "U2",
+          "HG": "U1-U3",
+          "OW": "L1, L2",
+          "BS": "U1, U3",
+          "SU": "P1, P2"
+        }
+      }
+    },
+    "inflections": {
+      "plural": "costumes"
+    }
+  },
+  {
+    "id": "word_3024",
+    "english": "century",
+    "disambiguation": null,
+    "display_label": "century",
+    "part_of_speech": "noun",
+    "category": "10_calendar_time",
+    "sub_category": "calendar_concept",
+    "ja_kanji": "世紀（100年間）",
+    "ja_hiragana": "せいき",
+    "en_katakana": "センチュリー",
+    "ruby": [
+      {
+        "base": "世紀",
+        "ruby": "せいき"
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G2"
+    ],
+    "tags": [
+      "calendar_concept",
+      "jhs_g2"
+    ],
+    "lemma": "century",
+    "is_plural": false,
+    "article": "a",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "4",
+    "three_hints": {
+      "category_hint": "It is a historical time word!",
+      "feature_hint": "A period of 100 years (we live in the 21st century)!",
+      "letter_hint": "It starts with 'C'."
+    },
+    "target_dialogues": [
+      {
+        "question": "When was this castle built?",
+        "answer": "It was built in the 17th century.",
+        "context": "JHS_G2 Unit 4: Conjunctions when, if, that (L13-L16)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "Unit 4: Conjunctions when, if, that (L13-L16)",
+        "source": "borderlink_jhs_g2",
+        "textbook_units": {
+          "NC": "L1, L4",
+          "NH": "U2",
+          "HG": "U1-U3",
+          "OW": "L1, L2",
+          "BS": "U1, U3",
+          "SU": "P1, P2"
+        }
+      }
+    },
+    "inflections": {
+      "plural": "centuries"
+    }
+  },
+  {
+    "id": "word_3025",
+    "english": "hobby",
+    "disambiguation": null,
+    "display_label": "hobby",
+    "part_of_speech": "noun",
+    "category": "07_dailylife",
+    "sub_category": "household_item",
+    "ja_kanji": "趣味",
+    "ja_hiragana": "しゅみ",
+    "en_katakana": "ホビー",
+    "ruby": [
+      {
+        "base": "趣味",
+        "ruby": "しゅみ"
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G2"
+    ],
+    "tags": [
+      "household_item",
+      "jhs_g2"
+    ],
+    "lemma": "hobby",
+    "is_plural": false,
+    "article": "a",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "4",
+    "three_hints": {
+      "category_hint": "It is something you enjoy in your free time!",
+      "feature_hint": "An activity you love doing in your free time!",
+      "letter_hint": "It starts with 'H'."
+    },
+    "target_dialogues": [
+      {
+        "question": "What is your hobby?",
+        "answer": "My hobby is taking pictures of trains.",
+        "context": "JHS_G2 Unit 5: Infinitives, Gerunds & Sense Verbs (L17-L24)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "Unit 5: Infinitives, Gerunds & Sense Verbs (L17-L24)",
+        "source": "borderlink_jhs_g2",
+        "textbook_units": {
+          "NC": "L2-L4",
+          "NH": "U1, U3, U4",
+          "HG": "U2, U4, U6",
+          "OW": "L1, L3, L4",
+          "BS": "U4-U6",
+          "SU": "P3, P5"
+        }
+      }
+    },
+    "inflections": {
+      "plural": "hobbies"
+    }
+  },
+  {
+    "id": "word_3026",
+    "english": "taste",
+    "disambiguation": null,
+    "display_label": "taste",
+    "part_of_speech": "verb",
+    "category": "01_action",
+    "sub_category": "present_verb",
+    "ja_kanji": "（〜の）味がする・味見する",
+    "ja_hiragana": "あじがする",
+    "en_katakana": "テイスト",
+    "ruby": [
+      {
+        "base": "味",
+        "ruby": "あじ"
+      },
+      {
+        "base": "がする",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G2"
+    ],
+    "tags": [
+      "present_verb",
+      "jhs_g2"
+    ],
+    "lemma": "taste",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "4",
+    "three_hints": {
+      "category_hint": "It is one of the 5 sense verbs!",
+      "feature_hint": "The sense verb you experience with your tongue when eating food ('It tastes good!')!",
+      "letter_hint": "It starts with 'T'."
+    },
+    "target_dialogues": [
+      {
+        "question": "How is the curry?",
+        "answer": "It tastes very delicious!",
+        "context": "JHS_G2 Unit 5: Infinitives, Gerunds & Sense Verbs (L17-L24)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "Unit 5: Infinitives, Gerunds & Sense Verbs (L17-L24)",
+        "source": "borderlink_jhs_g2",
+        "textbook_units": {
+          "NC": "L2-L4",
+          "NH": "U1, U3, U4",
+          "HG": "U2, U4, U6",
+          "OW": "L1, L3, L4",
+          "BS": "U4-U6",
+          "SU": "P3, P5"
+        }
+      }
+    },
+    "inflections": {
+      "third_person": "tastes",
+      "past": "tasted",
+      "past_participle": "tasted",
+      "gerund": "tasting"
+    }
+  },
+  {
+    "id": "word_3027",
+    "english": "smell",
+    "disambiguation": null,
+    "display_label": "smell",
+    "part_of_speech": "verb",
+    "category": "01_action",
+    "sub_category": "present_verb",
+    "ja_kanji": "（〜の）においがする",
+    "ja_hiragana": "においがする",
+    "en_katakana": "スメル",
+    "ruby": [
+      {
+        "base": "においがする",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G2"
+    ],
+    "tags": [
+      "present_verb",
+      "jhs_g2"
+    ],
+    "lemma": "smell",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "4",
+    "three_hints": {
+      "category_hint": "It is one of the 5 sense verbs!",
+      "feature_hint": "The sense verb you experience with your nose ('These flowers smell nice!')!",
+      "letter_hint": "It starts with 'S'."
+    },
+    "target_dialogues": [
+      {
+        "question": "What is cooking in the kitchen?",
+        "answer": "Something smells really sweet!",
+        "context": "JHS_G2 Unit 5: Infinitives, Gerunds & Sense Verbs (L17-L24)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "Unit 5: Infinitives, Gerunds & Sense Verbs (L17-L24)",
+        "source": "borderlink_jhs_g2",
+        "textbook_units": {
+          "NC": "L2-L4",
+          "NH": "U1, U3, U4",
+          "HG": "U2, U4, U6",
+          "OW": "L1, L3, L4",
+          "BS": "U4-U6",
+          "SU": "P3, P5"
+        }
+      }
+    },
+    "inflections": {
+      "third_person": "smells",
+      "past": "smelled",
+      "past_participle": "smelled",
+      "gerund": "smelling"
+    }
+  },
+  {
+    "id": "word_3028",
+    "english": "sound",
+    "disambiguation": null,
+    "display_label": "sound",
+    "part_of_speech": "verb",
+    "category": "01_action",
+    "sub_category": "present_verb",
+    "ja_kanji": "（〜のように）聞こえる・思える",
+    "ja_hiragana": "きこえる",
+    "en_katakana": "サウンド",
+    "ruby": [
+      {
+        "base": "聞",
+        "ruby": "き"
+      },
+      {
+        "base": "こえる",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G2"
+    ],
+    "tags": [
+      "present_verb",
+      "jhs_g2"
+    ],
+    "lemma": "sound",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "4",
+    "three_hints": {
+      "category_hint": "It is one of the 5 sense verbs!",
+      "feature_hint": "The sense verb you experience with your ears ('That sounds fun!')!",
+      "letter_hint": "It starts with 'S'."
+    },
+    "target_dialogues": [
+      {
+        "question": "Let's go to the beach!",
+        "answer": "That sounds great!",
+        "context": "JHS_G2 Unit 5: Infinitives, Gerunds & Sense Verbs (L17-L24)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "Unit 5: Infinitives, Gerunds & Sense Verbs (L17-L24)",
+        "source": "borderlink_jhs_g2",
+        "textbook_units": {
+          "NC": "L2-L4",
+          "NH": "U1, U3, U4",
+          "HG": "U2, U4, U6",
+          "OW": "L1, L3, L4",
+          "BS": "U4-U6",
+          "SU": "P3, P5"
+        }
+      }
+    },
+    "inflections": {
+      "third_person": "sounds",
+      "past": "sounded",
+      "past_participle": "sounded",
+      "gerund": "sounding"
+    }
+  },
+  {
+    "id": "word_3029",
+    "english": "feel",
+    "disambiguation": null,
+    "display_label": "feel",
+    "part_of_speech": "verb",
+    "category": "01_action",
+    "sub_category": "present_verb",
+    "ja_kanji": "感じる・（〜の）手ざわりがする",
+    "ja_hiragana": "かんじる",
+    "en_katakana": "フィール",
+    "ruby": [
+      {
+        "base": "感",
+        "ruby": "かん"
+      },
+      {
+        "base": "じる",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G2"
+    ],
+    "tags": [
+      "present_verb",
+      "jhs_g2"
+    ],
+    "lemma": "feel",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "4",
+    "three_hints": {
+      "category_hint": "It is one of the 5 sense verbs!",
+      "feature_hint": "To experience an emotion or touch with your hands ('This towel feels soft')!",
+      "letter_hint": "It starts with 'F'."
+    },
+    "target_dialogues": [
+      {
+        "question": "How do you feel today?",
+        "answer": "I feel very happy and relaxed.",
+        "context": "JHS_G2 Unit 5: Infinitives, Gerunds & Sense Verbs (L17-L24)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "Unit 5: Infinitives, Gerunds & Sense Verbs (L17-L24)",
+        "source": "borderlink_jhs_g2",
+        "textbook_units": {
+          "NC": "L2-L4",
+          "NH": "U1, U3, U4",
+          "HG": "U2, U4, U6",
+          "OW": "L1, L3, L4",
+          "BS": "U4-U6",
+          "SU": "P3, P5"
+        }
+      }
+    },
+    "inflections": {
+      "third_person": "feels",
+      "past": "felt",
+      "past_participle": "felt",
+      "gerund": "feeling"
+    }
+  },
+  {
+    "id": "word_3030",
+    "english": "clerk",
+    "disambiguation": null,
+    "display_label": "clerk",
+    "part_of_speech": "noun",
+    "category": "06_facility",
+    "sub_category": "job",
+    "ja_kanji": "店員・係員",
+    "ja_hiragana": "てんいん",
+    "en_katakana": "クラーク",
+    "ruby": [
+      {
+        "base": "店員",
+        "ruby": "てんいん"
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G2"
+    ],
+    "tags": [
+      "job",
+      "jhs_g2"
+    ],
+    "lemma": "clerk",
+    "is_plural": false,
+    "article": "a",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "4",
+    "three_hints": {
+      "category_hint": "It is a job at a shop or hotel!",
+      "feature_hint": "A person who works at a store counter helping customers!",
+      "letter_hint": "It starts with 'C'."
+    },
+    "target_dialogues": [
+      {
+        "question": "Who helped you at the store?",
+        "answer": "A kind shop clerk helped me find my size.",
+        "context": "JHS_G2 Unit 5: Infinitives, Gerunds & Sense Verbs (L17-L24)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "Unit 5: Infinitives, Gerunds & Sense Verbs (L17-L24)",
+        "source": "borderlink_jhs_g2",
+        "textbook_units": {
+          "NC": "L2-L4",
+          "NH": "U1, U3, U4",
+          "HG": "U2, U4, U6",
+          "OW": "L1, L3, L4",
+          "BS": "U4-U6",
+          "SU": "P3, P5"
+        }
+      }
+    },
+    "inflections": {
+      "plural": "clerks"
+    }
+  },
+  {
+    "id": "word_3031",
+    "english": "bring",
+    "disambiguation": null,
+    "display_label": "bring",
+    "part_of_speech": "verb",
+    "category": "01_action",
+    "sub_category": "present_verb",
+    "ja_kanji": "持ってくる・連れてくる",
+    "ja_hiragana": "もってくる",
+    "en_katakana": "ブリング",
+    "ruby": [
+      {
+        "base": "持",
+        "ruby": "も"
+      },
+      {
+        "base": "ってくる",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G2"
+    ],
+    "tags": [
+      "present_verb",
+      "jhs_g2"
+    ],
+    "lemma": "bring",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "4",
+    "three_hints": {
+      "category_hint": "It is an everyday action verb!",
+      "feature_hint": "To carry something or someone with you to a place (past tense: 'brought')!",
+      "letter_hint": "It starts with 'B'."
+    },
+    "target_dialogues": [
+      {
+        "question": "What should I bring to the picnic?",
+        "answer": "Please bring your own water bottle.",
+        "context": "JHS_G2 Unit 5: Infinitives, Gerunds & Sense Verbs (L17-L24)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "Unit 5: Infinitives, Gerunds & Sense Verbs (L17-L24)",
+        "source": "borderlink_jhs_g2",
+        "textbook_units": {
+          "NC": "L2-L4",
+          "NH": "U1, U3, U4",
+          "HG": "U2, U4, U6",
+          "OW": "L1, L3, L4",
+          "BS": "U4-U6",
+          "SU": "P3, P5"
+        }
+      }
+    },
+    "inflections": {
+      "third_person": "brings",
+      "past": "brought",
+      "past_participle": "brought",
+      "gerund": "bringing"
+    }
+  },
+  {
+    "id": "word_3032",
+    "english": "join",
+    "disambiguation": null,
+    "display_label": "join",
+    "part_of_speech": "verb",
+    "category": "01_action",
+    "sub_category": "present_verb",
+    "ja_kanji": "参加する・加わる",
+    "ja_hiragana": "さんかする",
+    "en_katakana": "ジョイン",
+    "ruby": [
+      {
+        "base": "参加",
+        "ruby": "さんか"
+      },
+      {
+        "base": "する",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G2"
+    ],
+    "tags": [
+      "present_verb",
+      "jhs_g2"
+    ],
+    "lemma": "join",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "4",
+    "three_hints": {
+      "category_hint": "It is a club & teamwork verb!",
+      "feature_hint": "To become a member of a club, team, or activity!",
+      "letter_hint": "It starts with 'J'."
+    },
+    "target_dialogues": [
+      {
+        "question": "Do you want to join our club?",
+        "answer": "Yes, I want to join the brass band!",
+        "context": "JHS_G2 Unit 5: Infinitives, Gerunds & Sense Verbs (L17-L24)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "Unit 5: Infinitives, Gerunds & Sense Verbs (L17-L24)",
+        "source": "borderlink_jhs_g2",
+        "textbook_units": {
+          "NC": "L2-L4",
+          "NH": "U1, U3, U4",
+          "HG": "U2, U4, U6",
+          "OW": "L1, L3, L4",
+          "BS": "U4-U6",
+          "SU": "P3, P5"
+        }
+      }
+    },
+    "inflections": {
+      "third_person": "joins",
+      "past": "joined",
+      "past_participle": "joined",
+      "gerund": "joining"
+    }
+  },
+  {
+    "id": "word_3033",
+    "english": "faster",
+    "disambiguation": null,
+    "display_label": "faster",
+    "part_of_speech": "adjective",
+    "category": "02_state",
+    "sub_category": "opposite_adj",
+    "ja_kanji": "より速い［比較級］",
+    "ja_hiragana": "よりはやい",
+    "en_katakana": "ファスター",
+    "ruby": [
+      {
+        "base": "より",
+        "ruby": ""
+      },
+      {
+        "base": "速",
+        "ruby": "はや"
+      },
+      {
+        "base": "い",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G2"
+    ],
+    "tags": [
+      "opposite_adj",
+      "jhs_g2"
+    ],
+    "lemma": "fast",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "4",
+    "three_hints": {
+      "category_hint": "It is a comparative (-er) adjective!",
+      "feature_hint": "The comparative form of 'fast' used with 'than'!",
+      "letter_hint": "It starts with 'F'."
+    },
+    "target_dialogues": [
+      {
+        "question": "Which is faster, a train or a plane?",
+        "answer": "A plane is faster than a train.",
+        "context": "JHS_G2 Unit 6: Comparatives & Superlatives (L25-L32)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "Unit 6: Comparatives & Superlatives (L25-L32)",
+        "source": "borderlink_jhs_g2",
+        "textbook_units": {
+          "NC": "L5",
+          "NH": "U6",
+          "HG": "U7",
+          "OW": "L6",
+          "BS": "U7",
+          "SU": "P4"
+        }
+      }
+    },
+    "inflections": {
+      "comparative": "faster",
+      "superlative": "fastest"
+    }
+  },
+  {
+    "id": "word_3034",
+    "english": "fastest",
+    "disambiguation": null,
+    "display_label": "fastest",
+    "part_of_speech": "adjective",
+    "category": "02_state",
+    "sub_category": "opposite_adj",
+    "ja_kanji": "最も速い［最上級］",
+    "ja_hiragana": "もっともはやい",
+    "en_katakana": "ファステスト",
+    "ruby": [
+      {
+        "base": "最",
+        "ruby": "もっと"
+      },
+      {
+        "base": "も",
+        "ruby": ""
+      },
+      {
+        "base": "速",
+        "ruby": "はや"
+      },
+      {
+        "base": "い",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G2"
+    ],
+    "tags": [
+      "opposite_adj",
+      "jhs_g2"
+    ],
+    "lemma": "fast",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "4",
+    "three_hints": {
+      "category_hint": "It is a superlative (the -est) adjective!",
+      "feature_hint": "The superlative form of 'fast'—#1 in speed!",
+      "letter_hint": "It starts with 'F'."
+    },
+    "target_dialogues": [
+      {
+        "question": "What is the fastest land animal?",
+        "answer": "A cheetah is the fastest animal.",
+        "context": "JHS_G2 Unit 6: Comparatives & Superlatives (L25-L32)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "Unit 6: Comparatives & Superlatives (L25-L32)",
+        "source": "borderlink_jhs_g2",
+        "textbook_units": {
+          "NC": "L5",
+          "NH": "U6",
+          "HG": "U7",
+          "OW": "L6",
+          "BS": "U7",
+          "SU": "P4"
+        }
+      }
+    },
+    "inflections": {
+      "comparative": "faster",
+      "superlative": "fastest"
+    }
+  },
+  {
+    "id": "word_3035",
+    "english": "busiest",
+    "disambiguation": null,
+    "display_label": "busiest",
+    "part_of_speech": "adjective",
+    "category": "02_state",
+    "sub_category": "feeling",
+    "ja_kanji": "最も忙しい・最も混雑した［最上級］",
+    "ja_hiragana": "もっともいそがしい",
+    "en_katakana": "ビジエスト",
+    "ruby": [
+      {
+        "base": "最",
+        "ruby": "もっと"
+      },
+      {
+        "base": "も",
+        "ruby": ""
+      },
+      {
+        "base": "忙",
+        "ruby": "いそが"
+      },
+      {
+        "base": "しい",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G2"
+    ],
+    "tags": [
+      "feeling",
+      "jhs_g2"
+    ],
+    "lemma": "busy",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "4",
+    "three_hints": {
+      "category_hint": "It is a superlative (-iest) adjective!",
+      "feature_hint": "The superlative form of 'busy'—crowded with the most people!",
+      "letter_hint": "It starts with 'B'."
+    },
+    "target_dialogues": [
+      {
+        "question": "What is the busiest station in the world?",
+        "answer": "Shinjuku is the busiest station in the world.",
+        "context": "JHS_G2 Unit 6: Comparatives & Superlatives (L25-L32)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "Unit 6: Comparatives & Superlatives (L25-L32)",
+        "source": "borderlink_jhs_g2",
+        "textbook_units": {
+          "NC": "L5",
+          "NH": "U6",
+          "HG": "U7",
+          "OW": "L6",
+          "BS": "U7",
+          "SU": "P4"
+        }
+      }
+    },
+    "inflections": {
+      "comparative": "busier",
+      "superlative": "busiest"
+    }
+  },
+  {
+    "id": "word_3036",
+    "english": "better",
+    "disambiguation": null,
+    "display_label": "better",
+    "part_of_speech": "adjective",
+    "category": "02_state",
+    "sub_category": "impression",
+    "ja_kanji": "より良い［good/wellの比較級］",
+    "ja_hiragana": "よりよい",
+    "en_katakana": "ベター",
+    "ruby": [
+      {
+        "base": "より",
+        "ruby": ""
+      },
+      {
+        "base": "良",
+        "ruby": "よ"
+      },
+      {
+        "base": "い",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G2"
+    ],
+    "tags": [
+      "impression",
+      "jhs_g2"
+    ],
+    "lemma": "good",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "4",
+    "three_hints": {
+      "category_hint": "It is an irregular comparative adjective!",
+      "feature_hint": "The irregular comparative form of 'good' and 'well'!",
+      "letter_hint": "It starts with 'B'."
+    },
+    "target_dialogues": [
+      {
+        "question": "Which do you like better, dogs or cats?",
+        "answer": "I think dogs are better companions.",
+        "context": "JHS_G2 Unit 6: Comparatives & Superlatives (L25-L32)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "Unit 6: Comparatives & Superlatives (L25-L32)",
+        "source": "borderlink_jhs_g2",
+        "textbook_units": {
+          "NC": "L5",
+          "NH": "U6",
+          "HG": "U7",
+          "OW": "L6",
+          "BS": "U7",
+          "SU": "P4"
+        }
+      }
+    },
+    "inflections": {
+      "comparative": "better",
+      "superlative": "best"
+    }
+  },
+  {
+    "id": "word_3037",
+    "english": "best",
+    "disambiguation": null,
+    "display_label": "best",
+    "part_of_speech": "adjective",
+    "category": "02_state",
+    "sub_category": "impression",
+    "ja_kanji": "最も良い・最高の［good/wellの最上級］",
+    "ja_hiragana": "もっともよい",
+    "en_katakana": "ベスト",
+    "ruby": [
+      {
+        "base": "最",
+        "ruby": "もっと"
+      },
+      {
+        "base": "も",
+        "ruby": ""
+      },
+      {
+        "base": "良",
+        "ruby": "よ"
+      },
+      {
+        "base": "い",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G2"
+    ],
+    "tags": [
+      "impression",
+      "jhs_g2"
+    ],
+    "lemma": "good",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "4",
+    "three_hints": {
+      "category_hint": "It is an irregular superlative adjective!",
+      "feature_hint": "The irregular superlative form of 'good'—#1 of all!",
+      "letter_hint": "It starts with 'B'."
+    },
+    "target_dialogues": [
+      {
+        "question": "What season do you think is the best?",
+        "answer": "I think spring is the best season.",
+        "context": "JHS_G2 Unit 6: Comparatives & Superlatives (L25-L32)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "Unit 6: Comparatives & Superlatives (L25-L32)",
+        "source": "borderlink_jhs_g2",
+        "textbook_units": {
+          "NC": "L5",
+          "NH": "U6",
+          "HG": "U7",
+          "OW": "L6",
+          "BS": "U7",
+          "SU": "P4"
+        }
+      }
+    },
+    "inflections": {
+      "comparative": "better",
+      "superlative": "best"
+    }
+  },
+  {
+    "id": "word_3038",
+    "english": "worse",
+    "disambiguation": null,
+    "display_label": "worse",
+    "part_of_speech": "adjective",
+    "category": "02_state",
+    "sub_category": "impression",
+    "ja_kanji": "より悪い［badの比較級］",
+    "ja_hiragana": "よりわるい",
+    "en_katakana": "ワース",
+    "ruby": [
+      {
+        "base": "より",
+        "ruby": ""
+      },
+      {
+        "base": "悪",
+        "ruby": "わる"
+      },
+      {
+        "base": "い",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G2"
+    ],
+    "tags": [
+      "impression",
+      "jhs_g2"
+    ],
+    "lemma": "bad",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "4",
+    "three_hints": {
+      "category_hint": "It is an irregular comparative adjective!",
+      "feature_hint": "The irregular comparative form of 'bad' (superlative: 'worst')!",
+      "letter_hint": "It starts with 'W'."
+    },
+    "target_dialogues": [
+      {
+        "question": "How is the weather getting?",
+        "answer": "The storm is getting worse than yesterday.",
+        "context": "JHS_G2 Unit 6: Comparatives & Superlatives (L25-L32)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "Unit 6: Comparatives & Superlatives (L25-L32)",
+        "source": "borderlink_jhs_g2",
+        "textbook_units": {
+          "NC": "L5",
+          "NH": "U6",
+          "HG": "U7",
+          "OW": "L6",
+          "BS": "U7",
+          "SU": "P4"
+        }
+      }
+    },
+    "inflections": {
+      "comparative": "worse",
+      "superlative": "worst"
+    }
+  },
+  {
+    "id": "word_3039",
+    "english": "worst",
+    "disambiguation": null,
+    "display_label": "worst",
+    "part_of_speech": "adjective",
+    "category": "02_state",
+    "sub_category": "impression",
+    "ja_kanji": "最も悪い・最悪の［badの最上級］",
+    "ja_hiragana": "もっともわるい",
+    "en_katakana": "ワースト",
+    "ruby": [
+      {
+        "base": "最",
+        "ruby": "もっと"
+      },
+      {
+        "base": "も",
+        "ruby": ""
+      },
+      {
+        "base": "悪",
+        "ruby": "わる"
+      },
+      {
+        "base": "い",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G2"
+    ],
+    "tags": [
+      "impression",
+      "jhs_g2"
+    ],
+    "lemma": "bad",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "4",
+    "three_hints": {
+      "category_hint": "It is an irregular superlative adjective!",
+      "feature_hint": "The irregular superlative form of 'bad' (opposite of 'best')!",
+      "letter_hint": "It starts with 'W'."
+    },
+    "target_dialogues": [
+      {
+        "question": "What was your worst score?",
+        "answer": "That was the worst day of the trip!",
+        "context": "JHS_G2 Unit 6: Comparatives & Superlatives (L25-L32)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "Unit 6: Comparatives & Superlatives (L25-L32)",
+        "source": "borderlink_jhs_g2",
+        "textbook_units": {
+          "NC": "L5",
+          "NH": "U6",
+          "HG": "U7",
+          "OW": "L6",
+          "BS": "U7",
+          "SU": "P4"
+        }
+      }
+    },
+    "inflections": {
+      "comparative": "worse",
+      "superlative": "worst"
+    }
+  },
+  {
+    "id": "word_3040",
+    "english": "electronic dictionary",
+    "disambiguation": null,
+    "display_label": "electronic dictionary",
+    "part_of_speech": "noun",
+    "category": "05_schoollife",
+    "sub_category": "stationery",
+    "ja_kanji": "電子辞書",
+    "ja_hiragana": "でんしじしょ",
+    "en_katakana": "エレクトロニック ディクショナリー",
+    "ruby": [
+      {
+        "base": "電子辞書",
+        "ruby": "でんしじしょ"
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G2"
+    ],
+    "tags": [
+      "stationery",
+      "jhs_g2"
+    ],
+    "lemma": "electronic dictionary",
+    "is_plural": false,
+    "article": "an",
+    "syllable_count": 2,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "4",
+    "three_hints": {
+      "category_hint": "It is a study tool & JHS G2 debate topic!",
+      "feature_hint": "A compact digital device used to look up English and Japanese words quickly!",
+      "letter_hint": "It starts with 'E'."
+    },
+    "target_dialogues": [
+      {
+        "question": "Which are better, paper or electronic dictionaries?",
+        "answer": "An electronic dictionary is light and easy to carry.",
+        "context": "JHS_G2 Unit 7: There is/are, Intro Passive & Counter-Arguments (L33-L41)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "Unit 7: There is/are, Intro Passive & Counter-Arguments (L33-L41)",
+        "source": "borderlink_jhs_g2",
+        "textbook_units": {
+          "NC": "L3, G3 L2",
+          "NH": "U5, U7",
+          "HG": "U4, U6, U8",
+          "OW": "L1, L7",
+          "BS": "U1, U8",
+          "SU": "P6"
+        }
+      }
+    },
+    "inflections": {
+      "plural": "electronic dictionaries"
+    }
+  },
+  {
+    "id": "word_3041",
+    "english": "plastic bag",
+    "disambiguation": null,
+    "display_label": "plastic bag",
+    "part_of_speech": "noun",
+    "category": "07_dailylife",
+    "sub_category": "household_item",
+    "ja_kanji": "レジ袋・ビニール袋",
+    "ja_hiragana": "れじぶくろ",
+    "en_katakana": "プラスチック バッグ",
+    "ruby": [
+      {
+        "base": "レジ",
+        "ruby": ""
+      },
+      {
+        "base": "袋",
+        "ruby": "ぶくろ"
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G2"
+    ],
+    "tags": [
+      "household_item",
+      "jhs_g2"
+    ],
+    "lemma": "plastic bag",
+    "is_plural": false,
+    "article": "a",
+    "syllable_count": 2,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "4",
+    "three_hints": {
+      "category_hint": "It is a shopping item & JHS G2 debate topic!",
+      "feature_hint": "A thin bag given at convenience stores that we try to reduce for the earth!",
+      "letter_hint": "It starts with 'P'."
+    },
+    "target_dialogues": [
+      {
+        "question": "Which do you use, paper or plastic bags?",
+        "answer": "We should reduce plastic bags for the environment.",
+        "context": "JHS_G2 Unit 7: There is/are, Intro Passive & Counter-Arguments (L33-L41)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "Unit 7: There is/are, Intro Passive & Counter-Arguments (L33-L41)",
+        "source": "borderlink_jhs_g2",
+        "textbook_units": {
+          "NC": "L3, G3 L2",
+          "NH": "U5, U7",
+          "HG": "U4, U6, U8",
+          "OW": "L1, L7",
+          "BS": "U1, U8",
+          "SU": "P6"
+        }
+      }
+    },
+    "inflections": {
+      "plural": "plastic bags"
+    }
+  },
+  {
+    "id": "word_3042",
+    "english": "against",
+    "disambiguation": null,
+    "display_label": "against",
+    "part_of_speech": "preposition",
+    "category": "13_position",
+    "sub_category": "preposition",
+    "ja_kanji": "〜に反対して・〜と対戦して",
+    "ja_hiragana": "にはんたいして",
+    "en_katakana": "アゲインスト",
+    "ruby": [
+      {
+        "base": "〜に",
+        "ruby": ""
+      },
+      {
+        "base": "反対",
+        "ruby": "はんたい"
+      },
+      {
+        "base": "して",
+        "ruby": ""
+      }
+    ],
+    "sound_file": "",
+    "card_image": "",
+    "grades": [
+      "JHS_G2"
+    ],
+    "tags": [
+      "preposition",
+      "jhs_g2"
+    ],
+    "lemma": "against",
+    "is_plural": false,
+    "article": "",
+    "syllable_count": 1,
+    "difficulty_tier": "intermediate",
+    "cefr": "A2",
+    "eiken": "4",
+    "three_hints": {
+      "category_hint": "It is a key debate & sports preposition!",
+      "feature_hint": "Taking the opposite side in a debate or playing versus another team!",
+      "letter_hint": "It starts with 'A'."
+    },
+    "target_dialogues": [
+      {
+        "question": "Are you for or against the plan?",
+        "answer": "I am against the plan for two reasons.",
+        "context": "JHS_G2 Unit 7: There is/are, Intro Passive & Counter-Arguments (L33-L41)"
+      }
+    ],
+    "media_by_grade": {
+      "JHS_G2": {
+        "card_image": "",
+        "unit": "Unit 7: There is/are, Intro Passive & Counter-Arguments (L33-L41)",
+        "source": "borderlink_jhs_g2",
+        "textbook_units": {
+          "NC": "L3, G3 L2",
+          "NH": "U5, U7",
+          "HG": "U4, U6, U8",
+          "OW": "L1, L7",
+          "BS": "U1, U8",
+          "SU": "P6"
+        }
+      }
+    }
+  }
+]
